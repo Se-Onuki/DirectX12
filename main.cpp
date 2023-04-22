@@ -43,6 +43,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	OutputDebugStringA("Hello,DirectX!\n");
 
 
+
 #pragma region ウィンドウクラス
 
 	WNDCLASS wc{};
@@ -272,11 +273,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region SwapChainからResourceを引っ張ってくる
 	// SwapChainからResourceを引っ張ってくる
-	ID3D12Resource *swaoChainResoureces[2] = { nullptr };
-	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swaoChainResoureces[0]));
+	ID3D12Resource *swapChainResources[2] = { nullptr };
+	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
 	// うまく取得できなければ生成できない
 	assert(SUCCEEDED(hr));
-	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swaoChainResoureces[1]));
+	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
@@ -293,14 +294,27 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 	// まずは1つめを作る。1つ目は最初の所に作る。作る場所をこちらで指定してあげる必要がある。
 	rtvHandles[0] = rtvStartHandle;
-	device->CreateRenderTargetView(swaoChainResoureces[0], &rtvDesc, rtvHandles[0]);
+	device->CreateRenderTargetView(swapChainResources[0], &rtvDesc, rtvHandles[0]);
 	// 2つ目のディスクリプタハンドルを作る。
 	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	device->CreateRenderTargetView(swaoChainResoureces[1], &rtvDesc, rtvHandles[1]);
+	device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
 
 #pragma endregion
 
 
+#pragma region FanceとEventを生成する
+
+	// 初期値0でFanceを作る
+	ID3D12Fence *fence = nullptr;
+	uint64_t fenceValue = 0;
+	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	assert(SUCCEEDED(hr));
+
+	//FenceのSignalを持つためのイベントを作成する
+	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
+
+#pragma endregion
 
 	MSG msg{};
 	// ウィンドウのxボタンが押されるまでループ
@@ -322,11 +336,44 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		
 		// これから書き込むバックバッファのインデックスを取得
 		UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+
+#pragma region TransitionBarrierを張る
+		
+		// TransitionBarrierの設定
+		D3D12_RESOURCE_BARRIER barrier{};
+		// 今回のバリアはTransition
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象のリソース。現在のバックバッファに対して行う
+		barrier.Transition.pResource = swapChainResources[backBufferIndex];
+		// 遷移前(現在)のResourceState
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+		// 遷移後のResourceState
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		// TransitionBurrierを張る
+		commandList->ResourceBarrier(1, &barrier);
+
+#pragma endregion
+
 		// 描画先のRTVを設定する
 		commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
 		// 指定した色で画面全体をクリアする
 		float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
 		commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], crearColor, 0, nullptr);
+
+#pragma region 画面状態の遷移
+
+		// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
+		// 今回はRenderTargetからPresentにする
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+		// TransitionBarrierを張る
+		commandList->ResourceBarrier(1, &barrier);
+
+#pragma endregion
+
+
 		// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
 		hr = commandList->Close();
 		assert(SUCCEEDED(hr));
@@ -340,6 +387,30 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandQueue->ExecuteCommandLists(1, commandLists);
 		// GPUとOSに画面の交換を行うように通知する
 		swapChain->Present(1, 0);
+
+#pragma region GPUにシグナルを送る
+		
+		// Fenceの値を更新
+		fenceValue++;
+		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+		commandQueue->Signal(fence, fenceValue);
+
+#pragma endregion
+
+#pragma region Fenceの値を確認してGPUを待つ
+
+		// Fenceの値が指定したらSignal値にたどりついているか確認する
+		// GetCompletedValueの初期値はFence作成時に渡した初期値
+		if (fence->GetCompletedValue() < fenceValue) {
+			// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
+			fence->SetEventOnCompletion(fenceValue, fenceEvent);
+			// イベント待機
+			WaitForSingleObject(fenceEvent, INFINITE);
+		}
+
+#pragma endregion
+
+
 		// 次のフレーム用のコマンドリストを準備
 		hr = commandAllocator->Reset();
 		assert(SUCCEEDED(hr));
