@@ -1,6 +1,6 @@
 #include "Render.hpp"
-#include "Header/Math/Matrix4x4.h"
-#include "Header/Math/Vector2.h"
+#include "../Math/Matrix4x4.h"
+#include "../Math/Vector2.h"
 
 #include <cmath>
 

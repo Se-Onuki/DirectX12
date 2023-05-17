@@ -19,6 +19,9 @@
     <Filter Include="Math">
       <UniqueIdentifier>{7671d120-dbd3-45bd-891b-5beb8d85d5ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{9f27f9be-29c7-496d-9c8b-051e06842e96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -44,6 +47,12 @@
     </ClCompile>
     <ClCompile Include="Header\Math\Math.cpp">
       <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Math\Transform.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Render\Render.cpp">
+      <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +82,12 @@
     </ClInclude>
     <ClInclude Include="Header\Math\Vector4.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Math\Transform.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Render\Render.hpp">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

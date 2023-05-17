@@ -17,7 +17,10 @@
 #include <string>
 #include "Header/String/String.hpp"
 #include <format>
+#include "Header/Render/Render.hpp"
 #include "Header/Math/Vector4.h"
+#include "Header/Math/Matrix4x4.h"
+#include "Header/Math/Transform.h"
 
 void Log(const std::string &message) {
 	OutputDebugStringA(message.c_str());
@@ -458,10 +461,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region RootParameter
 
 	// RootParameter作成
-	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	D3D12_ROOT_PARAMETER rootParameters[2] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
+	rootParameters[1].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
 	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
 
@@ -592,6 +598,28 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+#pragma region Transformを使ってCBufferを更新する
+
+	// Transform変数を作る
+	Transform transform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,0.f} };
+	// カメラTransformを作る
+	Transform cameraTransform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,-5.f} };
+
+#pragma endregion
+
+#pragma region TransformationMatrix用のResourceを作る
+
+	// WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
+	ID3D12Resource *wvpResource = CreateBufferResource(device, sizeof(Matrix4x4));
+	// データを書き込む
+	Matrix4x4 *wvpData = nullptr;
+	// 書き込むためのアドレスを取得
+	wvpResource->Map(0, nullptr, reinterpret_cast<void **>(&wvpData));
+	// 単位行列を書き込んでおく
+	*wvpData = Matrix4x4::Identity();
+
+#pragma endregion
+
 #pragma region Resourceにデータを書き込む
 
 	// 頂点リソースにデータを書き込む
@@ -644,7 +672,19 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			break;
 		}
 
+#pragma region ゲームの処理
 
+		transform.rotate.y += 0.03f;
+		Matrix4x4 worldMatrix = transform.Affine();
+		Matrix4x4 cameraMatrix = cameraTransform.Affine();
+		Matrix4x4 viewMatrix = cameraMatrix.Inverse();
+		// 透視投影行列
+		Matrix4x4 projectionMatrix = Render::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.f);
+		Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
+
+		*wvpData = worldViewProjectionMatrix;
+
+#pragma endregion
 
 
 #pragma region コマンドを積み込んで確定させる
@@ -689,6 +729,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		// マテリアルCBufferの場所を設定
 		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		// wvp用のCBufferの場所を設定
+		commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 		// 描画! (DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後。
 		commandList->DrawInstanced(3, 1, 0, 0);
 
@@ -767,6 +809,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	pixelShaderBlob->Release();
 	vertexShaderBlob->Release();
 	materialResource->Release();
+	wvpResource->Release();
 
 	CloseHandle(fenceEvent);
 	fence->Release();
