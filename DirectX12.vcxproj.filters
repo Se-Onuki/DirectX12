@@ -25,6 +25,9 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{e6aab315-db5a-458e-a434-c71b8efb11d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Texture">
+      <UniqueIdentifier>{ccd25494-8864-4478-85d6-5147c3188ef2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -77,6 +80,9 @@
     </ClCompile>
     <ClCompile Include="Header\Math\Transform.cpp">
       <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Texture\Texture.cpp">
+      <Filter>Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +143,9 @@
     <ClInclude Include="externals\imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Texture\Texture.h">
+      <Filter>Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl" />
@@ -146,5 +155,8 @@
     <Text Include="externals\imgui\LICENSE.txt">
       <Filter>imgui</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Object3d.hlsli" />
   </ItemGroup>
 </Project>

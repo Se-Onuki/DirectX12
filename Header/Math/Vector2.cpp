@@ -109,7 +109,3 @@ void Vector2::operator*=(const Matrix3x3 &matrix) {
 }
 
 
-
-Vector2::Vector2(float x, float y) : x(x), y(y)
-{
-}

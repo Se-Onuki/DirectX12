@@ -106,6 +106,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Math\Vector2.cpp" />
     <ClCompile Include="Header\Math\Vector3.cpp" />
     <ClCompile Include="Header\Render\Render.cpp" />
+    <ClCompile Include="Header\Texture\Texture.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +129,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Math\Vector4.h" />
     <ClInclude Include="Header\Render\Render.hpp" />
     <ClInclude Include="Header\String\String.hpp" />
+    <ClInclude Include="Header\Texture\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl">
@@ -145,6 +147,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
+      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Object3d.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
