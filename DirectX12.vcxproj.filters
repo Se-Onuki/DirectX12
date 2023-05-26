@@ -28,6 +28,9 @@
     <Filter Include="Texture">
       <UniqueIdentifier>{ccd25494-8864-4478-85d6-5147c3188ef2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Create">
+      <UniqueIdentifier>{889ff872-73da-42e3-a449-bb9b2a4a7219}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="Header\Texture\Texture.h">
       <Filter>Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Create\Create.h">
+      <Filter>Create</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

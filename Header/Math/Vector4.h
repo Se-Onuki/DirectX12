@@ -3,7 +3,7 @@
 #include <cmath>
 
 struct Vector4 {
-	//Vector4(float x = 0.f, float y = 0.f, float z = 0.f, float w = 0.f) : x(x), y(y), z(z), w(w) {}
+	// Vector4(float x = 0.f, float y = 0.f, float z = 0.f, float w = 0.f) : x(x), y(y), z(z), w(w) {}
 
 	float x;
 	float y;

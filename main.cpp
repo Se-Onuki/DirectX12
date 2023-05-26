@@ -30,6 +30,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #include "Header/Math/Matrix4x4.h"
 #include "Header/Math/Transform.h"
 #include "Header/Texture/Texture.h"
+#include "Header/Create/Create.h"
 
 void Log(const std::string &message) {
 	OutputDebugStringA(message.c_str());
@@ -119,41 +120,6 @@ IDxcBlob *CompileShader(
 #pragma endregion
 
 
-}
-
-ID3D12Resource *CreateBufferResource(ID3D12Device *device, const size_t &sizeBytes) {
-	// 頂点リソース用のヒープの設定
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	// 頂点リソースの設定
-	D3D12_RESOURCE_DESC vertexResourceDesc{};
-	// バッファリソース。 テクスチャの場合はまた別の設定をする
-	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc.Width = sizeBytes;					// リソースのサイズ。今回はVector4を3頂点分
-	// バッファの場合はこれらは1にする決まり
-	vertexResourceDesc.Height = 1;
-	vertexResourceDesc.DepthOrArraySize = 1;
-	vertexResourceDesc.MipLevels = 1;
-	vertexResourceDesc.SampleDesc.Count = 1;
-	// バッファの場合はこれにする決まり
-	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	// 実際に頂点リソースを作る
-	ID3D12Resource *vertexResource = nullptr;
-	assert(SUCCEEDED(device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexResource))));
-	return vertexResource;
-}
-
-_NODISCARD ID3D12DescriptorHeap *CreateDescriptorHeap(ID3D12Device *device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
-	// ディスクリプタヒープの生成
-	ID3D12DescriptorHeap *descriptorHeap = nullptr;
-	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
-	descriptorHeapDesc.Type = heapType;
-	descriptorHeapDesc.NumDescriptors = numDescriptors;
-	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	/*HRESULT hr = ;*/
-	// デスクリプタヒープが生成できなかったので起動できない
-	assert(SUCCEEDED(device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap))));
-	return descriptorHeap;
 }
 
 // ウィンドウプロシージャ
@@ -750,8 +716,52 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	DirectX::ScratchImage mipImages = Texture::Load("resources/uvChecker.png");
 	const DirectX::TexMetadata &metadata = mipImages.GetMetadata();
 	ID3D12Resource *textureResource = Texture::CreateResource(device, metadata);
-	Texture::UpdateData(textureResource, mipImages);
+	ID3D12Resource *intermediateResourece = Texture::UpdateData(textureResource, mipImages, device, commandList);
 
+	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
+	hr = commandList->Close();
+	assert(SUCCEEDED(hr));
+	if (true) {
+
+#pragma region コマンドをキックする
+
+		// GPUにコマンドリストの実行を行わせる
+		ID3D12CommandList *commandLists[] = { commandList };
+		commandQueue->ExecuteCommandLists(1, commandLists);
+
+#pragma region GPUにシグナルを送る
+
+		// Fenceの値を更新
+		fenceValue++;
+		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+		commandQueue->Signal(fence, fenceValue);
+
+#pragma endregion
+
+#pragma region Fenceの値を確認してGPUを待つ
+
+		// Fenceの値が指定したらSignal値にたどりついているか確認する
+		// GetCompletedValueの初期値はFence作成時に渡した初期値
+		if (fence->GetCompletedValue() < fenceValue) {
+			// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
+			fence->SetEventOnCompletion(fenceValue, fenceEvent);
+			// イベント待機
+			WaitForSingleObject(fenceEvent, INFINITE);
+		}
+
+#pragma endregion
+
+
+		// 次のフレーム用のコマンドリストを準備
+		hr = commandAllocator->Reset();
+		assert(SUCCEEDED(hr));
+		hr = commandList->Reset(commandAllocator, nullptr);
+		assert(SUCCEEDED(hr));
+
+#pragma endregion
+
+		intermediateResourece->Release();
+	}
 #pragma endregion
 
 #pragma region ShaderResourceViewを作る
@@ -896,7 +906,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-
 		// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
 		hr = commandList->Close();
 		assert(SUCCEEDED(hr));
@@ -941,6 +950,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		assert(SUCCEEDED(hr));
 
 #pragma endregion
+
 
 	}
 
