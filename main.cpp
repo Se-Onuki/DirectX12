@@ -589,6 +589,34 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+#pragma region DepthStencilState
+
+	ID3D12Resource *depthStencileResource = Texture::CreateDepthStencilTextureResource(device, kClientWidth, kClientHeight);
+
+	ID3D12DescriptorHeap *dsvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// Format。基本的にはResourceに合わせる。
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;	// 2dTexture
+	// DSVHeapの先頭にDSVを構築する。
+	device->CreateDepthStencilView(depthStencileResource, &dsvDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+
+#pragma region DepthStencileStateの設定
+
+	// DepthStencileStateの設定
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+	// Depthの機能を有効にする
+	depthStencilDesc.DepthEnable = true;
+	// 書き込みします。
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	// 比較関数はLessEqual。つまり、近ければ表示される。
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+#pragma endregion
+
+#pragma endregion
+
+
 #pragma region PSOを生成する
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -598,6 +626,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize() };		// PixelShader
 	graphicsPipelineStateDesc.BlendState = blendDesc;																// BlendState
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;														// RasterizeState
+
+	// DSVのFormatを設定する
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
+	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
 	// 書き込むRTVの情報
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
@@ -615,7 +648,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region VertexResourceを生成する
 
-	ID3D12Resource *vertexResource = CreateBufferResource(device, sizeof(Render::VertexData) * 3);
+	ID3D12Resource *vertexResource = CreateBufferResource(device, sizeof(Render::VertexData) * 6);
 
 #pragma endregion
 
@@ -639,7 +672,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView.SizeInBytes = sizeof(Render::VertexData) * 3;
+	vertexBufferView.SizeInBytes = sizeof(Render::VertexData) * 6;
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(Render::VertexData);
 
@@ -684,6 +717,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// 右下
 	vertexData[2].position = { 0.5f, -0.5f, 0.f, 1.f };
 	vertexData[2].texCoord = { 1.f,1.f };
+
+	// 左下
+	vertexData[3].position = { -0.5f, -0.5f, 0.5f, 1.f };
+	vertexData[3].texCoord = { 0.f,1.f };
+	// 右下
+	vertexData[4].position = { 0.f, 0.f, 0.f, 1.f };
+	vertexData[4].texCoord = { 0.5f,0.f };
+	// 右下
+	vertexData[5].position = { 0.5f, -0.5f, -0.5f, 1.f };
+	vertexData[5].texCoord = { 1.f,1.f };
 
 #pragma endregion
 
@@ -853,8 +896,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-		// 描画先のRTVを設定する
-		commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
+		// 描画先のRTVとDSVを設定する
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
+
+		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 		// 指定した色で画面全体をクリアする
 		float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
 		commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], crearColor, 0, nullptr);
@@ -884,7 +930,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// TextureのSRVテーブル情報を設定
 		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 		// 描画! (DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後。
-		commandList->DrawInstanced(3, 1, 0, 0);
+		commandList->DrawInstanced(6, 1, 0, 0);
 
 #pragma endregion
 
@@ -972,6 +1018,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	materialResource->Release();
 	wvpResource->Release();
 	textureResource->Release();
+	depthStencileResource->Release();
+	dsvDescriptorHeap->Release();
 
 	CloseHandle(fenceEvent);
 	fence->Release();
