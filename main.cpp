@@ -31,6 +31,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #include "Header/Math/Transform.h"
 #include "Header/Texture/Texture.h"
 #include "Header/Create/Create.h"
+#include "Header/Descriptor/DescriptorHandIe.h"
+#include <algorithm>
 
 void Log(const std::string &message) {
 	OutputDebugStringA(message.c_str());
@@ -319,10 +321,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-
-
 #pragma endregion
 
+#pragma region DescriptorSize
+
+	const uint32_t descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//const uint32_t descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	//const uint32_t descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+#pragma endregion
 
 #pragma region CommandQueueを生成する
 	// コマンドキューを生成する
@@ -718,7 +725,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Transformを使ってCBufferを更新する
 
 	// Transform変数を作る
-	Transform transform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,0.f} };
+	Transform transform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,10.f} };
 	// カメラTransformを作る
 	Transform cameraTransform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,-5.f} };
 
@@ -726,7 +733,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Transform transformSprite{ {1.f,1.f,1.f},{0.f,0.f,0.f},{-2.f,0.f,-0.5f} };
 
 	// Ball用のTransform
-	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,10.f} };
+	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,5.f} };
 
 #pragma endregion
 
@@ -862,10 +869,26 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Textureを読んで転送する
 
 	// Textureを読んで転送する
-	DirectX::ScratchImage mipImages = Texture::Load("resources/uvChecker.png");
-	const DirectX::TexMetadata &metadata = mipImages.GetMetadata();
-	ID3D12Resource *textureResource = Texture::CreateResource(device, metadata);
-	ID3D12Resource *intermediateResourece = Texture::UpdateData(textureResource, mipImages, device, commandList);
+	std::vector<DirectX::ScratchImage>mipImagesList;
+	std::vector<ID3D12Resource *> textureResourceList;
+	std::vector<ID3D12Resource *> intermediateResoureceList;
+
+	mipImagesList.emplace_back(Texture::Load("resources/uvChecker.png"));
+	mipImagesList.emplace_back(Texture::Load("resources/monsterBall.png"));
+
+
+	for (auto &mipImage : mipImagesList) {
+		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
+		ID3D12Resource *textureResource = Texture::CreateResource(device, metadata);
+		textureResourceList.push_back(textureResource);
+		intermediateResoureceList.push_back(Texture::UpdateData(textureResource, mipImage, device, commandList));
+	}
+
+
+	//DirectX::ScratchImage mipImages = Texture::Load("resources/uvChecker.png");
+	//const DirectX::TexMetadata &metadata = mipImages.GetMetadata();
+	//ID3D12Resource *textureResource = Texture::CreateResource(device, metadata);
+	//ID3D12Resource *intermediateResourece = Texture::UpdateData(textureResource, mipImages, device, commandList);
 
 	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
 	hr = commandList->Close();
@@ -908,29 +931,38 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		assert(SUCCEEDED(hr));
 
 #pragma endregion
-
-		intermediateResourece->Release();
+		for (auto &intermediateResourece : intermediateResoureceList) {
+			intermediateResourece->Release();
+		}
 	}
 #pragma endregion
 
 #pragma region ShaderResourceViewを作る
 
 	// metaDataを基にSRVの設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = metadata.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	std::vector<D3D12_SHADER_RESOURCE_VIEW_DESC> srvDescList;
+	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPUList;
+	for (uint32_t i = 0; i < mipImagesList.size(); i++)
+	{
+		const auto &metadata = mipImagesList[i].GetMetadata();
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+		srvDesc.Format = metadata.format;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+		srvDescList.push_back(srvDesc);
+		// SRVを作るDescriptorHeapの場所を決める
+		D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = DescriptorHandIe::GetCPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
+		D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = DescriptorHandIe::GetGPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
+		textureSrvHandleGPUList.emplace_back(textureSrvHandleGPU);
+		//// 先頭はImGuiが使ってるのでその次を使う
+		//textureSrvHandleCPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		//textureSrvHandleGPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		// SRVの作成
+		device->CreateShaderResourceView(textureResourceList[i], &srvDesc, textureSrvHandleCPU);
+	}
 
-	// SRVを作るDescriptorHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	// 先頭はImGuiが使ってるのでその次を使う
-	textureSrvHandleCPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleGPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	// SRVの作成
-	device->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
-
+	uint32_t ballTextureIndex = 0u;
 #pragma endregion
 
 
@@ -962,6 +994,21 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat3("scale", &cameraTransform.scale.x, 0.1f);
 		ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, 0.1f);
 		ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.1f);
+		ImGui::End();
+
+		ImGui::Begin("UI");
+		ImGui::DragFloat2("scale", &transformSprite.scale.x, 0.1f);
+		ImGui::DragFloat("rotate", &transformSprite.rotate.z, 0.1f);
+		ImGui::DragFloat2("translate", &transformSprite.translate.x, 1.f);
+		ImGui::End();
+
+		ImGui::Begin("Ball");
+		if (ImGui::Button("TextureIndex")) {
+			ballTextureIndex++;
+			if (textureSrvHandleGPUList.size() <= ballTextureIndex) {
+				ballTextureIndex = 0u;
+			}
+		}
 		ImGui::End();
 
 		// Sprite用のWorldMatrixSpriteを作る
@@ -1056,18 +1103,20 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// wvp用のCBufferの場所を設定
 		commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 		// TextureのSRVテーブル情報を設定
-		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[0]);
 		// 描画! (DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後。
 		commandList->DrawInstanced(6, 1, 0, 0);
 
 		// Spriteの描画
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[0]);
 		commandList->DrawInstanced(6, 1, 0, 0);
 
 		// Ballの描画
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[ballTextureIndex]);
 		commandList->DrawInstanced(BallVertexCount, 1, 0, 0);
 
 
@@ -1160,7 +1209,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	wvpResource->Release();
 	transformationMatrixResourceSprite->Release();
 	transformationMatrixResourceBall->Release();
-	textureResource->Release();
+	for (auto &textureResource : textureResourceList) {
+		textureResource->Release();
+	}
 	depthStencileResource->Release();
 	dsvDescriptorHeap->Release();
 

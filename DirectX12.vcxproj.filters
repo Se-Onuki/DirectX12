@@ -31,6 +31,9 @@
     <Filter Include="Create">
       <UniqueIdentifier>{889ff872-73da-42e3-a449-bb9b2a4a7219}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Descriptor">
+      <UniqueIdentifier>{4b65ff6b-7eb6-4681-9182-4191a9b63da5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -160,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="Header\Math\Lerp.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Descriptor\DescriptorHandIe.h">
+      <Filter>Descriptor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
