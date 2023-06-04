@@ -8,6 +8,7 @@
 #include "Polar.h"
 
 #include <assert.h>
+#include <numbers>
 
 
 
@@ -42,14 +43,14 @@ Vector2 operator <<(Vector2 &vec2, const Polar &Polar)
 	};
 }
 
-Polar operator<<(Polar& Polar, const Vector2& vec2)  {
-	return Polar = {(float)(atan2(vec2.y, vec2.x)), vec2.Length()};
+Polar operator<<(Polar &Polar, const Vector2 &vec2) {
+	return Polar = { (float)(atan2(vec2.y, vec2.x)), vec2.Length() };
 }
 
 
 
 
-Matrix2x2 MakeRotateMatrix(const float& theta) {
+Matrix2x2 MakeRotateMatrix(const float &theta) {
 	return Matrix2x2(
 		cos(theta), sin(theta),
 		-sin(theta), cos(theta)
@@ -58,15 +59,15 @@ Matrix2x2 MakeRotateMatrix(const float& theta) {
 
 
 Matrix3x3 MakeScaleMatrix(const Vector2 &scale) {
-	return Matrix3x3 {
+	return Matrix3x3{
 		scale.x, 0, 0,
 		0, scale.y, 0,
 		0, 0, 1
 	};
 }
 
-Matrix4x4 MakeScaleMatrix(const Vector3& scale) { 
-	return Matrix4x4 {
+Matrix4x4 MakeScaleMatrix(const Vector3 &scale) {
+	return Matrix4x4{
 		scale.x, 0, 0, 0,
 		0, scale.y, 0, 0,
 		0, 0, scale.z, 0,
@@ -92,7 +93,7 @@ Matrix3x3 MakeTranslateMatrix(const Vector2 &translate) {
 	};
 }
 
-Matrix4x4 MakeTranslateMatrix(const Vector3& translate) { 
+Matrix4x4 MakeTranslateMatrix(const Vector3 &translate) {
 	return Matrix4x4{
 		1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -150,4 +151,12 @@ Matrix3x3 MakeViewportMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom)
 		0, -(RightBottom.y - LeftTop.y) / 2.0f,0,
 		(RightBottom.x - LeftTop.x) / 2.0f + LeftTop.x,(RightBottom.y - LeftTop.y) / 2.0f + LeftTop.y, 1
 	};
+}
+
+float Angle::Digree::ToRadian() {
+	return digree * Dig2Rad;
+}
+
+float Angle::Radian::ToDigree() {
+	return radian * Rad2Dig;
 }

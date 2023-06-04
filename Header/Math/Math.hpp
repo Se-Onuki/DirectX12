@@ -6,6 +6,8 @@
 #include "Matrix3x3.h"
 #include "Matrix4x4.h"
 
+#include <numbers>
+
 static const Vector2 TextSize{50, 20};
 
 
@@ -110,3 +112,22 @@ Matrix3x3 MakeOrthographicMatrix(const Vector2 &LeftTop, const Vector2 &RightBot
 /// <param name="RightBottom">右下</param>
 /// <returns>ビューポート行列</returns>
 Matrix3x3 MakeViewportMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom);
+
+namespace Angle {
+
+	struct Digree {
+		float digree;
+		float ToRadian();
+	};
+
+	struct Radian {
+		float radian;
+		float ToDigree();
+	};
+
+	const float Dig2Rad = static_cast<float>(std::numbers::pi) / 180.f;
+	const float Rad2Dig = 180.f / static_cast<float>(std::numbers::pi);;
+
+	//enum class 
+
+} // namespace An

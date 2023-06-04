@@ -87,6 +87,12 @@
     <ClCompile Include="Header\Texture\Texture.cpp">
       <Filter>Texture</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Create\Create.cpp">
+      <Filter>Create</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Math\Lerp.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -151,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="Header\Create\Create.h">
       <Filter>Create</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Math\Lerp.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -646,10 +646,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+#pragma region BallSize
+
+	const uint8_t BallDivision = 16;
+	const uint32_t BallVertexCount = 6 * BallDivision * BallDivision;
+
+#pragma endregion
+
 #pragma region VertexResourceを生成する
 
 	ID3D12Resource *vertexResource = CreateBufferResource(device, sizeof(Render::VertexData) * 6);
 	ID3D12Resource *vertexResourceSprite = CreateBufferResource(device, sizeof(Render::VertexData) * 6);
+	ID3D12Resource *vertexResourceBall = CreateBufferResource(device, sizeof(Render::VertexData) * BallVertexCount);
 
 #pragma endregion
 
@@ -690,6 +698,19 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+#pragma region Ball
+
+	// 頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewBall{};
+	// リソースの先頭のアドレスから使う
+	vertexBufferViewBall.BufferLocation = vertexResourceBall->GetGPUVirtualAddress();
+	// 使用するリソース全体のサイズ
+	vertexBufferViewBall.SizeInBytes = sizeof(Render::VertexData) * BallVertexCount;
+	// 1頂点あたりのサイズ
+	vertexBufferViewBall.StrideInBytes = sizeof(Render::VertexData);
+
+#pragma endregion
+
 #pragma endregion
 
 #pragma endregion
@@ -703,6 +724,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// Sprite用のTransform
 	Transform transformSprite{ {1.f,1.f,1.f},{0.f,0.f,0.f},{-2.f,0.f,-0.5f} };
+
+	// Ball用のTransform
+	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,10.f} };
 
 #pragma endregion
 
@@ -727,6 +751,19 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixDataSprite));
 	// 単位行列を書き込んでおく
 	*transformationMatrixDataSprite = Matrix4x4::Identity();
+
+#pragma endregion
+
+#pragma region Ball
+
+	// Ball用のTransformationMatrixのリソースを作る。Matrix4x4 1つ分のサイズを用意する
+	ID3D12Resource *transformationMatrixResourceBall = CreateBufferResource(device, sizeof(Matrix4x4));
+	// データを書き込む
+	Matrix4x4 *transformationMatrixDataBall = nullptr;
+	// 書き込むためのアドレスを取得
+	transformationMatrixResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixDataBall));
+	// 単位行列を書き込んでおく
+	*transformationMatrixDataBall = Matrix4x4::Identity();
 
 #pragma endregion
 
@@ -783,6 +820,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// 右下
 	vertexDataSprite[5].position = { 640.f, 360.f, 0.f, 1.f };
 	vertexDataSprite[5].texCoord = { 1.f,1.f };
+
+#pragma endregion
+
+#pragma region Ball
+
+	// 頂点リソースにデータを書き込む
+	Render::VertexData *vertexDataBall = nullptr;
+	// 書き込むためのアドレスを取得
+	vertexResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&vertexDataBall));
+
+	CreateSphere(vertexDataBall, BallDivision);
 
 #pragma endregion
 
@@ -909,12 +957,20 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region ゲームの処理
 
+
+		ImGui::Begin("Camera");
+		ImGui::DragFloat3("scale", &cameraTransform.scale.x, 0.1f);
+		ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, 0.1f);
+		ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.1f);
+		ImGui::End();
+
 		// Sprite用のWorldMatrixSpriteを作る
 		Matrix4x4 worldMatrixSprite = transformSprite.Affine();
 		Matrix4x4 viewMatrixSprite = Matrix4x4::Identity();
 		Matrix4x4 projectionMatrixSprite = Render::MakeOrthographicMatrix({ 0.f,0.f }, { (float)kClientWidth,(float)kClientHeight }, 0.f, 100.f);
 		Matrix4x4 worldViewProjectionMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
 		*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
+
 
 		transform.rotate.y += 0.03f;
 		Matrix4x4 worldMatrix = transform.Affine();
@@ -926,7 +982,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		*wvpData = worldViewProjectionMatrix;
 
+
+		transformBall.rotate.y += 0.03f;
+		Matrix4x4 worldMatrixBall = transformBall.Affine();
+
+		*transformationMatrixDataBall = worldMatrixBall * viewMatrix * projectionMatrix;
+
 		ImGui::ShowDemoWindow();
+
 
 #pragma endregion
 
@@ -1001,6 +1064,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 		commandList->DrawInstanced(6, 1, 0, 0);
+
+		// Ballの描画
+		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
+		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
+		commandList->DrawInstanced(BallVertexCount, 1, 0, 0);
 
 
 #pragma endregion
@@ -1078,6 +1146,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui::DestroyContext();
 
 	vertexResourceSprite->Release();
+	vertexResourceBall->Release();
 	vertexResource->Release();
 	graphicsPipelineState->Release();
 	signatureBlob->Release();
@@ -1090,6 +1159,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	materialResource->Release();
 	wvpResource->Release();
 	transformationMatrixResourceSprite->Release();
+	transformationMatrixResourceBall->Release();
 	textureResource->Release();
 	depthStencileResource->Release();
 	dsvDescriptorHeap->Release();
