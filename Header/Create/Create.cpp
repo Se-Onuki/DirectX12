@@ -65,6 +65,9 @@ void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision)
 				static_cast<float>(lonIndex) / subdivision,
 				1.f - static_cast<float>(latIndex) / subdivision
 			};
+			vertexData->normal.x = vertexData->position.x;
+			vertexData->normal.y = vertexData->position.y;
+			vertexData->normal.z = vertexData->position.z;
 			vertexData = nullptr;
 
 #pragma endregion
@@ -81,6 +84,9 @@ void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision)
 				static_cast<float>(lonIndex) / subdivision,
 				1.f - static_cast<float>(latIndex + 1u) / subdivision
 			};
+			vertexData->normal.x = vertexData->position.x;
+			vertexData->normal.y = vertexData->position.y;
+			vertexData->normal.z = vertexData->position.z;
 			vertexData = nullptr;
 
 #pragma endregion
@@ -97,6 +103,9 @@ void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision)
 				static_cast<float>(lonIndex + 1u) / subdivision,
 				1.f - static_cast<float>(latIndex) / subdivision
 			};
+			vertexData->normal.x = vertexData->position.x;
+			vertexData->normal.y = vertexData->position.y;
+			vertexData->normal.z = vertexData->position.z;
 			vertexData = nullptr;
 
 #pragma endregion
@@ -113,6 +122,9 @@ void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision)
 				static_cast<float>(lonIndex) / subdivision,
 				1.f - static_cast<float>(latIndex + 1u) / subdivision
 			};
+			vertexData->normal.x = vertexData->position.x;
+			vertexData->normal.y = vertexData->position.y;
+			vertexData->normal.z = vertexData->position.z;
 			vertexData = nullptr;
 
 #pragma endregion
@@ -129,6 +141,9 @@ void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision)
 				static_cast<float>(lonIndex + 1u) / subdivision,
 				1.f - static_cast<float>(latIndex + 1u) / subdivision
 			};
+			vertexData->normal.x = vertexData->position.x;
+			vertexData->normal.y = vertexData->position.y;
+			vertexData->normal.z = vertexData->position.z;
 			vertexData = nullptr;
 
 #pragma endregion
@@ -145,6 +160,9 @@ void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision)
 				static_cast<float>(lonIndex + 1u) / subdivision,
 				1.f - static_cast<float>(latIndex) / subdivision
 			};
+			vertexData->normal.x = vertexData->position.x;
+			vertexData->normal.y = vertexData->position.y;
+			vertexData->normal.z = vertexData->position.z;
 			vertexData = nullptr;
 
 #pragma endregion
