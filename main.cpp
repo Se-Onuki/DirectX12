@@ -474,15 +474,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region RootParameter
 
 	// RootParameter作成
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
+	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
-
-	//rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
-	//rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
-	//rootParameters[3].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
 
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
@@ -503,6 +499,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	// Tableで使用する数
 
 #pragma endregion
+
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
 
 	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
@@ -671,9 +671,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region VertexResourceを生成する
 
-	//ID3D12Resource *lightResource = CreateBufferResource(device, sizeof(Light::Direction));
 	ID3D12Resource *vertexResourceSprite = CreateBufferResource(device, sizeof(Render::VertexData) * 6);
 	ID3D12Resource *vertexResourceBall = CreateBufferResource(device, sizeof(Render::VertexData) * BallVertexCount);
+	ID3D12Resource *lightResource = CreateBufferResource(device, sizeof(Light::Direction));
 
 #pragma endregion
 
@@ -706,13 +706,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region VertexBufferViewを作成する
 
 	//// 頂点バッファビューを作成する
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	//D3D12_VERTEX_BUFFER_VIEW lightBufferView{};
 	//// リソースの先頭のアドレスから使う
-	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	//// 使用するリソースのサイズは頂点3つ分のサイズ
-	//vertexBufferView.SizeInBytes = sizeof(Render::VertexData) * 6;
+	//lightBufferView.BufferLocation = lightResource->GetGPUVirtualAddress();
+	//// 使用するリソースの全体サイズ
+	//lightBufferView.SizeInBytes = sizeof(Light::Direction);
 	//// 1頂点あたりのサイズ
-	//vertexBufferView.StrideInBytes = sizeof(Render::VertexData);
+	//lightBufferView.StrideInBytes = sizeof(Light::Direction);
 
 #pragma region Sprite
 
@@ -802,13 +802,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Resourceにデータを書き込む
 
-	//// 頂点リソースにデータを書き込む
-	//Light::Direction *lightData = nullptr;
-	//// 書き込むためのアドレスを取得
-	//lightResource->Map(0, nullptr, reinterpret_cast<void **>(&lightData));
-	//lightData->color = { 1.f, 1.f, 1.f, 1.f };
-	//lightData->direction = Vector3{ 0.f,-1.f,0.f }.Nomalize();
-	//lightData->intensity = 1.f;
+	// 頂点リソースにデータを書き込む
+	Light::Direction *lightData = nullptr;
+	// 書き込むためのアドレスを取得
+	lightResource->Map(0, nullptr, reinterpret_cast<void **>(&lightData));
+	lightData->color = { 1.f, 1.f, 1.f, 1.f };
+	lightData->direction = Vector3{ 0.f,-1.f,0.f }.Nomalize();
+	lightData->intensity = 1.f;
 
 #pragma region Sprite
 
@@ -1026,12 +1026,20 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 		ImGui::End();
 
+		ImGui::Begin("Light");
+		ImGui::DragFloat3("Color", &lightData->color.x, 1.f / 255, 0, 1);
+		ImGui::DragFloat3("Direction", &lightData->direction.x, 1.f / 255, -1, 1);
+		ImGui::DragFloat("Brightness ", &lightData->intensity, 0.1f, 0, 1);
+		ImGui::End();
+		lightData->direction = lightData->direction.Nomalize();
+
 		// Sprite用のWorldMatrixSpriteを作る
 		Matrix4x4 worldMatrixSprite = transformSprite.Affine();
 		Matrix4x4 viewMatrixSprite = Matrix4x4::Identity();
 		Matrix4x4 projectionMatrixSprite = Render::MakeOrthographicMatrix({ 0.f,0.f }, { (float)kClientWidth,(float)kClientHeight }, 0.f, 100.f);
 		Matrix4x4 worldViewProjectionMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
 		transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
+		transformationMatrixDataSprite->World = worldMatrixSprite;
 
 
 		//transform.rotate.y += 0.03f;
@@ -1049,6 +1057,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		Matrix4x4 worldMatrixBall = transformBall.Affine();
 
 		transformationMatrixDataBall->WVP = worldMatrixBall * viewMatrix * projectionMatrix;
+		transformationMatrixDataBall->World = worldMatrixBall;
 
 		ImGui::ShowDemoWindow();
 
@@ -1113,23 +1122,20 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
 		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		// マテリアルCBufferの場所を設定
-		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-		//commandList->SetGraphicsRootConstantBufferView(3, lightResource->GetGPUVirtualAddress());
-		// wvp用のCBufferの場所を設定
-		//commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-		// TextureのSRVテーブル情報を設定
-		//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[0]);
-		// 描画! (DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後。
-		//commandList->DrawInstanced(6, 1, 0, 0);
 
+		// Light情報の場所を設定
+		commandList->SetGraphicsRootConstantBufferView(3, lightResource->GetGPUVirtualAddress());
+
+		// マテリアルCBufferの場所を設定
+		commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
 		// Spriteの描画
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
-		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[0]);
+		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
+		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[0]);		// TextureのSRVテーブル情報を設定
 		commandList->DrawInstanced(6, 1, 0, 0);
 
 		// Ballの描画
+		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[ballTextureIndex]);
@@ -1210,7 +1216,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	//lightResource->Release();
+	lightResource->Release();
 	vertexResourceSprite->Release();
 	vertexResourceBall->Release();
 	//vertexResource->Release();
