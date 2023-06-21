@@ -671,9 +671,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region VertexResourceを生成する
 
-	ID3D12Resource *vertexResourceSprite = CreateBufferResource(device, sizeof(Render::VertexData) * 6);
+	ID3D12Resource *vertexResourceSprite = CreateBufferResource(device, sizeof(Render::VertexData) * 4);
 	ID3D12Resource *vertexResourceBall = CreateBufferResource(device, sizeof(Render::VertexData) * BallVertexCount);
 	ID3D12Resource *lightResource = CreateBufferResource(device, sizeof(Light::Direction));
+
+#pragma endregion
+
+#pragma region IndexBuffer
+
+	ID3D12Resource *indexResourceSprite = CreateBufferResource(device, sizeof(uint32_t) * 6);
 
 #pragma endregion
 
@@ -721,9 +727,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// リソースの先頭のアドレスから使う
 	vertexBufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
 	// 使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferViewSprite.SizeInBytes = sizeof(Render::VertexData) * 6;
+	vertexBufferViewSprite.SizeInBytes = sizeof(Render::VertexData) * 4;
 	// 1頂点あたりのサイズ
 	vertexBufferViewSprite.StrideInBytes = sizeof(Render::VertexData);
+
+
+	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+
+	indexBufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
+	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6u;
+	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
 
 #pragma endregion
 
@@ -829,18 +842,24 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	vertexDataSprite[2].texCoord = { 1.f,1.f };
 	vertexDataSprite[2].normal = { 0.f,0.f,-1.f };
 
-	// 左下
-	vertexDataSprite[3].position = { 0.f, 0.f, 0.f, 1.f };
-	vertexDataSprite[3].texCoord = { 0.f,0.f };
-	vertexDataSprite[3].normal = { 0.f,0.f,-1.f };
+	//// 左下
+	//vertexDataSprite[3].position = { 0.f, 0.f, 0.f, 1.f };
+	//vertexDataSprite[3].texCoord = { 0.f,0.f };
+	//vertexDataSprite[3].normal = { 0.f,0.f,-1.f };
 	// 右上
-	vertexDataSprite[4].position = { 640.f, 0.f, 0.f, 1.f };
-	vertexDataSprite[4].texCoord = { 1.f,0.f };
-	vertexDataSprite[4].normal = { 0.f,0.f,-1.f };
+	vertexDataSprite[3].position = { 640.f, 0.f, 0.f, 1.f };
+	vertexDataSprite[3].texCoord = { 1.f,0.f };
+	vertexDataSprite[3].normal = { 0.f,0.f,-1.f };
 	// 右下
-	vertexDataSprite[5].position = { 640.f, 360.f, 0.f, 1.f };
+	/*vertexDataSprite[5].position = { 640.f, 360.f, 0.f, 1.f };
 	vertexDataSprite[5].texCoord = { 1.f,1.f };
-	vertexDataSprite[5].normal = { 0.f,0.f,-1.f };
+	vertexDataSprite[5].normal = { 0.f,0.f,-1.f };*/
+
+	uint32_t *indexDataSprite =
+		nullptr;
+	indexResourceSprite->Map(0, nullptr, reinterpret_cast<void **>(&indexDataSprite));
+	indexDataSprite[0] = 0u; indexDataSprite[1] = 1u; indexDataSprite[2] = 2u;
+	indexDataSprite[3] = 1u; indexDataSprite[4] = 3u; indexDataSprite[5] = 2u;
 
 #pragma endregion
 
@@ -883,8 +902,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Textureを読んで転送する
 
 	// Textureを読んで転送する
-	std::vector<DirectX::ScratchImage>mipImagesList;
-	std::vector<ID3D12Resource *> textureResourceList;
+	std::list<DirectX::ScratchImage>mipImagesList;
+	std::list<ID3D12Resource *> textureResourceList;
 	std::list<ID3D12Resource *> intermediateResoureceList;
 
 	mipImagesList.emplace_back(Texture::Load("resources/uvChecker.png"));
@@ -955,11 +974,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region ShaderResourceViewを作る
 
 	// metaDataを基にSRVの設定
-	std::vector<D3D12_SHADER_RESOURCE_VIEW_DESC> srvDescList;
-	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPUList;
-	for (uint32_t i = 0; i < mipImagesList.size(); i++)
+	std::list<D3D12_SHADER_RESOURCE_VIEW_DESC> srvDescList;
+	std::list<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPUList;
+
+	std::list<DirectX::ScratchImage>::iterator mipImageIterator = mipImagesList.begin();
+	std::list<ID3D12Resource *>::iterator textureResourceIterator = textureResourceList.begin();
+	for (uint32_t i = 0; mipImageIterator != mipImagesList.end() && textureResourceIterator != textureResourceList.end(); ++i, ++mipImageIterator, ++textureResourceIterator)
 	{
-		const auto &metadata = mipImagesList[i].GetMetadata();
+		const auto &metadata = mipImageIterator->GetMetadata();
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = metadata.format;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -974,10 +996,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//textureSrvHandleCPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		//textureSrvHandleGPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		// SRVの作成
-		device->CreateShaderResourceView(textureResourceList[i], &srvDesc, textureSrvHandleCPU);
+		device->CreateShaderResourceView(*textureResourceIterator, &srvDesc, textureSrvHandleCPU);
 	}
 
-	uint32_t ballTextureIndex = 0u;
+	D3D12_GPU_DESCRIPTOR_HANDLE selecteTexture = textureSrvHandleGPUList.front();
 #pragma endregion
 
 
@@ -1018,16 +1040,22 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::End();
 
 		ImGui::Begin("Ball");
-		if (ImGui::Button("TextureIndex")) {
-			ballTextureIndex++;
-			if (textureSrvHandleGPUList.size() <= ballTextureIndex) {
-				ballTextureIndex = 0u;
+		if (ImGui::BeginCombo("TextureList", "texture")) {
+
+			for (auto &texture : textureSrvHandleGPUList) {
+				//bool is_selected = false;
+				if (ImGui::Selectable(std::to_string(texture.ptr).c_str())) {
+					selecteTexture = texture;
+					break;
+				}
 			}
+			ImGui::EndCombo();
 		}
+		ImGui::Image((ImTextureID)selecteTexture.ptr, { 100.f,100.f });
 		ImGui::End();
 
 		ImGui::Begin("Light");
-		ImGui::DragFloat3("Color", &lightData->color.x, 1.f / 255, 0, 1);
+		ImGui::ColorEdit4("Color", &lightData->color.x);
 		ImGui::DragFloat3("Direction", &lightData->direction.x, 1.f / 255, -1, 1);
 		ImGui::DragFloat("Brightness ", &lightData->intensity, 0.1f, 0, 1);
 		ImGui::End();
@@ -1131,14 +1159,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// Spriteの描画
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
-		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[0]);		// TextureのSRVテーブル情報を設定
-		commandList->DrawInstanced(6, 1, 0, 0);
+		commandList->SetGraphicsRootDescriptorTable(2, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
+		commandList->IASetIndexBuffer(&indexBufferViewSprite);
+		commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+		//commandList->DrawInstanced(6, 1, 0, 0);
 
 		// Ballの描画
 		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPUList[ballTextureIndex]);
+		commandList->SetGraphicsRootDescriptorTable(2, selecteTexture);
 		commandList->DrawInstanced(BallVertexCount, 1, 0, 0);
 
 
@@ -1215,6 +1245,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	indexResourceSprite->Release();
 
 	lightResource->Release();
 	vertexResourceSprite->Release();

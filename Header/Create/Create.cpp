@@ -44,8 +44,8 @@ ID3D12DescriptorHeap *CreateDescriptorHeap(ID3D12Device *device, D3D12_DESCRIPTO
 
 
 void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision) {
-	const float kLonEvery = Angle::Digree(360).ToRadian() / subdivision; // 経度
-	const float kLatEvery = Angle::Digree(180).ToRadian() / subdivision; // 緯度
+	const float kLonEvery = 360u * Angle::Dig2Rad / subdivision; // 経度
+	const float kLatEvery = 180u * Angle::Dig2Rad / subdivision; // 緯度
 	// 緯度の方向に分解 -90 ~ 90
 	for (uint32_t latIndex = 0u; latIndex < subdivision; ++latIndex) {
 		const float lat = static_cast<float>(-std::numbers::pi) / 2.f + kLatEvery * latIndex;
