@@ -2,6 +2,7 @@
 #include "../Math/Vector2.h"
 #include "../Math/Vector3.h"
 #include "../Math/Vector4.h"
+#include "../Math/Matrix4x4.h"
 struct Vector2;
 struct Matrix4x4;
 
@@ -16,6 +17,10 @@ namespace Render {
 	struct Material {
 		Vector4 color;			// 色(RGBA)
 		int32_t enableLighting;	// ライティングの有無
+	private:
+		float patting[3];
+	public:
+		Matrix4x4 uvTransform;
 	};
 
 	/// @brief 正射影行列関数

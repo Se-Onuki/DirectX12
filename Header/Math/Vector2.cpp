@@ -6,6 +6,8 @@
 
 
 #include"Math.hpp"
+#include "Matrix2x2.h"
+#include "Matrix3x3.h"
 
 #include <assert.h>
 
@@ -77,16 +79,16 @@ void Vector2::operator /=(const float &Second) {
 Vector2 Vector2::operator*(const Matrix2x2 &Second) const {
 	const Vector2 b[2]{ {Second.m[0][0],Second.m[1][0]},{Second.m[0][1],Second.m[1][1]} };
 	return Vector2{
-		(*this* b[0]),
-		(*this* b[1])
+		(*this * b[0]),
+		(*this * b[1])
 	};
 }
 
 void Vector2::operator*=(const Matrix2x2 &Second) {
 	const Vector2 b[2]{ {Second.m[0][0],Second.m[1][0]},{Second.m[0][1],Second.m[1][1]} };
 	*this = {
-		(*this* b[0]),
-		(*this* b[1])
+		(*this * b[0]),
+		(*this * b[1])
 	};
 }
 

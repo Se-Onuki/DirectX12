@@ -1,17 +1,20 @@
 #pragma once
 
-#include "Vector2.h"
-#include "Polar.h"
-#include "Matrix2x2.h"
-#include "Matrix3x3.h"
-#include "Matrix4x4.h"
-
 #include <numbers>
+struct Polar;
 
-static const Vector2 TextSize{50, 20};
+struct Vector2;
+struct Vector3;
+
+struct Matrix2x2;
+struct Matrix3x3;
+struct Matrix4x4;
+
+//static const Vector2 TextSize{ 50, 20 };
 
 
-    /// <summary>
+
+/// <summary>
 /// 極座標系をベクトルに変換する。
 /// </summary>
 /// <param name="Polar">極座標</param>
@@ -39,7 +42,7 @@ Matrix2x2 MakeRotateMatrix(const float &theta);
 /// </summary>
 /// <param name="scale">拡縮の倍率</param>
 /// <returns>3x3の拡縮行列</returns>
-Matrix3x3 MakeScaleMatrix(const Vector2& scale);
+Matrix3x3 MakeScaleMatrix(const Vector2 &scale);
 
 // <summary>
 /// 拡縮行列作成関数
@@ -80,22 +83,22 @@ Matrix4x4 MakeTranslateMatrix(const Vector3 &translate);
 /// <param name="translate">変換元のベクトル</param>
 /// <returns>同次座標系</returns>
 Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vector2 &translate);
-
-/// <summary>
-/// ベクトルと同次座標系の合成
-/// </summary>
-/// <param name="vector">合成前のベクトル</param>
-/// <param name="matrix">同次座標系の平行移動行列</param>
-/// <returns>合成したベクトル</returns>
-Vector2 Transform(const Vector2 &vector, const Matrix3x3 &matrix);
-
-/// <summary>
-/// ベクトルと同次座標系の合成
-/// </summary>
-/// <param name="vector">合成前のベクトル</param>
-/// <param name="matrix">同次座標系の平行移動行列</param>
-/// <returns>合成したベクトル</returns>
-Vector3 Transform(const Vector3 &vector, const Matrix4x4 &matrix);
+//
+///// <summary>
+///// ベクトルと同次座標系の合成
+///// </summary>
+///// <param name="vector">合成前のベクトル</param>
+///// <param name="matrix">同次座標系の平行移動行列</param>
+///// <returns>合成したベクトル</returns>
+//Vector2 Transform(const Vector2 &vector, const Matrix3x3 &matrix);
+//
+///// <summary>
+///// ベクトルと同次座標系の合成
+///// </summary>
+///// <param name="vector">合成前のベクトル</param>
+///// <param name="matrix">同次座標系の平行移動行列</param>
+///// <returns>合成したベクトル</returns>
+//Vector3 Transform(const Vector3 &vector, const Matrix4x4 &matrix);
 
 /// <summary>
 /// 正射影行列
@@ -125,8 +128,10 @@ namespace Angle {
 		float ToDigree();
 	};
 
-	const float Dig2Rad = static_cast<float>(std::numbers::pi) / 180.f;
-	const float Rad2Dig = 180.f / static_cast<float>(std::numbers::pi);
+	const float PI = static_cast<float>(std::numbers::pi);
+
+	const float Dig2Rad = PI / 180.f;
+	const float Rad2Dig = 180.f / PI;
 
 	//enum class 
 

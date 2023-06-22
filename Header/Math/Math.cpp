@@ -3,9 +3,14 @@
 #define _USE_MATH_DEFINES
 #include<math.h>
 
+#include "Polar.h"
+
 #include "Vector2.h"
 #include "Vector3.h"
-#include "Polar.h"
+
+#include "Matrix2x2.h"
+#include "Matrix3x3.h"
+#include "Matrix4x4.h"
 
 #include <assert.h>
 #include <numbers>
@@ -111,28 +116,28 @@ Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vecto
 	};
 }
 
-
-Vector2 Transform(const Vector2 &vector, const Matrix3x3 &matrix) {
-	Vector2 result;
-
-	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + 1.0f * matrix.m[2][0];
-	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + 1.0f * matrix.m[2][1];
-	const float w = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + 1.0f * matrix.m[2][2];
-	assert(w != 0.0f);
-	return result / w; // 演算子のオーバーライド
-}
-
-
-Vector3 Transform(const Vector3 &vector, const Matrix4x4 &matrix) {
-	Vector3 result;
-
-	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
-	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
-	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
-	const float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
-	assert(w != 0.0f);
-	return result / w; // 演算子のオーバーライド
-}
+//
+//Vector2 Transform(const Vector2 &vector, const Matrix3x3 &matrix) {
+//	Vector2 result;
+//
+//	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + 1.0f * matrix.m[2][0];
+//	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + 1.0f * matrix.m[2][1];
+//	const float w = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + 1.0f * matrix.m[2][2];
+//	assert(w != 0.0f);
+//	return result / w; // 演算子のオーバーライド
+//}
+//
+//
+//Vector3 Transform(const Vector3 &vector, const Matrix4x4 &matrix) {
+//	Vector3 result;
+//
+//	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
+//	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
+//	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
+//	const float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
+//	assert(w != 0.0f);
+//	return result / w; // 演算子のオーバーライド
+//}
 
 
 Matrix3x3 MakeOrthographicMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom) {

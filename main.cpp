@@ -26,12 +26,21 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 #include "Header/String/String.hpp"
 #include "Header/Render/Render.hpp"
+
+#include "Header/Math/Math.hpp"
+
+#include "Header/Math/Vector3.h"
 #include "Header/Math/Vector4.h"
+
+#include "Header/Math/Matrix3x3.h"
 #include "Header/Math/Matrix4x4.h"
+
 #include "Header/Math/Transform.h"
+
 #include "Header/Texture/Texture.h"
 #include "Header/Create/Create.h"
 #include "Header/Descriptor/DescriptorHandIe.h"
+
 #include <algorithm>
 
 void Log(const std::string &message) {
@@ -693,6 +702,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	materialResource->Map(0, nullptr, reinterpret_cast<void **>(&materialData));
 	materialData->color = Vector4{ 1.f,1.f,1.f,1.f };
 	materialData->enableLighting = true;
+	materialData->uvTransform = Matrix4x4::Identity();
 
 #pragma region Sprite
 
@@ -704,6 +714,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void **>(&materialDataSprite));
 	materialDataSprite->color = Vector4{ 1.f,1.f,1.f,1.f };
 	materialDataSprite->enableLighting = false;
+	materialDataSprite->uvTransform = Matrix4x4::Identity();
 
 #pragma endregion
 
@@ -766,6 +777,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// Sprite用のTransform
 	Transform transformSprite{ {1.f,1.f,1.f},{0.f,0.f,0.f},{-2.f,0.f,-0.5f} };
+
+	Transform uvTransform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,0.f} };
 
 	// Ball用のTransform
 	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,5.f} };
@@ -1054,6 +1067,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::Image((ImTextureID)selecteTexture.ptr, { 100.f,100.f });
 		ImGui::End();
 
+		ImGui::Begin("uvTransform");
+		ImGui::DragFloat2("Scale", &uvTransform.scale.x, 0.01f, -10.f, 10.f);
+		ImGui::DragFloat("Rotate", &uvTransform.rotate.z, Angle::Dig2Rad);
+		ImGui::DragFloat2("Transform", &uvTransform.translate.x, 0.01f, -10.f, 10.f);
+		ImGui::End();
+
 		ImGui::Begin("Light");
 		ImGui::ColorEdit4("Color", &lightData->color.x);
 		ImGui::DragFloat3("Direction", &lightData->direction.x, 1.f / 255, -1, 1);
@@ -1068,6 +1087,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		Matrix4x4 worldViewProjectionMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
 		transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
 		transformationMatrixDataSprite->World = worldMatrixSprite;
+
+		materialDataSprite->uvTransform = uvTransform.Affine();
 
 
 		//transform.rotate.y += 0.03f;

@@ -1,6 +1,6 @@
 #pragma once
 
-class Polar
+struct Polar
 {
 public:
 	Polar();
