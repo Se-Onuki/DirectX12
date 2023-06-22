@@ -734,7 +734,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
 
-	indexBufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
+	indexBufferViewSprite.BufferLocation = indexResourceSprite->GetGPUVirtualAddress();
 	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6u;
 	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
 
