@@ -43,15 +43,17 @@ ID3D12DescriptorHeap *CreateDescriptorHeap(ID3D12Device *device, D3D12_DESCRIPTO
 }
 
 
-void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision) {
+void CreateSphere(Render::VertexData *const vertex,
+	ID3D12Resource *const indexResource, const uint32_t &subdivision) {
 	const float kLonEvery = 360u * Angle::Dig2Rad / subdivision; // 経度
 	const float kLatEvery = 180u * Angle::Dig2Rad / subdivision; // 緯度
+
 	// 緯度の方向に分解 -90 ~ 90
 	for (uint32_t latIndex = 0u; latIndex < subdivision; ++latIndex) {
 		const float lat = static_cast<float>(-std::numbers::pi) / 2.f + kLatEvery * latIndex;
 		// 経度の方向に分解 0 ~ 360
 		for (uint32_t lonIndex = 0u; lonIndex < subdivision; ++lonIndex) {
-			uint32_t indexStart = (latIndex * subdivision + lonIndex) * 6;
+			uint32_t indexStart = (latIndex * subdivision + lonIndex) * 4;
 			const float lon = lonIndex * kLonEvery;
 
 #pragma region Vertex[0] 左下
@@ -109,29 +111,29 @@ void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision)
 			vertexData = nullptr;
 
 #pragma endregion
+			//
+			//#pragma region Vertex[3] 左上
+			//
+			//			vertexData = &vertex[indexStart + 3u];
+			//			vertexData->position = { //左上
+			//				std::cos(lat + kLatEvery) * std::cos(lon),
+			//				std::sin(lat + kLatEvery),
+			//				std::cos(lat + kLatEvery) * std::sin(lon), 1
+			//			};
+			//			vertexData->texCoord = {
+			//				static_cast<float>(lonIndex) / subdivision,
+			//				1.f - static_cast<float>(latIndex + 1u) / subdivision
+			//			};
+			//			vertexData->normal.x = vertexData->position.x;
+			//			vertexData->normal.y = vertexData->position.y;
+			//			vertexData->normal.z = vertexData->position.z;
+			//			vertexData = nullptr;
+			//
+			//#pragma endregion
 
-#pragma region Vertex[3] 左上
+#pragma region Vertex[3] 右上
 
 			vertexData = &vertex[indexStart + 3u];
-			vertexData->position = { //左上
-				std::cos(lat + kLatEvery) * std::cos(lon),
-				std::sin(lat + kLatEvery),
-				std::cos(lat + kLatEvery) * std::sin(lon), 1
-			};
-			vertexData->texCoord = {
-				static_cast<float>(lonIndex) / subdivision,
-				1.f - static_cast<float>(latIndex + 1u) / subdivision
-			};
-			vertexData->normal.x = vertexData->position.x;
-			vertexData->normal.y = vertexData->position.y;
-			vertexData->normal.z = vertexData->position.z;
-			vertexData = nullptr;
-
-#pragma endregion
-
-#pragma region Vertex[4] 右上
-
-			vertexData = &vertex[indexStart + 4u];
 			vertexData->position = { //右上
 				std::cos(lat + kLatEvery) * std::cos(lon + kLonEvery),
 				std::sin(lat + kLatEvery),
@@ -147,41 +149,36 @@ void CreateSphere(Render::VertexData *const vertex, const uint32_t &subdivision)
 			vertexData = nullptr;
 
 #pragma endregion
+			//
+			//#pragma region Vertex[5] 右下
+			//
+			//			vertexData = &vertex[indexStart + 5u];
+			//			vertexData->position = { //右下
+			//				std::cos(lat) * std::cos(lon + kLonEvery),
+			//				std::sin(lat),
+			//				std::cos(lat) * std::sin(lon + kLonEvery), 1
+			//			};
+			//			vertexData->texCoord = {
+			//				static_cast<float>(lonIndex + 1u) / subdivision,
+			//				1.f - static_cast<float>(latIndex) / subdivision
+			//			};
+			//			vertexData->normal.x = vertexData->position.x;
+			//			vertexData->normal.y = vertexData->position.y;
+			//			vertexData->normal.z = vertexData->position.z;
+			//			vertexData = nullptr;
+			//
+			//#pragma endregion
 
-#pragma region Vertex[5] 右下
-
-			vertexData = &vertex[indexStart + 5u];
-			vertexData->position = { //右下
-				std::cos(lat) * std::cos(lon + kLonEvery),
-				std::sin(lat),
-				std::cos(lat) * std::sin(lon + kLonEvery), 1
-			};
-			vertexData->texCoord = {
-				static_cast<float>(lonIndex + 1u) / subdivision,
-				1.f - static_cast<float>(latIndex) / subdivision
-			};
-			vertexData->normal.x = vertexData->position.x;
-			vertexData->normal.y = vertexData->position.y;
-			vertexData->normal.z = vertexData->position.z;
-			vertexData = nullptr;
-
-#pragma endregion
-			//Vector3 a, b, c, d;
-			//a = {// 左下
-			//	radius * std::cos(lat) * std::cos(lon), radius * std::sin(lat),
-			//	radius * std::cos(lat) * std::sin(lon) };
-			//b = {// 左上
-			//	radius * std::cos(lat + kLatEvery) * std::cos(lon),
-			//	radius * std::sin(lat + kLatEvery),
-			//	radius * std::cos(lat + kLatEvery) * std::sin(lon) };
-			//c = {// 右下
-			//	radius * std::cos(lat) * std::cos(lon + kLonEvery),
-			//	radius * std::sin(lat),
-			//	radius * std::cos(lat) * std::sin(lon + kLonEvery) };
-			//d = {// 右上
-			//	radius * std::cos(lat + kLatEvery) * std::cos(lon + kLonEvery),
-			//	radius * std::sin(lat + kLatEvery),
-			//	radius * std::cos(lat + kLatEvery) * std::sin(lon + kLonEvery) };
 		}
+	}
+
+	uint32_t *indexData =
+		nullptr;
+	indexResource->Map(0, nullptr, reinterpret_cast<void **>(&indexData));
+	for (uint32_t i = 0; i < subdivision * subdivision; i++) {
+
+		indexData[i * 6u + 0u] = i * 4u + 0u; indexData[i * 6u + 1u] = i * 4u + 1u; indexData[i * 6u + 2u] = i * 4u + 2u;
+		indexData[i * 6u + 3u] = i * 4u + 1u; indexData[i * 6u + 4u] = i * 4u + 3u; indexData[i * 6u + 5u] = i * 4u + 2u;
+
 	}
 }

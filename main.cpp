@@ -673,8 +673,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region BallSize
 
-	const uint8_t BallDivision = 16;
-	const uint32_t BallVertexCount = 6 * BallDivision * BallDivision;
+	const uint16_t BallDivision = 16;
+	const uint32_t BallVertexCount = 4 * BallDivision * BallDivision;
 
 #pragma endregion
 
@@ -688,6 +688,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region IndexBuffer
 
+	ID3D12Resource *indexResourceBall = CreateBufferResource(device, sizeof(uint32_t) * BallDivision * BallDivision * 6);
 	ID3D12Resource *indexResourceSprite = CreateBufferResource(device, sizeof(uint32_t) * 6);
 
 #pragma endregion
@@ -761,6 +762,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	vertexBufferViewBall.SizeInBytes = sizeof(Render::VertexData) * BallVertexCount;
 	// 1頂点あたりのサイズ
 	vertexBufferViewBall.StrideInBytes = sizeof(Render::VertexData);
+
+
+	D3D12_INDEX_BUFFER_VIEW indexBufferViewBall{};
+
+	indexBufferViewBall.BufferLocation = indexResourceBall->GetGPUVirtualAddress();
+	indexBufferViewBall.SizeInBytes = sizeof(uint32_t) * 6u * BallDivision * BallDivision;
+	indexBufferViewBall.Format = DXGI_FORMAT_R32_UINT;
 
 #pragma endregion
 
@@ -883,7 +891,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// 書き込むためのアドレスを取得
 	vertexResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&vertexDataBall));
 
-	CreateSphere(vertexDataBall, BallDivision);
+	CreateSphere(vertexDataBall, indexResourceBall, BallDivision);
+
 
 #pragma endregion
 
@@ -1190,7 +1199,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable(2, selecteTexture);
-		commandList->DrawInstanced(BallVertexCount, 1, 0, 0);
+		//commandList->DrawInstanced(BallVertexCount, 1, 0, 0);
+		commandList->IASetIndexBuffer(&indexBufferViewBall);
+		commandList->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);
 
 
 #pragma endregion
@@ -1268,6 +1279,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui::DestroyContext();
 
 	indexResourceSprite->Release();
+	indexResourceBall->Release();
 
 	lightResource->Release();
 	vertexResourceSprite->Release();
