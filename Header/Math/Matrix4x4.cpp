@@ -60,6 +60,17 @@ Matrix4x4 Matrix4x4::Inverse() const {
 	        this->m[0][2] * this->m[1][1] * this->m[2][0]);*/
 }
 
+Matrix4x4 Matrix4x4::InverseRT() const {
+	return Matrix4x4{
+		{m[0][0],	                                                m[1][0], m[2][0], 0.f},
+		{m[0][1],	                                                m[1][1], m[2][1], 0.f},
+		{m[0][2],	                                                m[1][2], m[2][2], 0.f},
+		{-m[3][0] * m[0][0] - m[3][1] * m[0][1] - m[3][2] * m[0][2],
+		 -m[3][0] * m[1][0] - m[3][1] * m[1][1] - m[3][2] * m[1][2],
+		 -m[3][0] * m[2][0] - m[3][1] * m[2][1] - m[3][2] * m[2][2],                   1.f}
+	};
+};
+
 Matrix4x4 Matrix4x4::Transpose() const {
 	return Matrix4x4{
 	    this->m[0][0], this->m[1][0], this->m[2][0], this->m[3][0], this->m[0][1], this->m[1][1],

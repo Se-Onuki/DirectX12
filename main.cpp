@@ -42,12 +42,13 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #include "Header/Descriptor/DescriptorHandIe.h"
 
 #include <algorithm>
+#include "Header/Model/Model.h"
 
 void Log(const std::string &message) {
 	OutputDebugStringA(message.c_str());
 }
 
-IDxcBlob *CompileShader(
+IDxcBlob *const CompileShader(
 	// CompilerするShaderファイルへのパス
 	const std::wstring &file_path,
 	// Compilerに使用するProfile
@@ -678,6 +679,27 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+#pragma region Model
+
+	Mesh modelData = Mesh::LoadObjFile("resources", "axis");
+	ID3D12Resource *vertexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
+
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferPlane{};
+	// リソースの先頭のアドレスから使う
+	vertexBufferPlane.BufferLocation = vertexResourcePlane->GetGPUVirtualAddress();
+	// 使用するリソースの全体のサイズ
+	vertexBufferPlane.SizeInBytes = static_cast<UINT>(sizeof(Render::VertexData) * modelData.vertices.size());
+	// 1頂点あたりのサイズ
+	vertexBufferPlane.StrideInBytes = sizeof(Render::VertexData);
+
+	// 頂点リソースにデータを書き込む
+	Render::VertexData *vertexData = nullptr;
+	// 書き込むためのアドレスを取得
+	vertexResourcePlane->Map(0, nullptr, reinterpret_cast<void **>(&vertexData));
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(Render::VertexData) * modelData.vertices.size());
+
+#pragma endregion
+
 #pragma region VertexResourceを生成する
 
 	ID3D12Resource *vertexResourceSprite = CreateBufferResource(device, sizeof(Render::VertexData) * 4);
@@ -784,7 +806,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Transform cameraTransform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,-5.f} };
 
 	// Sprite用のTransform
-	Transform transformSprite{ {1.f,1.f,1.f},{0.f,0.f,0.f},{-2.f,0.f,-0.5f} };
+	Transform transformSprite{ {0.6f,1.f,1.f},{0.f,0.f,0.f},{-2.f,0.f,-0.5f} };
 
 	Transform uvTransform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,0.f} };
 
@@ -928,7 +950,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	std::list<ID3D12Resource *> textureResourceList;
 	std::list<ID3D12Resource *> intermediateResoureceList;
 
-	mipImagesList.emplace_back(Texture::Load("resources/uvChecker.png"));
+	mipImagesList.emplace_back(Texture::Load(modelData.material.textureFilePath));
 	mipImagesList.emplace_back(Texture::Load("resources/monsterBall.png"));
 
 
@@ -1051,13 +1073,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		ImGui::Begin("Camera");
 		ImGui::DragFloat3("scale", &cameraTransform.scale.x, 0.1f);
-		ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, 0.1f);
+		ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, Angle::Dig2Rad);
 		ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.1f);
 		ImGui::End();
 
 		ImGui::Begin("UI");
 		ImGui::DragFloat2("scale", &transformSprite.scale.x, 0.1f);
-		ImGui::DragFloat("rotate", &transformSprite.rotate.z, 0.1f);
+		ImGui::DragFloat("rotate", &transformSprite.rotate.z, Angle::Dig2Rad);
 		ImGui::DragFloat2("translate", &transformSprite.translate.x, 1.f);
 		ImGui::End();
 
@@ -1103,7 +1125,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//transform.rotate.y += 0.03f;
 		//Matrix4x4 worldMatrix = transform.Affine();
 		Matrix4x4 cameraMatrix = cameraTransform.Affine();
-		Matrix4x4 viewMatrix = cameraMatrix.Inverse();
+		Matrix4x4 viewMatrix = cameraMatrix.InverseRT();
 		// 透視投影行列
 		Matrix4x4 projectionMatrix = Render::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.f);
 		//Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
@@ -1111,7 +1133,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//*wvpData = worldViewProjectionMatrix;
 
 
-		transformBall.rotate.y += 0.03f;
+		//transformBall.rotate.y += 0.03f;
 		Matrix4x4 worldMatrixBall = transformBall.Affine();
 
 		transformationMatrixDataBall->WVP = worldMatrixBall * viewMatrix * projectionMatrix;
@@ -1196,12 +1218,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// Ballの描画
 		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
+		commandList->IASetVertexBuffers(0, 1, &vertexBufferPlane);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable(2, selecteTexture);
-		//commandList->DrawInstanced(BallVertexCount, 1, 0, 0);
-		commandList->IASetIndexBuffer(&indexBufferViewBall);
-		commandList->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);
+		commandList->DrawInstanced(static_cast<UINT>(modelData.vertices.size()), 1, 0, 0);
+		/*commandList->IASetIndexBuffer(&indexBufferViewBall);
+		commandList->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);*/
 
 
 #pragma endregion
@@ -1277,6 +1299,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	vertexResourcePlane->Release();
 
 	indexResourceSprite->Release();
 	indexResourceBall->Release();

@@ -34,6 +34,9 @@
     <Filter Include="Descriptor">
       <UniqueIdentifier>{4b65ff6b-7eb6-4681-9182-4191a9b63da5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{143b218a-367d-4711-a7fd-008924bd7bda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -95,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="Header\Math\Lerp.cpp">
       <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Model\Model.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="Header\Descriptor\DescriptorHandIe.h">
       <Filter>Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Model\Model.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

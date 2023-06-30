@@ -107,6 +107,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Math\Transform.cpp" />
     <ClCompile Include="Header\Math\Vector2.cpp" />
     <ClCompile Include="Header\Math\Vector3.cpp" />
+    <ClCompile Include="Header\Model\Model.cpp" />
     <ClCompile Include="Header\Render\Render.cpp" />
     <ClCompile Include="Header\Texture\Texture.cpp" />
     <ClCompile Include="main.cpp" />
@@ -132,6 +133,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Math\Vector2.h" />
     <ClInclude Include="Header\Math\Vector3.h" />
     <ClInclude Include="Header\Math\Vector4.h" />
+    <ClInclude Include="Header\Model\Model.h" />
     <ClInclude Include="Header\Render\Render.hpp" />
     <ClInclude Include="Header\String\String.hpp" />
     <ClInclude Include="Header\Texture\Texture.h" />
