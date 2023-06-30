@@ -39,25 +39,6 @@ Matrix4x4 Matrix4x4::Inverse() const {
 		}
 	}
 	return out;
-
-	/*return Matrix4x4{
-	           this->m[1][1] * this->m[2][2] - this->m[1][2] * this->m[2][1],
-	           this->m[0][2] * this->m[2][1] - this->m[0][1] * this->m[2][2],
-	           this->m[0][1] * this->m[1][2] - this->m[0][2] * this->m[1][1],
-
-	           this->m[1][2] * this->m[2][0] - this->m[1][0] * this->m[2][2],
-	           this->m[0][0] * this->m[2][2] - this->m[0][2] * this->m[2][0],
-	           this->m[0][2] * this->m[1][0] - this->m[0][0] * this->m[1][2],
-
-	           this->m[1][0] * this->m[2][1] - this->m[1][1] * this->m[2][0],
-	           this->m[0][1] * this->m[2][0] - this->m[0][0] * this->m[2][1],
-	           this->m[0][0] * this->m[1][1] - this->m[0][1] * this->m[1][0]} /
-	       (this->m[0][0] * this->m[1][1] * this->m[2][2] +
-	        this->m[0][1] * this->m[1][2] * this->m[2][0] +
-	        this->m[0][2] * this->m[1][0] * this->m[2][1] -
-	        this->m[0][0] * this->m[1][2] * this->m[2][1] -
-	        this->m[0][1] * this->m[1][0] * this->m[2][2] -
-	        this->m[0][2] * this->m[1][1] * this->m[2][0]);*/
 }
 
 Matrix4x4 Matrix4x4::InverseRT() const {
@@ -73,81 +54,81 @@ Matrix4x4 Matrix4x4::InverseRT() const {
 
 Matrix4x4 Matrix4x4::Transpose() const {
 	return Matrix4x4{
-	    this->m[0][0], this->m[1][0], this->m[2][0], this->m[3][0], this->m[0][1], this->m[1][1],
-	    this->m[2][1], this->m[3][1], this->m[0][2], this->m[1][2], this->m[2][2], this->m[3][2],
-	    this->m[0][3], this->m[1][3], this->m[2][3], this->m[3][3],
+		this->m[0][0], this->m[1][0], this->m[2][0], this->m[3][0], this->m[0][1], this->m[1][1],
+		this->m[2][1], this->m[3][1], this->m[0][2], this->m[1][2], this->m[2][2], this->m[3][2],
+		this->m[0][3], this->m[1][3], this->m[2][3], this->m[3][3],
 	};
 }
 
-Matrix4x4 Matrix4x4::Affine(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
+Matrix4x4 Matrix4x4::Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate) {
 	return Matrix4x4{
-	    scale.x * (std::cos(rotate.y) * std::cos(rotate.z)),
-	    scale.x * (std::cos(rotate.y) * std::sin(rotate.z)),
-	    scale.x * (-std::sin(rotate.y)),
-	    0,
+		scale.x * (std::cos(rotate.y) * std::cos(rotate.z)),
+		scale.x * (std::cos(rotate.y) * std::sin(rotate.z)),
+		scale.x * (-std::sin(rotate.y)),
+		0,
 
-	    scale.y * (std::sin(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) -
-	               std::cos(rotate.x) * std::sin(rotate.z)),
-	    scale.y * (std::sin(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) +
-	               std::cos(rotate.x) * std::cos(rotate.z)),
-	    scale.y * (std::sin(rotate.x) * std::cos(rotate.y)),
-	    0,
+		scale.y * (std::sin(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) -
+				   std::cos(rotate.x) * std::sin(rotate.z)),
+		scale.y * (std::sin(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) +
+				   std::cos(rotate.x) * std::cos(rotate.z)),
+		scale.y * (std::sin(rotate.x) * std::cos(rotate.y)),
+		0,
 
-	    scale.z * (std::cos(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) +
-	               std::sin(rotate.x) * std::sin(rotate.z)),
-	    scale.z * (std::cos(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) -
-	               std::sin(rotate.x) * std::cos(rotate.z)),
-	    scale.z * (std::cos(rotate.x) * std::cos(rotate.y)),
-	    0,
+		scale.z * (std::cos(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) +
+				   std::sin(rotate.x) * std::sin(rotate.z)),
+		scale.z * (std::cos(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) -
+				   std::sin(rotate.x) * std::cos(rotate.z)),
+		scale.z * (std::cos(rotate.x) * std::cos(rotate.y)),
+		0,
 
-	    translate.x,
-	    translate.y,
-	    translate.z,
-	    1};
+		translate.x,
+		translate.y,
+		translate.z,
+		1 };
 }
 
 Matrix4x4 Matrix4x4::EulerRotate(EulerAngle eulerAngle, float angle) {
 	switch (eulerAngle) {
 	case Matrix4x4::Pitch:
-		return Matrix4x4{1,
-		                 0,
-		                 0,
-		                 0,
-		                 0,
-		                 std::cos(angle),
-		                 std::sin(angle),
-		                 0,
-		                 0,
-		                 -std::sin(angle),
-		                 std::cos(angle),
-		                 0,
-		                 0,
-		                 0,
-		                 0,
-		                 1};
+		return Matrix4x4{ 1,
+						 0,
+						 0,
+						 0,
+						 0,
+						 std::cos(angle),
+						 std::sin(angle),
+						 0,
+						 0,
+						 -std::sin(angle),
+						 std::cos(angle),
+						 0,
+						 0,
+						 0,
+						 0,
+						 1 };
 		break;
 	case Matrix4x4::Yaw:
-		return Matrix4x4{std::cos(angle), 0, -std::sin(angle), 0, 0, 1, 0, 0,
-		                 std::sin(angle), 0, std::cos(angle),  0, 0, 0, 0, 1};
+		return Matrix4x4{ std::cos(angle), 0, -std::sin(angle), 0, 0, 1, 0, 0,
+						 std::sin(angle), 0, std::cos(angle),  0, 0, 0, 0, 1 };
 		break;
 	case Matrix4x4::Roll:
 		return Matrix4x4{
-		    std::cos(angle),
-		    std::sin(angle),
-		    0,
-		    0,
-		    -std::sin(angle),
-		    std::cos(angle),
-		    0,
-		    0,
-		    0,
-		    0,
-		    1,
-		    0,
-		    0,
-		    0,
-		    0,
-		    1};
+			std::cos(angle),
+			std::sin(angle),
+			0,
+			0,
+			-std::sin(angle),
+			std::cos(angle),
+			0,
+			0,
+			0,
+			0,
+			1,
+			0,
+			0,
+			0,
+			0,
+			1 };
 		break;
 	default:
 		return Identity();
@@ -155,135 +136,135 @@ Matrix4x4 Matrix4x4::EulerRotate(EulerAngle eulerAngle, float angle) {
 	}
 }
 
-Matrix4x4 Matrix4x4::EulerRotate(const Vector3& rotate) {
+Matrix4x4 Matrix4x4::EulerRotate(const Vector3 &rotate) {
 	return Matrix4x4{
-	    std::cos(rotate.y) * std::cos(rotate.z),
-	    std::cos(rotate.y) * std::sin(rotate.z),
-	    -std::sin(rotate.y),
-	    0,
+		std::cos(rotate.y) * std::cos(rotate.z),
+		std::cos(rotate.y) * std::sin(rotate.z),
+		-std::sin(rotate.y),
+		0,
 
-	    std::sin(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) -
-	        std::cos(rotate.x) * std::sin(rotate.z),
-	    std::sin(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) +
-	        std::cos(rotate.x) * std::cos(rotate.z),
-	    std::sin(rotate.x) * std::cos(rotate.y),
-	    0,
+		std::sin(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) -
+			std::cos(rotate.x) * std::sin(rotate.z),
+		std::sin(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) +
+			std::cos(rotate.x) * std::cos(rotate.z),
+		std::sin(rotate.x) * std::cos(rotate.y),
+		0,
 
-	    std::cos(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) +
-	        std::sin(rotate.x) * std::sin(rotate.z),
-	    std::cos(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) -
-	        std::sin(rotate.x) * std::cos(rotate.z),
-	    std::cos(rotate.x) * std::cos(rotate.y),
-	    0,
+		std::cos(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) +
+			std::sin(rotate.x) * std::sin(rotate.z),
+		std::cos(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) -
+			std::sin(rotate.x) * std::cos(rotate.z),
+		std::cos(rotate.x) * std::cos(rotate.y),
+		0,
 
-	    0,
-	    0,
-	    0,
-	    1};
+		0,
+		0,
+		0,
+		1 };
 }
 
-Matrix4x4 Matrix4x4::operator+(const Matrix4x4& Second) const {
+Matrix4x4 Matrix4x4::operator+(const Matrix4x4 &Second) const {
 	return (Matrix4x4{
-	    this->m[0][0] + Second.m[0][0], this->m[0][1] + Second.m[0][1],
-	    this->m[0][2] + Second.m[0][2], this->m[0][3] + Second.m[0][3],
+		this->m[0][0] + Second.m[0][0], this->m[0][1] + Second.m[0][1],
+		this->m[0][2] + Second.m[0][2], this->m[0][3] + Second.m[0][3],
 
-	    this->m[1][0] + Second.m[1][0], this->m[1][1] + Second.m[1][1],
-	    this->m[1][2] + Second.m[1][2], this->m[1][3] + Second.m[1][3],
+		this->m[1][0] + Second.m[1][0], this->m[1][1] + Second.m[1][1],
+		this->m[1][2] + Second.m[1][2], this->m[1][3] + Second.m[1][3],
 
-	    this->m[2][0] + Second.m[2][0], this->m[2][1] + Second.m[2][1],
-	    this->m[2][2] + Second.m[2][2], this->m[2][3] + Second.m[2][3],
+		this->m[2][0] + Second.m[2][0], this->m[2][1] + Second.m[2][1],
+		this->m[2][2] + Second.m[2][2], this->m[2][3] + Second.m[2][3],
 
-	    this->m[3][0] + Second.m[3][0], this->m[3][1] + Second.m[3][1],
-	    this->m[3][2] + Second.m[3][2], this->m[3][3] + Second.m[3][3]});
+		this->m[3][0] + Second.m[3][0], this->m[3][1] + Second.m[3][1],
+		this->m[3][2] + Second.m[3][2], this->m[3][3] + Second.m[3][3] });
 }
 
-Matrix4x4 Matrix4x4::operator-(const Matrix4x4& Second) const {
+Matrix4x4 Matrix4x4::operator-(const Matrix4x4 &Second) const {
 	return (Matrix4x4{
-	    this->m[0][0] - Second.m[0][0], this->m[0][1] - Second.m[0][1],
-	    this->m[0][2] - Second.m[0][2], this->m[0][3] - Second.m[0][3],
+		this->m[0][0] - Second.m[0][0], this->m[0][1] - Second.m[0][1],
+		this->m[0][2] - Second.m[0][2], this->m[0][3] - Second.m[0][3],
 
-	    this->m[1][0] - Second.m[1][0], this->m[1][1] - Second.m[1][1],
-	    this->m[1][2] - Second.m[1][2], this->m[1][3] - Second.m[1][3],
+		this->m[1][0] - Second.m[1][0], this->m[1][1] - Second.m[1][1],
+		this->m[1][2] - Second.m[1][2], this->m[1][3] - Second.m[1][3],
 
-	    this->m[2][0] - Second.m[2][0], this->m[2][1] - Second.m[2][1],
-	    this->m[2][2] - Second.m[2][2], this->m[2][3] - Second.m[2][3],
+		this->m[2][0] - Second.m[2][0], this->m[2][1] - Second.m[2][1],
+		this->m[2][2] - Second.m[2][2], this->m[2][3] - Second.m[2][3],
 
-	    this->m[3][0] - Second.m[3][0], this->m[3][1] - Second.m[3][1],
-	    this->m[3][2] - Second.m[3][2], this->m[3][3] - Second.m[3][3]});
+		this->m[3][0] - Second.m[3][0], this->m[3][1] - Second.m[3][1],
+		this->m[3][2] - Second.m[3][2], this->m[3][3] - Second.m[3][3] });
 }
 
-Matrix4x4 Matrix4x4::operator*(const Matrix4x4& Second) const {
+Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &Second) const {
 
 	return (Matrix4x4{
-	    this->m[0][0] * Second.m[0][0] + this->m[0][1] * Second.m[1][0] +
-	        this->m[0][2] * Second.m[2][0] + this->m[0][3] * Second.m[3][0],
-	    this->m[0][0] * Second.m[0][1] + this->m[0][1] * Second.m[1][1] +
-	        this->m[0][2] * Second.m[2][1] + this->m[0][3] * Second.m[3][1],
-	    this->m[0][0] * Second.m[0][2] + this->m[0][1] * Second.m[1][2] +
-	        this->m[0][2] * Second.m[2][2] + this->m[0][3] * Second.m[3][2],
-	    this->m[0][0] * Second.m[0][3] + this->m[0][1] * Second.m[1][3] +
-	        this->m[0][2] * Second.m[2][3] + this->m[0][3] * Second.m[3][3],
+		this->m[0][0] * Second.m[0][0] + this->m[0][1] * Second.m[1][0] +
+			this->m[0][2] * Second.m[2][0] + this->m[0][3] * Second.m[3][0],
+		this->m[0][0] * Second.m[0][1] + this->m[0][1] * Second.m[1][1] +
+			this->m[0][2] * Second.m[2][1] + this->m[0][3] * Second.m[3][1],
+		this->m[0][0] * Second.m[0][2] + this->m[0][1] * Second.m[1][2] +
+			this->m[0][2] * Second.m[2][2] + this->m[0][3] * Second.m[3][2],
+		this->m[0][0] * Second.m[0][3] + this->m[0][1] * Second.m[1][3] +
+			this->m[0][2] * Second.m[2][3] + this->m[0][3] * Second.m[3][3],
 
-	    this->m[1][0] * Second.m[0][0] + this->m[1][1] * Second.m[1][0] +
-	        this->m[1][2] * Second.m[2][0] + this->m[1][3] * Second.m[3][0],
-	    this->m[1][0] * Second.m[0][1] + this->m[1][1] * Second.m[1][1] +
-	        this->m[1][2] * Second.m[2][1] + this->m[1][3] * Second.m[3][1],
-	    this->m[1][0] * Second.m[0][2] + this->m[1][1] * Second.m[1][2] +
-	        this->m[1][2] * Second.m[2][2] + this->m[1][3] * Second.m[3][2],
-	    this->m[1][0] * Second.m[0][3] + this->m[1][1] * Second.m[1][3] +
-	        this->m[1][2] * Second.m[2][3] + this->m[1][3] * Second.m[3][3],
+		this->m[1][0] * Second.m[0][0] + this->m[1][1] * Second.m[1][0] +
+			this->m[1][2] * Second.m[2][0] + this->m[1][3] * Second.m[3][0],
+		this->m[1][0] * Second.m[0][1] + this->m[1][1] * Second.m[1][1] +
+			this->m[1][2] * Second.m[2][1] + this->m[1][3] * Second.m[3][1],
+		this->m[1][0] * Second.m[0][2] + this->m[1][1] * Second.m[1][2] +
+			this->m[1][2] * Second.m[2][2] + this->m[1][3] * Second.m[3][2],
+		this->m[1][0] * Second.m[0][3] + this->m[1][1] * Second.m[1][3] +
+			this->m[1][2] * Second.m[2][3] + this->m[1][3] * Second.m[3][3],
 
-	    this->m[2][0] * Second.m[0][0] + this->m[2][1] * Second.m[1][0] +
-	        this->m[2][2] * Second.m[2][0] + this->m[2][3] * Second.m[3][0],
-	    this->m[2][0] * Second.m[0][1] + this->m[2][1] * Second.m[1][1] +
-	        this->m[2][2] * Second.m[2][1] + this->m[2][3] * Second.m[3][1],
-	    this->m[2][0] * Second.m[0][2] + this->m[2][1] * Second.m[1][2] +
-	        this->m[2][2] * Second.m[2][2] + this->m[2][3] * Second.m[3][2],
-	    this->m[2][0] * Second.m[0][3] + this->m[2][1] * Second.m[1][3] +
-	        this->m[2][2] * Second.m[2][3] + this->m[2][3] * Second.m[3][3],
+		this->m[2][0] * Second.m[0][0] + this->m[2][1] * Second.m[1][0] +
+			this->m[2][2] * Second.m[2][0] + this->m[2][3] * Second.m[3][0],
+		this->m[2][0] * Second.m[0][1] + this->m[2][1] * Second.m[1][1] +
+			this->m[2][2] * Second.m[2][1] + this->m[2][3] * Second.m[3][1],
+		this->m[2][0] * Second.m[0][2] + this->m[2][1] * Second.m[1][2] +
+			this->m[2][2] * Second.m[2][2] + this->m[2][3] * Second.m[3][2],
+		this->m[2][0] * Second.m[0][3] + this->m[2][1] * Second.m[1][3] +
+			this->m[2][2] * Second.m[2][3] + this->m[2][3] * Second.m[3][3],
 
-	    this->m[3][0] * Second.m[0][0] + this->m[3][1] * Second.m[1][0] +
-	        this->m[3][2] * Second.m[2][0] + this->m[3][3] * Second.m[3][0],
-	    this->m[3][0] * Second.m[0][1] + this->m[3][1] * Second.m[1][1] +
-	        this->m[3][2] * Second.m[2][1] + this->m[3][3] * Second.m[3][1],
-	    this->m[3][0] * Second.m[0][2] + this->m[3][1] * Second.m[1][2] +
-	        this->m[3][2] * Second.m[2][2] + this->m[3][3] * Second.m[3][2],
-	    this->m[3][0] * Second.m[0][3] + this->m[3][1] * Second.m[1][3] +
-	        this->m[3][2] * Second.m[2][3] + this->m[3][3] * Second.m[3][3],
-	});
+		this->m[3][0] * Second.m[0][0] + this->m[3][1] * Second.m[1][0] +
+			this->m[3][2] * Second.m[2][0] + this->m[3][3] * Second.m[3][0],
+		this->m[3][0] * Second.m[0][1] + this->m[3][1] * Second.m[1][1] +
+			this->m[3][2] * Second.m[2][1] + this->m[3][3] * Second.m[3][1],
+		this->m[3][0] * Second.m[0][2] + this->m[3][1] * Second.m[1][2] +
+			this->m[3][2] * Second.m[2][2] + this->m[3][3] * Second.m[3][2],
+		this->m[3][0] * Second.m[0][3] + this->m[3][1] * Second.m[1][3] +
+			this->m[3][2] * Second.m[2][3] + this->m[3][3] * Second.m[3][3],
+		});
 }
 
-Matrix4x4 Matrix4x4::operator*(const float& Second) const {
+Matrix4x4 Matrix4x4::operator*(const float &Second) const {
 	return (Matrix4x4{
-	    this->m[0][0] * Second, this->m[0][1] * Second, this->m[0][2] * Second,
-	    this->m[0][3] * Second,
+		this->m[0][0] * Second, this->m[0][1] * Second, this->m[0][2] * Second,
+		this->m[0][3] * Second,
 
-	    this->m[1][0] * Second, this->m[1][1] * Second, this->m[1][2] * Second,
-	    this->m[1][3] * Second,
+		this->m[1][0] * Second, this->m[1][1] * Second, this->m[1][2] * Second,
+		this->m[1][3] * Second,
 
-	    this->m[2][0] * Second, this->m[2][1] * Second, this->m[2][2] * Second,
-	    this->m[2][3] * Second,
+		this->m[2][0] * Second, this->m[2][1] * Second, this->m[2][2] * Second,
+		this->m[2][3] * Second,
 
-	    this->m[3][0] * Second, this->m[3][1] * Second, this->m[3][2] * Second,
-	    this->m[3][3] * Second});
+		this->m[3][0] * Second, this->m[3][1] * Second, this->m[3][2] * Second,
+		this->m[3][3] * Second });
 }
 
-Matrix4x4 Matrix4x4::operator/(const float& Second) const {
+Matrix4x4 Matrix4x4::operator/(const float &Second) const {
 	return (Matrix4x4{
-	    this->m[0][0] / Second, this->m[0][1] / Second, this->m[0][2] / Second,
-	    this->m[0][3] / Second,
+		this->m[0][0] / Second, this->m[0][1] / Second, this->m[0][2] / Second,
+		this->m[0][3] / Second,
 
-	    this->m[1][0] / Second, this->m[1][1] / Second, this->m[1][2] / Second,
-	    this->m[1][3] / Second,
+		this->m[1][0] / Second, this->m[1][1] / Second, this->m[1][2] / Second,
+		this->m[1][3] / Second,
 
-	    this->m[2][0] / Second, this->m[2][1] / Second, this->m[2][2] / Second,
-	    this->m[2][3] / Second,
+		this->m[2][0] / Second, this->m[2][1] / Second, this->m[2][2] / Second,
+		this->m[2][3] / Second,
 
-	    this->m[3][0] / Second, this->m[3][1] / Second, this->m[3][2] / Second,
-	    this->m[3][3] / Second});
+		this->m[3][0] / Second, this->m[3][1] / Second, this->m[3][2] / Second,
+		this->m[3][3] / Second });
 }
 
-Matrix4x4 Matrix4x4::operator+=(const Matrix4x4& Second) {
+Matrix4x4 Matrix4x4::operator+=(const Matrix4x4 &Second) {
 
 	this->m[0][0] += Second.m[0][0], this->m[0][1] += Second.m[0][1];
 	this->m[0][2] += Second.m[0][2], this->m[0][3] += Second.m[0][3];
@@ -300,7 +281,7 @@ Matrix4x4 Matrix4x4::operator+=(const Matrix4x4& Second) {
 	return *this;
 }
 
-Matrix4x4 Matrix4x4::operator-=(const Matrix4x4& Second) {
+Matrix4x4 Matrix4x4::operator-=(const Matrix4x4 &Second) {
 
 	this->m[0][0] -= Second.m[0][0], this->m[0][1] -= Second.m[0][1];
 	this->m[0][2] -= Second.m[0][2], this->m[0][3] -= Second.m[0][3];
@@ -317,47 +298,47 @@ Matrix4x4 Matrix4x4::operator-=(const Matrix4x4& Second) {
 	return *this;
 }
 
-Matrix4x4 Matrix4x4::operator*=(const Matrix4x4& Second) {
+Matrix4x4 Matrix4x4::operator*=(const Matrix4x4 &Second) {
 
 	return *this = Matrix4x4{
-	           this->m[0][0] * Second.m[0][0] + this->m[0][1] * Second.m[1][0] +
-	               this->m[0][2] * Second.m[2][0] + this->m[0][3] * Second.m[3][0],
-	           this->m[0][0] * Second.m[0][1] + this->m[0][1] * Second.m[1][1] +
-	               this->m[0][2] * Second.m[2][1] + this->m[0][3] * Second.m[3][1],
-	           this->m[0][0] * Second.m[0][2] + this->m[0][1] * Second.m[1][2] +
-	               this->m[0][2] * Second.m[2][2] + this->m[0][3] * Second.m[3][2],
-	           this->m[0][0] * Second.m[0][3] + this->m[0][1] * Second.m[1][3] +
-	               this->m[0][2] * Second.m[2][3] + this->m[0][3] * Second.m[3][3],
+			   this->m[0][0] * Second.m[0][0] + this->m[0][1] * Second.m[1][0] +
+				   this->m[0][2] * Second.m[2][0] + this->m[0][3] * Second.m[3][0],
+			   this->m[0][0] * Second.m[0][1] + this->m[0][1] * Second.m[1][1] +
+				   this->m[0][2] * Second.m[2][1] + this->m[0][3] * Second.m[3][1],
+			   this->m[0][0] * Second.m[0][2] + this->m[0][1] * Second.m[1][2] +
+				   this->m[0][2] * Second.m[2][2] + this->m[0][3] * Second.m[3][2],
+			   this->m[0][0] * Second.m[0][3] + this->m[0][1] * Second.m[1][3] +
+				   this->m[0][2] * Second.m[2][3] + this->m[0][3] * Second.m[3][3],
 
-	           this->m[1][0] * Second.m[0][0] + this->m[1][1] * Second.m[1][0] +
-	               this->m[1][2] * Second.m[2][0] + this->m[1][3] * Second.m[3][0],
-	           this->m[1][0] * Second.m[0][1] + this->m[1][1] * Second.m[1][1] +
-	               this->m[1][2] * Second.m[2][1] + this->m[1][3] * Second.m[3][1],
-	           this->m[1][0] * Second.m[0][2] + this->m[1][1] * Second.m[1][2] +
-	               this->m[1][2] * Second.m[2][2] + this->m[1][3] * Second.m[3][2],
-	           this->m[1][0] * Second.m[0][3] + this->m[1][1] * Second.m[1][3] +
-	               this->m[1][2] * Second.m[2][3] + this->m[1][3] * Second.m[3][3],
+			   this->m[1][0] * Second.m[0][0] + this->m[1][1] * Second.m[1][0] +
+				   this->m[1][2] * Second.m[2][0] + this->m[1][3] * Second.m[3][0],
+			   this->m[1][0] * Second.m[0][1] + this->m[1][1] * Second.m[1][1] +
+				   this->m[1][2] * Second.m[2][1] + this->m[1][3] * Second.m[3][1],
+			   this->m[1][0] * Second.m[0][2] + this->m[1][1] * Second.m[1][2] +
+				   this->m[1][2] * Second.m[2][2] + this->m[1][3] * Second.m[3][2],
+			   this->m[1][0] * Second.m[0][3] + this->m[1][1] * Second.m[1][3] +
+				   this->m[1][2] * Second.m[2][3] + this->m[1][3] * Second.m[3][3],
 
-	           this->m[2][0] * Second.m[0][0] + this->m[2][1] * Second.m[1][0] +
-	               this->m[2][2] * Second.m[2][0] + this->m[2][3] * Second.m[3][0],
-	           this->m[2][0] * Second.m[0][1] + this->m[2][1] * Second.m[1][1] +
-	               this->m[2][2] * Second.m[2][1] + this->m[2][3] * Second.m[3][1],
-	           this->m[2][0] * Second.m[0][2] + this->m[2][1] * Second.m[1][2] +
-	               this->m[2][2] * Second.m[2][2] + this->m[2][3] * Second.m[3][2],
-	           this->m[2][0] * Second.m[0][3] + this->m[2][1] * Second.m[1][3] +
-	               this->m[2][2] * Second.m[2][3] + this->m[2][3] * Second.m[3][3],
+			   this->m[2][0] * Second.m[0][0] + this->m[2][1] * Second.m[1][0] +
+				   this->m[2][2] * Second.m[2][0] + this->m[2][3] * Second.m[3][0],
+			   this->m[2][0] * Second.m[0][1] + this->m[2][1] * Second.m[1][1] +
+				   this->m[2][2] * Second.m[2][1] + this->m[2][3] * Second.m[3][1],
+			   this->m[2][0] * Second.m[0][2] + this->m[2][1] * Second.m[1][2] +
+				   this->m[2][2] * Second.m[2][2] + this->m[2][3] * Second.m[3][2],
+			   this->m[2][0] * Second.m[0][3] + this->m[2][1] * Second.m[1][3] +
+				   this->m[2][2] * Second.m[2][3] + this->m[2][3] * Second.m[3][3],
 
-	           this->m[3][0] * Second.m[0][0] + this->m[3][1] * Second.m[1][0] +
-	               this->m[3][2] * Second.m[2][0] + this->m[3][3] * Second.m[3][0],
-	           this->m[3][0] * Second.m[0][1] + this->m[3][1] * Second.m[1][1] +
-	               this->m[3][2] * Second.m[2][1] + this->m[3][3] * Second.m[3][1],
-	           this->m[3][0] * Second.m[0][2] + this->m[3][1] * Second.m[1][2] +
-	               this->m[3][2] * Second.m[2][2] + this->m[3][3] * Second.m[3][2],
-	           this->m[3][0] * Second.m[0][3] + this->m[3][1] * Second.m[1][3] +
-	               this->m[3][2] * Second.m[2][3] + this->m[3][3] * Second.m[3][3],
-	       };
+			   this->m[3][0] * Second.m[0][0] + this->m[3][1] * Second.m[1][0] +
+				   this->m[3][2] * Second.m[2][0] + this->m[3][3] * Second.m[3][0],
+			   this->m[3][0] * Second.m[0][1] + this->m[3][1] * Second.m[1][1] +
+				   this->m[3][2] * Second.m[2][1] + this->m[3][3] * Second.m[3][1],
+			   this->m[3][0] * Second.m[0][2] + this->m[3][1] * Second.m[1][2] +
+				   this->m[3][2] * Second.m[2][2] + this->m[3][3] * Second.m[3][2],
+			   this->m[3][0] * Second.m[0][3] + this->m[3][1] * Second.m[1][3] +
+				   this->m[3][2] * Second.m[2][3] + this->m[3][3] * Second.m[3][3],
+	};
 }
-Matrix4x4 Matrix4x4::operator*=(const float& Second) {
+Matrix4x4 Matrix4x4::operator*=(const float &Second) {
 
 	this->m[0][0] *= Second;
 	this->m[0][1] *= Second;
@@ -382,7 +363,7 @@ Matrix4x4 Matrix4x4::operator*=(const float& Second) {
 	return *this;
 }
 
-Matrix4x4 Matrix4x4::operator/=(const float& Second) {
+Matrix4x4 Matrix4x4::operator/=(const float &Second) {
 
 	this->m[0][0] /= Second;
 	this->m[0][1] /= Second;

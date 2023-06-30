@@ -1072,7 +1072,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 		ImGui::Begin("Camera");
-		ImGui::DragFloat3("scale", &cameraTransform.scale.x, 0.1f);
+		// ImGui::DragFloat3("scale", &cameraTransform.scale.x, 0.1f);
 		ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, Angle::Dig2Rad);
 		ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.1f);
 		ImGui::End();
