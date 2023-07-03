@@ -681,8 +681,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Model
 
-	Mesh modelData = Mesh::LoadObjFile("resources", "axis");
+	Mesh modelData = Mesh::LoadObjFile("resources", "plane.obj");
 	ID3D12Resource *vertexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
+	//ID3D12Resource *indexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
+
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferPlane{};
 	// リソースの先頭のアドレスから使う

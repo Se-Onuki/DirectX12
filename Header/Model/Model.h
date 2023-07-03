@@ -47,6 +47,7 @@ struct Material {
 struct Mesh
 {
 	std::vector<Render::VertexData> vertices;
+	//std::vector<uint32_t> indexs;
 	Material material;
 	//std::vector<uint32_t> indexs;
 
@@ -65,7 +66,7 @@ struct Mesh
 
 #pragma region 2. ファイルを開く
 
-		std::ifstream file{ directoryPath + "/" + fileName + ".obj" };
+		std::ifstream file{ directoryPath + "/" + fileName };
 		if (!file.is_open()) return modelData;		// 開けなかった場合、処理を終了する
 
 #pragma endregion
@@ -103,7 +104,7 @@ struct Mesh
 				for (uint32_t faceVertex = 0u; faceVertex < 3u; ++faceVertex) {
 					std::string vertexDefinition;
 					s >> vertexDefinition;
-					// 頂点の要素へのIndexは「 位置 / UV法線 」 で格納されているので、分解してIndex を取得する
+					// 頂点の要素へのIndexは「 位置 / UV / 法線 」 で格納されているので、分解してIndex を取得する
 					std::istringstream v{ vertexDefinition };
 					uint32_t elementIndices[3];
 					for (uint32_t element = 0; element < 3; ++element) {
@@ -121,6 +122,9 @@ struct Mesh
 				}
 				// イテレータを用いた末尾への直接構築
 				modelData.vertices.insert(modelData.vertices.end(), triangle, triangle + 3);
+				/*modelData.indexs.push_back(modelData.vertices.size() - 3);
+				modelData.indexs.push_back(modelData.vertices.size() - 2);
+				modelData.indexs.push_back(modelData.vertices.size() - 1);*/
 			}
 			else if (identifier == "mtllib") {
 
