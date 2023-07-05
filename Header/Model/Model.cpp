@@ -107,19 +107,19 @@ void Mesh::CreateBuffer()
 {
 	//CreateBufferResource(device, sizeof(Render::VertexData) * vertices_.size());
 
-	// リソースの先頭のアドレスから使う
-	vbView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
-	// 使用するリソースの全体のサイズ
-	vbView_.SizeInBytes = static_cast<UINT>(sizeof(Render::VertexData) * vertices_.size());
-	// 1頂点あたりのサイズ
-	vbView_.StrideInBytes = sizeof(Render::VertexData);
+	//// リソースの先頭のアドレスから使う
+	//vbView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
+	//// 使用するリソースの全体のサイズ
+	//vbView_.SizeInBytes = static_cast<UINT>(sizeof(Render::VertexData) * vertices_.size());
+	//// 1頂点あたりのサイズ
+	//vbView_.StrideInBytes = sizeof(Render::VertexData);
 
 
-	// 頂点バッファへのデータ転送
-	Render::VertexData *vertMap = nullptr;
-	HRESULT result = vertBuff_->Map(0, nullptr, (void **)&vertMap);
-	if (SUCCEEDED(result)) {
-		std::copy(vertices_.begin(), vertices_.end(), vertMap);
-		vertBuff_->Unmap(0, nullptr);
-	}
+	//// 頂点バッファへのデータ転送
+	//Render::VertexData *vertMap = nullptr;
+	//HRESULT result = vertBuff_->Map(0, nullptr, (void **)&vertMap);
+	//if (SUCCEEDED(result)) {
+	//	std::copy(vertices_.begin(), vertices_.end(), vertMap);
+	//	vertBuff_->Unmap(0, nullptr);
+	//}
 }

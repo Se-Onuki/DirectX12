@@ -53,11 +53,11 @@ private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 
-	D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
-	D3D12_INDEX_BUFFER_VIEW ibView_ = {};
+	//D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
+	//D3D12_INDEX_BUFFER_VIEW ibView_ = {};
 
-	ComPtr<ID3D12Resource> vertBuff_;
-	ComPtr<ID3D12Resource> indexBuff_;
+	//ComPtr<ID3D12Resource> vertBuff_;
+	//ComPtr<ID3D12Resource> indexBuff_;
 
 	std::vector<Render::VertexData> vertices_;
 	std::vector<uint32_t> indexs_;
