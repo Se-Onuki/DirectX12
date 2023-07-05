@@ -3,7 +3,7 @@
 #include <string>
 
 
-std::wstring ConvertString(const std::string str) {
+inline std::wstring ConvertString(const std::string str) {
 	if (str.empty()) {
 		return std::wstring();
 	}
@@ -16,7 +16,7 @@ std::wstring ConvertString(const std::string str) {
 	return result;
 }
 
-std::string ConvertString(const std::wstring str) {
+inline std::string ConvertString(const std::wstring str) {
 	if (str.empty()) {
 		return std::string();
 	}

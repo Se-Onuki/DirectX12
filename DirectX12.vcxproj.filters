@@ -37,6 +37,9 @@
     <Filter Include="Model">
       <UniqueIdentifier>{143b218a-367d-4711-a7fd-008924bd7bda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{9a9921f6-a3ad-4eda-ba51-4e3fa0843c2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -101,6 +104,12 @@
     </ClCompile>
     <ClCompile Include="Header\Model\Model.cpp">
       <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectBase\Base\DirectXCommon.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectBase\Base\WinApp.cpp">
+      <Filter>Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +184,12 @@
     </ClInclude>
     <ClInclude Include="Header\Model\Model.h">
       <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Base\DirectXCommon.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Base\WinApp.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

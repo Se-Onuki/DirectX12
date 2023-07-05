@@ -17,10 +17,11 @@
 #include <string>
 #include <format>
 
-#include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#include "DirectBase/Base/WinApp.h"
+//#include "externals/imgui/imgui.h"
+//#include "externals/imgui/imgui_impl_dx12.h"
+//#include "externals/imgui/imgui_impl_win32.h"
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #include "externals/DirectXTex/DirectXTex.h"
 
@@ -514,6 +515,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
 	rootParameters[3].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
 
+	//rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	//rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
+	//rootParameters[4].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
+
 	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
 
@@ -681,16 +686,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Model
 
-	Mesh modelData = Mesh::LoadObjFile("resources", "plane.obj");
-	ID3D12Resource *vertexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
-	//ID3D12Resource *indexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
+	Model model;
+	model.LoadObjFile("resources", "plane.obj");
+	Mesh &modelData = *model.meshList_.back();
+	ID3D12Resource *vertexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices_.size());
+	// ID3D12Resource *indexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
 
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferPlane{};
 	// リソースの先頭のアドレスから使う
 	vertexBufferPlane.BufferLocation = vertexResourcePlane->GetGPUVirtualAddress();
 	// 使用するリソースの全体のサイズ
-	vertexBufferPlane.SizeInBytes = static_cast<UINT>(sizeof(Render::VertexData) * modelData.vertices.size());
+	vertexBufferPlane.SizeInBytes = static_cast<UINT>(sizeof(Render::VertexData) * modelData.vertices_.size());
 	// 1頂点あたりのサイズ
 	vertexBufferPlane.StrideInBytes = sizeof(Render::VertexData);
 
@@ -698,7 +705,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Render::VertexData *vertexData = nullptr;
 	// 書き込むためのアドレスを取得
 	vertexResourcePlane->Map(0, nullptr, reinterpret_cast<void **>(&vertexData));
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(Render::VertexData) * modelData.vertices.size());
+	std::memcpy(vertexData, modelData.vertices_.data(), sizeof(Render::VertexData) * modelData.vertices_.size());
 
 #pragma endregion
 
@@ -952,7 +959,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	std::list<ID3D12Resource *> textureResourceList;
 	std::list<ID3D12Resource *> intermediateResoureceList;
 
-	mipImagesList.emplace_back(Texture::Load(modelData.material.textureFilePath));
+	mipImagesList.emplace_back(Texture::Load(modelData.material_.textureFilePath));
 	mipImagesList.emplace_back(Texture::Load("resources/monsterBall.png"));
 
 
@@ -1109,7 +1116,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::Begin("Light");
 		ImGui::ColorEdit4("Color", &lightData->color.x);
 		ImGui::DragFloat3("Direction", &lightData->direction.x, 1.f / 255, -1, 1);
-		ImGui::DragFloat("Brightness ", &lightData->intensity, 0.1f, 0, 1);
+		ImGui::DragFloat("Brightness ", &lightData->intensity, 0.01f, 0, 1);
 		ImGui::End();
 		lightData->direction = lightData->direction.Nomalize();
 
@@ -1223,7 +1230,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferPlane);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable(2, selecteTexture);
-		commandList->DrawInstanced(static_cast<UINT>(modelData.vertices.size()), 1, 0, 0);
+		commandList->DrawInstanced(static_cast<UINT>(modelData.vertices_.size()), 1, 0, 0);
 		/*commandList->IASetIndexBuffer(&indexBufferViewBall);
 		commandList->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);*/
 
