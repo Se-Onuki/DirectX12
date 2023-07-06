@@ -29,70 +29,70 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-void WinApp::CreateGameWindow(const char *title, UINT windowStyle, int32_t clientWidth, int32_t clientHeight)
+void WinApp::CreateGameWindow(const char *, UINT, int32_t, int32_t)
 {
-
-#pragma region ウィンドウクラス
-
-	// ウィンドウプロシージャ
-	wc.lpfnWndProc = WindowProc;
-	// ウィンドウクラス名
-	wc.lpszClassName = L"CG2_DirectX12";
-	// インスタンスハンドル
-	wc.hInstance = GetModuleHandle(nullptr);
-	// カーソル
-	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-
-	// ウィンドウクラスを登録する。
-	RegisterClass(&wc);
-
-#pragma endregion
-
-#pragma region クライアント領域の設定
-
-	// ウィンドウサイズを表す構造体にクライアント領域を入れる
-	wrc = { 0,0, clientWidth, clientHeight };
-	// クライアント領域を元に実際のサイズにwrcを変更してもらう
-	AdjustWindowRect(&wrc, windowStyle, false);
-
-#pragma endregion
-
-#pragma region ウィンドウ生成=>出力
-
-	// ウィンドウの生成
-	hwnd = CreateWindow(
-		wc.lpszClassName,				// 利用するクラス名
-		ConvertString(title).c_str(),	// タイトルバーの文字
-		WS_OVERLAPPEDWINDOW,			// よく見るウィンドウスタイル
-		CW_USEDEFAULT,					// 表示X座標 (windowsに任せる)
-		CW_USEDEFAULT,					// 表示Y座標 (windowsに任せる)
-		wrc.right - wrc.left,			// ウィンドウ横幅
-		wrc.bottom - wrc.top,			// ウィンドウ縦幅
-		nullptr,						// 親ウィンドウハンドル
-		nullptr,						// メニューハンドル
-		wc.hInstance,					// インスタンスハンドル
-		nullptr							// オプション
-	);
-
-#pragma region デバッグレイヤー
-
-#ifdef _DEBUG
-
-	debugController = nullptr;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
-		// デバッグレイヤーを有効化する
-		debugController->EnableDebugLayer();
-		// さらにGPU側でもチェックを行うようにする
-		debugController->SetEnableGPUBasedValidation(TRUE);
-	}
-
-#endif // DEBUG
-
-#pragma endregion
-
-	// ウィンドウを表示する
-	ShowWindow(hwnd, SW_SHOW);
-
-#pragma endregion
+	//
+	//#pragma region ウィンドウクラス
+	//
+	//	// ウィンドウプロシージャ
+	//	wc.lpfnWndProc = WindowProc;
+	//	// ウィンドウクラス名
+	//	wc.lpszClassName = L"CG2_DirectX12";
+	//	// インスタンスハンドル
+	//	wc.hInstance = GetModuleHandle(nullptr);
+	//	// カーソル
+	//	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	//
+	//	// ウィンドウクラスを登録する。
+	//	RegisterClass(&wc);
+	//
+	//#pragma endregion
+	//
+	//#pragma region クライアント領域の設定
+	//
+	//	// ウィンドウサイズを表す構造体にクライアント領域を入れる
+	//	wrc = { 0,0, clientWidth, clientHeight };
+	//	// クライアント領域を元に実際のサイズにwrcを変更してもらう
+	//	AdjustWindowRect(&wrc, windowStyle, false);
+	//
+	//#pragma endregion
+	//
+	//#pragma region ウィンドウ生成=>出力
+	//
+	//	// ウィンドウの生成
+	//	hwnd = CreateWindow(
+	//		wc.lpszClassName,				// 利用するクラス名
+	//		ConvertString(title).c_str(),	// タイトルバーの文字
+	//		WS_OVERLAPPEDWINDOW,			// よく見るウィンドウスタイル
+	//		CW_USEDEFAULT,					// 表示X座標 (windowsに任せる)
+	//		CW_USEDEFAULT,					// 表示Y座標 (windowsに任せる)
+	//		wrc.right - wrc.left,			// ウィンドウ横幅
+	//		wrc.bottom - wrc.top,			// ウィンドウ縦幅
+	//		nullptr,						// 親ウィンドウハンドル
+	//		nullptr,						// メニューハンドル
+	//		wc.hInstance,					// インスタンスハンドル
+	//		nullptr							// オプション
+	//	);
+	//
+	//#pragma region デバッグレイヤー
+	//
+	//#ifdef _DEBUG
+	//
+	//	debugController = nullptr;
+	//	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+	//		// デバッグレイヤーを有効化する
+	//		debugController->EnableDebugLayer();
+	//		// さらにGPU側でもチェックを行うようにする
+	//		debugController->SetEnableGPUBasedValidation(TRUE);
+	//	}
+	//
+	//#endif // DEBUG
+	//
+	//#pragma endregion
+	//
+	//	// ウィンドウを表示する
+	//	ShowWindow(hwnd, SW_SHOW);
+	//
+	//#pragma endregion
 
 }

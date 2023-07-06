@@ -11,7 +11,7 @@
 #include "../Math/Vector4.h"
 #include "../Math/Vector3.h"
 #include "../Math/Vector2.h"
-#include <wrl.h>
+//#include <wrl.h>
 #include <d3d12.h>
 
 
@@ -50,7 +50,7 @@ struct Material {
 struct Mesh
 {
 private:
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	//template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 
 	//D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
@@ -68,7 +68,7 @@ public:
 
 class Model
 {
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	//template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 	Model();
 	~Model();
