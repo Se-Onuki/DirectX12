@@ -5,6 +5,7 @@
 #include "../String/String.hpp"
 #include "../../externals/DirectXTex/d3dx12.h"
 #include "../Create/Create.h"
+#include <wrl.h>
 
 namespace Texture
 {
@@ -30,7 +31,7 @@ namespace Texture
 	/// @param device デバイス
 	/// @param metadata テクスチャメタデータ
 	/// @return テクスチャリソースデータ
-	ID3D12Resource *CreateResource(ID3D12Device *device, const DirectX::TexMetadata &metadata) {
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateResource(ID3D12Device *device, const DirectX::TexMetadata &metadata) {
 		// 1. metadataを基にResourceの設定
 		D3D12_RESOURCE_DESC resourceDesc{};
 		resourceDesc.Width = UINT(metadata.width);				// textureの幅
@@ -48,7 +49,7 @@ namespace Texture
 		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;				// プロセッサの近くに配置
 
 		// 3. Resourceを生成する
-		ID3D12Resource *resource = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource>resource = nullptr;
 		HRESULT hr = device->CreateCommittedResource(
 			&heapProperties,					// Heapの設定
 			D3D12_HEAP_FLAG_NONE,				// Heapの特殊な設定。特になし。
@@ -61,7 +62,7 @@ namespace Texture
 	}
 
 
-	[[nodiscard]] ID3D12Resource *UpdateData(ID3D12Resource *texture, const DirectX::ScratchImage &mipImages, ID3D12Device *device, ID3D12GraphicsCommandList *commandList) {
+	[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> UpdateData(ID3D12Resource *texture, const DirectX::ScratchImage &mipImages, ID3D12Device *device, ID3D12GraphicsCommandList *commandList) {
 		//// Meta情報を取得
 		//const DirectX::TexMetadata &metadata = mipImages.GetMetadata();
 		//// 全MipMapについて
@@ -84,13 +85,13 @@ namespace Texture
 		std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 		DirectX::PrepareUpload(device, mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
 		uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, UINT(subresources.size()));
-		ID3D12Resource *intermediateResource = CreateBufferResource(device, intermediateSize);
+		Microsoft::WRL::ComPtr<ID3D12Resource>intermediateResource = CreateBufferResource(device, intermediateSize);
 
 #pragma endregion
 
 #pragma region データ転送をコマンドに積む
 
-		UpdateSubresources(commandList, texture, intermediateResource, 0, 0, UINT(subresources.size()), subresources.data());
+		UpdateSubresources(commandList, texture, intermediateResource.Get(), 0, 0, UINT(subresources.size()), subresources.data());
 
 #pragma endregion
 
@@ -110,7 +111,7 @@ namespace Texture
 #pragma endregion
 
 	}
-	[[nodiscard]] ID3D12Resource *CreateDepthStencilTextureResource(ID3D12Device *device, int32_t width, int32_t height) {
+	[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource>CreateDepthStencilTextureResource(ID3D12Device *device, int32_t width, int32_t height) {
 
 #pragma region Resource/Heapの設定を行う
 
@@ -141,7 +142,7 @@ namespace Texture
 
 #pragma region Resourceの生成
 
-		ID3D12Resource *resource = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
 		HRESULT hr = device->CreateCommittedResource(
 			&heapProperties,					// Heapの設定
 			D3D12_HEAP_FLAG_NONE,				// Heapの特殊な設定。特になし。

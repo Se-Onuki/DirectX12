@@ -74,7 +74,7 @@ void Log(const std::string &message) {
 	OutputDebugStringA(message.c_str());
 }
 
-IDxcBlob *const CompileShader(
+Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
 	// CompilerするShaderファイルへのパス
 	const std::wstring &file_path,
 	// Compilerに使用するProfile
@@ -90,7 +90,7 @@ IDxcBlob *const CompileShader(
 	// これからシェーダをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, path: {}, profile: {}\n", file_path, profile)));
 	// hlslファイルを読む
-	IDxcBlobEncoding *shaderSource = nullptr;
+	Microsoft::WRL::ComPtr<IDxcBlobEncoding>shaderSource = nullptr;
 	HRESULT hr = dxcUtils->LoadFile(file_path.c_str(), nullptr, &shaderSource);
 	// 読めなかったら止める
 	assert(SUCCEEDED(hr));
@@ -114,7 +114,7 @@ IDxcBlob *const CompileShader(
 	};
 
 	// 実際にShaderをコンパイルする
-	IDxcResult *shaderResult = nullptr;
+	Microsoft::WRL::ComPtr<IDxcResult> shaderResult = nullptr;
 	hr = dxcCompiler->Compile(
 		&shaderSourceBuffer,		// 読み込んだファイル
 		arguments,					// コンパイルオプション
@@ -131,7 +131,7 @@ IDxcBlob *const CompileShader(
 #pragma region 3. 警告・エラーがでていないか確認する
 
 	// 警告・エラーが出てたらログに出して止める
-	IDxcBlobUtf8 *shaderError = nullptr;
+	Microsoft::WRL::ComPtr<IDxcBlobUtf8> shaderError = nullptr;
 	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
 	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
 		Log(shaderError->GetStringPointer());
@@ -144,14 +144,11 @@ IDxcBlob *const CompileShader(
 #pragma region 4. Compile結果を受け取って返す
 
 	// コンパイル結果から実行用のバイナリ部分を取得
-	IDxcBlob *shaderBlob = nullptr;
+	Microsoft::WRL::ComPtr<IDxcBlob> shaderBlob = nullptr;
 	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
 	assert(SUCCEEDED(hr));
 	// 成功したログを出す
 	Log(ConvertString(std::format(L"Compile Succeeded, path: {}, profile: {}\n", file_path, profile)));
-	// もう使わないリソースを解放
-	shaderSource->Release();
-	shaderResult->Release();
 	//実行用のバイナリを返却
 	return shaderBlob;
 
@@ -995,9 +992,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	for (auto &mipImage : mipImagesList) {
 		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-		ID3D12Resource *textureResource = Texture::CreateResource(device.Get(), metadata);
+		Microsoft::WRL::ComPtr<ID3D12Resource >textureResource = Texture::CreateResource(device.Get(), metadata);
 		textureResourceList.push_back(textureResource);
-		intermediateResoureceList.push_back(Texture::UpdateData(textureResource, mipImage, device.Get(), commandList.Get()));
+		intermediateResoureceList.push_back(Texture::UpdateData(textureResource.Get(), mipImage, device.Get(), commandList.Get()));
 	}
 
 
