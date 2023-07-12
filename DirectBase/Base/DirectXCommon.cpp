@@ -1,14 +1,19 @@
 #include "DirectXCommon.h"
 
-DirectXCommon::DirectXCommon()
+
+void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBufferHeight)
 {
+	assert(winApp);
+	assert(4 <= backBufferWidth && backBufferWidth <= 4096);
+	assert(4 <= backBufferHeight && backBufferHeight <= 4096);
+
+	winApp_ = winApp;
+	backBufferWidth_ = backBufferWidth;
+	backBufferHeight_ = backBufferHeight;
 }
 
-DirectXCommon::~DirectXCommon()
+DirectXCommon *const DirectXCommon::GetInstance()
 {
-}
-
-void DirectXCommon::Init()
-{
-
+	static DirectXCommon instance;
+	return &instance;
 }
