@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include <list>
+#include <unordered_map>
 
 #include "../Math/Vector4.h"
 #include "../Math/Vector3.h"
@@ -75,6 +76,7 @@ public:
 
 	std::string name_;
 	std::vector<Mesh *> meshList_;
+	std::unordered_map<std::string, Material *> materialMap_;
 
 	void LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 private:

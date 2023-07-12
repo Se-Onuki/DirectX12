@@ -1085,8 +1085,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 	// ウィンドウのxボタンが押されるまでループ
-	while (!winApp->ProcessMessage()) {
-
+	while (true) {
+		if (winApp->ProcessMessage()) {
+			break;
+		}
 
 #pragma region ImGuiに新規フレームであると伝える
 

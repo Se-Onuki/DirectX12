@@ -111,6 +111,9 @@
     <ClCompile Include="DirectBase\Base\WinApp.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="DirectBase\Base\ImGuiManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -189,6 +192,9 @@
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="DirectBase\Base\WinApp.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Base\ImGuiManager.h">
       <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
