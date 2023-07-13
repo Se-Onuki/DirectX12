@@ -1,11 +1,17 @@
 #include "Object3d.hlsli"
-struct TransfirmationMatrix
+struct TransformationMatrix
 {
-    float32_t4x4 WVP;
+    //float32_t4x4 WVP;
     float32_t4x4 World;
 };
+struct ViewProjectionMatrix
+{
+    //float32_t4x4 WVP;
+    float32_t4x4 viewProjection;
+};
 
-ConstantBuffer<TransfirmationMatrix> gTransformationMatrix : register(b0);
+ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
+ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 
 struct VertexShaderInput
 {
@@ -17,7 +23,7 @@ struct VertexShaderInput
 VertexShaderOutput main(VertexShaderInput input)
 {
     VertexShaderOutput output;
-    output.position = mul(input.position, gTransformationMatrix.WVP);
+    output.position = mul(input.position, mul(gTransformationMatrix.World, gViewProjectionMatrix.viewProjection));
     output.texCoord = input.texCoord;
     output.normal = normalize(mul(input.normal, (float32_t3x3) gTransformationMatrix.World));
     return output;

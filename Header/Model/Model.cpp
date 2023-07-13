@@ -103,6 +103,13 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 }
 
+void Model::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform, const Matrix4x4 &viewProjection) const
+{
+	commandList;
+	transform;
+	viewProjection;
+}
+
 void Mesh::CreateBuffer()
 {
 	//CreateBufferResource(device, sizeof(Render::VertexData) * vertices_.size());

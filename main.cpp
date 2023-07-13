@@ -510,7 +510,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region RootParameter
 
 	// RootParameter作成
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	D3D12_ROOT_PARAMETER rootParameters[5] = {};
 
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
@@ -540,9 +540,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
 	rootParameters[3].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
 
-	//rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
-	//rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
-	//rootParameters[4].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
+	rootParameters[4].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
 
 	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
@@ -737,6 +737,20 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+#pragma region ViewProjection
+
+	Microsoft::WRL::ComPtr<ID3D12Resource>vpResource = CreateBufferResource(device.Get(), sizeof(Matrix4x4));
+	Matrix4x4 *vpData = nullptr;
+	vpResource->Map(0, nullptr, reinterpret_cast<void **>(&vpData));
+	*vpData = Matrix4x4::Identity();
+
+	Microsoft::WRL::ComPtr<ID3D12Resource>vpResourceUI = CreateBufferResource(device.Get(), sizeof(Matrix4x4));
+	Matrix4x4 *vpDataUI = nullptr;
+	vpResource->Map(0, nullptr, reinterpret_cast<void **>(&vpDataUI));
+	*vpDataUI = Matrix4x4::Identity();
+
+#pragma endregion
+
 #pragma region VertexResourceを生成する
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(device.Get(), sizeof(Render::VertexData) * 4);
@@ -866,13 +880,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Sprite
 
 	// Sprite用のTransformationMatrixのリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = CreateBufferResource(device.Get(), sizeof(TransformMatrix));
+	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = CreateBufferResource(device.Get(), sizeof(Transform::TransformMatrix));
 	// データを書き込む
-	TransformMatrix *transformationMatrixDataSprite = nullptr;
+	Transform::TransformMatrix *transformationMatrixDataSprite = nullptr;
 	// 書き込むためのアドレスを取得
 	transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixDataSprite));
 	// 単位行列を書き込んでおく
-	transformationMatrixDataSprite->WVP = Matrix4x4::Identity();
+	//transformationMatrixDataSprite->WVP = Matrix4x4::Identity();
 	transformationMatrixDataSprite->World = Matrix4x4::Identity();
 
 #pragma endregion
@@ -880,13 +894,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Ball
 
 	// Ball用のTransformationMatrixのリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceBall = CreateBufferResource(device.Get(), sizeof(TransformMatrix));
+	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceBall = CreateBufferResource(device.Get(), sizeof(Transform::TransformMatrix));
 	// データを書き込む
-	TransformMatrix *transformationMatrixDataBall = nullptr;
+	Transform::TransformMatrix *transformationMatrixDataBall = nullptr;
 	// 書き込むためのアドレスを取得
 	transformationMatrixResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixDataBall));
 	// 単位行列を書き込んでおく
-	transformationMatrixDataBall->WVP = Matrix4x4::Identity();
+	//transformationMatrixDataBall->WVP = Matrix4x4::Identity();
 	transformationMatrixDataBall->World = Matrix4x4::Identity();
 
 #pragma endregion
@@ -1146,7 +1160,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		Matrix4x4 viewMatrixSprite = Matrix4x4::Identity();
 		Matrix4x4 projectionMatrixSprite = Render::MakeOrthographicMatrix({ 0.f,0.f }, { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight }, 0.f, 100.f);
 		Matrix4x4 worldViewProjectionMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
-		transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
+		//transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
 		transformationMatrixDataSprite->World = worldMatrixSprite;
 
 		materialDataSprite->uvTransform = uvTransform.Affine();
@@ -1166,8 +1180,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//transformBall.rotate.y += 0.03f;
 		Matrix4x4 worldMatrixBall = transformBall.Affine();
 
-		transformationMatrixDataBall->WVP = worldMatrixBall * viewMatrix * projectionMatrix;
+		//transformationMatrixDataBall->WVP = worldMatrixBall * viewMatrix * projectionMatrix;
 		transformationMatrixDataBall->World = worldMatrixBall;
+
+		*vpData = viewMatrix * projectionMatrix;
+		*vpDataUI = viewMatrixSprite * projectionMatrixSprite;
 
 		ImGui::ShowDemoWindow();
 
@@ -1241,6 +1258,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// Spriteの描画
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
+		commandList->SetGraphicsRootConstantBufferView(4, vpResourceUI->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable(2, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
@@ -1250,6 +1268,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		commandList->IASetVertexBuffers(0, 1, &vertexBufferPlane);	// VBVを設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(4, vpResource->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable(2, selecteTexture);
 		commandList->DrawInstanced(static_cast<UINT>(modelData.vertices_.size()), 1, 0, 0);
 		/*commandList->IASetIndexBuffer(&indexBufferViewBall);

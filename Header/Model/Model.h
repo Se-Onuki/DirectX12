@@ -12,7 +12,8 @@
 #include "../Math/Vector4.h"
 #include "../Math/Vector3.h"
 #include "../Math/Vector2.h"
-//#include <wrl.h>
+#include "../Math/Matrix4x4.h"
+#include <wrl.h>
 #include <d3d12.h>
 
 
@@ -51,7 +52,7 @@ struct Material {
 struct Mesh
 {
 private:
-	//template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 
 	//D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
@@ -67,9 +68,11 @@ public:
 	void CreateBuffer();
 };
 
+struct Transform;
+
 class Model
 {
-	//template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 	Model();
 	~Model();
@@ -79,6 +82,8 @@ public:
 	std::unordered_map<std::string, Material *> materialMap_;
 
 	void LoadObjFile(const std::string &directoryPath, const std::string &fileName);
+
+	void Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform, const Matrix4x4 &viewProjection) const;
 private:
 
 };
