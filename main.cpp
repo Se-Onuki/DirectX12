@@ -45,8 +45,10 @@
 #include "Header/Descriptor/DescriptorHandIe.h"
 
 #include <algorithm>
+
 #include "Header/Model/Model.h"
 #include "DirectBase/3D/ViewProjection/ViewProjection.h"
+#include "DirectBase/Base/DirectXCommon.h"
 
 //template <typename T>using  Microsoft::WRL::ComPtr = Microsoft::WRL:: Microsoft::WRL::ComPtr<T>;
 //using namespace Microsoft::WRL;
@@ -69,10 +71,6 @@ struct DirectResourceLeakChecker {
 	}
 };
 
-void Log(const std::string &message) {
-	OutputDebugStringA(message.c_str());
-}
-
 Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
 	// CompilerするShaderファイルへのパス
 	const std::wstring &file_path,
@@ -87,7 +85,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
 #pragma region 1. hlslファイルを読む
 
 	// これからシェーダをコンパイルする旨をログに出す
-	Log(ConvertString(std::format(L"Begin CompileShader, path: {}, profile: {}\n", file_path, profile)));
+	DirectXCommon::Log(ConvertString(std::format(L"Begin CompileShader, path: {}, profile: {}\n", file_path, profile)));
 	// hlslファイルを読む
 	Microsoft::WRL::ComPtr<IDxcBlobEncoding>shaderSource = nullptr;
 	HRESULT hr = dxcUtils->LoadFile(file_path.c_str(), nullptr, &shaderSource);
@@ -133,7 +131,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
 	Microsoft::WRL::ComPtr<IDxcBlobUtf8> shaderError = nullptr;
 	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
 	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
-		Log(shaderError->GetStringPointer());
+		DirectXCommon::Log(shaderError->GetStringPointer());
 		// 警告・エラー、ダメゼッタイ
 		assert(false);
 	}
@@ -147,7 +145,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
 	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
 	assert(SUCCEEDED(hr));
 	// 成功したログを出す
-	Log(ConvertString(std::format(L"Compile Succeeded, path: {}, profile: {}\n", file_path, profile)));
+	DirectXCommon::Log(ConvertString(std::format(L"Compile Succeeded, path: {}, profile: {}\n", file_path, profile)));
 	//実行用のバイナリを返却
 	return shaderBlob;
 
@@ -260,6 +258,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//
 	//#pragma endregion
 
+	//DirectXCommon *dxCommon = DirectXCommon::GetInstance();
+	//dxCommon->Init(winApp);
+
 #pragma region DXGIFactoryの生成
 
 	Microsoft::WRL::ComPtr<IDXGIFactory7>dxgiFactory = nullptr;
@@ -283,7 +284,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// ソフトウェアアダプタでなければ、採用。
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 			// 採用したアダプタの情報をログに出力。wstringなので注意
-			Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+			DirectXCommon::Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
 			break;
 		}
 		useAdapter = nullptr; // ソフトウェアアダプタの場合は見なかったことにする
@@ -308,13 +309,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// 採用した機能レベルでデバイスが生成できたか確認
 		if (SUCCEEDED(hr)) {
 			//生成できたのでログ出力を行ってループを抜ける
-			Log(std::format("FeatureLevel: {}\n", featureLevelStrings[i]));
+			DirectXCommon::Log(std::format("FeatureLevel: {}\n", featureLevelStrings[i]));
 			break;
 		}
 	}
 	// デバイスの生成がうまくいかなかったので起動できない
 	assert(device != nullptr);
-	Log("Complete create D3D121Device!!!\n"); // 初期化完了のログを出す
+	DirectXCommon::Log("Complete create D3D121Device!!!\n"); // 初期化完了のログを出す
 
 #pragma region エラー/警告時に停止
 
@@ -575,7 +576,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Microsoft::WRL::ComPtr<ID3DBlob>errorBlob = nullptr;
 	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, signatureBlob.GetAddressOf(), errorBlob.GetAddressOf());
 	if (FAILED(hr)) {
-		Log(reinterpret_cast<char *>(errorBlob->GetBufferPointer()));
+		DirectXCommon::Log(reinterpret_cast<char *>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	// バイナリを元に作成
@@ -751,6 +752,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	vpResourceUI->Map(0, nullptr, reinterpret_cast<void **>(&vpDataUI));
 	vpDataUI->view = Matrix4x4::Identity();
 	vpDataUI->projection = Matrix4x4::Identity();
+
+	//ViewProjection viewProjection;
+	//viewProjection.Init();
 
 #pragma endregion
 

@@ -102,8 +102,34 @@ struct Vector3 {
 	// 外積
 	// inline float operator^(const Vector3& v) const { return x * v.y - y * v.x; }
 
+
 	inline static Vector3 zero() {
-		return Vector3{ 0, 0, 0 };
+		return Vector3{ 0.f, 0.f, 0.f };
+	}
+
+	static Vector3 up() {
+		return Vector3{ 0, 1, 0 };
+	}
+	static Vector3 down() {
+		return Vector3{ 0, -1, 0 };
+	}
+
+	static Vector3 front() {
+		return Vector3{ 0, 0, 1 };
+	}
+	static Vector3 back() {
+		return Vector3{ 0, 0, -1 };
+	}
+
+	static Vector3 right() {
+		return Vector3{ 1, 0, 0 };
+	}
+	static Vector3 left() {
+		return Vector3{ -1, 0, 0 };
+	}
+
+	static Vector3 one() {
+		return Vector3{ 1.f, 1.f, 1.f };
 	}
 
 	inline Vector3 Reflect(Vector3 normal) const {

@@ -8,6 +8,7 @@ struct ViewProjectionMatrix
 {
     matrix view;
     matrix projection;
+    float3 cameraPos;
 };
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);

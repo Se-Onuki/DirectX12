@@ -14,6 +14,8 @@ class DirectXCommon
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+private:
+
 	// ウィンドウ管理
 	WinApp *winApp_;
 
@@ -24,6 +26,7 @@ class DirectXCommon
 	int32_t backBufferHeight_ = 0;
 	// DXGI
 	ComPtr<IDXGIFactory7> dxgiFactory_;
+	ComPtr<IDXGIAdapter4> useAdapter_;
 
 	// DirectXDevice
 	ComPtr<ID3D12Device> device_;
@@ -52,4 +55,13 @@ public:
 	}
 
 	static DirectXCommon *const GetInstance();
+
+	static void Log(const std::string &message) {
+		OutputDebugStringA(message.c_str());
+	}
+
+
+private:
+
+	void InitDXGI();
 };

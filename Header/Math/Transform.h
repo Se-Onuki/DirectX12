@@ -9,7 +9,6 @@ struct Transform
 {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	struct TransformMatrix {
-		//Matrix4x4 WVP;
 		Matrix4x4 World;
 	};
 
