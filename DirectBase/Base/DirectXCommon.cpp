@@ -12,8 +12,12 @@ void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBu
 	winApp_ = winApp;
 	backBufferWidth_ = backBufferWidth;
 	backBufferHeight_ = backBufferHeight;
+	// DXGIとD3D12 Deviceを生成する
 	InitDXGI_Device();
+	// Command関連を生成する
 	InitCommand();
+	// SwapChainを生成する。
+	CreateSwapChain();
 }
 
 DirectXCommon *const DirectXCommon::GetInstance()
@@ -152,4 +156,27 @@ void DirectXCommon::InitCommand()
 	// コマンドリストの生成がうまくいかなかったので起動できない
 	assert(SUCCEEDED(hr));
 #pragma endregion
+}
+
+void DirectXCommon::CreateSwapChain()
+{
+
+#pragma region SwapChainを生成する
+
+	// スワップチェーンを生成する
+	swapChain_ = nullptr;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.Width = WinApp::kWindowWidth;								// 画面の幅。	ウィンドウクライアント領域と同じにしておく
+	swapChainDesc.Height = WinApp::kWindowHeight;							// 画面の高さ。ウィンドウクライアント領域と同じにしておく
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;				// 色の設定
+	swapChainDesc.SampleDesc.Count = 1;								// マルチサンプルしない
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	// 描写のターゲットとして利用する
+	swapChainDesc.BufferCount = 2;									// ダブルバッファ
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;		// モニタにうつしたら、中身を破壊
+	//コマンドキュー。ウィンドウハンドル
+	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1 **>(swapChain_.GetAddressOf()));
+	assert(SUCCEEDED(hr));
+
+#pragma endregion
+
 }

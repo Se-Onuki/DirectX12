@@ -17,7 +17,7 @@ class DirectXCommon
 private:
 
 	// ウィンドウ管理
-	WinApp *winApp_;
+	WinApp *winApp_ = nullptr;
 
 	// DirectX管理
 	// 定数
@@ -71,4 +71,6 @@ private:
 	void InitDXGI_Device();
 
 	void InitCommand();
+
+	void CreateSwapChain();
 };

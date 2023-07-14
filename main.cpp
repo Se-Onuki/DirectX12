@@ -396,27 +396,29 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 //	assert(SUCCEEDED(hr));
 //#pragma endregion
 
-	ID3D12CommandQueue *const commandQueue = dxCommon->commandQueue_.Get();
-	ID3D12CommandAllocator *const commandAllocator = dxCommon->commandAllocator_.Get();
-	ID3D12GraphicsCommandList *const commandList = dxCommon->commandList_.Get();
+	ID3D12CommandQueue *const commandQueue_ = dxCommon->commandQueue_.Get();
+	ID3D12CommandAllocator *const commandAllocator_ = dxCommon->commandAllocator_.Get();
+	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
+	//
+	//#pragma region SwapChainを生成する
+	//
+	//	// スワップチェーンを生成する
+	//	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
+	//	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	//	swapChainDesc.Width = WinApp::kWindowWidth;								// 画面の幅。	ウィンドウクライアント領域と同じにしておく
+	//	swapChainDesc.Height = WinApp::kWindowHeight;							// 画面の高さ。ウィンドウクライアント領域と同じにしておく
+	//	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;				// 色の設定
+	//	swapChainDesc.SampleDesc.Count = 1;								// マルチサンプルしない
+	//	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	// 描写のターゲットとして利用する
+	//	swapChainDesc.BufferCount = 2;									// ダブルバッファ
+	//	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;		// モニタにうつしたら、中身を破壊
+	//	//コマンドキュー。ウィンドウハンドル
+	//	hr = dxCommon->dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, winApp->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1 **>(swapChain.GetAddressOf()));
+	//	assert(SUCCEEDED(hr));
+	//
+	//#pragma endregion
 
-#pragma region SwapChainを生成する
-
-	// スワップチェーンを生成する
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	swapChainDesc.Width = WinApp::kWindowWidth;								// 画面の幅。	ウィンドウクライアント領域と同じにしておく
-	swapChainDesc.Height = WinApp::kWindowHeight;							// 画面の高さ。ウィンドウクライアント領域と同じにしておく
-	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;				// 色の設定
-	swapChainDesc.SampleDesc.Count = 1;								// マルチサンプルしない
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	// 描写のターゲットとして利用する
-	swapChainDesc.BufferCount = 2;									// ダブルバッファ
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;		// モニタにうつしたら、中身を破壊
-	//コマンドキュー。ウィンドウハンドル
-	hr = dxCommon->dxgiFactory_->CreateSwapChainForHwnd(commandQueue, winApp->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1 **>(swapChain.GetAddressOf()));
-	assert(SUCCEEDED(hr));
-
-#pragma endregion
+	IDXGISwapChain4 *const swapChain = dxCommon->swapChain_.Get();
 
 #pragma region DescriptorHeap
 
@@ -466,7 +468,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(winApp->GetHWND());
 	ImGui_ImplDX12_Init(dxCommon->GetDevice(),
-		swapChainDesc.BufferCount,
+		2,
 		rtvDesc.Format,
 		srvDescriptorHeap.Get(),
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -759,8 +761,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	vpDataUI->view = Matrix4x4::Identity();
 	vpDataUI->projection = Matrix4x4::Identity();
 
-	//ViewProjection viewProjection;
-	//viewProjection.Init();
+	ViewProjection viewProjection;
+	viewProjection.Init();
 
 #pragma endregion
 
@@ -1022,7 +1024,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
 		Microsoft::WRL::ComPtr<ID3D12Resource >textureResource = Texture::CreateResource(dxCommon->GetDevice(), metadata);
 		textureResourceList.push_back(textureResource);
-		intermediateResoureceList.push_back(Texture::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList));
+		intermediateResoureceList.push_back(Texture::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
 	}
 
 
@@ -1032,22 +1034,22 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//ID3D12Resource *intermediateResourece = Texture::UpdateData(textureResource, mipImages, device, commandList);
 
 	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
-	hr = commandList->Close();
+	hr = commandList_->Close();
 	assert(SUCCEEDED(hr));
 	if (true) {
 
 #pragma region コマンドをキックする
 
 		// GPUにコマンドリストの実行を行わせる
-		ID3D12CommandList *commandLists[] = { commandList };
-		commandQueue->ExecuteCommandLists(1, commandLists);
+		ID3D12CommandList *commandLists[] = { commandList_ };
+		commandQueue_->ExecuteCommandLists(1, commandLists);
 
 #pragma region GPUにシグナルを送る
 
 		// Fenceの値を更新
 		fenceValue++;
 		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-		commandQueue->Signal(fence.Get(), fenceValue);
+		commandQueue_->Signal(fence.Get(), fenceValue);
 
 #pragma endregion
 
@@ -1065,9 +1067,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 
 		// 次のフレーム用のコマンドリストを準備
-		hr = commandAllocator->Reset();
+		hr = commandAllocator_->Reset();
 		assert(SUCCEEDED(hr));
-		hr = commandList->Reset(commandAllocator, nullptr);
+		hr = commandList_->Reset(commandAllocator_, nullptr);
 		assert(SUCCEEDED(hr));
 
 #pragma endregion
@@ -1240,59 +1242,59 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// 遷移後のResourceState
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		// TransitionBurrierを張る
-		commandList->ResourceBarrier(1, &barrier);
+		commandList_->ResourceBarrier(1, &barrier);
 
 #pragma endregion
 
 		// 描画先のRTVとDSVを設定する
 		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
+		commandList_->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
 
-		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
+		commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 		// 指定した色で画面全体をクリアする
 		float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
-		commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], crearColor, 0, nullptr);
+		commandList_->ClearRenderTargetView(rtvHandles[backBufferIndex], crearColor, 0, nullptr);
 
 #pragma region ImGuiの描画用DescriptorHeapの設定
 
 		// 描画用のDescriptorHeapの設定。
 		ID3D12DescriptorHeap *descriptorHeaps[] = { srvDescriptorHeap.Get() };
-		commandList->SetDescriptorHeaps(1, descriptorHeaps);
+		commandList_->SetDescriptorHeaps(1, descriptorHeaps);
 
 #pragma endregion
 
 #pragma region コマンドを積む
 
-		commandList->RSSetViewports(1, &viewport);					// Viewportを設定
-		commandList->RSSetScissorRects(1, &scissorRect);			// Scirssorを設定
+		commandList_->RSSetViewports(1, &viewport);					// Viewportを設定
+		commandList_->RSSetScissorRects(1, &scissorRect);			// Scirssorを設定
 		// RootSignatureを設定。PSOに設定しているけど別途設定が必要
-		commandList->SetGraphicsRootSignature(rootSignature.Get());
-		commandList->SetPipelineState(graphicsPipelineState.Get());		// PSOを設定
+		commandList_->SetGraphicsRootSignature(rootSignature.Get());
+		commandList_->SetPipelineState(graphicsPipelineState.Get());		// PSOを設定
 		//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
 		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
-		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		// Light情報の場所を設定
-		commandList->SetGraphicsRootConstantBufferView(3, lightResource->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView(3, lightResource->GetGPUVirtualAddress());
 
 		// マテリアルCBufferの場所を設定
-		commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
 		// Spriteの描画
-		commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
-		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
-		commandList->SetGraphicsRootConstantBufferView(4, vpResourceUI->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootDescriptorTable(2, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
-		commandList->IASetIndexBuffer(&indexBufferViewSprite);
-		commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
+		commandList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
+		commandList_->SetGraphicsRootConstantBufferView(4, vpResourceUI->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootDescriptorTable(2, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
+		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
+		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 		//commandList->DrawInstanced(6, 1, 0, 0);
 
 		// Ballの描画
-		commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-		commandList->IASetVertexBuffers(0, 1, &vertexBufferPlane);	// VBVを設定
-		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootConstantBufferView(4, vpResource->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootDescriptorTable(2, selecteTexture);
-		commandList->DrawInstanced(static_cast<UINT>(modelData.vertices_.size()), 1, 0, 0);
+		commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		commandList_->IASetVertexBuffers(0, 1, &vertexBufferPlane);	// VBVを設定
+		commandList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView(4, viewProjection.constBuffer_->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootDescriptorTable(2, selecteTexture);
+		commandList_->DrawInstanced(static_cast<UINT>(modelData.vertices_.size()), 1, 0, 0);
 		/*commandList->IASetIndexBuffer(&indexBufferViewBall);
 		commandList->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);*/
 
@@ -1302,7 +1304,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region ImGuiの描画
 
 		// 実際のCommandListにImGuiの描画コマンドを積む
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
 
 #pragma endregion
 
@@ -1313,12 +1315,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 		// TransitionBarrierを張る
-		commandList->ResourceBarrier(1, &barrier);
+		commandList_->ResourceBarrier(1, &barrier);
 
 #pragma endregion
 
 		// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
-		hr = commandList->Close();
+		hr = commandList_->Close();
 		assert(SUCCEEDED(hr));
 
 #pragma endregion
@@ -1326,8 +1328,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region コマンドをキックする
 
 		// GPUにコマンドリストの実行を行わせる
-		ID3D12CommandList *commandLists[] = { commandList };
-		commandQueue->ExecuteCommandLists(1, commandLists);
+		ID3D12CommandList *commandLists[] = { commandList_ };
+		commandQueue_->ExecuteCommandLists(1, commandLists);
 		// GPUとOSに画面の交換を行うように通知する
 		swapChain->Present(1, 0);
 
@@ -1336,7 +1338,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// Fenceの値を更新
 		fenceValue++;
 		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-		commandQueue->Signal(fence.Get(), fenceValue);
+		commandQueue_->Signal(fence.Get(), fenceValue);
 
 #pragma endregion
 
@@ -1355,9 +1357,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 		// 次のフレーム用のコマンドリストを準備
-		hr = commandAllocator->Reset();
+		hr = commandAllocator_->Reset();
 		assert(SUCCEEDED(hr));
-		hr = commandList->Reset(commandAllocator, nullptr);
+		hr = commandList_->Reset(commandAllocator_, nullptr);
 		assert(SUCCEEDED(hr));
 
 #pragma endregion
