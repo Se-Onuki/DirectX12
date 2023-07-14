@@ -4,7 +4,7 @@
 #include "WinApp.h"
 #include <dxgi1_6.h>
 #include <vector>
-
+#include <array>
 class DirectXCommon
 {
 	DirectXCommon() = default;
@@ -13,6 +13,8 @@ class DirectXCommon
 	~DirectXCommon() = default;
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	static const uint32_t backBufferCount = 2;
 
 private:
 
@@ -42,7 +44,7 @@ public:
 	// スワップチェーン
 	ComPtr<IDXGISwapChain4> swapChain_;
 
-	std::vector<ComPtr<ID3D12Resource>> backBuffers_;
+	std::array<ComPtr<ID3D12Resource>, backBufferCount> backBuffers_;
 	ComPtr<ID3D12DescriptorHeap> rtvHeap_;
 
 	ComPtr<ID3D12Resource> depthBuffer_;
@@ -58,6 +60,7 @@ public:
 	ID3D12Device *const GetDevice() {
 		return device_.Get();
 	}
+
 
 	static DirectXCommon *const GetInstance();
 

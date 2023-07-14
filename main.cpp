@@ -468,7 +468,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(winApp->GetHWND());
 	ImGui_ImplDX12_Init(dxCommon->GetDevice(),
-		2,
+		(int32_t)dxCommon->backBuffers_.size(),
 		rtvDesc.Format,
 		srvDescriptorHeap.Get(),
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
