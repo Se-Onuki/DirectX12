@@ -46,6 +46,7 @@
 
 #include <algorithm>
 #include "Header/Model/Model.h"
+#include "DirectBase/3D/ViewProjection/ViewProjection.h"
 
 //template <typename T>using  Microsoft::WRL::ComPtr = Microsoft::WRL:: Microsoft::WRL::ComPtr<T>;
 //using namespace Microsoft::WRL;
@@ -739,15 +740,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region ViewProjection
 
-	Microsoft::WRL::ComPtr<ID3D12Resource>vpResource = CreateBufferResource(device.Get(), sizeof(Matrix4x4));
-	Matrix4x4 *vpData = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource>vpResource = CreateBufferResource(device.Get(), sizeof(ViewProjection::ViewProjectionMatrix));
+	ViewProjection::ViewProjectionMatrix *vpData = nullptr;
 	vpResource->Map(0, nullptr, reinterpret_cast<void **>(&vpData));
-	*vpData = Matrix4x4::Identity();
+	vpData->view = Matrix4x4::Identity();
+	vpData->projection = Matrix4x4::Identity();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource>vpResourceUI = CreateBufferResource(device.Get(), sizeof(Matrix4x4));
-	Matrix4x4 *vpDataUI = nullptr;
-	vpResource->Map(0, nullptr, reinterpret_cast<void **>(&vpDataUI));
-	*vpDataUI = Matrix4x4::Identity();
+	Microsoft::WRL::ComPtr<ID3D12Resource>vpResourceUI = CreateBufferResource(device.Get(), sizeof(ViewProjection::ViewProjectionMatrix));
+	ViewProjection::ViewProjectionMatrix *vpDataUI = nullptr;
+	vpResourceUI->Map(0, nullptr, reinterpret_cast<void **>(&vpDataUI));
+	vpDataUI->view = Matrix4x4::Identity();
+	vpDataUI->projection = Matrix4x4::Identity();
 
 #pragma endregion
 
@@ -1121,6 +1124,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.1f);
 		ImGui::End();
 
+		ImGui::Begin("OBJ");
+		ImGui::DragFloat3("scale", &transformBall.scale.x, 0.1f);
+		ImGui::DragFloat3("rotate", &transformBall.rotate.x, Angle::Dig2Rad);
+		ImGui::DragFloat3("translate", &transformBall.translate.x, 0.1f);
+		ImGui::End();
+
 		ImGui::Begin("UI");
 		ImGui::DragFloat2("scale", &transformSprite.scale.x, 0.1f);
 		ImGui::DragFloat("rotate", &transformSprite.rotate.z, Angle::Dig2Rad);
@@ -1159,8 +1168,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		Matrix4x4 worldMatrixSprite = transformSprite.Affine();
 		Matrix4x4 viewMatrixSprite = Matrix4x4::Identity();
 		Matrix4x4 projectionMatrixSprite = Render::MakeOrthographicMatrix({ 0.f,0.f }, { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight }, 0.f, 100.f);
-		Matrix4x4 worldViewProjectionMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
-		//transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
+		Matrix4x4 wvpnMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
+		//transformationMatrixDataSprite->WVP = wvpnMatrixSprite;
 		transformationMatrixDataSprite->World = worldMatrixSprite;
 
 		materialDataSprite->uvTransform = uvTransform.Affine();
@@ -1180,11 +1189,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//transformBall.rotate.y += 0.03f;
 		Matrix4x4 worldMatrixBall = transformBall.Affine();
 
-		//transformationMatrixDataBall->WVP = worldMatrixBall * viewMatrix * projectionMatrix;
+		Matrix4x4 wvp = worldMatrixBall * viewMatrix * projectionMatrix;
+		//transformationMatrixDataBall->WVP = wvp;
 		transformationMatrixDataBall->World = worldMatrixBall;
 
-		*vpData = viewMatrix * projectionMatrix;
-		*vpDataUI = viewMatrixSprite * projectionMatrixSprite;
+		vpData->view = viewMatrix;
+		vpData->projection = projectionMatrix;
+		vpDataUI->view = viewMatrixSprite;
+		vpDataUI->projection = projectionMatrixSprite;
 
 		ImGui::ShowDemoWindow();
 

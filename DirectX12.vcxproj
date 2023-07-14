@@ -90,6 +90,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectBase\3D\ViewProjection\ViewProjection.cpp" />
     <ClCompile Include="DirectBase\Base\DirectXCommon.cpp" />
     <ClCompile Include="DirectBase\Base\ImGuiManager.cpp" />
     <ClCompile Include="DirectBase\Base\WinApp.cpp" />
@@ -116,6 +117,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectBase\3D\ViewProjection\ViewProjection.h" />
     <ClInclude Include="DirectBase\Base\DirectXCommon.h" />
     <ClInclude Include="DirectBase\Base\ImGuiManager.h" />
     <ClInclude Include="DirectBase\Base\WinApp.h" />

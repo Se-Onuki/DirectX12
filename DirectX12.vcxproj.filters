@@ -40,6 +40,9 @@
     <Filter Include="Base">
       <UniqueIdentifier>{9a9921f6-a3ad-4eda-ba51-4e3fa0843c2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3D">
+      <UniqueIdentifier>{5c994ff3-038c-410e-a4d0-1aac27211028}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="DirectBase\Base\ImGuiManager.cpp">
       <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectBase\3D\ViewProjection\ViewProjection.cpp">
+      <Filter>3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="DirectBase\Base\ImGuiManager.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\3D\ViewProjection\ViewProjection.h">
+      <Filter>3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
