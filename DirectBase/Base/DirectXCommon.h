@@ -24,16 +24,21 @@ private:
 	UINT64 fenceVal_ = 0;
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
+
+public:
 	// DXGI
 	ComPtr<IDXGIFactory7> dxgiFactory_;
-	ComPtr<IDXGIAdapter4> useAdapter_;
 
+private:
 	// DirectXDevice
 	ComPtr<ID3D12Device> device_;
+
+public:
 	// コマンドリスト関係
 	ComPtr<ID3D12GraphicsCommandList> commandList_;
 	ComPtr<ID3D12CommandAllocator> commandAllocator_;
 	ComPtr<ID3D12CommandQueue> commandQueue_;
+
 	// スワップチェーン
 	ComPtr<IDXGISwapChain4> swapChain_;
 
@@ -63,5 +68,7 @@ public:
 
 private:
 
-	void InitDXGI();
+	void InitDXGI_Device();
+
+	void InitCommand();
 };

@@ -12,6 +12,8 @@ void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBu
 	winApp_ = winApp;
 	backBufferWidth_ = backBufferWidth;
 	backBufferHeight_ = backBufferHeight;
+	InitDXGI_Device();
+	InitCommand();
 }
 
 DirectXCommon *const DirectXCommon::GetInstance()
@@ -20,8 +22,7 @@ DirectXCommon *const DirectXCommon::GetInstance()
 	return &instance;
 }
 
-void DirectXCommon::InitDXGI()
-{
+void DirectXCommon::InitDXGI_Device() {
 
 #pragma region DXGIFactoryの生成
 
@@ -36,12 +37,12 @@ void DirectXCommon::InitDXGI()
 
 #pragma region 使用するアダプタ(GPU)を決定する
 	// 使用するアダプタ用の変数。最初にnullptrを入れておく。
-	useAdapter_ = nullptr;
+	ComPtr<IDXGIAdapter4> useAdapter = nullptr;
 	// 良い順にアダプタを積む
-	for (UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_)) != DXGI_ERROR_NOT_FOUND; ++i) {
+	for (UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) != DXGI_ERROR_NOT_FOUND; ++i) {
 		// アダプタの情報を取得する
 		DXGI_ADAPTER_DESC3 adapterDesc{};
-		hr = useAdapter_->GetDesc3(&adapterDesc);
+		hr = useAdapter->GetDesc3(&adapterDesc);
 		assert(SUCCEEDED(hr)); // 取得できないのは一大事
 		// ソフトウェアアダプタでなければ、採用。
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
@@ -49,11 +50,106 @@ void DirectXCommon::InitDXGI()
 			Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
 			break;
 		}
-		useAdapter_ = nullptr; // ソフトウェアアダプタの場合は見なかったことにする
+		useAdapter = nullptr; // ソフトウェアアダプタの場合は見なかったことにする
 	}
 	// 適切なアダプタが見つからなかったので起動できない
-	assert(useAdapter_ != nullptr);
+	assert(useAdapter != nullptr);
 
 #pragma endregion
 
+#pragma region D3D12Deviceの生成
+
+	device_ = nullptr;
+	// 機能レベルとログ出力用の文字列
+	D3D_FEATURE_LEVEL featureLevels[] = {
+		D3D_FEATURE_LEVEL_12_2, D3D_FEATURE_LEVEL_12_1 ,D3D_FEATURE_LEVEL_12_0
+	};
+	const char *featureLevelStrings[] = { "12.2","12.1", "12.0" };
+	// 高い順に生成できるか試していく
+	for (size_t i = 0; i < _countof(featureLevels); ++i) {
+		// 採用したアダプタでデバイスを生成
+		hr = D3D12CreateDevice(useAdapter.Get(), featureLevels[i], IID_PPV_ARGS(&device_));
+		// 採用した機能レベルでデバイスが生成できたか確認
+		if (SUCCEEDED(hr)) {
+			//生成できたのでログ出力を行ってループを抜ける
+			DirectXCommon::Log(std::format("FeatureLevel: {}\n", featureLevelStrings[i]));
+			break;
+		}
+	}
+	// デバイスの生成がうまくいかなかったので起動できない
+	assert(device_ != nullptr);
+	DirectXCommon::Log("Complete create D3D121Device!!!\n"); // 初期化完了のログを出す
+
+#pragma region エラー/警告時に停止
+
+#ifdef _DEBUG
+
+	Microsoft::WRL::ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
+	if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+		// やばいエラーの時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+		//エラーの時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		// 警告の時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, false);
+
+#pragma region エラー/警告の抑制
+
+		//抑制するメッセージのID
+		D3D12_MESSAGE_ID denyIds[] = {
+			// Windows11でのDXGIデバッグレイヤーとDX12デバッグレイヤーの相互作用バグによるメッセージ
+			// https://stackoverflow.com/Questions/69805245/directx-12-application-is-crashing-in-windows-11
+			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+		};
+		// 抑制するレベル
+		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+		D3D12_INFO_QUEUE_FILTER filter{};
+		filter.DenyList.NumIDs = _countof(denyIds);
+		filter.DenyList.pIDList = denyIds;
+		filter.DenyList.NumSeverities = _countof(severities);
+		filter.DenyList.pSeverityList = severities;
+		// 指定したメッセージの表示を抑制する。
+		infoQueue->PushStorageFilter(&filter);
+
+#pragma endregion
+
+		// 解放
+		//infoQueue->Release();
+	}
+
+#endif // DEBUG
+
+#pragma endregion
+
+#pragma endregion
+
+}
+
+void DirectXCommon::InitCommand()
+{
+	HRESULT hr;
+#pragma region CommandQueueを生成する
+	// コマンドキューを生成する
+	commandQueue_ = nullptr;
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+
+	hr = device_->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(commandQueue_.GetAddressOf()));
+	IID_PPV_ARGS(commandQueue_.GetAddressOf());
+	// コマンドキューの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+#pragma endregion
+
+#pragma region CommandListを生成する
+	// コマンドアロケータを生成する
+	commandAllocator_ = nullptr;
+	hr = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator_));
+	//コマンドアロケータの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	// コマンドリストを生成する
+	commandList_ = nullptr;
+	hr = device_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator_.Get(), nullptr, IID_PPV_ARGS(&commandList_));
+	// コマンドリストの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+#pragma endregion
 }
