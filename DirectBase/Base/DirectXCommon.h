@@ -20,6 +20,7 @@ private:
 
 	// ウィンドウ管理
 	WinApp *winApp_ = nullptr;
+public:
 
 	// DirectX管理
 	// 定数
@@ -27,7 +28,6 @@ private:
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
 
-public:
 	// DXGI
 	ComPtr<IDXGIFactory7> dxgiFactory_;
 
@@ -44,12 +44,12 @@ public:
 	// スワップチェーン
 	ComPtr<IDXGISwapChain4> swapChain_;
 
-	std::array<ComPtr<ID3D12Resource>, backBufferCount> backBuffers_;
 	ComPtr<ID3D12DescriptorHeap> rtvHeap_;
-
-	ComPtr<ID3D12Resource> depthBuffer_;
+	std::array<ComPtr<ID3D12Resource>, backBufferCount> backBuffers_;
 
 	ComPtr<ID3D12Fence> fence_;
+
+	ComPtr<ID3D12Resource> depthBuffer_;
 
 	ComPtr<ID3D12DescriptorHeap> dsvHeap_;
 public:
@@ -60,6 +60,7 @@ public:
 	ID3D12Device *const GetDevice() {
 		return device_.Get();
 	}
+
 
 
 	static DirectXCommon *const GetInstance();
@@ -76,4 +77,8 @@ private:
 	void InitCommand();
 
 	void CreateSwapChain();
+
+	void CreateRenderTarget();
+
+	void CreateFence();
 };

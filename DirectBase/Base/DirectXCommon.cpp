@@ -1,6 +1,7 @@
 #include "DirectXCommon.h"
 #include "../../Header/String/String.hpp"
 #include <format>
+#include "../../Header/Create/Create.h"
 
 
 void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBufferHeight)
@@ -18,6 +19,10 @@ void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBu
 	InitCommand();
 	// SwapChainを生成する。
 	CreateSwapChain();
+	// RenderTagetを生成する
+	CreateRenderTarget();
+
+	CreateFence();
 }
 
 DirectXCommon *const DirectXCommon::GetInstance()
@@ -176,6 +181,67 @@ void DirectXCommon::CreateSwapChain()
 	//コマンドキュー。ウィンドウハンドル
 	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1 **>(swapChain_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
+
+#pragma endregion
+
+}
+
+void DirectXCommon::CreateRenderTarget()
+{
+
+	HRESULT hr;
+
+	// RTV用のヒープでディスクリプタの数は2。RTVはShader内で触るものではないので、ShaderVisibleはfalse
+	rtvHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, backBufferCount, false);
+
+
+
+#pragma region SwapChainからResourceを引っ張ってくる
+	// SwapChainからResourceを引っ張ってくる
+	//Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources[2] = { nullptr };
+	hr = swapChain_->GetBuffer(0, IID_PPV_ARGS(backBuffers_[0].GetAddressOf()));
+	// うまく取得できなければ生成できない
+	assert(SUCCEEDED(hr));
+	hr = swapChain_->GetBuffer(1, IID_PPV_ARGS(backBuffers_[1].GetAddressOf()));
+	assert(SUCCEEDED(hr));
+
+#pragma endregion
+
+#pragma region RTVを作る
+
+	// RTVの設定
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
+	// ディスクリプタの先頭を取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvHeap_->GetCPUDescriptorHandleForHeapStart();
+	//RTVを2つ作るのでディスクリプタを2つ用意
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	// まずは1つめを作る。1つ目は最初の所に作る。作る場所をこちらで指定してあげる必要がある。
+	rtvHandles[0] = rtvStartHandle;
+	device_->CreateRenderTargetView(backBuffers_[0].Get(), &rtvDesc, rtvHandles[0]);
+	// 2つ目のディスクリプタハンドルを作る。
+	rtvHandles[1].ptr = rtvHandles[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device_->CreateRenderTargetView(backBuffers_[1].Get(), &rtvDesc, rtvHandles[1]);
+
+#pragma endregion
+
+}
+
+void DirectXCommon::CreateFence()
+{
+	HRESULT hr;
+#pragma region FanceとEventを生成する
+
+	// 初期値0でFanceを作る
+	fence_ = nullptr;
+	fenceVal_ = 0;
+	hr = device_->CreateFence(fenceVal_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
+	assert(SUCCEEDED(hr));
+
+	//FenceのSignalを持つためのイベントを作成する
+	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
 
 #pragma endregion
 
