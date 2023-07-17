@@ -436,33 +436,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		DirectXCommon::GetInstance()->backBuffers_[0].Get(),
 		DirectXCommon::GetInstance()->backBuffers_[1].Get()
 	};
-	//hr = swapChain->GetBuffer(0, IID_PPV_ARGS(swapChainResources[0].GetAddressOf()));
-	//// うまく取得できなければ生成できない
-	//assert(SUCCEEDED(hr));
-	//hr = swapChain->GetBuffer(1, IID_PPV_ARGS(swapChainResources[1].GetAddressOf()));
-	//assert(SUCCEEDED(hr));
-
+	
 #pragma endregion
-//
-//#pragma region RTVを作る
-//
+
 	// RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
 
-	//	// ディスクリプタの先頭を取得する
-	//	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	//	//RTVを2つ作るのでディスクリプタを2つ用意
-	//	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
-	//	// まずは1つめを作る。1つ目は最初の所に作る。作る場所をこちらで指定してあげる必要がある。
-	//	rtvHandles[0] = rtvStartHandle;
-	//	dxCommon->GetDevice()->CreateRenderTargetView(swapChainResources[0], &rtvDesc, rtvHandles[0]);
-	//	// 2つ目のディスクリプタハンドルを作る。
-	//	rtvHandles[1].ptr = rtvHandles[0].ptr + dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	//	dxCommon->GetDevice()->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
-	//
-	//#pragma endregion
 
 #pragma region ImGuiの初期化
 
@@ -1229,39 +1210,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 #pragma region コマンドを積み込んで確定させる
-		//
-		//		// これから書き込むバックバッファのインデックスを取得
-		//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-		//
-		//#pragma region TransitionBarrierを張る
-		//
-		//		// TransitionBarrierの設定
-		//		D3D12_RESOURCE_BARRIER barrier{};
-		//		// 今回のバリアはTransition
-		//		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		//		// Noneにしておく
-		//		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		//		// バリアを張る対象のリソース。現在のバックバッファに対して行う
-		//		barrier.Transition.pResource = swapChainResources[backBufferIndex];
-		//		// 遷移前(現在)のResourceState
-		//		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-		//		// 遷移後のResourceState
-		//		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		//		// TransitionBurrierを張る
-		//		commandList_->ResourceBarrier(1, &barrier);
-		//
-		//#pragma endregion
-		//
-		//		// 描画先のRTVとDSVを設定する
-		//		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		//		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), backBufferIndex, descriptorSizeRTV);
-		//		commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-		//
-		//		commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
-		//		// 指定した色で画面全体をクリアする
-		//		float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
-		//		commandList_->ClearRenderTargetView(rtvHandle, crearColor, 0, nullptr);
-
+		
 		dxCommon->StartDraw();
 
 #pragma region ImGuiの描画用DescriptorHeapの設定
@@ -1274,8 +1223,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region コマンドを積む
 
-		commandList_->RSSetViewports(1, &viewport);					// Viewportを設定
-		commandList_->RSSetScissorRects(1, &scissorRect);			// Scirssorを設定
 		// RootSignatureを設定。PSOに設定しているけど別途設定が必要
 		commandList_->SetGraphicsRootSignature(rootSignature.Get());
 		commandList_->SetPipelineState(graphicsPipelineState.Get());		// PSOを設定

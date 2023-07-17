@@ -70,9 +70,34 @@ void DirectXCommon::StartDraw() {
 
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 	// 指定した色で画面全体をクリアする
-	float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
+	const float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
 	commandList_->ClearRenderTargetView(rtvHandle, crearColor, 0, nullptr);
 
+
+#pragma region ViewportとScissor(シザー)
+
+	// ビューポート
+	D3D12_VIEWPORT viewport{ 0.f,0.f,WinApp::kWindowWidth ,WinApp::kWindowHeight,0.f,1.f };
+	//// クライアント領域のサイズと一緒にして画面全体に表示
+	//viewport.Width = WinApp::kWindowWidth;
+	//viewport.Height = WinApp::kWindowHeight;
+	//viewport.TopLeftX = 0;
+	//viewport.TopLeftY = 0;
+
+	//viewport.MinDepth = 0.f;
+	//viewport.MaxDepth = 1.f;
+
+	// シザー短形
+	D3D12_RECT scissorRect{};
+	// 基本的にビューポートと同じ短形が構成されるようにする
+	scissorRect.left = 0;
+	scissorRect.right = WinApp::kWindowWidth;
+	scissorRect.top = 0;
+	scissorRect.bottom = WinApp::kWindowHeight;
+
+#pragma endregion
+	commandList_->RSSetViewports(1, &viewport);					// Viewportを設定
+	commandList_->RSSetScissorRects(1, &scissorRect);			// Scirssorを設定
 }
 
 void DirectXCommon::EndDraw() {
