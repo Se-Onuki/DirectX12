@@ -54,7 +54,6 @@ public:
 	ComPtr<ID3D12Fence> fence_;
 
 	ComPtr<ID3D12Resource> depthBuffer_;
-
 	ComPtr<ID3D12DescriptorHeap> dsvHeap_;
 public:
 
@@ -87,6 +86,8 @@ private:
 	void CreateSwapChain();
 
 	void CreateRenderTarget();
+
+	void CreateDepthStencile();
 
 	void CreateFence();
 };

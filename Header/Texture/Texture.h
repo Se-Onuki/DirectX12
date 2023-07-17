@@ -12,7 +12,7 @@ namespace Texture
 	/// @brief TextureをCPUで読み込む
 	/// @param file_path ファイルパス
 	/// @return ミップマップ付きのデータ
-	DirectX::ScratchImage Load(const std::string &file_path) {
+	inline DirectX::ScratchImage Load(const std::string &file_path) {
 		// テクスチャファイルを呼んでプログラムで扱えるようにする
 		DirectX::ScratchImage image{};
 		std::wstring file_pathW = ConvertString(file_path);
@@ -31,7 +31,7 @@ namespace Texture
 	/// @param device デバイス
 	/// @param metadata テクスチャメタデータ
 	/// @return テクスチャリソースデータ
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateResource(ID3D12Device *device, const DirectX::TexMetadata &metadata) {
+	inline Microsoft::WRL::ComPtr<ID3D12Resource> CreateResource(ID3D12Device *device, const DirectX::TexMetadata &metadata) {
 		// 1. metadataを基にResourceの設定
 		D3D12_RESOURCE_DESC resourceDesc{};
 		resourceDesc.Width = UINT(metadata.width);				// textureの幅
@@ -62,7 +62,7 @@ namespace Texture
 	}
 
 
-	[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> UpdateData(ID3D12Resource *texture, const DirectX::ScratchImage &mipImages, ID3D12Device *device, ID3D12GraphicsCommandList *commandList) {
+	inline [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> UpdateData(ID3D12Resource *texture, const DirectX::ScratchImage &mipImages, ID3D12Device *device, ID3D12GraphicsCommandList *commandList) {
 		//// Meta情報を取得
 		//const DirectX::TexMetadata &metadata = mipImages.GetMetadata();
 		//// 全MipMapについて
@@ -111,7 +111,7 @@ namespace Texture
 #pragma endregion
 
 	}
-	[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource>CreateDepthStencilTextureResource(ID3D12Device *device, int32_t width, int32_t height) {
+	inline [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource>CreateDepthStencilTextureResource(ID3D12Device *device, int32_t width, int32_t height) {
 
 #pragma region Resource/Heapの設定を行う
 

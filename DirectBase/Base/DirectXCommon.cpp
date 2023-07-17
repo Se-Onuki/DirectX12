@@ -3,6 +3,7 @@
 #include <format>
 #include "../../Header/Create/Create.h"
 #include "../../externals/DirectXTex/d3dx12.h"
+#include "../../Header/Texture/Texture.h"
 
 
 void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBufferHeight)
@@ -22,6 +23,8 @@ void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBu
 	CreateSwapChain();
 	// RenderTagetを生成する
 	CreateRenderTarget();
+
+	CreateDepthStencile();
 
 	CreateFence();
 
@@ -289,5 +292,19 @@ void DirectXCommon::CreateFence()
 	assert(fenceEvent != nullptr);
 
 #pragma endregion
+
+}
+
+void DirectXCommon::CreateDepthStencile()
+{
+
+	depthBuffer_ = Texture::CreateDepthStencilTextureResource(device_.Get(), WinApp::kWindowWidth, WinApp::kWindowHeight);
+	dsvHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// Format。基本的にはResourceに合わせる。
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;	// 2dTexture
+	// DSVHeapの先頭にDSVを構築する。
+	device_->CreateDepthStencilView(depthBuffer_.Get(), &dsvDesc, dsvHeap_->GetCPUDescriptorHandleForHeapStart());
 
 }

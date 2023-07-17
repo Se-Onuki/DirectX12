@@ -366,7 +366,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region DescriptorSize
 
 	const uint32_t descriptorSizeSRV = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	const uint32_t descriptorSizeRTV = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	//const uint32_t descriptorSizeRTV = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	//const uint32_t descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 #pragma endregion
@@ -423,7 +423,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region DescriptorHeap
 
 	// RTV用のヒープでディスクリプタの数は2。RTVはShader内で触るものではないので、ShaderVisibleはfalse
-	ID3D12DescriptorHeap *rtvDescriptorHeap = DirectXCommon::GetInstance()->rtvHeap_.Get();
+	//ID3D12DescriptorHeap *rtvDescriptorHeap = DirectXCommon::GetInstance()->rtvHeap_.Get();
 
 	// SRV用のディスクリプタの数は128。SRVはShader内で触るものなので、ShaderVisibleはtrue
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
@@ -666,15 +666,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region DepthStencilState
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencileResource = Texture::CreateDepthStencilTextureResource(dxCommon->GetDevice(), WinApp::kWindowWidth, WinApp::kWindowHeight);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> depthStencileResource = Texture::CreateDepthStencilTextureResource(dxCommon->GetDevice(), WinApp::kWindowWidth, WinApp::kWindowHeight);
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>dsvDescriptorHeap = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>dsvDescriptorHeap = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// Format。基本的にはResourceに合わせる。
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;	// 2dTexture
-	// DSVHeapの先頭にDSVを構築する。
-	dxCommon->GetDevice()->CreateDepthStencilView(depthStencileResource.Get(), &dsvDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+	//D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	//dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// Format。基本的にはResourceに合わせる。
+	//dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;	// 2dTexture
+	//// DSVHeapの先頭にDSVを構築する。
+	//dxCommon->GetDevice()->CreateDepthStencilView(depthStencileResource.Get(), &dsvDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 #pragma region DepthStencileStateの設定
 
@@ -1229,38 +1229,40 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 #pragma region コマンドを積み込んで確定させる
-
-		// これから書き込むバックバッファのインデックスを取得
+		//
+		//		// これから書き込むバックバッファのインデックスを取得
 		UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+		//
+		//#pragma region TransitionBarrierを張る
+		//
+		//		// TransitionBarrierの設定
+		//		D3D12_RESOURCE_BARRIER barrier{};
+		//		// 今回のバリアはTransition
+		//		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		//		// Noneにしておく
+		//		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		//		// バリアを張る対象のリソース。現在のバックバッファに対して行う
+		//		barrier.Transition.pResource = swapChainResources[backBufferIndex];
+		//		// 遷移前(現在)のResourceState
+		//		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+		//		// 遷移後のResourceState
+		//		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		//		// TransitionBurrierを張る
+		//		commandList_->ResourceBarrier(1, &barrier);
+		//
+		//#pragma endregion
+		//
+		//		// 描画先のRTVとDSVを設定する
+		//		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		//		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), backBufferIndex, descriptorSizeRTV);
+		//		commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+		//
+		//		commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
+		//		// 指定した色で画面全体をクリアする
+		//		float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
+		//		commandList_->ClearRenderTargetView(rtvHandle, crearColor, 0, nullptr);
 
-#pragma region TransitionBarrierを張る
-
-		// TransitionBarrierの設定
-		D3D12_RESOURCE_BARRIER barrier{};
-		// 今回のバリアはTransition
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		// Noneにしておく
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		// バリアを張る対象のリソース。現在のバックバッファに対して行う
-		barrier.Transition.pResource = swapChainResources[backBufferIndex];
-		// 遷移前(現在)のResourceState
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-		// 遷移後のResourceState
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		// TransitionBurrierを張る
-		commandList_->ResourceBarrier(1, &barrier);
-
-#pragma endregion
-
-		// 描画先のRTVとDSVを設定する
-		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), backBufferIndex, descriptorSizeRTV);
-		commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-		commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
-		// 指定した色で画面全体をクリアする
-		float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
-		commandList_->ClearRenderTargetView(rtvHandle, crearColor, 0, nullptr);
+		dxCommon->StartDraw();
 
 #pragma region ImGuiの描画用DescriptorHeapの設定
 
@@ -1317,10 +1319,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region 画面状態の遷移
 
+		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+			swapChainResources[backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET,
+			D3D12_RESOURCE_STATE_PRESENT);
 		// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
 		// 今回はRenderTargetからPresentにする
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+		//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 		// TransitionBarrierを張る
 		commandList_->ResourceBarrier(1, &barrier);
 
