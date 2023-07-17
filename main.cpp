@@ -179,7 +179,11 @@ Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
+#ifdef _DEBUG
+
 	static DirectResourceLeakChecker leakChecker{};
+
+#endif // DEBUG
 
 #pragma region COMの初期化
 
