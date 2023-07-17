@@ -76,6 +76,69 @@ void DirectXCommon::StartDraw() {
 }
 
 void DirectXCommon::EndDraw() {
+	HRESULT hr = S_FALSE;
+	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
+
+#pragma region 画面状態の遷移
+
+	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		backBuffers_[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_PRESENT);
+	// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
+	// 今回はRenderTargetからPresentにする
+	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	// TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier);
+
+#pragma endregion
+
+	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
+	hr = commandList_->Close();
+	assert(SUCCEEDED(hr));
+
+
+#pragma region コマンドをキックする
+
+	// GPUにコマンドリストの実行を行わせる
+	ID3D12CommandList *commandLists[] = { commandList_.Get() };
+	commandQueue_->ExecuteCommandLists(1, commandLists);
+	// GPUとOSに画面の交換を行うように通知する
+	swapChain_->Present(1, 0);
+
+#pragma region GPUにシグナルを送る
+
+	// Fenceの値を更新
+	fenceValue_++;
+	//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+	commandQueue_->Signal(fence_.Get(), fenceValue_);
+
+#pragma endregion
+
+#pragma region Fenceの値を確認してGPUを待つ
+
+	// Fenceの値が指定したらSignal値にたどりついているか確認する
+	// GetCompletedValueの初期値はFence作成時に渡した初期値
+	if (fence_->GetCompletedValue() < fenceValue_) {
+		// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
+		fence_->SetEventOnCompletion(fenceValue_, fenceEvent);
+		// イベント待機
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
+
+#pragma endregion
+
+
+	// 次のフレーム用のコマンドリストを準備
+	hr = commandAllocator_->Reset();
+	assert(SUCCEEDED(hr));
+	hr = commandList_->Reset(commandAllocator_.Get(), nullptr);
+	assert(SUCCEEDED(hr));
+
+#pragma endregion
+
 
 }
 
@@ -283,8 +346,8 @@ void DirectXCommon::CreateFence()
 
 	// 初期値0でFanceを作る
 	fence_ = nullptr;
-	fenceVal_ = 0;
-	hr = device_->CreateFence(fenceVal_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
+	fenceValue_ = 0;
+	hr = device_->CreateFence(fenceValue_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
 	assert(SUCCEEDED(hr));
 
 	//FenceのSignalを持つためのイベントを作成する

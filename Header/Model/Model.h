@@ -18,6 +18,15 @@
 
 
 struct Material {
+
+	struct MaterialData {
+		Vector4 color;			// 色(RGBA)
+		int32_t enableLighting;	// ライティングの有無
+	private:
+		float patting[3];
+	public:
+		Matrix4x4 uvTransform;
+	};
 	std::string textureFilePath;
 
 	static Material LoadFile(const std::string &directoryPath, const std::string &fileName) {
@@ -55,17 +64,27 @@ private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 
+	struct VertexData {
+		Vector4 position;	// 頂点位置
+		Vector2 texCoord;	// UV座標系
+		Vector3 normal;		// 法線
+	};
+
 	//D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
 	//D3D12_INDEX_BUFFER_VIEW ibView_ = {};
 
 	//ComPtr<ID3D12Resource> vertBuff_;
 	//ComPtr<ID3D12Resource> indexBuff_;
 
-	std::vector<Render::VertexData> vertices_;
+	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indexs_;
 	Material material_;
 
 	void CreateBuffer();
+
+
+	static void CreateSphere(VertexData *const vertex,
+		ID3D12Resource *const indexResource, const uint32_t &subdivision);
 };
 
 struct Transform;

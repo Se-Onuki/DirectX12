@@ -418,7 +418,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//
 	//#pragma endregion
 
-	IDXGISwapChain4 *const swapChain = dxCommon->swapChain_.Get();
+	//IDXGISwapChain4 *const swapChain = dxCommon->swapChain_.Get();
 
 #pragma region DescriptorHeap
 
@@ -482,7 +482,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 
 	ID3D12Fence *const fence = dxCommon->fence_.Get();
-	uint64_t &fenceValue = dxCommon->fenceVal_;
+	uint64_t &fenceValue = dxCommon->fenceValue_;
 	//#pragma region FanceとEventを生成する
 	//
 	//	// 初期値0でFanceを作る
@@ -733,7 +733,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Model model;
 	model.LoadObjFile("resources", "plane.obj");
 	Mesh &modelData = *model.meshList_.back();
-	Microsoft::WRL::ComPtr<ID3D12Resource>vertexResourcePlane = CreateBufferResource(dxCommon->GetDevice(), sizeof(Render::VertexData) * modelData.vertices_.size());
+	Microsoft::WRL::ComPtr<ID3D12Resource>vertexResourcePlane = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * modelData.vertices_.size());
 	// ID3D12Resource *indexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
 
 
@@ -741,15 +741,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// リソースの先頭のアドレスから使う
 	vertexBufferPlane.BufferLocation = vertexResourcePlane->GetGPUVirtualAddress();
 	// 使用するリソースの全体のサイズ
-	vertexBufferPlane.SizeInBytes = static_cast<UINT>(sizeof(Render::VertexData) * modelData.vertices_.size());
+	vertexBufferPlane.SizeInBytes = static_cast<UINT>(sizeof(Mesh::VertexData) * modelData.vertices_.size());
 	// 1頂点あたりのサイズ
-	vertexBufferPlane.StrideInBytes = sizeof(Render::VertexData);
+	vertexBufferPlane.StrideInBytes = sizeof(Mesh::VertexData);
 
 	// 頂点リソースにデータを書き込む
-	Render::VertexData *vertexData = nullptr;
+	Mesh::VertexData *vertexData = nullptr;
 	// 書き込むためのアドレスを取得
 	vertexResourcePlane->Map(0, nullptr, reinterpret_cast<void **>(&vertexData));
-	std::memcpy(vertexData, modelData.vertices_.data(), sizeof(Render::VertexData) * modelData.vertices_.size());
+	std::memcpy(vertexData, modelData.vertices_.data(), sizeof(Mesh::VertexData) * modelData.vertices_.size());
 
 #pragma endregion
 
@@ -774,8 +774,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region VertexResourceを生成する
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(Render::VertexData) * 4);
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(Render::VertexData) * BallVertexCount);
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * 4);
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * BallVertexCount);
 	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Light::Direction));
 
 #pragma endregion
@@ -790,9 +790,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Material用のResource
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズ。
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Render::Material));
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Material::MaterialData));
 	// マテリアルにデータを書き込む
-	Render::Material *materialData = nullptr;
+	Material::MaterialData *materialData = nullptr;
 	// 書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void **>(&materialData));
 	materialData->color = Vector4{ 1.f,1.f,1.f,1.f };
@@ -802,9 +802,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Sprite
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズ。
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(Render::Material));
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(Material::MaterialData));
 	// マテリアルにデータを書き込む
-	Render::Material *materialDataSprite = nullptr;
+	Material::MaterialData *materialDataSprite = nullptr;
 	// 書き込むためのアドレスを取得
 	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void **>(&materialDataSprite));
 	materialDataSprite->color = Vector4{ 1.f,1.f,1.f,1.f };
@@ -833,9 +833,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// リソースの先頭のアドレスから使う
 	vertexBufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
 	// 使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferViewSprite.SizeInBytes = sizeof(Render::VertexData) * 4;
+	vertexBufferViewSprite.SizeInBytes = sizeof(Mesh::VertexData) * 4;
 	// 1頂点あたりのサイズ
-	vertexBufferViewSprite.StrideInBytes = sizeof(Render::VertexData);
+	vertexBufferViewSprite.StrideInBytes = sizeof(Mesh::VertexData);
 
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
@@ -853,9 +853,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// リソースの先頭のアドレスから使う
 	vertexBufferViewBall.BufferLocation = vertexResourceBall->GetGPUVirtualAddress();
 	// 使用するリソース全体のサイズ
-	vertexBufferViewBall.SizeInBytes = sizeof(Render::VertexData) * BallVertexCount;
+	vertexBufferViewBall.SizeInBytes = sizeof(Mesh::VertexData) * BallVertexCount;
 	// 1頂点あたりのサイズ
-	vertexBufferViewBall.StrideInBytes = sizeof(Render::VertexData);
+	vertexBufferViewBall.StrideInBytes = sizeof(Mesh::VertexData);
 
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewBall{};
@@ -941,7 +941,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Sprite
 
 	// 頂点リソースにデータを書き込む
-	Render::VertexData *vertexDataSprite = nullptr;
+	Mesh::VertexData *vertexDataSprite = nullptr;
 	// 書き込むためのアドレスを取得
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void **>(&vertexDataSprite));
 	// 左下
@@ -981,11 +981,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Ball
 
 	// 頂点リソースにデータを書き込む
-	Render::VertexData *vertexDataBall = nullptr;
+	Mesh::VertexData *vertexDataBall = nullptr;
 	// 書き込むためのアドレスを取得
 	vertexResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&vertexDataBall));
 
-	CreateSphere(vertexDataBall, indexResourceBall.Get(), BallDivision);
+	Mesh::CreateSphere(vertexDataBall, indexResourceBall.Get(), BallDivision);
 
 
 #pragma endregion
@@ -1231,7 +1231,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region コマンドを積み込んで確定させる
 		//
 		//		// これから書き込むバックバッファのインデックスを取得
-		UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+		//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 		//
 		//#pragma region TransitionBarrierを張る
 		//
@@ -1304,8 +1304,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->SetGraphicsRootConstantBufferView(4, viewProjection.constBuffer_->GetGPUVirtualAddress());
 		commandList_->SetGraphicsRootDescriptorTable(2, selecteTexture);
 		commandList_->DrawInstanced(static_cast<UINT>(modelData.vertices_.size()), 1, 0, 0);
-		/*commandList->IASetIndexBuffer(&indexBufferViewBall);
-		commandList->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);*/
+
+		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
+		commandList_->IASetIndexBuffer(&indexBufferViewBall);
+		commandList_->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);
 
 
 #pragma endregion
@@ -1316,65 +1318,65 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
 
 #pragma endregion
-
-#pragma region 画面状態の遷移
-
-		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-			swapChainResources[backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET,
-			D3D12_RESOURCE_STATE_PRESENT);
-		// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
-		// 今回はRenderTargetからPresentにする
-		//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		// TransitionBarrierを張る
-		commandList_->ResourceBarrier(1, &barrier);
-
-#pragma endregion
-
-		// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
-		hr = commandList_->Close();
-		assert(SUCCEEDED(hr));
-
-#pragma endregion
-
-#pragma region コマンドをキックする
-
-		// GPUにコマンドリストの実行を行わせる
-		ID3D12CommandList *commandLists[] = { commandList_ };
-		commandQueue_->ExecuteCommandLists(1, commandLists);
-		// GPUとOSに画面の交換を行うように通知する
-		swapChain->Present(1, 0);
-
-#pragma region GPUにシグナルを送る
-
-		// Fenceの値を更新
-		fenceValue++;
-		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-		commandQueue_->Signal(fence, fenceValue);
+		dxCommon->EndDraw();
+		//#pragma region 画面状態の遷移
+		//
+		//		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		//			swapChainResources[backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET,
+		//			D3D12_RESOURCE_STATE_PRESENT);
+		//		// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
+		//		// 今回はRenderTargetからPresentにする
+		//		//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		//		//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+		//		// TransitionBarrierを張る
+		//		commandList_->ResourceBarrier(1, &barrier);
+		//
+		//#pragma endregion
+		//
+		//		// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
+		//		hr = commandList_->Close();
+		//		assert(SUCCEEDED(hr));
 
 #pragma endregion
 
-#pragma region Fenceの値を確認してGPUを待つ
-
-		// Fenceの値が指定したらSignal値にたどりついているか確認する
-		// GetCompletedValueの初期値はFence作成時に渡した初期値
-		if (fence->GetCompletedValue() < fenceValue) {
-			// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
-			fence->SetEventOnCompletion(fenceValue, fenceEvent);
-			// イベント待機
-			WaitForSingleObject(fenceEvent, INFINITE);
-		}
-
-#pragma endregion
-
-
-		// 次のフレーム用のコマンドリストを準備
-		hr = commandAllocator_->Reset();
-		assert(SUCCEEDED(hr));
-		hr = commandList_->Reset(commandAllocator_, nullptr);
-		assert(SUCCEEDED(hr));
-
-#pragma endregion
+//#pragma region コマンドをキックする
+//
+//		// GPUにコマンドリストの実行を行わせる
+//		ID3D12CommandList *commandLists[] = { commandList_ };
+//		commandQueue_->ExecuteCommandLists(1, commandLists);
+//		// GPUとOSに画面の交換を行うように通知する
+//		swapChain->Present(1, 0);
+//
+//#pragma region GPUにシグナルを送る
+//
+//		// Fenceの値を更新
+//		fenceValue++;
+//		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+//		commandQueue_->Signal(fence, fenceValue);
+//
+//#pragma endregion
+//
+//#pragma region Fenceの値を確認してGPUを待つ
+//
+//		//// Fenceの値が指定したらSignal値にたどりついているか確認する
+//		//// GetCompletedValueの初期値はFence作成時に渡した初期値
+//		//if (fence->GetCompletedValue() < fenceValue) {
+//		//	// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
+//		//	fence->SetEventOnCompletion(fenceValue, fenceEvent);
+//		//	// イベント待機
+//		//	WaitForSingleObject(fenceEvent, INFINITE);
+//		//}
+//
+//#pragma endregion
+//
+//
+//		//// 次のフレーム用のコマンドリストを準備
+//		//hr = commandAllocator_->Reset();
+//		//assert(SUCCEEDED(hr));
+//		//hr = commandList_->Reset(commandAllocator_, nullptr);
+//		//assert(SUCCEEDED(hr));
+//
+//#pragma endregion
 
 
 	}
