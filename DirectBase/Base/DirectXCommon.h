@@ -28,6 +28,10 @@ public:
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
 
+	uint32_t descriptorSizeSRV;
+	uint32_t descriptorSizeRTV;
+	uint32_t descriptorSizeDSV;
+
 	// DXGI
 	ComPtr<IDXGIFactory7> dxgiFactory_;
 
@@ -68,6 +72,10 @@ public:
 	static void Log(const std::string &message) {
 		OutputDebugStringA(message.c_str());
 	}
+
+	void StartDraw();
+
+	void EndDraw();
 
 
 private:

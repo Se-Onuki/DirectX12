@@ -490,11 +490,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//	uint64_t fenceValue = 0;
 	//	hr = dxCommon->GetDevice()->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 	//	assert(SUCCEEDED(hr));
-	//
-	//	//FenceのSignalを持つためのイベントを作成する
-		HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-		assert(fenceEvent != nullptr);
-	//
+
+	// FenceのSignalを持つためのイベントを作成する
+	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
+
 	//#pragma endregion
 
 #pragma region DXCの初期化

@@ -2,6 +2,7 @@
 #include "../../Header/String/String.hpp"
 #include <format>
 #include "../../Header/Create/Create.h"
+#include "../../externals/DirectXTex/d3dx12.h"
 
 
 void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBufferHeight)
@@ -23,12 +24,56 @@ void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBu
 	CreateRenderTarget();
 
 	CreateFence();
+
+	descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descriptorSizeRTV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	descriptorSizeDSV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
 DirectXCommon *const DirectXCommon::GetInstance()
 {
 	static DirectXCommon instance;
 	return &instance;
+}
+
+void DirectXCommon::StartDraw() {
+
+	// これから書き込むバックバッファのインデックスを取得
+	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+
+#pragma region TransitionBarrierを張る
+
+	// TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+	// 今回のバリアはTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = backBuffers_[backBufferIndex].Get();
+	// 遷移前(現在)のResourceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	// 遷移後のResourceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// TransitionBurrierを張る
+	commandList_->ResourceBarrier(1, &barrier);
+
+#pragma endregion
+
+	// 描画先のRTVとDSVを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvHeap_->GetCPUDescriptorHandleForHeapStart(), backBufferIndex, descriptorSizeRTV);
+	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
+	// 指定した色で画面全体をクリアする
+	float crearColor[] = { 0.1f,0.25f,0.5f,1.f }; // 青っぽい色。 RGBAの値
+	commandList_->ClearRenderTargetView(rtvHandle, crearColor, 0, nullptr);
+
+}
+
+void DirectXCommon::EndDraw() {
+
 }
 
 void DirectXCommon::InitDXGI_Device() {
