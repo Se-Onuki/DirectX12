@@ -153,33 +153,33 @@ Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
 
 
 }
-
-// ウィンドウプロシージャ
-LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
-		return true;
-	}
-	// メッセージに応じてゲーム固有の処理を行う
-	switch (msg)
-	{
-		// ウィンドウが破棄された
-	case WM_DESTROY:
-		// OSに対して、アプリの終了を伝える
-		PostQuitMessage(0);
-		break;
-	default:
-		// 標準のメッセージ処理を伝える
-		return DefWindowProc(hwnd, msg, wParam, lParam);
-	}
-	return 0;
-}
-
+//
+//// ウィンドウプロシージャ
+//LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+//{
+//	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
+//		return true;
+//	}
+//	// メッセージに応じてゲーム固有の処理を行う
+//	switch (msg)
+//	{
+//		// ウィンドウが破棄された
+//	case WM_DESTROY:
+//		// OSに対して、アプリの終了を伝える
+//		PostQuitMessage(0);
+//		break;
+//	default:
+//		// 標準のメッセージ処理を伝える
+//		return DefWindowProc(hwnd, msg, wParam, lParam);
+//	}
+//	return 0;
+//}
+//
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
-	DirectResourceLeakChecker leakChecker{};
+	static DirectResourceLeakChecker leakChecker{};
 
 #pragma region COMの初期化
 
@@ -260,106 +260,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	DirectXCommon *dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
-	//
-	//#pragma region DXGIFactoryの生成
-	//
-	//	Microsoft::WRL::ComPtr<IDXGIFactory7>dxgiFactory = nullptr;
-	//	// HRESULTはWindows系のエラーコードであり、
-	//	// 関数が成功したかどうかをSUCCEEDEDマクロで判別できる
-	//	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
-	//	// 初期化の根本的な部分でエラーが出た場合はプログラムが間違っているか、どうにもできない場合が多いのでassertにしておく
-	//	assert(SUCCEEDED(hr));
-	//
-	//#pragma endregion
-	//
-	//#pragma region 使用するアダプタ(GPU)を決定する
-	//	// 使用するアダプタ用の変数。最初にnullptrを入れておく。
-	//	Microsoft::WRL::ComPtr<IDXGIAdapter4 >useAdapter = nullptr;
-	//	// 良い順にアダプタを積む
-	//	for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) != DXGI_ERROR_NOT_FOUND; ++i) {
-	//		// アダプタの情報を取得する
-	//		DXGI_ADAPTER_DESC3 adapterDesc{};
-	//		hr = useAdapter->GetDesc3(&adapterDesc);
-	//		assert(SUCCEEDED(hr)); // 取得できないのは一大事
-	//		// ソフトウェアアダプタでなければ、採用。
-	//		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
-	//			// 採用したアダプタの情報をログに出力。wstringなので注意
-	//			DirectXCommon::Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
-	//			break;
-	//		}
-	//		useAdapter = nullptr; // ソフトウェアアダプタの場合は見なかったことにする
-	//	}
-	//	// 適切なアダプタが見つからなかったので起動できない
-	//	assert(useAdapter != nullptr);
-	//
-	//#pragma endregion
-	//
-	//#pragma region D3D12Deviceの生成
-	//
-	//	Microsoft::WRL::ComPtr<ID3D12Device>device = nullptr;
-	//	// 機能レベルとログ出力用の文字列
-	//	D3D_FEATURE_LEVEL featureLevels[] = {
-	//		D3D_FEATURE_LEVEL_12_2, D3D_FEATURE_LEVEL_12_1 ,D3D_FEATURE_LEVEL_12_0
-	//	};
-	//	const char *featureLevelStrings[] = { "12.2","12.1", "12.0" };
-	//	// 高い順に生成できるか試していく
-	//	for (size_t i = 0; i < _countof(featureLevels); ++i) {
-	//		// 採用したアダプタでデバイスを生成
-	//		hr = D3D12CreateDevice(useAdapter.Get(), featureLevels[i], IID_PPV_ARGS(&device));
-	//		// 採用した機能レベルでデバイスが生成できたか確認
-	//		if (SUCCEEDED(hr)) {
-	//			//生成できたのでログ出力を行ってループを抜ける
-	//			DirectXCommon::Log(std::format("FeatureLevel: {}\n", featureLevelStrings[i]));
-	//			break;
-	//		}
-	//	}
-	//	// デバイスの生成がうまくいかなかったので起動できない
-	//	assert(device != nullptr);
-	//	DirectXCommon::Log("Complete create D3D121Device!!!\n"); // 初期化完了のログを出す
-	//
-	//#pragma region エラー/警告時に停止
-	//
-	//#ifdef _DEBUG
-	//
-	//	Microsoft::WRL::ComPtr<ID3D12InfoQueue >infoQueue = nullptr;
-	//	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
-	//		// やばいエラーの時に止まる
-	//		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
-	//		//エラーの時に止まる
-	//		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
-	//		// 警告の時に止まる
-	//		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
-	//
-	//#pragma region エラー/警告の抑制
-	//
-	//		//抑制するメッセージのID
-	//		D3D12_MESSAGE_ID denyIds[] = {
-	//			// Windows11でのDXGIデバッグレイヤーとDX12デバッグレイヤーの相互作用バグによるメッセージ
-	//			// https://stackoverflow.com/Questions/69805245/directx-12-application-is-crashing-in-windows-11
-	//			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
-	//		};
-	//		// 抑制するレベル
-	//		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
-	//		D3D12_INFO_QUEUE_FILTER filter{};
-	//		filter.DenyList.NumIDs = _countof(denyIds);
-	//		filter.DenyList.pIDList = denyIds;
-	//		filter.DenyList.NumSeverities = _countof(severities);
-	//		filter.DenyList.pSeverityList = severities;
-	//		// 指定したメッセージの表示を抑制する。
-	//		infoQueue->PushStorageFilter(&filter);
-	//
-	//#pragma endregion
-	//
-	//
-	//		// 解放
-	//		//infoQueue->Release();
-	//	}
-	//
-	//#endif // DEBUG
-	//
-	//#pragma endregion
-	//
-	//#pragma endregion
+
 
 	HRESULT hr;
 
@@ -436,7 +337,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		DirectXCommon::GetInstance()->backBuffers_[0].Get(),
 		DirectXCommon::GetInstance()->backBuffers_[1].Get()
 	};
-	
+
 #pragma endregion
 
 	// RTVの設定
@@ -736,11 +637,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region ViewProjection
 
-	Microsoft::WRL::ComPtr<ID3D12Resource>vpResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(ViewProjection::ViewProjectionMatrix));
-	ViewProjection::ViewProjectionMatrix *vpData = nullptr;
-	vpResource->Map(0, nullptr, reinterpret_cast<void **>(&vpData));
-	vpData->view = Matrix4x4::Identity();
-	vpData->projection = Matrix4x4::Identity();
+	//Microsoft::WRL::ComPtr<ID3D12Resource>vpResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(ViewProjection::ViewProjectionMatrix));
+	//ViewProjection::ViewProjectionMatrix *vpData = nullptr;
+	//vpResource->Map(0, nullptr, reinterpret_cast<void **>(&vpData));
+	//vpData->view = Matrix4x4::Identity();
+	//vpData->projection = Matrix4x4::Identity();
 
 	Microsoft::WRL::ComPtr<ID3D12Resource>vpResourceUI = CreateBufferResource(dxCommon->GetDevice(), sizeof(ViewProjection::ViewProjectionMatrix));
 	ViewProjection::ViewProjectionMatrix *vpDataUI = nullptr;
@@ -856,7 +757,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// Transform変数を作る
 	//Transform transform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,10.f} };
 	// カメラTransformを作る
-	Transform cameraTransform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,-5.f} };
+	//Transform cameraTransform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,-5.f} };
 
 	// Sprite用のTransform
 	Transform transformSprite{ {0.6f,1.f,1.f},{0.f,0.f,0.f},{-2.f,0.f,-0.5f} };
@@ -1119,8 +1020,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		ImGui::Begin("Camera");
 		// ImGui::DragFloat3("scale", &cameraTransform.scale.x, 0.1f);
-		ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, Angle::Dig2Rad);
-		ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.1f);
+		ImGui::DragFloat3("rotate", &viewProjection.rotation_.x, Angle::Dig2Rad);
+		ImGui::DragFloat3("translate", &viewProjection.translation_.x, 0.1f);
 		ImGui::End();
 
 		ImGui::Begin("OBJ");
@@ -1176,8 +1077,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		//transform.rotate.y += 0.03f;
 		//Matrix4x4 worldMatrix = transform.Affine();
-		Matrix4x4 cameraMatrix = cameraTransform.Affine();
-		Matrix4x4 viewMatrix = cameraMatrix.InverseRT();
+		//Matrix4x4 cameraMatrix = cameraTransform.Affine();
+		//Matrix4x4 viewMatrix = cameraMatrix.InverseRT();
 		// 透視投影行列
 		Matrix4x4 projectionMatrix = Render::MakePerspectiveFovMatrix(0.45f, float(WinApp::kWindowWidth) / float(WinApp::kWindowHeight), 0.1f, 100.f);
 		//Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
@@ -1188,12 +1089,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//transformBall.rotate.y += 0.03f;
 		Matrix4x4 worldMatrixBall = transformBall.Affine();
 
-		Matrix4x4 wvp = worldMatrixBall * viewMatrix * projectionMatrix;
+		//Matrix4x4 wvp = worldMatrixBall * viewMatrix * projectionMatrix;
 		//transformationMatrixDataBall->WVP = wvp;
 		transformationMatrixDataBall->World = worldMatrixBall;
 
-		vpData->view = viewMatrix;
-		vpData->projection = projectionMatrix;
+
+		//viewProjection.rotation_ = cameraTransform.rotate;
+		//viewProjection.translation_ = cameraTransform.translate;
+		viewProjection.UpdateMatrix();
+
+		//vpData->view = viewMatrix;
+		//vpData->projection = projectionMatrix;
 		vpDataUI->view = viewMatrixSprite;
 		vpDataUI->projection = projectionMatrixSprite;
 
@@ -1210,7 +1116,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 #pragma region コマンドを積み込んで確定させる
-		
+
 		dxCommon->StartDraw();
 
 #pragma region ImGuiの描画用DescriptorHeapの設定
