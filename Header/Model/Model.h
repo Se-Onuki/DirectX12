@@ -68,13 +68,18 @@ public:
 		Vector4 position;	// 頂点位置
 		Vector2 texCoord;	// UV座標系
 		Vector3 normal;		// 法線
+
+		bool operator==(const VertexData &vertex) {
+
+			return position == vertex.position && texCoord == vertex.texCoord && normal == vertex.normal;
+		}
 	};
 
-	//D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
-	//D3D12_INDEX_BUFFER_VIEW ibView_ = {};
+	D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
+	D3D12_INDEX_BUFFER_VIEW ibView_ = {};
 
-	//ComPtr<ID3D12Resource> vertBuff_;
-	//ComPtr<ID3D12Resource> indexBuff_;
+	ComPtr<ID3D12Resource> vertexBuff_;
+	ComPtr<ID3D12Resource> indexBuff_;
 
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indexs_;
@@ -82,9 +87,13 @@ public:
 
 	void CreateBuffer();
 
+	void AddVertex(const VertexData &vertex);
+
+	//void Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform);
 
 	static void CreateSphere(VertexData *const vertex,
 		ID3D12Resource *const indexResource, const uint32_t &subdivision);
+
 };
 
 struct Transform;

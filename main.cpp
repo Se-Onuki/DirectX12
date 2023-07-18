@@ -193,74 +193,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	WinApp *winApp = WinApp::GetInstance();
 	winApp->CreateGameWindow("DirectXGame");
-	//
-	//#pragma region ウィンドウクラス
-	//
-	//	WNDCLASS wc{};
-	//	// ウィンドウプロシージャ
-	//	wc.lpfnWndProc = WindowProc;
-	//	// ウィンドウクラス名
-	//	wc.lpszClassName = L"CG2_DirectX12";
-	//	// インスタンスハンドル
-	//	wc.hInstance = GetModuleHandle(nullptr);
-	//	// カーソル
-	//	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	//
-	//	// ウィンドウクラスを登録する。
-	//	RegisterClass(&wc);
-	//
-	//#pragma endregion
-	//
-	//#pragma region クライアント領域の設定
-	//
-	//	// クライアント領域のサイズ
-	//	const uint32_t kClientWidth = 1280;
-	//	const uint32_t kClientHeight = 720;
-	//
-	//	// ウィンドウサイズを表す構造体にクライアント領域を入れる
-	//	RECT wrc = { 0,0, kClientWidth, kClientHeight };
-	//	// クライアント領域を元に実際のサイズにwrcを変更してもらう
-	//	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-	//
-	//#pragma endregion
-	//
-	//#pragma region ウィンドウ生成=>出力
-	//
-	//	// ウィンドウの生成
-	//	HWND hwnd = CreateWindow(
-	//		wc.lpszClassName,		// 利用するクラス名
-	//		L"DirectXGame",			// タイトルバーの文字
-	//		WS_OVERLAPPEDWINDOW,	// よく見るウィンドウスタイル
-	//		CW_USEDEFAULT,			// 表示X座標 (windowsに任せる)
-	//		CW_USEDEFAULT,			// 表示Y座標 (windowsに任せる)
-	//		wrc.right - wrc.left,	// ウィンドウ横幅
-	//		wrc.bottom - wrc.top,	// ウィンドウ縦幅
-	//		nullptr,				// 親ウィンドウハンドル
-	//		nullptr,				// メニューハンドル
-	//		wc.hInstance,			// インスタンスハンドル
-	//		nullptr					// オプション
-	//	);
-	//
-	//#pragma region デバッグレイヤー
-	//
-	//#ifdef _DEBUG
-	//
-	//	Microsoft::WRL::ComPtr<ID3D12Debug1> debugController = nullptr;
-	//	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
-	//		// デバッグレイヤーを有効化する
-	//		debugController->EnableDebugLayer();
-	//		// さらにGPU側でもチェックを行うようにする
-	//		debugController->SetEnableGPUBasedValidation(TRUE);
-	//	}
-	//
-	//#endif // DEBUG
-	//
-	//#pragma endregion
-	//
-	//	// ウィンドウを表示する
-	//	ShowWindow(hwnd, SW_SHOW);
-	//
-	//#pragma endregion
 
 	DirectXCommon *dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
@@ -619,23 +551,38 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Model model;
 	model.LoadObjFile("resources", "plane.obj");
 	Mesh &modelData = *model.meshList_.back();
-	Microsoft::WRL::ComPtr<ID3D12Resource>vertexResourcePlane = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * modelData.vertices_.size());
-	// ID3D12Resource *indexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
+	modelData.CreateBuffer();
+	//Microsoft::WRL::ComPtr<ID3D12Resource>vertexResourcePlane = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * modelData.vertices_.size());
+	//Microsoft::WRL::ComPtr<ID3D12Resource>indexResourcePlane = CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * modelData.indexs_.size());
+	//// ID3D12Resource *indexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
 
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferPlane{};
-	// リソースの先頭のアドレスから使う
-	vertexBufferPlane.BufferLocation = vertexResourcePlane->GetGPUVirtualAddress();
-	// 使用するリソースの全体のサイズ
-	vertexBufferPlane.SizeInBytes = static_cast<UINT>(sizeof(Mesh::VertexData) * modelData.vertices_.size());
-	// 1頂点あたりのサイズ
-	vertexBufferPlane.StrideInBytes = sizeof(Mesh::VertexData);
+	//D3D12_VERTEX_BUFFER_VIEW vertexBufferPlane{};
+	//// リソースの先頭のアドレスから使う
+	//vertexBufferPlane.BufferLocation = vertexResourcePlane->GetGPUVirtualAddress();
+	//// 使用するリソースの全体のサイズ
+	//vertexBufferPlane.SizeInBytes = static_cast<UINT>(sizeof(Mesh::VertexData) * modelData.vertices_.size());
+	//// 1頂点あたりのサイズ
+	//vertexBufferPlane.StrideInBytes = sizeof(Mesh::VertexData);
 
-	// 頂点リソースにデータを書き込む
-	Mesh::VertexData *vertexData = nullptr;
-	// 書き込むためのアドレスを取得
-	vertexResourcePlane->Map(0, nullptr, reinterpret_cast<void **>(&vertexData));
-	std::memcpy(vertexData, modelData.vertices_.data(), sizeof(Mesh::VertexData) * modelData.vertices_.size());
+	//// 頂点リソースにデータを書き込む
+	//Mesh::VertexData *vertexData = nullptr;
+	//// 書き込むためのアドレスを取得
+	//vertexResourcePlane->Map(0, nullptr, reinterpret_cast<void **>(&vertexData));
+	//std::memcpy(vertexData, modelData.vertices_.data(), sizeof(Mesh::VertexData) * modelData.vertices_.size());
+
+
+	//D3D12_INDEX_BUFFER_VIEW indexBufferPlane{};
+
+	//indexBufferPlane.BufferLocation = indexResourcePlane->GetGPUVirtualAddress();
+	//indexBufferPlane.SizeInBytes = sizeof(uint32_t) * 6u;
+	//indexBufferPlane.Format = DXGI_FORMAT_R32_UINT;
+
+	//// 頂点リソースにデータを書き込む
+	//uint32_t *indexData = nullptr;
+	//// 書き込むためのアドレスを取得
+	//indexResourcePlane->Map(0, nullptr, reinterpret_cast<void **>(&indexData));
+	//std::memcpy(indexData, modelData.indexs_.data(), sizeof(uint32_t) * modelData.indexs_.size());
 
 #pragma endregion
 
@@ -662,6 +609,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * 4);
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * BallVertexCount);
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Light::Direction));
 
 #pragma endregion
@@ -1007,9 +955,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
-		if (winApp->ProcessMessage()) {
-			break;
-		}
+		if (winApp->ProcessMessage()) break;
 
 #pragma region ImGuiに新規フレームであると伝える
 
@@ -1021,9 +967,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region ゲームの処理
 
-
 		ImGui::Begin("Camera");
-		// ImGui::DragFloat3("scale", &cameraTransform.scale.x, 0.1f);
 		ImGui::DragFloat3("rotate", &viewProjection.rotation_.x, Angle::Dig2Rad);
 		ImGui::DragFloat3("translate", &viewProjection.translation_.x, 0.1f);
 		ImGui::End();
@@ -1152,19 +1096,19 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->SetGraphicsRootDescriptorTable(2, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
-		//commandList->DrawInstanced(6, 1, 0, 0);
 
 		// Ballの描画
 		commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-		commandList_->IASetVertexBuffers(0, 1, &vertexBufferPlane);	// VBVを設定
+		commandList_->IASetVertexBuffers(0, 1, &modelData.vbView_);	// VBVを設定
 		commandList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
 		commandList_->SetGraphicsRootConstantBufferView(4, viewProjection.constBuffer_->GetGPUVirtualAddress());
 		commandList_->SetGraphicsRootDescriptorTable(2, selecteTexture);
-		commandList_->DrawInstanced(static_cast<UINT>(modelData.vertices_.size()), 1, 0, 0);
+		commandList_->IASetIndexBuffer(&modelData.ibView_);
+		commandList_->DrawIndexedInstanced(static_cast<UINT>(modelData.indexs_.size()), 1, 0, 0, 0);
 
-		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
-		commandList_->IASetIndexBuffer(&indexBufferViewBall);
-		commandList_->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);
+		//commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
+		//commandList_->IASetIndexBuffer(&indexBufferViewBall);
+		//commandList_->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);
 
 
 #pragma endregion

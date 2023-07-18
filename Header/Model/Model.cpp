@@ -1,6 +1,8 @@
 #include "Model.h"
 #include "../Create/Create.h"
 #include "../Math/Math.hpp"
+#include <array>
+#include "../../DirectBase/Base/DirectXCommon.h"
 
 Model::Model()
 {
@@ -66,7 +68,7 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 		}
 		else if (identifier == "f") {
 			// 面は三角形限定。その他は未対応
-			Mesh::VertexData triangle[3] = {};
+			std::array<Mesh::VertexData, 3u> triangle = {};
 			for (uint32_t faceVertex = 0u; faceVertex < 3u; ++faceVertex) {
 				std::string vertexDefinition;
 				s >> vertexDefinition;
@@ -84,13 +86,15 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 				Vector3 normal = normalList[elementIndices[2] - 1];
 				// 末尾から順に(法線の逆転)
 				triangle[2u - faceVertex] = { position,texCoord,normal };
-
 			}
 			// イテレータを用いた末尾への直接構築
-			modelData.vertices_.insert(modelData.vertices_.end(), triangle, triangle + 3);
-			/*modelData.indexs.push_back(modelData.vertices.size() - 3);
-			modelData.indexs.push_back(modelData.vertices.size() - 2);
-			modelData.indexs.push_back(modelData.vertices.size() - 1);*/
+			modelData.AddVertex(triangle[0]);
+			modelData.AddVertex(triangle[1]);
+			modelData.AddVertex(triangle[2]);
+			/*
+			modelData.vertices_.insert(modelData.vertices_.end(), triangle.begin(), triangle.end());
+			const uint32_t indexOffset = (uint32_t)modelData.vertices_.size() - 3u;
+			modelData.indexs_.insert(modelData.indexs_.end(), { indexOffset ,indexOffset + 1,indexOffset + 2 });*/
 		}
 		else if (identifier == "mtllib") {
 
@@ -106,6 +110,9 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 void Model::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform, const Matrix4x4 &viewProjection) const
 {
+
+	commandList->IASetVertexBuffers(0, 1, &meshList_[0]->vbView_);
+	commandList->IASetIndexBuffer(&meshList_[0]->ibView_);
 	commandList;
 	transform;
 	viewProjection;
@@ -113,23 +120,68 @@ void Model::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &
 
 void Mesh::CreateBuffer()
 {
-	//CreateBufferResource(device, sizeof(Render::VertexData) * vertices_.size());
+	ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
 
-	//// リソースの先頭のアドレスから使う
-	//vbView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
-	//// 使用するリソースの全体のサイズ
-	//vbView_.SizeInBytes = static_cast<UINT>(sizeof(Render::VertexData) * vertices_.size());
-	//// 1頂点あたりのサイズ
-	//vbView_.StrideInBytes = sizeof(Render::VertexData);
+	HRESULT hr = S_FALSE;
+
+#pragma region 頂点バッファ
+
+	vertexBuff_ = CreateBufferResource(device, sizeof(VertexData) * vertices_.size());
+
+	// リソースの先頭のアドレスから使う
+	vbView_.BufferLocation = vertexBuff_->GetGPUVirtualAddress();
+	// 使用するリソースの全体のサイズ
+	vbView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * vertices_.size());
+	// 1頂点あたりのサイズ
+	vbView_.StrideInBytes = sizeof(VertexData);
 
 
-	//// 頂点バッファへのデータ転送
-	//Render::VertexData *vertMap = nullptr;
-	//HRESULT result = vertBuff_->Map(0, nullptr, (void **)&vertMap);
-	//if (SUCCEEDED(result)) {
-	//	std::copy(vertices_.begin(), vertices_.end(), vertMap);
-	//	vertBuff_->Unmap(0, nullptr);
-	//}
+	// 頂点バッファへのデータ転送
+	VertexData *vertexMap = nullptr;
+	hr = vertexBuff_->Map(0, nullptr, (void **)&vertexMap);
+	if (SUCCEEDED(hr)) {
+		std::copy(vertices_.begin(), vertices_.end(), vertexMap);
+		//vertexBuff_->Unmap(0, nullptr);
+	}
+
+#pragma endregion
+
+	hr = S_FALSE;
+
+#pragma region インデックスバッファ
+
+	indexBuff_ = CreateBufferResource(device, sizeof(uint32_t) * indexs_.size());
+
+	// リソースの先頭のアドレスから使う
+	ibView_.BufferLocation = indexBuff_->GetGPUVirtualAddress();
+	// 使用するリソースの全体のサイズ
+	ibView_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indexs_.size());
+	// 1添え字あたりの型情報
+	ibView_.Format = DXGI_FORMAT_R32_UINT;
+
+
+	// 頂点バッファへのデータ転送
+	uint32_t *indexMap = nullptr;
+	hr = indexBuff_->Map(0, nullptr, (void **)&indexMap);
+	if (SUCCEEDED(hr)) {
+		std::copy(indexs_.begin(), indexs_.end(), indexMap);
+		//indexBuff_->Unmap(0, nullptr);
+	}
+
+#pragma endregion
+
+}
+
+void Mesh::AddVertex(const VertexData &vertex)
+{
+	auto it = std::find(vertices_.begin(), vertices_.end(), vertex);
+	if (it != vertices_.end()) {
+		indexs_.push_back((uint32_t)std::distance(vertices_.begin(), it));
+	}
+	else {
+		vertices_.push_back(vertex);
+		indexs_.push_back((uint32_t)vertices_.size() - 1u);
+	}
 }
 
 void Mesh::CreateSphere(VertexData *const vertex, ID3D12Resource *const indexResource, const uint32_t &subdivision)
