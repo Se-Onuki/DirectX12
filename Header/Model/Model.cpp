@@ -4,6 +4,8 @@
 #include <array>
 #include "../../DirectBase/Base/DirectXCommon.h"
 
+ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
+
 Model::Model()
 {
 }
@@ -13,6 +15,7 @@ Model::~Model()
 	for (auto &mesh : meshList_) {
 		delete mesh;
 	}
+
 }
 
 void Model::LoadObjFile(const std::string &directoryPath, const std::string &fileName) {
@@ -108,12 +111,11 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 }
 
-void Model::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform, const Matrix4x4 &viewProjection) const
+void Model::Draw(const Transform &transform, const Matrix4x4 &viewProjection) const
 {
-
-	commandList->IASetVertexBuffers(0, 1, &meshList_[0]->vbView_);
-	commandList->IASetIndexBuffer(&meshList_[0]->ibView_);
-	commandList;
+	for (auto &mesh : meshList_) {
+		mesh->Draw(commandList_, transform);
+	}
 	transform;
 	viewProjection;
 }
@@ -182,6 +184,16 @@ void Mesh::AddVertex(const VertexData &vertex)
 		vertices_.push_back(vertex);
 		indexs_.push_back((uint32_t)vertices_.size() - 1u);
 	}
+}
+
+void Mesh::SetMaterial(Material *const material) {
+	material;
+}
+
+void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform) const {
+	commandList->IASetVertexBuffers(0, 1, &this->vbView_);
+	commandList->IASetIndexBuffer(&this->ibView_);
+	transform;
 }
 
 void Mesh::CreateSphere(VertexData *const vertex, ID3D12Resource *const indexResource, const uint32_t &subdivision)

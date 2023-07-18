@@ -552,37 +552,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	model.LoadObjFile("resources", "plane.obj");
 	Mesh &modelData = *model.meshList_.back();
 	modelData.CreateBuffer();
-	//Microsoft::WRL::ComPtr<ID3D12Resource>vertexResourcePlane = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * modelData.vertices_.size());
-	//Microsoft::WRL::ComPtr<ID3D12Resource>indexResourcePlane = CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * modelData.indexs_.size());
-	//// ID3D12Resource *indexResourcePlane = CreateBufferResource(device, sizeof(Render::VertexData) * modelData.vertices.size());
 
-
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferPlane{};
-	//// リソースの先頭のアドレスから使う
-	//vertexBufferPlane.BufferLocation = vertexResourcePlane->GetGPUVirtualAddress();
-	//// 使用するリソースの全体のサイズ
-	//vertexBufferPlane.SizeInBytes = static_cast<UINT>(sizeof(Mesh::VertexData) * modelData.vertices_.size());
-	//// 1頂点あたりのサイズ
-	//vertexBufferPlane.StrideInBytes = sizeof(Mesh::VertexData);
-
-	//// 頂点リソースにデータを書き込む
-	//Mesh::VertexData *vertexData = nullptr;
-	//// 書き込むためのアドレスを取得
-	//vertexResourcePlane->Map(0, nullptr, reinterpret_cast<void **>(&vertexData));
-	//std::memcpy(vertexData, modelData.vertices_.data(), sizeof(Mesh::VertexData) * modelData.vertices_.size());
-
-
-	//D3D12_INDEX_BUFFER_VIEW indexBufferPlane{};
-
-	//indexBufferPlane.BufferLocation = indexResourcePlane->GetGPUVirtualAddress();
-	//indexBufferPlane.SizeInBytes = sizeof(uint32_t) * 6u;
-	//indexBufferPlane.Format = DXGI_FORMAT_R32_UINT;
-
-	//// 頂点リソースにデータを書き込む
-	//uint32_t *indexData = nullptr;
-	//// 書き込むためのアドレスを取得
-	//indexResourcePlane->Map(0, nullptr, reinterpret_cast<void **>(&indexData));
-	//std::memcpy(indexData, modelData.indexs_.data(), sizeof(uint32_t) * modelData.indexs_.size());
 
 #pragma endregion
 
@@ -862,7 +832,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	for (auto &mipImage : mipImagesList) {
 		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-		Microsoft::WRL::ComPtr<ID3D12Resource >textureResource = Texture::CreateResource(dxCommon->GetDevice(), metadata);
+		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = Texture::CreateResource(dxCommon->GetDevice(), metadata);
 		textureResourceList.push_back(textureResource);
 		intermediateResoureceList.push_back(Texture::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
 	}
@@ -1120,64 +1090,47 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 		dxCommon->EndDraw();
-		//#pragma region 画面状態の遷移
-		//
-		//		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		//			swapChainResources[backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET,
-		//			D3D12_RESOURCE_STATE_PRESENT);
-		//		// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
-		//		// 今回はRenderTargetからPresentにする
-		//		//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		//		//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		//		// TransitionBarrierを張る
-		//		commandList_->ResourceBarrier(1, &barrier);
-		//
-		//#pragma endregion
-		//
-		//		// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
-		//		hr = commandList_->Close();
-		//		assert(SUCCEEDED(hr));
 
 #pragma endregion
 
-//#pragma region コマンドをキックする
-//
-//		// GPUにコマンドリストの実行を行わせる
-//		ID3D12CommandList *commandLists[] = { commandList_ };
-//		commandQueue_->ExecuteCommandLists(1, commandLists);
-//		// GPUとOSに画面の交換を行うように通知する
-//		swapChain->Present(1, 0);
-//
-//#pragma region GPUにシグナルを送る
-//
-//		// Fenceの値を更新
-//		fenceValue++;
-//		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-//		commandQueue_->Signal(fence, fenceValue);
-//
-//#pragma endregion
-//
-//#pragma region Fenceの値を確認してGPUを待つ
-//
-//		//// Fenceの値が指定したらSignal値にたどりついているか確認する
-//		//// GetCompletedValueの初期値はFence作成時に渡した初期値
-//		//if (fence->GetCompletedValue() < fenceValue) {
-//		//	// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
-//		//	fence->SetEventOnCompletion(fenceValue, fenceEvent);
-//		//	// イベント待機
-//		//	WaitForSingleObject(fenceEvent, INFINITE);
-//		//}
-//
-//#pragma endregion
-//
-//
-//		//// 次のフレーム用のコマンドリストを準備
-//		//hr = commandAllocator_->Reset();
-//		//assert(SUCCEEDED(hr));
-//		//hr = commandList_->Reset(commandAllocator_, nullptr);
-//		//assert(SUCCEEDED(hr));
-//
-//#pragma endregion
+		//#pragma region コマンドをキックする
+		//
+		//		// GPUにコマンドリストの実行を行わせる
+		//		ID3D12CommandList *commandLists[] = { commandList_ };
+		//		commandQueue_->ExecuteCommandLists(1, commandLists);
+		//		// GPUとOSに画面の交換を行うように通知する
+		//		swapChain->Present(1, 0);
+		//
+		//#pragma region GPUにシグナルを送る
+		//
+		//		// Fenceの値を更新
+		//		fenceValue++;
+		//		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+		//		commandQueue_->Signal(fence, fenceValue);
+		//
+		//#pragma endregion
+		//
+		//#pragma region Fenceの値を確認してGPUを待つ
+		//
+		//		//// Fenceの値が指定したらSignal値にたどりついているか確認する
+		//		//// GetCompletedValueの初期値はFence作成時に渡した初期値
+		//		//if (fence->GetCompletedValue() < fenceValue) {
+		//		//	// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
+		//		//	fence->SetEventOnCompletion(fenceValue, fenceEvent);
+		//		//	// イベント待機
+		//		//	WaitForSingleObject(fenceEvent, INFINITE);
+		//		//}
+		//
+		//#pragma endregion
+		//
+		//
+		//		//// 次のフレーム用のコマンドリストを準備
+		//		//hr = commandAllocator_->Reset();
+		//		//assert(SUCCEEDED(hr));
+		//		//hr = commandList_->Reset(commandAllocator_, nullptr);
+		//		//assert(SUCCEEDED(hr));
+		//
+		//#pragma endregion
 
 
 	}

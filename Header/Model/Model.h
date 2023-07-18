@@ -16,8 +16,13 @@
 #include <wrl.h>
 #include <d3d12.h>
 
+struct Transform;
 
 struct Material {
+
+private:
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+public:
 
 	struct MaterialData {
 		Vector4 color;			// 色(RGBA)
@@ -27,7 +32,9 @@ struct Material {
 	public:
 		Matrix4x4 uvTransform;
 	};
+
 	std::string textureFilePath;
+	ComPtr<ID3D12Resource> materialBuff_;
 
 	static Material LoadFile(const std::string &directoryPath, const std::string &fileName) {
 		Material materialData;
@@ -69,8 +76,8 @@ public:
 		Vector2 texCoord;	// UV座標系
 		Vector3 normal;		// 法線
 
-		bool operator==(const VertexData &vertex) {
-
+		// 比較。すべてが一致した場合のみ真を返す
+		bool operator==(const VertexData &vertex) const {
 			return position == vertex.position && texCoord == vertex.texCoord && normal == vertex.normal;
 		}
 	};
@@ -89,14 +96,15 @@ public:
 
 	void AddVertex(const VertexData &vertex);
 
-	//void Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform);
+	void SetMaterial(Material *const material);
+
+	void Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform) const;
 
 	static void CreateSphere(VertexData *const vertex,
 		ID3D12Resource *const indexResource, const uint32_t &subdivision);
 
 };
 
-struct Transform;
 
 class Model
 {
@@ -107,11 +115,12 @@ public:
 
 	std::string name_;
 	std::vector<Mesh *> meshList_;
-	std::unordered_map<std::string, Material *> materialMap_;
+	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
 	void LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 
-	void Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform, const Matrix4x4 &viewProjection) const;
+	void Draw(const Transform &transform, const Matrix4x4 &viewProjection) const;
 private:
+	static ID3D12GraphicsCommandList *commandList_;
 
 };
