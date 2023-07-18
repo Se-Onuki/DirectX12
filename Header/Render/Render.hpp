@@ -8,8 +8,14 @@ struct Matrix4x4;
 
 class Render {
 public:
+	enum class RootParameter {
+		kWorldTransform, // ワールド変換行列
+		kViewProjection, // ビュープロジェクション変換行列
+		kMaterial,       // マテリアル
+		kTexture,        // テクスチャ
+		kLight,          // ライト
+	};
 
-	
 
 	/// @brief 正射影行列関数
 	/// @param LeftTop 左上

@@ -233,8 +233,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 //	assert(SUCCEEDED(hr));
 //#pragma endregion
 
-	ID3D12CommandQueue *const commandQueue_ = dxCommon->commandQueue_.Get();
-	ID3D12CommandAllocator *const commandAllocator_ = dxCommon->commandAllocator_.Get();
+	//ID3D12CommandQueue *const commandQueue_ = dxCommon->commandQueue_.Get();
+	//ID3D12CommandAllocator *const commandAllocator_ = dxCommon->commandAllocator_.Get();
 	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
 	//
 	//#pragma region SwapChainを生成する
@@ -299,8 +299,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-	ID3D12Fence *const fence = dxCommon->fence_.Get();
-	uint64_t &fenceValue = dxCommon->fenceValue_;
+	//ID3D12Fence *const fence = dxCommon->fence_.Get();
+	//uint64_t &fenceValue = dxCommon->fenceValue_;
 	//#pragma region FanceとEventを生成する
 	//
 	//	// 初期値0でFanceを作る
@@ -346,13 +346,24 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// RootParameter作成
 	D3D12_ROOT_PARAMETER rootParameters[5] = {};
 
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
 
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
+
+	rootParameters[(uint32_t)Render::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[(uint32_t)Render::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
+	rootParameters[(uint32_t)Render::RootParameter::kWorldTransform].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
+
+	rootParameters[(uint32_t)Render::RootParameter::kViewProjection].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[(uint32_t)Render::RootParameter::kViewProjection].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
+	rootParameters[(uint32_t)Render::RootParameter::kViewProjection].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
+
+
+	rootParameters[(uint32_t)Render::RootParameter::kMaterial].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[(uint32_t)Render::RootParameter::kMaterial].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
+	rootParameters[(uint32_t)Render::RootParameter::kMaterial].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
+
+	rootParameters[(uint32_t)Render::RootParameter::kLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[(uint32_t)Render::RootParameter::kLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
+	rootParameters[(uint32_t)Render::RootParameter::kLight].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
 
 #pragma region Texture
 
@@ -363,20 +374,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;	// SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;	// Offsetを自動計算
 
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		// DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;				// Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	// Tableで使用する数
+	rootParameters[(uint32_t)Render::RootParameter::kTexture].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		// DescriptorTableを使う
+	rootParameters[(uint32_t)Render::RootParameter::kTexture].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
+	rootParameters[(uint32_t)Render::RootParameter::kTexture].DescriptorTable.pDescriptorRanges = descriptorRange;				// Tableの中身の配列を指定
+	rootParameters[(uint32_t)Render::RootParameter::kTexture].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	// Tableで使用する数
 
 #pragma endregion
-
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;		// PixelShaderで使う
-	rootParameters[3].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
-
-	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
-	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
-	rootParameters[4].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
 
 	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
@@ -819,6 +822,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+	dxCommon->StartDraw();
+
 #pragma region Textureを読んで転送する
 
 	// Textureを読んで転送する
@@ -843,52 +848,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//ID3D12Resource *textureResource = Texture::CreateResource(device, metadata);
 	//ID3D12Resource *intermediateResourece = Texture::UpdateData(textureResource, mipImages, device, commandList);
 
-	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからclearすること
-	hr = commandList_->Close();
-	assert(SUCCEEDED(hr));
-	if (true) {
+	dxCommon->EndDraw();
 
-#pragma region コマンドをキックする
-
-		// GPUにコマンドリストの実行を行わせる
-		ID3D12CommandList *commandLists[] = { commandList_ };
-		commandQueue_->ExecuteCommandLists(1, commandLists);
-
-#pragma region GPUにシグナルを送る
-
-		// Fenceの値を更新
-		fenceValue++;
-		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-		commandQueue_->Signal(fence, fenceValue);
-
-#pragma endregion
-
-#pragma region Fenceの値を確認してGPUを待つ
-
-		// Fenceの値が指定したらSignal値にたどりついているか確認する
-		// GetCompletedValueの初期値はFence作成時に渡した初期値
-		if (fence->GetCompletedValue() < fenceValue) {
-			// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
-			fence->SetEventOnCompletion(fenceValue, fenceEvent);
-			// イベント待機
-			WaitForSingleObject(fenceEvent, INFINITE);
-		}
-
-#pragma endregion
-
-		// 次のフレーム用のコマンドリストを準備
-		hr = commandAllocator_->Reset();
-		assert(SUCCEEDED(hr));
-		hr = commandList_->Reset(commandAllocator_, nullptr);
-		assert(SUCCEEDED(hr));
-
-#pragma endregion
-
-		//for (auto &intermediateResourece : intermediateResoureceList) {
-		//	//intermediateResourece->Release();
-		//}
-		//intermediateResoureceList.clear();
-	}
 #pragma endregion
 
 #pragma region ShaderResourceViewを作る
@@ -1055,24 +1016,24 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		// Light情報の場所を設定
-		commandList_->SetGraphicsRootConstantBufferView(3, lightResource->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kLight, lightResource->GetGPUVirtualAddress());
 
 		// マテリアルCBufferの場所を設定
-		commandList_->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, materialResourceSprite->GetGPUVirtualAddress());
 		// Spriteの描画
 		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
-		commandList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
-		commandList_->SetGraphicsRootConstantBufferView(4, vpResourceUI->GetGPUVirtualAddress());
-		commandList_->SetGraphicsRootDescriptorTable(2, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 		// Ballの描画
-		commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, materialResource->GetGPUVirtualAddress());
 		commandList_->IASetVertexBuffers(0, 1, &modelData.vbView_);	// VBVを設定
-		commandList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceBall->GetGPUVirtualAddress());
-		commandList_->SetGraphicsRootConstantBufferView(4, viewProjection.constBuffer_->GetGPUVirtualAddress());
-		commandList_->SetGraphicsRootDescriptorTable(2, selecteTexture);
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformationMatrixResourceBall->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, viewProjection.constBuffer_->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, selecteTexture);
 		commandList_->IASetIndexBuffer(&modelData.ibView_);
 		commandList_->DrawIndexedInstanced(static_cast<UINT>(modelData.indexs_.size()), 1, 0, 0, 0);
 
