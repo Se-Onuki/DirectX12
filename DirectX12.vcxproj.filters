@@ -43,6 +43,9 @@
     <Filter Include="3D">
       <UniqueIdentifier>{5c994ff3-038c-410e-a4d0-1aac27211028}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2D">
+      <UniqueIdentifier>{e5822814-93d1-4af8-bfd3-86c05bba8b3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -122,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="DirectBase\Base\TextureManager.cpp">
       <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectBase\2D\Sprite.cpp">
+      <Filter>2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="DirectBase\Base\TextureManager.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\2D\Sprite.h">
+      <Filter>2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -28,9 +28,9 @@ public:
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
 
-	uint32_t descriptorSizeSRV;
-	uint32_t descriptorSizeRTV;
-	uint32_t descriptorSizeDSV;
+	uint32_t descriptorSizeSRV = 0;
+	uint32_t descriptorSizeRTV = 0;
+	uint32_t descriptorSizeDSV = 0;
 
 	// DXGI
 	ComPtr<IDXGIFactory7> dxgiFactory_;

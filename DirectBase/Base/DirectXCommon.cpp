@@ -4,6 +4,7 @@
 #include "../../Header/Create/Create.h"
 #include "../../externals/DirectXTex/d3dx12.h"
 #include "../../Header/Texture/Texture.h"
+#include "TextureManager.h"
 
 
 void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBufferHeight)
@@ -164,6 +165,7 @@ void DirectXCommon::EndDraw() {
 
 #pragma endregion
 
+	TextureManager::GetInstance()->EndFlame();
 
 }
 
@@ -386,7 +388,7 @@ void DirectXCommon::CreateFence()
 void DirectXCommon::CreateDepthStencile()
 {
 
-	depthBuffer_ = Texture::CreateDepthStencilTextureResource(device_.Get(), WinApp::kWindowWidth, WinApp::kWindowHeight);
+	depthBuffer_ = TextureFunc::CreateDepthStencilTextureResource(device_.Get(), WinApp::kWindowWidth, WinApp::kWindowHeight);
 	dsvHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};

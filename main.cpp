@@ -828,15 +828,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResourceList;
 	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResoureceList;
 
-	mipImagesList.emplace_back(Texture::Load(modelData.material_.textureFilePath));
-	mipImagesList.emplace_back(Texture::Load("resources/monsterBall.png"));
+	mipImagesList.emplace_back(TextureFunc::Load(modelData.material_.textureFilePath));
+	mipImagesList.emplace_back(TextureFunc::Load("resources/monsterBall.png"));
 
 
 	for (auto &mipImage : mipImagesList) {
 		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = Texture::CreateResource(dxCommon->GetDevice(), metadata);
+		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = TextureFunc::CreateResource(dxCommon->GetDevice(), metadata);
 		textureResourceList.push_back(textureResource);
-		intermediateResoureceList.push_back(Texture::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
+		intermediateResoureceList.push_back(TextureFunc::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
 	}
 
 

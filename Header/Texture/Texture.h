@@ -7,7 +7,7 @@
 #include "../Create/Create.h"
 #include <wrl.h>
 
-namespace Texture
+namespace TextureFunc
 {
 	/// @brief TextureをCPUで読み込む
 	/// @param file_path ファイルパス
