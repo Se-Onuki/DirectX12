@@ -450,9 +450,24 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region BlendState(ブレンドステート)
 
 	// BlendStateの設定
-	D3D12_BLEND_DESC blendDesc{};
+	D3D12_BLEND_DESC blendDesc[2]{};
 	// 全ての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc[0].RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	// 全ての色要素を書き込む
+	blendDesc[1].RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc[1].RenderTarget[0].BlendEnable = true;
+	blendDesc[1].RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc[1].RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blendDesc[1].RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+
+	//BlendEnable = true;
+	//BlendOp = D3D12_BLEND_OP_ADD;
+	//SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	//DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc[1].RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc[1].RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc[1].RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
 #pragma endregion
 
@@ -520,7 +535,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;														// InputLayout
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),vertexShaderBlob->GetBufferSize() };		// VertexShader
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize() };		// PixelShader
-	graphicsPipelineStateDesc.BlendState = blendDesc;																// BlendState
+	graphicsPipelineStateDesc.BlendState = blendDesc[0];															// BlendState
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;														// RasterizeState
 
 	// DSVのFormatを設定する
@@ -536,11 +551,22 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
-	Microsoft::WRL::ComPtr<ID3D12PipelineState>graphicsPipelineState = nullptr;
-	hr = dxCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
+	Microsoft::WRL::ComPtr<ID3D12PipelineState>graphicsPipelineState[2] = { nullptr };
+	hr = dxCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState[0]));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
+
+#pragma region PSOを生成する
+
+	graphicsPipelineStateDesc.BlendState = blendDesc[1];
+	// 実際に生成
+	//Microsoft::WRL::ComPtr<ID3D12PipelineState>graphicsPipelineState = nullptr;
+	hr = dxCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState[1]));
+	assert(SUCCEEDED(hr));
+
+#pragma endregion
+
 
 #pragma region BallSize
 
@@ -1010,7 +1036,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// RootSignatureを設定。PSOに設定しているけど別途設定が必要
 		commandList_->SetGraphicsRootSignature(rootSignature.Get());
-		commandList_->SetPipelineState(graphicsPipelineState.Get());		// PSOを設定
+		commandList_->SetPipelineState(graphicsPipelineState[1].Get());		// PSOを設定
 		//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
 		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
 		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -1041,6 +1067,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//commandList_->IASetIndexBuffer(&indexBufferViewBall);
 		//commandList_->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);
 
+		//commandList_->SetPipelineState(graphicsPipelineState[0].Get());		// PSOを設定
 
 #pragma endregion
 
@@ -1054,46 +1081,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-		//#pragma region コマンドをキックする
-		//
-		//		// GPUにコマンドリストの実行を行わせる
-		//		ID3D12CommandList *commandLists[] = { commandList_ };
-		//		commandQueue_->ExecuteCommandLists(1, commandLists);
-		//		// GPUとOSに画面の交換を行うように通知する
-		//		swapChain->Present(1, 0);
-		//
-		//#pragma region GPUにシグナルを送る
-		//
-		//		// Fenceの値を更新
-		//		fenceValue++;
-		//		//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-		//		commandQueue_->Signal(fence, fenceValue);
-		//
-		//#pragma endregion
-		//
-		//#pragma region Fenceの値を確認してGPUを待つ
-		//
-		//		//// Fenceの値が指定したらSignal値にたどりついているか確認する
-		//		//// GetCompletedValueの初期値はFence作成時に渡した初期値
-		//		//if (fence->GetCompletedValue() < fenceValue) {
-		//		//	// 指定したSignalに達していないので、たどり着くまで待つようにイベントを設定する。
-		//		//	fence->SetEventOnCompletion(fenceValue, fenceEvent);
-		//		//	// イベント待機
-		//		//	WaitForSingleObject(fenceEvent, INFINITE);
-		//		//}
-		//
-		//#pragma endregion
-		//
-		//
-		//		//// 次のフレーム用のコマンドリストを準備
-		//		//hr = commandAllocator_->Reset();
-		//		//assert(SUCCEEDED(hr));
-		//		//hr = commandList_->Reset(commandAllocator_, nullptr);
-		//		//assert(SUCCEEDED(hr));
-		//
-		//#pragma endregion
-
-
 	}
 
 #pragma region 各種解放
@@ -1102,50 +1089,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	//	vertexResourcePlane->Release();
-	//
-	//	indexResourceSprite->Release();
-	//	indexResourceBall->Release();
-	//
-	//	lightResource->Release();
-	//	vertexResourceSprite->Release();
-	//	vertexResourceBall->Release();
-	//	//vertexResource->Release();
-	//	graphicsPipelineState->Release();
-	//	signatureBlob->Release();
-	//	if (errorBlob) {
-	//		errorBlob->Release();
-	//	}
-	//	rootSignature->Release();
-	//	pixelShaderBlob->Release();
-	//	vertexShaderBlob->Release();
-	//	materialResource->Release();
-	//	materialResourceSprite->Release();
-	//	//wvpResource->Release();
-	//	transformationMatrixResourceSprite->Release();
-	//	transformationMatrixResourceBall->Release();
-	//	for (auto &textureResource : textureResourceList) {
-	//		textureResource->Release();
-	//	}
-	//	depthStencileResource->Release();
-	//	dsvDescriptorHeap->Release();
-	//
 	CloseHandle(fenceEvent);
-	//	fence->Release();
-	//	srvDescriptorHeap->Release();
-	//	rtvDescriptorHeap->Release();
-	//	swapChainResources[0]->Release();
-	//	swapChainResources[1]->Release();
-	//	swapChain->Release();
-	//	commandList->Release();
-	//	commandAllocator->Release();
-	//	commandQueue->Release();
-	//	device->Release();
-	//	useAdapter->Release();
-	//	dxgiFactory->Release();
-	//#ifdef _DEBUG
-	//	debugController->Release();
-	//#endif // _DEBUG
+	
 	CloseWindow(winApp->GetHWND());
 
 #pragma endregion
