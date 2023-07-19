@@ -941,6 +941,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat2("translate", &transformSprite.translate.x, 1.f);
 		ImGui::End();
 
+		ImGui::Begin("Material");
+		ImGui::ColorEdit4("Color", &materialDataSprite->color.x);
+		ImGui::Checkbox("Lighting", (bool *)&materialDataSprite->enableLighting);
+		//ImGui::DragFloat2("translate", &transformSprite.translate.x, 1.f);
+		ImGui::End();
+
+
+
 		ImGui::Begin("Ball");
 		if (ImGui::BeginCombo("TextureList", "texture")) {
 
@@ -1036,7 +1044,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// RootSignatureを設定。PSOに設定しているけど別途設定が必要
 		commandList_->SetGraphicsRootSignature(rootSignature.Get());
-		commandList_->SetPipelineState(graphicsPipelineState[1].Get());		// PSOを設定
+		commandList_->SetPipelineState(graphicsPipelineState[0].Get());		// PSOを設定
 		//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
 		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
 		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -1090,7 +1098,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui::DestroyContext();
 
 	CloseHandle(fenceEvent);
-	
+
 	CloseWindow(winApp->GetHWND());
 
 #pragma endregion
