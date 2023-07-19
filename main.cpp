@@ -821,29 +821,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-#pragma region ViewportとScissor(シザー)
-
-	// ビューポート
-	D3D12_VIEWPORT viewport{};
-	// クライアント領域のサイズと一緒にして画面全体に表示
-	viewport.Width = WinApp::kWindowWidth;
-	viewport.Height = WinApp::kWindowHeight;
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-
-	viewport.MinDepth = 0.f;
-	viewport.MaxDepth = 1.f;
-
-	// シザー短形
-	D3D12_RECT scissorRect{};
-	// 基本的にビューポートと同じ短形が構成されるようにする
-	scissorRect.left = 0;
-	scissorRect.right = WinApp::kWindowWidth;
-	scissorRect.top = 0;
-	scissorRect.bottom = WinApp::kWindowHeight;
-
-#pragma endregion
-
 #pragma region Textureを読んで転送する
 
 	// Textureを読んで転送する
@@ -936,7 +913,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		ImGui::Begin("Ball");
 		if (ImGui::BeginCombo("TextureList", "texture")) {
-
 			for (auto &texture : textureSrvHandleGPUList) {
 				//bool is_selected = false;
 				if (ImGui::Selectable(std::to_string(texture.ptr).c_str())) {
@@ -1056,6 +1032,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 		dxCommon->EndDraw();
+
+		intermediateResoureceList.clear();
 
 #pragma endregion
 
