@@ -42,11 +42,10 @@ namespace Texture
 		resourceDesc.SampleDesc.Count = 1;						// サンプリングカウント
 		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);	// Textureの次元数。普段使っているのは2次元。
 
-		// 2. 利用するHeapの設定。非常に特殊な運用。02_04_exで一般的なケースがある。
+		// 2. 利用するHeapの設定。
 		D3D12_HEAP_PROPERTIES heapProperties{};
-		heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;							// 細かい設定を行う
-		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;	// WriteBackポリシーでCPUアクセス可能
-		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;				// プロセッサの近くに配置
+		heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;	// VRAM上に作成
+
 
 		// 3. Resourceを生成する
 		Microsoft::WRL::ComPtr<ID3D12Resource>resource = nullptr;

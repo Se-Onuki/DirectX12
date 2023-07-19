@@ -461,10 +461,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	blendDesc[1].RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
 	blendDesc[1].RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 
-	//BlendEnable = true;
-	//BlendOp = D3D12_BLEND_OP_ADD;
-	//SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	//DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 	blendDesc[1].RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 	blendDesc[1].RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc[1].RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
@@ -848,12 +844,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-	dxCommon->StartDraw();
-
 #pragma region Textureを読んで転送する
 
 	// Textureを読んで転送する
-	std::list<DirectX::ScratchImage>mipImagesList;
+	std::list<DirectX::ScratchImage> mipImagesList;
 	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResourceList;
 	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResoureceList;
 
@@ -868,13 +862,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		intermediateResoureceList.push_back(Texture::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
 	}
 
-
-	//DirectX::ScratchImage mipImages = Texture::Load("resources/uvChecker.png");
-	//const DirectX::TexMetadata &metadata = mipImages.GetMetadata();
-	//ID3D12Resource *textureResource = Texture::CreateResource(device, metadata);
-	//ID3D12Resource *intermediateResourece = Texture::UpdateData(textureResource, mipImages, device, commandList);
-
-	dxCommon->EndDraw();
 
 #pragma endregion
 
@@ -899,9 +886,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = DescriptorHandIe::GetCPUHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, i + 1);
 		D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = DescriptorHandIe::GetGPUHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, i + 1);
 		textureSrvHandleGPUList.emplace_back(textureSrvHandleGPU);
-		//// 先頭はImGuiが使ってるのでその次を使う
-		//textureSrvHandleCPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-		//textureSrvHandleGPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
 		// SRVの作成
 		dxCommon->GetDevice()->CreateShaderResourceView(textureResourceIterator->Get(), &srvDesc, textureSrvHandleCPU);
 	}
@@ -988,31 +973,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		materialDataSprite->uvTransform = uvTransform.Affine();
 
 
-		//transform.rotate.y += 0.03f;
-		//Matrix4x4 worldMatrix = transform.Affine();
-		//Matrix4x4 cameraMatrix = cameraTransform.Affine();
-		//Matrix4x4 viewMatrix = cameraMatrix.InverseRT();
 		// 透視投影行列
 		Matrix4x4 projectionMatrix = Render::MakePerspectiveFovMatrix(0.45f, float(WinApp::kWindowWidth) / float(WinApp::kWindowHeight), 0.1f, 100.f);
-		//Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
 
-		//*wvpData = worldViewProjectionMatrix;
-
-
-		//transformBall.rotate.y += 0.03f;
 		Matrix4x4 worldMatrixBall = transformBall.Affine();
 
-		//Matrix4x4 wvp = worldMatrixBall * viewMatrix * projectionMatrix;
-		//transformationMatrixDataBall->WVP = wvp;
 		transformationMatrixDataBall->World = worldMatrixBall;
 
 
-		//viewProjection.rotation_ = cameraTransform.rotate;
-		//viewProjection.translation_ = cameraTransform.translate;
 		viewProjection.UpdateMatrix();
 
-		//vpData->view = viewMatrix;
-		//vpData->projection = projectionMatrix;
 		vpDataUI->view = viewMatrixSprite;
 		vpDataUI->projection = projectionMatrixSprite;
 

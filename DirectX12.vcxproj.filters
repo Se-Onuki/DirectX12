@@ -120,6 +120,9 @@
     <ClCompile Include="DirectBase\3D\ViewProjection\ViewProjection.cpp">
       <Filter>3D</Filter>
     </ClCompile>
+    <ClCompile Include="DirectBase\Base\TextureManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -205,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="DirectBase\3D\ViewProjection\ViewProjection.h">
       <Filter>3D</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Base\TextureManager.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
