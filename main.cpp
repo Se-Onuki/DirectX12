@@ -207,55 +207,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//const uint32_t descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 #pragma endregion
-//
-//#pragma region CommandQueueを生成する
-//	// コマンドキューを生成する
-//	Microsoft::WRL::ComPtr<ID3D12CommandQueue>commandQueue = nullptr;
-//	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
-//
-//	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(commandQueue.GetAddressOf()));
-//	IID_PPV_ARGS(commandQueue.GetAddressOf());
-//	// コマンドキューの生成がうまくいかなかったので起動できない
-//	assert(SUCCEEDED(hr));
-//#pragma endregion
-//
-//#pragma region CommandListを生成する
-//	// コマンドアロケータを生成する
-//	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
-//	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
-//	//コマンドアロケータの生成がうまくいかなかったので起動できない
-//	assert(SUCCEEDED(hr));
-//
-//	// コマンドリストを生成する
-//	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
-//	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
-//	// コマンドリストの生成がうまくいかなかったので起動できない
-//	assert(SUCCEEDED(hr));
-//#pragma endregion
 
-	//ID3D12CommandQueue *const commandQueue_ = dxCommon->commandQueue_.Get();
-	//ID3D12CommandAllocator *const commandAllocator_ = dxCommon->commandAllocator_.Get();
 	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
-	//
-	//#pragma region SwapChainを生成する
-	//
-	//	// スワップチェーンを生成する
-	//	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
-	//	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	//	swapChainDesc.Width = WinApp::kWindowWidth;								// 画面の幅。	ウィンドウクライアント領域と同じにしておく
-	//	swapChainDesc.Height = WinApp::kWindowHeight;							// 画面の高さ。ウィンドウクライアント領域と同じにしておく
-	//	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;				// 色の設定
-	//	swapChainDesc.SampleDesc.Count = 1;								// マルチサンプルしない
-	//	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	// 描写のターゲットとして利用する
-	//	swapChainDesc.BufferCount = 2;									// ダブルバッファ
-	//	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;		// モニタにうつしたら、中身を破壊
-	//	//コマンドキュー。ウィンドウハンドル
-	//	hr = dxCommon->dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, winApp->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1 **>(swapChain.GetAddressOf()));
-	//	assert(SUCCEEDED(hr));
-	//
-	//#pragma endregion
-
-	//IDXGISwapChain4 *const swapChain = dxCommon->swapChain_.Get();
 
 #pragma region DescriptorHeap
 
@@ -345,8 +298,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// RootParameter作成
 	D3D12_ROOT_PARAMETER rootParameters[5] = {};
-
-
 
 	rootParameters[(uint32_t)Render::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters[(uint32_t)Render::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
