@@ -100,11 +100,13 @@ public:
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
 	void LoadObjFile(const std::string &directoryPath, const std::string &fileName);
+	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
 
 	void Draw(const Transform &transform, const ViewProjection &viewProjection) const;
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
+	static const char *const defaultDirectory;
 private:
 	static ID3D12GraphicsCommandList *commandList_;
 

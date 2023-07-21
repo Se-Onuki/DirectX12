@@ -8,6 +8,7 @@
 #include "../../DirectBase/Base/TextureManager.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
+const char *const Model::defaultDirectory = "resources/";
 
 Model::Model()
 {
@@ -30,7 +31,7 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 #pragma region 1. ファイルを開く
 
-	std::ifstream file{ directoryPath + fileName };
+	std::ifstream file{ defaultDirectory + directoryPath + fileName };
 	if (!file.is_open()) return;		// 開けなかった場合、処理を終了する
 
 #pragma endregion
@@ -355,7 +356,7 @@ Material Material::LoadFile(const std::string &directoryPath, const std::string 
 	Material materialData;
 	std::string line;
 
-	std::ifstream file{ directoryPath + fileName };
+	std::ifstream file{ Model::defaultDirectory + directoryPath + fileName };
 	if (!file.is_open()) return materialData;		// 開けなかった場合、処理を終了する
 
 #pragma region ファイルからMaterialDataを構築

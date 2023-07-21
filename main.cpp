@@ -528,7 +528,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Model
 
 	Model model;
-	model.LoadObjFile("resources/", "bunny.obj");
+	model.LoadObjFile("", "teapot.obj");
 	/*Mesh &modelData = *model.meshList_.back();
 	modelData.CreateBuffer();*/
 
