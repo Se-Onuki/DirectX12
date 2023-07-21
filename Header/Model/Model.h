@@ -24,6 +24,10 @@ struct Material {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
+	Material() = default;
+	Material(const std::string &materialName) {
+		name_ = materialName;
+	}
 
 	struct MaterialData {
 		Vector4 color;			// 色(RGBA)
@@ -34,9 +38,9 @@ public:
 		Matrix4x4 uvTransform;
 	};
 
-	Vector3 ambient_;			// アンビエント影響度
-	Vector3 diffuse_;			// ディフューズ影響度
-	Vector3 specular_;			// スペキュラー影響度
+	Vector3 ambient_{};			// アンビエント影響度
+	Vector3 diffuse_{};			// ディフューズ影響度
+	Vector3 specular_{};			// スペキュラー影響度
 	std::string name_;			// マテリアル名
 	std::string textureName_;
 	uint32_t texHandle_ = 1u;

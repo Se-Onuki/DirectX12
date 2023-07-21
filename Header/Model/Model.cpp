@@ -10,6 +10,44 @@
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
 
+void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fileName) {
+
+	Material *materialData = nullptr;
+	std::string line;
+
+	std::ifstream file{ Model::defaultDirectory + directoryPath + fileName };
+	if (!file.is_open()) return;		// 開けなかった場合、処理を終了する
+
+#pragma region ファイルからMaterialDataを構築
+
+	while (std::getline(file, line)) {
+
+		std::string identifier;
+		std::istringstream s{ line };
+		s >> identifier;
+
+		if (identifier == "newmtl") {
+			std::string materialName;
+			s >> materialName;
+			materialMap_[materialName].reset(new Material{ materialName });
+			materialData = materialMap_[materialName].get();
+		}
+
+		else if (identifier == "map_Kd") {
+			// 連結してファイルバスにする
+			std::string textureFilename;
+			s >> textureFilename;
+
+			materialData->textureName_ = directoryPath + textureFilename;
+			materialData->texHandle_ = TextureManager::Load(textureFilename);
+			materialData->CreateBuffer();
+		}
+	}
+#pragma endregion
+
+	return;
+}
+
 Model::Model()
 {
 }

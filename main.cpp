@@ -517,34 +517,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-
-#pragma region BallSize
-
-	const uint16_t BallDivision = 16;
-	const uint32_t BallVertexCount = 4 * BallDivision * BallDivision;
-
-#pragma endregion
-
 #pragma region Model
 
 	Model model;
-	model.LoadObjFile("", "teapot.obj");
-	/*Mesh &modelData = *model.meshList_.back();
-	modelData.CreateBuffer();*/
-
+	model.LoadObjFile("", "plane.obj");
 
 #pragma endregion
 
-	/*Transform transform;
-	transform.Init();*/
-
 #pragma region ViewProjection
-
-	//Microsoft::WRL::ComPtr<ID3D12Resource>vpResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(ViewProjection::ViewProjectionMatrix));
-	//ViewProjection::ViewProjectionMatrix *vpData = nullptr;
-	//vpResource->Map(0, nullptr, reinterpret_cast<void **>(&vpData));
-	//vpData->view = Matrix4x4::Identity();
-	//vpData->projection = Matrix4x4::Identity();
 
 	Microsoft::WRL::ComPtr<ID3D12Resource>vpResourceUI = CreateBufferResource(dxCommon->GetDevice(), sizeof(ViewProjection::ViewProjectionMatrix));
 	ViewProjection::ViewProjectionMatrix *vpDataUI = nullptr;
@@ -560,7 +540,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region VertexResourceを生成する
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * 4);
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * BallVertexCount);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(Mesh::VertexData) * BallVertexCount);
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Light::Direction));
 
@@ -568,7 +548,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region IndexBuffer
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * BallDivision * BallDivision * 6);
+	//Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * BallDivision * BallDivision * 6);
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * 6);
 
 #pragma endregion
@@ -634,21 +614,21 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Ball
 
-	// 頂点バッファビューを作成する
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewBall{};
-	// リソースの先頭のアドレスから使う
-	vertexBufferViewBall.BufferLocation = vertexResourceBall->GetGPUVirtualAddress();
-	// 使用するリソース全体のサイズ
-	vertexBufferViewBall.SizeInBytes = sizeof(Mesh::VertexData) * BallVertexCount;
-	// 1頂点あたりのサイズ
-	vertexBufferViewBall.StrideInBytes = sizeof(Mesh::VertexData);
+	//// 頂点バッファビューを作成する
+	//D3D12_VERTEX_BUFFER_VIEW vertexBufferViewBall{};
+	//// リソースの先頭のアドレスから使う
+	//vertexBufferViewBall.BufferLocation = vertexResourceBall->GetGPUVirtualAddress();
+	//// 使用するリソース全体のサイズ
+	//vertexBufferViewBall.SizeInBytes = sizeof(Mesh::VertexData) * BallVertexCount;
+	//// 1頂点あたりのサイズ
+	//vertexBufferViewBall.StrideInBytes = sizeof(Mesh::VertexData);
 
 
-	D3D12_INDEX_BUFFER_VIEW indexBufferViewBall{};
+	//D3D12_INDEX_BUFFER_VIEW indexBufferViewBall{};
 
-	indexBufferViewBall.BufferLocation = indexResourceBall->GetGPUVirtualAddress();
-	indexBufferViewBall.SizeInBytes = sizeof(uint32_t) * 6u * BallDivision * BallDivision;
-	indexBufferViewBall.Format = DXGI_FORMAT_R32_UINT;
+	//indexBufferViewBall.BufferLocation = indexResourceBall->GetGPUVirtualAddress();
+	//indexBufferViewBall.SizeInBytes = sizeof(uint32_t) * 6u * BallDivision * BallDivision;
+	//indexBufferViewBall.Format = DXGI_FORMAT_R32_UINT;
 
 #pragma endregion
 
@@ -767,12 +747,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Ball
 
-	// 頂点リソースにデータを書き込む
-	Mesh::VertexData *vertexDataBall = nullptr;
-	// 書き込むためのアドレスを取得
-	vertexResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&vertexDataBall));
+	//// 頂点リソースにデータを書き込む
+	//Mesh::VertexData *vertexDataBall = nullptr;
+	//// 書き込むためのアドレスを取得
+	//vertexResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&vertexDataBall));
 
-	Mesh::CreateSphere(vertexDataBall, indexResourceBall.Get(), BallDivision);
+	//Mesh::CreateSphere(vertexDataBall, indexResourceBall.Get(), BallDivision);
 
 
 #pragma endregion
