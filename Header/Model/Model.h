@@ -40,9 +40,12 @@ public:
 	std::string name_;			// マテリアル名
 	std::string textureName_;
 	uint32_t texHandle_ = 1u;
-	ComPtr<ID3D12Resource> materialBuff_;
+	ComPtr<ID3D12Resource> constBuffer_;
+	MaterialData *mapData_ = nullptr;
 
 	static Material LoadFile(const std::string &directoryPath, const std::string &fileName);
+
+	void CreateBuffer();
 };
 
 struct Mesh

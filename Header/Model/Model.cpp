@@ -204,6 +204,7 @@ void Mesh::SetMaterial(Material *const material) {
 void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform) const {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, material_.texHandle_);
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transform.constBuffer_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, material_.constBuffer_->GetGPUVirtualAddress());
 
 	commandList->IASetVertexBuffers(0, 1, &this->vbView_);
 	commandList->IASetIndexBuffer(&this->ibView_);
@@ -375,9 +376,20 @@ Material Material::LoadFile(const std::string &directoryPath, const std::string 
 
 			materialData.textureName_ = directoryPath + textureFilename;
 			materialData.texHandle_ = TextureManager::Load(textureFilename);
+			materialData.CreateBuffer();
 		}
 	}
 #pragma endregion
 
 	return materialData;
+}
+
+void Material::CreateBuffer() {
+	constBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(MaterialData));
+	// マテリアルにデータを書き込む
+	// 書き込むためのアドレスを取得
+	constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
+	mapData_->color = Vector4{ 1.f,1.f,1.f,1.f };
+	mapData_->enableLighting = true;
+	mapData_->uvTransform = Matrix4x4::Identity();
 }

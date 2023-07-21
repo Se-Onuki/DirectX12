@@ -528,7 +528,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Model
 
 	Model model;
-	model.LoadObjFile("resources/", "multiMesh.obj");
+	model.LoadObjFile("resources/", "teapot.obj");
 	Mesh &modelData = *model.meshList_.back();
 	modelData.CreateBuffer();
 
@@ -575,15 +575,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Material用のResource
 
-	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズ。
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Material::MaterialData));
-	// マテリアルにデータを書き込む
-	Material::MaterialData *materialData = nullptr;
-	// 書き込むためのアドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void **>(&materialData));
-	materialData->color = Vector4{ 1.f,1.f,1.f,1.f };
-	materialData->enableLighting = true;
-	materialData->uvTransform = Matrix4x4::Identity();
+	//// マテリアル用のリソースを作る。今回はcolor1つ分のサイズ。
+	//Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Material::MaterialData));
+	//// マテリアルにデータを書き込む
+	//Material::MaterialData *materialData = nullptr;
+	//// 書き込むためのアドレスを取得
+	//materialResource->Map(0, nullptr, reinterpret_cast<void **>(&materialData));
+	//materialData->color = Vector4{ 1.f,1.f,1.f,1.f };
+	//materialData->enableLighting = true;
+	//materialData->uvTransform = Matrix4x4::Identity();
 
 #pragma region Sprite
 
@@ -909,9 +909,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 		// 透視投影行列
-		Matrix4x4 projectionMatrix = Render::MakePerspectiveFovMatrix(0.45f, float(WinApp::kWindowWidth) / float(WinApp::kWindowHeight), 0.1f, 100.f);
+		//Matrix4x4 projectionMatrix = Render::MakePerspectiveFovMatrix(0.45f, float(WinApp::kWindowWidth) / float(WinApp::kWindowHeight), 0.1f, 100.f);
 
-		Matrix4x4 worldMatrixBall = transformBall.Affine();
+		//Matrix4x4 worldMatrixBall = transformBall.Affine();
 		transformBall.UpdateMatrix();
 
 		//transformationMatrixDataBall->World = worldMatrixBall;
@@ -923,7 +923,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		vpDataUI->projection = projectionMatrixSprite;
 
 		ImGui::ShowDemoWindow();
-
 
 #pragma endregion
 
@@ -972,14 +971,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 		// Ballの描画
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, materialResource->GetGPUVirtualAddress());
-		//commandList_->IASetVertexBuffers(0, 1, &modelData.vbView_);	// VBVを設定
-		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformBall.constBuffer_->GetGPUVirtualAddress());
-		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, viewProjection.constBuffer_->GetGPUVirtualAddress());
-		//texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, ball);
-		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());
-		//commandList_->IASetIndexBuffer(&modelData.ibView_);
-		//commandList_->DrawIndexedInstanced(static_cast<UINT>(modelData.indexs_.size()), 1, 0, 0, 0);
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, materialResource->GetGPUVirtualAddress());
+
 		model.Draw(transformBall, viewProjection);
 
 		//commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
