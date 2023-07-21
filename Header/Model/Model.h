@@ -85,7 +85,6 @@ public:
 
 	static void CreateSphere(VertexData *const vertex,
 		ID3D12Resource *const indexResource, const uint32_t &subdivision);
-
 };
 
 
@@ -99,8 +98,6 @@ public:
 	std::string name_;
 	std::vector<Mesh *> meshList_;
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
-
-	//static void Init(ID3D12GraphicsCommandList *const commandList);
 
 	void LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 

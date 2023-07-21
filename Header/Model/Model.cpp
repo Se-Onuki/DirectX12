@@ -119,7 +119,7 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 	}
 #pragma endregion
 
-
+	modelData.CreateBuffer();
 }
 
 void Model::Draw(const Transform &transform, const ViewProjection &viewProjection) const

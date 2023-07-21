@@ -226,10 +226,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region SwapChainからResourceを引っ張ってくる
 	// SwapChainからResourceを引っ張ってくる
-	ID3D12Resource *const swapChainResources[] = {
+	/*ID3D12Resource *const swapChainResources[] = {
 		DirectXCommon::GetInstance()->backBuffers_[0].Get(),
 		DirectXCommon::GetInstance()->backBuffers_[1].Get()
-	};
+	};*/
 
 #pragma endregion
 
@@ -529,8 +529,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	Model model;
 	model.LoadObjFile("resources/", "teapot.obj");
-	Mesh &modelData = *model.meshList_.back();
-	modelData.CreateBuffer();
+	/*Mesh &modelData = *model.meshList_.back();
+	modelData.CreateBuffer();*/
 
 
 #pragma endregion
@@ -901,7 +901,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		Matrix4x4 worldMatrixSprite = transformSprite.Affine();
 		Matrix4x4 viewMatrixSprite = Matrix4x4::Identity();
 		Matrix4x4 projectionMatrixSprite = Render::MakeOrthographicMatrix({ 0.f,0.f }, { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight }, 0.f, 100.f);
-		Matrix4x4 wvpnMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
+		//Matrix4x4 wvpnMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
 		//transformationMatrixDataSprite->WVP = wvpnMatrixSprite;
 		transformationMatrixDataSprite->World = worldMatrixSprite;
 
@@ -971,8 +971,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 		// Ballの描画
-		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, materialResource->GetGPUVirtualAddress());
-
 		model.Draw(transformBall, viewProjection);
 
 		//commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定

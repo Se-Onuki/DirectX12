@@ -20,10 +20,10 @@ private:
 
 	// ウィンドウ管理
 	WinApp *winApp_ = nullptr;
-public:
+	//public:
 
-	// DirectX管理
-	// 定数
+		// DirectX管理
+		// 定数
 	UINT64 fenceValue_ = 0;
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
@@ -42,6 +42,7 @@ private:
 public:
 	// コマンドリスト関係
 	ComPtr<ID3D12GraphicsCommandList> commandList_;
+private:
 	ComPtr<ID3D12CommandAllocator> commandAllocator_;
 	ComPtr<ID3D12CommandQueue> commandQueue_;
 
@@ -49,8 +50,10 @@ public:
 	ComPtr<IDXGISwapChain4> swapChain_;
 
 	ComPtr<ID3D12DescriptorHeap> rtvHeap_;
+public:
 	std::array<ComPtr<ID3D12Resource>, backBufferCount> backBuffers_;
 
+private:
 	ComPtr<ID3D12Fence> fence_;
 
 	ComPtr<ID3D12Resource> depthBuffer_;
