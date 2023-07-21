@@ -201,18 +201,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
 
 	TextureManager::GetInstance()->Init(dxCommon->GetDevice(), commandList_);
+	uint32_t white = TextureManager::Load("uvChecker.png");
 
 	HRESULT hr;
 
 #pragma region DescriptorSize
 
-	//const uint32_t descriptorSizeSRV = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//const uint32_t descriptorSizeRTV = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	//const uint32_t descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-
 #pragma endregion
-
-	//ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
 
 #pragma region DescriptorHeap
 
@@ -222,7 +217,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// SRV用のディスクリプタの数は128。SRVはShader内で触るものなので、ShaderVisibleはtrue
 	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
-	auto *const texManager = TextureManager::GetInstance();
+	TextureManager *const texManager = TextureManager::GetInstance();
 	ID3D12DescriptorHeap *const srvDescriptorHeap = TextureManager::GetInstance()->GetSRVHeap();
 
 
@@ -780,7 +775,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-	uint32_t white = TextureManager::Load("monsterBall.png");
 //
 //#pragma region Textureを読んで転送する
 //
