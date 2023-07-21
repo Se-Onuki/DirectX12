@@ -201,7 +201,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
 
 	TextureManager::GetInstance()->Init(dxCommon->GetDevice(), commandList_);
-	uint32_t uvTex = TextureManager::Load("uvChecker.png");
+	/*uint32_t uvTex = */TextureManager::Load("uvChecker.png");
 	uint32_t ball = TextureManager::Load("monsterBall.png");
 
 	HRESULT hr;
@@ -528,7 +528,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Model
 
 	Model model;
-	model.LoadObjFile("resources", "multiMesh.obj");
+	model.LoadObjFile("resources/", "multiMesh.obj");
 	Mesh &modelData = *model.meshList_.back();
 	modelData.CreateBuffer();
 
@@ -966,7 +966,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
-		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, uvTex);
+		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, ball);
 		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
@@ -976,7 +976,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//commandList_->IASetVertexBuffers(0, 1, &modelData.vbView_);	// VBVを設定
 		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformBall.constBuffer_->GetGPUVirtualAddress());
 		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, viewProjection.constBuffer_->GetGPUVirtualAddress());
-		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, ball);
+		//texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, ball);
 		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());
 		//commandList_->IASetIndexBuffer(&modelData.ibView_);
 		//commandList_->DrawIndexedInstanced(static_cast<UINT>(modelData.indexs_.size()), 1, 0, 0, 0);

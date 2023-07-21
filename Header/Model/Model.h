@@ -34,36 +34,15 @@ public:
 		Matrix4x4 uvTransform;
 	};
 
-	std::string textureFilePath;
+	Vector3 ambient_;			// アンビエント影響度
+	Vector3 diffuse_;			// ディフューズ影響度
+	Vector3 specular_;			// スペキュラー影響度
+	std::string name_;			// マテリアル名
+	std::string textureName_;
+	uint32_t texHandle_ = 1u;
 	ComPtr<ID3D12Resource> materialBuff_;
 
-	static Material LoadFile(const std::string &directoryPath, const std::string &fileName) {
-		Material materialData;
-		std::string line;
-
-		std::ifstream file{ directoryPath + "/" + fileName };
-		if (!file.is_open()) return materialData;		// 開けなかった場合、処理を終了する
-
-#pragma region ファイルからMaterialDataを構築
-
-		while (std::getline(file, line)) {
-
-			std::string identifier;
-			std::istringstream s{ line };
-			s >> identifier;
-
-			if (identifier == "map_Kd") {
-				// 連結してファイルバスにする
-				std::string textureFilename;
-				s >> textureFilename;
-
-				materialData.textureFilePath = directoryPath + "/" + textureFilename;
-			}
-		}
-#pragma endregion
-
-		return materialData;
-	}
+	static Material LoadFile(const std::string &directoryPath, const std::string &fileName);
 };
 
 struct Mesh

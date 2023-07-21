@@ -5,6 +5,7 @@
 #include "../../DirectBase/Base/DirectXCommon.h"
 #include "../../DirectBase/3D/ViewProjection/ViewProjection.h"
 #include "../Math/Transform.h"
+#include "../../DirectBase/Base/TextureManager.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 
@@ -32,7 +33,7 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 #pragma region 1. ファイルを開く
 
-	std::ifstream file{ directoryPath + "/" + fileName };
+	std::ifstream file{ directoryPath + fileName };
 	if (!file.is_open()) return;		// 開けなかった場合、処理を終了する
 
 #pragma endregion
@@ -201,6 +202,7 @@ void Mesh::SetMaterial(Material *const material) {
 }
 
 void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform) const {
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, material_.texHandle_);
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transform.constBuffer_->GetGPUVirtualAddress());
 
 	commandList->IASetVertexBuffers(0, 1, &this->vbView_);
@@ -349,4 +351,33 @@ void Mesh::CreateSphere(VertexData *const vertex, ID3D12Resource *const indexRes
 
 	}
 
+}
+
+Material Material::LoadFile(const std::string &directoryPath, const std::string &fileName) {
+	Material materialData;
+	std::string line;
+
+	std::ifstream file{ directoryPath + fileName };
+	if (!file.is_open()) return materialData;		// 開けなかった場合、処理を終了する
+
+#pragma region ファイルからMaterialDataを構築
+
+	while (std::getline(file, line)) {
+
+		std::string identifier;
+		std::istringstream s{ line };
+		s >> identifier;
+
+		if (identifier == "map_Kd") {
+			// 連結してファイルバスにする
+			std::string textureFilename;
+			s >> textureFilename;
+
+			materialData.textureName_ = directoryPath + textureFilename;
+			materialData.texHandle_ = TextureManager::Load(textureFilename);
+		}
+	}
+#pragma endregion
+
+	return materialData;
 }

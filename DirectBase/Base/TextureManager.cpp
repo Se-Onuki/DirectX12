@@ -46,6 +46,20 @@ void TextureManager::EndFlame()
 
 uint32_t TextureManager::LoadInternal(const std::string &file_name)
 {
+#pragma region Texture検索
+
+	auto it = std::find_if(textureArray_.begin(), textureArray_.end(), [&](const auto &texture) {
+		return texture.name == file_name;
+		}
+	);
+	if (it != textureArray_.end()) {
+		// 読み込み済みテクスチャの要素番号を取得
+		return static_cast<uint32_t>(std::distance(textureArray_.begin(), it));
+		//return handle;
+	}
+
+#pragma endregion
+
 	assert(nextIndex_ < maxTextureCount);
 	assert(nextIndex_ >= alreadyUsedCount);
 	uint32_t handle = nextIndex_;
