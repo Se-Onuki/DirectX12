@@ -18,7 +18,7 @@ class TextureManager
 
 public:
 
-	static const uint32_t maxTextureCount = 256u;
+	static const uint32_t maxTextureCount = 128u;
 	static const uint32_t alreadyUsedCount = 1u;
 
 	struct Texture {
@@ -35,9 +35,15 @@ public:
 
 	static uint32_t Load(const std::string &file_name);
 
-	void Init(ID3D12Device *const device, const std::string &directoryPath = "Resources/");
+	void Init(ID3D12Device *const device, ID3D12GraphicsCommandList *const commandList, const std::string &directoryPath = "resources/");
 
 	void Reset();
+
+	ID3D12DescriptorHeap *const GetSRVHeap()const {
+		return srvHeap_.Get();
+	}
+
+	void SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const;
 
 	void EndFlame();
 private:

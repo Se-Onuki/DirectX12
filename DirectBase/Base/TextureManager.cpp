@@ -3,16 +3,18 @@
 #include "../../externals/DirectXTex/DirectXTex.h"
 #include "../../Header/Texture/Texture.h"
 #include "../../Header/Descriptor/DescriptorHandIe.h"
+#include "../../Header/Render/Render.hpp"
 
 uint32_t TextureManager::Load(const std::string &file_name)
 {
 	return GetInstance()->LoadInternal(file_name);
 }
 
-void TextureManager::Init(ID3D12Device *const device, const std::string &directoryPath) {
+void TextureManager::Init(ID3D12Device *const device, ID3D12GraphicsCommandList *const commandList, const std::string &directoryPath) {
 
 	device_ = device;
 	directoryPath_ = directoryPath;
+	commandList_ = commandList;
 
 	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
@@ -22,7 +24,19 @@ void TextureManager::Init(ID3D12Device *const device, const std::string &directo
 void TextureManager::Reset() {
 	//HRESULT hr = S_FALSE;
 
-	nextIndex_ = 0 + alreadyUsedCount;
+	nextIndex_ = alreadyUsedCount;
+	srvHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, maxTextureCount, true);
+
+	for (size_t i = alreadyUsedCount; i < maxTextureCount; i++) {
+		textureArray_[i].textureResource.Reset();
+		textureArray_[i].cpuHandleSRV.ptr = 0;
+		textureArray_[i].gpuHandleSRV.ptr = 0;
+		textureArray_[i].name.clear();
+	}
+}
+
+void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const {
+	commandList_->SetGraphicsRootDescriptorTable(rootParamIndex, textureArray_[textureHandle].gpuHandleSRV);		// TextureのSRVテーブル情報を設定
 }
 
 void TextureManager::EndFlame()
@@ -32,8 +46,8 @@ void TextureManager::EndFlame()
 
 uint32_t TextureManager::LoadInternal(const std::string &file_name)
 {
-	assert(nextIndex_ >= maxTextureCount);
-	assert(nextIndex_ < alreadyUsedCount);
+	assert(nextIndex_ < maxTextureCount);
+	assert(nextIndex_ >= alreadyUsedCount);
 	const uint32_t &handle = nextIndex_;
 	Texture &texture = textureArray_[handle];
 
@@ -46,9 +60,8 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 
 
 	const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = TextureFunc::CreateResource(device_, metadata);
-	//textureResourceList.push_back(textureResource);
-	intermediateData_.push_back(TextureFunc::UpdateData(textureResource.Get(), mipImage, device_, commandList_));
+	texture.textureResource = TextureFunc::CreateResource(device_, metadata);
+	intermediateData_.push_back(TextureFunc::UpdateData(texture.textureResource.Get(), mipImage, device_, commandList_));
 
 
 #pragma endregion
@@ -72,5 +85,5 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 #pragma endregion
 
 	//file_name;
-	return 0;
+	return handle;
 }

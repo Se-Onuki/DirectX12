@@ -49,6 +49,7 @@
 #include "Header/Model/Model.h"
 #include "DirectBase/3D/ViewProjection/ViewProjection.h"
 #include "DirectBase/Base/DirectXCommon.h"
+#include "DirectBase/Base/TextureManager.h"
 
 //template <typename T>using  Microsoft::WRL::ComPtr = Microsoft::WRL:: Microsoft::WRL::ComPtr<T>;
 //using namespace Microsoft::WRL;
@@ -191,24 +192,27 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-	WinApp *winApp = WinApp::GetInstance();
+	WinApp *const winApp = WinApp::GetInstance();
 	winApp->CreateGameWindow("DirectXGame");
 
-	DirectXCommon *dxCommon = DirectXCommon::GetInstance();
+	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
 
+	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
+
+	TextureManager::GetInstance()->Init(dxCommon->GetDevice(), commandList_);
 
 	HRESULT hr;
 
 #pragma region DescriptorSize
 
-	const uint32_t descriptorSizeSRV = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//const uint32_t descriptorSizeSRV = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	//const uint32_t descriptorSizeRTV = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	//const uint32_t descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 #pragma endregion
 
-	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
+	//ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
 
 #pragma region DescriptorHeap
 
@@ -216,7 +220,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//ID3D12DescriptorHeap *rtvDescriptorHeap = DirectXCommon::GetInstance()->rtvHeap_.Get();
 
 	// SRV用のディスクリプタの数は128。SRVはShader内で触るものなので、ShaderVisibleはtrue
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+
+	auto *const texManager = TextureManager::GetInstance();
+	ID3D12DescriptorHeap *const srvDescriptorHeap = TextureManager::GetInstance()->GetSRVHeap();
+
 
 #pragma endregion
 
@@ -245,7 +253,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGui_ImplDX12_Init(dxCommon->GetDevice(),
 		(int32_t)dxCommon->backBuffers_.size(),
 		rtvDesc.Format,
-		srvDescriptorHeap.Get(),
+		srvDescriptorHeap,
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
 	);
@@ -772,55 +780,57 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-#pragma region Textureを読んで転送する
-
-	// Textureを読んで転送する
-	std::list<DirectX::ScratchImage> mipImagesList;
-	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResourceList;
-	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResoureceList;
-
-	mipImagesList.emplace_back(TextureFunc::Load(modelData.material_.textureFilePath));
-	mipImagesList.emplace_back(TextureFunc::Load("resources/monsterBall.png"));
-
-
-	for (auto &mipImage : mipImagesList) {
-		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = TextureFunc::CreateResource(dxCommon->GetDevice(), metadata);
-		textureResourceList.push_back(textureResource);
-		intermediateResoureceList.push_back(TextureFunc::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
-	}
-
-
-#pragma endregion
-
-#pragma region ShaderResourceViewを作る
-
-	// metaDataを基にSRVの設定
-	std::list<D3D12_SHADER_RESOURCE_VIEW_DESC> srvDescList;
-	std::list<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPUList;
-
-	std::list<DirectX::ScratchImage>::iterator mipImageIterator = mipImagesList.begin();
-	std::list< Microsoft::WRL::ComPtr<ID3D12Resource>>::iterator textureResourceIterator = textureResourceList.begin();
-	for (uint32_t i = 0; mipImageIterator != mipImagesList.end() && textureResourceIterator != textureResourceList.end(); ++i, ++mipImageIterator, ++textureResourceIterator)
-	{
-		const auto &metadata = mipImageIterator->GetMetadata();
-		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-		srvDesc.Format = metadata.format;
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-		srvDescList.push_back(srvDesc);
-		// SRVを作るDescriptorHeapの場所を決める
-		D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = DescriptorHandIe::GetCPUHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, i + 1);
-		D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = DescriptorHandIe::GetGPUHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, i + 1);
-		textureSrvHandleGPUList.emplace_back(textureSrvHandleGPU);
-
-		// SRVの作成
-		dxCommon->GetDevice()->CreateShaderResourceView(textureResourceIterator->Get(), &srvDesc, textureSrvHandleCPU);
-	}
-
-	D3D12_GPU_DESCRIPTOR_HANDLE selecteTexture = textureSrvHandleGPUList.front();
-#pragma endregion
+	uint32_t white = TextureManager::Load("monsterBall.png");
+//
+//#pragma region Textureを読んで転送する
+//
+//	// Textureを読んで転送する
+//	std::list<DirectX::ScratchImage> mipImagesList;
+//	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResourceList;
+//	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResoureceList;
+//
+//	mipImagesList.emplace_back(TextureFunc::Load(modelData.material_.textureFilePath));
+//	mipImagesList.emplace_back(TextureFunc::Load("resources/monsterBall.png"));
+//
+//
+//	for (auto &mipImage : mipImagesList) {
+//		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
+//		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = TextureFunc::CreateResource(dxCommon->GetDevice(), metadata);
+//		textureResourceList.push_back(textureResource);
+//		intermediateResoureceList.push_back(TextureFunc::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
+//	}
+//
+//
+//#pragma endregion
+//
+//#pragma region ShaderResourceViewを作る
+//
+//	// metaDataを基にSRVの設定
+//	std::list<D3D12_SHADER_RESOURCE_VIEW_DESC> srvDescList;
+//	std::list<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPUList;
+//
+//	std::list<DirectX::ScratchImage>::iterator mipImageIterator = mipImagesList.begin();
+//	std::list< Microsoft::WRL::ComPtr<ID3D12Resource>>::iterator textureResourceIterator = textureResourceList.begin();
+//	for (uint32_t i = 0; mipImageIterator != mipImagesList.end() && textureResourceIterator != textureResourceList.end(); ++i, ++mipImageIterator, ++textureResourceIterator)
+//	{
+//		const auto &metadata = mipImageIterator->GetMetadata();
+//		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+//		srvDesc.Format = metadata.format;
+//		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+//		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+//		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+//		srvDescList.push_back(srvDesc);
+//		// SRVを作るDescriptorHeapの場所を決める
+//		D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = DescriptorHandIe::GetCPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
+//		D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = DescriptorHandIe::GetGPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
+//		textureSrvHandleGPUList.emplace_back(textureSrvHandleGPU);
+//
+//		// SRVの作成
+//		dxCommon->GetDevice()->CreateShaderResourceView(textureResourceIterator->Get(), &srvDesc, textureSrvHandleCPU);
+//	}
+//
+//	D3D12_GPU_DESCRIPTOR_HANDLE selecteTexture = textureSrvHandleGPUList.front();
+//#pragma endregion
 
 
 	// ウィンドウのxボタンが押されるまでループ
@@ -862,19 +872,19 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 
-		ImGui::Begin("Ball");
-		if (ImGui::BeginCombo("TextureList", "texture")) {
-			for (auto &texture : textureSrvHandleGPUList) {
-				//bool is_selected = false;
-				if (ImGui::Selectable(std::to_string(texture.ptr).c_str())) {
-					selecteTexture = texture;
-					break;
-				}
-			}
-			ImGui::EndCombo();
-		}
-		ImGui::Image((ImTextureID)selecteTexture.ptr, { 100.f,100.f });
-		ImGui::End();
+		//ImGui::Begin("Ball");
+		//if (ImGui::BeginCombo("TextureList", "texture")) {
+		//	for (auto &texture : textureSrvHandleGPUList) {
+		//		//bool is_selected = false;
+		//		if (ImGui::Selectable(std::to_string(texture.ptr).c_str())) {
+		//			selecteTexture = texture;
+		//			break;
+		//		}
+		//	}
+		//	ImGui::EndCombo();
+		//}
+		//ImGui::Image((ImTextureID)selecteTexture.ptr, { 100.f,100.f });
+		//ImGui::End();
 
 		ImGui::Begin("uvTransform");
 		ImGui::DragFloat2("Scale", &uvTransform.scale.x, 0.01f, -10.f, 10.f);
@@ -932,7 +942,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region ImGuiの描画用DescriptorHeapの設定
 
 		// 描画用のDescriptorHeapの設定。
-		ID3D12DescriptorHeap *descriptorHeaps[] = { srvDescriptorHeap.Get() };
+		ID3D12DescriptorHeap *descriptorHeaps[] = { srvDescriptorHeap };
 		commandList_->SetDescriptorHeaps(1, descriptorHeaps);
 
 #pragma endregion
@@ -955,7 +965,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
-		commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
+		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, white);
+		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
@@ -964,7 +975,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->IASetVertexBuffers(0, 1, &modelData.vbView_);	// VBVを設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformationMatrixResourceBall->GetGPUVirtualAddress());
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, viewProjection.constBuffer_->GetGPUVirtualAddress());
-		commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, selecteTexture);
+		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, white);
+		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());
 		commandList_->IASetIndexBuffer(&modelData.ibView_);
 		commandList_->DrawIndexedInstanced(static_cast<UINT>(modelData.indexs_.size()), 1, 0, 0, 0);
 
@@ -984,7 +996,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 		dxCommon->EndDraw();
 
-		intermediateResoureceList.clear();
+		//textureResourceList.clear();
+		//intermediateResoureceList.clear();
 
 #pragma endregion
 
