@@ -15,9 +15,6 @@ Model::Model()
 
 Model::~Model()
 {
-	for (auto &mesh : meshList_) {
-		delete mesh;
-	}
 
 }
 

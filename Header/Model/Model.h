@@ -96,7 +96,7 @@ public:
 	~Model();
 
 	std::string name_;
-	std::vector<Mesh *> meshList_;
+	std::vector<std::unique_ptr<Mesh>> meshList_;
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
 	void LoadObjFile(const std::string &directoryPath, const std::string &fileName);
