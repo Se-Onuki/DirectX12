@@ -48,7 +48,7 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 {
 	assert(nextIndex_ < maxTextureCount);
 	assert(nextIndex_ >= alreadyUsedCount);
-	const uint32_t &handle = nextIndex_;
+	uint32_t handle = nextIndex_;
 	Texture &texture = textureArray_[handle];
 
 #pragma region Textureを読んで転送する
@@ -85,5 +85,6 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 #pragma endregion
 
 	//file_name;
+	nextIndex_++;
 	return handle;
 }

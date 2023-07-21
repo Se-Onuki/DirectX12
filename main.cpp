@@ -201,7 +201,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
 
 	TextureManager::GetInstance()->Init(dxCommon->GetDevice(), commandList_);
-	uint32_t white = TextureManager::Load("uvChecker.png");
+	uint32_t uvTex = TextureManager::Load("uvChecker.png");
+	uint32_t ball = TextureManager::Load("monsterBall.png");
 
 	HRESULT hr;
 
@@ -359,17 +360,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-
 	// シリアライズしてバイナリにする
-	Microsoft::WRL::ComPtr<ID3DBlob>signatureBlob = nullptr;
-	Microsoft::WRL::ComPtr<ID3DBlob>errorBlob = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, signatureBlob.GetAddressOf(), errorBlob.GetAddressOf());
 	if (FAILED(hr)) {
 		DirectXCommon::Log(reinterpret_cast<char *>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	// バイナリを元に作成
-	Microsoft::WRL::ComPtr < ID3D12RootSignature >rootSignature = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 	hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(rootSignature.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
@@ -528,12 +528,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Model
 
 	Model model;
-	model.LoadObjFile("resources", "plane.obj");
+	model.LoadObjFile("resources", "multiMesh.obj");
 	Mesh &modelData = *model.meshList_.back();
 	modelData.CreateBuffer();
 
 
 #pragma endregion
+
+	/*Transform transform;
+	transform.Init();*/
 
 #pragma region ViewProjection
 
@@ -667,6 +670,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// Ball用のTransform
 	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,5.f} };
+	transformBall.Init();
 
 #pragma endregion
 
@@ -697,15 +701,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Ball
 
-	// Ball用のTransformationMatrixのリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(Transform::TransformMatrix));
-	// データを書き込む
-	Transform::TransformMatrix *transformationMatrixDataBall = nullptr;
-	// 書き込むためのアドレスを取得
-	transformationMatrixResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixDataBall));
-	// 単位行列を書き込んでおく
-	//transformationMatrixDataBall->WVP = Matrix4x4::Identity();
-	transformationMatrixDataBall->World = Matrix4x4::Identity();
+	//// Ball用のTransformationMatrixのリソースを作る。Matrix4x4 1つ分のサイズを用意する
+	//Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(Transform::TransformMatrix));
+	//// データを書き込む
+	//Transform::TransformMatrix *transformationMatrixDataBall = nullptr;
+	//// 書き込むためのアドレスを取得
+	//transformationMatrixResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixDataBall));
+	//// 単位行列を書き込んでおく
+	////transformationMatrixDataBall->WVP = Matrix4x4::Identity();
+	//transformationMatrixDataBall->World = Matrix4x4::Identity();
 
 #pragma endregion
 
@@ -775,59 +779,59 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-//
-//#pragma region Textureを読んで転送する
-//
-//	// Textureを読んで転送する
-//	std::list<DirectX::ScratchImage> mipImagesList;
-//	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResourceList;
-//	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResoureceList;
-//
-//	mipImagesList.emplace_back(TextureFunc::Load(modelData.material_.textureFilePath));
-//	mipImagesList.emplace_back(TextureFunc::Load("resources/monsterBall.png"));
-//
-//
-//	for (auto &mipImage : mipImagesList) {
-//		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-//		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = TextureFunc::CreateResource(dxCommon->GetDevice(), metadata);
-//		textureResourceList.push_back(textureResource);
-//		intermediateResoureceList.push_back(TextureFunc::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
-//	}
-//
-//
-//#pragma endregion
-//
-//#pragma region ShaderResourceViewを作る
-//
-//	// metaDataを基にSRVの設定
-//	std::list<D3D12_SHADER_RESOURCE_VIEW_DESC> srvDescList;
-//	std::list<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPUList;
-//
-//	std::list<DirectX::ScratchImage>::iterator mipImageIterator = mipImagesList.begin();
-//	std::list< Microsoft::WRL::ComPtr<ID3D12Resource>>::iterator textureResourceIterator = textureResourceList.begin();
-//	for (uint32_t i = 0; mipImageIterator != mipImagesList.end() && textureResourceIterator != textureResourceList.end(); ++i, ++mipImageIterator, ++textureResourceIterator)
-//	{
-//		const auto &metadata = mipImageIterator->GetMetadata();
-//		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-//		srvDesc.Format = metadata.format;
-//		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-//		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-//		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-//		srvDescList.push_back(srvDesc);
-//		// SRVを作るDescriptorHeapの場所を決める
-//		D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = DescriptorHandIe::GetCPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
-//		D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = DescriptorHandIe::GetGPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
-//		textureSrvHandleGPUList.emplace_back(textureSrvHandleGPU);
-//
-//		// SRVの作成
-//		dxCommon->GetDevice()->CreateShaderResourceView(textureResourceIterator->Get(), &srvDesc, textureSrvHandleCPU);
-//	}
-//
-//	D3D12_GPU_DESCRIPTOR_HANDLE selecteTexture = textureSrvHandleGPUList.front();
-//#pragma endregion
+	//
+	//#pragma region Textureを読んで転送する
+	//
+	//	// Textureを読んで転送する
+	//	std::list<DirectX::ScratchImage> mipImagesList;
+	//	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResourceList;
+	//	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResoureceList;
+	//
+	//	mipImagesList.emplace_back(TextureFunc::Load(modelData.material_.textureFilePath));
+	//	mipImagesList.emplace_back(TextureFunc::Load("resources/monsterBall.png"));
+	//
+	//
+	//	for (auto &mipImage : mipImagesList) {
+	//		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
+	//		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = TextureFunc::CreateResource(dxCommon->GetDevice(), metadata);
+	//		textureResourceList.push_back(textureResource);
+	//		intermediateResoureceList.push_back(TextureFunc::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
+	//	}
+	//
+	//
+	//#pragma endregion
+	//
+	//#pragma region ShaderResourceViewを作る
+	//
+	//	// metaDataを基にSRVの設定
+	//	std::list<D3D12_SHADER_RESOURCE_VIEW_DESC> srvDescList;
+	//	std::list<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPUList;
+	//
+	//	std::list<DirectX::ScratchImage>::iterator mipImageIterator = mipImagesList.begin();
+	//	std::list< Microsoft::WRL::ComPtr<ID3D12Resource>>::iterator textureResourceIterator = textureResourceList.begin();
+	//	for (uint32_t i = 0; mipImageIterator != mipImagesList.end() && textureResourceIterator != textureResourceList.end(); ++i, ++mipImageIterator, ++textureResourceIterator)
+	//	{
+	//		const auto &metadata = mipImageIterator->GetMetadata();
+	//		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	//		srvDesc.Format = metadata.format;
+	//		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	//		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	//		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	//		srvDescList.push_back(srvDesc);
+	//		// SRVを作るDescriptorHeapの場所を決める
+	//		D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = DescriptorHandIe::GetCPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
+	//		D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = DescriptorHandIe::GetGPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
+	//		textureSrvHandleGPUList.emplace_back(textureSrvHandleGPU);
+	//
+	//		// SRVの作成
+	//		dxCommon->GetDevice()->CreateShaderResourceView(textureResourceIterator->Get(), &srvDesc, textureSrvHandleCPU);
+	//	}
+	//
+	//	D3D12_GPU_DESCRIPTOR_HANDLE selecteTexture = textureSrvHandleGPUList.front();
+	//#pragma endregion
 
 
-	// ウィンドウのxボタンが押されるまでループ
+		// ウィンドウのxボタンが押されるまでループ
 	while (true) {
 		if (winApp->ProcessMessage()) break;
 
@@ -908,8 +912,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		Matrix4x4 projectionMatrix = Render::MakePerspectiveFovMatrix(0.45f, float(WinApp::kWindowWidth) / float(WinApp::kWindowHeight), 0.1f, 100.f);
 
 		Matrix4x4 worldMatrixBall = transformBall.Affine();
+		transformBall.UpdateMatrix();
 
-		transformationMatrixDataBall->World = worldMatrixBall;
+		//transformationMatrixDataBall->World = worldMatrixBall;
 
 
 		viewProjection.UpdateMatrix();
@@ -932,6 +937,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region コマンドを積み込んで確定させる
 
 		dxCommon->StartDraw();
+
+		Model::StartDraw(commandList_);
 
 #pragma region ImGuiの描画用DescriptorHeapの設定
 
@@ -959,26 +966,29 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
-		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, white);
+		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, uvTex);
 		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 		// Ballの描画
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, materialResource->GetGPUVirtualAddress());
-		commandList_->IASetVertexBuffers(0, 1, &modelData.vbView_);	// VBVを設定
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformationMatrixResourceBall->GetGPUVirtualAddress());
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, viewProjection.constBuffer_->GetGPUVirtualAddress());
-		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, white);
+		//commandList_->IASetVertexBuffers(0, 1, &modelData.vbView_);	// VBVを設定
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformBall.constBuffer_->GetGPUVirtualAddress());
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, viewProjection.constBuffer_->GetGPUVirtualAddress());
+		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, ball);
 		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());
-		commandList_->IASetIndexBuffer(&modelData.ibView_);
-		commandList_->DrawIndexedInstanced(static_cast<UINT>(modelData.indexs_.size()), 1, 0, 0, 0);
+		//commandList_->IASetIndexBuffer(&modelData.ibView_);
+		//commandList_->DrawIndexedInstanced(static_cast<UINT>(modelData.indexs_.size()), 1, 0, 0, 0);
+		model.Draw(transformBall, viewProjection);
 
 		//commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
 		//commandList_->IASetIndexBuffer(&indexBufferViewBall);
 		//commandList_->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);
 
 		//commandList_->SetPipelineState(graphicsPipelineState[0].Get());		// PSOを設定
+
+		Model::EndDraw();
 
 #pragma endregion
 

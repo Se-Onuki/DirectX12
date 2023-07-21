@@ -17,6 +17,7 @@
 #include <d3d12.h>
 
 struct Transform;
+class ViewProjection;
 
 struct Material {
 
@@ -117,9 +118,14 @@ public:
 	std::vector<Mesh *> meshList_;
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
+	//static void Init(ID3D12GraphicsCommandList *const commandList);
+
 	void LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 
-	void Draw(const Transform &transform, const Matrix4x4 &viewProjection) const;
+	void Draw(const Transform &transform, const ViewProjection &viewProjection) const;
+
+	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
+	static void EndDraw();
 private:
 	static ID3D12GraphicsCommandList *commandList_;
 

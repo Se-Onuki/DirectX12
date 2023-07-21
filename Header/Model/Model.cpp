@@ -3,6 +3,8 @@
 #include "../Math/Math.hpp"
 #include <array>
 #include "../../DirectBase/Base/DirectXCommon.h"
+#include "../../DirectBase/3D/ViewProjection/ViewProjection.h"
+#include "../Math/Transform.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 
@@ -16,6 +18,14 @@ Model::~Model()
 		delete mesh;
 	}
 
+}
+
+void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
+	commandList_ = commandList;
+}
+
+void Model::EndDraw() {
+	commandList_ = nullptr;
 }
 
 void Model::LoadObjFile(const std::string &directoryPath, const std::string &fileName) {
@@ -111,13 +121,13 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 }
 
-void Model::Draw(const Transform &transform, const Matrix4x4 &viewProjection) const
+void Model::Draw(const Transform &transform, const ViewProjection &viewProjection) const
 {
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, viewProjection.constBuffer_->GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
 		mesh->Draw(commandList_, transform);
 	}
-	transform;
-	viewProjection;
+
 }
 
 void Mesh::CreateBuffer()
@@ -191,9 +201,12 @@ void Mesh::SetMaterial(Material *const material) {
 }
 
 void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform) const {
+	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transform.constBuffer_->GetGPUVirtualAddress());
+
 	commandList->IASetVertexBuffers(0, 1, &this->vbView_);
 	commandList->IASetIndexBuffer(&this->ibView_);
-	transform;
+	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexs_.size()), 1, 0, 0, 0);
+	//transform;
 }
 
 void Mesh::CreateSphere(VertexData *const vertex, ID3D12Resource *const indexResource, const uint32_t &subdivision)
