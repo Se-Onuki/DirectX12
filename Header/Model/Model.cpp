@@ -38,6 +38,8 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 			std::string textureFilename;
 			s >> textureFilename;
 
+			if (!materialData) return;
+
 			materialData->textureName_ = directoryPath + textureFilename;
 			materialData->texHandle_ = TextureManager::Load(textureFilename);
 			materialData->CreateBuffer();
@@ -80,7 +82,7 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 	meshList_.emplace_back(new Mesh);
 
-	Mesh &modelData = *meshList_.back();				// 構築するModelData
+	Mesh *modelData = meshList_.back().get();				// 構築するModelData
 	std::vector<Vector4> positionList;	// 位置
 	std::vector<Vector3> normalList;	// 法線
 	std::vector<Vector2> texCoordList;	// テクスチャ座標
@@ -138,24 +140,29 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 				triangle[2u - faceVertex] = { position,texCoord,normal };
 			}
 			// イテレータを用いた末尾への直接構築
-			modelData.AddVertex(triangle[0]);
-			modelData.AddVertex(triangle[1]);
-			modelData.AddVertex(triangle[2]);
+			modelData->AddVertex(triangle[0]);
+			modelData->AddVertex(triangle[1]);
+			modelData->AddVertex(triangle[2]);
 			/*
 			modelData.vertices_.insert(modelData.vertices_.end(), triangle.begin(), triangle.end());
 			const uint32_t indexOffset = (uint32_t)modelData.vertices_.size() - 3u;
 			modelData.indexs_.insert(modelData.indexs_.end(), { indexOffset ,indexOffset + 1,indexOffset + 2 });*/
 		}
+		else if (identifier == "o") {
+
+		}
 		else if (identifier == "mtllib") {
 
 			std::string materialFile;
 			s >> materialFile;
-			modelData.material_ = Material::LoadFile(directoryPath, materialFile);
+			modelData->material_ = Material::LoadFile(directoryPath, materialFile);
 		}
 	}
 #pragma endregion
 
-	modelData.CreateBuffer();
+	for (auto &mesh : meshList_) {
+		mesh->CreateBuffer();
+	}
 }
 
 void Model::Draw(const Transform &transform, const ViewProjection &viewProjection) const

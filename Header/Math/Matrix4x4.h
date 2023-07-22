@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector4.h"
+#include <immintrin.h>
 
 struct Vector3;
 
@@ -47,6 +48,10 @@ struct Matrix4x4 final {
 	/// @return 逆行列
 	Matrix4x4 InverseRT() const;
 
+	/// @brief Transform逆行列
+	/// @return 逆行列
+	inline Matrix4x4 InverseSRT() const;
+
 	/// @brief 転置行列関数
 	/// @return 転置行列
 	Matrix4x4 Transpose() const;
@@ -55,7 +60,7 @@ struct Matrix4x4 final {
 
 	Matrix4x4 operator-(const Matrix4x4 &Second) const;
 
-	Matrix4x4 operator*(const Matrix4x4 &Second) const;
+	inline Matrix4x4 operator*(const Matrix4x4 &Second) const;
 
 	Matrix4x4 operator*(const float &Second) const;
 	Matrix4x4 operator/(const float &Second) const;
@@ -84,3 +89,43 @@ struct Matrix4x4 final {
 		return Matrix4x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 	}
 };
+#pragma region 4x4Func
+
+Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &sec) const {
+	Matrix4x4 result;
+	__m128 row0 = _mm_load_ps(sec.m[0]);
+	__m128 row1 = _mm_load_ps(sec.m[1]);
+	__m128 row2 = _mm_load_ps(sec.m[2]);
+	__m128 row3 = _mm_load_ps(sec.m[3]);
+	for (int i = 0; i < 4; i++) {
+		__m128 brod0 = _mm_set1_ps(m[i][0]);
+		__m128 brod1 = _mm_set1_ps(m[i][1]);
+		__m128 brod2 = _mm_set1_ps(m[i][2]);
+		__m128 brod3 = _mm_set1_ps(m[i][3]);
+		__m128 row = _mm_add_ps(
+			_mm_add_ps(_mm_mul_ps(brod0, row0), _mm_mul_ps(brod1, row1)),
+			_mm_add_ps(_mm_mul_ps(brod2, row2), _mm_mul_ps(brod3, row3)));
+		_mm_store_ps(result.m[i], row);
+	}
+	return result;
+}
+
+Matrix4x4 Matrix4x4::InverseSRT() const {
+	const Vector4 vecX2 =
+		*(Vector4 *)&m[0] / _mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[0]), _mm_load_ps(m[0]), 0x71));
+	const Vector4 vecY2 =
+		*(Vector4 *)&m[1] / _mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[1]), _mm_load_ps(m[1]), 0x71));
+	const Vector4 vecZ2 =
+		*(Vector4 *)&m[2] / _mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[2]), _mm_load_ps(m[2]), 0x71));
+
+	return Matrix4x4{
+		{vecX2.x, vecY2.x, vecZ2.x, 0.f},
+		{vecX2.y, vecY2.y, vecZ2.y, 0.f},
+		{vecX2.z, vecY2.z, vecZ2.z, 0.f},
+		{-_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[3]), *(__m128 *) & vecX2, 0x71)),
+		 -_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[3]), *(__m128 *) & vecY2, 0x71)),
+		 -_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[3]), *(__m128 *) & vecZ2, 0x71)), 1.f}
+	};
+};
+
+#pragma endregion
