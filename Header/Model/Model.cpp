@@ -41,12 +41,13 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 			if (!materialData) return;
 
 			materialData->textureName_ = directoryPath + textureFilename;
-			materialData->texHandle_ = TextureManager::Load(textureFilename);
-			materialData->CreateBuffer();
+			materialData->texHandle_ = TextureManager::Load(directoryPath + textureFilename);
 		}
 	}
 #pragma endregion
-
+	for (auto &material : materialMap_) {
+		material.second->CreateBuffer();
+	}
 	return;
 }
 
@@ -80,9 +81,9 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 #pragma region 2. 中で必要になる変数の宣言
 
-	meshList_.emplace_back(new Mesh);
+	//meshList_.emplace_back(new Mesh);
 
-	Mesh *modelData = meshList_.back().get();				// 構築するModelData
+	Mesh *modelData = nullptr;				// 構築するModelData
 	std::vector<Vector4> positionList;	// 位置
 	std::vector<Vector3> normalList;	// 法線
 	std::vector<Vector2> texCoordList;	// テクスチャ座標
@@ -149,19 +150,35 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 			modelData.indexs_.insert(modelData.indexs_.end(), { indexOffset ,indexOffset + 1,indexOffset + 2 });*/
 		}
 		else if (identifier == "o") {
+			meshList_.emplace_back(new Mesh);
 
+			modelData = meshList_.back().get();				// 構築するModelData
+		}
+		else if (identifier == "usemtl") {
+			std::string materialID;
+			s >> materialID;
+			modelData->SetMaterial(materialMap_[materialID].get());
 		}
 		else if (identifier == "mtllib") {
 
 			std::string materialFile;
 			s >> materialFile;
-			modelData->material_ = Material::LoadFile(directoryPath, materialFile);
+			LoadMtlFile(directoryPath, materialFile);
+			//modelData->material_ = Material::LoadFile(directoryPath, materialFile);
 		}
 	}
 #pragma endregion
 
 	for (auto &mesh : meshList_) {
 		mesh->CreateBuffer();
+	}
+}
+
+void Model::ImGuiWidget()
+{
+
+	for (auto &material : materialMap_) {
+		material.second->ImGuiWidget();
 	}
 }
 
@@ -241,13 +258,15 @@ void Mesh::AddVertex(const VertexData &vertex)
 }
 
 void Mesh::SetMaterial(Material *const material) {
-	material;
+	if (!material) return;
+	material_ = material;
+	//material;
 }
 
 void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform) const {
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, material_.texHandle_);
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, material_->texHandle_);
+	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, material_->constBuffer_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transform.constBuffer_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, material_.constBuffer_->GetGPUVirtualAddress());
 
 	commandList->IASetVertexBuffers(0, 1, &this->vbView_);
 	commandList->IASetIndexBuffer(&this->ibView_);
@@ -435,4 +454,23 @@ void Material::CreateBuffer() {
 	mapData_->color = Vector4{ 1.f,1.f,1.f,1.f };
 	mapData_->enableLighting = true;
 	mapData_->uvTransform = Matrix4x4::Identity();
+}
+
+void Material::ImGuiWidget()
+{
+	if (ImGui::TreeNode(name_.c_str())) {
+		Transform transform;
+		transform.Create(mapData_->uvTransform);
+
+		if (transform.ImGuiWidget2D()) {
+			mapData_->uvTransform = transform.Affine();
+		}
+		if (ImGui::Button("ResetTransform")) {
+			mapData_->uvTransform = Matrix4x4::Identity();
+		}
+
+		ImGui::ColorEdit4("BaseColor", &mapData_->color.x);
+
+		ImGui::TreePop();
+	}
 }

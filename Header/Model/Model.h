@@ -50,6 +50,9 @@ public:
 	static Material LoadFile(const std::string &directoryPath, const std::string &fileName);
 
 	void CreateBuffer();
+
+	void ImGuiWidget();
+
 };
 
 struct Mesh
@@ -77,7 +80,7 @@ public:
 
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indexs_;
-	Material material_;
+	Material *material_;
 
 	void CreateBuffer();
 
@@ -89,6 +92,7 @@ public:
 
 	static void CreateSphere(VertexData *const vertex,
 		ID3D12Resource *const indexResource, const uint32_t &subdivision);
+
 };
 
 
@@ -111,6 +115,8 @@ public:
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
 	static const char *const defaultDirectory;
+
+	void ImGuiWidget();
 private:
 	static ID3D12GraphicsCommandList *commandList_;
 

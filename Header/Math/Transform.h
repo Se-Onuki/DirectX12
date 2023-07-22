@@ -17,7 +17,7 @@ struct Transform
 	Vector3 rotate;
 	Vector3 translate;
 
-	Matrix4x4 matWorld_;	// ローカル -> ワールド変換
+	Matrix4x4 matWorld_;	// ローカル . ワールド変換
 	Transform *parent_ = nullptr;	// 親へのアドレス
 
 	ComPtr<ID3D12Resource> constBuffer_ = nullptr;
@@ -34,4 +34,8 @@ struct Transform
 
 	void UpdateMatrix();
 
+	bool ImGuiWidget();
+	bool ImGuiWidget2D();
+
+	void Create(const Matrix4x4 &mat);
 };

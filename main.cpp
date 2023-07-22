@@ -201,8 +201,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
 
 	TextureManager::GetInstance()->Init(dxCommon->GetDevice(), commandList_);
-	/*uint32_t uvTex = */TextureManager::Load("uvChecker.png");
-	uint32_t ball = TextureManager::Load("monsterBall.png");
+	uint32_t uvTex = TextureManager::Load("white2x2.png");
 
 	HRESULT hr;
 
@@ -520,7 +519,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Model
 
 	Model model;
-	model.LoadObjFile("", "plane.obj");
+	model.LoadObjFile("", "multiMaterial.obj");
 
 #pragma endregion
 
@@ -831,9 +830,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::End();
 
 		ImGui::Begin("OBJ");
-		ImGui::DragFloat3("scale", &transformBall.scale.x, 0.1f);
-		ImGui::DragFloat3("rotate", &transformBall.rotate.x, Angle::Dig2Rad);
-		ImGui::DragFloat3("translate", &transformBall.translate.x, 0.1f);
+		transformBall.ImGuiWidget();
 		ImGui::End();
 
 		ImGui::Begin("UI");
@@ -902,6 +899,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		vpDataUI->view = viewMatrixSprite;
 		vpDataUI->projection = projectionMatrixSprite;
 
+		ImGui::Begin("model");
+		model.ImGuiWidget();
+		ImGui::End();
+
 		ImGui::ShowDemoWindow();
 
 #pragma endregion
@@ -945,7 +946,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
-		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, ball);
+		texManager->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, uvTex);
 		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
