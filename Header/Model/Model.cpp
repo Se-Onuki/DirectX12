@@ -61,6 +61,7 @@ Model::~Model()
 }
 
 void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
+	assert(!commandList_ && "EndDrawが呼び出されていません");
 	commandList_ = commandList;
 }
 

@@ -37,12 +37,13 @@ public:
 
 	static void StaticInit();
 
-	void Compile(const std::wstring &ShaderPath, const wchar_t *profile);
+	static Shader Compile(const std::wstring &ShaderPath, const wchar_t *profile);
 
 	inline IDxcBlob *const GetShaderBlob()const {
 		return shaderBlob_.Get();
 	}
 
+	D3D12_SHADER_BYTECODE GetBytecode()const;
 
 };
 

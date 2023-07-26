@@ -7,7 +7,6 @@ Microsoft::WRL::ComPtr<IDxcIncludeHandler> Shader::includeHandler_;
 
 void Shader::StaticInit()
 {
-
 	HRESULT hr = S_FALSE;
 	// dxcCompilerを初期化
 	dxcUtils_ = nullptr;
@@ -25,8 +24,14 @@ void Shader::StaticInit()
 
 }
 
-void Shader::Compile(const std::wstring &ShaderPath, const wchar_t *profile)
+D3D12_SHADER_BYTECODE Shader::GetBytecode() const {
+	return D3D12_SHADER_BYTECODE{ shaderBlob_->GetBufferPointer(),shaderBlob_->GetBufferSize() };
+}
+
+Shader Shader::Compile(const std::wstring &ShaderPath, const wchar_t *profile)
 {
-	shaderBlob_ = CompileShader(ShaderPath, profile, dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get());
-	assert(shaderBlob_ != nullptr);
+	Shader result;
+	result.shaderBlob_ = CompileShader(ShaderPath, profile, dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get());
+	assert(result.shaderBlob_ != nullptr);
+	return result;
 }

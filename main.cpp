@@ -344,21 +344,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region VertexShader
 
-	//Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get());
-	//assert(vertexShaderBlob != nullptr);
-	Shader vertexShader;
-	vertexShader.Compile(L"Object3D.VS.hlsl", L"vs_6_0");
-	IDxcBlob *const vertexShaderBlob = vertexShader.GetShaderBlob();
+	Shader vertexShader = Shader::Compile(L"Object3D.VS.hlsl", L"vs_6_0");
 
 #pragma endregion
 
 #pragma region PixelShader
 
-	//Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get());
-	//assert(pixelShaderBlob != nullptr);
-	Shader pixelShader;
-	pixelShader.Compile(L"Object3D.PS.hlsl", L"ps_6_0");
-	IDxcBlob *const pixelShaderBlob = pixelShader.GetShaderBlob();
+	Shader pixelShader = Shader::Compile(L"Object3D.PS.hlsl", L"ps_6_0");
 
 #pragma endregion
 
@@ -395,12 +387,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region PSOを生成する
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();													// RootSignature
-	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;														// InputLayout
-	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),vertexShaderBlob->GetBufferSize() };		// VertexShader
-	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize() };		// PixelShader
-	graphicsPipelineStateDesc.BlendState = blendDesc[0];															// BlendState
-	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;														// RasterizeState
+	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();		// RootSignature
+	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
+	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
+	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
+	graphicsPipelineStateDesc.BlendState = blendDesc[0];				// BlendState
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
 
 	// DSVのFormatを設定する
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
@@ -672,58 +664,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 
 #pragma endregion
-
-	//
-	//#pragma region Textureを読んで転送する
-	//
-	//	// Textureを読んで転送する
-	//	std::list<DirectX::ScratchImage> mipImagesList;
-	//	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> textureResourceList;
-	//	std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> intermediateResoureceList;
-	//
-	//	mipImagesList.emplace_back(TextureFunc::Load(modelData.material_.textureFilePath));
-	//	mipImagesList.emplace_back(TextureFunc::Load("resources/monsterBall.png"));
-	//
-	//
-	//	for (auto &mipImage : mipImagesList) {
-	//		const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-	//		Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = TextureFunc::CreateResource(dxCommon->GetDevice(), metadata);
-	//		textureResourceList.push_back(textureResource);
-	//		intermediateResoureceList.push_back(TextureFunc::UpdateData(textureResource.Get(), mipImage, dxCommon->GetDevice(), commandList_));
-	//	}
-	//
-	//
-	//#pragma endregion
-	//
-	//#pragma region ShaderResourceViewを作る
-	//
-	//	// metaDataを基にSRVの設定
-	//	std::list<D3D12_SHADER_RESOURCE_VIEW_DESC> srvDescList;
-	//	std::list<D3D12_GPU_DESCRIPTOR_HANDLE> textureSrvHandleGPUList;
-	//
-	//	std::list<DirectX::ScratchImage>::iterator mipImageIterator = mipImagesList.begin();
-	//	std::list< Microsoft::WRL::ComPtr<ID3D12Resource>>::iterator textureResourceIterator = textureResourceList.begin();
-	//	for (uint32_t i = 0; mipImageIterator != mipImagesList.end() && textureResourceIterator != textureResourceList.end(); ++i, ++mipImageIterator, ++textureResourceIterator)
-	//	{
-	//		const auto &metadata = mipImageIterator->GetMetadata();
-	//		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	//		srvDesc.Format = metadata.format;
-	//		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	//		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	//		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-	//		srvDescList.push_back(srvDesc);
-	//		// SRVを作るDescriptorHeapの場所を決める
-	//		D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = DescriptorHandIe::GetCPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
-	//		D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = DescriptorHandIe::GetGPUHandle(srvDescriptorHeap, descriptorSizeSRV, i + 1);
-	//		textureSrvHandleGPUList.emplace_back(textureSrvHandleGPU);
-	//
-	//		// SRVの作成
-	//		dxCommon->GetDevice()->CreateShaderResourceView(textureResourceIterator->Get(), &srvDesc, textureSrvHandleCPU);
-	//	}
-	//
-	//	D3D12_GPU_DESCRIPTOR_HANDLE selecteTexture = textureSrvHandleGPUList.front();
-	//#pragma endregion
-
 
 		// ウィンドウのxボタンが押されるまでループ
 	while (true) {
