@@ -129,6 +129,9 @@
     <ClCompile Include="DirectBase\2D\Sprite.cpp">
       <Filter>2D</Filter>
     </ClCompile>
+    <ClCompile Include="DirectBase\Base\Shader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="DirectBase\2D\Sprite.h">
       <Filter>2D</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Base\Shader.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -42,7 +42,7 @@ bool Transform::ImGuiWidget()
 	if (ImGui::TreeNode("Transform")) {
 		bool isUsing = false;
 
-		isUsing |= ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f,100.f);
+		isUsing |= ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 100.f);
 
 		isUsing |= ImGui::DragFloat3("Rotate", &rotate.z, Angle::Dig2Rad);
 
@@ -74,29 +74,22 @@ bool Transform::ImGuiWidget2D()
 
 void Transform::Create(const Matrix4x4 &mat) {
 	// スケールの取得
-	scale.x = sqrtf(mat.m[0][0] * mat.m[0][0] + mat.m[0][1] * mat.m[0][1] + mat.m[0][2] * mat.m[0][2]);
-	scale.y = sqrtf(mat.m[1][0] * mat.m[1][0] + mat.m[1][1] * mat.m[1][1] + mat.m[1][2] * mat.m[1][2]);
-	scale.z = sqrtf(mat.m[2][0] * mat.m[2][0] + mat.m[2][1] * mat.m[2][1] + mat.m[2][2] * mat.m[2][2]);
+	//scale.x = std::sqrt(mat.m[0][0] * mat.m[0][0] + mat.m[0][1] * mat.m[0][1] + mat.m[0][2] * mat.m[0][2]);
+	scale.x = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[0], *(__m128 *) mat.m[0], 0x71)));
+	scale.y = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[1], *(__m128 *) mat.m[1], 0x71)));
+	scale.z = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[2], *(__m128 *) mat.m[2], 0x71)));
 
 	// 回転行列の取得
 	Matrix4x4 rotMat;
 	*(__m128 *)rotMat.m[0] = _mm_div_ps(_mm_load_ps(mat.m[0]), _mm_set1_ps(scale.x));
 	*(__m128 *)rotMat.m[1] = _mm_div_ps(_mm_load_ps(mat.m[1]), _mm_set1_ps(scale.y));
 	*(__m128 *)rotMat.m[2] = _mm_div_ps(_mm_load_ps(mat.m[2]), _mm_set1_ps(scale.z));
-	//rotMat.m[0][0] /= scale.x;
-	//rotMat.m[0][1] /= scale.x;
-	//rotMat.m[0][2] /= scale.x;
-	//rotMat.m[1][0] /= scale.y;
-	//rotMat.m[1][1] /= scale.y;
-	//rotMat.m[1][2] /= scale.y;
-	//rotMat.m[2][0] /= scale.z;
-	//rotMat.m[2][1] /= scale.z;
-	//rotMat.m[2][2] /= scale.z;
+
 
 	// 回転角度の取得
-	rotate.x = atan2f(rotMat.m[1][2], rotMat.m[2][2]);
-	rotate.y = atan2f(-rotMat.m[0][2], sqrtf(rotMat.m[1][2] * rotMat.m[1][2] + rotMat.m[2][2] * rotMat.m[2][2]));
-	rotate.z = atan2f(rotMat.m[0][1], rotMat.m[0][0]);
+	rotate.x = std::atan2(rotMat.m[1][2], rotMat.m[2][2]);
+	rotate.y = std::atan2(-rotMat.m[0][2], std::sqrt(rotMat.m[1][2] * rotMat.m[1][2] + rotMat.m[2][2] * rotMat.m[2][2]));
+	rotate.z = std::atan2(rotMat.m[0][1], rotMat.m[0][0]);
 
 	// 移動量の取得
 	translate = *(Vector3 *)mat.m[3];

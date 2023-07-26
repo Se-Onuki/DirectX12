@@ -138,7 +138,7 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 				Vector2 texCoord = texCoordList[elementIndices[1] - 1];
 				Vector3 normal = normalList[elementIndices[2] - 1];
 				// 末尾から順に(法線の逆転)
-				triangle[2u - faceVertex] = { position,texCoord,normal };
+				triangle[2u - faceVertex] = Mesh::VertexData{ position,texCoord,normal };
 			}
 			// イテレータを用いた末尾への直接構築
 			modelData->AddVertex(triangle[0]);

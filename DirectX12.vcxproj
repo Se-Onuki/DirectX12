@@ -94,6 +94,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectBase\3D\ViewProjection\ViewProjection.cpp" />
     <ClCompile Include="DirectBase\Base\DirectXCommon.cpp" />
     <ClCompile Include="DirectBase\Base\ImGuiManager.cpp" />
+    <ClCompile Include="DirectBase\Base\Shader.cpp" />
     <ClCompile Include="DirectBase\Base\TextureManager.cpp" />
     <ClCompile Include="DirectBase\Base\WinApp.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
@@ -123,6 +124,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectBase\3D\ViewProjection\ViewProjection.h" />
     <ClInclude Include="DirectBase\Base\DirectXCommon.h" />
     <ClInclude Include="DirectBase\Base\ImGuiManager.h" />
+    <ClInclude Include="DirectBase\Base\Shader.h" />
     <ClInclude Include="DirectBase\Base\TextureManager.h" />
     <ClInclude Include="DirectBase\Base\WinApp.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
