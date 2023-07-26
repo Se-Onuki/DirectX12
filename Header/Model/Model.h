@@ -71,8 +71,6 @@ public:
 			return position == vertex.position && texCoord == vertex.texCoord && normal == vertex.normal;
 		}
 	};
-	void addVertex(const VertexData &vertex);
-
 
 	D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
 	D3D12_INDEX_BUFFER_VIEW ibView_ = {};
@@ -82,8 +80,8 @@ public:
 
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indexs_;
-	std::unordered_map<size_t, uint32_t> indexMap_;
 	Material *material_;
+	std::unordered_map<size_t, uint32_t> indexMap_;	// 頂点追加用一時データ
 
 	void CreateBuffer();
 

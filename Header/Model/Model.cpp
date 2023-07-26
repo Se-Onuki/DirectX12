@@ -374,9 +374,9 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 				triangle[2u - faceVertex] = Mesh::VertexData{ position,texCoord,normal };
 			}
 			// イテレータを用いた末尾への直接構築
-			modelData->addVertex(triangle[0]);
-			modelData->addVertex(triangle[1]);
-			modelData->addVertex(triangle[2]);
+			modelData->AddVertex(triangle[0]);
+			modelData->AddVertex(triangle[1]);
+			modelData->AddVertex(triangle[2]);
 			/*
 			modelData.vertices_.insert(modelData.vertices_.end(), triangle.begin(), triangle.end());
 			const uint32_t indexOffset = (uint32_t)modelData.vertices_.size() - 3u;
@@ -481,7 +481,7 @@ void Mesh::CreateBuffer()
 
 }
 
-void Mesh::addVertex(const VertexData &vertex) {
+void Mesh::AddVertex(const VertexData &vertex) {
 	size_t hashValue = std::hash<VertexData>()(vertex);
 	auto it = indexMap_.find(hashValue);
 	if (it != indexMap_.end()) {
@@ -490,21 +490,10 @@ void Mesh::addVertex(const VertexData &vertex) {
 	}
 	else {
 		// 同じ値のデータが存在しない場合
-		uint32_t index = static_cast<uint32_t>(vertices_.size());
+		const uint32_t index = static_cast<uint32_t>(vertices_.size());
 		vertices_.push_back(vertex);
 		indexs_.push_back(index);
 		indexMap_[hashValue] = index;
-	}
-};
-void Mesh::AddVertex(const VertexData &vertex)
-{
-	auto it = std::find(vertices_.begin(), vertices_.end(), vertex);
-	if (it != vertices_.end()) {
-		indexs_.push_back((uint32_t)std::distance(vertices_.begin(), it));
-	}
-	else {
-		vertices_.push_back(vertex);
-		indexs_.push_back((uint32_t)vertices_.size() - 1u);
 	}
 }
 
