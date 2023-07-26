@@ -311,6 +311,12 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 	//meshList_.emplace_back(new Mesh);
 
 	Mesh *modelData = nullptr;				// 構築するModelData
+
+	meshList_.emplace_back(new Mesh);
+
+	modelData = meshList_.back().get();
+
+
 	std::vector<Vector4> positionList;	// 位置
 	std::vector<Vector3> normalList;	// 法線
 	std::vector<Vector2> texCoordList;	// テクスチャ座標
@@ -368,16 +374,17 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 				triangle[2u - faceVertex] = Mesh::VertexData{ position,texCoord,normal };
 			}
 			// イテレータを用いた末尾への直接構築
-			modelData->AddVertex(triangle[0]);
-			modelData->AddVertex(triangle[1]);
-			modelData->AddVertex(triangle[2]);
+			modelData->addVertex(triangle[0]);
+			modelData->addVertex(triangle[1]);
+			modelData->addVertex(triangle[2]);
 			/*
 			modelData.vertices_.insert(modelData.vertices_.end(), triangle.begin(), triangle.end());
 			const uint32_t indexOffset = (uint32_t)modelData.vertices_.size() - 3u;
 			modelData.indexs_.insert(modelData.indexs_.end(), { indexOffset ,indexOffset + 1,indexOffset + 2 });*/
 		}
 		else if (identifier == "o") {
-			meshList_.emplace_back(new Mesh);
+			if (!modelData->vertices_.empty())
+				meshList_.emplace_back(new Mesh);
 
 			modelData = meshList_.back().get();				// 構築するModelData
 		}
@@ -398,6 +405,7 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 	for (auto &mesh : meshList_) {
 		mesh->CreateBuffer();
+		mesh->indexMap_.clear();
 	}
 }
 
@@ -473,6 +481,21 @@ void Mesh::CreateBuffer()
 
 }
 
+void Mesh::addVertex(const VertexData &vertex) {
+	size_t hashValue = std::hash<VertexData>()(vertex);
+	auto it = indexMap_.find(hashValue);
+	if (it != indexMap_.end()) {
+		// 同じ値のデータが存在する場合
+		indexs_.push_back(it->second);
+	}
+	else {
+		// 同じ値のデータが存在しない場合
+		uint32_t index = static_cast<uint32_t>(vertices_.size());
+		vertices_.push_back(vertex);
+		indexs_.push_back(index);
+		indexMap_[hashValue] = index;
+	}
+};
 void Mesh::AddVertex(const VertexData &vertex)
 {
 	auto it = std::find(vertices_.begin(), vertices_.end(), vertex);

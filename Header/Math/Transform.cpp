@@ -44,7 +44,7 @@ bool Transform::ImGuiWidget()
 
 		isUsing |= ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 100.f);
 
-		isUsing |= ImGui::DragFloat3("Rotate", &rotate.z, Angle::Dig2Rad);
+		isUsing |= ImGui::DragFloat3("Rotate", &rotate.x, Angle::Dig2Rad);
 
 		isUsing |= ImGui::DragFloat3("Transform", &translate.x, 0.01f);
 

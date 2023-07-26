@@ -148,3 +148,13 @@ private:
 inline Vector3 operator* (const float &left, const Vector3 &right) {
 	return right * left;
 }
+
+//namespace std {
+//	template<>
+//	struct hash<Vector3> {
+//		size_t operator()(const Vector3 &v) const {
+//			std::string s = std::to_string(v.x) + std::to_string(v.y) + std::to_string(v.z);
+//			return std::hash<std::string>()(s);
+//		}
+//	};
+//}

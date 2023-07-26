@@ -71,6 +71,8 @@ public:
 			return position == vertex.position && texCoord == vertex.texCoord && normal == vertex.normal;
 		}
 	};
+	void addVertex(const VertexData &vertex);
+
 
 	D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
 	D3D12_INDEX_BUFFER_VIEW ibView_ = {};
@@ -80,6 +82,7 @@ public:
 
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indexs_;
+	std::unordered_map<size_t, uint32_t> indexMap_;
 	Material *material_;
 
 	void CreateBuffer();
@@ -95,6 +98,18 @@ public:
 
 };
 
+namespace std {
+	template<>
+	struct hash<Mesh::VertexData> {
+		size_t operator()(const Mesh::VertexData &v) const {
+			std::string s =
+				std::to_string(v.position.x) + std::to_string(v.position.y) + std::to_string(v.position.z) + std::to_string(v.position.w)	// 頂点
+				+ std::to_string(v.texCoord.x) + std::to_string(v.texCoord.y)	// uv座標
+				+ std::to_string(v.normal.x) + std::to_string(v.normal.y) + std::to_string(v.normal.z);	// 法線
+			return std::hash<std::string>()(s);
+		}
+	};
+}
 
 class Model
 {
