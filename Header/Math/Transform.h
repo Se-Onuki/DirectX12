@@ -26,7 +26,7 @@ struct Transform
 
 	_NODISCARD Matrix4x4 Affine() const;
 
-	void Init();
+	void InitResource();
 
 	void CreateConstBuffer();
 

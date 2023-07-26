@@ -556,7 +556,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// Ball用のTransform
 	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,5.f} };
-	transformBall.Init();
+	transformBall.InitResource();
 
 #pragma endregion
 

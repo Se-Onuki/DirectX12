@@ -26,39 +26,56 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 		std::istringstream s{ line };
 		s >> identifier;
 
+		// 新規マテリアルの生成
 		if (identifier == "newmtl") {
 			std::string materialName;
 			s >> materialName;
 			materialMap_[materialName].reset(new Material{ materialName });
 			materialData = materialMap_[materialName].get();
+			materialData->CreateBuffer();
+		}
+		else if (identifier == "Kd") {
+			if (materialData && materialData->mapData_) {
+				Vector4 &color = materialData->mapData_->color;
+				s >> color.x >> color.y >> color.z;
+			}
 		}
 
 		else if (identifier == "map_Kd") {
-			// 連結してファイルバスにする
-			std::string textureFilename;
-			s >> textureFilename;
 
-			if (!materialData) return;
+			std::string token;
+			Transform uv{};
+			uv.scale = Vector3::one();
 
-			materialData->textureName_ = directoryPath + textureFilename;
-			materialData->texHandle_ = TextureManager::Load(directoryPath + textureFilename);
+			while (s >> token) {
+				if (token == "-o") {
+					s >> uv.translate.x >> uv.translate.y >> uv.translate.z;
+				}
+				else if (token == "-s") {
+					s >> uv.scale.x >> uv.scale.y >> uv.scale.z;
+				}
+				else {
+
+					if (!materialData) return;
+					// 連結してファイルバスにする
+					materialData->textureName_ = directoryPath + token;
+					materialData->texHandle_ = TextureManager::Load(directoryPath + token);
+					break;
+				}
+			}
+			// uvTransformの値を代入する
+			if (materialData && materialData->mapData_) {
+				materialData->mapData_->uvTransform = uv.Affine();
+			}
 		}
 	}
 #pragma endregion
-	for (auto &material : materialMap_) {
-		material.second->CreateBuffer();
-	}
+	//for (auto &material : materialMap_) {
+	//	//material.second->CreateBuffer();
+	//}
 	return;
 }
 
-Model::Model()
-{
-}
-
-Model::~Model()
-{
-
-}
 
 void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 	assert(!commandList_ && "EndDrawが呼び出されていません");
@@ -186,8 +203,9 @@ void Model::ImGuiWidget()
 void Model::Draw(const Transform &transform, const ViewProjection &viewProjection) const
 {
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kViewProjection, viewProjection.constBuffer_->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transform.constBuffer_->GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
-		mesh->Draw(commandList_, transform);
+		mesh->Draw(commandList_);
 	}
 
 }
@@ -264,10 +282,9 @@ void Mesh::SetMaterial(Material *const material) {
 	//material;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform) const {
+void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Render::RootParameter::kTexture, material_->texHandle_);
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kMaterial, material_->constBuffer_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView((uint32_t)Render::RootParameter::kWorldTransform, transform.constBuffer_->GetGPUVirtualAddress());
 
 	commandList->IASetVertexBuffers(0, 1, &this->vbView_);
 	commandList->IASetIndexBuffer(&this->ibView_);

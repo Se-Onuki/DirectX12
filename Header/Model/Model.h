@@ -40,7 +40,7 @@ public:
 
 	Vector3 ambient_{};			// アンビエント影響度
 	Vector3 diffuse_{};			// ディフューズ影響度
-	Vector3 specular_{};			// スペキュラー影響度
+	Vector3 specular_{};		// スペキュラー影響度
 	std::string name_;			// マテリアル名
 	std::string textureName_;
 	uint32_t texHandle_ = 1u;
@@ -88,7 +88,7 @@ public:
 
 	void SetMaterial(Material *const material);
 
-	void Draw(ID3D12GraphicsCommandList *const commandList, const Transform &transform) const;
+	void Draw(ID3D12GraphicsCommandList *const commandList) const;
 
 	static void CreateSphere(VertexData *const vertex,
 		ID3D12Resource *const indexResource, const uint32_t &subdivision);
@@ -99,9 +99,11 @@ public:
 class Model
 {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+
 public:
-	Model();
-	~Model();
+	Model() = default;
+	~Model() = default;
 
 	std::string name_;
 	std::vector<std::unique_ptr<Mesh>> meshList_;

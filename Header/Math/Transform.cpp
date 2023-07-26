@@ -10,7 +10,7 @@ Matrix4x4 Transform::Affine() const
 	return Matrix4x4::Affine(scale, rotate, translate);
 }
 
-void Transform::Init()
+void Transform::InitResource()
 {
 	CreateConstBuffer();
 	SetMap();
