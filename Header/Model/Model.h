@@ -99,9 +99,22 @@ public:
 class Model
 {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-
+	// モデル用パイプライン
+	static ComPtr<ID3D12PipelineState>graphicsPipelineState_;
+	static ComPtr<ID3D12RootSignature> rootSignature_;
 
 public:
+	enum class RootParameter {
+		kWorldTransform, // ワールド変換行列
+		kViewProjection, // ビュープロジェクション変換行列
+		kMaterial,       // マテリアル
+		kTexture,        // テクスチャ
+		kLight,          // ライト
+	};
+
+	static void StaticInit();
+	static void CreatePipeLine();
+
 	Model() = default;
 	~Model() = default;
 

@@ -135,6 +135,9 @@
     <ClCompile Include="DirectBase\Base\PipelineState.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="DirectBase\Base\LeakChecker.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -231,6 +234,9 @@
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="DirectBase\Base\PipelineState.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Base\LeakChecker.h">
       <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
