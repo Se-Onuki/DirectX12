@@ -21,22 +21,24 @@ class Shader {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	Shader() = default;
-	~Shader() = default;
-
 	// dxcCompilerを初期化
 	static ComPtr<IDxcUtils>dxcUtils_;
 	static ComPtr<IDxcCompiler3> dxcCompiler_;
 
 	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
 	static ComPtr<IDxcIncludeHandler> includeHandler_;
-	void StaticInit();
-
-	void Compile(const std::wstring &ShaderPath, const wchar_t *profile);
 
 	ComPtr<IDxcBlob> shaderBlob_ = nullptr;
 
 public:
+
+	Shader() = default;
+	~Shader() = default;
+
+	static void StaticInit();
+
+	void Compile(const std::wstring &ShaderPath, const wchar_t *profile);
+
 	inline IDxcBlob *const GetShaderBlob()const {
 		return shaderBlob_.Get();
 	}

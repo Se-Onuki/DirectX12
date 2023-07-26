@@ -180,18 +180,20 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region DXCの初期化
 
-	// dxcCompilerを初期化
-	Microsoft::WRL::ComPtr<IDxcUtils>dxcUtils = nullptr;
-	Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler = nullptr;
-	hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
-	assert(SUCCEEDED(hr));
-	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
-	assert(SUCCEEDED(hr));
+	//// dxcCompilerを初期化
+	//Microsoft::WRL::ComPtr<IDxcUtils>dxcUtils = nullptr;
+	//Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler = nullptr;
+	//hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
+	//assert(SUCCEEDED(hr));
+	//hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
+	//assert(SUCCEEDED(hr));
 
-	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
-	Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
-	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
-	assert(SUCCEEDED(hr));
+	//// 現時点でincludeはしないが、includeに対応するための設定を行っておく
+	//Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
+	//hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
+	//assert(SUCCEEDED(hr));
+	Shader::StaticInit();
+
 
 #pragma endregion
 
@@ -342,15 +344,21 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region VertexShader
 
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get());
-	assert(vertexShaderBlob != nullptr);
+	//Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get());
+	//assert(vertexShaderBlob != nullptr);
+	Shader vertexShader;
+	vertexShader.Compile(L"Object3D.VS.hlsl", L"vs_6_0");
+	IDxcBlob *const vertexShaderBlob = vertexShader.GetShaderBlob();
 
 #pragma endregion
 
 #pragma region PixelShader
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get());
-	assert(pixelShaderBlob != nullptr);
+	//Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils.Get(), dxcCompiler.Get(), includeHandler.Get());
+	//assert(pixelShaderBlob != nullptr);
+	Shader pixelShader;
+	pixelShader.Compile(L"Object3D.PS.hlsl", L"ps_6_0");
+	IDxcBlob *const pixelShaderBlob = pixelShader.GetShaderBlob();
 
 #pragma endregion
 
