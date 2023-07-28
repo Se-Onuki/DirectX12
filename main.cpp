@@ -49,6 +49,7 @@
 #include "DirectBase/Base/DirectXCommon.h"
 #include "DirectBase/Base/TextureManager.h"
 #include "DirectBase/Base/Shader.h"
+#include "DirectBase/Base/ImGuiManager.h"
 
 //template <typename T>using  Microsoft::WRL::ComPtr = Microsoft::WRL:: Microsoft::WRL::ComPtr<T>;
 //using namespace Microsoft::WRL;
@@ -56,16 +57,7 @@
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
-#ifdef _DEBUG
-
-
-#endif // DEBUG
-
-#pragma region COMの初期化
-
-	CoInitializeEx(0, COINIT_MULTITHREADED);
-
-#pragma endregion
+	WinApp::StaticInit();
 
 	WinApp *const winApp = WinApp::GetInstance();
 	winApp->CreateGameWindow("DirectXGame");
@@ -136,19 +128,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 #pragma region DXCの初期化
-
-	//// dxcCompilerを初期化
-	//Microsoft::WRL::ComPtr<IDxcUtils>dxcUtils = nullptr;
-	//Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler = nullptr;
-	//hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
-	//assert(SUCCEEDED(hr));
-	//hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
-	//assert(SUCCEEDED(hr));
-
-	//// 現時点でincludeはしないが、includeに対応するための設定を行っておく
-	//Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
-	//hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
-	//assert(SUCCEEDED(hr));
 	Shader::StaticInit();
 	Model::StaticInit();
 
@@ -386,7 +365,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Model
 
 	Model model;
-	model.LoadObjFile("", "plane.obj");
+	model.LoadObjFile("", "multiMaterial.obj");
 
 #pragma endregion
 
@@ -793,18 +772,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 
 #pragma region 各種解放
+	
+	ImGuiManager::Finalize();
 
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	dxCommon->Finalize();
 
-	CloseHandle(fenceEvent);
-
-	CloseWindow(winApp->GetHWND());
+	winApp->Finalize();
 
 #pragma endregion
-
-	CoUninitialize();
 
 	return 0;
 }

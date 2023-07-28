@@ -53,4 +53,7 @@ public:
 		int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);
 
 	bool ProcessMessage() const;
+
+	static void StaticInit();
+	void Finalize();
 };

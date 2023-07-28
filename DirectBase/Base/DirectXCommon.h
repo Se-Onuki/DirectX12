@@ -20,10 +20,9 @@ private:
 
 	// ウィンドウ管理
 	WinApp *winApp_ = nullptr;
-	//public:
 
-		// DirectX管理
-		// 定数
+	// DirectX管理
+	// 定数
 	UINT64 fenceValue_ = 0;
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
@@ -35,7 +34,6 @@ private:
 	// DXGI
 	ComPtr<IDXGIFactory7> dxgiFactory_;
 
-private:
 	// DirectXDevice
 	ComPtr<ID3D12Device> device_;
 
@@ -66,8 +64,8 @@ public:
 	ID3D12Device *const GetDevice() {
 		return device_.Get();
 	}
-
-
+	/// @brief 各種破棄
+	void Finalize();
 
 	static DirectXCommon *const GetInstance();
 

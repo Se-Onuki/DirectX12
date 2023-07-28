@@ -1,5 +1,6 @@
 #pragma once
 #include <wrl.h>
+#include "../../externals/imgui/imgui.h"
 
 class DirectXCommon;
 
@@ -17,5 +18,10 @@ class ImGuiManager
 
 public:
 
+	static ImGuiManager *const GetInstance() {
+		static ImGuiManager instance{};
+		return &instance;
+	}
 
+	static void Finalize();
 };

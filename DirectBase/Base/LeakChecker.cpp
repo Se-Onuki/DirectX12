@@ -1,3 +1,3 @@
 #include "LeakChecker.h"
 
-DirectResourceLeakChecker LeakChecker::leakChecker = {};
+DirectResourceLeakChecker LeakChecker::leakChecker {};

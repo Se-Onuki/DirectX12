@@ -13,6 +13,8 @@
 struct DirectResourceLeakChecker {
 	~DirectResourceLeakChecker() {
 
+#ifdef _DEBUG
+
 #pragma region Report Live Objects
 
 		// リソースリークチェック
@@ -24,6 +26,8 @@ struct DirectResourceLeakChecker {
 		}
 
 #pragma endregion
+
+#endif // DEBUG
 
 	}
 };

@@ -5,6 +5,10 @@
 #include "../../Header/Descriptor/DescriptorHandIe.h"
 #include "../../Header/Render/Render.hpp"
 
+void TextureManager::StartDraw()
+{
+}
+
 uint32_t TextureManager::Load(const std::string &file_name)
 {
 	return GetInstance()->LoadInternal(file_name);

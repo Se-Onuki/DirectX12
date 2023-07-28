@@ -3,6 +3,26 @@
 
 const wchar_t WinApp::kWindowClassName[] = L"DirectXGame";
 
+
+void WinApp::StaticInit()
+{
+
+#pragma region COMの初期化
+
+	CoInitializeEx(0, COINIT_MULTITHREADED);
+
+#pragma endregion
+
+}
+void WinApp::Finalize()
+{
+
+	CloseWindow(hwnd);
+
+	CoUninitialize();
+
+}
+
 WinApp *const WinApp::GetInstance()
 {
 	static WinApp instance;

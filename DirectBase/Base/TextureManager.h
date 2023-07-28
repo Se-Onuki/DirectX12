@@ -33,6 +33,8 @@ public:
 		return &instance;
 	}
 
+	static void StartDraw();
+
 	static uint32_t Load(const std::string &file_name);
 
 	void Init(ID3D12Device *const device, ID3D12GraphicsCommandList *const commandList, const std::string &directoryPath = "resources/");
