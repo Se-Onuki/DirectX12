@@ -738,3 +738,7 @@ void Material::ImGuiWidget()
 		ImGui::TreePop();
 	}
 }
+
+void Material::Create()
+{
+}

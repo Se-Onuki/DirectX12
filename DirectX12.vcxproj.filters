@@ -46,6 +46,9 @@
     <Filter Include="2D">
       <UniqueIdentifier>{e5822814-93d1-4af8-bfd3-86c05bba8b3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダ">
+      <UniqueIdentifier>{c0fe13e8-8231-4a1b-ac1c-784807b87d54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -244,8 +247,18 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Object3d.VS.hlsl" />
-    <FxCompile Include="Object3d.PS.hlsl" />
+    <FxCompile Include="Object3d.VS.hlsl">
+      <Filter>シェーダ</Filter>
+    </FxCompile>
+    <FxCompile Include="Object3d.PS.hlsl">
+      <Filter>シェーダ</Filter>
+    </FxCompile>
+    <FxCompile Include="Sprite.VS.hlsl">
+      <Filter>シェーダ</Filter>
+    </FxCompile>
+    <FxCompile Include="Sprite.PS.hlsl">
+      <Filter>シェーダ</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -253,6 +266,11 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Object3d.hlsli" />
+    <None Include="Object3d.hlsli">
+      <Filter>シェーダ</Filter>
+    </None>
+    <None Include="Sprite.hlsli">
+      <Filter>シェーダ</Filter>
+    </None>
   </ItemGroup>
 </Project>

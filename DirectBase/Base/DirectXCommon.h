@@ -61,9 +61,13 @@ public:
 	void Init(WinApp *winApp, int32_t backBufferWidth = WinApp::kWindowWidth,
 		int32_t backBufferHeight = WinApp::kWindowHeight);
 
-	ID3D12Device *const GetDevice() {
+	ID3D12Device *const GetDevice()const {
 		return device_.Get();
 	}
+	ID3D12GraphicsCommandList *const GetCommandList()const {
+		return commandList_.Get();
+	}
+
 	/// @brief 各種破棄
 	void Finalize();
 

@@ -33,11 +33,11 @@ public:
 		const Vector2 &LeftTop, const float &width, const float &height, const float &minDepth,
 		const float &maxDepth);
 };
-
-namespace Light {
-	struct Direction {
-		Vector4 color;		// 色(RGBA)
-		Vector3 direction;	// ライトの向き
-		float intensity;	// 輝度
-	};
-}
+//
+//namespace Light {
+//	struct Direction {
+//		Vector4 color;		// 色(RGBA)
+//		Vector3 direction;	// ライトの向き
+//		float intensity;	// 輝度
+//	};
+//}

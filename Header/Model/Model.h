@@ -55,6 +55,8 @@ public:
 
 	void ImGuiWidget();
 
+	void Create();
+
 };
 
 struct Mesh
