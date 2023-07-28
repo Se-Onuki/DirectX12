@@ -103,9 +103,9 @@ namespace std {
 	struct hash<Mesh::VertexData> {
 		size_t operator()(const Mesh::VertexData &v) const {
 			std::string s =
-				std::to_string(v.position.x) + std::to_string(v.position.y) + std::to_string(v.position.z) + std::to_string(v.position.w)	// 頂点
-				+ std::to_string(v.texCoord.x) + std::to_string(v.texCoord.y)	// uv座標
-				+ std::to_string(v.normal.x) + std::to_string(v.normal.y) + std::to_string(v.normal.z);	// 法線
+				std::to_string(v.position.x) + "/" + std::to_string(v.position.y) + "/" + std::to_string(v.position.z) + "/" + std::to_string(v.position.w)	// 頂点
+				+ "/" + std::to_string(v.texCoord.x) + "/" + std::to_string(v.texCoord.y)	// uv座標
+				+ "/" + std::to_string(v.normal.x) + "/" + std::to_string(v.normal.y) + "/" + std::to_string(v.normal.z);	// 法線
 			return std::hash<std::string>()(s);
 		}
 	};
@@ -137,8 +137,6 @@ public:
 	std::vector<std::unique_ptr<Mesh>> meshList_;
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
-	void LoadObjFile(const std::string &directoryPath, const std::string &fileName);
-	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
 
 	void Draw(const Transform &transform, const ViewProjection &viewProjection) const;
 
@@ -147,7 +145,11 @@ public:
 	static const char *const defaultDirectory;
 
 	void ImGuiWidget();
+
+	[[nodiscard]] static  Model *const LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 private:
+	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
+
 	static ID3D12GraphicsCommandList *commandList_;
 
 };

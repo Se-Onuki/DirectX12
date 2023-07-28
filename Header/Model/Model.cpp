@@ -319,16 +319,18 @@ void Model::EndDraw() {
 	commandList_ = nullptr;
 }
 
-void Model::LoadObjFile(const std::string &directoryPath, const std::string &fileName) {
+Model *const Model::LoadObjFile(const std::string &directoryPath, const std::string &fileName) {
 
 #pragma region 1. ファイルを開く
 
 	std::ifstream file{ defaultDirectory + directoryPath + fileName };
-	if (!file.is_open()) return;		// 開けなかった場合、処理を終了する
+	if (!file.is_open()) return nullptr;		// 開けなかった場合、処理を終了する
 
 #pragma endregion
 
-	name_ = fileName.substr(0, fileName.size() - 4);
+	Model *const result = new Model;
+
+	result->name_ = fileName.substr(0, fileName.size() - 4);
 
 #pragma region 2. 中で必要になる変数の宣言
 
@@ -336,9 +338,9 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 
 	Mesh *modelData = nullptr;				// 構築するModelData
 
-	meshList_.emplace_back(new Mesh);
+	result->meshList_.emplace_back(new Mesh);
 
-	modelData = meshList_.back().get();
+	modelData = result->meshList_.back().get();
 
 
 	std::vector<Vector4> positionList;	// 位置
@@ -408,29 +410,30 @@ void Model::LoadObjFile(const std::string &directoryPath, const std::string &fil
 		}
 		else if (identifier == "o") {
 			if (!modelData->vertices_.empty())
-				meshList_.emplace_back(new Mesh);
+				result->meshList_.emplace_back(new Mesh);
 
-			modelData = meshList_.back().get();				// 構築するModelData
+			modelData = result->meshList_.back().get();				// 構築するModelData
 		}
 		else if (identifier == "usemtl") {
 			std::string materialID;
 			s >> materialID;
-			modelData->SetMaterial(materialMap_[materialID].get());
+			modelData->SetMaterial(result->materialMap_[materialID].get());
 		}
 		else if (identifier == "mtllib") {
 
 			std::string materialFile;
 			s >> materialFile;
-			LoadMtlFile(directoryPath, materialFile);
+			result->LoadMtlFile(directoryPath, materialFile);
 			//modelData->material_ = Material::LoadFile(directoryPath, materialFile);
 		}
 	}
 #pragma endregion
 
-	for (auto &mesh : meshList_) {
+	for (auto &mesh : result->meshList_) {
 		mesh->CreateBuffer();
 		mesh->indexMap_.clear();
 	}
+	return result;
 }
 
 void Model::ImGuiWidget()

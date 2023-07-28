@@ -70,7 +70,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	TextureManager *const textureManager = TextureManager::GetInstance();
 
 	textureManager->Init(dxCommon->GetDevice(), commandList_);
-	uint32_t uvTex = TextureManager::Load("white2x2.png");
+	uint32_t uvTex =
+		TextureManager::Load("white2x2.png");
 
 	//HRESULT hr;
 
@@ -348,8 +349,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Model
 
-	Model model;
-	model.LoadObjFile("", "multiMaterial.obj");
+	std::unique_ptr<Model> model;
+
+	model.reset(Model::LoadObjFile("", "multiMaterial.obj"));
+	//model[1].reset(Model::LoadObjFile("", "bunny.obj"));
+
+	//const std::unique_ptr<Model>const model2{ Model::LoadObjFile("", "bunny.obj") };
+	//model.LoadObjFile("", "plane.obj");
+
 
 #pragma endregion
 
@@ -465,11 +472,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Transformを使ってCBufferを更新する
 
-	// Transform変数を作る
-	//Transform transform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,10.f} };
-	// カメラTransformを作る
-	//Transform cameraTransform{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,-5.f} };
-
 	// Sprite用のTransform
 	Transform transformSprite{ {0.6f,1.f,1.f},{0.f,0.f,0.f},{-2.f,0.f,-0.5f} };
 
@@ -483,15 +485,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region TransformationMatrix用のResourceを作る
 
-	//// WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	//ID3D12Resource *wvpResource = CreateBufferResource(device, sizeof(Matrix4x4));
-	//// データを書き込む
-	//Matrix4x4 *wvpData = nullptr;
-	//// 書き込むためのアドレスを取得
-	//wvpResource->Map(0, nullptr, reinterpret_cast<void **>(&wvpData));
-	//// 単位行列を書き込んでおく
-	//*wvpData = Matrix4x4::Identity();
-
 #pragma region Sprite
 
 	// Sprite用のTransformationMatrixのリソースを作る。Matrix4x4 1つ分のサイズを用意する
@@ -503,20 +496,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// 単位行列を書き込んでおく
 	//transformationMatrixDataSprite->WVP = Matrix4x4::Identity();
 	transformationMatrixDataSprite->World = Matrix4x4::Identity();
-
-#pragma endregion
-
-#pragma region Ball
-
-	//// Ball用のTransformationMatrixのリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	//Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceBall = CreateBufferResource(dxCommon->GetDevice(), sizeof(Transform::TransformMatrix));
-	//// データを書き込む
-	//Transform::TransformMatrix *transformationMatrixDataBall = nullptr;
-	//// 書き込むためのアドレスを取得
-	//transformationMatrixResourceBall->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixDataBall));
-	//// 単位行列を書き込んでおく
-	////transformationMatrixDataBall->WVP = Matrix4x4::Identity();
-	//transformationMatrixDataBall->World = Matrix4x4::Identity();
 
 #pragma endregion
 
@@ -542,7 +521,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	vertexDataSprite[0].position = { 0.f, 360.f, 0.f, 1.f };
 	vertexDataSprite[0].texCoord = { 0.f,1.f };
 	vertexDataSprite[0].normal = { 0.f,0.f,-1.f };
-	// 左下
+	// 左上
 	vertexDataSprite[1].position = { 0.f, 0.f, 0.f, 1.f };
 	vertexDataSprite[1].texCoord = { 0.f,0.f };
 	vertexDataSprite[1].normal = { 0.f,0.f,-1.f };
@@ -551,18 +530,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	vertexDataSprite[2].texCoord = { 1.f,1.f };
 	vertexDataSprite[2].normal = { 0.f,0.f,-1.f };
 
-	//// 左下
-	//vertexDataSprite[3].position = { 0.f, 0.f, 0.f, 1.f };
-	//vertexDataSprite[3].texCoord = { 0.f,0.f };
-	//vertexDataSprite[3].normal = { 0.f,0.f,-1.f };
 	// 右上
 	vertexDataSprite[3].position = { 640.f, 0.f, 0.f, 1.f };
 	vertexDataSprite[3].texCoord = { 1.f,0.f };
 	vertexDataSprite[3].normal = { 0.f,0.f,-1.f };
-	// 右下
-	/*vertexDataSprite[5].position = { 640.f, 360.f, 0.f, 1.f };
-	vertexDataSprite[5].texCoord = { 1.f,1.f };
-	vertexDataSprite[5].normal = { 0.f,0.f,-1.f };*/
 
 	uint32_t *indexDataSprite =
 		nullptr;
@@ -655,7 +626,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		vpDataUI->projection = projectionMatrixSprite;
 
 		ImGui::Begin("model");
-		model.ImGuiWidget();
+		model->ImGuiWidget();
 		ImGui::End();
 
 		ImGui::ShowDemoWindow();
@@ -692,12 +663,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
 		textureManager->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, uvTex);
-		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 		// Ballの描画
-		model.Draw(transformBall, viewProjection);
+		model->Draw(transformBall, viewProjection);
 
 		Model::EndDraw();
 

@@ -22,3 +22,7 @@ void Sprite::Init() {
 
 void Sprite::Draw() {
 }
+
+void Sprite::CreateVertex()
+{
+}
