@@ -18,6 +18,8 @@ class ImGuiManager
 
 public:
 
+	static void StartFlame();
+
 	static ImGuiManager *const GetInstance() {
 		static ImGuiManager instance{};
 		return &instance;

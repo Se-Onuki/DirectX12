@@ -239,6 +239,9 @@
     <ClInclude Include="DirectBase\Base\LeakChecker.h">
       <Filter>Base</Filter>
     </ClInclude>
+    <ClInclude Include="DirectBase\3D\DirectionLight.h">
+      <Filter>3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl" />

@@ -67,7 +67,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
 
-	TextureManager::GetInstance()->Init(dxCommon->GetDevice(), commandList_);
+	TextureManager *const textureManager = TextureManager::GetInstance();
+
+	textureManager->Init(dxCommon->GetDevice(), commandList_);
 	uint32_t uvTex = TextureManager::Load("white2x2.png");
 
 	//HRESULT hr;
@@ -78,26 +80,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region DescriptorHeap
 
-	// RTV用のヒープでディスクリプタの数は2。RTVはShader内で触るものではないので、ShaderVisibleはfalse
-	//ID3D12DescriptorHeap *rtvDescriptorHeap = DirectXCommon::GetInstance()->rtvHeap_.Get();
-
-	// SRV用のディスクリプタの数は128。SRVはShader内で触るものなので、ShaderVisibleはtrue
-	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
-
-	TextureManager *const texManager = TextureManager::GetInstance();
-	ID3D12DescriptorHeap *const srvDescriptorHeap = TextureManager::GetInstance()->GetSRVHeap();
+	ID3D12DescriptorHeap *const srvDescriptorHeap = textureManager->GetSRVHeap();
 
 
 #pragma endregion
 
-#pragma region SwapChainからResourceを引っ張ってくる
-	// SwapChainからResourceを引っ張ってくる
-	/*ID3D12Resource *const swapChainResources[] = {
-		DirectXCommon::GetInstance()->backBuffers_[0].Get(),
-		DirectXCommon::GetInstance()->backBuffers_[1].Get()
-	};*/
-
-#pragma endregion
 
 	// RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
@@ -126,12 +113,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
 
-
-#pragma region DXCの初期化
 	Shader::StaticInit();
 	Model::StaticInit();
 
-#pragma endregion
 
 	//#pragma region PSO(Pipeline State Object)
 	//
@@ -607,11 +591,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		if (winApp->ProcessMessage()) break;
 
 #pragma region ImGuiに新規フレームであると伝える
-
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-
+		ImGuiManager::StartFlame();
 #pragma endregion
 
 #pragma region ゲームの処理
@@ -634,24 +614,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::Begin("Material");
 		ImGui::ColorEdit4("Color", &materialDataSprite->color.x);
 		ImGui::Checkbox("Lighting", (bool *)&materialDataSprite->enableLighting);
-		//ImGui::DragFloat2("translate", &transformSprite.translate.x, 1.f);
 		ImGui::End();
-
-
-
-		//ImGui::Begin("Ball");
-		//if (ImGui::BeginCombo("TextureList", "texture")) {
-		//	for (auto &texture : textureSrvHandleGPUList) {
-		//		//bool is_selected = false;
-		//		if (ImGui::Selectable(std::to_string(texture.ptr).c_str())) {
-		//			selecteTexture = texture;
-		//			break;
-		//		}
-		//	}
-		//	ImGui::EndCombo();
-		//}
-		//ImGui::Image((ImTextureID)selecteTexture.ptr, { 100.f,100.f });
-		//ImGui::End();
 
 		ImGui::Begin("uvTransform");
 		ImGui::DragFloat2("Scale", &uvTransform.scale.x, 0.01f, -10.f, 10.f);
@@ -710,22 +673,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		dxCommon->StartDraw();
 
+		textureManager->StartDraw();
+
 		Model::StartDraw(commandList_);
-
-#pragma region ImGuiの描画用DescriptorHeapの設定
-
-		// 描画用のDescriptorHeapの設定。
-		ID3D12DescriptorHeap *descriptorHeaps[] = { srvDescriptorHeap };
-		commandList_->SetDescriptorHeaps(1, descriptorHeaps);
-
-#pragma endregion
 
 #pragma region コマンドを積む
 
-		//// RootSignatureを設定。PSOに設定しているけど別途設定が必要
-		//commandList_->SetGraphicsRootSignature(rootSignature.Get());
-		//commandList_->SetPipelineState(graphicsPipelineState[0].Get());		// PSOを設定
-		//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
 		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
 		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -738,19 +691,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
-		texManager->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, uvTex);
+		textureManager->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, uvTex);
 		//commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, *textureSrvHandleGPUList.begin());		// TextureのSRVテーブル情報を設定
 		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 		// Ballの描画
 		model.Draw(transformBall, viewProjection);
-
-		//commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewBall);	// VBVを設定
-		//commandList_->IASetIndexBuffer(&indexBufferViewBall);
-		//commandList_->DrawIndexedInstanced(BallDivision * BallDivision * 6u, 1, 0, 0, 0);
-
-		//commandList_->SetPipelineState(graphicsPipelineState[0].Get());		// PSOを設定
 
 		Model::EndDraw();
 
@@ -764,15 +711,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 		dxCommon->EndDraw();
 
-		//textureResourceList.clear();
-		//intermediateResoureceList.clear();
-
 #pragma endregion
 
 	}
 
 #pragma region 各種解放
-	
+
 	ImGuiManager::Finalize();
 
 	dxCommon->Finalize();

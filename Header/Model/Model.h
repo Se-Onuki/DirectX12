@@ -16,6 +16,8 @@
 #include <wrl.h>
 #include <d3d12.h>
 
+#include <array>
+
 struct Transform;
 class ViewProjection;
 
@@ -113,7 +115,7 @@ class Model
 {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// モデル用パイプライン
-	static ComPtr<ID3D12PipelineState>graphicsPipelineState_;
+	static std::array<ComPtr<ID3D12PipelineState>, 2u> graphicsPipelineState_;
 	static ComPtr<ID3D12RootSignature> rootSignature_;
 
 public:

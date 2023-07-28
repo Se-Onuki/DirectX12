@@ -7,6 +7,15 @@
 
 void TextureManager::StartDraw()
 {
+
+#pragma region 描画用DescriptorHeapの設定
+
+	// 描画用のDescriptorHeapの設定。
+	ID3D12DescriptorHeap *descriptorHeaps[] = { srvHeap_.Get() };
+	commandList_->SetDescriptorHeaps(1, descriptorHeaps);
+
+#pragma endregion
+
 }
 
 uint32_t TextureManager::Load(const std::string &file_name)

@@ -33,7 +33,7 @@ public:
 		return &instance;
 	}
 
-	static void StartDraw();
+	void StartDraw();
 
 	static uint32_t Load(const std::string &file_name);
 

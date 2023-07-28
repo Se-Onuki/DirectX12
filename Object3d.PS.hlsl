@@ -12,6 +12,7 @@ struct DirectionalLight
     float4 color; // 色(RGBA)
     float3 direction; // ライトの向き
     float intensity; // 輝度
+    //int enableLighting;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -31,9 +32,17 @@ PixelShaderOutput main(VertexShaderOutput input)
     float4 transformedUV = mul(float4(input.texCoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
     
-    float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-    float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
-    output.color = gMaterial.color * textureColor * saturate(gDirectionalLight.color * cos * gDirectionalLight.intensity + !gMaterial.enableLighting);
+    if (gMaterial.enableLighting)
+    {
+        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+        float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
     
+        output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+        output.color.w = gMaterial.color.w * textureColor.w;
+    }
+    else
+    {
+        output.color = gMaterial.color * textureColor;
+    }
     return output;
 }

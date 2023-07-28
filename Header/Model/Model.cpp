@@ -10,7 +10,7 @@
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
-Microsoft::WRL::ComPtr<ID3D12PipelineState> Model::graphicsPipelineState_ = nullptr;
+std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 2u> Model::graphicsPipelineState_ = { nullptr };
 Microsoft::WRL::ComPtr<ID3D12RootSignature> Model::rootSignature_ = nullptr;
 
 void Model::StaticInit() {
@@ -206,10 +206,34 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[0]));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
+
+
+#pragma region BlendState(ブレンドステート)
+
+	// 全ての色要素を書き込む
+	//blendDesc.RenderTarget[0].RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[1]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
 
 #pragma endregion
 
@@ -288,7 +312,7 @@ void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 
 	// RootSignatureを設定。
 	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList_->SetPipelineState(graphicsPipelineState_.Get());		// PSOを設定
+	commandList_->SetPipelineState(graphicsPipelineState_[0].Get());		// PSOを設定
 }
 
 void Model::EndDraw() {
