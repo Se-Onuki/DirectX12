@@ -41,6 +41,8 @@ public:
 
 	void Reset();
 
+	void ImGuiWindow()const;
+
 	ID3D12DescriptorHeap *const GetSRVHeap()const {
 		return srvHeap_.Get();
 	}

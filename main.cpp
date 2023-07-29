@@ -112,7 +112,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	lightData->color = { 1.f, 1.f, 1.f,1.f };
 	lightData->direction = Vector3{ 0.f,-1.f,0.f }.Nomalize();
 	lightData->intensity = 1.f;
-	lightData->lightingPattern[0] = 2;
+	lightData->pattern = 2;
 
 #pragma endregion
 
@@ -151,6 +151,21 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::ColorEdit3("Color", &lightData->color.x);
 		ImGui::DragFloat3("Direction", &lightData->direction.x, 1.f / 255, -1, 1);
 		ImGui::DragFloat("Brightness ", &lightData->intensity, 0.01f, 0, 1);
+		const static std::array<std::string, 3u>lightPattern{ "kNone", "kLambert","kHalfLambert" };
+		if (ImGui::BeginCombo("LightingPattren", lightPattern[lightData->pattern].c_str())) {
+
+			for (uint32_t i = 0; i < lightPattern.size(); i++) {
+				if (ImGui::Selectable(lightPattern[i].c_str())) {
+					lightData->pattern = i;
+					break;
+				}
+			}
+			ImGui::EndCombo();
+		}
+		//ImGui::Image((ImTextureID)selecteTexture.ptr, { 100.f,100.f });
+
+		//ImGui::
+		//ImGui::DragInt("LightingPattern", &lightData->pattern);
 		ImGui::End();
 		lightData->direction = lightData->direction.Nomalize();
 

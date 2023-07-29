@@ -40,12 +40,16 @@ void TextureManager::Reset() {
 	nextIndex_ = alreadyUsedCount;
 	srvHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, maxTextureCount, true);
 
-	for (size_t i = alreadyUsedCount; i < maxTextureCount; i++) {
+	for (size_t i = 0u; i < maxTextureCount; i++) {
 		textureArray_[i].textureResource.Reset();
 		textureArray_[i].cpuHandleSRV.ptr = 0;
 		textureArray_[i].gpuHandleSRV.ptr = 0;
 		textureArray_[i].name.clear();
 	}
+}
+
+void TextureManager::ImGuiWindow() const {
+
 }
 
 void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const {

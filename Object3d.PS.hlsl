@@ -14,7 +14,7 @@ struct DirectionalLight
     float3 direction; // ライトの向き
     float intensity; // 輝度
     
-    uint pattern;
+    int pattern;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
