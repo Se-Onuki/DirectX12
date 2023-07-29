@@ -13,7 +13,8 @@ struct DirectionalLight
     float4 color; // 色(RGBA)
     float3 direction; // ライトの向き
     float intensity; // 輝度
-    //int enableLighting;
+    
+    uint pattern;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -35,11 +36,25 @@ PixelShaderOutput main(VertexShaderOutput input)
     
     
     float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-    float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
-    
-    output.color = gMaterial.color * gDirectionalLight.color * cos * gDirectionalLight.intensity;   // 
-    output.color = saturate(output.color + gMaterial.emissive) * textureColor;  // 自己発光
-    output.color.w = gMaterial.color.w * textureColor.w;    // α値
+    if (gDirectionalLight.pattern == 0)
+    {
+        output.color = textureColor;
+        output.color.w = gMaterial.color.w * textureColor.w; // α値
+        
+    }
+    else if (gDirectionalLight.pattern == 1)
+    {
+        output.color = gMaterial.color * gDirectionalLight.color * NdotL * gDirectionalLight.intensity; // 
+        output.color = saturate(output.color + gMaterial.emissive) * textureColor; // 自己発光
+        output.color.w = gMaterial.color.w * textureColor.w; // α値
+    }
+    else if (gDirectionalLight.pattern == 2)
+    {
+        float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
+        output.color = gMaterial.color * gDirectionalLight.color * cos * gDirectionalLight.intensity; // 
+        output.color = saturate(output.color + gMaterial.emissive) * textureColor; // 自己発光
+        output.color.w = gMaterial.color.w * textureColor.w; // α値
+    }
    
     return output;
 }

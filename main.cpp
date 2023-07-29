@@ -67,11 +67,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
 
-	ID3D12GraphicsCommandList *const commandList_ = dxCommon->commandList_.Get();
+	ID3D12GraphicsCommandList *const commandList = dxCommon->commandList_.Get();
 
 	TextureManager *const textureManager = TextureManager::GetInstance();
 
-	textureManager->Init(dxCommon->GetDevice(), commandList_);
+	textureManager->Init(dxCommon->GetDevice(), commandList);
 	TextureManager::Load("white2x2.png");
 
 	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), (int32_t)dxCommon->backBuffers_.size(), textureManager->GetSRVHeap());
@@ -87,7 +87,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	std::unique_ptr<Model> model{ Model::LoadObjFile("", "multiMaterial.obj") };
 	std::unique_ptr<Model> model2{ Model::LoadObjFile("", "plane.obj") };
 
-	Transform planeTransform{ Vector3::one(),Vector3::zero(),{-1.f,0.f,0.f} };
+	Transform planeTransform{ Vector3::one(),Vector3::zero(),{-1.5f,0.f,0.f} };
 	planeTransform.InitResource();
 
 
@@ -109,9 +109,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Light::Direction *lightData = nullptr;
 	// 書き込むためのアドレスを取得
 	lightResource->Map(0, nullptr, reinterpret_cast<void **>(&lightData));
-	lightData->color = { 1.f, 1.f, 1.f, 1.f };
+	lightData->color = { 1.f, 1.f, 1.f,1.f };
 	lightData->direction = Vector3{ 0.f,-1.f,0.f }.Nomalize();
 	lightData->intensity = 1.f;
+	lightData->lightingPattern[0] = 2;
 
 #pragma endregion
 
@@ -147,7 +148,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::End();
 
 		ImGui::Begin("Light");
-		ImGui::ColorEdit4("Color", &lightData->color.x);
+		ImGui::ColorEdit3("Color", &lightData->color.x);
 		ImGui::DragFloat3("Direction", &lightData->direction.x, 1.f / 255, -1, 1);
 		ImGui::DragFloat("Brightness ", &lightData->intensity, 0.01f, 0, 1);
 		ImGui::End();
@@ -182,13 +183,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region コマンドを積む
 
-		Sprite::StartDraw(commandList_);
+		Sprite::StartDraw(commandList);
 		sprite.Draw();
 		Sprite::EndDraw();
 
-		Model::StartDraw(commandList_);
+		Model::StartDraw(commandList);
 
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource->GetGPUVirtualAddress());
 
 		// モデルの描画
 		model->Draw(transformBall, viewProjection);
@@ -199,7 +200,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 
 #pragma region ImGuiの描画
-		ImGuiManager::Draw(commandList_);
+		ImGuiManager::Draw(commandList);
 
 #pragma endregion
 		dxCommon->EndDraw();
