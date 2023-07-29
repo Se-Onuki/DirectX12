@@ -28,7 +28,7 @@ struct Transform
 
 	void InitResource();
 
-
+	void CalcMatrix();
 	void UpdateMatrix();
 
 	bool ImGuiWidget();

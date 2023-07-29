@@ -28,12 +28,17 @@ void Transform::SetMap()
 	assert(SUCCEEDED(result));
 }
 
-void Transform::UpdateMatrix()
+void Transform::CalcMatrix()
 {
 	matWorld_ = Affine();
 	if (parent_) {
 		matWorld_ *= parent_->matWorld_;
 	}
+}
+
+void Transform::UpdateMatrix()
+{
+	CalcMatrix();
 	mapData_->World = matWorld_;
 }
 

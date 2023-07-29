@@ -422,6 +422,8 @@ void Sprite::SetBlendMode(BlendMode blendMode)
 }
 
 void Sprite::ImGuiWidget() {
-	transform_.ImGuiWidget2D();
+	if (transform_.ImGuiWidget2D()) {
+		transform_.CalcMatrix();
+	}
 	ImGui::ColorEdit4("Color", &constMap_->color.x);
 }
