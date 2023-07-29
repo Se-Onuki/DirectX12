@@ -28,9 +28,6 @@ struct Transform
 
 	void InitResource();
 
-	void CreateConstBuffer();
-
-	void SetMap();
 
 	void UpdateMatrix();
 
@@ -38,4 +35,8 @@ struct Transform
 	bool ImGuiWidget2D();
 
 	void Create(const Matrix4x4 &mat);
+private:
+	void CreateConstBuffer();
+
+	void SetMap();
 };

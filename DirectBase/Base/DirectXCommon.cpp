@@ -269,8 +269,6 @@ void DirectXCommon::InitDXGI_Device() {
 
 #pragma endregion
 
-		// 解放
-		//infoQueue->Release();
 	}
 
 #endif // DEBUG

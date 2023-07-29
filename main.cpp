@@ -352,12 +352,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region Model
 
 	std::unique_ptr<Model> model;
+	std::unique_ptr<Model> model2;
 
 	model.reset(Model::LoadObjFile("", "multiMaterial.obj"));
 	//model[1].reset(Model::LoadObjFile("", "bunny.obj"));
 
 	//const std::unique_ptr<Model>const model2{ Model::LoadObjFile("", "bunny.obj") };
-	//model.LoadObjFile("", "plane.obj");
+	model2.reset(Model::LoadObjFile("", "plane.obj"));
+	Transform planeTransform{ Vector3::one(),Vector3::zero(),Vector3::zero() };
+	planeTransform.InitResource();
 
 
 #pragma endregion
@@ -412,7 +415,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// 書き込むためのアドレスを取得
 	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void **>(&materialDataSprite));
 	materialDataSprite->color = Vector4{ 1.f,1.f,1.f,1.f };
-	materialDataSprite->enableLighting = false;
 	materialDataSprite->uvTransform = Matrix4x4::Identity();
 
 #pragma endregion
@@ -574,8 +576,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat3("translate", &viewProjection.translation_.x, 0.1f);
 		ImGui::End();
 
-		ImGui::Begin("OBJ");
+		ImGui::Begin("Obj0");
 		transformBall.ImGuiWidget();
+		ImGui::End();
+
+		ImGui::Begin("Obj1");
+		planeTransform.ImGuiWidget();
 		ImGui::End();
 
 		ImGui::Begin("UI");
@@ -586,7 +592,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		ImGui::Begin("Material");
 		ImGui::ColorEdit4("Color", &materialDataSprite->color.x);
-		ImGui::Checkbox("Lighting", (bool *)&materialDataSprite->enableLighting);
+		//ImGui::Checkbox("Lighting", (bool *)&materialDataSprite->enableLighting);
 		ImGui::End();
 
 		ImGui::Begin("uvTransform");
@@ -618,7 +624,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		//Matrix4x4 worldMatrixBall = transformBall.Affine();
 		transformBall.UpdateMatrix();
-
+		planeTransform.UpdateMatrix();
 		//transformationMatrixDataBall->World = worldMatrixBall;
 
 
@@ -670,6 +676,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// Ballの描画
 		model->Draw(transformBall, viewProjection);
+		model2->Draw(planeTransform, viewProjection);
 
 		Model::EndDraw();
 

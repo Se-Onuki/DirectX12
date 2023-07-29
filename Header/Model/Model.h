@@ -33,10 +33,6 @@ public:
 
 	struct MaterialData {
 		Vector4 color;			// 色(RGBA)
-		int32_t enableLighting;	// ライティングの有無
-	private:
-		float patting[3];
-	public:
 		Matrix4x4 uvTransform;
 	};
 
@@ -120,6 +116,8 @@ class Model
 	static std::array<ComPtr<ID3D12PipelineState>, 2u> graphicsPipelineState_;
 	static ComPtr<ID3D12RootSignature> rootSignature_;
 
+	static void CreatePipeLine();
+
 public:
 	enum class RootParameter {
 		kWorldTransform, // ワールド変換行列
@@ -130,7 +128,6 @@ public:
 	};
 
 	static void StaticInit();
-	static void CreatePipeLine();
 
 	Model() = default;
 	~Model() = default;
@@ -148,7 +145,7 @@ public:
 
 	void ImGuiWidget();
 
-	[[nodiscard]] static  Model *const LoadObjFile(const std::string &directoryPath, const std::string &fileName);
+	[[nodiscard]] static Model *const LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 private:
 	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
 

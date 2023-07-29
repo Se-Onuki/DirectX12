@@ -716,7 +716,6 @@ void Material::CreateBuffer() {
 	// 書き込むためのアドレスを取得
 	constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 	mapData_->color = Vector4{ 1.f,1.f,1.f,1.f };
-	mapData_->enableLighting = true;
 	mapData_->uvTransform = Matrix4x4::Identity();
 }
 

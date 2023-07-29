@@ -2,7 +2,7 @@
 struct Material
 {
     float4 color;
-    int enableLighting;
+    //int enableLighting;
     float4x4 uvTransform;
 };
 
@@ -32,17 +32,12 @@ PixelShaderOutput main(VertexShaderOutput input)
     float4 transformedUV = mul(float4(input.texCoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
     
-    if (gMaterial.enableLighting)
-    {
-        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-        float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
     
-        output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
-        output.color.w = gMaterial.color.w * textureColor.w;
-    }
-    else
-    {
-        output.color = gMaterial.color * textureColor;
-    }
+    float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+    float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
+    
+    output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+    output.color.w = gMaterial.color.w * textureColor.w;
+   
     return output;
 }

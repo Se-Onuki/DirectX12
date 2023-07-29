@@ -12,12 +12,6 @@
 
 class Sprite {
 
-	struct DeleteChecker {
-		~DeleteChecker() {
-			static DirectResourceLeakChecker b{};
-		};
-	};
-
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// 透視投影行列
 	static Matrix4x4 matProjection_;
@@ -41,7 +35,8 @@ public:
 	};
 private:
 
-	static DirectResourceLeakChecker leakChecker;
+	static DirectResourceLeakChecker leakChecker; // リークチェッカー
+
 	static std::array<ComPtr<ID3D12PipelineState>, (uint32_t)BlendMode::kTotal> graphicsPipelineState_;
 	static ComPtr<ID3D12RootSignature> rootSignature_;
 
