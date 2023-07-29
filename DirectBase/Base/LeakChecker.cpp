@@ -1,3 +1,4 @@
 #include "LeakChecker.h"
 
-DirectResourceLeakChecker LeakChecker::leakChecker {};
+const DirectResourceLeakChecker leakChecker{};
+uint32_t DirectResourceLeakChecker::loadCount = 0u;

@@ -8,7 +8,15 @@
 #include "../../Header/Math/Transform.h"
 #include <array>
 
+#include "../Base/LeakChecker.h"
+
 class Sprite {
+
+	struct DeleteChecker {
+		~DeleteChecker() {
+			static DirectResourceLeakChecker b{};
+		};
+	};
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// 透視投影行列
@@ -33,8 +41,10 @@ public:
 	};
 private:
 
+	static DirectResourceLeakChecker leakChecker;
 	static std::array<ComPtr<ID3D12PipelineState>, (uint32_t)BlendMode::kTotal> graphicsPipelineState_;
 	static ComPtr<ID3D12RootSignature> rootSignature_;
+
 
 public:
 	struct VertexData {
@@ -56,7 +66,7 @@ public:
 	Sprite() = default;
 	~Sprite() = default;
 
-	static void StaticInit(ID3D12Device *const device);
+	static void StaticInit();
 private:
 	// バッファを生成
 	void CreateBuffer();

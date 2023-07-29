@@ -1,6 +1,15 @@
-#include "Object3d.hlsli"
+#include "Sprite.hlsli"
 
-float4 main(VertexShaderOutput input)
+Texture2D<float4> gTexture : register(t0);
+SamplerState gSampler : register(s0);
+struct PixelShaderOutput
 {
-    return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 color : SV_TARGET0;
+};
+
+PixelShaderOutput main(VertexShaderOutput input)
+{
+    PixelShaderOutput output;
+    output.color = gTexture.Sample(gSampler, input.texCoord) * gConstData.color;
+    return output;
 }

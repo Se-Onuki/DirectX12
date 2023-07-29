@@ -8,6 +8,6 @@ ConstantBuffer<ConstData> gConstData : register(b0);
 
 struct VertexShaderOutput
 {
-    float4 svpos : SV_POSITION;
-    float2 uv : TEXCOORD;
+    float4 svPosition : SV_POSITION;
+    float2 texCoord : TEXCOORD;
 };

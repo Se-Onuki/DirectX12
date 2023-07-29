@@ -4,6 +4,7 @@
 #include "../../Header/Create/Create.h"
 #include "../../Header/Render/Render.hpp"
 #include "../Base/Shader.h"
+DirectResourceLeakChecker Sprite::leakChecker{};
 
 Matrix4x4 Sprite::matProjection_{};
 ID3D12Device *Sprite::device_ = nullptr;
@@ -149,7 +150,7 @@ void Sprite::CreatePipeLine() {
 #pragma region Shader
 
 	Shader vertexShader = Shader::Compile(L"Sprite.VS.hlsl", L"vs_6_0");
-	Shader pixelShader = Shader::Compile(L"Object3D.PS.hlsl", L"ps_6_0");
+	Shader pixelShader = Shader::Compile(L"Sprite.PS.hlsl", L"ps_6_0");
 
 #pragma endregion
 
@@ -196,7 +197,7 @@ void Sprite::CreatePipeLine() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[0]));
+	//hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[0]));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
@@ -218,7 +219,7 @@ void Sprite::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[1]));
+	//hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[1]));
 	assert(SUCCEEDED(hr));
 
 
@@ -229,10 +230,11 @@ void Sprite::CreatePipeLine() {
 
 }
 
-void Sprite::StaticInit(ID3D12Device *device) {
-	device_ = device;
+void Sprite::StaticInit() {
 
+	device_ = DirectXCommon::GetInstance()->GetDevice();
 
+	CreatePipeLine();
 
 }
 

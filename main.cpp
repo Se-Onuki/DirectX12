@@ -51,6 +51,7 @@
 #include "DirectBase/Base/Shader.h"
 #include "DirectBase/Base/ImGuiManager.h"
 #include "DirectBase/3D/DirectionLight.h"
+#include "DirectBase/2D/Sprite.h"
 
 //template <typename T>using  Microsoft::WRL::ComPtr = Microsoft::WRL:: Microsoft::WRL::ComPtr<T>;
 //using namespace Microsoft::WRL;
@@ -116,6 +117,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	Shader::StaticInit();
 	Model::StaticInit();
+	Sprite::StaticInit();
 
 
 	//#pragma region PSO(Pipeline State Object)
