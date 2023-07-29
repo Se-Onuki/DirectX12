@@ -1,6 +1,8 @@
 #pragma once
 #include <wrl.h>
 #include "../../externals/imgui/imgui.h"
+#include <stdint.h>
+#include <d3d12.h>
 
 class DirectXCommon;
 
@@ -24,6 +26,12 @@ public:
 		static ImGuiManager instance{};
 		return &instance;
 	}
+
+	static void StaticInit(const HWND &hwnd, ID3D12Device *const device, uint32_t backBufferCount, ID3D12DescriptorHeap *const srvHeap);
+
+	static void CreateCommand();
+
+	static void Draw(ID3D12GraphicsCommandList *const commandList);
 
 	static void Finalize();
 };

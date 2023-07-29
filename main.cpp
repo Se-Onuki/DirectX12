@@ -72,48 +72,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	TextureManager *const textureManager = TextureManager::GetInstance();
 
 	textureManager->Init(dxCommon->GetDevice(), commandList_);
-	//uint32_t uvTex =
 	TextureManager::Load("white2x2.png");
 
+	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), (int32_t)dxCommon->backBuffers_.size(), textureManager->GetSRVHeap());
 
-#pragma region DescriptorSize
-
-#pragma endregion
-
-#pragma region DescriptorHeap
-
-	ID3D12DescriptorHeap *const srvDescriptorHeap = textureManager->GetSRVHeap();
-
-
-#pragma endregion
-
-
-	// RTVの設定
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
-
-
-#pragma region ImGuiの初期化
-
-	//ImGuiの初期化
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApp->GetHWND());
-	ImGui_ImplDX12_Init(dxCommon->GetDevice(),
-		(int32_t)dxCommon->backBuffers_.size(),
-		rtvDesc.Format,
-		srvDescriptorHeap,
-		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
-	);
-
-#pragma endregion
-
-	// FenceのSignalを持つためのイベントを作成する
-	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	assert(fenceEvent != nullptr);
 
 	Shader::StaticInit();
 	Model::StaticInit();
@@ -122,35 +84,26 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Model
 
-	std::unique_ptr<Model> model;
-	std::unique_ptr<Model> model2;
+	std::unique_ptr<Model> model{ Model::LoadObjFile("", "multiMaterial.obj") };
+	std::unique_ptr<Model> model2{ Model::LoadObjFile("", "plane.obj") };
 
-	model.reset(Model::LoadObjFile("", "multiMaterial.obj"));
-	model2.reset(Model::LoadObjFile("", "plane.obj"));
 	Transform planeTransform{ Vector3::one(),Vector3::zero(),{-1.f,0.f,0.f} };
 	planeTransform.InitResource();
 
 
 #pragma endregion
 
-#pragma region ViewProjection
-
 	ViewProjection viewProjection;
 	viewProjection.Init();
 
-#pragma endregion
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Light::Direction));
-
-#pragma region Transformを使ってCBufferを更新する
 
 	// Ball用のTransform
 	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,5.f} };
 	transformBall.InitResource();
 
-#pragma endregion
-
 #pragma region Resourceにデータを書き込む
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Light::Direction));
 
 	// 頂点リソースにデータを書き込む
 	Light::Direction *lightData = nullptr;
@@ -217,9 +170,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 
 #pragma region ImGuiの内部コマンドを生成する
-
-		ImGui::Render();
-
+		ImGuiManager::CreateCommand();
 #pragma endregion
 
 
@@ -239,18 +190,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource->GetGPUVirtualAddress());
 
-		// Ballの描画
+		// モデルの描画
 		model->Draw(transformBall, viewProjection);
-		//model2->Draw(planeTransform, viewProjection);
+		model2->Draw(planeTransform, viewProjection);
 
 		Model::EndDraw();
 
 #pragma endregion
 
 #pragma region ImGuiの描画
-
-		// 実際のCommandListにImGuiの描画コマンドを積む
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
+		ImGuiManager::Draw(commandList_);
 
 #pragma endregion
 		dxCommon->EndDraw();
