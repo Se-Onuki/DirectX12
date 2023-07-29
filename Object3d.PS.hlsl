@@ -2,7 +2,8 @@
 struct Material
 {
     float4 color;
-    //int enableLighting;
+    float4 emissive;
+
     float4x4 uvTransform;
 };
 
@@ -36,8 +37,9 @@ PixelShaderOutput main(VertexShaderOutput input)
     float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
     float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
     
-    output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
-    output.color.w = gMaterial.color.w * textureColor.w;
+    output.color = gMaterial.color * gDirectionalLight.color * cos * gDirectionalLight.intensity;   // 
+    output.color = saturate(output.color + gMaterial.emissive) * textureColor;  // 自己発光
+    output.color.w = gMaterial.color.w * textureColor.w;    // α値
    
     return output;
 }

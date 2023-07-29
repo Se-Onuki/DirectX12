@@ -33,6 +33,7 @@ public:
 
 	struct MaterialData {
 		Vector4 color;			// 色(RGBA)
+		Vector4 emissive;		// 自己発光色(RGBA)
 		Matrix4x4 uvTransform;
 	};
 
@@ -144,6 +145,8 @@ public:
 	static const char *const defaultDirectory;
 
 	void ImGuiWidget();
+
+	[[nodiscard]] static Model *const CreateSphere();
 
 	[[nodiscard]] static Model *const LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 private:

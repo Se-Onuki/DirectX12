@@ -313,6 +313,10 @@ void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 	// RootSignatureを設定。
 	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
 	commandList_->SetPipelineState(graphicsPipelineState_[0].Get());		// PSOを設定
+
+
+	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Model::EndDraw() {
@@ -434,6 +438,11 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 		mesh->indexMap_.clear();
 	}
 	return result;
+}
+
+Model *const Model::CreateSphere()
+{
+	return nullptr;
 }
 
 void Model::ImGuiWidget()
@@ -716,6 +725,7 @@ void Material::CreateBuffer() {
 	// 書き込むためのアドレスを取得
 	constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 	mapData_->color = Vector4{ 1.f,1.f,1.f,1.f };
+	mapData_->emissive = Vector4{ 0.f,0.f,0.f,0.f };
 	mapData_->uvTransform = Matrix4x4::Identity();
 }
 
@@ -733,11 +743,12 @@ void Material::ImGuiWidget()
 		}
 
 		ImGui::ColorEdit4("BaseColor", &mapData_->color.x);
+		ImGui::ColorEdit4("EmissiveColor", &mapData_->emissive.x);
 
 		ImGui::TreePop();
 	}
 }
 
-void Material::Create()
-{
+void Material::Create() {
+
 }

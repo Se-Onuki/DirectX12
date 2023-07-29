@@ -25,11 +25,11 @@ class Sprite {
 public:
 	enum class BlendMode {
 		kNone,		// ブレンド無し
-		kNormal,		// αブレンド
+		kNormal,	// αブレンド
 		kAdd,		// 加算合成
 		kSubtract,	// 減算合成
 		kMultily,	// 乗算合成
-		kScreen,		// スクリーン合成
+		kScreen,	// スクリーン合成
 
 		kTotal	// 総数
 	};
@@ -73,9 +73,11 @@ private:
 
 	ComPtr<ID3D12Resource> vertexResource_ = nullptr;
 	VertexData *vertexMap_ = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
 
 	ComPtr<ID3D12Resource> indexResource_ = nullptr;
 	uint32_t *indexMap_ = nullptr;
+	D3D12_INDEX_BUFFER_VIEW ibView_ = {};
 
 	ComPtr<ID3D12Resource> constResource_ = nullptr;
 	ConstData *constMap_ = nullptr;
@@ -98,6 +100,9 @@ public:
 	void Init();
 	void Draw() const;
 
+	void ImGuiWidget();
+
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
+	static void SetBlendMode(BlendMode blendMode);
 	static void EndDraw();
 };

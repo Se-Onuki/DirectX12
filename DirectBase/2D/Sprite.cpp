@@ -102,7 +102,7 @@ void Sprite::CreatePipeLine() {
 #pragma region InputLayout(インプットレイアウト)
 
 	// InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
@@ -113,11 +113,6 @@ void Sprite::CreatePipeLine() {
 	inputElementDescs[1].SemanticIndex = 0;
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
@@ -166,8 +161,8 @@ void Sprite::CreatePipeLine() {
 	depthStencilDesc.DepthEnable = true;
 	// 書き込みします。
 	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	// 比較関数はLessEqual。つまり、近ければ表示される。
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	// 比較関数はalways。必ず書き換える
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 
 #pragma endregion
 
@@ -177,7 +172,7 @@ void Sprite::CreatePipeLine() {
 #pragma region PSOを生成する
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();		// RootSignature
+	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
 	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
@@ -197,29 +192,112 @@ void Sprite::CreatePipeLine() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[0]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[(uint32_t)BlendMode::kNone]));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
 
+#pragma region αブレンド 
 
-#pragma region BlendState(ブレンドステート)
 
-	// 全ての色要素を書き込む
-	//blendDesc.RenderTarget[0].RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = true;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendEnable = true;						// ブレンドモードを有効にするか
+	// RGB値の操作
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;				// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;	// レンダーターゲットからの受け取り方
+	// α値の操作
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;		// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;		// レンダーターゲットからの受け取り方
 
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[1]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[(uint32_t)BlendMode::kNormal]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+#pragma region 加算合成 Dest * 1 + Src * Src.Alpha
+
+	blendDesc.RenderTarget[0].BlendEnable = true;						// ブレンドモードを有効にするか
+	// RGB値の操作
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;				// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;				// レンダーターゲットからの受け取り方
+	// α値の操作
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;		// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;		// レンダーターゲットからの受け取り方
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[(uint32_t)BlendMode::kAdd]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+#pragma region 減算合成 Dest * 1 - Src * Src.Alpha
+
+	blendDesc.RenderTarget[0].BlendEnable = true;						// ブレンドモードを有効にするか
+	// RGB値の操作
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_SUBTRACT;		// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;				// レンダーターゲットからの受け取り方
+	// α値の操作
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;		// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;		// レンダーターゲットからの受け取り方
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[(uint32_t)BlendMode::kSubtract]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+#pragma region 乗算合成 Dest * 1 - Src * Src.Alpha
+
+	blendDesc.RenderTarget[0].BlendEnable = true;						// ブレンドモードを有効にするか
+	// RGB値の操作
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_SUBTRACT;		// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;				// レンダーターゲットからの受け取り方
+	// α値の操作
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;		// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;		// レンダーターゲットからの受け取り方
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[(uint32_t)BlendMode::kMultily]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+#pragma region スクリーン合成 Dest * 1 - Src * Src.Alpha
+
+	blendDesc.RenderTarget[0].BlendEnable = true;						// ブレンドモードを有効にするか
+	// RGB値の操作
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_SUBTRACT;		// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;				// レンダーターゲットからの受け取り方
+	// α値の操作
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;		// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;		// レンダーターゲットからの受け取り方
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[(uint32_t)BlendMode::kScreen]));
 	assert(SUCCEEDED(hr));
 
 
@@ -242,12 +320,19 @@ void Sprite::Init() {
 	textureHaundle_ = TextureManager::Load("white2x2.png");
 	CreateBuffer();
 	MapVertex();
+	transform_.matWorld_ = Matrix4x4::Identity();
 }
 
 void Sprite::Draw() const {
 	constMap_->matWorldProjection = transform_.matWorld_ * matProjection_;
 
-
+	// マテリアルCBufferの場所を設定
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)RootParameter::kConstData, constResource_->GetGPUVirtualAddress());
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)RootParameter::kTexture, textureHaundle_);
+	// Spriteの描画
+	commandList_->IASetVertexBuffers(0, 1, &vbView_);	// VBVを設定
+	commandList_->IASetIndexBuffer(&ibView_);
+	commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
 void Sprite::MapVertex()
@@ -265,17 +350,17 @@ void Sprite::MapVertex()
 	// 書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void **>(&vertexMap_));
 	// 左下
-	vertexMap_[0].position = { 0.f, 360.f, 0.f, 1.f };
+	vertexMap_[0].position = { 0.f, 1.f, 0.f, 1.f };
 	vertexMap_[0].texCoord = { 0.f,1.f };
 	// 左上
 	vertexMap_[1].position = { 0.f, 0.f, 0.f, 1.f };
 	vertexMap_[1].texCoord = { 0.f,0.f };
 	// 右下
-	vertexMap_[2].position = { 640.f, 360.f, 0.f, 1.f };
+	vertexMap_[2].position = { 1.f, 1.f, 0.f, 1.f };
 	vertexMap_[2].texCoord = { 1.f,1.f };
 
 	// 右上
-	vertexMap_[3].position = { 640.f, 0.f, 0.f, 1.f };
+	vertexMap_[3].position = { 1.f, 0.f, 0.f, 1.f };
 	vertexMap_[3].texCoord = { 1.f,0.f };
 
 	// インデックス
@@ -295,13 +380,48 @@ void Sprite::CreateBuffer() {
 	vertexResource_ = CreateBufferResource(device, sizeof(VertexData) * 4u);
 	indexResource_ = CreateBufferResource(device, sizeof(uint32_t) * 6u);
 
+
+	// 頂点バッファビューを作成する
+	// リソースの先頭のアドレスから使う
+	vbView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	// 使用するリソースのサイズは頂点3つ分のサイズ
+	vbView_.SizeInBytes = sizeof(VertexData) * 4;
+	// 1頂点あたりのサイズ
+	vbView_.StrideInBytes = sizeof(VertexData);
+
+
+	// インデックスview
+	ibView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	ibView_.SizeInBytes = sizeof(uint32_t) * 6u;
+	ibView_.Format = DXGI_FORMAT_R32_UINT;
+
 }
 
 void Sprite::StartDraw(ID3D12GraphicsCommandList *const commandList) {
+	assert(!commandList_ && "EndDrawが呼び出されていません");
 	commandList_ = commandList;
+
+	// RootSignatureを設定。
+	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList_->SetPipelineState(graphicsPipelineState_[(uint32_t)BlendMode::kNormal].Get());		// PSOを設定
+
+	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	matProjection_ = Render::MakeOrthographicMatrix({ 0.f,0.f }, { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight }, 0.f, 100.f);
 }
 
 void Sprite::EndDraw() {
 	commandList_ = nullptr;
+}
+
+void Sprite::SetBlendMode(BlendMode blendMode)
+{
+	commandList_->SetPipelineState(graphicsPipelineState_[(uint32_t)blendMode].Get());		// PSOを設定
+
+}
+
+void Sprite::ImGuiWidget() {
+	transform_.ImGuiWidget2D();
+	ImGui::ColorEdit4("Color", &constMap_->color.x);
 }

@@ -72,8 +72,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	TextureManager *const textureManager = TextureManager::GetInstance();
 
 	textureManager->Init(dxCommon->GetDevice(), commandList_);
-	uint32_t uvTex =
-		TextureManager::Load("white2x2.png");
+	//uint32_t uvTex =
+	TextureManager::Load("white2x2.png");
 
 
 #pragma region DescriptorSize
@@ -355,11 +355,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	std::unique_ptr<Model> model2;
 
 	model.reset(Model::LoadObjFile("", "multiMaterial.obj"));
-	//model[1].reset(Model::LoadObjFile("", "bunny.obj"));
-
-	//const std::unique_ptr<Model>const model2{ Model::LoadObjFile("", "bunny.obj") };
 	model2.reset(Model::LoadObjFile("", "plane.obj"));
-	Transform planeTransform{ Vector3::one(),Vector3::zero(),Vector3::zero() };
+	Transform planeTransform{ Vector3::one(),Vector3::zero(),{-1.f,0.f,0.f} };
 	planeTransform.InitResource();
 
 
@@ -396,16 +393,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region Material用のResource
 
-	//// マテリアル用のリソースを作る。今回はcolor1つ分のサイズ。
-	//Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Material::MaterialData));
-	//// マテリアルにデータを書き込む
-	//Material::MaterialData *materialData = nullptr;
-	//// 書き込むためのアドレスを取得
-	//materialResource->Map(0, nullptr, reinterpret_cast<void **>(&materialData));
-	//materialData->color = Vector4{ 1.f,1.f,1.f,1.f };
-	//materialData->enableLighting = true;
-	//materialData->uvTransform = Matrix4x4::Identity();
-
 #pragma region Sprite
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズ。
@@ -415,6 +402,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// 書き込むためのアドレスを取得
 	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void **>(&materialDataSprite));
 	materialDataSprite->color = Vector4{ 1.f,1.f,1.f,1.f };
+	materialDataSprite->emissive = Vector4{ 1.f,1.f,1.f,1.f };
 	materialDataSprite->uvTransform = Matrix4x4::Identity();
 
 #pragma endregion
@@ -449,26 +437,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	indexBufferViewSprite.BufferLocation = indexResourceSprite->GetGPUVirtualAddress();
 	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6u;
 	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
-
-#pragma endregion
-
-#pragma region Ball
-
-	//// 頂点バッファビューを作成する
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferViewBall{};
-	//// リソースの先頭のアドレスから使う
-	//vertexBufferViewBall.BufferLocation = vertexResourceBall->GetGPUVirtualAddress();
-	//// 使用するリソース全体のサイズ
-	//vertexBufferViewBall.SizeInBytes = sizeof(Mesh::VertexData) * BallVertexCount;
-	//// 1頂点あたりのサイズ
-	//vertexBufferViewBall.StrideInBytes = sizeof(Mesh::VertexData);
-
-
-	//D3D12_INDEX_BUFFER_VIEW indexBufferViewBall{};
-
-	//indexBufferViewBall.BufferLocation = indexResourceBall->GetGPUVirtualAddress();
-	//indexBufferViewBall.SizeInBytes = sizeof(uint32_t) * 6u * BallDivision * BallDivision;
-	//indexBufferViewBall.Format = DXGI_FORMAT_R32_UINT;
 
 #pragma endregion
 
@@ -561,7 +529,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-		// ウィンドウのxボタンが押されるまでループ
+	Sprite sprite;
+	sprite.Init();
+
+
+	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
 		if (winApp->ProcessMessage()) break;
 
@@ -585,13 +557,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::End();
 
 		ImGui::Begin("UI");
-		ImGui::DragFloat2("scale", &transformSprite.scale.x, 0.1f);
-		ImGui::DragFloat("rotate", &transformSprite.rotate.z, Angle::Dig2Rad);
-		ImGui::DragFloat2("translate", &transformSprite.translate.x, 1.f);
+		sprite.ImGuiWidget();
 		ImGui::End();
 
 		ImGui::Begin("Material");
 		ImGui::ColorEdit4("Color", &materialDataSprite->color.x);
+		ImGui::ColorEdit4("EmissiveColor", &materialDataSprite->emissive.x);
 		//ImGui::Checkbox("Lighting", (bool *)&materialDataSprite->enableLighting);
 		ImGui::End();
 
@@ -654,29 +625,33 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		textureManager->StartDraw();
 
+		Sprite::StartDraw(commandList_);
+		sprite.Draw();
+		Sprite::EndDraw();
+
 		Model::StartDraw(commandList_);
 
 #pragma region コマンドを積む
 
 		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
-		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		// Light情報の場所を設定
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource->GetGPUVirtualAddress());
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource->GetGPUVirtualAddress());
 
 		// マテリアルCBufferの場所を設定
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, materialResourceSprite->GetGPUVirtualAddress());
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, materialResourceSprite->GetGPUVirtualAddress());
 		// Spriteの描画
-		commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
-		textureManager->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, uvTex);
-		commandList_->IASetIndexBuffer(&indexBufferViewSprite);
-		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
+		//commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);	// VBVを設定
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transformationMatrixResourceSprite->GetGPUVirtualAddress());		// wvp用のCBufferの場所を設定
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, vpResourceUI->GetGPUVirtualAddress());
+		//textureManager->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, uvTex);
+		//commandList_->IASetIndexBuffer(&indexBufferViewSprite);
+		//commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 		// Ballの描画
-		model->Draw(transformBall, viewProjection);
-		model2->Draw(planeTransform, viewProjection);
+		//model->Draw(transformBall, viewProjection);
+		//model2->Draw(planeTransform, viewProjection);
 
 		Model::EndDraw();
 
