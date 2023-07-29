@@ -41,10 +41,17 @@ public:
 
 	void Reset();
 
-	void ImGuiWindow()const;
+	void ImGuiWindow();
 
 	ID3D12DescriptorHeap *const GetSRVHeap()const {
 		return srvHeap_.Get();
+	}
+
+	inline const D3D12_RESOURCE_DESC &GetResourceDesc(uint32_t index) {
+		return textureArray_.at(index).textureResource->GetDesc();
+	}
+	inline const D3D12_GPU_DESCRIPTOR_HANDLE &GetGpuSrvHandle(uint32_t index) {
+		return textureArray_.at(index).gpuHandleSRV;
 	}
 
 	void SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const;

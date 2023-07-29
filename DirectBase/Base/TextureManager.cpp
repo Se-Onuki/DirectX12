@@ -48,7 +48,7 @@ void TextureManager::Reset() {
 	}
 }
 
-void TextureManager::ImGuiWindow() const {
+void TextureManager::ImGuiWindow()  {
 
 }
 

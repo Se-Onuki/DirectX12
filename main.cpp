@@ -116,8 +116,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
-	Sprite sprite;
-	sprite.Init();
+	std::unique_ptr<Sprite> sprite{ Sprite::Create() };
 
 
 	// ウィンドウのxボタンが押されるまでループ
@@ -144,7 +143,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::End();
 
 		ImGui::Begin("UI");
-		sprite.ImGuiWidget();
+		sprite->ImGuiWidget();
 		ImGui::End();
 
 		ImGui::Begin("Light");
@@ -199,7 +198,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region コマンドを積む
 
 		Sprite::StartDraw(commandList);
-		sprite.Draw();
+		sprite->Draw();
 		Sprite::EndDraw();
 
 		Model::StartDraw(commandList);

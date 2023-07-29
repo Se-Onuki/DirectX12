@@ -9,6 +9,7 @@
 #include <array>
 
 #include "../Base/LeakChecker.h"
+#include "../Base/TextureManager.h"
 
 class Sprite {
 
@@ -82,11 +83,12 @@ private:
 	ComPtr<ID3D12Resource> constResource_ = nullptr;
 	ConstData *constMap_ = nullptr;
 
-
 private:
 
 	// マッピング無しTransform
 	Transform transform_;
+
+	Vector2 texSize_ = { 1.f,1.f };
 
 	// テクスチャID
 	uint32_t textureHaundle_ = 1;
@@ -95,10 +97,14 @@ public:
 
 	void SetTextureHaundle(const uint32_t textureHaundle) {
 		textureHaundle_ = textureHaundle;
+		const D3D12_RESOURCE_DESC &desc = TextureManager::GetInstance()->GetResourceDesc(textureHaundle);
+		texSize_ = { float(desc.Width), float(desc.Height) };
 	}
 
-	void Init();
+	void Init(const std::string &textureName = "white2x2.png");
 	void Draw() const;
+
+	[[nodiscard]] static Sprite *const Create();
 
 	void ImGuiWidget();
 

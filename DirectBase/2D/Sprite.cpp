@@ -316,8 +316,8 @@ void Sprite::StaticInit() {
 
 }
 
-void Sprite::Init() {
-	textureHaundle_ = TextureManager::Load("white2x2.png");
+void Sprite::Init(const std::string &textureName) {
+	textureHaundle_ = TextureManager::Load(textureName);
 	CreateBuffer();
 	MapVertex();
 	transform_.matWorld_ = Matrix4x4::Identity();
@@ -426,4 +426,11 @@ void Sprite::ImGuiWidget() {
 		transform_.CalcMatrix();
 	}
 	ImGui::ColorEdit4("Color", &constMap_->color.x);
+}
+
+Sprite *const Sprite::Create()
+{
+	Sprite *sprite = new Sprite();
+	sprite->Init();
+	return sprite;
 }
