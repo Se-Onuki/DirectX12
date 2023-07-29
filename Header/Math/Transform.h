@@ -13,7 +13,7 @@ struct Transform
 	};
 
 
-	Vector3 scale;
+	Vector3 scale = { 1.f,1.f,1.f };
 	Vector3 rotate;
 	Vector3 translate;
 
