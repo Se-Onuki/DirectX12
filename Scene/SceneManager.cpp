@@ -2,7 +2,7 @@
 
 void SceneManager::ChangeScene(const std::string &name) {
 	// 現在のシーンと同じであった場合、実行しない。
-	if (currentSceneName == name) return;
+	//if (currentSceneName == name) return;
 	// マップに一致する要素があった場合、実行。
 	if (scenes_.contains(name)) {
 		if (currentScene) {
@@ -17,7 +17,7 @@ void SceneManager::ChangeScene(const std::string &name) {
 }
 
 void SceneManager::ChangeScene(const std::string &name, const int &transitionTime) {
-	if (currentSceneName == name) return;
+	//if (currentSceneName == name) return;
 
 	if (scenes_.contains(name)) {
 		nextSceneName = name;

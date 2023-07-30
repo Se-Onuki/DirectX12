@@ -272,6 +272,9 @@
     <ClInclude Include="Scene\GameScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Model\Object.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl">

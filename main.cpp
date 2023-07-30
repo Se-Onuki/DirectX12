@@ -56,25 +56,6 @@
 #include "Scene/SceneManager.h"
 #include "Scene/GameScene.h"
 
-class Object {
-public:
-	Object(const std::string &filePath) {
-		model_.reset(Model::LoadObjFile("", filePath));
-		transform_.InitResource();
-	}
-	~Object() = default;
-
-	std::unique_ptr<Model> model_ = nullptr;
-	Transform transform_{};
-	void ImGuiWidget() {
-		transform_.ImGuiWidget();
-		model_->ImGuiWidget();
-	}
-	void Draw(const ViewProjection &viewProjection)const {
-		model_->Draw(transform_, viewProjection);
-	}
-};
-
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
@@ -105,17 +86,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	sceneManager->ChangeScene("Game");
 
 
-	ViewProjection viewProjection;
-	viewProjection.Init();
-
-
-	std::unique_ptr<DirectionLight> light{ DirectionLight::Create() };
-
-	std::unique_ptr<Sprite> sprite{ Sprite::Create() };
-
-	std::list<std::unique_ptr<Object>> objectArray_;
-
-
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
 		if (winApp->ProcessMessage()) break;
@@ -127,75 +97,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region ゲームの処理
 
 		sceneManager->Update();
-
-		ImGui::Begin("Camera");
-		ImGui::DragFloat3("rotate", &viewProjection.rotation_.x, Angle::Dig2Rad);
-		ImGui::DragFloat3("translate", &viewProjection.translation_.x, 0.1f);
-		ImGui::End();
-
-
-		ImGui::Begin("UI");
-		sprite->ImGuiWidget();
-		ImGui::End();
-
-
-		ImGui::Begin("Light");
-		light->ImGuiWidget();
-		ImGui::End();
-
-		ImGui::Begin("ObjectLoader");
-		static char fileName[32];
-		ImGui::InputText(".obj", fileName, 32u);
-		if (ImGui::Button("Load")) {
-			objectArray_.emplace_back(new Object(fileName + std::string(".obj")));
-		}
-		if (ImGui::Button("Add Plane")) {
-			objectArray_.emplace_back(new Object("plane.obj"));
-		}
-		if (ImGui::Button("Add Sphere")) {
-			objectArray_.emplace_back(new Object("sphere.obj"));
-		}
-		if (ImGui::Button("Add Suzanne")) {
-			objectArray_.emplace_back(new Object("suzanne.obj"));
-		}
-		if (ImGui::Button("Add MultiMaterial")) {
-			objectArray_.emplace_back(new Object("multiMaterial.obj"));
-		}
-		if (ImGui::Button("Add Teapot")) {
-			objectArray_.emplace_back(new Object("teapot.obj"));
-		}
-		if (ImGui::Button("Add Bunny(Too Heavy)")) {
-			objectArray_.emplace_back(new Object("bunny.obj"));
-		}
-
-
-		std::list<std::unique_ptr<Object>>::iterator it = objectArray_.begin();
-		uint32_t index = 0;
-		while (it != objectArray_.end()) {
-
-			if (ImGui::TreeNode(((*it)->model_->name_ + "[" + std::to_string(index) + "]").c_str())) {
-				(*it)->ImGuiWidget();
-				ImGui::TreePop();
-			}
-			(*it)->transform_.UpdateMatrix();
-
-
-
-			if (ImGui::Button(("Delete##" + std::to_string(index)).c_str())) {
-				objectArray_.erase(it++); // 削除する前にイテレータをインクリメント
-			}
-			else {
-				++it;
-				index++;
-			}
-		}
-
-		ImGui::End();
-
-		viewProjection.UpdateMatrix();
-
-		ImGui::ShowDemoWindow();
-
 #pragma endregion
 
 #pragma region ImGuiの内部コマンドを生成する
@@ -212,22 +113,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region コマンドを積む
 
 		sceneManager->Draw();
-
-		Sprite::StartDraw(commandList);
-		sprite->Draw();
-		Sprite::EndDraw();
-
-		Model::StartDraw(commandList);
-
-		light->SetLight(commandList);
-
-		// モデルの描画
-
-		for (auto &obj : objectArray_) {
-			obj->Draw(viewProjection);
-		}
-
-		Model::EndDraw();
 
 #pragma endregion
 
