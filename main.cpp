@@ -53,8 +53,24 @@
 #include "DirectBase/3D/DirectionLight.h"
 #include "DirectBase/2D/Sprite.h"
 
-//template <typename T>using  Microsoft::WRL::ComPtr = Microsoft::WRL:: Microsoft::WRL::ComPtr<T>;
-//using namespace Microsoft::WRL;
+class Object {
+public:
+	Object(const std::string &filePath) {
+		model_.reset(Model::LoadObjFile("", filePath));
+		transform_.InitResource();
+	}
+	~Object() = default;
+
+	std::unique_ptr<Model> model_ = nullptr;
+	Transform transform_{};
+	void ImGuiWidget() {
+		transform_.ImGuiWidget();
+		model_->ImGuiWidget();
+	}
+	void Draw(const ViewProjection &viewProjection)const {
+		model_->Draw(transform_, viewProjection);
+	}
+};
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -82,29 +98,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Sprite::StaticInit();
 
 
-#pragma region Model
-
-	std::unique_ptr<Model> model{ Model::LoadObjFile("", "multiMaterial.obj") };
-	std::unique_ptr<Model> model2{ Model::LoadObjFile("", "plane.obj") };
-
-	Transform planeTransform{ Vector3::one(),Vector3::zero(),{-1.5f,0.f,0.f} };
-	planeTransform.InitResource();
-
-
-#pragma endregion
-
 	ViewProjection viewProjection;
 	viewProjection.Init();
 
 
-	// Ball用のTransform
-	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,5.f} };
-	transformBall.InitResource();
 
 
 	std::unique_ptr<DirectionLight> light{ DirectionLight::Create() };
 
 	std::unique_ptr<Sprite> sprite{ Sprite::Create() };
+
+	std::vector<std::unique_ptr<Object>> objectArray_;
 
 
 	// ウィンドウのxボタンが押されるまでループ
@@ -122,35 +126,45 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::DragFloat3("translate", &viewProjection.translation_.x, 0.1f);
 		ImGui::End();
 
-		ImGui::Begin("Obj0");
-		transformBall.ImGuiWidget();
-		ImGui::End();
-
-		ImGui::Begin("Obj1");
-		planeTransform.ImGuiWidget();
-		ImGui::End();
 
 		ImGui::Begin("UI");
 		sprite->ImGuiWidget();
 		ImGui::End();
 
 
-
 		ImGui::Begin("Light");
 		light->ImGuiWidget();
 		ImGui::End();
 
+		ImGui::Begin("ObjectLoader");
+		static char fileName[32];
+		ImGui::InputText(".obj", fileName, 32u);
+		if (ImGui::Button("Load")) {
+			objectArray_.emplace_back(new Object(fileName + std::string(".obj")));
+		}
+		if (ImGui::Button("Add Plane")) {
+			objectArray_.emplace_back(new Object("plane.obj"));
+		}
+		if (ImGui::Button("Add Sphere")) {
+			objectArray_.emplace_back(new Object("sphere.obj"));
+		}
+		if (ImGui::Button("Add MultiMaterial")) {
+			objectArray_.emplace_back(new Object("multiMaterial.obj"));
+		}
 
-		transformBall.UpdateMatrix();
-		planeTransform.UpdateMatrix();
+		for (uint32_t i = 0; i < objectArray_.size(); i++) {
+			if (ImGui::TreeNode((objectArray_[i]->model_->name_ + "[" + std::to_string(i) + "]").c_str())) {
+				objectArray_[i]->ImGuiWidget();
+				ImGui::TreePop();
+			}
+			objectArray_[i]->transform_.UpdateMatrix();
+		}
 
+		ImGui::End();
 
 		viewProjection.UpdateMatrix();
 
 
-		ImGui::Begin("model");
-		model->ImGuiWidget();
-		ImGui::End();
 
 		ImGui::ShowDemoWindow();
 
@@ -178,8 +192,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		light->SetLight(commandList);
 
 		// モデルの描画
-		model->Draw(transformBall, viewProjection);
-		model2->Draw(planeTransform, viewProjection);
+
+		for (auto &obj : objectArray_) {
+			obj->Draw(viewProjection);
+		}
 
 		Model::EndDraw();
 
