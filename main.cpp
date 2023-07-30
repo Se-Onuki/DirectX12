@@ -67,7 +67,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
 
-	ID3D12GraphicsCommandList *const commandList = dxCommon->commandList_.Get();
+	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
 	TextureManager *const textureManager = TextureManager::GetInstance();
 

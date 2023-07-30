@@ -54,6 +54,8 @@ void GameScene::Update()
 	if (ImGui::Button("Load")) {
 		objectArray_.emplace_back(new Object(fileName + std::string(".obj")));
 	}
+#pragma region 確認用ローダ
+
 	if (ImGui::Button("Add Plane")) {
 		objectArray_.emplace_back(new Object("plane.obj"));
 	}
@@ -73,6 +75,7 @@ void GameScene::Update()
 		objectArray_.emplace_back(new Object("bunny.obj"));
 	}
 
+#pragma endregion
 
 	std::list<std::unique_ptr<Object>>::iterator it = objectArray_.begin();
 	uint32_t index = 0;
