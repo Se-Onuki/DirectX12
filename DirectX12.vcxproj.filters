@@ -141,6 +141,9 @@
     <ClCompile Include="DirectBase\Base\LeakChecker.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="DirectBase\3D\DirectionLight.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">

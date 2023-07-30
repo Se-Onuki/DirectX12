@@ -24,7 +24,7 @@ public:
 		Vector4 color;		// 色(RGBA)
 		Vector3 direction;	// ライトの向き
 		float intensity;	// 輝度
-		uint32_t lightingPattern;	// ライティングの種類
+		int32_t pattern;	// ライティングの種類
 	};
 
 	enum class Pattern {
@@ -34,7 +34,11 @@ public:
 	};
 
 	void Init();
-	void SetLight();
+	void SetLight(ID3D12GraphicsCommandList *const commandList);
+
+	void ImGuiWidget();
+
+	[[nodiscard]] static DirectionLight *const Create();
 
 private:
 

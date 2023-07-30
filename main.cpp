@@ -101,20 +101,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Transform transformBall{ {1.f,1.f,1.f},{0.f,0.f,0.f},{0.f,0.f,5.f} };
 	transformBall.InitResource();
 
-#pragma region Resourceにデータを書き込む
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> lightResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(Light::Direction));
-
-	// 頂点リソースにデータを書き込む
-	Light::Direction *lightData = nullptr;
-	// 書き込むためのアドレスを取得
-	lightResource->Map(0, nullptr, reinterpret_cast<void **>(&lightData));
-	lightData->color = { 1.f, 1.f, 1.f,1.f };
-	lightData->direction = Vector3{ 0.f,-1.f,0.f }.Nomalize();
-	lightData->intensity = 1.f;
-	lightData->pattern = 2;
-
-#pragma endregion
+	std::unique_ptr<DirectionLight> light{ DirectionLight::Create() };
 
 	std::unique_ptr<Sprite> sprite{ Sprite::Create() };
 
@@ -146,27 +134,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		sprite->ImGuiWidget();
 		ImGui::End();
 
+
+
 		ImGui::Begin("Light");
-		ImGui::ColorEdit3("Color", &lightData->color.x);
-		ImGui::DragFloat3("Direction", &lightData->direction.x, 1.f / 255, -1, 1);
-		ImGui::DragFloat("Brightness ", &lightData->intensity, 0.01f, 0, 1);
-		const static std::array<std::string, 3u>lightPattern{ "kNone", "kLambert","kHalfLambert" };
-		if (ImGui::BeginCombo("LightingPattren", lightPattern[lightData->pattern].c_str())) {
-
-			for (uint32_t i = 0; i < lightPattern.size(); i++) {
-				if (ImGui::Selectable(lightPattern[i].c_str())) {
-					lightData->pattern = i;
-					break;
-				}
-			}
-			ImGui::EndCombo();
-		}
-		//ImGui::Image((ImTextureID)selecteTexture.ptr, { 100.f,100.f });
-
-		//ImGui::
-		//ImGui::DragInt("LightingPattern", &lightData->pattern);
+		light->ImGuiWidget();
 		ImGui::End();
-		lightData->direction = lightData->direction.Nomalize();
 
 
 		transformBall.UpdateMatrix();
@@ -203,7 +175,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		Model::StartDraw(commandList);
 
-		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource->GetGPUVirtualAddress());
+		light->SetLight(commandList);
 
 		// モデルの描画
 		model->Draw(transformBall, viewProjection);

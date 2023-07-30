@@ -91,6 +91,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DirectBase\2D\Sprite.cpp" />
+    <ClCompile Include="DirectBase\3D\DirectionLight.cpp" />
     <ClCompile Include="DirectBase\3D\ViewProjection\ViewProjection.cpp" />
     <ClCompile Include="DirectBase\Base\DirectXCommon.cpp" />
     <ClCompile Include="DirectBase\Base\ImGuiManager.cpp" />
