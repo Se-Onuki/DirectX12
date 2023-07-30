@@ -58,6 +58,12 @@ public:
 		kConstData	// スプライト情報
 	};
 
+	enum class VertexNumer {
+		LDown,
+		LTop,
+		RDown,
+		RTop
+	};
 
 	Sprite() = default;
 	~Sprite() = default;
@@ -69,6 +75,9 @@ private:
 	// 頂点/添え字をマップ
 	void MapVertex();
 
+
+	void Init(const std::string &textureName = "white2x2.png");
+	void Init(const uint32_t &textureHaundle);
 
 private:
 
@@ -88,25 +97,65 @@ private:
 	// マッピング無しTransform
 	Transform transform_;
 
-	Vector2 texSize_ = { 1.f,1.f };
+private:
+
+	// テクスチャ原点 : 差分
+	std::pair<Vector2, Vector2> uv_{};
+	// 中心点
+	Vector2 pivot_{};
+
 
 	// テクスチャID
 	uint32_t textureHaundle_ = 1;
 
-public:
+	// テクスチャリソースの情報
+	D3D12_RESOURCE_DESC resourceDesc;
 
-	void SetTextureHaundle(const uint32_t textureHaundle) {
+public:
+	/// @brief テクスチャ設定
+	/// @param textureHaundle テクスチャハンドル
+	void SetTextureHaundle(const uint32_t &textureHaundle) {
 		textureHaundle_ = textureHaundle;
-		const D3D12_RESOURCE_DESC &desc = TextureManager::GetInstance()->GetResourceDesc(textureHaundle);
-		texSize_ = { float(desc.Width), float(desc.Height) };
+		resourceDesc = TextureManager::GetInstance()->GetResourceDesc(textureHaundle);
+		SetTexOrigin(ZeroVector2);
+		SetTexDiff(Vector2{ float(resourceDesc.Width), float(resourceDesc.Height) });
 	}
 
-	void Init(const std::string &textureName = "white2x2.png");
+	/// @brief テクスチャ原点設定(左上)
+	void SetTexOrigin(const Vector2 &texOrigin);
+
+	/// @brief テクスチャ差分設定(右下)
+	void SetTexDiff(const Vector2 &texDiff);
+
+	/// @brief テクスチャ座標取得 
+	/// @return { テクスチャ原点(左上), テクスチャ差分(右下) }
+	const std::pair<Vector2, Vector2> &GetUV() const {
+		return uv_;
+	}
+
+	/// @brief 中心点設定
+	void SetPivot(const Vector2 &pivot);
+
+	void SetScale(const Vector2 &scale);
+	void SetRotate(const float &angle);
+	void SetPosition(const Vector2 &position);
+
+	const Transform &GetTransform() const {
+		return transform_;
+	}
+
+
+	/// @brief 描画
 	void Draw() const;
 
 	[[nodiscard]] static Sprite *const Create();
+	[[nodiscard]] static Sprite *const Create(const uint32_t textureHaundle);
+	[[nodiscard]] static Sprite *const Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale);
 
 	void ImGuiWidget();
+
+	/// @brief 頂点データ編集
+	void CalcBuffer();
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void SetBlendMode(BlendMode blendMode);

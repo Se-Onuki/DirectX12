@@ -13,6 +13,7 @@ class DirectXCommon
 	~DirectXCommon() = default;
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+public:
 
 	static const uint32_t backBufferCount = 2;
 
@@ -37,10 +38,8 @@ private:
 	// DirectXDevice
 	ComPtr<ID3D12Device> device_;
 
-public:
 	// コマンドリスト関係
 	ComPtr<ID3D12GraphicsCommandList> commandList_;
-private:
 	ComPtr<ID3D12CommandAllocator> commandAllocator_;
 	ComPtr<ID3D12CommandQueue> commandQueue_;
 
@@ -48,10 +47,8 @@ private:
 	ComPtr<IDXGISwapChain4> swapChain_;
 
 	ComPtr<ID3D12DescriptorHeap> rtvHeap_;
-public:
 	std::array<ComPtr<ID3D12Resource>, backBufferCount> backBuffers_;
 
-private:
 	ComPtr<ID3D12Fence> fence_;
 
 	ComPtr<ID3D12Resource> depthBuffer_;
@@ -80,6 +77,8 @@ public:
 	void StartDraw();
 
 	void EndDraw();
+
+	void CrearDepthBuffer();
 
 
 private:

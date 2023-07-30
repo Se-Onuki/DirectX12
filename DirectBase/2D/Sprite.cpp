@@ -133,8 +133,8 @@ void Sprite::CreatePipeLine() {
 
 	// RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
-	// 裏面(時計回り)を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	// カリングを無効化
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
@@ -317,10 +317,15 @@ void Sprite::StaticInit() {
 }
 
 void Sprite::Init(const std::string &textureName) {
-	SetTextureHaundle(TextureManager::Load(textureName));
+	Init(TextureManager::Load(textureName));
+}
 
+void Sprite::Init(const uint32_t &textureHaundle) {
 	CreateBuffer();
 	MapVertex();
+	CalcBuffer();
+
+	SetTextureHaundle(textureHaundle);
 	transform_.matWorld_ = Matrix4x4::Identity();
 }
 
@@ -350,19 +355,20 @@ void Sprite::MapVertex()
 
 	// 書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void **>(&vertexMap_));
+
 	// 左下
-	vertexMap_[0].position = { 0.f, 1.f, 0.f, 1.f };
-	vertexMap_[0].texCoord = { 0.f,1.f };
+	vertexMap_[(uint32_t)VertexNumer::LDown].position = { 0.f, 1.f, 0.f, 1.f };
+	vertexMap_[(uint32_t)VertexNumer::LDown].texCoord = { 0.f,1.f };
 	// 左上
-	vertexMap_[1].position = { 0.f, 0.f, 0.f, 1.f };
-	vertexMap_[1].texCoord = { 0.f,0.f };
+	vertexMap_[(uint32_t)VertexNumer::LTop].position = { 0.f, 0.f, 0.f, 1.f };
+	vertexMap_[(uint32_t)VertexNumer::LTop].texCoord = { 0.f,0.f };
 	// 右下
-	vertexMap_[2].position = { 1.f, 1.f, 0.f, 1.f };
-	vertexMap_[2].texCoord = { 1.f,1.f };
+	vertexMap_[(uint32_t)VertexNumer::RDown].position = { 1.f, 1.f, 0.f, 1.f };
+	vertexMap_[(uint32_t)VertexNumer::RDown].texCoord = { 1.f,1.f };
 
 	// 右上
-	vertexMap_[3].position = { 1.f, 0.f, 0.f, 1.f };
-	vertexMap_[3].texCoord = { 1.f,0.f };
+	vertexMap_[(uint32_t)VertexNumer::RTop].position = { 1.f, 0.f, 0.f, 1.f };
+	vertexMap_[(uint32_t)VertexNumer::RTop].texCoord = { 1.f,0.f };
 
 	// インデックス
 	indexResource_->Map(0, nullptr, reinterpret_cast<void **>(&indexMap_));
@@ -427,11 +433,108 @@ void Sprite::ImGuiWidget() {
 		transform_.CalcMatrix();
 	}
 	ImGui::ColorEdit4("Color", &constMap_->color.x);
+	static char filePath[32];
+	ImGui::InputText("filePath", filePath, 32u);
+	if (ImGui::Button("Load")) {
+		SetTextureHaundle(TextureManager::Load(filePath));
+	}
+	if (ImGui::Button("Set 'white2x2.png'")) {
+		SetTextureHaundle(TextureManager::Load("white2x2.png"));
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Set 'uvChecker.png'")) {
+		SetTextureHaundle(TextureManager::Load("uvChecker.png"));
+	}
+
+	bool uvMoveing = false;
+	uvMoveing |= ImGui::DragFloat2("Pivot", &pivot_.x, 0.05f, 0.f, 1.f);
+
+	uvMoveing |= ImGui::DragFloat2("uvOrigin", &uv_.first.x, 1.f, 0.f, 1024.f);
+	uvMoveing |= ImGui::DragFloat2("uvDiff", &uv_.second.x, 1.f, 0.f, 1024.f);
+	if (uvMoveing) {
+		CalcBuffer();
+	}
+
 }
 
-Sprite *const Sprite::Create()
+
+void Sprite::SetScale(const Vector2 &scale)
 {
+	transform_.scale = { scale.x,scale.y,1.f };
+	transform_.CalcMatrix();
+}
+void Sprite::SetRotate(const float &angle)
+{
+	transform_.rotate = { 0.f,0.f,angle };
+	transform_.CalcMatrix();
+}
+
+void Sprite::SetPosition(const Vector2 &position)
+{
+	transform_.translate = { position.x,position.y,0.f };
+	transform_.CalcMatrix();
+}
+
+Sprite *const Sprite::Create() {
 	Sprite *sprite = new Sprite();
 	sprite->Init();
 	return sprite;
+}
+
+void Sprite::CalcBuffer()
+{
+#pragma region MyRegion
+
+	vertexMap_[(uint32_t)VertexNumer::LDown].position = { -pivot_.x, 1.f - pivot_.y, 0.f, 1.f };	// 左下 { 0, 1 }
+	vertexMap_[(uint32_t)VertexNumer::LTop].position = { -pivot_.x,  -pivot_.y, 0.f, 1.f };	// 左上 { 0, 0 }
+	vertexMap_[(uint32_t)VertexNumer::RDown].position = { 1.f - pivot_.x, 1.f - pivot_.y, 0.f, 1.f };	// 右下 { 1, 1 }
+	vertexMap_[(uint32_t)VertexNumer::RTop].position = { 1.f - pivot_.x, -pivot_.y, 0.f, 1.f };	// 右上 { 1, 0 }
+
+#pragma endregion
+
+#pragma region UV情報
+
+	Vector2 texOrigin = { uv_.first.x / resourceDesc.Width,uv_.first.y / resourceDesc.Width };
+	Vector2 texDiff = { (uv_.first.x + uv_.second.x) / resourceDesc.Width, (uv_.first.y + uv_.second.y) / resourceDesc.Width };
+
+	vertexMap_[(uint32_t)VertexNumer::LDown].texCoord = { texOrigin.x,texDiff.y };	// 左下 { 0, 1 }
+	vertexMap_[(uint32_t)VertexNumer::LTop].texCoord = { texOrigin.x,texOrigin.y };	// 左上 { 0, 0 }
+	vertexMap_[(uint32_t)VertexNumer::RDown].texCoord = { texDiff.x,texDiff.y };	// 右下 { 1, 1 }
+	vertexMap_[(uint32_t)VertexNumer::RTop].texCoord = { texDiff.x,texOrigin.y };	// 右上 { 1, 0 }
+
+#pragma endregion
+
+	transform_.CalcMatrix();
+}
+
+Sprite *const Sprite::Create(const uint32_t textureHaundle)
+{
+	Sprite *sprite = new Sprite();
+	sprite->Init(textureHaundle);
+	return sprite;
+}
+
+Sprite *const Sprite::Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale)
+{
+	Sprite *sprite = Create(textureHaundle);
+	sprite->transform_.translate = { position.x,position.y,0.f };
+	sprite->transform_.scale = { scale.x,scale.y,1.f };
+	sprite->transform_.CalcMatrix();
+	return sprite;
+}
+
+
+void Sprite::SetTexOrigin(const Vector2 &texOrigin) {
+	uv_.first = texOrigin;
+	CalcBuffer();
+}
+
+void Sprite::SetTexDiff(const Vector2 &texDiff) {
+	uv_.second = texDiff;
+	CalcBuffer();
+}
+
+void Sprite::SetPivot(const Vector2 &pivot) {
+	pivot_ = pivot;
+	CalcBuffer();
 }

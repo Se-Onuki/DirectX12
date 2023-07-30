@@ -1,6 +1,6 @@
 #pragma once
 #include "SceneManager.h"
-
+#include "../DirectBase/3D/DirectionLight.h"
 
 class TitleScene : public IScene {
 public:
@@ -15,6 +15,7 @@ public:
 public:
 
 private:
+	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 
 };

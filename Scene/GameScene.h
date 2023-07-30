@@ -21,10 +21,10 @@ private:
 
 	ViewProjection viewProjection;
 
-	std::unique_ptr<DirectionLight> light = nullptr;
+	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	std::unique_ptr<Sprite> sprite = nullptr;
+	std::unique_ptr<Sprite> sprite_ = nullptr;
 
-	std::list<std::unique_ptr<Object>> objectArray_;
+	std::list<std::unique_ptr<Object>> objectList_;
 
 };

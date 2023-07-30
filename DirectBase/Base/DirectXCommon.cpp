@@ -178,6 +178,12 @@ void DirectXCommon::EndDraw() {
 
 }
 
+void DirectXCommon::CrearDepthBuffer() {
+
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetCPUDescriptorHandleForHeapStart();
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
+}
+
 void DirectXCommon::InitDXGI_Device() {
 
 #pragma region DXGIFactoryの生成

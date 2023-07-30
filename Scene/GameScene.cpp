@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "../externals/imgui/imgui.h"
 #include "../DirectBase/Base/DirectXCommon.h"
+#include "TitleScene.h"
 
 GameScene::GameScene()
 {
@@ -14,9 +15,9 @@ void GameScene::OnEnter()
 {
 	viewProjection.Init();
 
-	light.reset(DirectionLight::Create());
+	light_.reset(DirectionLight::Create());
 
-	sprite.reset(Sprite::Create());
+	sprite_.reset(Sprite::Create(TextureManager::Load("uvChecker.png"), Vector2{ 100.f,100.f }, Vector2{ 100.f,100.f }));
 
 	//objectArray_.clear();
 }
@@ -27,9 +28,12 @@ void GameScene::OnExit()
 
 void GameScene::Update()
 {
-	ImGui::Begin("GameScene");
+	ImGui::Begin("SceneChanger");
 	if (ImGui::Button("Reload : Delay 30Flame")) {
 		SceneManager::GetInstance()->ChangeScene(new GameScene, 30);
+	}
+	if (ImGui::Button("TitleScene : Delay 30Flame")) {
+		SceneManager::GetInstance()->ChangeScene(new TitleScene, 30);
 	}
 	ImGui::End();
 
@@ -40,46 +44,49 @@ void GameScene::Update()
 
 
 	ImGui::Begin("UI");
-	sprite->ImGuiWidget();
+	sprite_->ImGuiWidget();
 	ImGui::End();
 
 
 	ImGui::Begin("Light");
-	light->ImGuiWidget();
+	light_->ImGuiWidget();
 	ImGui::End();
 
 	ImGui::Begin("ObjectLoader");
 	static char fileName[32];
 	ImGui::InputText(".obj", fileName, 32u);
 	if (ImGui::Button("Load")) {
-		objectArray_.emplace_back(new Object(fileName + std::string(".obj")));
+		objectList_.emplace_back(new Object(fileName + std::string(".obj")));
 	}
-#pragma region 確認用ローダ
+
+#pragma region モデル確認用ローダ
 
 	if (ImGui::Button("Add Plane")) {
-		objectArray_.emplace_back(new Object("plane.obj"));
+		objectList_.emplace_back(new Object("plane.obj"));
 	}
 	if (ImGui::Button("Add Sphere")) {
-		objectArray_.emplace_back(new Object("sphere.obj"));
+		objectList_.emplace_back(new Object("sphere.obj"));
 	}
 	if (ImGui::Button("Add Suzanne")) {
-		objectArray_.emplace_back(new Object("suzanne.obj"));
+		objectList_.emplace_back(new Object("suzanne.obj"));
 	}
 	if (ImGui::Button("Add MultiMaterial")) {
-		objectArray_.emplace_back(new Object("multiMaterial.obj"));
+		objectList_.emplace_back(new Object("multiMaterial.obj"));
 	}
 	if (ImGui::Button("Add Teapot")) {
-		objectArray_.emplace_back(new Object("teapot.obj"));
+		objectList_.emplace_back(new Object("teapot.obj"));
 	}
 	if (ImGui::Button("Add Bunny(Too Heavy)")) {
-		objectArray_.emplace_back(new Object("bunny.obj"));
+		objectList_.emplace_back(new Object("bunny.obj"));
 	}
 
 #pragma endregion
 
-	std::list<std::unique_ptr<Object>>::iterator it = objectArray_.begin();
+
+	ImGui::Text("inspector");
+	std::list<std::unique_ptr<Object>>::iterator it = objectList_.begin();
 	uint32_t index = 0;
-	while (it != objectArray_.end()) {
+	while (it != objectList_.end()) {
 
 		if (ImGui::TreeNode(((*it)->model_->name_ + "[" + std::to_string(index) + "]").c_str())) {
 			(*it)->ImGuiWidget();
@@ -88,12 +95,11 @@ void GameScene::Update()
 		(*it)->transform_.UpdateMatrix();
 
 
-
 		if (ImGui::Button(("Delete##" + std::to_string(index)).c_str())) {
-			objectArray_.erase(it++); // 削除する前にイテレータをインクリメント
+			objectList_.erase(it++); // 削除する前にイテレータをインクリメント
 		}
 		else {
-			++it;
+			it++;
 			index++;
 		}
 	}
@@ -108,21 +114,49 @@ void GameScene::Update()
 
 void GameScene::Draw()
 {
-	ID3D12GraphicsCommandList *const commandList = DirectXCommon::GetInstance()->GetCommandList();
+	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+
+#pragma region 背面スプライト
 
 	Sprite::StartDraw(commandList);
-	sprite->Draw();
+
+	// スプライトの描画
+
+
 	Sprite::EndDraw();
+
+#pragma endregion
+
+
+	dxCommon->CrearDepthBuffer();
+
+#pragma region モデル描画
 
 	Model::StartDraw(commandList);
 
-	light->SetLight(commandList);
+	light_->SetLight(commandList);
 
 	// モデルの描画
 
-	for (auto &obj : objectArray_) {
+	for (auto &obj : objectList_) {
 		obj->Draw(viewProjection);
 	}
 
+
 	Model::EndDraw();
+
+#pragma endregion
+
+#pragma region 前面スプライト
+
+	Sprite::StartDraw(commandList);
+
+	// スプライトの描画
+	sprite_->Draw();
+
+	Sprite::EndDraw();
+
+#pragma endregion
+
 }
