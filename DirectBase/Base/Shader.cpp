@@ -4,6 +4,7 @@ Microsoft::WRL::ComPtr<IDxcUtils>Shader::dxcUtils_;
 Microsoft::WRL::ComPtr<IDxcCompiler3> Shader::dxcCompiler_;
 
 Microsoft::WRL::ComPtr<IDxcIncludeHandler> Shader::includeHandler_;
+const std::wstring Shader::directoryPath_ = L"resources/shader/";
 
 void Shader::StaticInit()
 {
@@ -31,7 +32,7 @@ D3D12_SHADER_BYTECODE Shader::GetBytecode() const {
 Shader Shader::Compile(const std::wstring &ShaderPath, const wchar_t *profile)
 {
 	Shader result;
-	result.shaderBlob_ = CompileShader(ShaderPath, profile, dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get());
+	result.shaderBlob_ = CompileShader(directoryPath_ + ShaderPath, profile, dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get());
 	assert(result.shaderBlob_ != nullptr);
 	return result;
 }

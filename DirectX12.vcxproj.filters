@@ -283,29 +283,29 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Object3d.VS.hlsl">
-      <Filter>シェーダ</Filter>
-    </FxCompile>
-    <FxCompile Include="Object3d.PS.hlsl">
-      <Filter>シェーダ</Filter>
-    </FxCompile>
-    <FxCompile Include="Sprite.VS.hlsl">
-      <Filter>シェーダ</Filter>
-    </FxCompile>
-    <FxCompile Include="Sprite.PS.hlsl">
-      <Filter>シェーダ</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
       <Filter>imgui</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Object3d.hlsli">
+    <FxCompile Include="resources\shader\Sprite.PS.hlsl">
+      <Filter>シェーダ</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\Sprite.VS.hlsl">
+      <Filter>シェーダ</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\Object3d.PS.hlsl">
+      <Filter>シェーダ</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\Object3d.VS.hlsl">
+      <Filter>シェーダ</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shader\Object3d.hlsli">
       <Filter>シェーダ</Filter>
     </None>
-    <None Include="Sprite.hlsli">
+    <None Include="resources\shader\Sprite.hlsli">
       <Filter>シェーダ</Filter>
     </None>
   </ItemGroup>

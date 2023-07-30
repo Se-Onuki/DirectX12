@@ -28,6 +28,8 @@ class Shader {
 	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
 	static ComPtr<IDxcIncludeHandler> includeHandler_;
 
+	static const std::wstring directoryPath_;
+
 	ComPtr<IDxcBlob> shaderBlob_ = nullptr;
 
 public:
