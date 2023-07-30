@@ -44,8 +44,6 @@ public:
 	ComPtr<ID3D12Resource> constBuffer_;
 	MaterialData *mapData_ = nullptr;
 
-	static Material LoadFile(const std::string &directoryPath, const std::string &fileName);
-
 	void CreateBuffer();
 
 	void ImGuiWidget();
@@ -90,8 +88,6 @@ public:
 
 	void Draw(ID3D12GraphicsCommandList *const commandList) const;
 
-	static void CreateSphere(VertexData *const vertex,
-		ID3D12Resource *const indexResource, const uint32_t &subdivision);
 
 };
 
