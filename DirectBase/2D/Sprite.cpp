@@ -317,7 +317,8 @@ void Sprite::StaticInit() {
 }
 
 void Sprite::Init(const std::string &textureName) {
-	textureHaundle_ = TextureManager::Load(textureName);
+	SetTextureHaundle(TextureManager::Load(textureName));
+
 	CreateBuffer();
 	MapVertex();
 	transform_.matWorld_ = Matrix4x4::Identity();

@@ -108,7 +108,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	std::unique_ptr<Sprite> sprite{ Sprite::Create() };
 
-	std::vector<std::unique_ptr<Object>> objectArray_;
+	std::list<std::unique_ptr<Object>> objectArray_;
 
 
 	// ウィンドウのxボタンが押されるまでループ
@@ -154,20 +154,46 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		if (ImGui::Button("Add MultiMaterial")) {
 			objectArray_.emplace_back(new Object("multiMaterial.obj"));
 		}
+		if (ImGui::Button("Add Teapot")) {
+			objectArray_.emplace_back(new Object("teapot.obj"));
+		}
+		if (ImGui::Button("Add Bunny(Too Heavy)")) {
+			objectArray_.emplace_back(new Object("bunny.obj"));
+		}
 
-		for (uint32_t i = 0; i < objectArray_.size(); i++) {
-			if (ImGui::TreeNode((objectArray_[i]->model_->name_ + "[" + std::to_string(i) + "]").c_str())) {
-				objectArray_[i]->ImGuiWidget();
+
+		std::list<std::unique_ptr<Object>>::iterator it = objectArray_.begin();
+		uint32_t index = 0;
+		while (it != objectArray_.end()) {
+
+			if (ImGui::TreeNode(((*it)->model_->name_ + "[" + std::to_string(index) + "]").c_str())) {
+				(*it)->ImGuiWidget();
 				ImGui::TreePop();
 			}
-			objectArray_[i]->transform_.UpdateMatrix();
+			(*it)->transform_.UpdateMatrix();
+
+
+
+			if (ImGui::Button(("Delete##" + std::to_string(index)).c_str())) {
+				objectArray_.erase(it++); // 削除する前にイテレータをインクリメント
+			}
+			else {
+				++it;
+				index++;
+			}
 		}
+
+		//for (uint32_t i = 0; i < objectArray_.size(); i++) {
+		//	if (ImGui::TreeNode((objectArray_[i]->model_->name_ + "[" + std::to_string(i) + "]").c_str())) {
+		//		objectArray_[i]->ImGuiWidget();
+		//		ImGui::TreePop();
+		//	}
+		//	objectArray_[i]->transform_.UpdateMatrix();
+		//}
 
 		ImGui::End();
 
 		viewProjection.UpdateMatrix();
-
-
 
 		ImGui::ShowDemoWindow();
 
