@@ -24,7 +24,8 @@ void Transform::CreateConstBuffer()
 
 void Transform::SetMap()
 {
-	HRESULT result = constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
+	HRESULT result = S_FALSE;
+	result = constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 	assert(SUCCEEDED(result));
 }
 

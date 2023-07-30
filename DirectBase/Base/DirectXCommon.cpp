@@ -330,7 +330,8 @@ void DirectXCommon::CreateSwapChain()
 	swapChainDesc.BufferCount = 2;									// ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;		// モニタにうつしたら、中身を破壊
 	//コマンドキュー。ウィンドウハンドル
-	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1 **>(swapChain_.GetAddressOf()));
+	HRESULT hr = S_FALSE;
+	hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApp_->GetHWND(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1 **>(swapChain_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
@@ -391,7 +392,8 @@ void DirectXCommon::CreateFence()
 	assert(SUCCEEDED(hr));
 
 	//FenceのSignalを持つためのイベントを作成する
-	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	HANDLE fenceEvent = nullptr;
+	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
 
 #pragma endregion

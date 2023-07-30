@@ -89,21 +89,29 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	while (true) {
 		if (winApp->ProcessMessage()) break;
 
-#pragma region ImGuiに新規フレームであると伝える
+		// ImGuiに新規フレームであると伝える
 		ImGuiManager::StartFlame();
-#pragma endregion
 
-#pragma region ゲームの処理
+		///
+		/// ↓ゲーム処理↓
+		///
 
+
+		// ゲームの処理
 		sceneManager->Update();
-#pragma endregion
 
-#pragma region ImGuiの内部コマンドを生成する
+
+		///
+		/// ↑ゲーム処理↑
+		///
+
+
+		// ImGuiの内部コマンドを生成する
 		ImGuiManager::CreateCommand();
-#pragma endregion
 
-
-#pragma region コマンドを積み込んで確定させる
+		///
+		/// ↓描画関連↓
+		///
 
 		dxCommon->StartDraw();
 
@@ -118,7 +126,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		dxCommon->EndDraw();
 
-#pragma endregion
+		///
+		/// ↑描画関連↑
+		///
 
 	}
 
