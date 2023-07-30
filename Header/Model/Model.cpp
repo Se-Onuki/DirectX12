@@ -414,16 +414,13 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 			modelData->AddVertex(triangle[0]);
 			modelData->AddVertex(triangle[1]);
 			modelData->AddVertex(triangle[2]);
-			/*
-			modelData.vertices_.insert(modelData.vertices_.end(), triangle.begin(), triangle.end());
-			const uint32_t indexOffset = (uint32_t)modelData.vertices_.size() - 3u;
-			modelData.indexs_.insert(modelData.indexs_.end(), { indexOffset ,indexOffset + 1,indexOffset + 2 });*/
+			
 		}
 		else if (identifier == "o") {
 			if (!modelData->vertices_.empty())
 				result->meshList_.emplace_back(new Mesh);
 
-			modelData = result->meshList_.back().get();				// 構築するModelData
+			modelData = result->meshList_.back().get();		// 構築するModelData
 		}
 		else if (identifier == "usemtl") {
 			std::string materialID;

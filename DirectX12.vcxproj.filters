@@ -159,6 +159,9 @@
     <ClCompile Include="Scene\GameScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -274,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="Header\Model\Object.h">
       <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

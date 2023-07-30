@@ -18,7 +18,7 @@ void GameScene::OnEnter()
 
 	sprite.reset(Sprite::Create());
 
-	objectArray_.clear();
+	//objectArray_.clear();
 }
 
 void GameScene::OnExit()
@@ -28,8 +28,8 @@ void GameScene::OnExit()
 void GameScene::Update()
 {
 	ImGui::Begin("GameScene");
-	if (ImGui::Button("Reload")) {
-		SceneManager::GetInstance()->ChangeScene("Game", 30);
+	if (ImGui::Button("Reload : Delay 30Flame")) {
+		SceneManager::GetInstance()->ChangeScene(new GameScene, 30);
 	}
 	ImGui::End();
 

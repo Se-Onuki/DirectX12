@@ -22,15 +22,11 @@ public:
 class SceneManager {
 private:
 
-	Timer transitionTimer{};
-
-	std::unordered_map<std::string, std::unique_ptr<IScene>> scenes_;
-
-	std::string currentSceneName = "";
-	IScene *currentScene = nullptr;
-
-	std::string nextSceneName = "";
-	IScene *nextScene = nullptr;
+	Timer transitionTimer_{};
+	// 現在読み込んでいるシーン
+	std::unique_ptr<IScene> currentScene_ = nullptr;
+	// 次に遷移するシーン
+	std::unique_ptr<IScene> nextScene_ = nullptr;
 
 
 	SceneManager() = default;
@@ -48,23 +44,16 @@ public:
 		return &instance;
 	}
 
-	/// @brief シーンの追加
-	/// @param name シーン名
-	/// @param scene シーンのポインタ
-	inline void AddScene(const std::string &name, IScene *const scene) {
-		scenes_[name].reset(scene);
-	}
-
 
 	/// @brief シーン遷移
 	/// @param name 遷移先のシーン
-	void ChangeScene(const std::string &name);
+	void ChangeScene(IScene *const nextScene);
 
 
 	/// @brief シーン遷移
 	/// @param name 遷移先の名前キー
 	/// @param transitionTime 必要とする時間
-	void ChangeScene(const std::string &name, const int &transitionTime);
+	void ChangeScene(IScene *const nextScene, const int &transitionTime);
 
 
 	/// @brief シーンの更新

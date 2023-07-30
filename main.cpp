@@ -76,14 +76,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), (int32_t)dxCommon->backBuffers_.size(), textureManager->GetSRVHeap());
 
-
 	Shader::StaticInit();
 	Model::StaticInit();
 	Sprite::StaticInit();
 
+	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
-	sceneManager->AddScene("Game", new GameScene);
-	sceneManager->ChangeScene("Game");
+	sceneManager->ChangeScene(new GameScene);
 
 
 	// ウィンドウのxボタンが押されるまでループ
@@ -110,16 +109,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		textureManager->StartDraw();
 
-#pragma region コマンドを積む
-
+		// 一般描画
 		sceneManager->Draw();
 
-#pragma endregion
 
-#pragma region ImGuiの描画
+		// ImGuiの描画
 		ImGuiManager::Draw(commandList);
 
-#pragma endregion
 		dxCommon->EndDraw();
 
 #pragma endregion
