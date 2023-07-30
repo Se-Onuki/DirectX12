@@ -394,12 +394,19 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 				for (uint32_t element = 0; element < 3; ++element) {
 					std::string index;
 					std::getline(v, index, '/'); // 区切りでインデックスを読んでいく
+					if (index == "") {	// もし値が無かった場合
+						elementIndices[element] = 0;	// 0 を代入(エラー回避)
+						continue;
+					}
 					elementIndices[element] = std::stoi(index);
 				}
 				// 要素へのIndexから、実際の要素の値を取得して、頂点を機築する
 				Vector4 position = positionList[elementIndices[0] - 1];
-				Vector2 texCoord = texCoordList[elementIndices[1] - 1];
 				Vector3 normal = normalList[elementIndices[2] - 1];
+				Vector2 texCoord = ZeroVector2;
+				if (elementIndices[1] != 0) {	// 値が無かった場合
+					texCoord = texCoordList[elementIndices[1] - 1];
+				}
 				// 末尾から順に(法線の逆転)
 				triangle[2u - faceVertex] = Mesh::VertexData{ position,texCoord,normal };
 			}

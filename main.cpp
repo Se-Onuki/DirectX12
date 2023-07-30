@@ -148,6 +148,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		if (ImGui::Button("Add Sphere")) {
 			objectArray_.emplace_back(new Object("sphere.obj"));
 		}
+		if (ImGui::Button("Add Suzanne")) {
+			objectArray_.emplace_back(new Object("suzanne.obj"));
+		}
 		if (ImGui::Button("Add MultiMaterial")) {
 			objectArray_.emplace_back(new Object("multiMaterial.obj"));
 		}

@@ -119,7 +119,7 @@ public:
 const Vector2 ScreenSize{ 1280, 720 };
 
 /// ゼロベクトル
-const Vector2 ZeroVector2 = { 0, 0 };
+const Vector2 ZeroVector2 = { 0.f, 0.f };
 
 /// UIなどの基準値となる座標
 const Vector2 MiddleLeftOver = { (float)(-ScreenSize.x / 2), (float)(ScreenSize.y / 2) };
