@@ -183,14 +183,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			}
 		}
 
-		//for (uint32_t i = 0; i < objectArray_.size(); i++) {
-		//	if (ImGui::TreeNode((objectArray_[i]->model_->name_ + "[" + std::to_string(i) + "]").c_str())) {
-		//		objectArray_[i]->ImGuiWidget();
-		//		ImGui::TreePop();
-		//	}
-		//	objectArray_[i]->transform_.UpdateMatrix();
-		//}
-
 		ImGui::End();
 
 		viewProjection.UpdateMatrix();

@@ -44,7 +44,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     else if (gDirectionalLight.pattern == 1)
     {
-        output.color = gMaterial.color * gDirectionalLight.color * NdotL * gDirectionalLight.intensity; // 
+        output.color = saturate(gMaterial.color * gDirectionalLight.color * NdotL * gDirectionalLight.intensity); // 
         output.color = saturate(output.color + gMaterial.emissive) * textureColor; // 自己発光
         output.color.w = gMaterial.color.w * textureColor.w; // α値
     }
