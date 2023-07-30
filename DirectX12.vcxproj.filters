@@ -49,6 +49,12 @@
     <Filter Include="シェーダ">
       <UniqueIdentifier>{c0fe13e8-8231-4a1b-ac1c-784807b87d54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{b8ff11c6-a1b0-456f-a9b2-0f0e2c1a2db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{66b332a3-f4f2-4a7b-ae4c-5b5a9eb27d60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -132,17 +138,23 @@
     <ClCompile Include="DirectBase\2D\Sprite.cpp">
       <Filter>2D</Filter>
     </ClCompile>
-    <ClCompile Include="DirectBase\Base\Shader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectBase\Base\PipelineState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectBase\Base\LeakChecker.cpp">
       <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="DirectBase\3D\DirectionLight.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SceneManager.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectBase\Base\Shader.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectBase\Base\PipelineState.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Timer\TImer.cpp">
+      <Filter>Timer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +259,12 @@
     </ClInclude>
     <ClInclude Include="DirectBase\3D\DirectionLight.h">
       <Filter>3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneManager.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Timer\Timer.h">
+      <Filter>Timer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

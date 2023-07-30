@@ -120,7 +120,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Model\Model.cpp" />
     <ClCompile Include="Header\Render\Render.cpp" />
     <ClCompile Include="Header\Texture\Texture.cpp" />
+    <ClCompile Include="Header\Timer\TImer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectBase\2D\Sprite.h" />
@@ -157,6 +159,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Render\Render.hpp" />
     <ClInclude Include="Header\String\String.hpp" />
     <ClInclude Include="Header\Texture\Texture.h" />
+    <ClInclude Include="Header\Timer\Timer.h" />
+    <ClInclude Include="Scene\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl">
