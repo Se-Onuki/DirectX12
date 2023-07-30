@@ -122,6 +122,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Texture\Texture.cpp" />
     <ClCompile Include="Header\Timer\TImer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\String\String.hpp" />
     <ClInclude Include="Header\Texture\Texture.h" />
     <ClInclude Include="Header\Timer\Timer.h" />
+    <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>

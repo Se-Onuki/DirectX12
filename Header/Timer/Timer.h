@@ -17,7 +17,7 @@ class Timer {
 	}
 
 public:
-	Timer(uint32_t goal = 0u) : goalFlame_(goal), nowFlame_(0), isFinish_(false) {}
+	Timer(uint32_t goal = 0u) : goalFlame_(goal), nowFlame_(0), isFinish_(true) {}
 
 	/// @brief 更新処理
 	/// @return bool 実行中である場合true

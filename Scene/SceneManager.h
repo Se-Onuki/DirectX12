@@ -7,46 +7,36 @@
 //#include "Scene.hpp"
 
 class IScene {
-
-protected:
-
-	/// @brief 自分自身をマネージャーに登録するための関数
-	//inline void SelfEntry(const std::string &name);
-
 public:
 	IScene() = default;
 	virtual ~IScene() = default;
 
-	virtual void Update() = 0;
-	virtual void Draw() const = 0;
+	virtual void OnEnter() = 0;	// シーン入室時に一度走る
+	virtual void OnExit() = 0;	// シーン退室時に一度走る
 
-	virtual void OnEnter() = 0;
-	virtual void OnExit() = 0;
-
-
-	inline virtual void Delete() = 0;
+	virtual void Update() = 0;	// 更新処理
+	virtual void Draw() = 0;	// 描画処理
 };
 
 
 class SceneManager {
 private:
 
-	Timer transitionTimer;
+	Timer transitionTimer{};
 
 	std::unordered_map<std::string, std::unique_ptr<IScene>> scenes_;
 
-	std::string currentSceneName;
-	IScene *currentScene;
+	std::string currentSceneName = "";
+	IScene *currentScene = nullptr;
 
-	std::string nextSceneName;
-	IScene *nextScene;
+	std::string nextSceneName = "";
+	IScene *nextScene = nullptr;
 
 
-	SceneManager() {
-		currentScene = nullptr;
-		currentSceneName = "";
-	}
-
+	SceneManager() = default;
+	SceneManager(const SceneManager &) = delete;
+	SceneManager operator=(const SceneManager &) = delete;
+	~SceneManager() = default;
 
 public:
 
@@ -68,44 +58,19 @@ public:
 
 	/// @brief シーン遷移
 	/// @param name 遷移先のシーン
-	inline void ChangeScene(const std::string &name);
+	void ChangeScene(const std::string &name);
 
 
 	/// @brief シーン遷移
 	/// @param name 遷移先の名前キー
 	/// @param transitionTime 必要とする時間
-	inline void ChangeScene(const std::string &name, const int &transitionTime) {
-		if (currentSceneName == name) return;
-
-		if (scenes_.contains(name)) {
-			nextSceneName = name;
-			nextScene = scenes_[name].get();
-		}
-		else {
-			return;
-		}
-
-		transitionTimer.Init(transitionTime);
-	}
+	void ChangeScene(const std::string &name, const int &transitionTime);
 
 
 	/// @brief シーンの更新
-	inline void Update() {
-		if (transitionTimer.IsFinish()) {
-			ChangeScene(nextSceneName);
-		}
-
-		if (currentScene) {
-			currentScene->Update();
-		}
-		transitionTimer.Update();
-	}
+	void Update();
 
 
 	/// @brief シーンの描画
-	void Draw() {
-		if (currentScene) {
-			currentScene->Draw();
-		}
-	}
+	void Draw() const;
 };

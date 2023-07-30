@@ -53,6 +53,9 @@
 #include "DirectBase/3D/DirectionLight.h"
 #include "DirectBase/2D/Sprite.h"
 
+#include "Scene/SceneManager.h"
+#include "Scene/GameScene.h"
+
 class Object {
 public:
 	Object(const std::string &filePath) {
@@ -97,6 +100,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Model::StaticInit();
 	Sprite::StaticInit();
 
+	SceneManager *const sceneManager = SceneManager::GetInstance();
+	sceneManager->AddScene("Game", new GameScene);
+	sceneManager->ChangeScene("Game");
+
 
 	ViewProjection viewProjection;
 	viewProjection.Init();
@@ -118,6 +125,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 
 #pragma region ゲームの処理
+
+		sceneManager->Update();
 
 		ImGui::Begin("Camera");
 		ImGui::DragFloat3("rotate", &viewProjection.rotation_.x, Angle::Dig2Rad);
@@ -201,6 +210,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		textureManager->StartDraw();
 
 #pragma region コマンドを積む
+
+		sceneManager->Draw();
 
 		Sprite::StartDraw(commandList);
 		sprite->Draw();
