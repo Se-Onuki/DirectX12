@@ -14,6 +14,7 @@ GameScene::~GameScene()
 void GameScene::OnEnter()
 {
 	viewProjection.Init();
+	viewProjection.translation_ = { 0.f,0.f,-15.f };
 
 	light_.reset(DirectionLight::Create());
 
@@ -32,8 +33,8 @@ void GameScene::Update()
 	if (ImGui::Button("Reload : Delay 30Flame")) {
 		SceneManager::GetInstance()->ChangeScene(new GameScene, 30);
 	}
-	if (ImGui::Button("TitleScene : Delay 30Flame")) {
-		SceneManager::GetInstance()->ChangeScene(new TitleScene, 30);
+	if (ImGui::Button("TitleScene : Delay 60Flame")) {
+		SceneManager::GetInstance()->ChangeScene(new TitleScene, 60);
 	}
 	ImGui::End();
 

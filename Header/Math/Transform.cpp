@@ -65,7 +65,7 @@ bool Transform::ImGuiWidget2D()
 		bool isUsing = false;
 
 
-		isUsing |= ImGui::DragFloat2("Scale", &scale.x, 0.01f, 0.001f, 100.f);
+		isUsing |= ImGui::DragFloat2("Scale", &scale.x, 0.01f, 0.001f, 2048.f);
 
 		isUsing |= ImGui::DragFloat("Rotate", &rotate.z, Angle::Dig2Rad);
 

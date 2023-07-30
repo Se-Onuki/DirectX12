@@ -144,6 +144,9 @@ public:
 		return transform_;
 	}
 
+	void SetColor(const Vector4 &color);
+	const Vector4 &GetColor()const;
+
 
 	/// @brief 描画
 	void Draw() const;

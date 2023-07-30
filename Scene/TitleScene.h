@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneManager.h"
 #include "../DirectBase/3D/DirectionLight.h"
+#include "../DirectBase/2D/Sprite.h"
 
 class TitleScene : public IScene {
 public:
@@ -17,5 +18,9 @@ public:
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
+	std::unique_ptr<Sprite> title_ = nullptr;
 
+	std::unique_ptr<Sprite> plane_ = nullptr;
+
+	Sprite::BlendMode blend_ = Sprite::BlendMode::kSubtract;
 };

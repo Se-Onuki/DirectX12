@@ -494,8 +494,8 @@ void Sprite::CalcBuffer()
 
 #pragma region UV情報
 
-	Vector2 texOrigin = { uv_.first.x / resourceDesc.Width,uv_.first.y / resourceDesc.Width };
-	Vector2 texDiff = { (uv_.first.x + uv_.second.x) / resourceDesc.Width, (uv_.first.y + uv_.second.y) / resourceDesc.Width };
+	Vector2 texOrigin = { uv_.first.x / resourceDesc.Width,uv_.first.y / resourceDesc.Height };
+	Vector2 texDiff = { (uv_.first.x + uv_.second.x) / resourceDesc.Width, (uv_.first.y + uv_.second.y) / resourceDesc.Height };
 
 	vertexMap_[(uint32_t)VertexNumer::LDown].texCoord = { texOrigin.x,texDiff.y };	// 左下 { 0, 1 }
 	vertexMap_[(uint32_t)VertexNumer::LTop].texCoord = { texOrigin.x,texOrigin.y };	// 左上 { 0, 0 }
@@ -521,6 +521,16 @@ Sprite *const Sprite::Create(const uint32_t textureHaundle, const Vector2 &posit
 	sprite->transform_.scale = { scale.x,scale.y,1.f };
 	sprite->transform_.CalcMatrix();
 	return sprite;
+}
+
+void Sprite::SetColor(const Vector4 &color)
+{
+	constMap_->color = color;
+}
+
+const Vector4 &Sprite::GetColor() const
+{
+	return constMap_->color;
 }
 
 
