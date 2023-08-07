@@ -4,6 +4,7 @@
 #include "../../Header/Texture/Texture.h"
 #include "../../Header/Descriptor/DescriptorHandIe.h"
 #include "../../Header/Render/Render.hpp"
+#include "../../externals/imgui/imgui.h"
 
 void TextureManager::StartDraw()
 {
@@ -48,8 +49,37 @@ void TextureManager::Reset() {
 	}
 }
 
-void TextureManager::ImGuiWindow()  {
+void TextureManager::ImGuiWindow() {
+	ImGui::Begin("TextureManager");
+	static char filePath[32];
+	ImGui::InputTextWithHint("textureLoad", "resources/...", filePath, 32u);
+	if (ImGui::Button("Load")) {
+		LoadInternal(filePath);
+		filePath[0] = '\0';
+	}
 
+	static uint32_t index = 1;
+	if (ImGui::BeginCombo("TextureList", textureArray_[index].name.c_str())) {
+
+		for (uint32_t i = 0; i < textureArray_.size(); i++) {
+			if (textureArray_[i].name == "") continue;
+			if (ImGui::Selectable((textureArray_[i].name + "[" + std::to_string(i) + "]").c_str())) {
+				index = i;
+				break;
+			}
+		}
+		ImGui::EndCombo();
+	}
+	if (textureArray_[index].gpuHandleSRV.ptr) {
+		const auto &resourceDesc = textureArray_[index].textureResource->GetDesc();
+		const Vector2 &texSize = Vector2{ (float)resourceDesc.Width,(float)resourceDesc.Height } / (float)resourceDesc.Width * 100.f;
+		ImGui::Image((ImTextureID)textureArray_[index].gpuHandleSRV.ptr, ImVec2{ texSize.x,texSize.y });
+		ImGui::SameLine();
+		ImGui::Text("Width: %d\nHeight: %d", resourceDesc.Width, resourceDesc.Height);
+	}
+
+
+	ImGui::End();
 }
 
 void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const {

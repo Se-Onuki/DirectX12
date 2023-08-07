@@ -38,6 +38,8 @@ void GameScene::Update()
 	}
 	ImGui::End();
 
+	TextureManager::GetInstance()->ImGuiWindow();
+
 	ImGui::Begin("Camera");
 	ImGui::DragFloat3("rotate", &viewProjection.rotation_.x, Angle::Dig2Rad);
 	ImGui::DragFloat3("translate", &viewProjection.translation_.x, 0.1f);

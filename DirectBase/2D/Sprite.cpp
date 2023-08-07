@@ -142,12 +142,8 @@ void Sprite::CreatePipeLine() {
 
 #pragma region ShaderをCompileする
 
-#pragma region Shader
-
 	Shader vertexShader = Shader::Compile(L"Sprite.VS.hlsl", L"vs_6_0");
 	Shader pixelShader = Shader::Compile(L"Sprite.PS.hlsl", L"ps_6_0");
-
-#pragma endregion
 
 #pragma endregion
 
