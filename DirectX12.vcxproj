@@ -134,6 +134,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectBase\Base\ImGuiManager.h" />
     <ClInclude Include="DirectBase\Base\LeakChecker.h" />
     <ClInclude Include="DirectBase\Base\PipelineState.h" />
+    <ClInclude Include="DirectBase\Base\ResourceLoader.h" />
     <ClInclude Include="DirectBase\Base\Shader.h" />
     <ClInclude Include="DirectBase\Base\TextureManager.h" />
     <ClInclude Include="DirectBase\Base\WinApp.h" />

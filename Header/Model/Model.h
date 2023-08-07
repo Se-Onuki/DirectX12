@@ -202,4 +202,6 @@ public:
 	void Init();
 	void Draw();
 
+	void LoadJson(const std::string &file_path);
+
 };

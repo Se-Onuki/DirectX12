@@ -281,6 +281,9 @@
     <ClInclude Include="Scene\TitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="DirectBase\Base\ResourceLoader.h">
+      <Filter>Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

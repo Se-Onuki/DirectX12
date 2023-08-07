@@ -637,3 +637,9 @@ void MinecraftModel::Bone::UpdateTransform() {
 		child.UpdateTransform();
 	}
 }
+
+void MinecraftModel::LoadJson(const std::string &file_path)
+{
+
+
+}
