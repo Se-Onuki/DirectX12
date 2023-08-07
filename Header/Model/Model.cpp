@@ -584,3 +584,56 @@ void Material::ImGuiWidget()
 void Material::Create() {
 
 }
+
+
+void MinecraftModel::Cube::ResetTransform() {
+	enum class vertexPos {
+		left = 0b0000,
+		right = 0b0001,
+		front = 0b0000,
+		back = 0b0010,
+		up = 0b0000,
+		down = 0b0100
+	};
+
+
+}
+
+void MinecraftModel::Cube::Init() {
+	CreateBuffer();
+
+
+
+}
+
+void MinecraftModel::Cube::CreateBuffer() {
+	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+
+	const uint32_t vertexCount = 24u;
+	const uint32_t indexCount = 36u;
+
+	vertexBuff = CreateBufferResource(device, sizeof(Mesh::VertexData) * vertexCount);
+	indexBuff = CreateBufferResource(device, sizeof(uint32_t) * indexCount);
+
+
+	// 頂点バッファビューを作成する
+	// リソースの先頭のアドレスから使う
+	vbView.BufferLocation = vertexBuff->GetGPUVirtualAddress();
+	// 使用するリソースのサイズは頂点の総数のサイズ
+	vbView.SizeInBytes = sizeof(Mesh::VertexData) * vertexCount;
+	// 1頂点あたりのサイズ
+	vbView.StrideInBytes = sizeof(Mesh::VertexData);
+
+
+	// インデックスview
+	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
+	ibView.SizeInBytes = sizeof(uint32_t) * indexCount;
+	ibView.Format = DXGI_FORMAT_R32_UINT;
+
+}
+void MinecraftModel::Bone::UpdateTransform() {
+	transform.UpdateMatrix();
+	for (auto &child : children) {
+		child.UpdateTransform();
+	}
+}

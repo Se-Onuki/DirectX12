@@ -18,6 +18,8 @@
 
 #include <array>
 
+#include "../Math/Transform.h"
+
 struct Transform;
 class ViewProjection;
 
@@ -147,5 +149,57 @@ private:
 	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
 
 	static ID3D12GraphicsCommandList *commandList_;
+
+};
+
+
+class MinecraftModel {
+
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	struct Cube {
+		D3D12_VERTEX_BUFFER_VIEW vbView = {};
+		D3D12_INDEX_BUFFER_VIEW ibView = {};
+
+		ComPtr<ID3D12Resource> vertexBuff;
+		ComPtr<ID3D12Resource> indexBuff;
+
+		std::array<Mesh::VertexData, 24u> vertices;
+		std::array<uint32_t, 36u> indexs;
+
+		Transform transformLocal;
+
+		void Init();
+		void Draw();
+		void CreateBuffer();
+
+		void ResetTransform();
+
+	};
+
+	struct Bone {
+		std::string name;
+		std::vector<Cube> cubes;
+		std::vector<Bone> children;
+		Bone *parent;
+
+		Transform transform;
+
+		void UpdateTransform();
+		void Init();
+
+		void AddCube();
+
+		void Draw();
+	};
+
+public:
+	MinecraftModel() = default;
+	~MinecraftModel() = default;
+
+	Transform transformOrigin_;
+
+	void Init();
+	void Draw();
 
 };
