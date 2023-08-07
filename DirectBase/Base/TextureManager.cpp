@@ -4,7 +4,8 @@
 #include "../../Header/Texture/Texture.h"
 #include "../../Header/Descriptor/DescriptorHandIe.h"
 #include "../../Header/Render/Render.hpp"
-#include "../../externals/imgui/imgui.h"
+
+#include <imgui.h>
 
 void TextureManager::StartDraw()
 {
