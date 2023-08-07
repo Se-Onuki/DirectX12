@@ -21,6 +21,8 @@ void GameScene::OnEnter()
 	sprite_.reset(Sprite::Create(TextureManager::Load("uvChecker.png"), Vector2{ 100.f,100.f }, Vector2{ 100.f,100.f }));
 
 	//objectArray_.clear();
+
+	mineModel_.LoadJson("resources/MinecraftModel/player.geo.json");
 }
 
 void GameScene::OnExit()
@@ -144,6 +146,10 @@ void GameScene::Draw()
 
 	for (auto &obj : objectList_) {
 		obj->Draw(viewProjection);
+	}
+
+	if (objectList_.size() != 0) {
+		mineModel_.bones_.begin()->second.cubes_.begin()->Draw(commandList);
 	}
 
 

@@ -27,4 +27,6 @@ private:
 
 	std::list<std::unique_ptr<Object>> objectList_;
 
+	MinecraftModel mineModel_ = {};
+
 };

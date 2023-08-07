@@ -164,6 +164,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Math\Vector2.h" />
     <ClInclude Include="Header\Math\Vector3.h" />
     <ClInclude Include="Header\Math\Vector4.h" />
+    <ClInclude Include="Header\Model\MinecraftModel.h" />
     <ClInclude Include="Header\Model\Model.h" />
     <ClInclude Include="Header\Model\Object.h" />
     <ClInclude Include="Header\Render\Render.hpp" />

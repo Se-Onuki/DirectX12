@@ -157,50 +157,76 @@ class MinecraftModel {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	struct Face {
+		D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
+		D3D12_INDEX_BUFFER_VIEW ibView_ = {};
+
+		ComPtr<ID3D12Resource> vertexBuff_;
+		ComPtr<ID3D12Resource> indexBuff_;
+
+		Mesh::VertexData *vertices_;
+		uint32_t *indexs_;
+
+		void CreateBuffer();
+		void Init();
+		void SetVertex(const std::array<Vector3, 4u> &vertex, const Vector3 &normal);
+		void Draw(ID3D12GraphicsCommandList *const commandList);
+	};
+
 	struct Cube {
-		D3D12_VERTEX_BUFFER_VIEW vbView = {};
-		D3D12_INDEX_BUFFER_VIEW ibView = {};
-
-		ComPtr<ID3D12Resource> vertexBuff;
-		ComPtr<ID3D12Resource> indexBuff;
-
-		std::array<Mesh::VertexData, 24u> vertices;
-		std::array<uint32_t, 36u> indexs;
-
-		Transform transformLocal;
+		enum class FaceDirection : uint32_t {
+			UP,
+			Down,
+			FRONT,
+			BACK,
+			RIGHT,
+			LEFT,
+			kCount
+		};
+		std::array<Face, (uint32_t)FaceDirection::kCount> faces_;
+		Transform transformLocal_;
 
 		void Init();
-		void Draw();
-		void CreateBuffer();
+		void Draw(ID3D12GraphicsCommandList *const commandList);
+
+		void SetVertex(const Vector3 &origin, const Vector3 &size);
 
 		void ResetTransform();
 
 	};
 
 	struct Bone {
-		std::string name;
-		std::vector<Cube> cubes;
-		std::vector<Bone> children;
-		Bone *parent;
+		std::string name_;
+		std::vector<Cube> cubes_;
+		std::vector<Bone> children_;
 
-		Transform transform;
+		Bone *parent_;
+
+		Transform transform_;
 
 		void UpdateTransform();
+		void SetParent(Bone *const parent);
 		void Init();
 
 		void AddCube();
 
-		void Draw();
+		void Draw(ID3D12GraphicsCommandList *const commandList);
 	};
 
 public:
+	Vector2 texelSize_ = {};
+	uint32_t textureHandle_ = 1u;
+
+	std::unordered_map<std::string, Bone> bones_ = {};
+	std::list<Bone> children_{};
+
 	MinecraftModel() = default;
 	~MinecraftModel() = default;
 
 	Transform transformOrigin_;
 
 	void Init();
-	void Draw();
+	void Draw(ID3D12GraphicsCommandList *const commandList);
 
 	void LoadJson(const std::string &file_path);
 

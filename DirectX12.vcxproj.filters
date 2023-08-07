@@ -284,6 +284,9 @@
     <ClInclude Include="DirectBase\Base\ResourceLoader.h">
       <Filter>Base</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Model\MinecraftModel.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

@@ -8,6 +8,10 @@
 #include "../../DirectBase/Base/TextureManager.h"
 #include "../../DirectBase/Base/Shader.h"
 
+#include <windows.h>
+#include <fstream>
+#include <json.hpp>
+
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
 std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 2u> Model::graphicsPipelineState_ = { nullptr };
@@ -548,7 +552,7 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
 
 	commandList->IASetVertexBuffers(0, 1, &vbView_);
 	commandList->IASetIndexBuffer(&ibView_);
-	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexs_.size()), 1, 0, 0, 0);
+	//commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexs_.size()), 1, 0, 0, 0);
 }
 
 void Material::CreateBuffer() {
@@ -587,7 +591,7 @@ void Material::Create() {
 
 
 void MinecraftModel::Cube::ResetTransform() {
-	enum class vertexPos {
+	enum vertexPos {
 		left = 0b0000,
 		right = 0b0001,
 		front = 0b0000,
@@ -600,46 +604,257 @@ void MinecraftModel::Cube::ResetTransform() {
 }
 
 void MinecraftModel::Cube::Init() {
-	CreateBuffer();
-
-
-
+	for (auto &face : faces_) {
+		face.Init();
+	}
 }
 
-void MinecraftModel::Cube::CreateBuffer() {
-	auto *const device = DirectXCommon::GetInstance()->GetDevice();
-
-	const uint32_t vertexCount = 24u;
-	const uint32_t indexCount = 36u;
-
-	vertexBuff = CreateBufferResource(device, sizeof(Mesh::VertexData) * vertexCount);
-	indexBuff = CreateBufferResource(device, sizeof(uint32_t) * indexCount);
-
-
-	// 頂点バッファビューを作成する
-	// リソースの先頭のアドレスから使う
-	vbView.BufferLocation = vertexBuff->GetGPUVirtualAddress();
-	// 使用するリソースのサイズは頂点の総数のサイズ
-	vbView.SizeInBytes = sizeof(Mesh::VertexData) * vertexCount;
-	// 1頂点あたりのサイズ
-	vbView.StrideInBytes = sizeof(Mesh::VertexData);
-
-
-	// インデックスview
-	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
-	ibView.SizeInBytes = sizeof(uint32_t) * indexCount;
-	ibView.Format = DXGI_FORMAT_R32_UINT;
-
+void MinecraftModel::Face::Draw(ID3D12GraphicsCommandList *const commandList) {
+	commandList->IASetVertexBuffers(0, 1, &vbView_);
+	commandList->IASetIndexBuffer(&ibView_);
+	commandList->DrawIndexedInstanced(6u, 1, 0, 0, 0);
 }
+void MinecraftModel::Cube::Draw(ID3D12GraphicsCommandList *const commandList) {
+	for (auto &face : faces_) {
+		face.Draw(commandList);
+	}
+}
+
+void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size) {
+	enum vertexPos {
+		left = 0b0000,
+		right = 0b0001,
+		front = 0b0000,
+		back = 0b0010,
+		up = 0b0000,
+		down = 0b0100
+	};
+
+	const Vector3 centor = origin + size / 2.f;
+	std::array<Vector3, 8u> vertices{
+		centor + Vector3{-size.x,size.y,size.z},	// 左遠
+		centor + Vector3{size.x,size.y,size.z},		// 右遠
+		centor + Vector3{-size.x,size.y,-size.z},	// 左近
+		centor + Vector3{size.x,size.y,-size.z},	// 右近
+
+		centor + Vector3{-size.x,-size.y,size.z},	// 左遠
+		centor + Vector3{size.x,-size.y,size.z}, 	// 右遠
+		centor + Vector3{-size.x,-size.y,-size.z},	// 左近,
+		centor + Vector3{size.x,-size.y,-size.z},	// 右近
+	};
+
+	faces_[(uint32_t)FaceDirection::UP].SetVertex(
+		std::array<Vector3, 4u>{
+		vertices[left + front + up],
+			vertices[right + front + up],
+			vertices[left + back + up],
+			vertices[right + back + up],
+	},
+		Vector3::up()
+			);
+
+	faces_[(uint32_t)FaceDirection::Down].SetVertex(
+		{
+		vertices[left + back + down],
+		vertices[right + back + down],
+		vertices[left + front + down],
+		vertices[right + front + down],
+		},
+		Vector3::down()
+		);
+
+	faces_[(uint32_t)FaceDirection::FRONT].SetVertex(
+		{
+		vertices[right + front + up],
+		vertices[left + front + up],
+		vertices[right + front + down],
+		vertices[left + front + down],
+		},
+		Vector3::front()
+		);
+
+	faces_[(uint32_t)FaceDirection::BACK].SetVertex(
+		{
+		vertices[left + back + up],
+		vertices[right + back + up],
+		vertices[left + back + down],
+		vertices[right + back + down],
+		},
+		Vector3::back()
+		);
+
+	faces_[(uint32_t)FaceDirection::RIGHT].SetVertex(
+		{
+		vertices[right + back + up],
+		vertices[right + front + up],
+		vertices[right + back + down],
+		vertices[right + front + down],
+		},
+		Vector3::right()
+		);
+
+	faces_[(uint32_t)FaceDirection::LEFT].SetVertex(
+		{
+		vertices[left + front + up],
+		vertices[left + back + up],
+		vertices[left + front + down],
+		vertices[left + back + down],
+		},
+		Vector3::left()
+		);
+}
+
 void MinecraftModel::Bone::UpdateTransform() {
-	transform.UpdateMatrix();
-	for (auto &child : children) {
+	transform_.UpdateMatrix();
+	for (auto &child : children_) {
 		child.UpdateTransform();
 	}
 }
 
+void MinecraftModel::Bone::SetParent(Bone *const parent)
+{
+	parent_ = parent;
+	transform_.parent_ = parent->transform_.parent_;
+}
+
 void MinecraftModel::LoadJson(const std::string &file_path)
 {
+	std::ifstream ifs;
+	ifs.open(file_path);
+	// ファイルオープンエラー
+	if (ifs.fail()) {
+		std::string message = "Failed open data file for read.";
+		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		assert(0);
+		return;
+	}
+
+	nlohmann::json root;
+	ifs >> root;
+	ifs.close();
 
 
+	const auto &geometry = root["minecraft:geometry"][0];
+
+#pragma region 単ピクセルサイズ
+
+	texelSize_.x = 1.f / geometry["description"]["texture_width"].get<int32_t>();
+	texelSize_.y = 1.f / geometry["description"]["texture_height"].get<int32_t>();
+
+#pragma endregion
+
+	const auto &bones = geometry["bones"];
+	for (const auto &boneJson : bones) {
+		// ボーン名
+		const std::string &boneName = boneJson["name"];
+		// ボーンの構築、名前設定
+		Bone &bone = bones_[boneName];
+		bone.name_ = boneName;
+
+		// 親子関係
+		const auto &parent = boneJson.find("parent");
+		if (parent != boneJson.end()) {
+			const std::string &parentName = parent->get<std::string>();
+			bone.SetParent(&bones_[parentName]);
+		}
+		else {
+			bone.transform_.parent_ = &transformOrigin_;
+		}
+
+		// 座標構築
+		// 原点
+		const auto &pivotJson = boneJson["pivot"];
+		Vector3 pivot = Vector3{
+			(float)pivotJson.at(0).get<double>(),
+			(float)pivotJson.at(1).get<double>(),
+			(float)pivotJson.at(2).get<double>()
+		};
+		bone.transform_.translate = pivot / 16.f;
+
+		// 回転
+		const auto &rotateJson = boneJson.find("rotation");
+		if (rotateJson != boneJson.end()) {
+			Vector3 rotate = Vector3{
+				(float)rotateJson->at(0).get<double>(),
+				(float)rotateJson->at(1).get<double>(),
+				(float)rotateJson->at(2).get<double>()
+			};
+			bone.transform_.rotate = rotate * Angle::Dig2Rad;
+		}
+		else {
+			bone.transform_.rotate = Vector3::zero();
+		}
+
+		// キューブ
+		const auto &cubesJson = boneJson.find("cubes");
+		if (cubesJson != boneJson.end()) {
+			for (const auto &cubeText : *cubesJson) {
+				// Cubeの構築
+				bone.cubes_.emplace_back();
+				Cube &cube = bone.cubes_.back();
+				cube.Init();
+
+				const auto &originJson = cubeText.at("origin");
+				Vector3 origin = Vector3{
+					(float)originJson.at(0).get<double>(),
+					(float)originJson.at(1).get<double>(),
+					(float)originJson.at(2).get<double>()
+				};
+				const auto &sizeJson = cubeText.at("size");
+				Vector3 size = Vector3{
+					(float)sizeJson.at(0).get<double>(),
+					(float)sizeJson.at(1).get<double>(),
+					(float)sizeJson.at(2).get<double>()
+				};
+				origin /= 16.f;
+				size /= 16.f;
+
+				cube.SetVertex(origin, size);
+			}
+		}
+	}
+
+}
+
+void MinecraftModel::Face::CreateBuffer() {
+	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+
+	const uint32_t vertexCount = 4u;
+	const uint32_t indexCount = 6u;
+
+	vertexBuff_ = CreateBufferResource(device, sizeof(Mesh::VertexData) * vertexCount);
+	indexBuff_ = CreateBufferResource(device, sizeof(uint32_t) * indexCount);
+
+	vertexBuff_->Map(0, nullptr, reinterpret_cast<void **>(&vertices_));
+	indexBuff_->Map(0, nullptr, reinterpret_cast<void **>(&indexs_));
+
+	// 頂点バッファビューを作成する
+	// リソースの先頭のアドレスから使う
+	vbView_.BufferLocation = vertexBuff_->GetGPUVirtualAddress();
+	// 使用するリソースのサイズは頂点の総数のサイズ
+	vbView_.SizeInBytes = sizeof(Mesh::VertexData) * vertexCount;
+	// 1頂点あたりのサイズ
+	vbView_.StrideInBytes = sizeof(Mesh::VertexData);
+
+
+	// インデックスview
+	ibView_.BufferLocation = indexBuff_->GetGPUVirtualAddress();
+	ibView_.SizeInBytes = sizeof(uint32_t) * indexCount;
+	ibView_.Format = DXGI_FORMAT_R32_UINT;
+}
+
+void MinecraftModel::Face::Init() {
+	CreateBuffer();
+	// 左上からZの形に構成
+	indexs_[0] = 0u; indexs_[1] = 1u; indexs_[2] = 2u;
+	indexs_[3] = 1u; indexs_[4] = 3u; indexs_[5] = 2u;
+}
+
+void MinecraftModel::Face::SetVertex(const std::array<Vector3, 4u> &vertex, const Vector3 &face)
+{
+	for (uint8_t i = 0u; i < 4u; i++) {
+		vertices_[i].position = Vector4{ vertex[i].x,vertex[i].y,vertex[i].z,1.f };
+		vertices_[i].normal = face;
+		vertices_[i].texCoord = { 0.f,0.f };
+	}
 }
