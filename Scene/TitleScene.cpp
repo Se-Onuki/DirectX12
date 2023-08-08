@@ -18,7 +18,7 @@ void TitleScene::OnEnter()
 	title_.reset(Sprite::Create(TextureManager::Load("UI/title.png"), MiddleCentor, TopRight));
 	title_->SetPivot({ 0.5f,0.5f });
 
-	plane_.reset(Sprite::Create(TextureManager::Load("white2x2.png"), MiddleCentor, Vector2{ 200.f,200.f }));
+	plane_.reset(Sprite::Create(TextureManager::Load("debugfont.png"), MiddleCentor, Vector2{ 200.f,200.f }));
 	plane_->SetPivot({ 0.5f,0.5f });
 
 	light_.reset(DirectionLight::Create());
@@ -47,7 +47,7 @@ void TitleScene::Update()
 
 	ImGui::Begin("UI2");
 
-	const static std::array<std::string, 4u> blendMode{ "kNone", "kNormal","kAdd","kSubtract" };
+	const static std::array<std::string, 6u> blendMode{ "kNone", "kNormal", "kAdd", "kSubtract", "kMultily", "kScreen" };
 	if (ImGui::BeginCombo("BlendPattren", blendMode[(uint32_t)blend_].c_str())) {
 
 		for (uint32_t i = 0; i < blendMode.size(); i++) {

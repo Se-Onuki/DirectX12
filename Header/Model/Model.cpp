@@ -704,10 +704,18 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 		);
 }
 
+void MinecraftModel::Bone::Draw(ID3D12GraphicsCommandList *const commandList) {
+	for (auto &cube : cubes_) {
+		cube.Draw(commandList);
+	}
+	for (auto &child : children_) {
+		child.second.Draw(commandList);
+	}
+}
 void MinecraftModel::Bone::UpdateTransform() {
 	transform_.UpdateMatrix();
 	for (auto &child : children_) {
-		child.UpdateTransform();
+		child.second.UpdateTransform();
 	}
 }
 
@@ -715,6 +723,12 @@ void MinecraftModel::Bone::SetParent(Bone *const parent)
 {
 	parent_ = parent;
 	transform_.parent_ = parent->transform_.parent_;
+}
+
+void MinecraftModel::Draw(ID3D12GraphicsCommandList *const commandList) {
+	for (auto &bone : bones_) {
+		bone.second.Draw(commandList);
+	}
 }
 
 void MinecraftModel::LoadJson(const std::string &file_path)

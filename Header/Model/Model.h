@@ -185,6 +185,7 @@ class MinecraftModel {
 		};
 		std::array<Face, (uint32_t)FaceDirection::kCount> faces_;
 		Transform transformLocal_;
+		void UpdateMatrix();
 
 		void Init();
 		void Draw(ID3D12GraphicsCommandList *const commandList);
@@ -198,7 +199,7 @@ class MinecraftModel {
 	struct Bone {
 		std::string name_;
 		std::vector<Cube> cubes_;
-		std::vector<Bone> children_;
+		std::unordered_map<std::string, Bone> children_;
 
 		Bone *parent_;
 
@@ -218,7 +219,7 @@ public:
 	uint32_t textureHandle_ = 1u;
 
 	std::unordered_map<std::string, Bone> bones_ = {};
-	std::list<Bone> children_{};
+	std::unordered_map<std::string, Bone> children_{};
 
 	MinecraftModel() = default;
 	~MinecraftModel() = default;

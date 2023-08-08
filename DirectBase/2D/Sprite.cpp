@@ -257,13 +257,13 @@ void Sprite::CreatePipeLine() {
 
 #pragma endregion
 
-#pragma region 乗算合成 Dest * 1 - Src * Src.Alpha
+#pragma region 乗算合成 Src * 0 + Dest * Src
 
 	blendDesc.RenderTarget[0].BlendEnable = true;						// ブレンドモードを有効にするか
 	// RGB値の操作
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_SUBTRACT;		// レンダーターゲットへの論理操作
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;			// シェーダから得たデータの受け取り方
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;				// レンダーターゲットからの受け取り方
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;				// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;				// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;		// レンダーターゲットからの受け取り方
 	// α値の操作
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;		// レンダーターゲットへの論理操作
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;			// シェーダから得たデータの受け取り方
@@ -278,12 +278,12 @@ void Sprite::CreatePipeLine() {
 
 #pragma endregion
 
-#pragma region スクリーン合成 Dest * 1 - Src * Src.Alpha
+#pragma region スクリーン合成 Src * (1 - Dest) + Dest * 1
 
 	blendDesc.RenderTarget[0].BlendEnable = true;						// ブレンドモードを有効にするか
 	// RGB値の操作
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_SUBTRACT;		// レンダーターゲットへの論理操作
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;			// シェーダから得たデータの受け取り方
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;				// レンダーターゲットへの論理操作
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;	// シェーダから得たデータの受け取り方
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;				// レンダーターゲットからの受け取り方
 	// α値の操作
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;		// レンダーターゲットへの論理操作
