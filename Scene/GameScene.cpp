@@ -25,7 +25,7 @@ void GameScene::OnExit()
 
 void GameScene::Update() {
 	DirectInput *const directInput = DirectInput::GetInstance();
-	if (directInput->key_[DIK_A]) {
+	if (directInput->IsPress(DIK_A)) {
 		light_->ImGuiWidget();
 	}
 

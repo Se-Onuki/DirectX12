@@ -8,6 +8,8 @@
 
 #include <wrl.h>
 
+#include <array>
+#include <stdint.h>
 class Input
 {
 public:
@@ -33,9 +35,22 @@ public:
 
 	void Init();
 	void Update();
-
+private:
 	IDirectInput8 *directInput_ = nullptr;
 	IDirectInputDevice8 *keyboard_ = nullptr;
-	BYTE key_[256] = {};
-	BYTE preKey_[256] = {};
+
+	bool inputTarget = 0u;
+	std::array<BYTE, 256u> key_[2u] = {};
+
+public:
+	bool IsPress(const uint8_t key) const {
+		return key_[inputTarget][key];
+	}
+	bool IsTrigger(const uint8_t key) const {
+		return key_[inputTarget][key] && !key_[!inputTarget][key];
+	}
+	bool IsRelease(const uint8_t key) const {
+		return key_[!inputTarget][key] && !key_[inputTarget][key];
+	}
+
 };

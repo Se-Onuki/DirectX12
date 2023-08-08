@@ -28,7 +28,8 @@ void DirectInput::Init() {
 }
 
 void DirectInput::Update() {
-	std::memcpy(preKey_, key_, sizeof(key_));
+
+	inputTarget = !inputTarget;
 	keyboard_->Acquire();
-	keyboard_->GetDeviceState(sizeof(key_), key_);
+	keyboard_->GetDeviceState(sizeof(key_[inputTarget]), &key_[inputTarget]);
 }
