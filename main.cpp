@@ -13,51 +13,37 @@
 
 #include <wrl.h>
 
+#define DIRECTINPIT_VERSION 0x0800	// DirectInputのバージョン
+#include <dinput.h>
+
+#pragma comment(lib, "dinput8.lib")
+
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
 
+
 #include <string>
-#include <format>
 
 #include "DirectBase/Base/WinApp.h"
+#include "DirectBase/Base/DirectXCommon.h"
 
 #include "externals/DirectXTex/DirectXTex.h"
 
-#include "Header/String/String.hpp"
-#include "Header/Render/Render.hpp"
-
-#include "Header/Math/Math.hpp"
-
-#include "Header/Math/Vector3.h"
-#include "Header/Math/Vector4.h"
-
-#include "Header/Math/Matrix3x3.h"
-#include "Header/Math/Matrix4x4.h"
-
-#include "Header/Math/Transform.h"
-
-#include "Header/Texture/Texture.h"
-#include "Header/Create/Create.h"
-#include "Header/Descriptor/DescriptorHandIe.h"
-
-#include <algorithm>
-
-#include "Header/Model/Model.h"
-#include "DirectBase/3D/ViewProjection/ViewProjection.h"
-#include "DirectBase/Base/DirectXCommon.h"
 #include "DirectBase/Base/TextureManager.h"
 #include "DirectBase/Base/Shader.h"
+#include "Header/Model/Model.h"
 #include "DirectBase/Base/ImGuiManager.h"
-#include "DirectBase/3D/DirectionLight.h"
-#include "DirectBase/2D/Sprite.h"
 
 #include "Scene/SceneManager.h"
 #include "Scene/GameScene.h"
+#include "DirectBase/Input/Input.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
+
+#pragma region 基盤初期化
 
 	WinApp::StaticInit();
 
@@ -67,9 +53,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
 
+#pragma endregion
+
 	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
 	TextureManager *const textureManager = TextureManager::GetInstance();
+
+	DirectInput *const directInput = DirectInput::GetInstance();
+
+#pragma region その他初期化
 
 	textureManager->Init(dxCommon->GetDevice(), commandList);
 	TextureManager::Load("white2x2.png");
@@ -80,6 +72,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Model::StaticInit();
 	Sprite::StaticInit();
 
+	directInput->Init();
+
+#pragma endregion
+
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->ChangeScene(new GameScene);
@@ -89,8 +85,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	while (true) {
 		if (winApp->ProcessMessage()) break;
 
+		// キーボードの更新
+		directInput->Update();
+
 		// ImGuiに新規フレームであると伝える
 		ImGuiManager::StartFlame();
+
 
 		///
 		/// ↓ゲーム処理↓

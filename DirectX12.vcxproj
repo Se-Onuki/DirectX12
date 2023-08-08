@@ -106,6 +106,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectBase\Base\Shader.cpp" />
     <ClCompile Include="DirectBase\Base\TextureManager.cpp" />
     <ClCompile Include="DirectBase\Base\WinApp.cpp" />
+    <ClCompile Include="DirectBase\Input\Input.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -144,6 +145,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectBase\Base\Shader.h" />
     <ClInclude Include="DirectBase\Base\TextureManager.h" />
     <ClInclude Include="DirectBase\Base\WinApp.h" />
+    <ClInclude Include="DirectBase\Input\Input.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />

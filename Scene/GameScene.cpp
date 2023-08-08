@@ -2,6 +2,7 @@
 #include "../externals/imgui/imgui.h"
 #include "../DirectBase/Base/DirectXCommon.h"
 #include "TitleScene.h"
+#include "../DirectBase/Input/Input.h"
 
 GameScene::GameScene()
 {
@@ -22,8 +23,11 @@ void GameScene::OnExit()
 {
 }
 
-void GameScene::Update()
-{
+void GameScene::Update() {
+	DirectInput *const directInput = DirectInput::GetInstance();
+	if (directInput->key_[DIK_A]) {
+		light_->ImGuiWidget();
+	}
 
 }
 

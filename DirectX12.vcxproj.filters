@@ -55,6 +55,9 @@
     <Filter Include="Timer">
       <UniqueIdentifier>{66b332a3-f4f2-4a7b-ae4c-5b5a9eb27d60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{175675a6-8b1e-4269-9a34-0ee1b0d38c10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -161,6 +164,9 @@
     </ClCompile>
     <ClCompile Include="Scene\TitleScene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectBase\Input\Input.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -286,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="Header\Model\MinecraftModel.h">
       <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Input\Input.h">
+      <Filter>Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
