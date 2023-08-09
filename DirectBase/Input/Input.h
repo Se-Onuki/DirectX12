@@ -20,12 +20,12 @@ enum class KeyCode {
 	DPAD_DOWN = 0x0002,	// 十字下
 	DPAD_LEFT = 0x0004,	// 十字左
 	DPAD_RIGHT = 0x0008,// 十字右
-	START = 0x0010,
-	BACK = 0x0020,
-	LEFT_THUMB = 0x0040,
-	RIGHT_THUMB = 0x0080,
-	LEFT_SHOULDER = 0x0100,
-	RIGHT_SHOULDER = 0x0200,
+	START = 0x0010,			// スタートボタン
+	BACK = 0x0020,			// バックボタン
+	LEFT_THUMB = 0x0040,	// 左スティック押下
+	RIGHT_THUMB = 0x0080,	// 右スティック押下
+	LEFT_SHOULDER = 0x0100,	// Lボタン
+	RIGHT_SHOULDER = 0x0200,// Rボタン
 	A = 0x1000,
 	B = 0x2000,
 	X = 0x4000,
@@ -76,6 +76,7 @@ public:
 	}
 
 };
+
 class XInput
 {
 	XInput() = default;
