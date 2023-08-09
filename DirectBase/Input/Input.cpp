@@ -1,6 +1,7 @@
 #include "Input.h"
 #include <cassert>
 #include "../Base/WinApp.h"
+#include <algorithm>
 
 void DirectInput::Init() {
 
@@ -32,4 +33,35 @@ void DirectInput::Update() {
 	inputTarget = !inputTarget;
 	keyboard_->Acquire();
 	keyboard_->GetDeviceState(sizeof(key_[inputTarget]), &key_[inputTarget]);
+}
+//
+//VirtualPad Input::GetPadState(const uint8_t padNumber) const {
+//	return VirtualPad();
+//}
+
+void VirtualPad::operator<<(const _XINPUT_GAMEPAD &xInput) {
+	std::memcpy(&button_, &xInput.wButtons, sizeof(WORD));
+	triggerL_ = xInput.bLeftTrigger / 255.f;
+	triggerR_ = xInput.bRightTrigger / 255.f;
+
+	stickL_ = Vector2{ std::clamp(xInput.sThumbLX / 32767.f, -1.f,1.f),std::clamp(xInput.sThumbLY / 32767.f, -1.f,1.f) };
+	stickR_ = Vector2{ std::clamp(xInput.sThumbRX / 32767.f, -1.f,1.f),std::clamp(xInput.sThumbRY / 32767.f, -1.f,1.f) };
+}
+
+void XInput::Update() {
+
+	std::memcpy(&gamePad_[0], &gamePad_[1], sizeof(VirtualPad));
+
+	XINPUT_STATE state{};
+	XInputGetState(
+		0,
+		&state);
+
+	gamePad_[0] << state.Gamepad;
+}
+
+void Input::Init() {
+	directInput_ = DirectInput::GetInstance();
+	directInput_->Init();
+	xInput_ = XInput::GetInstance();
 }

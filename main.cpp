@@ -13,11 +13,6 @@
 
 #include <wrl.h>
 
-#define DIRECTINPIT_VERSION 0x0800	// DirectInputのバージョン
-#include <dinput.h>
-
-#pragma comment(lib, "dinput8.lib")
-
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -59,7 +54,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	TextureManager *const textureManager = TextureManager::GetInstance();
 
-	DirectInput *const directInput = DirectInput::GetInstance();
+	Input *const input = Input::GetInstance();
 
 #pragma region その他初期化
 
@@ -72,7 +67,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Model::StaticInit();
 	Sprite::StaticInit();
 
-	directInput->Init();
+	input->Init();
 
 #pragma endregion
 
@@ -83,10 +78,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
-		if (winApp->ProcessMessage() || directInput->IsPress(DIK_ESCAPE)) break;
+		if (winApp->ProcessMessage() || input->GetDirectInput()->IsPress(DIK_ESCAPE)) break;
 
 		// キーボードの更新
-		directInput->Update();
+		input->Update();
 
 		// ImGuiに新規フレームであると伝える
 		ImGuiManager::StartFlame();
