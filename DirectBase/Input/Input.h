@@ -15,8 +15,6 @@
 #include <stdint.h>
 #include "../../Header/Math/Vector2.h"
 
-class DirectInput;
-
 enum class KeyCode {
 	DPAD_UP = 0x0001,	// 十字上
 	DPAD_DOWN = 0x0002,	// 十字下
