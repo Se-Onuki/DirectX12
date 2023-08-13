@@ -168,6 +168,9 @@
     <ClCompile Include="DirectBase\Input\Input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="DirectBase\Base\Audio.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -295,6 +298,9 @@
     </ClInclude>
     <ClInclude Include="DirectBase\Input\Input.h">
       <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Base\Audio.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
