@@ -169,7 +169,7 @@
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="DirectBase\Base\Audio.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

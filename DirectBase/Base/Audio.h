@@ -42,6 +42,8 @@ public:
 		BYTE *pBuffer;
 		// バッファのサイズ
 		uint32_t bufferSize;
+
+		void Unload();
 	};
 
 
