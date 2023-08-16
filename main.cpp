@@ -67,6 +67,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Shader::StaticInit();
 	Model::StaticInit();
 	Sprite::StaticInit();
+	Audio::GetInstance()->StaticInit();
 
 	input->Init();
 

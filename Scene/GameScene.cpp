@@ -4,18 +4,20 @@
 #include "TitleScene.h"
 #include "../DirectBase/Input/Input.h"
 
-GameScene::GameScene()
-{
+GameScene::GameScene() {
+	soundData = SoundLoadWave("resources/Alarm01.wav");
 }
 
-GameScene::~GameScene()
-{
+GameScene::~GameScene() {
+	Audio::GetInstance()->Finalize();
+	soundData.Unload();
 }
 
 void GameScene::OnEnter()
 {
 
 	light_.reset(DirectionLight::Create());
+	Audio::GetInstance()->PlayWave(soundData);
 
 }
 

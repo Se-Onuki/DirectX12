@@ -1,6 +1,10 @@
 #include "Audio.h"
 #include <cassert>
 
+void Audio::Finalize() {
+	xAudio2_.Reset();
+}
+
 void Audio::StaticInit() {
 
 	HRESULT hr = S_FALSE;
@@ -32,14 +36,14 @@ void Audio::PlayWave(const SoundData &soundData) {
 	hr = pSourceVoice->Start();
 }
 
-Audio::SoundData SoundLoadWave(const char *const filename) {
+Audio::SoundData SoundLoadWave(const char *filename) {
 
 	// HRESULT hr = S_FALSE;
 
 #pragma region ファイルオープン
 
 	// ファイル入力ストリームのインスタンス
-	std::fstream file;
+	std::ifstream file;
 	// .wavファイルをバイナリモードで開く
 	file.open(filename, std::ios_base::binary);
 	// ファイルオープン失敗の検出
@@ -67,7 +71,7 @@ Audio::SoundData SoundLoadWave(const char *const filename) {
 	// Formatチャンクの読み込み
 	Audio::FormatChunk format{};
 	// チャンクヘッダの確認
-	file.read((char *)&format, sizeof(format));
+	file.read((char *)&format, sizeof(Audio::ChunkHeader));
 	if (strncmp(format.chunk.id, "fmt ", 4u) != 0) {
 		assert(0);
 	}

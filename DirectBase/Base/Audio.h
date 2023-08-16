@@ -52,9 +52,11 @@ public:
 		return &instatnce;
 	}
 
+	void Finalize();
+
 	void StaticInit();
 	void PlayWave(const SoundData &soundData);
 private:
 };
 
-Audio::SoundData SoundLoadWave(const char *const filename);
+Audio::SoundData SoundLoadWave(const char *filename);

@@ -4,6 +4,7 @@
 #include "../DirectBase/3D/DirectionLight.h"
 #include "../DirectBase/2D/Sprite.h"
 #include "../Header/Model/Object.h"
+#include "../DirectBase/Base/Audio.h"
 
 class GameScene : public IScene {
 public:
@@ -19,6 +20,6 @@ public:
 
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
-
+	Audio::SoundData soundData{};
 
 };
