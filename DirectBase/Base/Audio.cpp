@@ -13,6 +13,25 @@ void Audio::StaticInit() {
 
 }
 
+void Audio::PlayWave(const SoundData &soundData) {
+	HRESULT hr = S_FALSE;
+
+	// 波形フォーマットを基にSourceVoiceの生成
+	IXAudio2SourceVoice *pSourceVoice = nullptr;
+	hr = xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	assert(SUCCEEDED(hr));
+
+	// 再生する波形データの設定
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = soundData.pBuffer;
+	buf.AudioBytes = soundData.bufferSize;
+	buf.Flags = XAUDIO2_END_OF_STREAM;
+
+	// 波形データの再生
+	hr = pSourceVoice->SubmitSourceBuffer(&buf);
+	hr = pSourceVoice->Start();
+}
+
 Audio::SoundData SoundLoadWave(const char *const filename) {
 
 	// HRESULT hr = S_FALSE;
@@ -94,4 +113,14 @@ Audio::SoundData SoundLoadWave(const char *const filename) {
 #pragma endregion
 
 	return soundData;
+}
+
+void Audio::SoundData::Unload()
+{
+	// バッファのメモリを解放
+	delete[] pBuffer;
+
+	pBuffer = nullptr;
+	bufferSize = 0u;
+	wfex = {};
 }

@@ -53,7 +53,7 @@ public:
 	}
 
 	void StaticInit();
-
+	void PlayWave(const SoundData &soundData);
 private:
 };
 
