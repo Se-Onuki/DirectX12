@@ -20,6 +20,7 @@ public:
 
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
-	Audio::SoundData soundData{};
+	uint32_t bgm_;
+	//Audio::SoundData soundData{};
 
 };

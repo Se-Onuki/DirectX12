@@ -5,20 +5,22 @@
 #include "../DirectBase/Input/Input.h"
 
 GameScene::GameScene() {
-	soundData = SoundLoadWave("resources/Alarm01.wav");
+	bgm_ = Audio::GetInstance()->LoadWave("resources/Alarm01.wav");
+	//soundData = SoundLoadWave("resources/Alarm01.wav");
+
 }
 
 GameScene::~GameScene() {
-	Audio::GetInstance()->Finalize();
-	soundData.Unload();
+	//Audio::GetInstance()->Finalize();
+	//soundData.Unload();
 }
 
 void GameScene::OnEnter()
 {
 
 	light_.reset(DirectionLight::Create());
-	Audio::GetInstance()->PlayWave(soundData);
-
+	//Audio::GetInstance()->PlayWave(soundData);
+	Audio::GetInstance()->PlayWave(bgm_);
 }
 
 void GameScene::OnExit()

@@ -3,6 +3,10 @@
 
 void Audio::Finalize() {
 	xAudio2_.Reset();
+	for (auto &sound : soundArray_) {
+		if (sound)
+			sound->Unload();
+	}
 }
 
 void Audio::StaticInit() {
@@ -34,6 +38,26 @@ void Audio::PlayWave(const SoundData &soundData) {
 	// 波形データの再生
 	hr = pSourceVoice->SubmitSourceBuffer(&buf);
 	hr = pSourceVoice->Start();
+}
+
+void Audio::PlayWave(uint32_t index) {
+	PlayWave(*GetWave(index));
+}
+
+uint32_t Audio::LoadWave(const char *filename) {
+	for (uint32_t i = 0u; i < soundArray_.size(); i++) {
+		auto &pSound = soundArray_[i];
+		if (!pSound) {
+			pSound.reset(new SoundData{ SoundLoadWave(filename) });
+			return i;
+		}
+	}
+	assert(0 && "Soundの追加に失敗しました");
+	return 0;
+}
+
+Audio::SoundData *const Audio::GetWave(uint32_t index) {
+	return soundArray_[index].get();
 }
 
 Audio::SoundData SoundLoadWave(const char *filename) {
@@ -122,7 +146,7 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 void Audio::SoundData::Unload()
 {
 	// バッファのメモリを解放
-	delete[] pBuffer;
+	if (pBuffer) delete[] pBuffer;
 
 	pBuffer = nullptr;
 	bufferSize = 0u;

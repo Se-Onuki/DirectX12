@@ -6,10 +6,11 @@
 
 #include <wrl.h>
 
-class Audio {
-	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_ = nullptr;
-	IXAudio2MasteringVoice *masterVoice_ = nullptr;
+#include <memory>
+#include <array>
+#include <string>
 
+class Audio {
 	Audio() = default;
 	Audio(const Audio &) = delete;
 	Audio operator=(const Audio &) = delete;
@@ -56,7 +57,15 @@ public:
 
 	void StaticInit();
 	void PlayWave(const SoundData &soundData);
+	void PlayWave(uint32_t index);
+	uint32_t LoadWave(const char *filename);
+	SoundData *const GetWave(const uint32_t index);
 private:
+
+	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_ = nullptr;
+	IXAudio2MasteringVoice *masterVoice_ = nullptr;
+
+	std::array<std::unique_ptr<SoundData>, 128u> soundArray_;
 };
 
 Audio::SoundData SoundLoadWave(const char *filename);

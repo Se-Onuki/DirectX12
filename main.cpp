@@ -57,6 +57,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Input *const input = Input::GetInstance();
 	const DirectInput *const directInput = DirectInput::GetInstance();
 
+	Audio *const audio = Audio::GetInstance();
+
 #pragma region その他初期化
 
 	textureManager->Init(dxCommon->GetDevice(), commandList);
@@ -67,7 +69,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Shader::StaticInit();
 	Model::StaticInit();
 	Sprite::StaticInit();
-	Audio::GetInstance()->StaticInit();
+	audio->StaticInit();
 
 	input->Init();
 
@@ -132,6 +134,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region 各種解放
 
 	ImGuiManager::Finalize();
+
+	audio->Finalize();
 
 	dxCommon->Finalize();
 
