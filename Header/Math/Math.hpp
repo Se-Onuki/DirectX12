@@ -128,10 +128,13 @@ namespace Angle {
 		float ToDigree();
 	};
 
-	const float PI = static_cast<float>(std::numbers::pi);
+	constexpr float PI = static_cast<float>(std::numbers::pi);
+	constexpr float PI2 = PI * 2.f;
 
-	const float Dig2Rad = PI / 180.f;
-	const float Rad2Dig = 180.f / PI;
+	constexpr float Dig2Rad = PI / 180.f;
+	constexpr float Rad2Dig = 180.f / PI;
+
+	float Larp(const float start, const float end, const float t);
 
 	//enum class 
 
