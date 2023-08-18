@@ -142,6 +142,14 @@ struct Vector3 {
 		return (this->x == vec.x) && (this->y == vec.y) && (this->z == vec.z);
 	}
 
+	Vector3 Direction2Euler() const {
+		Vector3 out{};
+		out.y = std::atan2(x, z);
+		out.x = std::atan2(-y, std::sqrt(std::powf(x, 2) + std::powf(z, 2)));
+
+		return out;
+	}
+
 private:
 };
 

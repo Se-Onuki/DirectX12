@@ -27,12 +27,12 @@ void GameScene::OnEnter() {
 
 	player_.reset(new Player);
 	player_->Init(playerMap_);
+	player_->SetViewProjection(&viewProjection_);
 
 	light_.reset(DirectionLight::Create());
 }
 
-void GameScene::OnExit()
-{
+void GameScene::OnExit() {
 }
 
 void GameScene::Update() {

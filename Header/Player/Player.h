@@ -16,6 +16,13 @@ public:
 
 	void Draw(const ViewProjection &vp) const override;
 
+	void SetViewProjection(const ViewProjection *const viewProjection) {
+		viewProjection_ = viewProjection;
+	}
+
 private:
 	Input *input_ = nullptr;
+
+	const float moveSpeed_ = 0.5f;
+	const ViewProjection *viewProjection_ = nullptr;
 };

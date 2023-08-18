@@ -169,7 +169,7 @@ float Angle::Radian::ToDigree() {
 float Angle::Larp(const float start, const float end, const float t) {
 	float diff = end - start;
 	// 360度に補完する
-	diff = std::fmod<float>(diff, PI2);
+	diff = std::fmodf(diff, PI2);
 
 	// 180度に補完する
 	if (diff > PI) diff -= PI2;	// +180以上は-360する
