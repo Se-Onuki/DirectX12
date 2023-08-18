@@ -10,7 +10,7 @@ void Player::Update() {
 	BaseCharacter::Update();
 	Vector2 stickL = input_->GetXInput()->GetState()->stickL_;
 	Vector3 inputMove = Vector3{ stickL.x, 0, stickL.y };
-	transformOrigin_.translate += inputMove;
+	transformOrigin_.translate += inputMove * 0.25f;
 
 	transformOrigin_.ImGuiWidget();
 
