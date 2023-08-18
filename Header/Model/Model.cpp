@@ -552,7 +552,7 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
 
 	commandList->IASetVertexBuffers(0, 1, &vbView_);
 	commandList->IASetIndexBuffer(&ibView_);
-	//commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexs_.size()), 1, 0, 0, 0);
+	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexs_.size()), 1, 0, 0, 0);
 }
 
 void Material::CreateBuffer() {

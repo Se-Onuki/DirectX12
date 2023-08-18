@@ -42,3 +42,18 @@ void ViewProjection::UpdateMatrix()
 	mapData_->projection = matProjection_;
 	mapData_->cameraPos = translation_;
 }
+
+bool ViewProjection::ImGuiWidget() {
+
+	if (ImGui::TreeNode("Camera")) {
+		bool isUsing = false;
+
+		isUsing |= ImGui::DragFloat3("Rotate", &rotation_.x, Angle::Dig2Rad);
+
+		isUsing |= ImGui::DragFloat3("Transform", &translation_.x, 0.01f);
+
+		ImGui::TreePop();
+		return isUsing;
+	}
+	return false;
+}

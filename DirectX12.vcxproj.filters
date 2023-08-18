@@ -61,6 +61,12 @@
     <Filter Include="Engine\Shader">
       <UniqueIdentifier>{c0fe13e8-8231-4a1b-ac1c-784807b87d54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header">
+      <UniqueIdentifier>{70021064-7ab7-4ec2-9901-25c7e7295690}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity">
+      <UniqueIdentifier>{3111759b-0bb8-488a-a007-ceee6c80174c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -173,6 +179,12 @@
     </ClCompile>
     <ClCompile Include="DirectBase\Base\Audio.cpp">
       <Filter>Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\BaseCharacter.cpp">
+      <Filter>Header\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Player\Player.cpp">
+      <Filter>Header\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +316,15 @@
     </ClInclude>
     <ClInclude Include="DirectBase\Base\Audio.h">
       <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Player\Player.h">
+      <Filter>Header\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\BaseCharacter.h">
+      <Filter>Header\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Model\ModelManager.h">
+      <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

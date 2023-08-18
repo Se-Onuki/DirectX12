@@ -6,6 +6,8 @@
 #include "../Header/Model/Object.h"
 #include "../DirectBase/Base/Audio.h"
 
+class Player;
+
 class GameScene : public IScene {
 public:
 	GameScene();
@@ -20,5 +22,9 @@ public:
 
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
+	std::unique_ptr<Player> player_ = nullptr;
+
+	ViewProjection viewProjection_{};
 
 };
