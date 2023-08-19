@@ -1,10 +1,13 @@
 #pragma once
+#include "Object.h"
 
-class PlayerBullet
-{
+class PlayerBullet : public Object {
 public:
-	PlayerBullet();
-	~PlayerBullet();
+	PlayerBullet() = default;
+	~PlayerBullet() = default;
+
+
+
 
 private:
 

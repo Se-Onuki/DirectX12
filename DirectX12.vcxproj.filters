@@ -73,6 +73,9 @@
     <Filter Include="Header\Object">
       <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Component">
+      <UniqueIdentifier>{a686d45a-498c-4ad2-b9e7-3cbab9f39e24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -198,11 +201,11 @@
     <ClCompile Include="Header\Object\Ground.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Entity\Collider.cpp">
-      <Filter>Header\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Entity\Object.cpp">
       <Filter>Header\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\Collider.cpp">
+      <Filter>Header\Entity\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,11 +356,11 @@
     <ClInclude Include="Header\Entity\PlayerBullet.h">
       <Filter>Header\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Entity\Collider.h">
-      <Filter>Header\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Entity\Object.h">
       <Filter>Header\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\Collider.h">
+      <Filter>Header\Entity\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,18 +1,19 @@
 #pragma once
 
-#include "Object.h"
+#include "../Object.h"
 #include <stdint.h>
 #include <list>
 
 #include <functional>
 
-class Collider /*: public IComponent*/ {
+class ColliderComp : public IComponent {
 	// 衝突属性(自分)
 	uint32_t collisionAttribute_ = 0xFFFFFFFF;
 	// 衝突マスク(相手)
 	uint32_t collisionMask_ = 0xFFFFFFFF;
 
-	//std::function<void(Collider *const)> hitFunc_;
+	// 衝突時に実行される関数
+	std::function<void(ColliderComp *const)> hitFunc_;
 
 protected:
 
@@ -48,20 +49,18 @@ public:
 	}
 
 	// 当たった時に実行される関数を定義
-	void SetFunction(const std::function<void(Collider *const)> &function) {
-		function;
-		//hitFunc_ = function;
+	void SetFunction(const std::function<void(ColliderComp *const)> &function) {
+		hitFunc_ = function;
 	}
 
-	void Init();
+	void Init() override;
 
-	void OnCollision(Collider *const other);
 };
 
 
 
 class CollisionManager {
-	std::list<Collider *> colliderList_;
+	std::list<ColliderComp *> colliderList_;
 
 	CollisionManager() = default;
 	CollisionManager(const CollisionManager &) = delete;
@@ -76,10 +75,10 @@ public:
 	void clear() {
 		colliderList_.clear();
 	}
-	void push_back(Collider *collider) {
+	void push_back(ColliderComp *collider) {
 		colliderList_.push_back(collider);
 	}
 
 	void ChackAllCollision();
-	void CheckCollisionPair(Collider *const A, Collider *const B);
+	void CheckCollisionPair(ColliderComp *const A, ColliderComp *const B);
 };
