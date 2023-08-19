@@ -12,16 +12,15 @@ void FollowCamera::Update() {
 		const VirtualPad *const vPad = input_->GetXInput()->GetState();
 		Vector3 offset{ 0.f, 3.f, -15.f };
 
-		//if (input_->GetJoystickState(0, inputState)) {
-		const float rotateStick = vPad->stickR_.x;
-		rotate_.y += rotateStick * cameraRotSpeed_;
-
+		if (vPad->stickR_.Length() > 0.1f) {
+			const float rotateStick = vPad->stickR_.x;
+			rotate_.y += rotateStick * cameraRotSpeed_;
+		}
 		const Matrix4x4 &mat = Matrix4x4::EulerRotate(Matrix4x4::Yaw, rotate_.y);
 
 		offset = TransformNormal(offset, mat);
 
 		viewProjection_.rotation_.y = rotate_.y;
-		//}
 
 		viewProjection_.translation_ = target_->translate + offset;
 	}
