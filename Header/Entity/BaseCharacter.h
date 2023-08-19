@@ -22,7 +22,7 @@ public:
 
 	virtual void Draw(const ViewProjection &vp) const;
 
-	const Transform &GetWorldTransform() const {
+	const Transform &GetTransform() const {
 		return transformOrigin_;
 	}
 

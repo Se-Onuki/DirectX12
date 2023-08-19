@@ -7,6 +7,8 @@
 #include "../DirectBase/Base/Audio.h"
 
 class Player;
+class FollowCamera;
+class Ground;
 
 class GameScene : public IScene {
 public:
@@ -24,6 +26,8 @@ private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	std::unique_ptr<Player> player_ = nullptr;
+	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
+	std::unique_ptr<Ground> ground_ = nullptr;
 
 	ViewProjection viewProjection_{};
 

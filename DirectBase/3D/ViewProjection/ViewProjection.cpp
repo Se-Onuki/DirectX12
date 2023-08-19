@@ -37,7 +37,10 @@ void ViewProjection::UpdateMatrix()
 {
 	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseRT();
 	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	TransferMatrix();
+}
 
+void ViewProjection::TransferMatrix() {
 	mapData_->view = matView_;
 	mapData_->projection = matProjection_;
 	mapData_->cameraPos = translation_;

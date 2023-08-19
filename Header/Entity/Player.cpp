@@ -21,7 +21,8 @@ void Player::Update() {
 
 		transformOrigin_.translate += move; // 移動量を追加
 
-		transformOrigin_.rotate = move.Direction2Euler(); // ベクトルからオイラー角を算出
+		const float moveRotate = move.Direction2Euler().y;
+		transformOrigin_.rotate.y = Angle::Larp(transformOrigin_.rotate.y, moveRotate, 0.1f);
 	}
 
 	transformOrigin_.ImGuiWidget();

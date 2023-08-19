@@ -116,6 +116,13 @@ Matrix3x3 MakeOrthographicMatrix(const Vector2 &LeftTop, const Vector2 &RightBot
 /// <returns>ビューポート行列</returns>
 Matrix3x3 MakeViewportMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom);
 
+
+/// @brief ベクトルの向きのみの回転
+/// @param v 元ベクトル
+/// @param m ワールド行列
+/// @return 回転したベクトル
+Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m);
+
 namespace Angle {
 
 	struct Digree {

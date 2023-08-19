@@ -67,6 +67,12 @@
     <Filter Include="Header\Entity">
       <UniqueIdentifier>{3111759b-0bb8-488a-a007-ceee6c80174c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\FollowCamera">
+      <UniqueIdentifier>{045a8eee-9582-423c-bec6-9aca40ef0678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object">
+      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -183,8 +189,14 @@
     <ClCompile Include="Header\Entity\BaseCharacter.cpp">
       <Filter>Header\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Player\Player.cpp">
+    <ClCompile Include="Header\Entity\Player.cpp">
       <Filter>Header\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\FollowCamera.cpp">
+      <Filter>Header\FollowCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Ground.cpp">
+      <Filter>Header\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -317,14 +329,20 @@
     <ClInclude Include="DirectBase\Base\Audio.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Player\Player.h">
-      <Filter>Header\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Entity\BaseCharacter.h">
       <Filter>Header\Entity</Filter>
     </ClInclude>
     <ClInclude Include="Header\Model\ModelManager.h">
       <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Player.h">
+      <Filter>Header\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\FollowCamera.h">
+      <Filter>Header\FollowCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Ground.h">
+      <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

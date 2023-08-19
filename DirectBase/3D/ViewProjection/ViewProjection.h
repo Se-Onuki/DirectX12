@@ -52,6 +52,8 @@ public:
 
 	void UpdateMatrix();
 
+	void TransferMatrix();
+
 	bool ImGuiWidget();
 
 };

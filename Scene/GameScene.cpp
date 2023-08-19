@@ -4,8 +4,10 @@
 #include "TitleScene.h"
 #include "../DirectBase/Input/Input.h"
 
-#include "../Header/Player/Player.h"
+#include "../Header/Entity/Player.h"
 #include "../Header/Model/ModelManager.h"
+#include "../Header/Entity/FollowCamera.h"
+#include "../Header/Object/Ground.h"
 
 GameScene::GameScene() {
 }
@@ -20,6 +22,7 @@ void GameScene::OnEnter() {
 
 	Model *const playerBody =
 		ModelManager::GetInstance()->AddModel("playerBody", Model::LoadObjFile("", "sphere.obj"));
+	ModelManager::GetInstance()->AddModel("Ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
 
 	std::unordered_map<std::string, Model *> playerMap_{
 		{"body",   playerBody  },
@@ -27,7 +30,14 @@ void GameScene::OnEnter() {
 
 	player_.reset(new Player);
 	player_->Init(playerMap_);
-	player_->SetViewProjection(&viewProjection_);
+
+	followCamera_.reset(new FollowCamera);
+	followCamera_->Init();
+	followCamera_->SetTarget(&player_->GetTransform());
+	player_->SetViewProjection(followCamera_->GetViewProjection());
+
+	ground_.reset(new Ground);
+	ground_->Init();
 
 	light_.reset(DirectionLight::Create());
 }
@@ -38,12 +48,19 @@ void GameScene::OnExit() {
 void GameScene::Update() {
 	const DirectInput *const directInput = DirectInput::GetInstance();
 	//const XInput *const xInput = XInput::GetInstance();
-	viewProjection_.ImGuiWidget();
-	viewProjection_.UpdateMatrix();
+	//viewProjection_.ImGuiWidget();
+	//viewProjection_.UpdateMatrix();
 	if (directInput->IsPress(DIK_A)) {
 		light_->ImGuiWidget();
 	}
+	//ground_->Update();
 	player_->Update();
+	followCamera_->Update();
+
+	viewProjection_.matView_ = followCamera_->GetViewMatrix();
+	viewProjection_.matProjection_ = followCamera_->GetProjectionMatrix();
+
+	viewProjection_.TransferMatrix();
 }
 
 void GameScene::Draw()
@@ -71,6 +88,7 @@ void GameScene::Draw()
 	light_->SetLight(commandList);
 
 	// モデルの描画
+	ground_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 
 	Model::EndDraw();

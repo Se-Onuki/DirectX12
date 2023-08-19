@@ -117,6 +117,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Header\Create\Create.cpp" />
     <ClCompile Include="Header\Entity\BaseCharacter.cpp" />
+    <ClCompile Include="Header\Entity\FollowCamera.cpp" />
+    <ClCompile Include="Header\Entity\Player.cpp" />
     <ClCompile Include="Header\Math\Lerp.cpp" />
     <ClCompile Include="Header\Math\Math.cpp" />
     <ClCompile Include="Header\Math\Matrix2x2.cpp" />
@@ -127,7 +129,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Math\Vector2.cpp" />
     <ClCompile Include="Header\Math\Vector3.cpp" />
     <ClCompile Include="Header\Model\Model.cpp" />
-    <ClCompile Include="Header\Player\Player.cpp" />
+    <ClCompile Include="Header\Object\Ground.cpp" />
     <ClCompile Include="Header\Render\Render.cpp" />
     <ClCompile Include="Header\Texture\Texture.cpp" />
     <ClCompile Include="Header\Timer\TImer.cpp" />
@@ -161,6 +163,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Create\Create.h" />
     <ClInclude Include="Header\Descriptor\DescriptorHandIe.h" />
     <ClInclude Include="Header\Entity\BaseCharacter.h" />
+    <ClInclude Include="Header\Entity\FollowCamera.h" />
+    <ClInclude Include="Header\Entity\Player.h" />
     <ClInclude Include="Header\Math\Lerp.h" />
     <ClInclude Include="Header\Math\Math.hpp" />
     <ClInclude Include="Header\Math\Matrix2x2.h" />
@@ -175,7 +179,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Model\Model.h" />
     <ClInclude Include="Header\Model\ModelManager.h" />
     <ClInclude Include="Header\Model\Object.h" />
-    <ClInclude Include="Header\Player\Player.h" />
+    <ClInclude Include="Header\Object\Ground.h" />
     <ClInclude Include="Header\Render\Render.hpp" />
     <ClInclude Include="Header\String\String.hpp" />
     <ClInclude Include="Header\Texture\Texture.h" />
