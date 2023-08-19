@@ -34,8 +34,3 @@ void CollisionManager::CheckCollisionPair(ColliderComp *const A, ColliderComp *c
 		bObject->OnCollision(aObject);
 	}
 }
-
-
-void ColliderComp::Init() {
-	hitFunc_ = [](ColliderComp *) {};
-}

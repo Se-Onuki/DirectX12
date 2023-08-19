@@ -12,9 +12,6 @@ class ColliderComp : public IComponent {
 	// 衝突マスク(相手)
 	uint32_t collisionMask_ = 0xFFFFFFFF;
 
-	// 衝突時に実行される関数
-	std::function<void(ColliderComp *const)> hitFunc_;
-
 protected:
 
 	float radius = 0.5f;
@@ -47,13 +44,6 @@ public:
 	void SetRadius(const float &rad) {
 		radius = rad;
 	}
-
-	// 当たった時に実行される関数を定義
-	void SetFunction(const std::function<void(ColliderComp *const)> &function) {
-		hitFunc_ = function;
-	}
-
-	void Init() override;
 
 };
 
