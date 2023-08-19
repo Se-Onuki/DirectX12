@@ -35,3 +35,18 @@ void Player::Draw(const ViewProjection &vp) const {
 		model.second->Draw(transformOrigin_, vp);
 	}
 }
+
+void Player::Attack() {
+	if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
+
+		// Vector3 velocity(0, 0, kBulletSpeed);
+		// velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+		Vector3 velocity = Vector3::front();
+		velocity = velocity.Nomalize() * bulletSpeed_;
+
+		/*PlayerBullet *newBullet = new PlayerBullet();
+		newBullet->Init(model_, GetPosition(), velocity);
+
+		gameScene_->AddPlayerBullet(newBullet);*/
+	}
+}

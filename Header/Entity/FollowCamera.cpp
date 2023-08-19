@@ -10,7 +10,7 @@ void FollowCamera::Init() {
 void FollowCamera::Update() {
 	if (target_) {
 		const VirtualPad *const vPad = input_->GetXInput()->GetState();
-		Vector3 offset{ 0.f, 3.f, -15.f };
+		Vector3 offset{ 3.f, 2.f, -13.f };
 
 		if (vPad->stickR_.Length() > 0.1f) {
 			const float rotateStick = vPad->stickR_.x;

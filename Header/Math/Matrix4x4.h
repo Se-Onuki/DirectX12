@@ -11,13 +11,7 @@ struct Matrix4x4 final {
 		Roll   // z軸
 	};
 
-	inline Matrix4x4()
-		: m{
-			  {0, 0, 0, 0},
-			  {0, 0, 0, 0},
-			  {0, 0, 0, 0},
-			  {0, 0, 0, 0}
-		} {}
+	Matrix4x4() = default;
 
 	inline Matrix4x4(
 		float A, float B, float C, float D, float E, float F, float G, float H, float I, float J,
