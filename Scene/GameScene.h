@@ -9,6 +9,7 @@
 class Player;
 class FollowCamera;
 class Ground;
+class Input;
 
 class GameScene : public IScene {
 public:
@@ -23,6 +24,9 @@ public:
 public:
 
 private:
+	Input *input_ = nullptr;
+	Audio *audio_ = nullptr;
+
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	std::unique_ptr<Player> player_ = nullptr;

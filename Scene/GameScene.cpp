@@ -10,6 +10,8 @@
 #include "../Header/Object/Ground.h"
 
 GameScene::GameScene() {
+	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 }
 
 GameScene::~GameScene() {
