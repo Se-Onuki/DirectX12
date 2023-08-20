@@ -9,8 +9,8 @@ void Player::Init() {
 	Object::Init();
 	input_ = Input::GetInstance();
 
-	Object::AddComponent<ColliderComp>();
-	Object::AddComponent<ModelComp>();
+	AddComponent<ColliderComp>();
+	AddComponent<ModelComp>();
 }
 
 void Player::Update() {

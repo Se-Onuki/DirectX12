@@ -11,9 +11,8 @@ class Object;
 
 class IComponent {
 	IComponent() = delete;
-	IComponent(const IComponent &) = delete;
 public:
-	IComponent(Object *object);
+	IComponent(Object *const object) : object_(object) {}
 	virtual ~IComponent() = default;
 
 	virtual void Init() {};

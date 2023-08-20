@@ -14,6 +14,7 @@ void ModelComp::Draw(const ViewProjection &vp) const {
 
 void ModelComp::SetModel(const std::unordered_map<std::string, std::pair<Transform, Model *>> &model) {
 	modelMap_ = model;
+	SetTransformParent();
 }
 
 void ModelComp::SetTransformParent() {

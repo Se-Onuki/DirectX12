@@ -30,7 +30,7 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	std::unique_ptr<Object> player_ = nullptr;
+	std::unique_ptr<Player> player_ = nullptr;
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Ground> ground_ = nullptr;
 

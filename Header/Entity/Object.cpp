@@ -1,7 +1,5 @@
 #include "Object.h"
 
-IComponent::IComponent(Object *object) : object_(object) {
-}
 
 void Object::Init() {
 	isActive_ = true;

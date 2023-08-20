@@ -31,15 +31,15 @@ void GameScene::OnEnter() {
 		{"body",  {Transform{}, playerBody}  },
 	};
 
-	player_.reset(new Object);
+	player_.reset(new Player);
 	player_->Init();
-	//auto *const modelComp = player_->GetComponent<ModelComp>();
-	//modelComp->SetModel(playerModel);
+	auto *const modelComp = player_->GetComponent<ModelComp>();
+	modelComp->SetModel(playerModel);
 
 	followCamera_.reset(new FollowCamera);
 	followCamera_->Init();
 	followCamera_->SetTarget(&player_->GetTransform());
-	//player_->SetViewProjection(followCamera_->GetViewProjection());
+	player_->SetViewProjection(followCamera_->GetViewProjection());
 
 	ground_.reset(new Ground);
 	ground_->Init();
