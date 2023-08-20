@@ -18,7 +18,7 @@ void ModelComp::SetModel(const std::unordered_map<std::string, std::pair<Transfo
 }
 
 void ModelComp::SetTransformParent() {
-	const Transform *const parent = &object_->GetTransform();
+	const Transform *const parent = object_->GetTransform();
 	for (auto &[key, model] : modelMap_) {
 		model.first.InitResource();
 		model.first.parent_ = parent;

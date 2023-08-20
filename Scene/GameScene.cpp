@@ -38,7 +38,7 @@ void GameScene::OnEnter() {
 
 	followCamera_.reset(new FollowCamera);
 	followCamera_->Init();
-	followCamera_->SetTarget(&player_->GetTransform());
+	followCamera_->SetTarget(player_->GetTransform());
 	player_->SetViewProjection(followCamera_->GetViewProjection());
 
 	ground_.reset(new Ground);

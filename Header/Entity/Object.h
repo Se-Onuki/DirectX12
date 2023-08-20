@@ -34,11 +34,11 @@ public:
 };
 
 class Object {
-protected:
 	// 生きているか
 	bool isActive_;
 	// コンポーネントの連想コンテナ
 	std::unordered_map<std::type_index, std::unique_ptr<IComponent>> componentMap_;
+protected:
 
 	// オブジェクトのSRT
 	Transform transform_;
@@ -71,13 +71,15 @@ public:
 	bool GetActive() const {
 		return isActive_;
 	}
-	const Transform &GetTransform() {
-		return transform_;
+	Transform *const GetTransform() {
+		return &transform_;
 	}
 
 	const Vector3 &GetWorldPos();
 
 	void OnCollision(Object *const other);
+
+	void ImGuiWidget();
 
 private:
 

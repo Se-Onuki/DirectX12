@@ -32,3 +32,9 @@ void Object::OnCollision(Object *const other) {
 void Object::SetActive(const bool newState) {
 	isActive_ = newState;
 }
+
+void Object::ImGuiWidget() {
+	for (auto &component : componentMap_) {
+		component.second->ImGuiWidget();
+	}
+}
