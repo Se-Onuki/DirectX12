@@ -118,6 +118,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Create\Create.cpp" />
     <ClCompile Include="Header\Entity\BaseCharacter.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
+    <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
     <ClCompile Include="Header\Entity\FollowCamera.cpp" />
     <ClCompile Include="Header\Entity\Object.cpp" />
     <ClCompile Include="Header\Entity\Player.cpp" />
@@ -166,6 +167,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Descriptor\DescriptorHandIe.h" />
     <ClInclude Include="Header\Entity\BaseCharacter.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
+    <ClInclude Include="Header\Entity\Component\ModelComp.h" />
     <ClInclude Include="Header\Entity\Object.h" />
     <ClInclude Include="Header\Entity\FollowCamera.h" />
     <ClInclude Include="Header\Entity\Player.h" />

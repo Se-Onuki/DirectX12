@@ -18,7 +18,7 @@ struct Transform
 	Vector3 translate;
 
 	Matrix4x4 matWorld_;	// ローカル . ワールド変換
-	Transform *parent_ = nullptr;	// 親へのアドレス
+	const Transform *parent_ = nullptr;	// 親へのアドレス
 
 	ComPtr<ID3D12Resource> constBuffer_ = nullptr;
 	TransformMatrix *mapData_ = nullptr;	// マップ済みデータ
