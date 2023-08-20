@@ -323,9 +323,6 @@
     <ClInclude Include="Scene\GameScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Model\Object.h">
-      <Filter>Engine\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\TitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>

@@ -2,15 +2,16 @@
 
 #include "../Math/Transform.h"
 #include "../Model/Model.h"
-#include "../Entity/BaseCharacter.h"
+
+#include "Object.h"
 class Input;
 
-class Player : public BaseCharacter {
+class Player : public Object {
 public:
 	Player() = default;
 	~Player() override = default;
 
-	void Init(const std::unordered_map<std::string, Model *> &model) override;
+	void Init() override;
 
 	void Update() override;
 

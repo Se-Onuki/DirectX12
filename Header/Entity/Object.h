@@ -9,10 +9,11 @@
 
 class Object;
 
-class IComponent
-{
+class IComponent {
+	IComponent() = delete;
+	IComponent(const IComponent &) = delete;
 public:
-	IComponent(Object *const object);
+	IComponent(Object *object);
 	virtual ~IComponent() = default;
 
 	virtual void Init() {};
@@ -34,6 +35,7 @@ public:
 };
 
 class Object {
+protected:
 	// 生きているか
 	bool isActive_;
 	// コンポーネントの連想コンテナ
@@ -48,11 +50,11 @@ class Object {
 
 public:
 	Object() = default;
-	~Object() = default;
+	virtual ~Object() = default;
 
-	void Init();
-	void Update();
-	void Draw(const ViewProjection &vp) const;
+	virtual void Init();
+	virtual void Update();
+	virtual void Draw(const ViewProjection &vp) const;
 
 	/// @brief コンポーネントを追加
 	/// @tparam T コンポーネントの型
@@ -85,6 +87,7 @@ private:
 template <typename T>
 T *const Object::AddComponent() {
 	//static_assert(std::is_base_of<IComponent, T>::value, "引数はIComponentクラスの派生クラスではありません");
+
 	// コンポーネントを生成
 	IComponent *const component = new T(this);
 	std::type_index key = std::type_index(typeid(T));

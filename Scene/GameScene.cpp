@@ -8,6 +8,7 @@
 #include "../Header/Model/ModelManager.h"
 #include "../Header/Entity/FollowCamera.h"
 #include "../Header/Object/Ground.h"
+#include "../Header/Entity/Component/ModelComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -26,17 +27,19 @@ void GameScene::OnEnter() {
 		ModelManager::GetInstance()->AddModel("playerBody", Model::LoadObjFile("", "sphere.obj"));
 	ModelManager::GetInstance()->AddModel("Ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
 
-	std::unordered_map<std::string, Model *> playerMap_{
-		{"body",   playerBody  },
+	std::unordered_map<std::string, std::pair<Transform, Model *>> playerModel{
+		{"body",  {Transform{}, playerBody}  },
 	};
 
-	player_.reset(new Player);
-	player_->Init(playerMap_);
+	player_.reset(new Object);
+	player_->Init();
+	//auto *const modelComp = player_->GetComponent<ModelComp>();
+	//modelComp->SetModel(playerModel);
 
 	followCamera_.reset(new FollowCamera);
 	followCamera_->Init();
 	followCamera_->SetTarget(&player_->GetTransform());
-	player_->SetViewProjection(followCamera_->GetViewProjection());
+	//player_->SetViewProjection(followCamera_->GetViewProjection());
 
 	ground_.reset(new Ground);
 	ground_->Init();

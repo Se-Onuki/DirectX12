@@ -3,8 +3,9 @@
 #include "../DirectBase/3D/ViewProjection/ViewProjection.h"
 #include "../DirectBase/3D/DirectionLight.h"
 #include "../DirectBase/2D/Sprite.h"
-#include "../Header/Model/Object.h"
 #include "../DirectBase/Base/Audio.h"
+
+#include "../Header/Entity/Object.h"
 
 class Player;
 class FollowCamera;
@@ -29,7 +30,7 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	std::unique_ptr<Player> player_ = nullptr;
+	std::unique_ptr<Object> player_ = nullptr;
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Ground> ground_ = nullptr;
 

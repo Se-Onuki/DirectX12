@@ -1,6 +1,6 @@
 #include "Object.h"
 
-IComponent::IComponent(Object *const object) : object_(object) {
+IComponent::IComponent(Object *object) : object_(object) {
 }
 
 void Object::Init() {

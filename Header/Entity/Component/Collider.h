@@ -17,6 +17,9 @@ protected:
 	float radius = 0.5f;
 
 public:
+	// 親のコンストラクタを使う
+	using IComponent::IComponent;
+
 	/// @brief 衝突属性を取得
 	/// @return 衝突属性
 	const uint32_t GetCollisionAttribute() const {

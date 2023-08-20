@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "../DirectBase/Base/DirectXCommon.h"
 #include "../DirectBase/2D/Sprite.h"
+#include "../Header/Model/Model.h"
 
 TitleScene::TitleScene()
 {
