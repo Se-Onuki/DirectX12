@@ -13,15 +13,8 @@ public:
 
 	void Init() override;
 
-	void Update() override;
-
-	void Draw(const ViewProjection &vp) const override;
-
 	void Attack();
 
-	void SetViewProjection(const ViewProjection *const viewProjection) {
-		viewProjection_ = viewProjection;
-	}
 
 private:
 	Input *input_ = nullptr;

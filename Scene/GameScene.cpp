@@ -9,6 +9,7 @@
 #include "../Header/Entity/FollowCamera.h"
 #include "../Header/Object/Ground.h"
 #include "../Header/Entity/Component/ModelComp.h"
+#include "../Header/Entity/Component/PlayerComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -33,13 +34,17 @@ void GameScene::OnEnter() {
 
 	player_.reset(new Player);
 	player_->Init();
-	auto *const modelComp = player_->GetComponent<ModelComp>();
-	modelComp->SetModel(playerModel);
+	ModelComp *const modelComp = player_->GetComponent<ModelComp>();
+	if (modelComp) {
+		modelComp->SetModel(playerModel);
+	}
 
 	followCamera_.reset(new FollowCamera);
 	followCamera_->Init();
-	followCamera_->SetTarget(player_->GetTransform());
-	player_->SetViewProjection(followCamera_->GetViewProjection());
+	followCamera_->SetTarget(&player_->transform_);
+
+	PlayerComp *const playerComp = player_->GetComponent<PlayerComp>();
+	playerComp->SetViewProjection(followCamera_->GetViewProjection());
 
 	ground_.reset(new Ground);
 	ground_->Init();

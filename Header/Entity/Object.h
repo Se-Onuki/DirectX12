@@ -38,22 +38,25 @@ class Object {
 	bool isActive_;
 	// コンポーネントの連想コンテナ
 	std::unordered_map<std::type_index, std::unique_ptr<IComponent>> componentMap_;
-protected:
 
-	// オブジェクトのSRT
-	Transform transform_;
 
 	// 今後実装予定
 	// Object *parent_ = nullptr;
 	// std::list<std::unique_ptr<Object>> children_;
 
 public:
+	// オブジェクトのSRT
+	Transform transform_;
+
 	Object() = default;
 	virtual ~Object() = default;
 
 	virtual void Init();
 	virtual void Update();
 	virtual void Draw(const ViewProjection &vp) const;
+
+	template<typename T>
+	bool HasComponent();
 
 	/// @brief コンポーネントを追加
 	/// @tparam T コンポーネントの型
@@ -71,9 +74,6 @@ public:
 	bool GetActive() const {
 		return isActive_;
 	}
-	Transform *const GetTransform() {
-		return &transform_;
-	}
 
 	const Vector3 &GetWorldPos();
 
@@ -88,6 +88,11 @@ private:
 template <typename T>
 T *const Object::AddComponent() {
 	//static_assert(std::is_base_of<IComponent, T>::value, "引数はIComponentクラスの派生クラスではありません");
+
+	T *const findComp = GetComponent<T>();
+	if (findComp != nullptr) {
+		return findComp;
+	}
 
 	// コンポーネントを生成
 	IComponent *const component = new T(this);

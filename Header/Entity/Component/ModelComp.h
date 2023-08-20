@@ -6,14 +6,28 @@
 #include "../../Math/Transform.h"
 
 class ModelComp : public IComponent {
-
-	std::unordered_map<std::string, std::pair<Transform, Model *>> modelMap_;
+	using ModelPair = std::pair<Transform, Model *>;
+	using ModelMap = std::unordered_map<std::string, ModelPair>;
+	ModelMap modelMap_;
 public:
 	// 親のコンストラクタを使う
 	using IComponent::IComponent;
 	~ModelComp() override = default;
 
-	void SetModel(const std::unordered_map<std::string, std::pair<Transform, Model *>> &model);
+	void SetModel(const ModelMap &model);
+
+	ModelMap *const GetModel() {
+		return &modelMap_;
+	}
+
+	ModelPair *const GetModel(const std::string &key) {
+		auto it = modelMap_.find(key);
+		if (it != modelMap_.end()) {
+			return &it->second;
+		}
+		return nullptr;
+	}
+
 
 	void Update() override;
 	void Draw(const ViewProjection &vp)const override;

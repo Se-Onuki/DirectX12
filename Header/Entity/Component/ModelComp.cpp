@@ -12,13 +12,13 @@ void ModelComp::Draw(const ViewProjection &vp) const {
 	}
 }
 
-void ModelComp::SetModel(const std::unordered_map<std::string, std::pair<Transform, Model *>> &model) {
+void ModelComp::SetModel(const ModelMap &model) {
 	modelMap_ = model;
 	SetTransformParent();
 }
 
 void ModelComp::SetTransformParent() {
-	const Transform *const parent = object_->GetTransform();
+	const Transform *const parent = &object_->transform_;
 	for (auto &[key, model] : modelMap_) {
 		model.first.InitResource();
 		model.first.parent_ = parent;

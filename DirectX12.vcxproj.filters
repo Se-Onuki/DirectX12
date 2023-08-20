@@ -210,6 +210,9 @@
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp">
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -363,6 +366,9 @@
       <Filter>Header\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\ModelComp.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerComp.h">
       <Filter>Header\Entity\Component</Filter>
     </ClInclude>
   </ItemGroup>
