@@ -7,6 +7,8 @@ class ViewProjection;
 
 class GameScene;
 
+class ModelComp;
+
 class PlayerComp : public IComponent {
 public:
 	using IComponent::IComponent;
@@ -30,10 +32,12 @@ private:
 	const ViewProjection *viewProjection_ = nullptr;
 	GameScene *gameScene_ = nullptr;
 
-	const uint32_t shotCoolTime_ = 5u;
+	ModelComp *modelComp_ = nullptr;
+
+	const uint32_t shotCoolTime_ = 10u;
 	uint32_t coolTime_ = 0u;
 
-	const float bulletSpeed_ = 0.25f;
+	const float bulletSpeed_ = 0.75f;
 	const float moveSpeed_ = 0.025f;
 	const float friction_ = 0.95f;
 };

@@ -2,6 +2,7 @@
 #include "../Object.h"
 
 #include <unordered_map>
+#include <memory>
 #include "../../Model/Model.h"
 #include "../../Math/Transform.h"
 

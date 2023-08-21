@@ -141,7 +141,8 @@ namespace Angle {
 	constexpr float Dig2Rad = PI / 180.f;
 	constexpr float Rad2Dig = 180.f / PI;
 
-	float Larp(const float start, const float end, const float t);
+	float Lerp(const float start, const float end, const float t);
+	float Mod(float radian);
 
 	//enum class 
 

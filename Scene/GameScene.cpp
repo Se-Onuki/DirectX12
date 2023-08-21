@@ -1,8 +1,10 @@
 #include "GameScene.h"
+
 #include "../externals/imgui/imgui.h"
 #include "../DirectBase/Base/DirectXCommon.h"
-#include "TitleScene.h"
 #include "../DirectBase/Input/Input.h"
+
+#include "TitleScene.h"
 
 #include "../Header/Entity/Player.h"
 #include "../Header/Model/ModelManager.h"
@@ -29,23 +31,40 @@ void GameScene::OnEnter() {
 	viewProjection_.Init();
 	viewProjection_.translation_ = { 0.f,0.f,-15.f };
 
+	Model *const playerLeg =
+		ModelManager::GetInstance()->AddModel("playerLeg", Model::LoadObjFile("Model/gunTank/", "playerLeg.obj"));
+	Model *const playerWaist =
+		ModelManager::GetInstance()->AddModel("playerWaist", Model::LoadObjFile("Model/gunTank/", "playerWaist.obj"));
 	Model *const playerBody =
-		ModelManager::GetInstance()->AddModel("gunTank", Model::LoadObjFile("Model/gunTank/", "gunTank.obj"));
+		ModelManager::GetInstance()->AddModel("playerBody", Model::LoadObjFile("Model/gunTank/", "playerBody.obj"));
+	Model *const playerHead =
+		ModelManager::GetInstance()->AddModel("playerHead", Model::LoadObjFile("Model/gunTank/", "playerHead.obj"));
+
 	ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
 	ModelManager::GetInstance()->AddModel("ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
 
-
-	Transform bodyTransform = Transform{};
-	bodyTransform.translate = { 0.f,0.f,0.f };
 	std::unordered_map<std::string, std::pair<Transform, Model *>> playerModel{
-		{"body",  {bodyTransform, playerBody}  },
+		{ "waist",  {Transform{}, playerWaist}},
+		{ "leg",  {Transform{}, playerLeg}},
+		{ "body",  {Transform{}, playerBody}},
+		{ "head",  {Transform{}, playerHead}},
 	};
+
 
 	player_.reset(new Player);
 	player_->Init();
 	ModelComp *const modelComp = player_->GetComponent<ModelComp>();
 	if (modelComp) {
 		modelComp->SetModel(playerModel);
+
+		modelComp->GetModel("leg")->first.parent_ = &modelComp->GetModel("waist")->first;
+		modelComp->GetModel("body")->first.parent_ = &modelComp->GetModel("waist")->first;
+		modelComp->GetModel("head")->first.parent_ = &modelComp->GetModel("waist")->first;
+
+		modelComp->GetModel("waist")->first.translate = Vector3{ 0.f,0.6f,0.f };
+		modelComp->GetModel("body")->first.translate = Vector3{ 0.f,0.85f,0.f };
+		modelComp->GetModel("head")->first.translate = Vector3{ 0.f,1.7f,0.f };
+
 	}
 
 	followCamera_.reset(new FollowCamera);

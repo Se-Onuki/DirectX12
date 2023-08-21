@@ -3,10 +3,12 @@
 #include "../../../DirectBase/3D/ViewProjection/ViewProjection.h"
 #include "Collider.h"
 #include "Rigidbody.h"
+#include "ModelComp.h"
 #include "../PlayerBullet.h"
 
 #include "../../../Scene/GameScene.h"
 #include "PlayerBulletComp.h"
+#include <imgui.h>
 
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
@@ -15,6 +17,8 @@ void PlayerComp::Init() {
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
 	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Player)));
 	colliderComp->SetRadius(10.f);
+
+	modelComp_ = object_->AddComponent<ModelComp>();
 }
 
 void PlayerComp::Update() {
@@ -33,12 +37,30 @@ void PlayerComp::Update() {
 		rigidbody->AddAcceleration(move); // 移動量を追加
 
 		const float moveRotate = rigidbody->GetVelocity().Direction2Euler().y;
-		object_->transform_.rotate.y = Angle::Larp(object_->transform_.rotate.y, moveRotate, 0.15f);
+		object_->transform_.rotate.y = Angle::Lerp(object_->transform_.rotate.y, moveRotate, 0.15f);
 	}
 
 	object_->transform_.ImGuiWidget();
 
 	object_->transform_.CalcMatrix();
+
+#pragma region 体の回転
+
+	float &bodyRotateY = modelComp_->GetModel("body")->first.rotate.y;
+	const float bodyDiff = viewProjection_->rotation_.y - object_->transform_.rotate.y;
+	const float bodyEnd = Angle::Lerp(0.f, bodyDiff, 0.5f);
+	bodyRotateY = Angle::Lerp(Angle::Mod(bodyRotateY), bodyEnd, 0.1f);
+	ImGui::SliderAngle("bodyRotate", &bodyRotateY);
+
+#pragma endregion
+
+#pragma region 頭の回転
+
+	float &headRotateY = modelComp_->GetModel("head")->first.rotate.y;
+	headRotateY = viewProjection_->rotation_.y - object_->transform_.rotate.y;
+	ImGui::SliderAngle("headRotate", &headRotateY);
+
+#pragma endregion
 
 	CoolTimeUpdate();
 

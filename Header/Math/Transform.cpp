@@ -37,10 +37,14 @@ void Transform::CalcMatrix()
 	}
 }
 
+void Transform::TransferMatrix() {
+	mapData_->World = matWorld_;
+}
+
 void Transform::UpdateMatrix()
 {
 	CalcMatrix();
-	mapData_->World = matWorld_;
+	TransferMatrix();
 }
 
 bool Transform::ImGuiWidget()
