@@ -13,14 +13,6 @@ public:
 
 	void Init() override;
 
-	void Attack();
-
 
 private:
-	Input *input_ = nullptr;
-
-	const ViewProjection *viewProjection_ = nullptr;
-
-	const float bulletSpeed_ = 0.25;
-	const float moveSpeed_ = 0.5f;
 };

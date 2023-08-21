@@ -213,6 +213,12 @@
     <ClCompile Include="Header\Entity\Component\PlayerComp.cpp">
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\Rigidbody.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\PlayerBullet.cpp">
+      <Filter>Header\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -356,9 +362,6 @@
     <ClInclude Include="Header\Object\Ground.h">
       <Filter>Header\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Entity\PlayerBullet.h">
-      <Filter>Header\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Entity\Object.h">
       <Filter>Header\Entity</Filter>
     </ClInclude>
@@ -370,6 +373,12 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerComp.h">
       <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\Rigidbody.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\PlayerBullet.h">
+      <Filter>Header\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

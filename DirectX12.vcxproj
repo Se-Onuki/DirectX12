@@ -120,9 +120,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerComp.cpp" />
+    <ClCompile Include="Header\Entity\Component\Rigidbody.cpp" />
     <ClCompile Include="Header\Entity\FollowCamera.cpp" />
     <ClCompile Include="Header\Entity\Object.cpp" />
     <ClCompile Include="Header\Entity\Player.cpp" />
+    <ClCompile Include="Header\Entity\PlayerBullet.cpp" />
     <ClCompile Include="Header\Math\Lerp.cpp" />
     <ClCompile Include="Header\Math\Math.cpp" />
     <ClCompile Include="Header\Math\Matrix2x2.cpp" />
@@ -170,6 +172,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
     <ClInclude Include="Header\Entity\Component\PlayerComp.h" />
+    <ClInclude Include="Header\Entity\Component\Rigidbody.h" />
     <ClInclude Include="Header\Entity\Object.h" />
     <ClInclude Include="Header\Entity\FollowCamera.h" />
     <ClInclude Include="Header\Entity\Player.h" />

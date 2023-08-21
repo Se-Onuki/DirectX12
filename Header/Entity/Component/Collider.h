@@ -6,6 +6,12 @@
 
 #include <functional>
 
+
+enum class CollisionFilter {
+	Player = 0b00001, Enemy = 0b00010
+};
+
+
 class ColliderComp : public IComponent {
 	// 衝突属性(自分)
 	uint32_t collisionAttribute_ = 0xFFFFFFFF;

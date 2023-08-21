@@ -6,6 +6,10 @@ void Object::Init() {
 	transform_.InitResource();
 }
 
+void Object::Reset() {
+
+}
+
 void Object::Update() {
 	for (auto &component : componentMap_) {
 		component.second->Update();
@@ -29,9 +33,7 @@ void Object::OnCollision(Object *const other) {
 	}
 }
 
-void Object::SetActive(const bool newState) {
-	isActive_ = newState;
-}
+void Object::SetActive(const bool newState) { isActive_ = newState; }
 
 void Object::ImGuiWidget() {
 	for (auto &component : componentMap_) {

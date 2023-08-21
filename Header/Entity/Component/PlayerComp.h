@@ -13,6 +13,7 @@ public:
 	void Init() override;
 	void Update() override;
 
+	void Attack();
 
 	void SetViewProjection(const ViewProjection *const viewProjection) {
 		viewProjection_ = viewProjection;
@@ -23,6 +24,6 @@ private:
 
 	const ViewProjection *viewProjection_ = nullptr;
 
-	const float bulletSpeed_ = 0.25;
-	const float moveSpeed_ = 0.5f;
+	const float bulletSpeed_ = 0.25f;
+	const float moveSpeed_ = 0.05f;
 };

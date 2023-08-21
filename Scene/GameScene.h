@@ -8,6 +8,8 @@
 #include "../Header/Entity/Object.h"
 
 class Player;
+class PlayerBullet;
+
 class FollowCamera;
 class Ground;
 class Input;
@@ -24,6 +26,8 @@ public:
 	void Draw() override;
 public:
 
+	void AddPlayerBullet(PlayerBullet *const newBullet);
+
 private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
@@ -31,6 +35,8 @@ private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	std::unique_ptr<Player> player_ = nullptr;
+	std::list<std::unique_ptr<PlayerBullet>> pBulletList_;
+
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Ground> ground_ = nullptr;
 

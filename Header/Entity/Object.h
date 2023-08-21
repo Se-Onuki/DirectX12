@@ -2,32 +2,60 @@
 #include <unordered_map>
 #include <typeindex>
 #include <memory>
-//#include <type_traits>
+#include <type_traits>
 
 #include "../Math/Transform.h"
 #include "../../DirectBase/3D/ViewProjection/ViewProjection.h"
 
 class Object;
 
+///	
+/// ↓ コンポーネントの最小構成 ↓
+/// 
+///	class MyComponent : public IComponent {	← IComponentを継承する
+///	public:
+///		using IComponent::IComponent;	←	IComponentのコンストラクタを引き継ぐ
+///		
+///		↓ ここからは自由 ↓
+/// 
+///		~MyComponent() override {}
+/// 
+///		[ Init() や Update() などはここに書く ]
+///	
+///	private:
+///	
+///	};
+///
+
+/// @brief コンポーネント指向の基盤
 class IComponent {
+	// 通常のコンストラクタは無効化
 	IComponent() = delete;
+	IComponent(const IComponent &) = delete;
+	IComponent operator=(const IComponent &) = delete;
 public:
+	/// @brief 自動的に呼ばれるコンストラクタ
+	/// @param object 紐づけられる実体のアドレス
 	IComponent(Object *const object) : object_(object) {}
 	virtual ~IComponent() = default;
 
-	virtual void Init() {};
-	virtual void Update() {};
-	virtual void Draw(const ViewProjection &vp) const {
-		vp;
-	};
 
+	/// @brief Objectに追加した時に走る処理
+	virtual void Init() {};
+	/// @brief 任意で実行する初期化
+	virtual void Reset() {};
+	/// @brief 毎フレーム実行される処理
+	virtual void Update() {};
+	/// @brief 描画処理
+	/// @param vp ViewProjectionクラス
+	virtual void Draw(const ViewProjection &) const {};
+
+	/// @brief ImGuiで表示する内容
 	virtual void ImGuiWidget() {};
 
 	/// @brief 接触時に実行される関数
-	/// @param other 接触相手
-	virtual void OnCollision(Object *const other) {
-		other;
-	};
+	/// @param Object* other : 接触相手のアドレスが代入される
+	virtual void OnCollision(Object *const) {};
 
 	// 紐づけられた実体
 	Object *const object_ = nullptr;
@@ -52,6 +80,7 @@ public:
 	virtual ~Object() = default;
 
 	virtual void Init();
+	virtual void Reset();
 	virtual void Update();
 	virtual void Draw(const ViewProjection &vp) const;
 
@@ -87,12 +116,10 @@ private:
 
 template <typename T>
 T *const Object::AddComponent() {
-	//static_assert(std::is_base_of<IComponent, T>::value, "引数はIComponentクラスの派生クラスではありません");
+	static_assert(std::is_base_of<IComponent, T>::value, "引数はIComponentクラスの派生クラスではありません");
 
 	T *const findComp = GetComponent<T>();
-	if (findComp != nullptr) {
-		return findComp;
-	}
+	if (findComp != nullptr) { return findComp; }
 
 	// コンポーネントを生成
 	IComponent *const component = new T(this);

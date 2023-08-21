@@ -10,6 +10,8 @@
 #include "../Header/Object/Ground.h"
 #include "../Header/Entity/Component/ModelComp.h"
 #include "../Header/Entity/Component/PlayerComp.h"
+#include "../Header/Entity/PlayerBullet.h"
+
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -56,16 +58,23 @@ void GameScene::OnExit() {
 }
 
 void GameScene::Update() {
-	const DirectInput *const directInput = DirectInput::GetInstance();
-	//const XInput *const xInput = XInput::GetInstance();
-	//viewProjection_.ImGuiWidget();
-	//viewProjection_.UpdateMatrix();
-	if (directInput->IsPress(DIK_A)) {
-		light_->ImGuiWidget();
-	}
-	//ground_->Update();
+	//const DirectInput *const directInput = DirectInput::GetInstance();
+
+	pBulletList_.remove_if([](std::unique_ptr<PlayerBullet> &bullet) {
+		if (!bullet->GetActive()) {
+			bullet.reset();
+			return true;
+		}
+		return false;
+		}
+	);
+
 	player_->Update();
 	followCamera_->Update();
+
+	for (auto &pBullet : pBulletList_) {
+		pBullet->Update();
+	}
 
 	viewProjection_.matView_ = followCamera_->GetViewMatrix();
 	viewProjection_.matProjection_ = followCamera_->GetProjectionMatrix();
@@ -101,6 +110,10 @@ void GameScene::Draw()
 	ground_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 
+	for (auto &pBullet : pBulletList_) {
+		pBullet->Update();
+	}
+
 	Model::EndDraw();
 
 #pragma endregion
@@ -115,4 +128,8 @@ void GameScene::Draw()
 
 #pragma endregion
 
+}
+
+void GameScene::AddPlayerBullet(PlayerBullet *const newBullet) {
+	pBulletList_.emplace_back(newBullet);
 }
