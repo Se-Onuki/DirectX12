@@ -10,6 +10,8 @@
 class Player;
 class PlayerBullet;
 
+class CollisionManager;
+
 class FollowCamera;
 class Ground;
 class Input;
@@ -26,7 +28,7 @@ public:
 	void Draw() override;
 public:
 
-	void AddPlayerBullet(PlayerBullet *const newBullet);
+	void AddPlayerBullet(PlayerBullet *newBullet);
 
 private:
 	Input *input_ = nullptr;
@@ -42,6 +44,6 @@ private:
 
 	ViewProjection viewProjection_{};
 
-
+	CollisionManager *collisionManager_ = nullptr;
 
 };

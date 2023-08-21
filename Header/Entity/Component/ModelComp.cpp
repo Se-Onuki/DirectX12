@@ -20,7 +20,11 @@ void ModelComp::SetModel(const ModelMap &model) {
 void ModelComp::SetTransformParent() {
 	const Transform *const parent = &object_->transform_;
 	for (auto &[key, model] : modelMap_) {
-		model.first.InitResource();
-		model.first.parent_ = parent;
+		if (model.first.constBuffer_ == nullptr) {
+			model.first.InitResource();
+		}
+		if (model.first.parent_ == nullptr) {
+			model.first.parent_ = parent;
+		}
 	}
 }

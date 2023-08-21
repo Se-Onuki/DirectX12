@@ -6,10 +6,9 @@
 #include "../../Math/Transform.h"
 
 class ModelComp : public IComponent {
+public:
 	using ModelPair = std::pair<Transform, Model *>;
 	using ModelMap = std::unordered_map<std::string, ModelPair>;
-	ModelMap modelMap_;
-public:
 	// 親のコンストラクタを使う
 	using IComponent::IComponent;
 	~ModelComp() override = default;
@@ -35,5 +34,7 @@ public:
 private:
 	/// @brief モデルの親子関係を紐づける
 	void SetTransformParent();
+
+	ModelMap modelMap_;
 
 };

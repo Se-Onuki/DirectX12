@@ -266,6 +266,9 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 			materialMap_[materialName].reset(new Material{ materialName });
 			materialData = materialMap_[materialName].get();
 			materialData->CreateBuffer();
+			// 仮読み込み
+			materialData->textureName_ = "white2x2.png";
+			materialData->texHandle_ = TextureManager::Load("white2x2.png");
 		}
 		else if (identifier == "Kd") {
 			if (materialData && materialData->mapData_) {
@@ -345,6 +348,7 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 	//meshList_.emplace_back(new Mesh);
 
 	Mesh *modelData = nullptr;				// 構築するModelData
+	Material *materialData = nullptr;		// マテリアルの共用
 
 	result->meshList_.emplace_back(new Mesh);
 
@@ -425,11 +429,16 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 				result->meshList_.emplace_back(new Mesh);
 
 			modelData = result->meshList_.back().get();		// 構築するModelData
+
+			if (materialData) {								// もしマテリアルが設定されてたら割り当て
+				modelData->SetMaterial(materialData);
+			}
 		}
 		else if (identifier == "usemtl") {
 			std::string materialID;
 			s >> materialID;
-			modelData->SetMaterial(result->materialMap_[materialID].get());
+			materialData = result->materialMap_[materialID].get();
+			modelData->SetMaterial(materialData);
 		}
 		else if (identifier == "mtllib") {
 

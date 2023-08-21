@@ -3,6 +3,10 @@
 #include "../../../DirectBase/3D/ViewProjection/ViewProjection.h"
 #include "Collider.h"
 #include "Rigidbody.h"
+#include "../PlayerBullet.h"
+
+#include "../../../Scene/GameScene.h"
+#include "PlayerBulletComp.h"
 
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
@@ -10,6 +14,7 @@ void PlayerComp::Init() {
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
 	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Player)));
+	colliderComp->SetRadius(10.f);
 }
 
 void PlayerComp::Update() {
@@ -35,17 +40,41 @@ void PlayerComp::Update() {
 
 	object_->transform_.CalcMatrix();
 
+	CoolTimeUpdate();
+
+	Attack();
+
+	const Vector3 &velocity = rigidbody->GetVelocity();
+	rigidbody->SetVelocity(velocity * friction_);
+
 }
 
 void PlayerComp::Attack() {
 	if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
+		if (coolTime_ == 0u) {
 
-		Vector3 velocity = Vector3::front();
-		velocity = velocity.Nomalize() * bulletSpeed_;
+			AddCoolTime(shotCoolTime_);
+			// 弾のベクトルの生成
+			Vector3 velocity = Vector3::front();
+			velocity = velocity.Nomalize() * bulletSpeed_;
+			//const Matrix4x4& rotMat = 
+			velocity = TransformNormal(velocity, Matrix4x4::EulerRotate(viewProjection_->rotation_));
 
-		/*PlayerBullet *newBullet = new PlayerBullet();
-		newBullet->Init(model_, GetPosition(), velocity);
+			// 弾の生成 + 初期化
+			PlayerBullet *newBullet = new PlayerBullet;
+			newBullet->Init();
+			auto *const bulletComp = newBullet->GetComponent<PlayerBulletComp>();
+			bulletComp->SetVelocity(velocity);
+			bulletComp->SetPosition(object_->GetWorldPos());
 
-		gameScene_->AddPlayerBullet(newBullet);*/
+			// 弾の追加
+			gameScene_->AddPlayerBullet(newBullet);
+		}
+	}
+}
+
+void PlayerComp::CoolTimeUpdate() {
+	if (coolTime_) {
+		coolTime_--;
 	}
 }

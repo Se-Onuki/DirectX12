@@ -11,7 +11,6 @@ void Player::Init() {
 	Object::Init();
 	AddComponent<Rigidbody>();
 
-
 	AddComponent<PlayerComp>();
 
 	AddComponent<ColliderComp>();

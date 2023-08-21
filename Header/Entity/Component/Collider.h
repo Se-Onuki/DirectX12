@@ -27,22 +27,22 @@ public:
 	using IComponent::IComponent;
 
 	/// @brief 衝突属性を取得
-	/// @return 衝突属性
+	/// @return 衝突属性(自分)
 	const uint32_t GetCollisionAttribute() const {
 		return collisionAttribute_;
 	}
 	/// @brief 衝突属性を設定
-	/// @param newAttribute 衝突属性
+	/// @param newAttribute 衝突属性(自分)
 	void SetCollisionAttribute(const uint32_t newAttribute) {
 		collisionAttribute_ = newAttribute;
 	}
 	/// @brief 衝突マスクを取得
-	/// @return 衝突マスク
+	/// @return 衝突マスク(相手)
 	const uint32_t GetCollisionMask() const {
 		return collisionMask_;
 	}
 	/// @brief 衝突マスクを設定
-	/// @param newMask 衝突マスク
+	/// @param newMask 衝突マスク(相手)
 	void SetCollisionMask(const uint32_t newMask) {
 		collisionMask_ = newMask;
 	}
@@ -74,8 +74,14 @@ public:
 	void clear() {
 		colliderList_.clear();
 	}
-	void push_back(ColliderComp *collider) {
-		colliderList_.push_back(collider);
+
+	void push_back(ColliderComp *collider) { colliderList_.push_back(collider); }
+
+	void push_back(Object *object) {
+		auto *const colliderComp = object->GetComponent<ColliderComp>();
+		if (colliderComp) {
+			colliderList_.push_back(colliderComp);
+		}
 	}
 
 	void ChackAllCollision();

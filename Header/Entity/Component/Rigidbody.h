@@ -11,17 +11,13 @@ public:
 	void Init();
 	void Update();
 
-	void AddAcceleration(const Vector3 &acceleration) {
-		acceleration_ = acceleration;
-	}
+	void AddAcceleration(const Vector3 &acceleration) { acceleration_ = acceleration; }
 
-	const Vector3 &GetVelocity() const {
-		return velocity_;
-	}
+	void SetVelocity(const Vector3 &vec) { velocity_ = vec; }
 
-	const Vector3 &GetAcceleration() const {
-		return acceleration_;
-	}
+	const Vector3 &GetVelocity() const { return velocity_; }
+
+	const Vector3 &GetAcceleration() const { return acceleration_; }
 
 private:
 	Vector3 velocity_;

@@ -219,6 +219,9 @@
     <ClCompile Include="Header\Entity\PlayerBullet.cpp">
       <Filter>Header\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerBulletComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -379,6 +382,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\PlayerBullet.h">
       <Filter>Header\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerBulletComp.h">
+      <Filter>Header\Entity\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

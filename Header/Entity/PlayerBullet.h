@@ -3,32 +3,15 @@
 
 class PlayerBullet : public Object {
 public:
+	//using Object::Object;
 	PlayerBullet() = default;
-	~PlayerBullet() = default;
+	//PlayerBullet(PlayerBullet *) {};
+	~PlayerBullet() override = default;
 
 	void Init() override;
 
 
 private:
-
-};
-
-class PlayerBulletComp : public IComponent {
-public:
-	using IComponent::IComponent;
-	~PlayerBulletComp() = default;
-
-	void Init();
-	void Update();
-
-	void OnCollision(Object *const other) override;
-
-	void Move();
-
-private:
-
-	static const int32_t kLifeTime = 60 * 5;
-	int32_t deathTimer_ = kLifeTime;
-	Vector3 velocity_;
+	const float a = 0.f;
 
 };

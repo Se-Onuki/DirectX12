@@ -13,6 +13,5 @@ public:
 
 	void Init() override;
 
-
 private:
 };

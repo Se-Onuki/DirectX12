@@ -12,10 +12,13 @@
 #include "../Header/Entity/Component/PlayerComp.h"
 #include "../Header/Entity/PlayerBullet.h"
 
+#include "../Header/Entity/Component/Collider.h"
+
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	collisionManager_ = CollisionManager::GetInstance();
 }
 
 GameScene::~GameScene() {
@@ -27,11 +30,15 @@ void GameScene::OnEnter() {
 	viewProjection_.translation_ = { 0.f,0.f,-15.f };
 
 	Model *const playerBody =
-		ModelManager::GetInstance()->AddModel("playerBody", Model::LoadObjFile("", "sphere.obj"));
-	ModelManager::GetInstance()->AddModel("Ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
+		ModelManager::GetInstance()->AddModel("gunTank", Model::LoadObjFile("Model/gunTank/", "gunTank.obj"));
+	ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
+	ModelManager::GetInstance()->AddModel("ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
 
+
+	Transform bodyTransform = Transform{};
+	bodyTransform.translate = { 0.f,0.f,0.f };
 	std::unordered_map<std::string, std::pair<Transform, Model *>> playerModel{
-		{"body",  {Transform{}, playerBody}  },
+		{"body",  {bodyTransform, playerBody}  },
 	};
 
 	player_.reset(new Player);
@@ -47,6 +54,7 @@ void GameScene::OnEnter() {
 
 	PlayerComp *const playerComp = player_->GetComponent<PlayerComp>();
 	playerComp->SetViewProjection(followCamera_->GetViewProjection());
+	playerComp->SetGameScene(this);
 
 	ground_.reset(new Ground);
 	ground_->Init();
@@ -69,6 +77,26 @@ void GameScene::Update() {
 		}
 	);
 
+#pragma region AddCollisionManager
+	collisionManager_->clear();
+
+	collisionManager_->push_back(player_.get());
+	for (auto &pBullet : pBulletList_) {
+		collisionManager_->push_back(pBullet.get());
+	}
+	/*for (auto &enemy : enemyList_) {
+		collisionManager_->push_back(enemy.get());
+	}
+
+	for (auto &eBullet : enemyBulletList_) {
+		collisionManager_->push_back(eBullet.get());
+	}*/
+
+	collisionManager_->ChackAllCollision();
+
+#pragma endregion
+
+
 	player_->Update();
 	followCamera_->Update();
 
@@ -78,6 +106,8 @@ void GameScene::Update() {
 
 	viewProjection_.matView_ = followCamera_->GetViewMatrix();
 	viewProjection_.matProjection_ = followCamera_->GetProjectionMatrix();
+
+	followCamera_->ImGuiWidget();
 
 	viewProjection_.TransferMatrix();
 }
@@ -111,7 +141,7 @@ void GameScene::Draw()
 	player_->Draw(viewProjection_);
 
 	for (auto &pBullet : pBulletList_) {
-		pBullet->Update();
+		pBullet->Draw(viewProjection_);
 	}
 
 	Model::EndDraw();
@@ -130,6 +160,9 @@ void GameScene::Draw()
 
 }
 
-void GameScene::AddPlayerBullet(PlayerBullet *const newBullet) {
+void GameScene::AddPlayerBullet(PlayerBullet *newBullet) {
+	//std::unique_ptr<PlayerBullet> bulletPtr{ newBullet };
 	pBulletList_.emplace_back(newBullet);
+	/*auto &uPtr = pBulletList_.back();
+	uPtr.reset(newBullet);*/
 }

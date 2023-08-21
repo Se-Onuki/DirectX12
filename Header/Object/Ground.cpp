@@ -2,7 +2,7 @@
 #include "../Model/ModelManager.h"
 
 void Ground::Init() {
-	model_ = ModelManager::GetInstance()->GetModel("Ground");
+	model_ = ModelManager::GetInstance()->GetModel("ground");
 	transform_.InitResource();
 	transform_.scale *= 500.f;
 }

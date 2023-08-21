@@ -8,6 +8,7 @@
 #include "../../DirectBase/3D/ViewProjection/ViewProjection.h"
 
 class Object;
+//class IScene;
 
 ///	
 /// ↓ コンポーネントの最小構成 ↓
@@ -63,12 +64,17 @@ public:
 
 class Object {
 	// 生きているか
-	bool isActive_;
+	bool isActive_ = false;
 	// コンポーネントの連想コンテナ
 	std::unordered_map<std::type_index, std::unique_ptr<IComponent>> componentMap_;
 
 
 	// 今後実装予定
+	// 
+	// シーン情報
+	// IScene * scene_ = nullptr;
+	// 
+	// 親子関係
 	// Object *parent_ = nullptr;
 	// std::list<std::unique_ptr<Object>> children_;
 
@@ -77,6 +83,7 @@ public:
 	Transform transform_;
 
 	Object() = default;
+	//Object(const Object&) = default;
 	virtual ~Object() = default;
 
 	virtual void Init();
@@ -84,8 +91,8 @@ public:
 	virtual void Update();
 	virtual void Draw(const ViewProjection &vp) const;
 
-	template<typename T>
-	bool HasComponent();
+	/*template<typename T>
+	bool HasComponent();*/
 
 	/// @brief コンポーネントを追加
 	/// @tparam T コンポーネントの型

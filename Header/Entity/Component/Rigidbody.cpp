@@ -6,7 +6,6 @@ void Rigidbody::Init() {
 }
 
 void Rigidbody::Update() {
-	velocity_ *= 0.95f;
 	velocity_ += acceleration_;
 	object_->transform_.translate += velocity_;
 

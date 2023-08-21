@@ -5,6 +5,8 @@
 class Input;
 class ViewProjection;
 
+class GameScene;
+
 class PlayerComp : public IComponent {
 public:
 	using IComponent::IComponent;
@@ -15,15 +17,23 @@ public:
 
 	void Attack();
 
-	void SetViewProjection(const ViewProjection *const viewProjection) {
-		viewProjection_ = viewProjection;
-	}
+	void SetViewProjection(const ViewProjection *const vp) { viewProjection_ = vp; }
+
+	void SetGameScene(GameScene *const gameScene) { gameScene_ = gameScene; }
+
+	void CoolTimeUpdate();
+	void AddCoolTime(const uint32_t time) { coolTime_ += time; }
 
 private:
 	Input *input_ = nullptr;
 
 	const ViewProjection *viewProjection_ = nullptr;
+	GameScene *gameScene_ = nullptr;
+
+	const uint32_t shotCoolTime_ = 5u;
+	uint32_t coolTime_ = 0u;
 
 	const float bulletSpeed_ = 0.25f;
-	const float moveSpeed_ = 0.05f;
+	const float moveSpeed_ = 0.025f;
+	const float friction_ = 0.95f;
 };
