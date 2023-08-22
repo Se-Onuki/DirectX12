@@ -15,12 +15,14 @@
 #include "../../Model/ModelManager.h"
 
 #include "../FollowCamera.h"
+#include "../../Collision/Target.h"
 
 #include "../../Math/Lerp.h"
 #include <algorithm>
 
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
+	targeting_ = Targeting::GetInstance();
 
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
@@ -48,11 +50,11 @@ void PlayerComp::Init() {
 	reticle_->SetPivot({ 0.5f,0.5f });
 	reticle_->SetPosition(windowCentor);
 
-	box_.reset(new Object);
-	box_->Init();
+	//box_.reset(new Object);
+	//box_->Init();
 
-	Model *const sphere = ModelManager::GetInstance()->GetModel("sphere");
-	box_->AddComponent<ModelComp>()->SetModel({ {"body",{Transform{}, sphere}} });
+	//Model *const sphere = ModelManager::GetInstance()->GetModel("sphere");
+	//box_->AddComponent<ModelComp>()->SetModel({ {"body",{Transform{}, sphere}} });
 }
 
 void PlayerComp::Update() {
@@ -107,7 +109,6 @@ void PlayerComp::Update() {
 
 #pragma endregion
 
-
 	CoolTimeUpdate();
 
 	Attack();
@@ -117,8 +118,8 @@ void PlayerComp::Update() {
 }
 
 void PlayerComp::Draw(const ViewProjection &vp) const {
-
-	box_->Draw(vp);
+	vp;
+	//box_->Draw(vp);
 }
 
 void PlayerComp::DrawUI() const {
@@ -136,7 +137,7 @@ void PlayerComp::Attack() {
 			const Vector3 &spawnPos = nozzle_ * cameraRotY + object_->GetWorldPos();
 
 			// 弾のベクトルの生成
-			Vector3 velocity = sightCentor_ - spawnPos;
+			Vector3 velocity = target_ - spawnPos;
 			velocity = velocity.Nomalize() * bulletSpeed_;
 			//const Matrix4x4& rotMat = 
 			//velocity = TransformNormal(velocity, Matrix4x4::EulerRotate(viewProjection_->rotation_));
@@ -144,6 +145,7 @@ void PlayerComp::Attack() {
 			// 弾の生成 + 初期化
 			PlayerBullet *newBullet = new PlayerBullet;
 			newBullet->Init();
+			newBullet->transform_.rotate = velocity.Direction2Euler();
 			auto *const bulletComp = newBullet->GetComponent<PlayerBulletComp>();
 			bulletComp->SetVelocity(velocity);
 			bulletComp->SetPosition(spawnPos);
@@ -179,18 +181,22 @@ void PlayerComp::UpdateUI() {
 		Render::MakeViewportMatrix({ 0.f,0.f }, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
 	Matrix4x4 matVPVp = viewProjection_->matView_ * viewProjection_->matProjection_ * matViewport;
 
-	std::pair<Vector3, Vector3> segment = Render::ScreenToWorld(*(Vector2 *)&sightPos, matVPVp);
+	std::pair<Vector3, Vector3> segment = Render::ScreenToWorld(sightPos.ToVec2(), matVPVp);
 
 #pragma endregion
 
 	sightCentor_ = segment.second;
-	box_->transform_.translate = sightCentor_;
+	/*box_->transform_.translate = sightCentor_;
 	box_->transform_.CalcMatrix();
 
-	box_->Update();
+	box_->Update();*/
+
+	if (vPad->stickR_.Length() <= 0.1f) {
+		sightCentor_ = Lerp(sightCentor_, target_, 0.8f);
+	}
 
 	// レティクルの線分からオイラー角を生成
-	Vector3 segmentRotate = Vector3{ segment.second - segment.first }.Direction2Euler();
+	const Vector3 &segmentRotate = Vector3{ segment.second - segment.first }.Direction2Euler();
 	// オイラー角の線形補間
 	followCamera_->SetRotate(Angle::Lerp(followCamera_->GetRotate(), segmentRotate, cameraRotateSpeed_));
 	followCamera_->Update();
@@ -201,7 +207,24 @@ void PlayerComp::UpdateUI() {
 
 	sightPos = Render::WorldToScreen(sightCentor_, matVPVp);
 
-	sight_->SetPosition(*(Vector2 *)&sightPos);
+	sight_->SetPosition(sightPos.ToVec2());
+
+#pragma region TargetPosition
+
+	targeting_->SetPosition(sightPos.ToVec2());
+	auto *const hitCollider = targeting_->GetHitCollider();
+	if (hitCollider) {
+		target_ = hitCollider->GetWorldCentor();
+	}
+	else {
+		target_ = sightCentor_;
+	}
+
+#pragma endregion
+
+	//if (hitCollider) {
+	reticle_->SetPosition(Render::WorldToScreen(target_, matVPVp).ToVec2());
+	//}
 
 #pragma endregion
 

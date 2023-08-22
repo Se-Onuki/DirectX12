@@ -18,6 +18,8 @@
 
 #include "../Header/Entity/Component/Collider.h"
 
+#include "../Header/Collision/Target.h"
+
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -30,6 +32,8 @@ GameScene::~GameScene() {
 }
 
 void GameScene::OnEnter() {
+	targeting_ = Targeting::GetInstance();
+
 	viewProjection_.Init();
 	viewProjection_.translation_ = { 0.f,0.f,-15.f };
 
@@ -90,15 +94,22 @@ void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 }
 
-void GameScene::OnExit() {
-}
+void GameScene::OnExit() {}
 
 void GameScene::Update() {
-	//const DirectInput *const directInput = DirectInput::GetInstance();
 
 	pBulletList_.remove_if([](std::unique_ptr<PlayerBullet> &bullet) {
 		if (!bullet->GetActive()) {
 			bullet.reset();
+			return true;
+		}
+		return false;
+		}
+	);
+
+	enemyList_.remove_if([](std::unique_ptr<Enemy> &enemy) {
+		if (!enemy->GetActive()) {
+			enemy.reset();
 			return true;
 		}
 		return false;
@@ -124,7 +135,22 @@ void GameScene::Update() {
 
 #pragma endregion
 
+
 	followCamera_->Update();
+
+#pragma region Target
+
+	targeting_->clear();
+	for (auto &enemy : enemyList_) {
+		if (!enemy->GetActive())
+			continue;
+		targeting_->push_back(enemy.get());
+	}
+	targeting_->Update(*followCamera_->GetViewProjection());
+
+#pragma endregion
+
+
 	player_->ImGuiWidget();
 	player_->Update();
 

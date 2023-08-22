@@ -1,5 +1,6 @@
 #pragma once
 //#include "Matrix3x3.hpp"
+#include "Vector2.h"
 
 #include <cmath>
 
@@ -23,9 +24,12 @@ struct Vector3 {
 	/// ベクトル長関数
 	/// </summary>
 	/// <returns>ベクトルの長さ</returns>
-	float Length() const {
-		return sqrtf((*this) * (*this));
-	}
+	float Length() const { return sqrtf((*this) * (*this)); }
+
+
+	/// @brief 2乗ベクトル長関数
+	/// @return ベクトル長
+	float LengthSQ() const { return (*this) * (*this); }
 
 	/// <summary>
 	/// 正規化
@@ -91,56 +95,38 @@ struct Vector3 {
 	Vector3 &operator*=(const Matrix4x4 &Second);
 
 	// 逆ベクトル
-	inline Vector3 operator-() const {
-		return *this * -1;
-	}
+	inline Vector3 operator-() const { return *this * -1; }
 
 	// 内積
-	inline float operator*(const Vector3 &v) const {
-		return x * v.x + y * v.y + z * v.z;
-	}
-	// 外積
-	// inline float operator^(const Vector3& v) const { return x * v.y - y * v.x; }
+	inline float operator*(const Vector3 &v) const { return x * v.x + y * v.y + z * v.z; }
+	// 外積(クロス積)
+	[[nodiscard]] inline Vector3 cross(const Vector3 &v) const { return Vector3{ y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x }; }
 
 
-	inline static Vector3 zero() {
-		return Vector3{ 0.f, 0.f, 0.f };
+	/// @brief 垂直ベクトル
+	/// @return 90度回転したベクトル
+	inline Vector3 Perpendicular() const {
+		if (x != 0.f || y != 0.f)
+			return Vector3{ -y, x, 0.f };
+		return Vector3{ 0.f, -z, y };
 	}
 
-	static Vector3 up() {
-		return Vector3{ 0, 1, 0 };
-	}
-	static Vector3 down() {
-		return Vector3{ 0, -1, 0 };
-	}
+	inline static Vector3 zero() { return Vector3{ 0.f, 0.f, 0.f }; }
 
-	static Vector3 front() {
-		return Vector3{ 0, 0, 1 };
-	}
-	static Vector3 back() {
-		return Vector3{ 0, 0, -1 };
-	}
+	static Vector3 up() { return Vector3{ 0, 1, 0 }; }
+	static Vector3 down() { return Vector3{ 0, -1, 0 }; }
 
-	static Vector3 right() {
-		return Vector3{ 1, 0, 0 };
-	}
-	static Vector3 left() {
-		return Vector3{ -1, 0, 0 };
-	}
+	static Vector3 front() { return Vector3{ 0, 0, 1 }; }
+	static Vector3 back() { return Vector3{ 0, 0, -1 }; }
 
-	static Vector3 one() {
-		return Vector3{ 1.f, 1.f, 1.f };
-	}
+	static Vector3 right() { return Vector3{ 1, 0, 0 }; }
+	static Vector3 left() { return Vector3{ -1, 0, 0 }; }
 
-	inline Vector3 Reflect(Vector3 normal) const {
-		return (*this) - normal * 2 * ((*this) * normal);
+	static Vector3 one() { return Vector3{ 1.f, 1.f, 1.f }; }
 
-		// return {this->x- 2}
-	}
+	inline Vector3 Reflect(Vector3 normal) const { return (*this) - normal * 2 * ((*this) * normal); }
 
-	inline bool operator==(const Vector3 &vec) const {
-		return (this->x == vec.x) && (this->y == vec.y) && (this->z == vec.z);
-	}
+	inline bool operator==(const Vector3 &vec) const { return (this->x == vec.x) && (this->y == vec.y) && (this->z == vec.z); }
 
 	Vector3 Direction2Euler() const {
 		Vector3 out{};
@@ -149,6 +135,8 @@ struct Vector3 {
 
 		return out;
 	}
+
+	Vector2 ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
 
 private:
 };

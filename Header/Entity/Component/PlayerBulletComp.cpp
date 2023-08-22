@@ -13,11 +13,11 @@ void PlayerBulletComp::Init() {
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
 	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Player)));
 	colliderComp->SetRadius(1.5f);
-	colliderComp->SetCentor(Vector3::up() * 1.5f);
+	//colliderComp->SetCentor(Vector3::up() * 1.5f);
 
 	ModelComp *const modelComp = object_->AddComponent<ModelComp>();
 	Model *const bulletModel = ModelManager::GetInstance()->GetModel("sphere");
-	modelComp->SetModel({ { "body", { Transform{},bulletModel } } });
+	modelComp->SetModel({ { "body", { Transform{.scale{0.5f,0.5f,1.5f}},bulletModel } } });
 }
 
 void PlayerBulletComp::Update() {

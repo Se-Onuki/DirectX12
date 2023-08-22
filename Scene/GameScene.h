@@ -18,6 +18,8 @@ class FollowCamera;
 class Ground;
 class Input;
 
+class Targeting;
+
 class GameScene : public IScene {
 public:
 	GameScene();
@@ -49,5 +51,7 @@ private:
 	ViewProjection viewProjection_{};
 
 	CollisionManager *collisionManager_ = nullptr;
+
+	Targeting *targeting_ = nullptr;
 
 };

@@ -12,7 +12,7 @@ class GameScene;
 class ModelComp;
 
 class FollowCamera;
-//class Sprite;
+class Targeting;
 
 class PlayerComp : public IComponent {
 public:
@@ -54,10 +54,12 @@ private:
 
 	ModelComp *modelComp_ = nullptr;
 
+	Targeting *targeting_ = nullptr;
+
 	Vector3 sightCentor_{};
 	Vector3 target_{};
 
-	std::unique_ptr<Object> box_ = nullptr;
+	// std::unique_ptr<Object> box_ = nullptr;
 
 	// 円形サイト
 	std::unique_ptr<Sprite> sight_ = nullptr;

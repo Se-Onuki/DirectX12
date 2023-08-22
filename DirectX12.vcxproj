@@ -115,6 +115,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Header\Collision\Collision.cpp" />
+    <ClCompile Include="Header\Collision\Target.cpp" />
     <ClCompile Include="Header\Create\Create.cpp" />
     <ClCompile Include="Header\Entity\BaseCharacter.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
@@ -168,6 +170,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="Header\Collision\Collision.h" />
+    <ClInclude Include="Header\Collision\Target.h" />
     <ClInclude Include="Header\Create\Create.h" />
     <ClInclude Include="Header\Descriptor\DescriptorHandIe.h" />
     <ClInclude Include="Header\Entity\BaseCharacter.h" />
