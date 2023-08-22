@@ -3,12 +3,12 @@
 #include "../Math/Vector3.h"
 #include "../Math/Vector4.h"
 #include "../Math/Matrix4x4.h"
+
 struct Vector2;
 struct Matrix4x4;
 
 class Render {
 public:
-
 
 	/// @brief 正射影行列関数
 	/// @param LeftTop 左上
@@ -32,6 +32,12 @@ public:
 	static Matrix4x4 MakeViewportMatrix(
 		const Vector2 &LeftTop, const float &width, const float &height, const float &minDepth,
 		const float &maxDepth);
+
+	/// @brief 2D空間から3D空間に変換する
+	/// @param screenPos 2次元ベクトル
+	/// @param matVPVp レンダリングパイプライン
+	/// @return 始点と終点座標 { 近, 遠 }
+	static std::pair<Vector3, Vector3> ScreenToWorld(const Vector2 &screenPos, const Matrix4x4 &matVPVp);
 };
 //
 //namespace Light {

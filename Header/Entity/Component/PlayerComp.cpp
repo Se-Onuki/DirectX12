@@ -12,6 +12,7 @@
 #include "PlayerBulletComp.h"
 #include <imgui.h>
 #include "../../../DirectBase/Base/WinApp.h"
+#include "../../Model/ModelManager.h"
 
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
@@ -42,6 +43,11 @@ void PlayerComp::Init() {
 	reticle_->SetPivot({ 0.5f,0.5f });
 	reticle_->SetPosition(windowCentor);
 
+	box_.reset(new Object);
+	box_->Init();
+
+	Model *const sphere = ModelManager::GetInstance()->GetModel("sphere");
+	box_->AddComponent<ModelComp>()->SetModel({ {"body",{Transform{}, sphere}} });
 }
 
 void PlayerComp::Update() {
@@ -105,6 +111,11 @@ void PlayerComp::Update() {
 	rigidbody->SetVelocity({ velocity.x * friction_, velocity.y, velocity.z * friction_ });
 }
 
+void PlayerComp::Draw(const ViewProjection &vp) const {
+
+	box_->Draw(vp);
+}
+
 void PlayerComp::DrawUI() const {
 	sight_->Draw();
 	reticle_->Draw();
@@ -145,6 +156,30 @@ void PlayerComp::Jump() {
 }
 
 void PlayerComp::UpdateUI() {
+	Vector2 sightPos = *reinterpret_cast<const Vector2 *>(&sight_->GetTransform().translate);
+
+	const VirtualPad *const vPad = input_->GetXInput()->GetState();
+	if (vPad->stickR_.Length() > 0.1f) {
+		sightPos += Vector2{ vPad->stickR_.x,-vPad->stickR_.y } *sightSpeed_;
+	}
+	sight_->SetPosition(sightPos);
+
+
+
+#pragma region 2D->3D
+
+	const static Matrix4x4 matViewport =
+		Render::MakeViewportMatrix({ 0.f,0.f }, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+	Matrix4x4 matVPVp = viewProjection_->matView_ * viewProjection_->matProjection_ * matViewport;
+
+	std::pair<Vector3, Vector3> worldSegment = Render::ScreenToWorld(sightPos, matVPVp);
+
+#pragma endregion
+
+	box_->transform_.translate = worldSegment.second;
+
+	box_->Update();
+
 }
 
 void PlayerComp::ImGuiWidget() {
@@ -157,6 +192,7 @@ void PlayerComp::ImGuiWidget() {
 		ImGui::DragFloat("moveSpeed", &moveSpeed_);
 		ImGui::DragFloat("friction", &friction_);
 		ImGui::DragFloat("jumpStrength", &jumpStrength_);
+		ImGui::DragFloat("sightSpeed", &sightSpeed_);
 
 
 		ImGui::TreePop();

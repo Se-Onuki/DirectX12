@@ -19,6 +19,7 @@ public:
 
 	void Init() override;
 	void Update() override;
+	void Draw(const ViewProjection &vp) const override;
 
 	void DrawUI() const;
 
@@ -48,7 +49,9 @@ private:
 
 	ModelComp *modelComp_ = nullptr;
 
-	Vector3 facing_{};
+	Vector3 target_{};
+
+	std::unique_ptr<Object> box_ = nullptr;
 
 	// 円形サイト
 	std::unique_ptr<Sprite> sight_ = nullptr;
@@ -73,4 +76,6 @@ private:
 	float friction_ = 0.95f;
 
 	float jumpStrength_ = 750.f;
+
+	float sightSpeed_ = 10.f;
 };
