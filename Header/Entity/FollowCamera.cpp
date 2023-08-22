@@ -60,6 +60,6 @@ bool FollowCamera::ImGuiWidget() {
 
 }
 
-const ViewProjection *const FollowCamera::GetViewProjection() const {
+ViewProjection *const FollowCamera::GetViewProjection() {
 	return &viewProjection_;
 }

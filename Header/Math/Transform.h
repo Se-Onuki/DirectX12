@@ -14,10 +14,10 @@ struct Transform
 
 
 	Vector3 scale = { 1.f,1.f,1.f };
-	Vector3 rotate;
-	Vector3 translate;
+	Vector3 rotate{};
+	Vector3 translate{};
 
-	Matrix4x4 matWorld_;	// ローカル . ワールド変換
+	Matrix4x4 matWorld_{};	// ローカル . ワールド変換
 	const Transform *parent_ = nullptr;	// 親へのアドレス
 
 	ComPtr<ID3D12Resource> constBuffer_ = nullptr;

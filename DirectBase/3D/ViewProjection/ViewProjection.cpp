@@ -5,17 +5,7 @@
 #include "../../../Header/Render/Render.hpp"
 
 
-
-ViewProjection::ViewProjection()
-{
-}
-
-ViewProjection::~ViewProjection()
-{
-}
-
-void ViewProjection::Init()
-{
+void ViewProjection::Init() {
 	CreateConstBuffer();
 	SetMap();
 	UpdateMatrix();

@@ -10,6 +10,8 @@
 class Player;
 class PlayerBullet;
 
+class Enemy;
+
 class CollisionManager;
 
 class FollowCamera;
@@ -38,6 +40,7 @@ private:
 
 	std::unique_ptr<Player> player_ = nullptr;
 	std::list<std::unique_ptr<PlayerBullet>> pBulletList_;
+	std::list<std::unique_ptr<Enemy>> enemyList_;
 
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Ground> ground_ = nullptr;

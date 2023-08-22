@@ -222,6 +222,9 @@
     <ClCompile Include="Header\Entity\Component\PlayerBulletComp.cpp">
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Enemy.cpp">
+      <Filter>Header\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -385,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerBulletComp.h">
       <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Enemy.h">
+      <Filter>Header\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@ void Object::Draw(const ViewProjection &vp) const {
 	}
 }
 
+
 const Vector3 &Object::GetWorldPos() {
 	transform_.CalcMatrix();
 	return *reinterpret_cast<Vector3 *>(transform_.matWorld_.m[3]);
@@ -32,8 +33,6 @@ void Object::OnCollision(Object *const other) {
 		component.second->OnCollision(other);
 	}
 }
-
-void Object::SetActive(const bool newState) { isActive_ = newState; }
 
 void Object::ImGuiWidget() {
 	for (auto &component : componentMap_) {

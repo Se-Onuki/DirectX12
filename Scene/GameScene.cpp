@@ -6,13 +6,15 @@
 
 #include "TitleScene.h"
 
-#include "../Header/Entity/Player.h"
 #include "../Header/Model/ModelManager.h"
 #include "../Header/Entity/FollowCamera.h"
 #include "../Header/Object/Ground.h"
 #include "../Header/Entity/Component/ModelComp.h"
 #include "../Header/Entity/Component/PlayerComp.h"
+
+#include "../Header/Entity/Player.h"
 #include "../Header/Entity/PlayerBullet.h"
+#include "../Header/Entity/Enemy.h"
 
 #include "../Header/Entity/Component/Collider.h"
 
@@ -172,6 +174,7 @@ void GameScene::Draw()
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
+	player_->GetComponent<PlayerComp>()->DrawUI();
 
 	Sprite::EndDraw();
 

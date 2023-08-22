@@ -32,5 +32,5 @@ public:
 
 	bool ImGuiWidget();
 
-	const ViewProjection *const GetViewProjection() const;
+	ViewProjection *const GetViewProjection();
 };

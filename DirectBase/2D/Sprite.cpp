@@ -326,15 +326,17 @@ void Sprite::Init(const uint32_t &textureHaundle) {
 }
 
 void Sprite::Draw() const {
-	constMap_->matWorldProjection = transform_.matWorld_ * matProjection_;
+	if (isVisible_) {	// 不可視であれば飛ばす
+		constMap_->matWorldProjection = transform_.matWorld_ * matProjection_;
 
-	// マテリアルCBufferの場所を設定
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)RootParameter::kConstData, constResource_->GetGPUVirtualAddress());
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)RootParameter::kTexture, textureHaundle_);
-	// Spriteの描画
-	commandList_->IASetVertexBuffers(0, 1, &vbView_);	// VBVを設定
-	commandList_->IASetIndexBuffer(&ibView_);
-	commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
+		// マテリアルCBufferの場所を設定
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)RootParameter::kConstData, constResource_->GetGPUVirtualAddress());
+		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)RootParameter::kTexture, textureHaundle_);
+		// Spriteの描画
+		commandList_->IASetVertexBuffers(0, 1, &vbView_);	// VBVを設定
+		commandList_->IASetIndexBuffer(&ibView_);
+		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	}
 }
 
 void Sprite::MapVertex()
@@ -459,7 +461,7 @@ void Sprite::SetScale(const Vector2 &scale)
 	transform_.scale = { scale.x,scale.y,1.f };
 	transform_.CalcMatrix();
 }
-void Sprite::SetRotate(const float &angle)
+void Sprite::SetRotate(const float angle)
 {
 	transform_.rotate = { 0.f,0.f,angle };
 	transform_.CalcMatrix();

@@ -4,13 +4,9 @@
 #include <stdint.h>
 #include <list>
 
-#include <functional>
-
-
 enum class CollisionFilter {
 	Player = 0b00001, Enemy = 0b00010
 };
-
 
 class ColliderComp : public IComponent {
 	// 衝突属性(自分)
@@ -20,7 +16,8 @@ class ColliderComp : public IComponent {
 
 protected:
 
-	float radius = 0.5f;
+	Vector3 centor_{};
+	float radius_ = 0.5f;
 
 public:
 	// 親のコンストラクタを使う
@@ -28,31 +25,23 @@ public:
 
 	/// @brief 衝突属性を取得
 	/// @return 衝突属性(自分)
-	const uint32_t GetCollisionAttribute() const {
-		return collisionAttribute_;
-	}
+	const uint32_t GetCollisionAttribute() const { return collisionAttribute_; }
 	/// @brief 衝突属性を設定
 	/// @param newAttribute 衝突属性(自分)
-	void SetCollisionAttribute(const uint32_t newAttribute) {
-		collisionAttribute_ = newAttribute;
-	}
+	void SetCollisionAttribute(const uint32_t newAttribute) { collisionAttribute_ = newAttribute; }
 	/// @brief 衝突マスクを取得
 	/// @return 衝突マスク(相手)
-	const uint32_t GetCollisionMask() const {
-		return collisionMask_;
-	}
+	const uint32_t GetCollisionMask() const { return collisionMask_; }
 	/// @brief 衝突マスクを設定
 	/// @param newMask 衝突マスク(相手)
-	void SetCollisionMask(const uint32_t newMask) {
-		collisionMask_ = newMask;
-	}
+	void SetCollisionMask(const uint32_t newMask) { collisionMask_ = newMask; }
 
-	const float &GetRadius() const {
-		return radius;
-	}
-	void SetRadius(const float &rad) {
-		radius = rad;
-	}
+	const float &GetRadius() const { return radius_; }
+	void SetRadius(const float &rad) { radius_ = rad; }
+
+	const Vector3 &GetCentor() const { return centor_; }
+	Vector3 GetWorldCentor() const;
+	void SetCentor(const Vector3 &centor) { centor_ = centor; }
 
 };
 

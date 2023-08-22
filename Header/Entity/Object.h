@@ -1,8 +1,10 @@
 #pragma once
 #include <unordered_map>
+#include <unordered_set>
 #include <typeindex>
 #include <memory>
 #include <type_traits>
+#include <string>
 
 #include "../Math/Transform.h"
 #include "../../DirectBase/3D/ViewProjection/ViewProjection.h"
@@ -68,6 +70,7 @@ class Object {
 	// コンポーネントの連想コンテナ
 	std::unordered_map<std::type_index, std::unique_ptr<IComponent>> componentMap_;
 
+	std::unordered_set<std::string> tag_;
 
 	// 今後実装予定
 	// 
@@ -102,14 +105,30 @@ public:
 
 	/// @brief コンポーネントの取得
 	/// @tparam T コンポーネント型
-	/// @return コンポーネントのポインタ
+	/// @return コンポーネントのポインタ (存在しない場合、nullptr)
 	template <typename T>
 	T *const GetComponent() const;
 
-	void SetActive(const bool newState);
-	bool GetActive() const {
-		return isActive_;
-	}
+	/// @brief 生存しているかを設定する
+	/// @param newState 生きている場合 [ true ]
+	void SetActive(const bool newState) { isActive_ = newState; }
+
+	/// @brief 生存しているかを取得する
+	/// @return 生きている場合 [ true ]
+	bool GetActive() const { return isActive_; }
+
+	/// @brief タグの追加
+	/// @param tag 追加するタグの文字列
+	void AddTag(const std::string &tag) { tag_.insert(tag); }
+
+	/// @brief タグを持っているか
+	/// @param tag 検索するタグ
+	/// @return タグを持っている場合 [ true ]
+	bool HasTag(const std::string &tag) const { return tag_.contains(tag); }
+
+	/// @brief タグの削除
+	/// @param tag 削除するタグ
+	void RemoveTag(const std::string &tag) { tag_.erase(tag); }
 
 	const Vector3 &GetWorldPos();
 
@@ -123,17 +142,19 @@ private:
 
 template <typename T>
 T *const Object::AddComponent() {
-	static_assert(std::is_base_of<IComponent, T>::value, "引数はIComponentクラスの派生クラスではありません");
+	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
 
+	// 既に存在する場合はその場で終了
 	T *const findComp = GetComponent<T>();
-	if (findComp != nullptr) { return findComp; }
+	if (findComp) { return findComp; }
 
 	// コンポーネントを生成
 	IComponent *const component = new T(this);
 	std::type_index key = std::type_index(typeid(T));
 
+	// 登録
 	componentMap_[key].reset(component);
-
+	// 初期化
 	component->Init();
 
 	return GetComponent<T>();
@@ -142,7 +163,9 @@ T *const Object::AddComponent() {
 
 template <typename T>
 T *const Object::GetComponent() const {
-	auto it = componentMap_.find(std::type_index(typeid(T)));
+	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
+
+	const auto &it = componentMap_.find(std::type_index(typeid(T)));
 	if (it != componentMap_.end()) {
 		return static_cast<T *>(it->second.get());
 	}

@@ -19,8 +19,8 @@ public:
 
 private:
 
-	static const int32_t kLifeTime = 60 * 5;
+	static const int32_t kLifeTime = 60 * 3;
 	int32_t deathTimer_ = kLifeTime;
-	Vector3 velocity_;
+	Vector3 velocity_{};
 
 };

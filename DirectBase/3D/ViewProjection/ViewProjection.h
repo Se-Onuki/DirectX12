@@ -17,8 +17,8 @@ public:
 		Vector3 cameraPos;
 	};
 
-	ViewProjection();
-	~ViewProjection();
+	ViewProjection() = default;
+	~ViewProjection() = default;
 
 	ComPtr<ID3D12Resource> constBuffer_ = nullptr;
 	ViewProjectionMatrix *mapData_ = nullptr;	// マップ済みデータ
@@ -41,8 +41,8 @@ public:
 	float farZ = 1000.0f;
 #pragma endregion
 
-	Matrix4x4 matView_;
-	Matrix4x4 matProjection_;
+	Matrix4x4 matView_{};
+	Matrix4x4 matProjection_{};
 
 	void Init();
 

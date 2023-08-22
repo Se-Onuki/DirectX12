@@ -19,10 +19,13 @@ void PlayerBulletComp::Init() {
 }
 
 void PlayerBulletComp::Update() {
-	Move();
-	if (--deathTimer_ <= 0) {
+	bool isDead = false;
+	isDead |= --deathTimer_ <= 0;	// 寿命を迎えたら死ぬ
+	isDead |= object_->transform_.translate.y <= 0.f;	// 地下に潜ったら死ぬ
+	if (isDead) {
 		object_->SetActive(false);
 	}
+	Move();
 }
 
 void PlayerBulletComp::OnCollision(Object *const) {

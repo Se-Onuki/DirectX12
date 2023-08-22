@@ -104,12 +104,14 @@ private:
 	// 中心点
 	Vector2 pivot_{};
 
+	bool isVisible_ = true;
+
 
 	// テクスチャID
-	uint32_t textureHaundle_ = 1;
+	uint32_t textureHaundle_ = 1u;
 
 	// テクスチャリソースの情報
-	D3D12_RESOURCE_DESC resourceDesc;
+	D3D12_RESOURCE_DESC resourceDesc{};
 
 public:
 	/// @brief テクスチャ設定
@@ -129,20 +131,19 @@ public:
 
 	/// @brief テクスチャ座標取得 
 	/// @return { テクスチャ原点(左上), テクスチャ差分(右下) }
-	const std::pair<Vector2, Vector2> &GetUV() const {
-		return uv_;
-	}
+	const std::pair<Vector2, Vector2> &GetUV() const { return uv_; }
+
+	void SetVisible(bool visible) { isVisible_ = visible; }
+	bool GetVisible() const { return isVisible_; }
 
 	/// @brief 中心点設定
 	void SetPivot(const Vector2 &pivot);
 
 	void SetScale(const Vector2 &scale);
-	void SetRotate(const float &angle);
+	void SetRotate(const float angle);
 	void SetPosition(const Vector2 &position);
 
-	const Transform &GetTransform() const {
-		return transform_;
-	}
+	const Transform &GetTransform() const { return transform_; }
 
 	void SetColor(const Vector4 &color);
 	const Vector4 &GetColor()const;

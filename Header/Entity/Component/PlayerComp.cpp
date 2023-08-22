@@ -6,9 +6,12 @@
 #include "ModelComp.h"
 #include "../PlayerBullet.h"
 
+#include "../../../DirectBase/2D/Sprite.h"
+
 #include "../../../Scene/GameScene.h"
 #include "PlayerBulletComp.h"
 #include <imgui.h>
+#include "../../../DirectBase/Base/WinApp.h"
 
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
@@ -16,13 +19,34 @@ void PlayerComp::Init() {
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
 	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Player)));
-	colliderComp->SetRadius(10.f);
+	colliderComp->SetRadius(2.f);
+	colliderComp->SetCentor({ 0.f,2.f,0.f });
 
 	modelComp_ = object_->AddComponent<ModelComp>();
+
+	const uint32_t textHaundle = TextureManager::Load("UI/circle.png");
+
+	const Vector2 windowCentor = Vector2{ WinApp::kWindowWidth, WinApp::kWindowHeight } / 2.f;
+
+	sight_.reset(Sprite::Create());
+	sight_->SetTextureHaundle(textHaundle);
+	sight_->SetColor(Vector4{ 0.f,0.f,0.f,1.f });
+	sight_->SetScale(Vector2{ 1.f,1.f } *300.f);
+	sight_->SetPivot({ 0.5f,0.5f });
+	sight_->SetPosition(windowCentor);
+
+	reticle_.reset(Sprite::Create());
+	reticle_->SetTextureHaundle(textHaundle);
+	reticle_->SetColor(Vector4{ 0.f,0.f,0.f,1.f });
+	reticle_->SetScale(Vector2{ 1.f,1.f } *100.f);
+	reticle_->SetPivot({ 0.5f,0.5f });
+	reticle_->SetPosition(windowCentor);
+
 }
 
 void PlayerComp::Update() {
 	Rigidbody *const rigidbody = object_->GetComponent<Rigidbody>();
+	rigidbody->AddAcceleration(Vector3{ 0.f,-9.8f,0.f } *2.f);
 
 	Vector2 stickL = input_->GetXInput()->GetState()->stickL_;
 	Vector3 move = Vector3{ stickL.x, 0, stickL.y };
@@ -64,13 +88,26 @@ void PlayerComp::Update() {
 
 #pragma endregion
 
+	Jump();
+
+#pragma region UI
+
+	UpdateUI();
+
+#pragma endregion
+
+
 	CoolTimeUpdate();
 
 	Attack();
 
 	const Vector3 &velocity = rigidbody->GetVelocity();
-	rigidbody->SetVelocity(velocity * friction_);
+	rigidbody->SetVelocity({ velocity.x * friction_, velocity.y, velocity.z * friction_ });
+}
 
+void PlayerComp::DrawUI() const {
+	sight_->Draw();
+	reticle_->Draw();
 }
 
 void PlayerComp::Attack() {
@@ -98,12 +135,28 @@ void PlayerComp::Attack() {
 	}
 }
 
+void PlayerComp::Jump() {
+	if (input_->GetXInput()->IsTrigger(KeyCode::LEFT_SHOULDER)) {
+		Rigidbody *const rigidbody = object_->GetComponent<Rigidbody>();
+		if (rigidbody->GetIsGround()) {
+			rigidbody->AddAcceleration(Vector3::up() * jumpStrength_);
+		}
+	}
+}
+
+void PlayerComp::UpdateUI() {
+}
+
 void PlayerComp::ImGuiWidget() {
 	if (ImGui::TreeNode("PlayerComp")) {
 
 		ImGui::DragInt("fireCoolTime", &fireCoolTime_, 1.f, 0, 100);
 		ImGui::DragFloat3("nozzle", &nozzle_.x);
 		ImGui::DragFloat("bulletSpeed", &bulletSpeed_);
+
+		ImGui::DragFloat("moveSpeed", &moveSpeed_);
+		ImGui::DragFloat("friction", &friction_);
+		ImGui::DragFloat("jumpStrength", &jumpStrength_);
 
 
 		ImGui::TreePop();
