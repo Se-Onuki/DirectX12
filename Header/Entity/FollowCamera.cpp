@@ -11,13 +11,13 @@ void FollowCamera::Init() {
 
 void FollowCamera::Update() {
 	if (target_) {
-		const VirtualPad *const vPad = input_->GetXInput()->GetState();
+		//const VirtualPad *const vPad = input_->GetXInput()->GetState();
 		Vector3 offset;
 
-		if (vPad->stickR_.Length() > 0.1f) {
-			rotate_.y += vPad->stickR_.x * cameraRotSpeed_.y; // 横方向
-			rotate_.x += -vPad->stickR_.y * cameraRotSpeed_.x;	// 縦方向
-		}
+		//if (vPad->stickR_.Length() > 0.1f) {
+		//	rotate_.y += vPad->stickR_.x * cameraRotSpeed_.y; // 横方向
+		//	rotate_.x += -vPad->stickR_.y * cameraRotSpeed_.x;	// 縦方向
+		//}
 		// 埋まりこみ対策
 		if (rotate_.x < minRotate_) { rotate_.x = minRotate_; }
 

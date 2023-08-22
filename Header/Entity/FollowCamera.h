@@ -23,9 +23,10 @@ public:
 
 	void Init();
 	void Update();
-	inline void SetTarget(const Transform *const target) {
-		target_ = target;
-	}
+	inline void SetTarget(const Transform *const target) { target_ = target; }
+
+	void SetRotate(const Vector3 &rot) { rotate_ = rot; }
+	const Vector3 &GetRotate() const { return rotate_; }
 
 	const Matrix4x4 &GetViewMatrix() const;
 	const Matrix4x4 &GetProjectionMatrix() const;

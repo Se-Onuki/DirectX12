@@ -58,3 +58,7 @@ std::pair<Vector3, Vector3> Render::ScreenToWorld(const Vector2 &screenPos, cons
 	segment.second = posFar;
 	return segment;
 }
+
+Vector3 Render::WorldToScreen(const Vector3 &worldPos, const Matrix4x4 &matVPVp) {
+	return worldPos * matVPVp;
+}

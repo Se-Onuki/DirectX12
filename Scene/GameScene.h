@@ -31,6 +31,7 @@ public:
 public:
 
 	void AddPlayerBullet(PlayerBullet *newBullet);
+	void AddEnemy(Enemy *newEnemy);
 
 private:
 	Input *input_ = nullptr;

@@ -10,6 +10,8 @@ class ViewProjection;
 class GameScene;
 
 class ModelComp;
+
+class FollowCamera;
 //class Sprite;
 
 class PlayerComp : public IComponent {
@@ -32,6 +34,8 @@ public:
 	void CoolTimeUpdate();
 	void AddCoolTime(uint32_t time) { coolTime_ += time; }
 
+	void SetFollowCamera(FollowCamera *const fCamera) { followCamera_ = fCamera; }
+
 private:
 
 	void Attack();
@@ -46,9 +50,11 @@ private:
 
 	ViewProjection *viewProjection_ = nullptr;
 	GameScene *gameScene_ = nullptr;
+	FollowCamera *followCamera_ = nullptr;
 
 	ModelComp *modelComp_ = nullptr;
 
+	Vector3 sightCentor_{};
 	Vector3 target_{};
 
 	std::unique_ptr<Object> box_ = nullptr;
@@ -77,5 +83,7 @@ private:
 
 	float jumpStrength_ = 750.f;
 
-	float sightSpeed_ = 10.f;
+	float sightSpeed_ = 20.f;
+
+	float cameraRotateSpeed_ = 0.1f;
 };

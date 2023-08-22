@@ -176,8 +176,13 @@ float Angle::Radian::ToDigree() {
 float Angle::Lerp(const float start, const float end, const float t) {
 	const float diff = end - start;
 
-
 	return start + Mod(diff) * t;
+}
+
+Vector3 Angle::Lerp(const Vector3 &start, const Vector3 &end, const float t) {
+	const Vector3& diff = end - start;
+
+	return Mod(start) + Mod(diff) * t;
 }
 
 float Angle::Mod(float radian) {
@@ -189,4 +194,13 @@ float Angle::Mod(float radian) {
 	else if (radian < -PI) radian += PI2; // -180以下は+360する
 
 	return radian;
+}
+
+Vector3 Angle::Mod(const Vector3 &euler)
+{
+	Vector3 result{};
+	for (uint8_t i = 0u; i < 3u; i++) {
+		(&result.x)[i] = Angle::Mod((&euler.x)[i]);
+	}
+	return result;
 }

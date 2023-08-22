@@ -76,6 +76,13 @@ void GameScene::OnEnter() {
 	PlayerComp *const playerComp = player_->GetComponent<PlayerComp>();
 	playerComp->SetViewProjection(followCamera_->GetViewProjection());
 	playerComp->SetGameScene(this);
+	playerComp->SetFollowCamera(followCamera_.get());
+
+	Enemy *const enemy = new Enemy;
+	enemy->Init();
+	enemy->transform_.translate = { 10.f,5.f,6.f };
+	AddEnemy(enemy);
+
 
 	ground_.reset(new Ground);
 	ground_->Init();
@@ -105,10 +112,10 @@ void GameScene::Update() {
 	for (auto &pBullet : pBulletList_) {
 		collisionManager_->push_back(pBullet.get());
 	}
-	/*for (auto &enemy : enemyList_) {
+	for (auto &enemy : enemyList_) {
 		collisionManager_->push_back(enemy.get());
 	}
-
+	/*
 	for (auto &eBullet : enemyBulletList_) {
 		collisionManager_->push_back(eBullet.get());
 	}*/
@@ -123,6 +130,10 @@ void GameScene::Update() {
 
 	for (auto &pBullet : pBulletList_) {
 		pBullet->Update();
+	}
+
+	for (auto &enemy : enemyList_) {
+		enemy->Update();
 	}
 
 	viewProjection_.matView_ = followCamera_->GetViewMatrix();
@@ -165,6 +176,10 @@ void GameScene::Draw()
 		pBullet->Draw(viewProjection_);
 	}
 
+	for (auto &enemy : enemyList_) {
+		enemy->Draw(viewProjection_);
+	}
+
 	Model::EndDraw();
 
 #pragma endregion
@@ -183,8 +198,10 @@ void GameScene::Draw()
 }
 
 void GameScene::AddPlayerBullet(PlayerBullet *newBullet) {
-	//std::unique_ptr<PlayerBullet> bulletPtr{ newBullet };
 	pBulletList_.emplace_back(newBullet);
-	/*auto &uPtr = pBulletList_.back();
-	uPtr.reset(newBullet);*/
+}
+
+void GameScene::AddEnemy(Enemy *newEnemy) {
+	enemyList_.emplace_back(newEnemy);
+	enemyList_.back()->transform_.InitResource();
 }

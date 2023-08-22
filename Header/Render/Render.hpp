@@ -33,11 +33,17 @@ public:
 		const Vector2 &LeftTop, const float &width, const float &height, const float &minDepth,
 		const float &maxDepth);
 
-	/// @brief 2D空間から3D空間に変換する
+	/// @brief スクリーン座標から3D座標に変換する
 	/// @param screenPos 2次元ベクトル
-	/// @param matVPVp レンダリングパイプライン
+	/// @param matVPVp 座標変換行列
 	/// @return 始点と終点座標 { 近, 遠 }
 	static std::pair<Vector3, Vector3> ScreenToWorld(const Vector2 &screenPos, const Matrix4x4 &matVPVp);
+
+	/// @brief 3D座標からスクリーン座標に変換する
+	/// @param worldPos 3次元の座標
+	/// @param matVPVp 座標変換行列
+	/// @return スクリーン上の座標
+	static Vector3 WorldToScreen(const Vector3 &worldPos, const Matrix4x4 &matVPVp);
 };
 //
 //namespace Light {
