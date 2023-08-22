@@ -50,6 +50,8 @@ public:
 
 	void SetMap();
 
+	void CalcMatrix();
+
 	void UpdateMatrix();
 
 	void TransferMatrix();

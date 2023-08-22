@@ -164,8 +164,6 @@ void PlayerComp::UpdateUI() {
 	}
 	sight_->SetPosition(sightPos);
 
-
-
 #pragma region 2D->3D
 
 	const static Matrix4x4 matViewport =
@@ -177,6 +175,7 @@ void PlayerComp::UpdateUI() {
 #pragma endregion
 
 	box_->transform_.translate = worldSegment.second;
+	box_->transform_.CalcMatrix();
 
 	box_->Update();
 

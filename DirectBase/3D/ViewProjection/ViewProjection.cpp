@@ -23,10 +23,13 @@ void ViewProjection::SetMap()
 	assert(SUCCEEDED(result));
 }
 
-void ViewProjection::UpdateMatrix()
-{
+void ViewProjection::CalcMatrix() {
 	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseRT();
 	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+}
+
+void ViewProjection::UpdateMatrix() {
+	CalcMatrix();
 	TransferMatrix();
 }
 

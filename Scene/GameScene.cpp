@@ -117,9 +117,9 @@ void GameScene::Update() {
 
 #pragma endregion
 
+	followCamera_->Update();
 	player_->ImGuiWidget();
 	player_->Update();
-	followCamera_->Update();
 
 	for (auto &pBullet : pBulletList_) {
 		pBullet->Update();
