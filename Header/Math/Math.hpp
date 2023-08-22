@@ -123,6 +123,8 @@ Matrix3x3 MakeViewportMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom)
 /// @return 回転したベクトル
 Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m);
 
+float GetRandom(const float min, const float max);
+
 namespace Angle {
 
 	struct Digree {

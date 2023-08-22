@@ -18,16 +18,21 @@ void Targeting::push_back(Object *object) {
 }
 
 void Targeting::Update(const ViewProjection &vp) {
+	//const Vector3 &direction = TransformNormal(Vector3::front(), vp.matView_);
+
 	for (auto &collider : colliderList_) {
 		const Vector3 &colliderPos = collider->GetWorldCentor();
+
 		const static Matrix4x4 matViewport =
 			Render::MakeViewportMatrix({ 0.f,0.f }, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
 
 		const Matrix4x4 &matVPVp = vp.matView_ * vp.matProjection_ * matViewport;
 
-		const Vector2 &pos2D = Render::WorldToScreen(colliderPos, matVPVp).ToVec2();
-
-		if ((reticlePos_ - pos2D).Length() <= lineRadius_) {
+		const Vector3 &screenPos = Render::WorldToScreen(colliderPos, matVPVp);
+		if (screenPos.z > 1.f) {
+			continue;
+		}
+		if ((reticlePos_ - screenPos.ToVec2()).Length() <= lineRadius_) {
 			hitCollider_ = collider;
 			return;
 		}

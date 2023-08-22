@@ -35,6 +35,8 @@ public:
 	void AddPlayerBullet(PlayerBullet *newBullet);
 	void AddEnemy(Enemy *newEnemy);
 
+	void PopEnemy();
+
 private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;

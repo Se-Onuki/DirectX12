@@ -14,6 +14,7 @@
 
 #include <assert.h>
 #include <numbers>
+#include <random>
 
 
 
@@ -163,6 +164,18 @@ Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m) {
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
 		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
 		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] };
+}
+
+float GetRandom(const float min, const float max) {
+	static std::mt19937 gen;
+	static bool init;
+	if (!init) {
+		std::random_device rd;
+		gen.seed(rd());
+		init = true;
+	}
+	std::uniform_real_distribution<float> dist(min, max);
+	return dist(gen);
 }
 
 float Angle::Digree::ToRadian() {

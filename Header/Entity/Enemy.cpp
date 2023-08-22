@@ -21,3 +21,10 @@ void Enemy::Init() {
 		}
 	);
 }
+
+void Enemy::OnCollision(Object *const other) {
+	other;
+	if (--hp_ <= 0) {
+		SetActive(false);
+	}
+}

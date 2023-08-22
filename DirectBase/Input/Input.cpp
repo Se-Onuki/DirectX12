@@ -50,7 +50,7 @@ void VirtualPad::operator<<(const _XINPUT_GAMEPAD &xInput) {
 
 void XInput::Update() {
 
-	std::memcpy(&gamePad_[0], &gamePad_[1], sizeof(VirtualPad));
+	std::memcpy(&gamePad_[1], &gamePad_[0], sizeof(VirtualPad));
 
 	XINPUT_STATE state{};
 	XInputGetState(

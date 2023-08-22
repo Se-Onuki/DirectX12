@@ -132,7 +132,7 @@ public:
 
 	const Vector3 &GetWorldPos();
 
-	void OnCollision(Object *const other);
+	virtual void OnCollision(Object *const other);
 
 	void ImGuiWidget();
 

@@ -128,7 +128,7 @@ void PlayerComp::DrawUI() const {
 }
 
 void PlayerComp::Attack() {
-	if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
+	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {
 		if (coolTime_ == 0u) {
 
 			AddCoolTime(fireCoolTime_);
@@ -162,6 +162,10 @@ void PlayerComp::Jump() {
 		if (rigidbody->GetIsGround()) {
 			rigidbody->AddAcceleration(Vector3::up() * jumpStrength_);
 		}
+		else {
+			rigidbody->SetVelocity(Vector3::zero());
+			rigidbody->AddAcceleration((Vector3{ 0.f,-0.2f,3.f }*Matrix4x4::EulerRotate(Matrix4x4::Yaw, object_->transform_.rotate.y)) * jumpStrength_ * 2.f);
+		}
 	}
 }
 
@@ -191,8 +195,8 @@ void PlayerComp::UpdateUI() {
 
 	box_->Update();*/
 
-	if (vPad->stickR_.Length() <= 0.1f) {
-		sightCentor_ = Lerp(sightCentor_, target_, 0.8f);
+	if (vPad->stickR_.Length() <= 0.2f) {
+		sightCentor_ = Lerp(sightCentor_, target_, 0.65f);
 	}
 
 	// レティクルの線分からオイラー角を生成
@@ -215,9 +219,12 @@ void PlayerComp::UpdateUI() {
 	auto *const hitCollider = targeting_->GetHitCollider();
 	if (hitCollider) {
 		target_ = hitCollider->GetWorldCentor();
+		reticle_->SetColor(Vector4{ 1.f,0.f,0.f,1.f });
 	}
 	else {
 		target_ = sightCentor_;
+		reticle_->SetColor(Vector4{ 0.f,0.f,0.f,1.f });
+
 	}
 
 #pragma endregion

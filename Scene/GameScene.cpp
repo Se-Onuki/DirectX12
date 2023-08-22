@@ -82,11 +82,7 @@ void GameScene::OnEnter() {
 	playerComp->SetGameScene(this);
 	playerComp->SetFollowCamera(followCamera_.get());
 
-	Enemy *const enemy = new Enemy;
-	enemy->Init();
-	enemy->transform_.translate = { 10.f,5.f,6.f };
-	AddEnemy(enemy);
-
+	PopEnemy();
 
 	ground_.reset(new Ground);
 	ground_->Init();
@@ -116,6 +112,10 @@ void GameScene::Update() {
 		}
 	);
 
+	if (enemyList_.size() < 2) {
+		PopEnemy();
+	}
+
 #pragma region AddCollisionManager
 	collisionManager_->clear();
 
@@ -134,7 +134,6 @@ void GameScene::Update() {
 	collisionManager_->ChackAllCollision();
 
 #pragma endregion
-
 
 	followCamera_->Update();
 
@@ -230,4 +229,13 @@ void GameScene::AddPlayerBullet(PlayerBullet *newBullet) {
 void GameScene::AddEnemy(Enemy *newEnemy) {
 	enemyList_.emplace_back(newEnemy);
 	enemyList_.back()->transform_.InitResource();
+}
+
+void GameScene::PopEnemy() {
+
+	Enemy *const enemy = new Enemy;
+	enemy->Init();
+	enemy->transform_.translate = { GetRandom(-100.f,100.f),GetRandom(1.f,10.f),GetRandom(-100.f,100.f) };
+
+	AddEnemy(enemy);
 }

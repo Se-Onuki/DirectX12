@@ -1,4 +1,5 @@
 #include "Object.h"
+#include "Component/ModelComp.h"
 
 
 void Object::Init() {
@@ -11,10 +12,14 @@ void Object::Reset() {
 }
 
 void Object::Update() {
+	auto *const modelComp = GetComponent<ModelComp>();
 	for (auto &component : componentMap_) {
-		component.second->Update();
+		if (modelComp != component.second.get())
+			component.second->Update();
 	}
 	transform_.UpdateMatrix();
+	if (modelComp)
+		modelComp->Update();
 }
 void Object::Draw(const ViewProjection &vp) const {
 	for (auto &component : componentMap_) {
