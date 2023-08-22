@@ -57,7 +57,9 @@ void PlayerComp::Update() {
 #pragma region 頭の回転
 
 	float &headRotateY = modelComp_->GetModel("head")->first.rotate.y;
-	headRotateY = viewProjection_->rotation_.y - object_->transform_.rotate.y;
+	const float headEnd = Angle::Mod(viewProjection_->rotation_.y - object_->transform_.rotate.y);
+
+	headRotateY = Angle::Mod(Angle::Lerp(headRotateY, headEnd, 0.2f));
 	ImGui::SliderAngle("headRotate", &headRotateY);
 
 #pragma endregion
@@ -75,7 +77,7 @@ void PlayerComp::Attack() {
 	if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
 		if (coolTime_ == 0u) {
 
-			AddCoolTime(shotCoolTime_);
+			AddCoolTime(fireCoolTime_);
 			// 弾のベクトルの生成
 			Vector3 velocity = Vector3::front();
 			velocity = velocity.Nomalize() * bulletSpeed_;
@@ -87,11 +89,24 @@ void PlayerComp::Attack() {
 			newBullet->Init();
 			auto *const bulletComp = newBullet->GetComponent<PlayerBulletComp>();
 			bulletComp->SetVelocity(velocity);
-			bulletComp->SetPosition(object_->GetWorldPos());
+			const Matrix4x4 &cameraRotY = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, viewProjection_->rotation_.y);
+			bulletComp->SetPosition(nozzle_ * cameraRotY + object_->GetWorldPos());
 
 			// 弾の追加
 			gameScene_->AddPlayerBullet(newBullet);
 		}
+	}
+}
+
+void PlayerComp::ImGuiWidget() {
+	if (ImGui::TreeNode("PlayerComp")) {
+
+		ImGui::DragInt("fireCoolTime", &fireCoolTime_, 1.f, 0, 100);
+		ImGui::DragFloat3("nozzle", &nozzle_.x);
+		ImGui::DragFloat("bulletSpeed", &bulletSpeed_);
+
+
+		ImGui::TreePop();
 	}
 }
 

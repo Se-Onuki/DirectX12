@@ -174,15 +174,10 @@ float Angle::Radian::ToDigree() {
 }
 
 float Angle::Lerp(const float start, const float end, const float t) {
-	float diff = end - start;
-	// 360度に補完する
-	diff = std::fmodf(diff, PI2);
+	const float diff = end - start;
 
-	// 180度に補完する
-	if (diff > PI) diff -= PI2;	// +180以上は-360する
-	else if (diff < -PI) diff += PI2; // -180以下は+360する
 
-	return start + diff * t;
+	return start + Mod(diff) * t;
 }
 
 float Angle::Mod(float radian) {
