@@ -163,13 +163,21 @@ void PlayerComp::Jump() {
 			rigidbody->AddAcceleration(Vector3::up() * jumpStrength_);
 		}
 		else {
+			sightScale_ -= scaleSub_;
 			rigidbody->SetVelocity(Vector3::zero());
-			rigidbody->AddAcceleration((Vector3{ 0.f,-0.2f,3.f }*Matrix4x4::EulerRotate(Matrix4x4::Yaw, object_->transform_.rotate.y)) * jumpStrength_ * 2.f);
+			rigidbody->AddAcceleration((Vector3{ 0.f,-0.2f,5.f }*Matrix4x4::EulerRotate(Matrix4x4::Yaw, object_->transform_.rotate.y)) * jumpStrength_ * 2.f);
 		}
 	}
 }
 
 void PlayerComp::UpdateUI() {
+
+	sightScale_ += scaleHeal_;
+	sightScale_ = std::clamp(sightScale_, minSightScale_, maxSightScale_);
+
+	sight_->SetScale(Vector2{ 2.f,2.f } *GetSightRadius());
+	targeting_->SetRadius(GetSightRadius());
+
 	Vector3 sightPos = sight_->GetTransform().translate;
 
 	const VirtualPad *const vPad = input_->GetXInput()->GetState();
@@ -196,7 +204,7 @@ void PlayerComp::UpdateUI() {
 	box_->Update();*/
 
 	if (vPad->stickR_.Length() <= 0.2f) {
-		sightCentor_ = Lerp(sightCentor_, target_, 0.65f);
+		sightCentor_ = Lerp(sightCentor_, target_, 0.55f);
 	}
 
 	// レティクルの線分からオイラー角を生成
@@ -224,14 +232,11 @@ void PlayerComp::UpdateUI() {
 	else {
 		target_ = sightCentor_;
 		reticle_->SetColor(Vector4{ 0.f,0.f,0.f,1.f });
-
 	}
 
 #pragma endregion
 
-	//if (hitCollider) {
 	reticle_->SetPosition(Render::WorldToScreen(target_, matVPVp).ToVec2());
-	//}
 
 #pragma endregion
 

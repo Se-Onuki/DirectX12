@@ -32,7 +32,7 @@ void Targeting::Update(const ViewProjection &vp) {
 		if (screenPos.z > 1.f) {
 			continue;
 		}
-		if ((reticlePos_ - screenPos.ToVec2()).Length() <= lineRadius_) {
+		if ((reticlePos_ - screenPos.ToVec2()).Length() <= radius_) {
 			hitCollider_ = collider;
 			return;
 		}

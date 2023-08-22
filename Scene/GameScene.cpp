@@ -135,7 +135,7 @@ void GameScene::Update() {
 
 #pragma endregion
 
-	followCamera_->Update();
+	//followCamera_->Update();
 
 #pragma region Target
 
@@ -235,7 +235,7 @@ void GameScene::PopEnemy() {
 
 	Enemy *const enemy = new Enemy;
 	enemy->Init();
-	enemy->transform_.translate = { GetRandom(-100.f,100.f),GetRandom(1.f,10.f),GetRandom(-100.f,100.f) };
+	enemy->transform_.translate = { GetRandom(-100.f,100.f),GetRandom(1.f,50.f),GetRandom(-100.f,100.f) };
 
 	AddEnemy(enemy);
 }

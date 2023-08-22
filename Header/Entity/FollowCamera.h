@@ -9,6 +9,7 @@ class Input;
 class FollowCamera {
 	ViewProjection viewProjection_;
 	const Transform *target_ = nullptr;
+	Vector3 interTarget_{};
 	Vector3 rotate_ = {};
 	Vector2 cameraRotSpeed_ = Vector2{ 1.f,3.f } *Angle::Dig2Rad;
 
@@ -22,6 +23,7 @@ public:
 	~FollowCamera() = default;
 
 	void Init();
+	void Reset();
 	void Update();
 	inline void SetTarget(const Transform *const target) { target_ = target; }
 

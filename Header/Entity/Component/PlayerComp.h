@@ -36,6 +36,8 @@ public:
 
 	void SetFollowCamera(FollowCamera *const fCamera) { followCamera_ = fCamera; }
 
+	float GetSightRadius() const { return defaultSightRadius_ * sightScale_; }
+
 private:
 
 	void Attack();
@@ -66,6 +68,15 @@ private:
 
 	// 追尾レティクル
 	std::unique_ptr<Sprite> reticle_ = nullptr;
+
+	float defaultSightRadius_ = 150.f;
+
+	float maxSightScale_ = 1.f;
+	float sightScale_ = 1.f;
+	float minSightScale_ = 0.3f;
+
+	float scaleSub_ = 0.2f;
+	float scaleHeal_ = 0.001f;
 
 private:
 

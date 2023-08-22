@@ -3,10 +3,17 @@
 #include "../Math/Transform.h"
 
 #include "../../externals/imgui/imgui.h"
+#include "../Math/Lerp.h"
 
 void FollowCamera::Init() {
 	viewProjection_.Init();
 	input_ = Input::GetInstance();
+}
+
+void FollowCamera::Reset() {
+	if (target_) {
+		interTarget_ = target_->translate;
+	}
 }
 
 void FollowCamera::Update() {
@@ -18,6 +25,9 @@ void FollowCamera::Update() {
 		//	rotate_.y += vPad->stickR_.x * cameraRotSpeed_.y; // 横方向
 		//	rotate_.x += -vPad->stickR_.y * cameraRotSpeed_.x;	// 縦方向
 		//}
+		
+		interTarget_ = Lerp(interTarget_, target_->translate, 0.2f);
+		
 		// 埋まりこみ対策
 		if (rotate_.x < minRotate_) { rotate_.x = minRotate_; }
 
@@ -27,7 +37,7 @@ void FollowCamera::Update() {
 
 		viewProjection_.rotation_ = rotate_;
 
-		viewProjection_.translation_ = target_->translate + offset;
+		viewProjection_.translation_ = interTarget_ + offset;
 	}
 	viewProjection_.UpdateMatrix();
 }
