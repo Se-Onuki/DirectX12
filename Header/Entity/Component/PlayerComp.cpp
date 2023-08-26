@@ -182,7 +182,7 @@ void PlayerComp::UpdateUI() {
 
 	const VirtualPad *const vPad = input_->GetXInput()->GetState();
 	if (vPad->stickR_.Length() > 0.1f) {
-		sightPos += Vector3{ vPad->stickR_.x,-vPad->stickR_.y, 0.f } *sightSpeed_;
+		sightPos += Vector3{ vPad->stickR_.x * sightSpeed_.x,-vPad->stickR_.y * sightSpeed_.y, 0.f };
 	}
 	sightPos.x = std::clamp<float>(sightPos.x, 0.f, WinApp::kWindowWidth);
 	sightPos.y = std::clamp<float>(sightPos.y, 0.f, WinApp::kWindowHeight);
@@ -223,6 +223,8 @@ void PlayerComp::UpdateUI() {
 
 	sightPos = Render::WorldToScreen(sightCentor_, matVPVp);
 
+	sightPos.x = Lerp<float>(sightPos.x, WinApp::kWindowWidth / 2.f, 0.05f);
+
 	sight_->SetPosition(sightPos.ToVec2());
 
 #pragma region TargetPosition
@@ -258,7 +260,7 @@ void PlayerComp::ImGuiWidget() {
 		ImGui::DragFloat("friction", &friction_);
 		ImGui::DragFloat("jumpStrength", &jumpStrength_);
 
-		ImGui::DragFloat("sightSpeed", &sightSpeed_);
+		ImGui::DragFloat2("sightSpeed", &sightSpeed_.x);
 		ImGui::DragFloat("cameraRotateSpeed", &cameraRotateSpeed_, 0.01f, 0.f, 1.f);
 
 
