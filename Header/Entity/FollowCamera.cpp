@@ -17,6 +17,7 @@ void FollowCamera::Reset() {
 }
 
 void FollowCamera::Update() {
+	rotate_.y = Angle::Mod(rotate_.y);
 	if (target_) {
 		//const VirtualPad *const vPad = input_->GetXInput()->GetState();
 		Vector3 offset;
@@ -25,9 +26,9 @@ void FollowCamera::Update() {
 		//	rotate_.y += vPad->stickR_.x * cameraRotSpeed_.y; // 横方向
 		//	rotate_.x += -vPad->stickR_.y * cameraRotSpeed_.x;	// 縦方向
 		//}
-		
+
 		interTarget_ = Lerp(interTarget_, target_->translate, 0.2f);
-		
+
 		// 埋まりこみ対策
 		if (rotate_.x < minRotate_) { rotate_.x = minRotate_; }
 

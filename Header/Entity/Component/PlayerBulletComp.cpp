@@ -17,7 +17,7 @@ void PlayerBulletComp::Init() {
 
 	ModelComp *const modelComp = object_->AddComponent<ModelComp>();
 	Model *const bulletModel = ModelManager::GetInstance()->GetModel("sphere");
-	modelComp->SetModel({ { "body", { Transform{.scale{0.5f,0.5f,1.5f}},bulletModel } } });
+	modelComp->SetModel({ { "body", { Transform{.scale{0.5f,0.5f,5.f}},bulletModel } } });
 }
 
 void PlayerBulletComp::Update() {

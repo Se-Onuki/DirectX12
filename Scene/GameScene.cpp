@@ -149,6 +149,7 @@ void GameScene::Update() {
 
 #pragma endregion
 
+	followCamera_->Update();
 
 	player_->ImGuiWidget();
 	player_->Update();

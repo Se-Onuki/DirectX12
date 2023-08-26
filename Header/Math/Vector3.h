@@ -130,8 +130,13 @@ struct Vector3 {
 
 	Vector3 Direction2Euler() const {
 		Vector3 out{};
-		out.y = std::atan2(x, z);
-		out.x = std::atan2(-y, std::sqrt(std::powf(x, 2) + std::powf(z, 2)));
+		if (x == 0 && z == 0) { out.y = 0; }
+		else { out.y = std::atan2(x, z); }
+
+		if (y == 0) {
+			out.x = 0;
+		}
+		else { out.x = std::atan2(-y, std::sqrt(std::powf(x, 2) + std::powf(z, 2))); }
 
 		return out;
 	}

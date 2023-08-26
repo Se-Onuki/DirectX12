@@ -74,7 +74,7 @@ void PlayerComp::Update() {
 		rigidbody->AddAcceleration(move); // 移動量を追加
 
 		const float moveRotate = rigidbody->GetVelocity().Direction2Euler().y;
-		object_->transform_.rotate.y = Angle::Lerp(object_->transform_.rotate.y, moveRotate, 0.15f);
+		object_->transform_.rotate.y = Angle::Mod(Angle::Lerp(object_->transform_.rotate.y, moveRotate, 0.15f));
 	}
 
 	object_->transform_.ImGuiWidget();
@@ -208,14 +208,18 @@ void PlayerComp::UpdateUI() {
 	}
 
 	// レティクルの線分からオイラー角を生成
-	const Vector3 &segmentRotate = Vector3{ segment.second - segment.first }.Direction2Euler();
+	Vector3 segmentDiff = Vector3{ segment.second - segment.first }.Nomalize();
+
+	const Vector3 &segmentRotate = segmentDiff.Direction2Euler();
+	Vector3 rot = Angle::Lerp(followCamera_->GetRotate(), segmentRotate, cameraRotateSpeed_);
+	ImGui::DragFloat3("setRot", &rot.x);
 	// オイラー角の線形補間
-	followCamera_->SetRotate(Angle::Lerp(followCamera_->GetRotate(), segmentRotate, cameraRotateSpeed_));
-	followCamera_->Update();
+	followCamera_->SetRotate(rot);
+	// followCamera_->Update();
 
 #pragma region 3D->2D
 
-	matVPVp = viewProjection_->matView_ * viewProjection_->matProjection_ * matViewport;
+	// matVPVp = viewProjection_->matView_ * viewProjection_->matProjection_ * matViewport;
 
 	sightPos = Render::WorldToScreen(sightCentor_, matVPVp);
 
