@@ -94,7 +94,7 @@ void PlayerComp::Update() {
 #pragma region 頭の回転
 
 	float &headRotateY = modelComp_->GetBone("head")->transform_.rotate.y;
-	const float headEnd = Angle::Mod(viewProjection_->rotation_.y - object_->transform_.rotate.y);
+	const float headEnd = Angle::Mod(viewProjection_->rotation_.y - (object_->transform_.rotate.y + bodyRotateY));
 
 	headRotateY = Angle::Mod(Angle::Lerp(headRotateY, headEnd, 0.2f));
 	ImGui::SliderAngle("headRotate", &headRotateY);
