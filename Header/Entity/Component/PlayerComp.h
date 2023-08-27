@@ -96,7 +96,7 @@ private:
 
 	float jumpStrength_ = 750.f;
 
-	Vector2 sightSpeed_ = { 20.f,20.f };
+	Vector2 sightSpeed_ = { 15.f,7.5f };
 
 	float cameraRotateSpeed_ = 0.1f;
 };

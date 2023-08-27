@@ -3,11 +3,13 @@
 #include "Component/ModelComp.h"
 
 #include "../Model/ModelManager.h"
+#include "Component/HealthComp.h"
 
 void Enemy::Init() {
 	Object::Init();
 	auto *const colliderComp = AddComponent<ColliderComp>();
 	auto *const modelComp = AddComponent<ModelComp>();
+	auto *const healthComp = AddComponent<HealthComp>();
 
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Enemy));
 	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Enemy)));
@@ -20,11 +22,7 @@ void Enemy::Init() {
 			{"body",{Transform{}, enemyModel}},
 		}
 	);
-}
 
-void Enemy::OnCollision(Object *const other) {
-	other;
-	if (--hp_ <= 0) {
-		SetActive(false);
-	}
+	healthComp->SetMaxHealth(3.f);
+	healthComp->Reset();
 }

@@ -8,8 +8,5 @@ public:
 
 	void Init() override;
 
-	void OnCollision(Object *const other) override;
 private:
-
-	uint32_t hp_ = 3u;
 };
