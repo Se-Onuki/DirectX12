@@ -31,3 +31,22 @@ void ModelComp::SetTransformParent() {
 		}
 	}
 }
+
+void ModelComp::ModelTree::Init() {
+	transform_.InitResource();
+}
+
+void ModelComp::ModelTree::AddChild(Model *const model) {
+	ModelTree *const modelTree = new ModelTree;
+	modelTree->Init();
+
+	modelTree->model_ = model;
+	modelTree->SetParent(this);
+
+	children_.emplace_back(modelTree);
+}
+
+void ModelComp::ModelTree::SetParent(ModelTree *parent) {
+	parent_ = parent;
+	transform_.parent_ = &parent->transform_;
+}

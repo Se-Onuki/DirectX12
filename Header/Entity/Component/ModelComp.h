@@ -8,6 +8,18 @@
 
 class ModelComp : public IComponent {
 public:
+	struct ModelTree {
+		Transform transform_;
+		Model *model_;
+
+		ModelTree *parent_ = nullptr;
+		std::list<std::unique_ptr<ModelTree>> children_;
+
+		void Init();
+		void AddChild(Model *const model);
+		void SetParent(ModelTree *parent);
+	};
+
 	using ModelPair = std::pair<Transform, Model *>;
 	using ModelMap = std::unordered_map<std::string, ModelPair>;
 	// 親のコンストラクタを使う
@@ -37,5 +49,8 @@ private:
 	void SetTransformParent();
 
 	ModelMap modelMap_;
+
+	std::list<ModelTree> modelTree_;
+	std::unordered_map<std::string, ModelTree *> modelKey_;
 
 };
