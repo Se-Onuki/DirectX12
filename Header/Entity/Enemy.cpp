@@ -4,26 +4,12 @@
 
 #include "../Model/ModelManager.h"
 #include "Component/HealthComp.h"
+#include "Component/BossComp.h"
 
 void Enemy::Init() {
 	Object::Init();
-	auto *const colliderComp = AddComponent<ColliderComp>();
-	auto *const modelComp = AddComponent<ModelComp>();
-	auto *const healthComp = AddComponent<HealthComp>();
-
-	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Enemy));
-	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Enemy)));
-	colliderComp->SetRadius(3.f);
-	//colliderComp->SetCentor(Vector3::up() * 3.f);
-
-	Model *const enemyModel = ModelManager::GetInstance()->GetModel("sphere");
-	modelComp->AddBone("body", enemyModel);
-	/*	SetModel(
-			{
-				{"body",{Transform{}, enemyModel}},
-			}
-	);*/
-
-	healthComp->SetMaxHealth(3.f);
-	healthComp->Reset();
+	AddComponent<ColliderComp>();
+	AddComponent<ModelComp>();
+	AddComponent<HealthComp>();
+	AddComponent<BossComp>();
 }

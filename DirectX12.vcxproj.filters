@@ -240,6 +240,9 @@
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\BossComp.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -417,6 +420,9 @@
       <Filter>Header\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\HealthComp.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\BossComp.h">
       <Filter>Header\Entity\Component</Filter>
     </ClInclude>
   </ItemGroup>

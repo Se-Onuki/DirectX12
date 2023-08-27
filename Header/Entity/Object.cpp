@@ -8,7 +8,9 @@ void Object::Init() {
 }
 
 void Object::Reset() {
-
+	for (auto &component : componentMap_) {
+		component.second->Reset();
+	}
 }
 
 void Object::Update() {

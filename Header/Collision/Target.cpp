@@ -36,10 +36,5 @@ void Targeting::Update(const ViewProjection &vp) {
 			hitCollider_ = collider;
 			return;
 		}
-		/*const Vector3 &closestPoint = mouseSegment_.ClosestPoint(colliderPos);
-		if ((closestPoint - colliderPos).Length() <= collider->GetRadius() + lineRadius_) {
-			hitCollider_ = collider;
-			return;
-		}*/
 	}
 }

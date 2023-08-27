@@ -59,7 +59,6 @@ void GameScene::OnEnter() {
 		modelComp->AddBone("leg", playerLeg, waistBone, {});
 		auto *const bodyBone = modelComp->AddBone("body", playerBody, waistBone, Transform{ .translate{ 0.f,0.85f,0.f } });
 		modelComp->AddBone("head", playerHead, bodyBone, Transform{ .translate{ 0.f,0.85f,0.f } });
-		
 	}
 
 	followCamera_.reset(new FollowCamera);
