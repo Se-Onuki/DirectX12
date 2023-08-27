@@ -49,19 +49,23 @@ void GameScene::OnEnter() {
 	ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
 	ModelManager::GetInstance()->AddModel("ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
 
-	std::unordered_map<std::string, std::pair<Transform, Model *>> playerModel{
-		{ "waist",  {Transform{}, playerWaist}},
-		{ "leg",  {Transform{}, playerLeg}},
-		{ "body",  {Transform{}, playerBody}},
-		{ "head",  {Transform{}, playerHead}},
-	};
+	//std::unordered_map<std::string, std::pair<Transform, Model *>> playerModel{
+	//	{ "waist",  {Transform{}, playerWaist}},
+	//	{ "leg",  {Transform{}, playerLeg}},
+	//	{ "body",  {Transform{}, playerBody}},
+	//	{ "head",  {Transform{}, playerHead}},
+	//};
 
 
 	player_.reset(new Player);
 	player_->Init();
 	ModelComp *const modelComp = player_->GetComponent<ModelComp>();
 	if (modelComp) {
-		modelComp->SetModel(playerModel);
+		auto *const waistBone = modelComp->AddBone("waist", playerWaist, Transform{ .translate{ 0.f,0.6f,0.f } });
+		modelComp->AddBone("leg", playerLeg, waistBone, {});
+		modelComp->AddBone("body", playerBody, waistBone, Transform{ .translate{ 0.f,0.85f,0.f } });
+		modelComp->AddBone("head", playerHead, waistBone, Transform{ .translate{ 0.f,1.7f,0.f } });
+		/*modelComp->SetModel(playerModel);
 
 		modelComp->GetModel("leg")->first.parent_ = &modelComp->GetModel("waist")->first;
 		modelComp->GetModel("body")->first.parent_ = &modelComp->GetModel("waist")->first;
@@ -69,7 +73,7 @@ void GameScene::OnEnter() {
 
 		modelComp->GetModel("waist")->first.translate = Vector3{ 0.f,0.6f,0.f };
 		modelComp->GetModel("body")->first.translate = Vector3{ 0.f,0.85f,0.f };
-		modelComp->GetModel("head")->first.translate = Vector3{ 0.f,1.7f,0.f };
+		modelComp->GetModel("head")->first.translate = Vector3{ 0.f,1.7f,0.f };*/
 
 	}
 

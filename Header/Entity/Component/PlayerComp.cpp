@@ -83,7 +83,7 @@ void PlayerComp::Update() {
 
 #pragma region 体の回転
 
-	float &bodyRotateY = modelComp_->GetModel("body")->first.rotate.y;
+	float &bodyRotateY = modelComp_->GetBone("body")->transform_.rotate.y;
 	const float bodyDiff = viewProjection_->rotation_.y - object_->transform_.rotate.y;
 	const float bodyEnd = Angle::Lerp(0.f, bodyDiff, 0.5f);
 	bodyRotateY = Angle::Lerp(Angle::Mod(bodyRotateY), bodyEnd, 0.1f);
@@ -93,7 +93,7 @@ void PlayerComp::Update() {
 
 #pragma region 頭の回転
 
-	float &headRotateY = modelComp_->GetModel("head")->first.rotate.y;
+	float &headRotateY = modelComp_->GetBone("head")->transform_.rotate.y;
 	const float headEnd = Angle::Mod(viewProjection_->rotation_.y - object_->transform_.rotate.y);
 
 	headRotateY = Angle::Mod(Angle::Lerp(headRotateY, headEnd, 0.2f));

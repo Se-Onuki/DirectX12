@@ -17,11 +17,12 @@ void Enemy::Init() {
 	//colliderComp->SetCentor(Vector3::up() * 3.f);
 
 	Model *const enemyModel = ModelManager::GetInstance()->GetModel("sphere");
-	modelComp->SetModel(
-		{
-			{"body",{Transform{}, enemyModel}},
-		}
-	);
+	modelComp->AddBone("body", enemyModel);
+	/*	SetModel(
+			{
+				{"body",{Transform{}, enemyModel}},
+			}
+	);*/
 
 	healthComp->SetMaxHealth(3.f);
 	healthComp->Reset();
