@@ -19,6 +19,8 @@ class ColliderComp : public IComponent {
 
 protected:
 
+
+
 	Vector3 centor_{};
 	float radius_ = 0.5f;
 

@@ -224,10 +224,6 @@ void PlayerComp::UpdateUI() {
 #pragma endregion
 
 	sightCentor_ = segment.second;
-	/*box_->transform_.translate = sightCentor_;
-	box_->transform_.CalcMatrix();
-
-	box_->Update();*/
 
 	if (vPad->stickR_.Length() <= 0.2f) {
 		sightCentor_ = Lerp(sightCentor_, target_, 0.55f);
