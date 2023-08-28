@@ -6,6 +6,8 @@
 #include "../Header/Timer/Timer.h"
 //#include "Scene.hpp"
 
+class SceneManager;
+
 class IScene {
 public:
 	IScene() = default;
@@ -16,6 +18,8 @@ public:
 
 	virtual void Update() = 0;	// 更新処理
 	virtual void Draw() = 0;	// 描画処理
+
+	static SceneManager *sceneManager_;
 };
 
 
@@ -35,6 +39,8 @@ private:
 	~SceneManager() = default;
 
 public:
+
+	void Init();
 
 
 	/// @brief インスタンスの取得

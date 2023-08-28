@@ -32,8 +32,9 @@
 #include "DirectBase/Base/ImGuiManager.h"
 
 #include "Scene/SceneManager.h"
-#include "Scene/GameScene.h"
+#include "Scene/TitleScene.h"
 #include "DirectBase/Input/Input.h"
+#include "DirectBase/Base/Audio.h"
 
 #include "Header/File/GlobalVariables.h"
 
@@ -82,7 +83,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
-	sceneManager->ChangeScene(new GameScene);
+	sceneManager->Init();
+	sceneManager->ChangeScene(new TitleScene);
 
 
 	// ウィンドウのxボタンが押されるまでループ

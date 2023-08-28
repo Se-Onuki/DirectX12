@@ -3,6 +3,7 @@
 #include "../externals/imgui/imgui.h"
 #include "../DirectBase/Base/DirectXCommon.h"
 #include "../DirectBase/Input/Input.h"
+#include "../DirectBase/Base/Audio.h"
 
 #include "TitleScene.h"
 
@@ -156,6 +157,9 @@ void GameScene::Update() {
 	followCamera_->ImGuiWidget();
 
 	viewProjection_.TransferMatrix();
+	if (input_->GetDirectInput()->IsTrigger(DIK_T)) {
+		sceneManager_->ChangeScene(new TitleScene);
+	}
 }
 
 void GameScene::Draw()

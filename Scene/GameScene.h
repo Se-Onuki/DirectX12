@@ -3,7 +3,6 @@
 #include "../DirectBase/3D/ViewProjection/ViewProjection.h"
 #include "../DirectBase/3D/DirectionLight.h"
 #include "../DirectBase/2D/Sprite.h"
-#include "../DirectBase/Base/Audio.h"
 
 #include "../Header/Entity/Object.h"
 
@@ -16,7 +15,9 @@ class CollisionManager;
 
 class FollowCamera;
 class Ground;
+
 class Input;
+class Audio;
 
 class Targeting;
 

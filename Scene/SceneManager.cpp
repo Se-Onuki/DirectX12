@@ -1,5 +1,12 @@
 #include "SceneManager.h"
 
+SceneManager *IScene::sceneManager_ = nullptr;
+
+
+void SceneManager::Init() {
+	IScene::sceneManager_ = this;
+}
+
 void SceneManager::ChangeScene(IScene *const nextScene) {
 	if (currentScene_) {
 		// 遷移前のシーンの退室処理

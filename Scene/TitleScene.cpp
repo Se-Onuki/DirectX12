@@ -6,12 +6,15 @@
 #include "../DirectBase/2D/Sprite.h"
 #include "../Header/Model/Model.h"
 
-TitleScene::TitleScene()
-{
+#include "../DirectBase/Input/Input.h"
+#include "../DirectBase/Base/Audio.h"
+
+TitleScene::TitleScene() {
+	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 }
 
-TitleScene::~TitleScene()
-{
+TitleScene::~TitleScene() {
 }
 
 void TitleScene::OnEnter()
@@ -25,8 +28,7 @@ void TitleScene::OnEnter()
 	light_.reset(DirectionLight::Create());
 }
 
-void TitleScene::OnExit()
-{
+void TitleScene::OnExit() {
 }
 
 void TitleScene::Update()
@@ -34,10 +36,10 @@ void TitleScene::Update()
 
 	ImGui::Begin("SceneChanger");
 	if (ImGui::Button("Reload : Delay 30Flame")) {
-		SceneManager::GetInstance()->ChangeScene(new TitleScene, 30);
+		sceneManager_->ChangeScene(new TitleScene, 30);
 	}
 	if (ImGui::Button("GameScene : Delay 60Flame")) {
-		SceneManager::GetInstance()->ChangeScene(new GameScene, 60);
+		sceneManager_->ChangeScene(new GameScene, 60);
 	}
 	ImGui::End();
 
