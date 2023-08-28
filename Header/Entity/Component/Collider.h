@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <list>
 
-enum class CollisionFilter {
+enum class CollisionFilter : uint32_t {
 	Player = 0b00001,
 	Enemy = 0b00010,
 	Item = 0b00100,
@@ -55,8 +55,6 @@ public:
 	void AddVariable(const char *const groupName) override { groupName; }
 
 };
-
-
 
 class CollisionManager {
 	std::list<ColliderComp *> colliderList_;
