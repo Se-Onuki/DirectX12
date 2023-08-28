@@ -4,7 +4,7 @@
 void Ground::Init() {
 	model_ = ModelManager::GetInstance()->GetModel("ground");
 	transform_.InitResource();
-	transform_.scale *= 500.f;
+	SetStageRadius(stageRadius_);
 }
 
 void Ground::Update() {
@@ -13,4 +13,9 @@ void Ground::Update() {
 
 void Ground::Draw(const ViewProjection &Vp) const {
 	model_->Draw(transform_, Vp);
+}
+
+void Ground::SetStageRadius(const float value) {
+	stageRadius_ = value;
+	transform_.scale = Vector3::one() * value;
 }

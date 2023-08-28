@@ -43,6 +43,14 @@ public:
 	Vector3 GetWorldCentor() const;
 	void SetCentor(const Vector3 &centor) { centor_ = centor; }
 
+	/// @brief jsonからの読み込み
+	/// @param groupName グループ名
+	void ApplyVariables(const char *const groupName) override { groupName; }
+
+	/// @brief jsonへの紐づけ
+	/// @param groupName グループ名
+	void AddVariable(const char *const groupName) override { groupName; }
+
 };
 
 

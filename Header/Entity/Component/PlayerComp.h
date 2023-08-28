@@ -22,8 +22,8 @@ public:
 	void Init() override;
 	void Update() override;
 
-	void ApplyVariables(const char *const groupName);
-	void AddVariable(const char *const groupName);
+	void ApplyVariables(const char *const groupName) override;
+	void AddVariable(const char *const groupName) override;
 
 	void DrawUI() const;
 

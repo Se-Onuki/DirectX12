@@ -53,6 +53,15 @@ public:
 	/// @param vp ViewProjectionクラス
 	virtual void Draw(const ViewProjection &) const {};
 
+	/// @brief jsonからの読み込み
+	/// @param groupName グループ名
+	virtual void ApplyVariables(const char *const groupName) { groupName; }
+
+	/// @brief jsonへの紐づけ
+	/// @param groupName グループ名
+	virtual void AddVariable(const char *const groupName) { groupName; }
+
+
 	/// @brief ImGuiで表示する内容
 	virtual void ImGuiWidget() {};
 
