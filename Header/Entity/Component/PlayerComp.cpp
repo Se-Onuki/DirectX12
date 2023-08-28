@@ -26,7 +26,7 @@ const std::string PlayerComp::groupName = "Player";
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
 	targeting_ = Targeting::GetInstance();
-	ApplyClobalVariables();
+	ApplyGlobalVariables();
 
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
@@ -118,7 +118,7 @@ void PlayerComp::Update() {
 }
 
 
-void PlayerComp::ApplyClobalVariables() {
+void PlayerComp::ApplyGlobalVariables() {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
 	fireCoolTime_ << gVariable->Get(groupName, "fireCoolTime");

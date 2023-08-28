@@ -22,7 +22,7 @@ public:
 	void Init() override;
 	void Update() override;
 
-	void ApplyClobalVariables();
+	void ApplyGlobalVariables();
 	void AddValue();
 
 	void DrawUI() const;
