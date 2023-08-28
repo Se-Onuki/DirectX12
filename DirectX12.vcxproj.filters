@@ -434,6 +434,9 @@
     <ClInclude Include="Header\File\GlobalVariables.h">
       <Filter>Engine\File</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Math\FloatArray.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

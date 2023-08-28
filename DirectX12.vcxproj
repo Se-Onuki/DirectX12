@@ -193,6 +193,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Player.h" />
     <ClInclude Include="Header\Entity\PlayerBullet.h" />
     <ClInclude Include="Header\File\GlobalVariables.h" />
+    <ClInclude Include="Header\Math\FloatArray.h" />
     <ClInclude Include="Header\Math\Lerp.h" />
     <ClInclude Include="Header\Math\Math.hpp" />
     <ClInclude Include="Header\Math\Matrix2x2.h" />

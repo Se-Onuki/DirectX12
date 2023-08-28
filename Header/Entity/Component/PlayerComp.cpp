@@ -21,12 +21,12 @@
 #include <algorithm>
 #include "../../File/GlobalVariables.h"
 
-const std::string PlayerComp::groupName = "Player";
+const char *const PlayerComp::groupName_ = "Player";
 
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
 	targeting_ = Targeting::GetInstance();
-	ApplyGlobalVariables();
+	ApplyVariables(groupName_);
 
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
@@ -54,7 +54,7 @@ void PlayerComp::Init() {
 	reticle_->SetPivot({ 0.5f,0.5f });
 	reticle_->SetPosition(windowCentor);
 
-	AddValue();
+	AddVariable(groupName_);
 }
 
 void PlayerComp::Update() {
@@ -118,7 +118,7 @@ void PlayerComp::Update() {
 }
 
 
-void PlayerComp::ApplyGlobalVariables() {
+void PlayerComp::ApplyVariables(const char *const groupName) {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
 	fireCoolTime_ << gVariable->Get(groupName, "fireCoolTime");
@@ -133,7 +133,7 @@ void PlayerComp::ApplyGlobalVariables() {
 	cameraRotateSpeed_ << gVariable->Get(groupName, "cameraRotateSpeed");
 }
 
-void PlayerComp::AddValue() {
+void PlayerComp::AddVariable(const char *const groupName) {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
 	gVariable->AddValue(groupName, "fireCoolTime", fireCoolTime_);

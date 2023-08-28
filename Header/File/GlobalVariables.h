@@ -17,8 +17,9 @@ class GlobalVariables {
 	const std::string kDirectoryPath = "Resources/GlobalVariables/";
 
 public:
+	/// @brief 保存できる型
 	using Item = std::variant<int32_t, float, Vector2, Vector3, Vector4>;
-
+	/// @brief 1つのグループに保存する連想記憶コンテナ
 	using Group = std::unordered_map<std::string, Item>;
 
 	static GlobalVariables *const GetInstance() {
@@ -28,8 +29,17 @@ public:
 
 	void CreateGroups(const std::string &groupName) { datas_[groupName]; }
 
+	/// @brief Item自体のゲッタ
+	/// @param groupName グループ名
+	/// @param key 紐づけられたキー
+	/// @return 紐づけられたItem
 	const Item &Get(const std::string &groupName, const std::string &key) const;
 
+	/// @brief 変換付きゲッタ
+	/// @tparam T 変換先の型
+	/// @param groupName グループ名
+	/// @param key 紐づけられたキー
+	/// @return 型変換した値
 	template<typename T>
 	T Get(const std::string &groupName, const std::string &key) const;
 	/*template<typename T>
@@ -51,6 +61,11 @@ public:
 private:
 	std::unordered_map<std::string, Group> datas_;
 };
+
+/// @brief Itemから型変換を行って代入
+/// @tparam T 代入する型
+/// @param value 代入先の変数
+/// @param item 保存されたItem
 template<typename T>
 void operator<< (T &value, const GlobalVariables::Item &item) {
 

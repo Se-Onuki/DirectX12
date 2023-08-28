@@ -22,8 +22,8 @@ public:
 	void Init() override;
 	void Update() override;
 
-	void ApplyGlobalVariables();
-	void AddValue();
+	void ApplyVariables(const char *const groupName);
+	void AddVariable(const char *const groupName);
 
 	void DrawUI() const;
 
@@ -88,7 +88,7 @@ private:
 
 private:
 
-	static const std::string groupName;
+	static const char *const groupName_;
 
 	int32_t fireCoolTime_ = 10u;
 
