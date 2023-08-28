@@ -23,8 +23,8 @@ void CollisionManager::CheckCollisionPair(ColliderComp *const A, ColliderComp *c
 		return;
 	}
 
-	const Vector3 aPos = A->GetWorldCentor();
-	const Vector3 bPos = B->GetWorldCentor();
+	const Vector3 aPos = A->GetGlobalCentor();
+	const Vector3 bPos = B->GetGlobalCentor();
 
 	if ((aPos - bPos).Length() <= A->GetRadius() + B->GetRadius()) {
 		Object *const aObject = A->object_;
@@ -35,7 +35,7 @@ void CollisionManager::CheckCollisionPair(ColliderComp *const A, ColliderComp *c
 	}
 }
 
-Vector3 ColliderComp::GetWorldCentor() const {
+Vector3 ColliderComp::GetGlobalCentor() const {
 	object_->transform_.CalcMatrix();
 	return centor_ * object_->transform_.matWorld_;
 }

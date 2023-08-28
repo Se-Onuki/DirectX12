@@ -40,7 +40,7 @@ public:
 	void SetRadius(const float &rad) { radius_ = rad; }
 
 	const Vector3 &GetCentor() const { return centor_; }
-	Vector3 GetWorldCentor() const;
+	Vector3 GetGlobalCentor() const;
 	void SetCentor(const Vector3 &centor) { centor_ = centor; }
 
 	/// @brief jsonからの読み込み

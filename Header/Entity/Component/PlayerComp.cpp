@@ -258,7 +258,7 @@ void PlayerComp::UpdateUI() {
 	targeting_->SetPosition(sightPos.ToVec2());
 	auto *const hitCollider = targeting_->GetHitCollider();
 	if (hitCollider) {
-		target_ = hitCollider->GetWorldCentor();
+		target_ = hitCollider->GetGlobalCentor();
 		reticle_->SetColor(Vector4{ 1.f,0.f,0.f,1.f });
 	}
 	else {
