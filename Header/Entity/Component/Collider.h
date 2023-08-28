@@ -5,11 +5,14 @@
 #include <list>
 
 enum class CollisionFilter {
-	Player = 0b00001, Enemy = 0b00010
+	Player = 0b00001,
+	Enemy = 0b00010,
+	Item = 0b00100,
+	Ground = 0b01000,
 };
 
 class ColliderComp : public IComponent {
-	// 衝突属性(自分)
+	// 衝突属性(自分自身が持つ属性)
 	uint32_t collisionAttribute_ = 0xFFFFFFFF;
 	// 衝突マスク(相手)
 	uint32_t collisionMask_ = 0xFFFFFFFF;
