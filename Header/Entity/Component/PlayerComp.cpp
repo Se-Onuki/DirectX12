@@ -19,10 +19,14 @@
 
 #include "../../Math/Lerp.h"
 #include <algorithm>
+#include "../../File/GlobalVariables.h"
+
+const std::string PlayerComp::groupName = "Player";
 
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
 	targeting_ = Targeting::GetInstance();
+	ApplyClobalVariables();
 
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
@@ -50,11 +54,7 @@ void PlayerComp::Init() {
 	reticle_->SetPivot({ 0.5f,0.5f });
 	reticle_->SetPosition(windowCentor);
 
-	//box_.reset(new Object);
-	//box_->Init();
-
-	//Model *const sphere = ModelManager::GetInstance()->GetModel("sphere");
-	//box_->AddComponent<ModelComp>()->SetModel({ {"body",{Transform{}, sphere}} });
+	AddValue();
 }
 
 void PlayerComp::Update() {
@@ -117,9 +117,35 @@ void PlayerComp::Update() {
 	rigidbody->SetVelocity({ velocity.x * friction_, velocity.y, velocity.z * friction_ });
 }
 
-void PlayerComp::Draw(const ViewProjection &vp) const {
-	vp;
-	//box_->Draw(vp);
+
+void PlayerComp::ApplyClobalVariables() {
+	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+
+	fireCoolTime_ = gVariable->Get<int32_t>(groupName, "fireCoolTime");
+	nozzle_ = gVariable->Get<Vector3>(groupName, "nozzle");
+	bulletSpeed_ = gVariable->Get<float>(groupName, "bulletSpeed");
+
+	moveSpeed_ = gVariable->Get<float>(groupName, "moveSpeed");
+	friction_ = gVariable->Get<float>(groupName, "friction");
+	jumpStrength_ = gVariable->Get<float>(groupName, "jumpStrength");
+
+	sightSpeed_ = gVariable->Get<Vector2>(groupName, "sightSpeed");
+	cameraRotateSpeed_ = gVariable->Get<float>(groupName, "cameraRotateSpeed");
+}
+
+void PlayerComp::AddValue() {
+	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+
+	gVariable->AddValue(groupName, "fireCoolTime", fireCoolTime_);
+	gVariable->AddValue(groupName, "nozzle", nozzle_);
+	gVariable->AddValue(groupName, "bulletSpeed", bulletSpeed_);
+
+	gVariable->AddValue(groupName, "moveSpeed", moveSpeed_);
+	gVariable->AddValue(groupName, "friction", friction_);
+	gVariable->AddValue(groupName, "jumpStrength", jumpStrength_);
+
+	gVariable->AddValue(groupName, "sightSpeed", sightSpeed_);
+	gVariable->AddValue(groupName, "cameraRotateSpeed", cameraRotateSpeed_);
 }
 
 void PlayerComp::DrawUI() const {

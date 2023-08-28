@@ -21,7 +21,9 @@ public:
 
 	void Init() override;
 	void Update() override;
-	void Draw(const ViewProjection &vp) const override;
+
+	void ApplyClobalVariables();
+	void AddValue();
 
 	void DrawUI() const;
 
@@ -85,6 +87,8 @@ private:
 	int32_t jumpLimter_ = 0u;
 
 private:
+
+	static const std::string groupName;
 
 	int32_t fireCoolTime_ = 10u;
 

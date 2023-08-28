@@ -35,6 +35,8 @@
 #include "Scene/GameScene.h"
 #include "DirectBase/Input/Input.h"
 
+#include "Header/File/GlobalVariables.h"
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
@@ -75,6 +77,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+	gVariable->LoadFile();
+
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->ChangeScene(new GameScene);
@@ -96,6 +101,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 
 
+
+		gVariable->Update();
 		// ゲームの処理
 		sceneManager->Update();
 

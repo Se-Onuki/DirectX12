@@ -1,0 +1,19 @@
+{
+    "Player": {
+        "bulletSpeed": 1.5,
+        "cameraRotateSpeed": 0.10000000149011612,
+        "fireCoolTime": 10,
+        "friction": 0.949999988079071,
+        "jumpStrength": 750.0,
+        "moveSpeed": 75.0,
+        "nozzle": [
+            0.75,
+            2.0,
+            0.0
+        ],
+        "sightSpeed": [
+            15.0,
+            7.5
+        ]
+    }
+}

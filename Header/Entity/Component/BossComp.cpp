@@ -18,6 +18,6 @@ void BossComp::Init() {
 	Model *const enemyModel = ModelManager::GetInstance()->GetModel("sphere");
 	modelComp->AddBone("body", enemyModel, Transform{ .translate{0.f,3.f,0.f} });
 
-	healthComp->SetMaxHealth(3.f);
+	healthComp->SetMaxHealth(100.f);
 	healthComp->Reset();
 }

@@ -132,6 +132,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Object.cpp" />
     <ClCompile Include="Header\Entity\Player.cpp" />
     <ClCompile Include="Header\Entity\PlayerBullet.cpp" />
+    <ClCompile Include="Header\File\GlobalVariables.cpp" />
     <ClCompile Include="Header\Math\Lerp.cpp" />
     <ClCompile Include="Header\Math\Math.cpp" />
     <ClCompile Include="Header\Math\Matrix2x2.cpp" />
@@ -191,6 +192,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\FollowCamera.h" />
     <ClInclude Include="Header\Entity\Player.h" />
     <ClInclude Include="Header\Entity\PlayerBullet.h" />
+    <ClInclude Include="Header\File\GlobalVariables.h" />
     <ClInclude Include="Header\Math\Lerp.h" />
     <ClInclude Include="Header\Math\Math.hpp" />
     <ClInclude Include="Header\Math\Matrix2x2.h" />

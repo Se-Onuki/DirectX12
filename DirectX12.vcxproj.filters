@@ -79,6 +79,9 @@
     <Filter Include="Header\Collision">
       <UniqueIdentifier>{2d432e2a-c249-44f0-95d4-ec01c6a7bc70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\File">
+      <UniqueIdentifier>{a57a9446-25a3-40cb-9a13-fcf1624ed26c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -242,6 +245,9 @@
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\BossComp.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\File\GlobalVariables.cpp">
+      <Filter>Engine\File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -424,6 +430,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\BossComp.h">
       <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\File\GlobalVariables.h">
+      <Filter>Engine\File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
