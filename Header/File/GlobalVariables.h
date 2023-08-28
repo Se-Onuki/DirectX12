@@ -28,22 +28,10 @@ public:
 
 	void CreateGroups(const std::string &groupName) { datas_[groupName]; }
 
-	template<typename T> T Get(const std::string &groupName, const std::string &key) const {
-		// グループ内を検索
-		auto itGroup = datas_.find(groupName);
-		assert(itGroup != datas_.end());
+	const Item &Get(const std::string &groupName, const std::string &key) const;
 
-		// キーがあるか
-		auto itItem = itGroup->second.find(key);
-		assert(itItem != itGroup->second.end());
-
-		// 型が正しいか
-		if (std::holds_alternative<T>(itItem->second)) {
-			return std::get<T>(itItem->second);
-		}
-		assert(0 && "存在しない型を取得しようとしました。");
-		return T{};
-	}
+	template<typename T>
+	T Get(const std::string &groupName, const std::string &key) const;
 	/*template<typename T>
 	void AddValue(const std::string& groupName, const std::string& key, const T value);*/
 
@@ -63,6 +51,35 @@ public:
 private:
 	std::unordered_map<std::string, Group> datas_;
 };
+template<typename T>
+void operator<< (T &value, const GlobalVariables::Item &item) {
+
+	// 型が正しいか
+	if (std::holds_alternative<T>(item)) {
+		value = std::get<T>(item);
+		return;
+	}
+	assert(0 && "存在しない型を取得しようとしました。");
+	value = T{};
+}
+
+template<typename T>
+inline T GlobalVariables::Get(const std::string &groupName, const std::string &key) const {
+	// グループ内を検索
+	auto itGroup = datas_.find(groupName);
+	assert(itGroup != datas_.end());
+
+	// キーがあるか
+	auto itItem = itGroup->second.find(key);
+	assert(itItem != itGroup->second.end());
+
+	// 型が正しいか
+	if (std::holds_alternative<T>(itItem->second)) {
+		return std::get<T>(itItem->second);
+	}
+	assert(0 && "存在しない型を取得しようとしました。");
+	return T{};
+}
 
 template<typename T>
 void GlobalVariables::AddValue(

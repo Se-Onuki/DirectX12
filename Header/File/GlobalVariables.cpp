@@ -7,6 +7,18 @@
 
 #include "../../DirectBase/Base/WinApp.h"
 
+const GlobalVariables::Item &GlobalVariables::Get(const std::string &groupName, const std::string &key) const {
+	// グループ内を検索
+	auto itGroup = datas_.find(groupName);
+	assert(itGroup != datas_.end());
+
+	// キーがあるか
+	auto itItem = itGroup->second.find(key);
+	assert(itItem != itGroup->second.end());
+
+	return itItem->second;
+}
+
 void GlobalVariables::Update() {
 	if (!ImGui::Begin("GlobalVariables", nullptr, ImGuiWindowFlags_MenuBar)) {
 		ImGui::End();

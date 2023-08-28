@@ -121,16 +121,16 @@ void PlayerComp::Update() {
 void PlayerComp::ApplyClobalVariables() {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
-	fireCoolTime_ = gVariable->Get<int32_t>(groupName, "fireCoolTime");
-	nozzle_ = gVariable->Get<Vector3>(groupName, "nozzle");
-	bulletSpeed_ = gVariable->Get<float>(groupName, "bulletSpeed");
+	fireCoolTime_ << gVariable->Get(groupName, "fireCoolTime");
+	nozzle_ << gVariable->Get(groupName, "nozzle");
+	bulletSpeed_ << gVariable->Get(groupName, "bulletSpeed");
 
-	moveSpeed_ = gVariable->Get<float>(groupName, "moveSpeed");
-	friction_ = gVariable->Get<float>(groupName, "friction");
-	jumpStrength_ = gVariable->Get<float>(groupName, "jumpStrength");
+	moveSpeed_ << gVariable->Get(groupName, "moveSpeed");
+	friction_ << gVariable->Get(groupName, "friction");
+	jumpStrength_ << gVariable->Get(groupName, "jumpStrength");
 
-	sightSpeed_ = gVariable->Get<Vector2>(groupName, "sightSpeed");
-	cameraRotateSpeed_ = gVariable->Get<float>(groupName, "cameraRotateSpeed");
+	sightSpeed_ << gVariable->Get(groupName, "sightSpeed");
+	cameraRotateSpeed_ << gVariable->Get(groupName, "cameraRotateSpeed");
 }
 
 void PlayerComp::AddValue() {
