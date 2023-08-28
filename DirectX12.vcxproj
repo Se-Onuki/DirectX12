@@ -156,6 +156,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectBase\2D\Sprite.h" />
     <ClInclude Include="DirectBase\3D\DirectionLight.h" />
     <ClInclude Include="DirectBase\3D\ViewProjection\ViewProjection.h" />
+    <ClInclude Include="DirectBase\Base\CBuffer.h" />
     <ClInclude Include="DirectBase\Base\DirectXCommon.h" />
     <ClInclude Include="DirectBase\Base\ImGuiManager.h" />
     <ClInclude Include="DirectBase\Base\LeakChecker.h" />

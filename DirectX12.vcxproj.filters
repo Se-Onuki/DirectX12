@@ -437,6 +437,9 @@
     <ClInclude Include="Header\Math\FloatArray.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
+    <ClInclude Include="DirectBase\Base\CBuffer.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
