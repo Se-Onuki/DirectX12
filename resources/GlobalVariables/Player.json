@@ -1,10 +1,14 @@
 {
     "Player": {
         "bulletSpeed": 1.5,
-        "cameraRotateSpeed": 0.1,
+        "cameraRotateSpeed": 0.10000000149011612,
+        "colliderRadius": 2.0,
+        "defaultSightRadius": 150.0,
         "fireCoolTime": 10,
-        "friction": 0.95,
+        "friction": 0.949999988079071,
         "jumpStrength": 750.0,
+        "maxSightScale": 1.0,
+        "minSightScale": 0.30000001192092896,
         "moveSpeed": 75.0,
         "nozzle": [
             0.75,
