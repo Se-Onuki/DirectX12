@@ -12,7 +12,6 @@ const char *const BossComp::groupName_ = "Boss";
 void BossComp::Init() {
 	ApplyVariables(groupName_);
 
-
 	auto *const colliderComp = object_->AddComponent<ColliderComp>();
 	auto *const modelComp = object_->AddComponent<ModelComp>();
 	auto *const healthComp = object_->AddComponent<HealthComp>();

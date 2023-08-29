@@ -7,6 +7,7 @@
 //#include "Scene.hpp"
 
 class SceneManager;
+class Object;
 
 class IScene {
 public:
@@ -20,6 +21,10 @@ public:
 	virtual void Draw() = 0;	// 描画処理
 
 	static SceneManager *sceneManager_;
+
+	/// 今後実装
+	// void AddObject(Object*const object);
+	// std::list<std::unique_ptr<Object>> objectList_;
 };
 
 

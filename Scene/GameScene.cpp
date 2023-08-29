@@ -158,7 +158,7 @@ void GameScene::Update() {
 
 	viewProjection_.TransferMatrix();
 	if (input_->GetDirectInput()->IsTrigger(DIK_T)) {
-		sceneManager_->ChangeScene(new TitleScene);
+		EndGame();
 	}
 }
 
@@ -234,5 +234,5 @@ void GameScene::PopEnemy() {
 }
 
 void GameScene::EndGame() {
-
+	sceneManager_->ChangeScene(new TitleScene, 60);
 }
