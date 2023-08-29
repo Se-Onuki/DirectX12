@@ -1,6 +1,8 @@
 #include "Ground.h"
 #include "../Model/ModelManager.h"
 
+float Ground::stageRadius_ = 200.f;
+
 void Ground::Init() {
 	model_ = ModelManager::GetInstance()->GetModel("ground");
 	transform_.InitResource();

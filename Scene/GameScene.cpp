@@ -41,13 +41,9 @@ void GameScene::OnEnter() {
 
 	auto *const modelManager = ModelManager::GetInstance();
 
-	//Model *const playerLeg =
 	modelManager->AddModel("playerLeg", Model::LoadObjFile("Model/gunTank/", "playerLeg.obj"));
-	//Model *const playerWaist =
 	modelManager->AddModel("playerWaist", Model::LoadObjFile("Model/gunTank/", "playerWaist.obj"));
-	//Model *const playerBody =
 	modelManager->AddModel("playerBody", Model::LoadObjFile("Model/gunTank/", "playerBody.obj"));
-	//Model *const playerHead =
 	modelManager->AddModel("playerHead", Model::LoadObjFile("Model/gunTank/", "playerHead.obj"));
 
 	ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
@@ -132,6 +128,9 @@ void GameScene::Update() {
 	for (auto &enemy : enemyList_) {
 		enemy->Update();
 	}
+
+	// ground_->Update();
+
 	if (followCamera_) {
 		viewProjection_.matView_ = followCamera_->GetViewMatrix();
 		viewProjection_.matProjection_ = followCamera_->GetProjectionMatrix();
@@ -244,7 +243,6 @@ void GameScene::PopEnemy() {
 
 	Enemy *const enemy = new Enemy;
 	enemy->Init();
-	// enemy->transform_.translate = { GetRandom(-100.f,100.f),GetRandom(1.f,50.f),GetRandom(-100.f,100.f) };
 
 	AddEnemy(enemy);
 }

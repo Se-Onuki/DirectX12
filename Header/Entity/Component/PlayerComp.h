@@ -90,6 +90,8 @@ private:
 
 	static const char *const groupName_;
 
+	VariantItem<float> colliderRadius_{ "colliderRadius", 2.f };
+
 	VariantItem<float> defaultSightRadius_{ "defaultSightRadius", 150.f };
 
 	VariantItem<int32_t> fireCoolTime_{ "fireCoolTime", 10 };

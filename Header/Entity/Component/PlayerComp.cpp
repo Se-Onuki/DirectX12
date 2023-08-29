@@ -6,6 +6,8 @@
 #include "ModelComp.h"
 #include "../PlayerBullet.h"
 
+#include "../../Object/Ground.h"
+
 #include "../../../DirectBase/2D/Sprite.h"
 
 #include "../../../Scene/GameScene.h"
@@ -32,8 +34,8 @@ void PlayerComp::Init() {
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
 	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Player)));
-	colliderComp->SetRadius(2.f);
-	colliderComp->SetCentor({ 0.f,2.f,0.f });
+	colliderComp->SetRadius(colliderRadius_);
+	colliderComp->SetCentor(Vector3{ 0.f,colliderRadius_,0.f });
 
 	modelComp_ = object_->AddComponent<ModelComp>();
 	rigidbody_ = object_->AddComponent<Rigidbody>();
@@ -77,6 +79,9 @@ void PlayerComp::Update() {
 		const float moveRotate = rigidbody_->GetVelocity().Direction2Euler().y;
 		object_->transform_.rotate.y = Angle::Mod(Angle::Lerp(object_->transform_.rotate.y, moveRotate, 0.15f));
 	}
+	const float stageRad = Ground::GetStageRadius() - colliderRadius_;
+	object_->transform_.translate.x = std::clamp(object_->transform_.translate.x, -stageRad, stageRad);
+	object_->transform_.translate.z = std::clamp(object_->transform_.translate.z, -stageRad, stageRad);
 
 	object_->transform_.ImGuiWidget();
 
@@ -138,6 +143,8 @@ void PlayerComp::ApplyVariables(const char *const groupName) {
 
 	group >> maxSightScale_;
 	group >> minSightScale_;
+
+	group >> colliderRadius_;
 }
 
 void PlayerComp::AddVariable(const char *const groupName) const {
@@ -158,6 +165,8 @@ void PlayerComp::AddVariable(const char *const groupName) const {
 
 	gVariable->AddValue(groupName, maxSightScale_);
 	gVariable->AddValue(groupName, minSightScale_);
+
+	gVariable->AddValue(groupName, colliderRadius_);
 }
 
 void PlayerComp::DrawUI() const {

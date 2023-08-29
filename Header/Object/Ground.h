@@ -8,7 +8,7 @@ class Ground {
 	Model *model_ = nullptr;
 	Transform transform_;
 
-	float stageRadius_ = 200.f;
+	static float stageRadius_;
 
 public:
 	Ground() = default;
@@ -20,5 +20,5 @@ public:
 	void Draw(const ViewProjection &Vp) const;
 
 	void SetStageRadius(const float value);
-	float GetStageRadius() const { return stageRadius_; }
+	static float GetStageRadius() { return stageRadius_; }
 };
