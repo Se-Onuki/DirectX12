@@ -20,6 +20,7 @@
 #include "../../Math/Lerp.h"
 #include <algorithm>
 #include "../../File/GlobalVariables.h"
+#include "../../../DirectBase/Base/SoLib.h"
 
 const char *const PlayerComp::groupName_ = "Player";
 
@@ -121,31 +122,36 @@ void PlayerComp::Update() {
 void PlayerComp::ApplyVariables(const char *const groupName) {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
-	gVariable->Get(groupName, "fireCoolTime") >> fireCoolTime_;
-	gVariable->Get(groupName, "nozzle") >> nozzle_;
-	gVariable->Get(groupName, "bulletSpeed") >> bulletSpeed_;
+	auto &group = gVariable->GetGroup(groupName);
+	group >> fireCoolTime_;
+	group >> nozzle_;
+	group >> bulletSpeed_;
 
-	gVariable->Get(groupName, "moveSpeed") >> moveSpeed_;
-	gVariable->Get(groupName, "friction") >> friction_;
-	gVariable->Get(groupName, "jumpStrength") >> jumpStrength_;
+	group >> moveSpeed_;
+	group >> friction_;
+	group >> jumpStrength_;
 
-	gVariable->Get(groupName, "sightSpeed") >> sightSpeed_;
-	gVariable->Get(groupName, "cameraRotateSpeed") >> cameraRotateSpeed_;
+	group >> sightSpeed_;
+	group >> cameraRotateSpeed_;
+
+	group >> defaultSightRadius_;
 }
 
-void PlayerComp::AddVariable(const char *const groupName) {
+void PlayerComp::AddVariable(const char *const groupName) const {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
-	gVariable->AddValue(groupName, "fireCoolTime", fireCoolTime_);
-	gVariable->AddValue(groupName, "nozzle", nozzle_);
-	gVariable->AddValue(groupName, "bulletSpeed", bulletSpeed_);
+	gVariable->AddValue(groupName, fireCoolTime_);
+	gVariable->AddValue(groupName, nozzle_);
+	gVariable->AddValue(groupName, bulletSpeed_);
 
-	gVariable->AddValue(groupName, "moveSpeed", moveSpeed_);
-	gVariable->AddValue(groupName, "friction", friction_);
-	gVariable->AddValue(groupName, "jumpStrength", jumpStrength_);
+	gVariable->AddValue(groupName, moveSpeed_);
+	gVariable->AddValue(groupName, friction_);
+	gVariable->AddValue(groupName, jumpStrength_);
 
-	gVariable->AddValue(groupName, "sightSpeed", sightSpeed_);
-	gVariable->AddValue(groupName, "cameraRotateSpeed", cameraRotateSpeed_);
+	gVariable->AddValue(groupName, sightSpeed_);
+	gVariable->AddValue(groupName, cameraRotateSpeed_);
+
+	gVariable->AddValue(groupName, defaultSightRadius_);
 }
 
 void PlayerComp::DrawUI() const {
@@ -160,7 +166,7 @@ void PlayerComp::Attack() {
 			AddCoolTime(fireCoolTime_);
 			// カメラの回転行列
 			const Matrix4x4 &cameraRotY = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, viewProjection_->rotation_.y);
-			const Vector3 &spawnPos = nozzle_ * cameraRotY + object_->GetWorldPos();
+			const Vector3 &spawnPos = nozzle_.GetItem() * cameraRotY + object_->GetWorldPos();
 
 			// 弾のベクトルの生成
 			Vector3 velocity = target_ - spawnPos;
@@ -208,7 +214,7 @@ void PlayerComp::UpdateUI() {
 
 	const VirtualPad *const vPad = input_->GetXInput()->GetState();
 	if (vPad->stickR_.Length() > 0.1f) {
-		sightPos += Vector3{ vPad->stickR_.x * sightSpeed_.x,-vPad->stickR_.y * sightSpeed_.y, 0.f };
+		sightPos += Vector3{ vPad->stickR_.x * sightSpeed_->x,-vPad->stickR_.y * sightSpeed_->y, 0.f };
 	}
 	sightPos.x = std::clamp<float>(sightPos.x, 0.f, WinApp::kWindowWidth);
 	sightPos.y = std::clamp<float>(sightPos.y, 0.f, WinApp::kWindowHeight);
@@ -274,16 +280,18 @@ void PlayerComp::UpdateUI() {
 void PlayerComp::ImGuiWidget() {
 	if (ImGui::TreeNode("PlayerComp")) {
 
-		ImGui::DragInt("fireCoolTime", &fireCoolTime_, 1.f, 0, 100);
-		ImGui::DragFloat3("nozzle", &nozzle_.x);
-		ImGui::DragFloat("bulletSpeed", &bulletSpeed_);
+		SoLib::ImGuiWidget(&fireCoolTime_);
+		SoLib::ImGuiWidget(&nozzle_);
+		SoLib::ImGuiWidget(&bulletSpeed_);
 
-		ImGui::DragFloat("moveSpeed", &moveSpeed_);
-		ImGui::DragFloat("friction", &friction_);
-		ImGui::DragFloat("jumpStrength", &jumpStrength_);
+		SoLib::ImGuiWidget(&moveSpeed_);
+		SoLib::ImGuiWidget(&friction_);
+		SoLib::ImGuiWidget(&jumpStrength_);
 
-		ImGui::DragFloat2("sightSpeed", &sightSpeed_.x);
-		ImGui::DragFloat("cameraRotateSpeed", &cameraRotateSpeed_, 0.01f, 0.f, 1.f);
+		SoLib::ImGuiWidget(&sightSpeed_);
+		SoLib::ImGuiWidget(&cameraRotateSpeed_);
+
+		SoLib::ImGuiWidget(&defaultSightRadius_);
 
 
 		ImGui::TreePop();

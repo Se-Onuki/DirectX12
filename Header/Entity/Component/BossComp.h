@@ -18,14 +18,13 @@ public:
 
 	/// @brief jsonへの紐づけ
 	/// @param groupName グループ名
-	virtual void AddVariable(const char *const groupName) override;
+	virtual void AddVariable(const char *const groupName) const override;
 
 
 private:
 
 	static const char *const groupName_;
 
-	VariantItem<float> vHealth_{ "health" ,4.f };
 	VariantItem<float> vMaxHealth_{ "maxHealth",100.f };
 
 };

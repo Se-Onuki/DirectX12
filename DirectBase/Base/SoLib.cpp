@@ -11,6 +11,10 @@ void SoLib::ImGuiWidget(const char *const label, float *const value) {
 	ImGui::DragFloat(label, value, 0.1f, 0.f, 100.f);
 }
 
+void SoLib::ImGuiWidget(const char *const label, double *const value) {
+	ImGui::InputDouble(label, value, 0.1f, 1.f);
+}
+
 void SoLib::ImGuiWidget(const char *const label, Vector2 *const value) {
 	ImGui::DragFloat2(label, &value->x, 0.1f, 0.f, 100.f);
 }

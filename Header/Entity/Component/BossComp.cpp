@@ -5,6 +5,7 @@
 #include "../../Model/ModelManager.h"
 
 #include "../../File/GlobalVariables.h"
+#include "../../../DirectBase/Base/SoLib.h"
 
 const char *const BossComp::groupName_ = "Boss";
 
@@ -32,7 +33,7 @@ void BossComp::Init() {
 }
 
 void BossComp::Update() {
-
+	SoLib::ImGuiWidget(&vMaxHealth_);
 }
 
 void BossComp::ApplyVariables(const char *const groupName) {
@@ -41,7 +42,7 @@ void BossComp::ApplyVariables(const char *const groupName) {
 	gVariable->GetGroup(groupName) >> vMaxHealth_;
 }
 
-void BossComp::AddVariable(const char *const groupName) {
+void BossComp::AddVariable(const char *const groupName) const {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
 	gVariable->AddValue(groupName, vMaxHealth_);

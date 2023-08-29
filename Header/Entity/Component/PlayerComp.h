@@ -4,6 +4,8 @@
 #include <memory>
 #include "../../../DirectBase/2D/Sprite.h"
 
+#include "../../File/VariantItem.h"
+
 class Input;
 class ViewProjection;
 
@@ -23,7 +25,7 @@ public:
 	void Update() override;
 
 	void ApplyVariables(const char *const groupName) override;
-	void AddVariable(const char *const groupName) override;
+	void AddVariable(const char *const groupName) const override;
 
 	void DrawUI() const;
 
@@ -71,8 +73,6 @@ private:
 	// 追尾レティクル
 	std::unique_ptr<Sprite> reticle_ = nullptr;
 
-	float defaultSightRadius_ = 150.f;
-
 	float maxSightScale_ = 1.f;
 	float sightScale_ = 1.f;
 	float minSightScale_ = 0.3f;
@@ -90,17 +90,19 @@ private:
 
 	static const char *const groupName_;
 
-	int32_t fireCoolTime_ = 10u;
+	VariantItem<float> defaultSightRadius_{ "defaultSightRadius", 150.f };
 
-	Vector3 nozzle_ = { 0.75f,2.f,0.f };
+	VariantItem<int32_t> fireCoolTime_{ "fireCoolTime", 10 };
 
-	float bulletSpeed_ = 1.5f;
-	float moveSpeed_ = 75.f;
-	float friction_ = 0.95f;
+	VariantItem<Vector3> nozzle_{ "nozzle", Vector3{ 0.75f,2.f,0.f } };
 
-	float jumpStrength_ = 750.f;
+	VariantItem<float> bulletSpeed_{ "bulletSpeed", 1.5f };
+	VariantItem<float> moveSpeed_{ "moveSpeed", 75.f };
+	VariantItem<float> friction_{ "friction", 0.95f };
 
-	Vector2 sightSpeed_ = { 15.f,7.5f };
+	VariantItem<float> jumpStrength_{ "jumpStrength", 750.f };
 
-	float cameraRotateSpeed_ = 0.1f;
+	VariantItem<Vector2> sightSpeed_{ "sightSpeed",{ 15.f,7.5f } };
+
+	VariantItem<float> cameraRotateSpeed_{ "cameraRotateSpeed", 0.1f };
 };

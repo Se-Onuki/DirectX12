@@ -6,6 +6,7 @@
 #include <windows.h>
 
 #include "../../DirectBase/Base/WinApp.h"
+#include "../../DirectBase/Base/SoLib.h"
 
 const GlobalVariables::Group &GlobalVariables::GetGroup(const std::string &groupName) const {
 	// グループ内を検索
@@ -49,7 +50,10 @@ void GlobalVariables::Update() {
 
 			Item &item = itItem->second;
 
-			if (std::holds_alternative<int32_t>(item)) {
+			// どの値が入っていた場合でも、ImGuiを呼び出す
+			std::visit([&itemName](auto &x) { SoLib::ImGuiWidget(itemName.c_str(), &x); }, item);
+
+			/*if (std::holds_alternative<int32_t>(item)) {
 				int32_t *ptr = std::get_if<int32_t>(&item);
 				ImGui::SliderInt(itemName.c_str(), ptr, 0, 100);
 			}
@@ -68,7 +72,7 @@ void GlobalVariables::Update() {
 			else if (std::holds_alternative<Vector4>(item)) {
 				Vector4 *ptr = std::get_if<Vector4>(&item);
 				ImGui::SliderFloat4(itemName.c_str(), &ptr->x, -10.f, -10.f);
-			}
+			}*/
 		}
 
 		ImGui::Text("\n");

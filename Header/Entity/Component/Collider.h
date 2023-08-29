@@ -54,7 +54,7 @@ public:
 
 	/// @brief jsonへの紐づけ
 	/// @param groupName グループ名
-	void AddVariable(const char *const groupName) override { groupName; }
+	void AddVariable(const char *const groupName) const override { groupName; }
 
 };
 

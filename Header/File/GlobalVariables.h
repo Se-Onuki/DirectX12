@@ -92,12 +92,29 @@ void operator>> (const GlobalVariables::Item &item, T &value) {
 	value = T{};
 }
 
+/// @brief Itemから型変換を行って代入
+/// @tparam T 代入する型
+/// @param value 代入先の変数
+/// @param item 保存されたItem
 template<typename T>
-void operator >> (const GlobalVariables::Group &group, VariantItem<T> &value) {
+void operator>> (const GlobalVariables::Item &item, VariantItem<T> &value) {
+
+	// 型が正しいか
+	if (std::holds_alternative<T>(item)) {
+		value = std::get<T>(item);
+		return;
+	}
+	assert(0 && "存在しない型を取得しようとしました。");
+	value = T{};
+}
+
+template<typename T>
+void operator>> (const GlobalVariables::Group &group, VariantItem<T> &value) {
 
 	// キーがあるか
 	const auto &itItem = group.find(value.GetKey());
-	assert(itItem != group.end());
+	//assert(itItem != group.end());
+	if (itItem == group.end()) { return; }
 
 	// アイテムの参照
 	const auto &item = itItem->second;
@@ -111,19 +128,19 @@ void operator >> (const GlobalVariables::Group &group, VariantItem<T> &value) {
 	value = T{};
 }
 
-
-template<typename T>
-void operator << (const GlobalVariables::Group &group, VariantItem<T> &value) {
-
-	// キーがあるか
-	const auto &itItem = group.find(value.GetKey());
-	assert(itItem != group.end());
-
-	// アイテムの参照
-	const auto &item = itItem->second;
-
-	item = value.GetItem();
-}
+//
+//template<typename T>
+//void operator<< (const GlobalVariables::Group &group, VariantItem<T> &value) {
+//
+//	// キーがあるか
+//	const auto &itItem = group.find(value.GetKey());
+//	assert(itItem != group.end());
+//
+//	// アイテムの参照
+//	auto &item = itItem->second;
+//
+//	item = value.GetItem();
+//}
 
 template<typename T>
 inline T GlobalVariables::Get(const std::string &groupName, const std::string &key) const {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../../DirectBase/Base/SoLib.h"
-
 #include <string>
 
 template <typename T>
@@ -9,17 +7,17 @@ class VariantItem final {
 	VariantItem() = delete;
 public:
 	VariantItem(const std::string &key, const T &item = {}) : key_(key), item_(item) {}
-	inline VariantItem &operator=(const T &item);
 	~VariantItem() = default;
 
-	//inline operator T();
-
 	inline operator const T &() const;
+	inline VariantItem &operator=(const T &item);
+
+	inline T *const operator->() { return &item_; }
 
 	const std::string &GetKey() const { return key_; }
+	T &GetItem() { return item_; }
 	const T &GetItem() const { return item_; }
 
-	void ImGuiWidget() { SoLib::ImGuiWidget(key_.c_str(), &item_); }
 
 private:
 	const std::string key_;

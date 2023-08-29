@@ -59,7 +59,7 @@ public:
 
 	/// @brief jsonへの紐づけ
 	/// @param groupName グループ名
-	virtual void AddVariable(const char *const groupName) { groupName; }
+	virtual void AddVariable(const char *const groupName) const { groupName; }
 
 
 	/// @brief ImGuiで表示する内容
