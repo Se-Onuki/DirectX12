@@ -36,6 +36,8 @@ public:
 	void AddPlayerBullet(PlayerBullet *newBullet);
 	void AddEnemy(Enemy *newEnemy);
 
+	void AddPlayer();
+
 	void PopEnemy();
 
 	void EndGame();

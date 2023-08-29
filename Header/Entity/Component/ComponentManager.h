@@ -2,6 +2,8 @@
 
 #include <unordered_map>
 #include <string>
+#include <type_traits>
+
 #include "../Object.h"
 
 class ComponentManager
@@ -15,6 +17,8 @@ public:
 
 	template<typename T>
 	void Register();
+
+
 
 private:
 	std::unordered_map<std::string, IComponent *(*)(Object *const object)> componentMap_;
