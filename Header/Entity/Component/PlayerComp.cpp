@@ -36,6 +36,7 @@ void PlayerComp::Init() {
 	colliderComp->SetCentor({ 0.f,2.f,0.f });
 
 	modelComp_ = object_->AddComponent<ModelComp>();
+	rigidbody_ = object_->AddComponent<Rigidbody>();
 
 	const uint32_t textHaundle = TextureManager::Load("UI/circle.png");
 
@@ -59,22 +60,21 @@ void PlayerComp::Init() {
 }
 
 void PlayerComp::Update() {
-	Rigidbody *const rigidbody = object_->GetComponent<Rigidbody>();
-	rigidbody->AddAcceleration(Vector3{ 0.f,-9.8f,0.f } *2.f);
+
+	rigidbody_->AddAcceleration(Vector3{ 0.f,-9.8f,0.f } *2.f);
 
 	Vector2 stickL = input_->GetXInput()->GetState()->stickL_;
 	Vector3 move = Vector3{ stickL.x, 0, stickL.y };
 
 	if (move.Length() > 0.1f) {
 
-		//move = move.Nomalize() * moveSpeed_; // 速度を正規化
 		move =                               // カメラ方向に向けて回転
 			move *
 			Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, viewProjection_->rotation_.y) * moveSpeed_;
 
-		rigidbody->AddAcceleration(move); // 移動量を追加
+		rigidbody_->AddAcceleration(move); // 移動量を追加
 
-		const float moveRotate = rigidbody->GetVelocity().Direction2Euler().y;
+		const float moveRotate = rigidbody_->GetVelocity().Direction2Euler().y;
 		object_->transform_.rotate.y = Angle::Mod(Angle::Lerp(object_->transform_.rotate.y, moveRotate, 0.15f));
 	}
 
@@ -114,8 +114,8 @@ void PlayerComp::Update() {
 
 	Attack();
 
-	const Vector3 &velocity = rigidbody->GetVelocity();
-	rigidbody->SetVelocity({ velocity.x * friction_, velocity.y, velocity.z * friction_ });
+	const Vector3 &velocity = rigidbody_->GetVelocity();
+	rigidbody_->SetVelocity({ velocity.x * friction_, velocity.y, velocity.z * friction_ });
 }
 
 
@@ -196,14 +196,14 @@ void PlayerComp::Attack() {
 
 void PlayerComp::Jump() {
 	if (input_->GetXInput()->IsTrigger(KeyCode::LEFT_SHOULDER)) {
-		Rigidbody *const rigidbody = object_->GetComponent<Rigidbody>();
-		if (rigidbody->GetIsGround()) {
-			rigidbody->AddAcceleration(Vector3::up() * jumpStrength_);
+
+		if (rigidbody_->GetIsGround()) {
+			rigidbody_->AddAcceleration(Vector3::up() * jumpStrength_);
 		}
 		else {
 			sightScale_ -= scaleSub_;
-			rigidbody->SetVelocity(Vector3::zero());
-			rigidbody->AddAcceleration((Vector3{ 0.f,-0.2f,5.f }*Matrix4x4::EulerRotate(Matrix4x4::Yaw, object_->transform_.rotate.y)) * jumpStrength_ * 2.f);
+			rigidbody_->SetVelocity(Vector3::zero());
+			rigidbody_->AddAcceleration((Vector3{ 0.f,-0.2f,5.f }*Matrix4x4::EulerRotate(Matrix4x4::Yaw, object_->transform_.rotate.y)) * jumpStrength_ * 2.f);
 		}
 	}
 }

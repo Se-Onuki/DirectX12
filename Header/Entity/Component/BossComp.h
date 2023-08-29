@@ -25,6 +25,6 @@ private:
 
 	static const char *const groupName_;
 
-	VariantItem<float> vMaxHealth_{ "maxHealth",100.f };
+	VariantItem<float> vMaxHealth_{ "maxHealth", 100.f };
 
 };

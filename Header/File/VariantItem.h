@@ -9,7 +9,7 @@ public:
 	VariantItem(const std::string &key, const T &item = {}) : key_(key), item_(item) {}
 	~VariantItem() = default;
 
-	inline operator const T &() const;
+	inline operator const T &() const noexcept;
 	inline VariantItem &operator=(const T &item);
 
 	inline T *const operator->() { return &item_; }
@@ -31,6 +31,6 @@ inline VariantItem<T> &VariantItem<T>::operator=(const T &item) {
 }
 
 template<typename T>
-inline VariantItem<T>::operator const T &() const {
+inline VariantItem<T>::operator const T &() const noexcept {
 	return item_;
 }

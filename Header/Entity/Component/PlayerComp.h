@@ -12,6 +12,7 @@ class ViewProjection;
 class GameScene;
 
 class ModelComp;
+class Rigidbody;
 
 class FollowCamera;
 class Targeting;
@@ -59,6 +60,7 @@ private:
 	FollowCamera *followCamera_ = nullptr;
 
 	ModelComp *modelComp_ = nullptr;
+	Rigidbody *rigidbody_ = nullptr;
 
 	Targeting *targeting_ = nullptr;
 
