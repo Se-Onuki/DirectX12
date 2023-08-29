@@ -10,6 +10,9 @@ enum class CollisionFilter : uint32_t {
 	Item = 0b00100,
 	Ground = 0b01000,
 };
+// ビット演算用
+CollisionFilter operator|(CollisionFilter A, CollisionFilter B);
+CollisionFilter operator&(CollisionFilter A, CollisionFilter B);
 
 class ColliderComp : public IComponent {
 	// 衝突属性(自分自身が持つ属性)

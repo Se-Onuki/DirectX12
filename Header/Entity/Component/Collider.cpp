@@ -39,3 +39,11 @@ Vector3 ColliderComp::GetGlobalCentor() const {
 	object_->transform_.CalcMatrix();
 	return centor_ * object_->transform_.matWorld_;
 }
+
+CollisionFilter operator|(CollisionFilter A, CollisionFilter B) {
+	return static_cast<CollisionFilter>(static_cast<uint32_t>(A) | static_cast<uint32_t>(B));
+}
+
+CollisionFilter operator&(CollisionFilter A, CollisionFilter B) {
+	return static_cast<CollisionFilter>(static_cast<uint32_t>(A) & static_cast<uint32_t>(B));
+}
