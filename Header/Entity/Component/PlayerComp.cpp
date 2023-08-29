@@ -19,7 +19,6 @@
 
 #include "../../Math/Lerp.h"
 #include <algorithm>
-
 #include "../../File/GlobalVariables.h"
 
 const char *const PlayerComp::groupName_ = "Player";
@@ -122,16 +121,16 @@ void PlayerComp::Update() {
 void PlayerComp::ApplyVariables(const char *const groupName) {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
-	fireCoolTime_ << gVariable->Get(groupName, "fireCoolTime");
-	nozzle_ << gVariable->Get(groupName, "nozzle");
-	bulletSpeed_ << gVariable->Get(groupName, "bulletSpeed");
+	gVariable->Get(groupName, "fireCoolTime") >> fireCoolTime_;
+	gVariable->Get(groupName, "nozzle") >> nozzle_;
+	gVariable->Get(groupName, "bulletSpeed") >> bulletSpeed_;
 
-	moveSpeed_ << gVariable->Get(groupName, "moveSpeed");
-	friction_ << gVariable->Get(groupName, "friction");
-	jumpStrength_ << gVariable->Get(groupName, "jumpStrength");
+	gVariable->Get(groupName, "moveSpeed") >> moveSpeed_;
+	gVariable->Get(groupName, "friction") >> friction_;
+	gVariable->Get(groupName, "jumpStrength") >> jumpStrength_;
 
-	sightSpeed_ << gVariable->Get(groupName, "sightSpeed");
-	cameraRotateSpeed_ << gVariable->Get(groupName, "cameraRotateSpeed");
+	gVariable->Get(groupName, "sightSpeed") >> sightSpeed_;
+	gVariable->Get(groupName, "cameraRotateSpeed") >> cameraRotateSpeed_;
 }
 
 void PlayerComp::AddVariable(const char *const groupName) {

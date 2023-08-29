@@ -38,11 +38,11 @@ void BossComp::Update() {
 void BossComp::ApplyVariables(const char *const groupName) {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
-	vMaxHealth_ << gVariable->Get(groupName, "maxHealth");
+	gVariable->GetGroup(groupName) >> vMaxHealth_;
 }
 
 void BossComp::AddVariable(const char *const groupName) {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
-	gVariable->AddValue(groupName, "maxHealth", vMaxHealth_);
+	gVariable->AddValue(groupName, vMaxHealth_);
 }

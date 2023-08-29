@@ -237,17 +237,20 @@
     <ClCompile Include="Header\Collision\Target.cpp">
       <Filter>Header\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Entity\Component\Projectile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Header\Entity\Component\HealthComp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Header\Entity\Component\BossComp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Header\File\GlobalVariables.cpp">
       <Filter>Engine\File</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectBase\Base\SoLib.cpp">
+      <Filter>Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\BossComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\HealthComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\Projectile.cpp">
+      <Filter>Header\Entity\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -438,6 +441,12 @@
       <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="DirectBase\Base\CBuffer.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\File\VariantItem.h">
+      <Filter>Engine\File</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectBase\Base\SoLib.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
   </ItemGroup>

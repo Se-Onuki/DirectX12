@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <variant>
 
+#include "VariantItem.h"
+
 class GlobalVariables {
 	GlobalVariables() = default;
 	GlobalVariables(const GlobalVariables &) = delete;
@@ -29,10 +31,17 @@ public:
 
 	void CreateGroups(const std::string &groupName) { datas_[groupName]; }
 
+	/// @brief Group自体のゲッタ
+	/// @param groupName グループ名
+	/// @return 紐づいた Group
+	const Group &GetGroup(const std::string &groupName) const;
+
+	Group &operator[](const std::string &groupName) { return datas_[groupName]; }
+
 	/// @brief Item自体のゲッタ
 	/// @param groupName グループ名
 	/// @param key 紐づけられたキー
-	/// @return 紐づけられたItem
+	/// @return 紐づいた Item
 	const Item &Get(const std::string &groupName, const std::string &key) const;
 
 	/// @brief 変換付きゲッタ
@@ -51,6 +60,11 @@ public:
 	template<typename T>
 	void SetValue(const std::string &groupName, const std::string &key, const T &value);
 
+	template<typename T>
+	void AddValue(const std::string &groupName, const VariantItem<T> &item);
+	template<typename T>
+	void SetValue(const std::string &groupName, const VariantItem<T> &item);
+
 	void Update();
 
 	void SaveFile(const std::string &groupName) const;
@@ -67,7 +81,7 @@ private:
 /// @param value 代入先の変数
 /// @param item 保存されたItem
 template<typename T>
-void operator<< (T &value, const GlobalVariables::Item &item) {
+void operator>> (const GlobalVariables::Item &item, T &value) {
 
 	// 型が正しいか
 	if (std::holds_alternative<T>(item)) {
@@ -79,18 +93,46 @@ void operator<< (T &value, const GlobalVariables::Item &item) {
 }
 
 template<typename T>
-inline T GlobalVariables::Get(const std::string &groupName, const std::string &key) const {
-	// グループ内を検索
-	auto itGroup = datas_.find(groupName);
-	assert(itGroup != datas_.end());
+void operator >> (const GlobalVariables::Group &group, VariantItem<T> &value) {
 
 	// キーがあるか
-	auto itItem = itGroup->second.find(key);
-	assert(itItem != itGroup->second.end());
+	const auto &itItem = group.find(value.GetKey());
+	assert(itItem != group.end());
+
+	// アイテムの参照
+	const auto &item = itItem->second;
 
 	// 型が正しいか
-	if (std::holds_alternative<T>(itItem->second)) {
-		return std::get<T>(itItem->second);
+	if (std::holds_alternative<T>(item)) {
+		value = std::get<T>(item);
+		return;
+	}
+	assert(0 && "存在しない型を取得しようとしました。");
+	value = T{};
+}
+
+
+template<typename T>
+void operator << (const GlobalVariables::Group &group, VariantItem<T> &value) {
+
+	// キーがあるか
+	const auto &itItem = group.find(value.GetKey());
+	assert(itItem != group.end());
+
+	// アイテムの参照
+	const auto &item = itItem->second;
+
+	item = value.GetItem();
+}
+
+template<typename T>
+inline T GlobalVariables::Get(const std::string &groupName, const std::string &key) const {
+
+	// アイテムの検索
+	const Item &item = Get(groupName, key);
+	// 型が正しいか
+	if (std::holds_alternative<T>(item)) {
+		return std::get<T>(item);
 	}
 	assert(0 && "存在しない型を取得しようとしました。");
 	return T{};
@@ -114,34 +156,11 @@ void GlobalVariables::SetValue(
 	group[key] = value;
 }
 
-template <typename T>
-class VariantItem final {
-	VariantItem() = delete;
-public:
-	VariantItem(const std::string &key, const T &item = {}) : key_(key), item_(item) {}
-	inline VariantItem &operator=(const T &item);
-	~VariantItem() = default;
-
-	inline operator T();
-	inline operator T() const;
-
-private:
-	const std::string key_;
-	T item_;
-};
-
 template<typename T>
-inline VariantItem<T> &VariantItem<T>::operator=(const T &item) {
-	item_ = item;
-	return *this;
+inline void GlobalVariables::AddValue(const std::string &groupName, const VariantItem<T> &item) {
+	AddValue(groupName, item.GetKey(), item.GetItem());
 }
-
 template<typename T>
-inline VariantItem<T>::operator T() {
-	return item_;
-}
-
-template<typename T>
-inline VariantItem<T>::operator T() const {
-	return item_;
+inline void GlobalVariables::SetValue(const std::string &groupName, const VariantItem<T> &item) {
+	AddValue(groupName, item.GetKey(), item.GetItem());
 }

@@ -7,14 +7,22 @@
 
 #include "../../DirectBase/Base/WinApp.h"
 
-const GlobalVariables::Item &GlobalVariables::Get(const std::string &groupName, const std::string &key) const {
+const GlobalVariables::Group &GlobalVariables::GetGroup(const std::string &groupName) const {
 	// グループ内を検索
 	const auto &itGroup = datas_.find(groupName);
 	assert(itGroup != datas_.end());
 
+	return itGroup->second;
+}
+
+const GlobalVariables::Item &GlobalVariables::Get(const std::string &groupName, const std::string &key) const {
+
+	// グループの検索
+	const auto &group = GetGroup(groupName);
+
 	// キーがあるか
-	const auto &itItem = itGroup->second.find(key);
-	assert(itItem != itGroup->second.end());
+	const auto &itItem = group.find(key);
+	assert(itItem != group.end());
 
 	return itItem->second;
 }
