@@ -7,6 +7,11 @@ void SceneManager::Init() {
 	IScene::sceneManager_ = this;
 }
 
+void SceneManager::Cancel() {
+	nextScene_.reset();
+	transitionTimer_.Init();
+}
+
 void SceneManager::ChangeScene(IScene *const nextScene) {
 	if (nextScene == nullptr) return;
 	if (currentScene_) {

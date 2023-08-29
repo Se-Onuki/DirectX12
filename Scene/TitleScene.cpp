@@ -41,6 +41,9 @@ void TitleScene::Update()
 	if (ImGui::Button("GameScene : Delay 60Flame")) {
 		sceneManager_->ChangeScene(new GameScene, 60);
 	}
+	if (ImGui::Button("Cancel")) {
+		sceneManager_->Cancel();
+	}
 	ImGui::End();
 
 

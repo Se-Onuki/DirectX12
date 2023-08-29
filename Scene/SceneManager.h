@@ -50,6 +50,8 @@ public:
 		return &instance;
 	}
 
+	void Cancel();
+
 
 	/// @brief シーン遷移
 	/// @param name 遷移先のシーン
