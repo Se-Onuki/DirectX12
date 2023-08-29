@@ -135,6 +135,9 @@ void PlayerComp::ApplyVariables(const char *const groupName) {
 	group >> cameraRotateSpeed_;
 
 	group >> defaultSightRadius_;
+
+	group >> maxSightScale_;
+	group >> minSightScale_;
 }
 
 void PlayerComp::AddVariable(const char *const groupName) const {
@@ -152,6 +155,9 @@ void PlayerComp::AddVariable(const char *const groupName) const {
 	gVariable->AddValue(groupName, cameraRotateSpeed_);
 
 	gVariable->AddValue(groupName, defaultSightRadius_);
+
+	gVariable->AddValue(groupName, maxSightScale_);
+	gVariable->AddValue(groupName, minSightScale_);
 }
 
 void PlayerComp::DrawUI() const {
@@ -205,7 +211,7 @@ void PlayerComp::Jump() {
 void PlayerComp::UpdateUI() {
 
 	sightScale_ += scaleHeal_;
-	sightScale_ = std::clamp(sightScale_, minSightScale_, maxSightScale_);
+	sightScale_ = std::clamp(sightScale_, minSightScale_.GetItem(), maxSightScale_.GetItem());
 
 	sight_->SetScale(Vector2{ 2.f,2.f } *GetSightRadius());
 	targeting_->SetRadius(GetSightRadius());
@@ -292,6 +298,9 @@ void PlayerComp::ImGuiWidget() {
 		SoLib::ImGuiWidget(&cameraRotateSpeed_);
 
 		SoLib::ImGuiWidget(&defaultSightRadius_);
+
+		SoLib::ImGuiWidget(&maxSightScale_);
+		SoLib::ImGuiWidget(&minSightScale_);
 
 
 		ImGui::TreePop();

@@ -8,6 +8,7 @@ void SceneManager::Init() {
 }
 
 void SceneManager::ChangeScene(IScene *const nextScene) {
+	if (nextScene == nullptr) return;
 	if (currentScene_) {
 		// 遷移前のシーンの退室処理
 		currentScene_->OnExit();

@@ -232,3 +232,7 @@ void GameScene::PopEnemy() {
 
 	AddEnemy(enemy);
 }
+
+void GameScene::EndGame() {
+
+}

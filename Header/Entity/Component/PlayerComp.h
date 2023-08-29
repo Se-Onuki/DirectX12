@@ -73,9 +73,7 @@ private:
 	// 追尾レティクル
 	std::unique_ptr<Sprite> reticle_ = nullptr;
 
-	float maxSightScale_ = 1.f;
 	float sightScale_ = 1.f;
-	float minSightScale_ = 0.3f;
 
 	float scaleSub_ = 0.2f;
 	float scaleHeal_ = 0.001f;
@@ -105,4 +103,7 @@ private:
 	VariantItem<Vector2> sightSpeed_{ "sightSpeed",{ 15.f,7.5f } };
 
 	VariantItem<float> cameraRotateSpeed_{ "cameraRotateSpeed", 0.1f };
+
+	VariantItem<float> maxSightScale_{ "maxSightScale", 1.f };
+	VariantItem<float> minSightScale_{ "minSightScale", 0.3f };
 };

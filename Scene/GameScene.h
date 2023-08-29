@@ -38,6 +38,8 @@ public:
 
 	void PopEnemy();
 
+	void EndGame();
+
 private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
