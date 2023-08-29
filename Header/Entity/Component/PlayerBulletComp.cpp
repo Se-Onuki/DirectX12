@@ -8,6 +8,7 @@
 void PlayerBulletComp::Init() {
 	deathTimer_ = kLifeTime;
 	velocity_ = {};
+	modelComp_ = object_->AddComponent<ModelComp>();
 
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
@@ -15,12 +16,15 @@ void PlayerBulletComp::Init() {
 	colliderComp->SetRadius(1.5f);
 	//colliderComp->SetCentor(Vector3::up() * 1.5f);
 
-	ModelComp *const modelComp = object_->AddComponent<ModelComp>();
+
 	Model *const bulletModel = ModelManager::GetInstance()->GetModel("sphere");
-	modelComp->AddBone("body", bulletModel, Transform{ .scale{0.5f,0.5f,5.f} });
+	modelComp_->AddBone("body", bulletModel, Transform{ .scale{0.5f,0.5f,5.f} });
 }
 
 void PlayerBulletComp::Update() {
+	float &modelRotZ = modelComp_->GetBone("body")->transform_.rotate.z;
+	modelRotZ = Angle::Mod(modelRotZ + Angle::Dig2Rad * 12.f);
+
 	bool isDead = false;
 	isDead |= --deathTimer_ <= 0;	// 寿命を迎えたら死ぬ
 	isDead |= object_->transform_.translate.y <= 0.f;	// 地下に潜ったら死ぬ

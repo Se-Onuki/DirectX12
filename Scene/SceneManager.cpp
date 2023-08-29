@@ -24,6 +24,11 @@ void SceneManager::ChangeScene(IScene *const nextScene) {
 }
 
 void SceneManager::ChangeScene(IScene *const nextScene, const int &transitionTime) {
+	// もし、次のシーンがあったらキャンセル
+	if (nextScene_ != nullptr) {
+		delete nextScene;
+		return;
+	}
 	// 次のシーンのポインタを保存
 	nextScene_.reset(nextScene);
 	// 遷移タイマーを開始

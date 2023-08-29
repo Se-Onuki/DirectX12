@@ -2,6 +2,8 @@
 
 #include "../Object.h"
 
+class ModelComp;
+
 class PlayerBulletComp : public IComponent {
 public:
 	using IComponent::IComponent;
@@ -18,6 +20,8 @@ public:
 	void SetPosition(const Vector3 &vec);
 
 private:
+
+	ModelComp *modelComp_ = nullptr;
 
 	static const int32_t kLifeTime = 60 * 3;
 	int32_t deathTimer_ = kLifeTime;

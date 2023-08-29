@@ -53,7 +53,7 @@ void GameScene::OnEnter() {
 	ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
 	ModelManager::GetInstance()->AddModel("ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
 
-	//AddPlayer();
+	AddPlayer();
 
 	PopEnemy();
 
