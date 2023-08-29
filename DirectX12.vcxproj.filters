@@ -449,6 +449,9 @@
     <ClInclude Include="DirectBase\Base\SoLib.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Entity\Component\ComponentManager.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

@@ -1,0 +1,27 @@
+#pragma once
+
+#include <unordered_map>
+#include <string>
+#include "../Object.h"
+
+class ComponentManager
+{
+	ComponentManager() = default;
+	ComponentManager(const ComponentManager &) = delete;
+	ComponentManager &operator=(const ComponentManager &) = delete;
+
+	~ComponentManager() = default;
+public:
+
+	template<typename T>
+	void Register();
+
+private:
+	std::unordered_map<std::string, IComponent *(*)(Object *const object)> componentMap_;
+};
+
+template<typename T>
+inline void ComponentManager::Register() {
+	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
+	componentMap_[typeid(T).name] = T(Object *const);
+}

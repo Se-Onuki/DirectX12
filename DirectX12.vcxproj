@@ -184,6 +184,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\BaseCharacter.h" />
     <ClInclude Include="Header\Entity\Component\BossComp.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
+    <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
     <ClInclude Include="Header\Entity\Component\PlayerBulletComp.h" />
