@@ -101,7 +101,7 @@ void GameScene::Update() {
 		}
 	);
 
-	if (enemyList_.size() < 2) {
+	if (enemyList_.size() < 1u) {
 		PopEnemy();
 	}
 

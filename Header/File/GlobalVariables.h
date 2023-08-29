@@ -114,34 +114,34 @@ void GlobalVariables::SetValue(
 	group[key] = value;
 }
 
+template <typename T>
+class VariantItem final {
+	VariantItem() = delete;
+public:
+	VariantItem(const std::string &key, const T &item = {}) : key_(key), item_(item) {}
+	inline VariantItem &operator=(const T &item);
+	~VariantItem() = default;
 
-//class Serializer {
-//	std::unordered_map<std::string, std::pair<GlobalVariables::Item, void*>> itemMap_;
-//
-//public:
-//	Serializer() = default;
-//	~Serializer() = default;
-//
-//	/// @brief 入出力データ設定
-//	/// @tparam T 保存する型
-//	/// @param key
-//	/// @param item
-//	template<typename T> void AddItem(const std::string& key, T* const item) {
-//		itemMap_[key] = {*item, item};
-//	}
-//
-//	void SetItems(const std::string& groupName) const;
-//
-//private:
-//};
-//
-//template<typename T>
-//inline void
-//    GlobalVariables::AddValue(const std::string& groupName, const std::string& key, const T value) {
-//	auto itItem = datas_[groupName].find(key); // キーがあるか
-//	if (itItem == datas_[groupName].end()) {
-//		SetValue(groupName, key, value);
-//		return;
-//	}
-//	return;
-//}
+	inline operator T();
+	inline operator T() const;
+
+private:
+	const std::string key_;
+	T item_;
+};
+
+template<typename T>
+inline VariantItem<T> &VariantItem<T>::operator=(const T &item) {
+	item_ = item;
+	return *this;
+}
+
+template<typename T>
+inline VariantItem<T>::operator T() {
+	return item_;
+}
+
+template<typename T>
+inline VariantItem<T>::operator T() const {
+	return item_;
+}

@@ -19,6 +19,7 @@
 
 #include "../../Math/Lerp.h"
 #include <algorithm>
+
 #include "../../File/GlobalVariables.h"
 
 const char *const PlayerComp::groupName_ = "Player";

@@ -4,7 +4,13 @@
 #include "HealthComp.h"
 #include "../../Model/ModelManager.h"
 
+#include "../../File/GlobalVariables.h"
+
+const char *const BossComp::groupName_ = "Boss";
+
 void BossComp::Init() {
+	ApplyVariables(groupName_);
+
 
 	auto *const colliderComp = object_->AddComponent<ColliderComp>();
 	auto *const modelComp = object_->AddComponent<ModelComp>();
@@ -18,6 +24,25 @@ void BossComp::Init() {
 	Model *const enemyModel = ModelManager::GetInstance()->GetModel("sphere");
 	modelComp->AddBone("body", enemyModel, Transform{ .translate{0.f,3.f,0.f} });
 
-	healthComp->SetMaxHealth(100.f);
+	healthComp->SetMaxHealth(vMaxHealth_);
 	healthComp->Reset();
+
+	AddVariable(groupName_);
+
+}
+
+void BossComp::Update() {
+
+}
+
+void BossComp::ApplyVariables(const char *const groupName) {
+	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+
+	vMaxHealth_ << gVariable->Get(groupName, "maxHealth");
+}
+
+void BossComp::AddVariable(const char *const groupName) {
+	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+
+	gVariable->AddValue(groupName, "maxHealth", vMaxHealth_);
 }
