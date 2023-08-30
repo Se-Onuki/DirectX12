@@ -34,7 +34,6 @@ void BossComp::Init() {
 	healthComp->Reset();
 
 	//const uint32_t textHaundle = TextureManager::Load("UI/circle.png");
-	vBarCentor_ = Vector2{ WinApp::kWindowWidth * 0.5f, WinApp::kWindowHeight * 0.25f };
 
 	healthBarFrame_.reset(Sprite::Create());
 	//healthBarFrame_->SetTextureHaundle(textHaundle);
