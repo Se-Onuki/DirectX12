@@ -33,22 +33,25 @@ void BossComp::Init() {
 	healthComp->SetMaxHealth(vMaxHealth_);
 	healthComp->Reset();
 
-	//const uint32_t textHaundle = TextureManager::Load("UI/circle.png");
+	const uint32_t textHaundle = TextureManager::Load("UI/BossBarFlame.png");
+	const auto &texDesc = TextureManager::GetInstance()->GetResourceDesc(textHaundle);
+	const Vector2 &textureSize = { static_cast<float>(texDesc.Width), static_cast<float>(texDesc.Height) };
+
+	barFlameSize_ = { vBarScale_->x * (vBarFlame_->x / textureSize.x), vBarScale_->y * (vBarFlame_->y / textureSize.y) };
 
 	healthBarFrame_.reset(Sprite::Create());
-	//healthBarFrame_->SetTextureHaundle(textHaundle);
-	healthBarFrame_->SetColor(Vector4{ 1.f,1.f,1.f,0.5f });
+	healthBarFrame_->SetTextureHaundle(textHaundle);
+	healthBarFrame_->SetColor(Vector4{ 1.f,1.f,1.f,1.f });
 	healthBarFrame_->SetScale(vBarScale_);
 	healthBarFrame_->SetPivot({ 0.5f,0.5f });
 	healthBarFrame_->SetPosition(vBarCentor_);
 
 
 	healthBar_.reset(Sprite::Create());
-	healthBar_->SetColor(Vector4{ 1.f,0.f,0.f,1.f });
-	healthBar_->SetScale(Vector2{ vBarScale_->x / 2.f, vBarScale_->y });
+	healthBar_->SetColor(Vector4{ 0.f,1.f,0.f,1.f });
+	healthBar_->SetScale(vBarScale_.GetItem() - barFlameSize_ * 2.f);
 	healthBar_->SetPivot({ 0.0f,0.5f });
-	healthBar_->SetPosition(vBarCentor_.GetItem() - Vector2{ vBarScale_->x / 2.f,0.f });
-
+	healthBar_->SetPosition(vBarCentor_.GetItem() - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
 
 
 	AddVariable(groupName_);
@@ -68,24 +71,28 @@ void BossComp::Update() {
 	object_->transform_.rotate.y = bossRot.y;
 
 
-	auto *const healthComp = object_->GetComponent<HealthComp>();
-	float healthProgress = healthComp->GetProgress();
-	healthBar_->SetScale(Vector2{ vBarScale_->x * healthProgress, vBarScale_->y });
+	HealthComp *const healthComp = object_->GetComponent<HealthComp>();
+	const float healthProgress = healthComp->GetProgress();
+	healthBar_->SetScale(Vector2{ (vBarScale_->x - barFlameSize_.x * 2.f) * healthProgress , vBarScale_->y - barFlameSize_.y * 2.f });
 }
 
 void BossComp::DrawUI() const {
-	healthBar_->Draw();
 	healthBarFrame_->Draw();
+	healthBar_->Draw();
 }
 
 void BossComp::ApplyVariables(const char *const groupName) {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 
-	gVariable->GetGroup(groupName) >> vRadius_;
-	gVariable->GetGroup(groupName) >> vMaxHealth_;
+	auto &group = gVariable->GetGroup(groupName);
 
-	gVariable->GetGroup(groupName) >> vBarCentor_;
-	gVariable->GetGroup(groupName) >> vBarScale_;
+	group >> vRadius_;
+	group >> vMaxHealth_;
+
+	group >> vBarCentor_;
+	group >> vBarScale_;
+
+	group >> vBarFlame_;
 }
 
 void BossComp::AddVariable(const char *const groupName) const {
@@ -96,6 +103,8 @@ void BossComp::AddVariable(const char *const groupName) const {
 
 	gVariable->AddValue(groupName, vBarCentor_);
 	gVariable->AddValue(groupName, vBarScale_);
+
+	gVariable->AddValue(groupName, vBarFlame_);
 }
 
 void BossComp::SetGameScene(GameScene *const gameScene) {

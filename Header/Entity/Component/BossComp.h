@@ -39,6 +39,9 @@ private:
 	Vector3 target_;
 
 	VariantItem<Vector2> vBarCentor_{ "barCentor", {640.f,180.f} };
+	Vector2 barFlameSize_;
+	VariantItem<Vector2> vBarFlame_{ "barFlame", {8.f ,8.f} };
+
 	VariantItem<Vector2> vBarScale_{ "barScale", {360.f,50.f} };
 
 	VariantItem<float> vRadius_{ "radius", 3.f };

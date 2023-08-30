@@ -4,11 +4,15 @@
             640.0,
             90.0
         ],
-        "barScale": [
-            360.0,
-            50.0
+        "barFlame": [
+            8.0,
+            8.0
         ],
-        "maxHealth": 10.0,
+        "barScale": [
+            512.0,
+            32.0
+        ],
+        "maxHealth": 300.0,
         "radius": 3.0
     }
 }

@@ -24,7 +24,7 @@ void ViewProjection::SetMap()
 }
 
 void ViewProjection::CalcMatrix() {
-	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseRT();
+	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseSRT();
 	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 }
 
