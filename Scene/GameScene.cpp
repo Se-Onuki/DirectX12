@@ -20,6 +20,7 @@
 #include "../Header/Entity/Component/Collider.h"
 
 #include "../Header/Collision/Target.h"
+#include "../Header/Entity/Component/BossComp.h"
 
 
 GameScene::GameScene() {
@@ -191,6 +192,11 @@ void GameScene::Draw()
 	// スプライトの描画
 	if (player_) { player_->GetComponent<PlayerComp>()->DrawUI(); }
 
+	for (auto &enemy : enemyList_) {
+		enemy->GetComponent<BossComp>()->DrawUI();
+	}
+
+
 	Sprite::EndDraw();
 
 #pragma endregion
@@ -239,10 +245,20 @@ void GameScene::AddPlayer() {
 
 }
 
+void GameScene::RemovePlayer() {
+	player_.reset();
+	followCamera_.reset();
+}
+
+Player *const GameScene::GetPlayer() {
+	return player_.get();
+}
+
 void GameScene::PopEnemy() {
 
 	Enemy *const enemy = new Enemy;
 	enemy->Init();
+	enemy->GetComponent<BossComp>()->SetGameScene(this);
 
 	AddEnemy(enemy);
 }

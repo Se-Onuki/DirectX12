@@ -130,7 +130,7 @@ void operator>> (const GlobalVariables::Group &group, VariantItem<T> &value) {
 
 //
 //template<typename T>
-//void operator<< (const GlobalVariables::Group &group, VariantItem<T> &value) {
+//void operator<< (GlobalVariables::Group &group, VariantItem<T> &value) {
 //
 //	// キーがあるか
 //	const auto &itItem = group.find(value.GetKey());

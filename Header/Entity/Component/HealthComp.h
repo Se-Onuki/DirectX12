@@ -17,6 +17,10 @@ public:
 
 	float GetNowHealth() const { return nowHealth_; }
 
+	/// @brief 比率の取得
+	/// @return 最大の場合1.fが返る
+	float GetProgress() const { return nowHealth_ / maxHealth_; }
+
 private:
 
 	float maxHealth_;

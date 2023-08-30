@@ -37,6 +37,8 @@ public:
 	void AddEnemy(Enemy *newEnemy);
 
 	void AddPlayer();
+	void RemovePlayer();
+	Player *const GetPlayer();
 
 	void PopEnemy();
 
