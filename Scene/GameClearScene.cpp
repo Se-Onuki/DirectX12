@@ -19,6 +19,12 @@ GameClearScene::~GameClearScene() {
 
 void GameClearScene::OnEnter()
 {
+	backGround_.reset(Sprite::Create());
+	backGround_->SetColor(Vector4{ 0.5f,0.5f,0.5f,1.f });
+	backGround_->SetPosition(MiddleCentor);
+	backGround_->SetPivot({ 0.5f,0.5f });
+	backGround_->SetScale(TopRight);
+
 	gameClearSprite_.reset(Sprite::Create(TextureManager::Load("UI/gameClear.png"), MiddleCentor, TopRight));
 	gameClearSprite_->SetPivot({ 0.5f,0.5f });
 }
@@ -63,6 +69,7 @@ void GameClearScene::Draw() {
 
 	Sprite::StartDraw(commandList);
 
+	backGround_->Draw();
 	gameClearSprite_->Draw();
 
 	Sprite::EndDraw();

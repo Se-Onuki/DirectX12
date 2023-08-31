@@ -52,6 +52,7 @@ public:
 private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
+	std::unique_ptr<Sprite> hudButton_ = nullptr;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 

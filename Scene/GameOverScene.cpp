@@ -20,6 +20,7 @@ GameOverScene::~GameOverScene() {
 void GameOverScene::OnEnter()
 {
 	backGround_.reset(Sprite::Create());
+	backGround_->SetColor(Vector4{ 0.5f,0.5f,0.5f,1.f });
 	backGround_->SetPosition(MiddleCentor);
 	backGround_->SetPivot({ 0.5f,0.5f });
 	backGround_->SetScale(TopRight);

@@ -24,5 +24,6 @@ private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 
+	std::unique_ptr<Sprite> backGround_ = nullptr;
 	std::unique_ptr<Sprite> gameClearSprite_ = nullptr;
 };

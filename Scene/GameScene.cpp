@@ -60,6 +60,11 @@ void GameScene::OnEnter() {
 	ModelManager::GetInstance()->AddModel("ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
 	ModelManager::GetInstance()->AddModel("skyCylinder", Model::LoadObjFile("", "skyCylinder.obj"));
 
+	hudButton_.reset(Sprite::Create(TextureManager::Load("UI/hudButton.png")));
+	hudButton_->SetPosition(MiddleCentor);
+	hudButton_->SetPivot({ 0.5f,0.5f });
+	hudButton_->SetScale(TopRight);
+
 	AddPlayer();
 
 	PopEnemy();
@@ -221,6 +226,7 @@ void GameScene::Draw()
 
 	Sprite::StartDraw(commandList);
 
+	hudButton_->Draw();
 	// スプライトの描画
 	if (player_) { player_->GetComponent<PlayerComp>()->DrawUI(); }
 
