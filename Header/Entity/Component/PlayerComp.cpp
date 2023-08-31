@@ -24,6 +24,7 @@
 #include <limits>
 #include "../../File/GlobalVariables.h"
 #include "../../../DirectBase/Base/SoLib.h"
+#include "HealthComp.h"
 
 const char *const PlayerComp::groupName_ = "Player";
 
@@ -58,6 +59,10 @@ void PlayerComp::Init() {
 	reticle_->SetScale(Vector2{ 1.f,1.f } *100.f);
 	reticle_->SetPivot({ 0.5f,0.5f });
 	reticle_->SetPosition(windowCentor);
+
+	auto *const healthComp = object_->AddComponent<HealthComp>();
+	healthComp->SetMaxHealth(maxHealth_);
+	healthComp->Reset();
 
 	AddVariable(groupName_);
 }
@@ -146,6 +151,7 @@ void PlayerComp::ApplyVariables(const char *const groupName) {
 	group >> minSightScale_;
 
 	group >> colliderRadius_;
+	group >> maxHealth_;
 }
 
 void PlayerComp::AddVariable(const char *const groupName) const {
@@ -168,6 +174,8 @@ void PlayerComp::AddVariable(const char *const groupName) const {
 	gVariable->AddValue(groupName, minSightScale_);
 
 	gVariable->AddValue(groupName, colliderRadius_);
+
+	gVariable->AddValue(groupName, maxHealth_);
 }
 
 void PlayerComp::DrawUI() const {

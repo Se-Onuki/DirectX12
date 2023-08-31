@@ -90,6 +90,9 @@ private:
 
 	static const char *const groupName_;
 
+	VariantItem<float> maxHealth_{ "maxHealth", 30.f };
+
+
 	VariantItem<float> colliderRadius_{ "colliderRadius", 2.f };
 
 	VariantItem<float> defaultSightRadius_{ "defaultSightRadius", 150.f };

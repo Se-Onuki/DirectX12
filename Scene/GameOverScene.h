@@ -1,4 +1,5 @@
 #pragma once
+
 #include "SceneManager.h"
 #include "../DirectBase/3D/DirectionLight.h"
 #include "../DirectBase/2D/Sprite.h"
@@ -6,10 +7,10 @@
 class Input;
 class Audio;
 
-class TitleScene : public IScene {
+class GameOverScene : public IScene {
 public:
-	TitleScene();
-	~TitleScene();
+	GameOverScene();
+	~GameOverScene();
 
 	void OnEnter() override;
 	void OnExit() override;
@@ -23,10 +24,5 @@ private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 
-
-	std::unique_ptr<DirectionLight> light_ = nullptr;
-
-	std::unique_ptr<Sprite> title_ = nullptr;
-
-	std::unique_ptr<Sprite> plane_ = nullptr;
+	std::unique_ptr<Sprite> gameOverSprite_ = nullptr;
 };

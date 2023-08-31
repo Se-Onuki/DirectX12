@@ -6,6 +6,7 @@ float SkyCylinder::radius_ = 1200.f;
 void SkyCylinder::Init() {
 	model_ = ModelManager::GetInstance()->GetModel("skyCylinder");
 	model_->materialMap_["sky"]->mapData_->emissive = Vector4{ 1.f,1.f,1.f,1.f };
+
 	transform_.InitResource();
 	SetRadius(radius_);
 

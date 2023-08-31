@@ -6,6 +6,7 @@
 #include "../DirectBase/Base/Audio.h"
 
 #include "TitleScene.h"
+#include "GameOverScene.h"
 
 #include "../Header/Model/ModelManager.h"
 #include "../Header/Entity/FollowCamera.h"
@@ -89,7 +90,7 @@ void GameScene::Update() {
 	);
 
 	if (enemyList_.size() < 1u) {
-		EndGame();
+		GameClear();
 	}
 
 #pragma region AddCollisionManager
@@ -147,7 +148,10 @@ void GameScene::Update() {
 
 	viewProjection_.TransferMatrix();
 	if (input_->GetDirectInput()->IsTrigger(DIK_T)) {
-		EndGame();
+		GameClear();
+	}
+	if (player_ && !player_->GetActive()) {
+
 	}
 }
 
@@ -271,6 +275,9 @@ void GameScene::PopEnemy() {
 	AddEnemy(enemy);
 }
 
-void GameScene::EndGame() {
-	sceneManager_->ChangeScene(new TitleScene, 60);
+void GameScene::GameClear() {
+	sceneManager_->ChangeScene(new GameOverScene, 60);
+}
+
+void GameScene::GameOver() {
 }

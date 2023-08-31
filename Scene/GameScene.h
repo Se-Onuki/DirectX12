@@ -44,7 +44,8 @@ public:
 
 	void PopEnemy();
 
-	void EndGame();
+	void GameClear();
+	void GameOver();
 
 private:
 	Input *input_ = nullptr;

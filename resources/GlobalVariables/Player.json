@@ -7,6 +7,7 @@
         "fireCoolTime": 10,
         "friction": 0.949999988079071,
         "jumpStrength": 750.0,
+        "maxHealth": 30.0,
         "maxSightScale": 1.0,
         "minSightScale": 0.30000001192092896,
         "moveSpeed": 75.0,
