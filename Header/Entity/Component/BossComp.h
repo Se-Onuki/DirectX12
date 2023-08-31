@@ -11,11 +11,12 @@ class BossComp : public IComponent {
 public:
 
 	enum class Behavior {
-		kRoot,   // 通常状態
-		kAttack, // 攻撃力
+		kMove,   // 移動
+		kAttack, // 連続射撃
+		kRange,	 // 範囲射撃
 	};
 
-	Behavior behavior_ = Behavior::kRoot;
+	Behavior behavior_ = Behavior::kAttack;
 
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
@@ -46,6 +47,7 @@ private:
 	void AddCoolTime(uint32_t time) { coolTime_ += time; }
 
 	void MoveBehavior();
+	void AttackBehavior();
 
 	void Attack();
 	void AttackRange();

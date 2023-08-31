@@ -18,8 +18,8 @@ void PlayerBulletComp::Init() {
 	//colliderComp->SetCentor(Vector3::up() * 1.5f);
 
 
-	Model *const bulletModel = ModelManager::GetInstance()->GetModel("sphere");
-	modelComp_->AddBone("body", bulletModel, Transform{ .scale{0.5f,0.5f,5.f} });
+	Model *const bulletModel = ModelManager::GetInstance()->GetModel("playerBullet");
+	modelComp_->AddBone("body", bulletModel, Transform{ .scale{Vector3::one() * 2.f} });
 }
 
 void PlayerBulletComp::Update() {

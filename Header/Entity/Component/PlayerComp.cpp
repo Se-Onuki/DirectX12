@@ -265,11 +265,6 @@ void PlayerComp::Jump() {
 		if (rigidbody_->GetIsGround()) {
 			rigidbody_->AddAcceleration(Vector3::up() * jumpStrength_);
 		}
-		/*else {
-			sightScale_ -= scaleSub_;
-			rigidbody_->SetVelocity(Vector3::zero());
-			rigidbody_->AddAcceleration((Vector3{ 0.f,-0.2f,5.f }*Matrix4x4::EulerRotate(Matrix4x4::Yaw, object_->transform_.rotate.y)) * jumpStrength_ * 2.f);
-		}*/
 	}
 }
 
