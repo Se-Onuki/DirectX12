@@ -4,6 +4,7 @@
 #include "Component/HealthComp.h"
 
 #include "../Model/ModelManager.h"
+#include "Component/Projectile.h"
 
 void BossBullet::Init() {
 	Object::Init();
@@ -26,6 +27,10 @@ void BossBulletComp::Init() {
 	colliderComp->SetCollisionCancel(static_cast<uint32_t>(CollisionFilter::Enemy | CollisionFilter::Bullet));		// 無効化する属性
 	colliderComp->SetRadius(1.5f);
 	//colliderComp->SetCentor(Vector3::up() * 1.5f);
+
+	auto *const projactile = object_->AddComponent<ProjectileComp>();
+
+	projactile->SetDamage(1.f);
 
 
 	Model *const bulletModel = ModelManager::GetInstance()->GetModel("sphere");
