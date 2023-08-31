@@ -35,7 +35,7 @@ void PlayerComp::Init() {
 
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player));
-	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Player)));
+	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Player | CollisionFilter::Bullet)));
 	colliderComp->SetRadius(colliderRadius_);
 	colliderComp->SetCentor(Vector3{ 0.f,colliderRadius_,0.f });
 

@@ -10,6 +10,7 @@ class Player;
 class PlayerBullet;
 
 class Enemy;
+class BossBullet;
 
 class CollisionManager;
 
@@ -37,6 +38,7 @@ public:
 
 	void AddPlayerBullet(PlayerBullet *newBullet);
 	void AddEnemy(Enemy *newEnemy);
+	void AddBossBullet(BossBullet *newBullet);
 
 	void AddPlayer();
 	void RemovePlayer();
@@ -56,6 +58,7 @@ private:
 	std::unique_ptr<Player> player_ = nullptr;
 	std::list<std::unique_ptr<PlayerBullet>> pBulletList_;
 	std::list<std::unique_ptr<Enemy>> enemyList_;
+	std::list<std::unique_ptr<BossBullet>> bossBulletList_;
 
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Ground> ground_ = nullptr;

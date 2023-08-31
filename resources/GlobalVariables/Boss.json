@@ -12,7 +12,14 @@
             512.0,
             32.0
         ],
+        "bulletSpeed": 0.5,
+        "fireCoolTime": 10,
         "maxHealth": 300.0,
+        "nozzle": [
+            0.0,
+            3.0,
+            0.0
+        ],
         "radius": 3.0
     }
 }

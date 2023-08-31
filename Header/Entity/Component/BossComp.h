@@ -29,6 +29,15 @@ public:
 
 private:
 
+	void CoolTimeUpdate();
+	void AddCoolTime(uint32_t time) { coolTime_ += time; }
+
+	void Attack();
+
+	void FireBullet(const Vector3 &spawnPos, const Vector3 &velocity);
+
+private:
+
 	static const char *const groupName_;
 
 	GameScene *gameScene_;
@@ -37,6 +46,11 @@ private:
 	std::unique_ptr<Sprite> healthBar_ = nullptr;
 
 	Vector3 target_;
+	int32_t coolTime_ = 0;
+
+	VariantItem<int32_t> vFireCoolTime_{ "fireCoolTime", 10 };
+	VariantItem<float> vBulletSpeed_{ "bulletSpeed", 2.5f };
+	VariantItem<Vector3> vNozzle_{ "nozzle", Vector3{0.f,3.f,0.f} };
 
 	VariantItem<Vector2> vBarCentor_{ "barCentor", {640.f,180.f} };
 	Vector2 barFlameSize_;

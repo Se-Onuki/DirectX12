@@ -11,6 +11,5 @@ public:
 	void Init() override;
 
 private:
-	const float a = 0.f;
 
 };

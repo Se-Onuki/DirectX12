@@ -6,6 +6,7 @@
 #include "../DirectBase/Base/Audio.h"
 
 #include "TitleScene.h"
+#include "GameClearScene.h"
 #include "GameOverScene.h"
 
 #include "../Header/Model/ModelManager.h"
@@ -19,6 +20,7 @@
 #include "../Header/Entity/Player.h"
 #include "../Header/Entity/PlayerBullet.h"
 #include "../Header/Entity/Enemy.h"
+#include "../Header/Entity/BossBullet.h"
 
 #include "../Header/Entity/Component/Collider.h"
 
@@ -89,6 +91,15 @@ void GameScene::Update() {
 		}
 	);
 
+	bossBulletList_.remove_if([](std::unique_ptr<BossBullet> &bBullet) {
+		if (!bBullet->GetActive()) {
+			bBullet.reset();
+			return true;
+		}
+		return false;
+		}
+	);
+
 	if (enemyList_.size() < 1u) {
 		GameClear();
 	}
@@ -102,6 +113,9 @@ void GameScene::Update() {
 	}
 	for (auto &enemy : enemyList_) {
 		collisionManager_->push_back(enemy.get());
+	}
+	for (auto &bBullet : bossBulletList_) {
+		collisionManager_->push_back(bBullet.get());
 	}
 	/*
 	for (auto &eBullet : enemyBulletList_) {
@@ -137,6 +151,10 @@ void GameScene::Update() {
 		enemy->Update();
 	}
 
+	for (auto &bBullet : bossBulletList_) {
+		bBullet->Update();
+	}
+
 	// ground_->Update();
 
 	if (followCamera_) {
@@ -151,7 +169,7 @@ void GameScene::Update() {
 		GameClear();
 	}
 	if (player_ && !player_->GetActive()) {
-
+		GameOver();
 	}
 }
 
@@ -193,6 +211,10 @@ void GameScene::Draw()
 		enemy->Draw(viewProjection_);
 	}
 
+	for (auto &bBullet : bossBulletList_) {
+		bBullet->Draw(viewProjection_);
+	}
+
 	Model::EndDraw();
 
 #pragma endregion
@@ -224,6 +246,11 @@ void GameScene::AddEnemy(Enemy *newEnemy) {
 	enemyList_.back()->transform_.InitResource();
 }
 
+void GameScene::AddBossBullet(BossBullet *newBullet) {
+	bossBulletList_.emplace_back(newBullet);
+	bossBulletList_.back()->transform_.InitResource();
+}
+
 void GameScene::AddPlayer() {
 
 	auto *const modelManager = ModelManager::GetInstance();
@@ -237,6 +264,8 @@ void GameScene::AddPlayer() {
 
 	player_.reset(new Player);
 	player_->Init();
+	player_->transform_.translate = Vector3{ 0.f,0.f,-100.f };
+	player_->transform_.UpdateMatrix();
 
 	ModelComp *const modelComp = player_->GetComponent<ModelComp>();
 	if (modelComp) {
@@ -276,8 +305,10 @@ void GameScene::PopEnemy() {
 }
 
 void GameScene::GameClear() {
-	sceneManager_->ChangeScene(new GameOverScene, 60);
+	sceneManager_->ChangeScene(new GameClearScene, 60);
 }
 
 void GameScene::GameOver() {
+	sceneManager_->ChangeScene(new GameOverScene, 60);
+
 }

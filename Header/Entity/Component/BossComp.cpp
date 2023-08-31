@@ -12,6 +12,7 @@
 #include "../../../Scene/GameScene.h"
 #include "../Player.h"
 #include "../../../DirectBase/Base/WinApp.h"
+#include "../BossBullet.h"
 
 const char *const BossComp::groupName_ = "Boss";
 
@@ -23,7 +24,7 @@ void BossComp::Init() {
 	auto *const healthComp = object_->AddComponent<HealthComp>();
 
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Enemy));
-	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Enemy)));
+	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Enemy | CollisionFilter::Bullet)));
 	colliderComp->SetRadius(vRadius_);
 	colliderComp->SetCentor(Vector3::up() * vRadius_);
 
@@ -59,10 +60,11 @@ void BossComp::Init() {
 }
 
 void BossComp::Update() {
+	CoolTimeUpdate();
 	auto *const player = gameScene_->GetPlayer();
 
 	if (player) {
-		target_ = player->GetWorldPos();
+		target_ = player->GetComponent<ColliderComp>()->GetGlobalCentor();
 	}
 
 	Vector3 targetDiff = target_ - object_->GetWorldPos();
@@ -70,6 +72,7 @@ void BossComp::Update() {
 	Vector3 bossRot = targetDiff.Direction2Euler();
 	object_->transform_.rotate.y = bossRot.y;
 
+	Attack();
 
 	HealthComp *const healthComp = object_->GetComponent<HealthComp>();
 	const float healthProgress = healthComp->GetProgress();
@@ -93,6 +96,10 @@ void BossComp::ApplyVariables(const char *const groupName) {
 	group >> vBarScale_;
 
 	group >> vBarFlame_;
+	group >> vFireCoolTime_;
+
+	group >> vBulletSpeed_;
+	group >> vNozzle_;
 }
 
 void BossComp::AddVariable(const char *const groupName) const {
@@ -105,8 +112,49 @@ void BossComp::AddVariable(const char *const groupName) const {
 	gVariable->AddValue(groupName, vBarScale_);
 
 	gVariable->AddValue(groupName, vBarFlame_);
+	gVariable->AddValue(groupName, vFireCoolTime_);
+
+	gVariable->AddValue(groupName, vBulletSpeed_);
+	gVariable->AddValue(groupName, vNozzle_);
 }
 
 void BossComp::SetGameScene(GameScene *const gameScene) {
 	gameScene_ = gameScene;
+}
+
+void BossComp::CoolTimeUpdate() {
+	if (coolTime_ > 0) {
+		--coolTime_;
+	}
+}
+
+void BossComp::Attack() {
+	if (coolTime_ == 0u) {
+
+		AddCoolTime(vFireCoolTime_);
+		// カメラの回転行列
+		const Matrix4x4 &rotateY = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, object_->transform_.rotate.y);
+		const Vector3 &spawnPos = vNozzle_.GetItem() * rotateY + object_->GetWorldPos();
+
+		// 弾のベクトルの生成
+		Vector3 velocity = target_ - spawnPos;
+		velocity = velocity.Nomalize() * vBulletSpeed_;
+
+		// 弾の生成 + 初期化
+		FireBullet(spawnPos, velocity);
+	}
+}
+
+void BossComp::FireBullet(const Vector3 &spawnPos, const Vector3 &velocity) {
+
+	// 弾の生成 + 初期化
+	BossBullet *newBullet = new BossBullet;
+	newBullet->Init();
+	newBullet->transform_.rotate = velocity.Direction2Euler();
+	auto *const bulletComp = newBullet->GetComponent<BossBulletComp>();
+	bulletComp->SetVelocity(velocity);
+	bulletComp->SetPosition(spawnPos);
+
+	// 弾の追加
+	gameScene_->AddBossBullet(newBullet);
 }

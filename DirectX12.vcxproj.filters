@@ -261,6 +261,9 @@
     <ClCompile Include="Scene\GameClearScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\BossBullet.cpp">
+      <Filter>Header\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -469,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="Scene\GameClearScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\BossBullet.h">
+      <Filter>Header\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

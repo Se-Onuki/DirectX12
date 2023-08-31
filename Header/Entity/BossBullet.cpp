@@ -1,19 +1,29 @@
-#include "PlayerBulletComp.h"
+#include "BossBullet.h"
+#include "Component/Collider.h"
+#include "Component/ModelComp.h"
+#include "Component/HealthComp.h"
 
-#include "Collider.h"
-#include "ModelComp.h"
+#include "../Model/ModelManager.h"
 
-#include "../../Model/ModelManager.h"
+void BossBullet::Init() {
+	Object::Init();
 
-void PlayerBulletComp::Init() {
+	AddComponent<BossBulletComp>();
+}
+
+
+
+void BossBulletComp::Init() {
 	deathTimer_ = kLifeTime;
 	velocity_ = {};
 	modelComp_ = object_->AddComponent<ModelComp>();
 
 	ColliderComp *const colliderComp = object_->AddComponent<ColliderComp>();
-	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Player | CollisionFilter::Bullet));
-	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Player | CollisionFilter::Bullet)));
-	colliderComp->SetCollisionCancel((static_cast<uint32_t>(CollisionFilter::Player | CollisionFilter::Bullet)));
+
+	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Enemy | CollisionFilter::Bullet));	// 自分の属性
+	colliderComp->SetCollisionMask(~static_cast<uint32_t>(CollisionFilter::Enemy | CollisionFilter::Bullet));		// 検知する属性
+
+	colliderComp->SetCollisionCancel(static_cast<uint32_t>(CollisionFilter::Enemy | CollisionFilter::Bullet));		// 無効化する属性
 	colliderComp->SetRadius(1.5f);
 	//colliderComp->SetCentor(Vector3::up() * 1.5f);
 
@@ -22,7 +32,7 @@ void PlayerBulletComp::Init() {
 	modelComp_->AddBone("body", bulletModel, Transform{ .scale{0.5f,0.5f,5.f} });
 }
 
-void PlayerBulletComp::Update() {
+void BossBulletComp::Update() {
 	float &modelRotZ = modelComp_->GetBone("body")->transform_.rotate.z;
 	modelRotZ = Angle::Mod(modelRotZ + Angle::Dig2Rad * 12.f);
 
@@ -35,15 +45,15 @@ void PlayerBulletComp::Update() {
 	Move();
 }
 
-void PlayerBulletComp::OnCollision(Object *const) {
+void BossBulletComp::OnCollision(Object *const) {
 	object_->SetActive(false);
 }
 
-void PlayerBulletComp::Move() {
+void BossBulletComp::Move() {
 	object_->transform_.translate += velocity_;
 	object_->transform_.CalcMatrix();
 }
 
-void PlayerBulletComp::SetPosition(const Vector3 &vec) {
+void BossBulletComp::SetPosition(const Vector3 &vec) {
 	object_->transform_.translate = vec;
 }

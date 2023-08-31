@@ -120,6 +120,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Collision\Target.cpp" />
     <ClCompile Include="Header\Create\Create.cpp" />
     <ClCompile Include="Header\Entity\BaseCharacter.cpp" />
+    <ClCompile Include="Header\Entity\BossBullet.cpp" />
     <ClCompile Include="Header\Entity\Component\BossComp.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
@@ -185,6 +186,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Create\Create.h" />
     <ClInclude Include="Header\Descriptor\DescriptorHandIe.h" />
     <ClInclude Include="Header\Entity\BaseCharacter.h" />
+    <ClInclude Include="Header\Entity\BossBullet.h" />
     <ClInclude Include="Header\Entity\Component\BossComp.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />

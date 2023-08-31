@@ -16,8 +16,13 @@ void CollisionManager::ChackAllCollision() {
 }
 
 void CollisionManager::CheckCollisionPair(ColliderComp *const A, ColliderComp *const B) {
-	/*uint32_t test = (A->GetCollisionAttribute() & B->GetCollisionMask());
-	test = test;*/
+
+	// キャンセル条件
+	if ((A->GetCollisionAttribute() & B->GetCollisionCancel()) != 0u ||
+		(B->GetCollisionAttribute() & A->GetCollisionCancel()) != 0u) {
+		return;
+	}
+	// ヒット検知
 	if ((A->GetCollisionAttribute() & B->GetCollisionMask()) == 0u ||
 		(B->GetCollisionAttribute() & A->GetCollisionMask()) == 0u) {
 		return;
