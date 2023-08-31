@@ -28,12 +28,13 @@ public:
 	void SetVelocity(const Vector3 &vec) { velocity_ = vec; }
 	void SetPosition(const Vector3 &vec);
 
+	void SetLifeTime(const int32_t time);
+
 private:
 
 	ModelComp *modelComp_ = nullptr;
 
-	static const int32_t kLifeTime = 60 * 3;
-	int32_t deathTimer_ = kLifeTime;
+	int32_t deathTimer_ = 0;
 	Vector3 velocity_{};
 
 

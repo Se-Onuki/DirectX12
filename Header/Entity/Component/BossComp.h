@@ -32,9 +32,12 @@ private:
 	void CoolTimeUpdate();
 	void AddCoolTime(uint32_t time) { coolTime_ += time; }
 
-	void Attack();
+	void MoveBehavior();
 
-	void FireBullet(const Vector3 &spawnPos, const Vector3 &velocity);
+	void Attack();
+	void AttackRange();
+
+	void FireBullet(const Vector3 &spawnPos, const Vector3 &velocity, const int32_t lifeTime);
 
 private:
 
@@ -47,6 +50,14 @@ private:
 
 	Vector3 target_;
 	int32_t coolTime_ = 0;
+
+	VariantItem<int32_t> vBulletLifeTime_{ "bulletLifeTime", 60 };
+
+	VariantItem<int32_t> vRangeLifeTime_{ "rangeLifeTime", 30 };
+	VariantItem<int32_t> vRangeCoolTime_{ "rangeCoolTime", 120 };
+
+	VariantItem<int32_t> vRangeBulletCount_{ "rangeBulletCount", 32 };
+	VariantItem<float> vRangeAngle_{ "rangeAngle", 45 };
 
 	VariantItem<int32_t> vFireCoolTime_{ "fireCoolTime", 10 };
 	VariantItem<float> vBulletSpeed_{ "bulletSpeed", 2.5f };

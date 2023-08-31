@@ -121,10 +121,6 @@ void GameScene::Update() {
 	for (auto &bBullet : bossBulletList_) {
 		collisionManager_->push_back(bBullet.get());
 	}
-	/*
-	for (auto &eBullet : enemyBulletList_) {
-		collisionManager_->push_back(eBullet.get());
-	}*/
 
 	collisionManager_->ChackAllCollision();
 
@@ -169,9 +165,6 @@ void GameScene::Update() {
 	if (followCamera_) { followCamera_->ImGuiWidget(); }
 
 	viewProjection_.TransferMatrix();
-	if (input_->GetDirectInput()->IsTrigger(DIK_T)) {
-		GameClear();
-	}
 }
 
 void GameScene::Draw()
@@ -306,10 +299,10 @@ void GameScene::PopEnemy() {
 }
 
 void GameScene::GameClear() {
-	sceneManager_->ChangeScene(new GameClearScene, 60);
+	sceneManager_->ChangeScene(new GameClearScene, 180);
 }
 
 void GameScene::GameOver() {
-	sceneManager_->ChangeScene(new GameOverScene, 60);
+	sceneManager_->ChangeScene(new GameOverScene, 180);
 
 }

@@ -12,14 +12,19 @@
             512.0,
             32.0
         ],
-        "bulletSpeed": 0.5,
+        "bulletLifeTime": 180,
+        "bulletSpeed": 2.0,
         "fireCoolTime": 10,
         "maxHealth": 300.0,
         "nozzle": [
             0.0,
-            3.0,
-            0.0
+            10.0,
+            -10.0
         ],
-        "radius": 3.0
+        "radius": 10.0,
+        "rangeAngle": 45.0,
+        "rangeBulletCount": 32,
+        "rangeCoolTime": 120,
+        "rangeLifeTime": 60
     }
 }

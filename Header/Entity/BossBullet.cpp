@@ -15,7 +15,6 @@ void BossBullet::Init() {
 
 
 void BossBulletComp::Init() {
-	deathTimer_ = kLifeTime;
 	velocity_ = {};
 	modelComp_ = object_->AddComponent<ModelComp>();
 
@@ -61,4 +60,8 @@ void BossBulletComp::Move() {
 
 void BossBulletComp::SetPosition(const Vector3 &vec) {
 	object_->transform_.translate = vec;
+}
+
+void BossBulletComp::SetLifeTime(const int32_t time) {
+	deathTimer_ = time;
 }
