@@ -60,9 +60,34 @@ void PlayerComp::Init() {
 	reticle_->SetPivot({ 0.5f,0.5f });
 	reticle_->SetPosition(windowCentor);
 
-	auto *const healthComp = object_->AddComponent<HealthComp>();
-	healthComp->SetMaxHealth(maxHealth_);
-	healthComp->Reset();
+	healthComp_ = object_->AddComponent<HealthComp>();
+	healthComp_->SetMaxHealth(maxHealth_);
+	healthComp_->Reset();
+
+	// 体力バーの設定
+
+	const uint32_t barTexture = TextureManager::Load("UI/BossBarFlame.png");
+	const auto &texDesc = TextureManager::GetInstance()->GetResourceDesc(barTexture);
+	const Vector2 &textureSize = { static_cast<float>(texDesc.Width), static_cast<float>(texDesc.Height) };
+
+	barFlameSize_ = { vBarScale_->x * (vBarFlame_->x / textureSize.x), vBarScale_->y * (vBarFlame_->y / textureSize.y) };
+
+
+	healthBarFrame_.reset(Sprite::Create());
+	healthBarFrame_->SetTextureHaundle(barTexture);
+	healthBarFrame_->SetColor(Vector4{ 1.f,1.f,1.f,1.f });
+	healthBarFrame_->SetScale(vBarScale_);
+	healthBarFrame_->SetPivot({ 0.5f,0.5f });
+	healthBarFrame_->SetPosition(vBarCentor_);
+
+
+	healthBar_.reset(Sprite::Create());
+	healthBar_->SetColor(Vector4{ 0.f,1.f,0.f,1.f });
+	healthBar_->SetScale(vBarScale_.GetItem() - barFlameSize_ * 2.f);
+	healthBar_->SetPivot({ 0.0f,0.5f });
+	healthBar_->SetPosition(vBarCentor_.GetItem() - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
+
+
 
 	AddVariable(groupName_);
 }
@@ -80,8 +105,12 @@ void PlayerComp::Update() {
 			move *
 			Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, viewProjection_->rotation_.y) * moveSpeed_;
 
-		rigidbody_->AddAcceleration(move); // 移動量を追加
-
+		if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {
+			rigidbody_->AddAcceleration(move * vSpeedDown_); // 移動量を追加
+		}
+		else {
+			rigidbody_->AddAcceleration(move); // 移動量を追加
+		}
 		const float moveRotate = rigidbody_->GetVelocity().Direction2Euler().y;
 		object_->transform_.rotate.y = Angle::Mod(Angle::Lerp(object_->transform_.rotate.y, moveRotate, 0.15f));
 	}
@@ -152,6 +181,13 @@ void PlayerComp::ApplyVariables(const char *const groupName) {
 
 	group >> colliderRadius_;
 	group >> maxHealth_;
+
+	group >> vSpeedDown_;
+	group >> vJumpDown_;
+
+	group >> vBarCentor_;
+	group >> vBarFlame_;
+	group >> vBarScale_;
 }
 
 void PlayerComp::AddVariable(const char *const groupName) const {
@@ -176,9 +212,20 @@ void PlayerComp::AddVariable(const char *const groupName) const {
 	gVariable->AddValue(groupName, colliderRadius_);
 
 	gVariable->AddValue(groupName, maxHealth_);
+
+	gVariable->AddValue(groupName, vSpeedDown_);
+	gVariable->AddValue(groupName, vJumpDown_);
+
+	gVariable->AddValue(groupName, vBarCentor_);
+	gVariable->AddValue(groupName, vBarFlame_);
+	gVariable->AddValue(groupName, vBarScale_);
 }
 
 void PlayerComp::DrawUI() const {
+
+	healthBarFrame_->Draw();
+	healthBar_->Draw();
+
 	sight_->Draw();
 	reticle_->Draw();
 }
@@ -218,15 +265,22 @@ void PlayerComp::Jump() {
 		if (rigidbody_->GetIsGround()) {
 			rigidbody_->AddAcceleration(Vector3::up() * jumpStrength_);
 		}
-		else {
+		/*else {
 			sightScale_ -= scaleSub_;
 			rigidbody_->SetVelocity(Vector3::zero());
 			rigidbody_->AddAcceleration((Vector3{ 0.f,-0.2f,5.f }*Matrix4x4::EulerRotate(Matrix4x4::Yaw, object_->transform_.rotate.y)) * jumpStrength_ * 2.f);
-		}
+		}*/
 	}
 }
 
 void PlayerComp::UpdateUI() {
+
+#pragma region 体力バー
+
+	const float healthProgress = healthComp_->GetProgress();
+	healthBar_->SetScale(Vector2{ (vBarScale_->x - barFlameSize_.x * 2.f) * healthProgress , vBarScale_->y - barFlameSize_.y * 2.f });
+
+#pragma endregion
 
 	sightScale_ += scaleHeal_;
 	sightScale_ = std::clamp(sightScale_, minSightScale_.GetItem(), maxSightScale_.GetItem());
@@ -325,6 +379,9 @@ void PlayerComp::ImGuiWidget() {
 
 		SoLib::ImGuiWidget(&maxSightScale_);
 		SoLib::ImGuiWidget(&minSightScale_);
+
+		SoLib::ImGuiWidget(&vSpeedDown_);
+		SoLib::ImGuiWidget(&vJumpDown_);
 
 
 		ImGui::TreePop();

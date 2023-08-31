@@ -21,7 +21,7 @@ void BossComp::Init() {
 
 	auto *const colliderComp = object_->AddComponent<ColliderComp>();
 	auto *const modelComp = object_->AddComponent<ModelComp>();
-	auto *const healthComp = object_->AddComponent<HealthComp>();
+	healthComp_ = object_->AddComponent<HealthComp>();
 
 	colliderComp->SetCollisionAttribute(static_cast<uint32_t>(CollisionFilter::Enemy));
 	colliderComp->SetCollisionMask(~(static_cast<uint32_t>(CollisionFilter::Enemy | CollisionFilter::Bullet)));
@@ -31,14 +31,20 @@ void BossComp::Init() {
 	Model *const enemyModel = ModelManager::GetInstance()->GetModel("sphere");
 	modelComp->AddBone("body", enemyModel, Transform{ .scale{Vector3::one() * vRadius_.GetItem()}, .translate{0.f,vRadius_,0.f} });
 
-	healthComp->SetMaxHealth(vMaxHealth_);
-	healthComp->Reset();
+	healthComp_->SetMaxHealth(vMaxHealth_);
+	healthComp_->Reset();
 
 	const uint32_t textHaundle = TextureManager::Load("UI/BossBarFlame.png");
 	const auto &texDesc = TextureManager::GetInstance()->GetResourceDesc(textHaundle);
 	const Vector2 &textureSize = { static_cast<float>(texDesc.Width), static_cast<float>(texDesc.Height) };
 
 	barFlameSize_ = { vBarScale_->x * (vBarFlame_->x / textureSize.x), vBarScale_->y * (vBarFlame_->y / textureSize.y) };
+
+	bossText_.reset(Sprite::Create(TextureManager::Load("UI/enemyText.png")));
+	bossText_->SetColor(Vector4{ 1.f,1.f,1.f,1.f });
+	bossText_->SetScale(Vector2{ 512.f,128.f }*0.5f);
+	bossText_->SetPivot({ 0.5f,0.5f });
+	bossText_->SetPosition(-Vector2{ 0.f,48.f } + vBarCentor_);
 
 	healthBarFrame_.reset(Sprite::Create());
 	healthBarFrame_->SetTextureHaundle(textHaundle);
@@ -72,16 +78,16 @@ void BossComp::Update() {
 	Vector3 bossRot = targetDiff.Direction2Euler();
 	object_->transform_.rotate.y = bossRot.y;
 
-	AttackRange();
+	Attack();
 
-	HealthComp *const healthComp = object_->GetComponent<HealthComp>();
-	const float healthProgress = healthComp->GetProgress();
+	const float healthProgress = healthComp_->GetProgress();
 	healthBar_->SetScale(Vector2{ (vBarScale_->x - barFlameSize_.x * 2.f) * healthProgress , vBarScale_->y - barFlameSize_.y * 2.f });
 }
 
 void BossComp::DrawUI() const {
 	healthBarFrame_->Draw();
 	healthBar_->Draw();
+	bossText_->Draw();
 }
 
 void BossComp::ApplyVariables(const char *const groupName) {
@@ -107,6 +113,7 @@ void BossComp::ApplyVariables(const char *const groupName) {
 
 	group >> vRangeBulletCount_;
 	group >> vRangeAngle_;
+	group >> vRangeBulletSpeed_;
 }
 
 void BossComp::AddVariable(const char *const groupName) const {
@@ -130,6 +137,7 @@ void BossComp::AddVariable(const char *const groupName) const {
 
 	gVariable->AddValue(groupName, vRangeBulletCount_);
 	gVariable->AddValue(groupName, vRangeAngle_);
+	gVariable->AddValue(groupName, vRangeBulletSpeed_);
 }
 
 void BossComp::SetGameScene(GameScene *const gameScene) {
@@ -176,7 +184,7 @@ void BossComp::AttackRange() {
 		const float rangeDiff = vRangeAngle_ * Angle::Dig2Rad;
 		for (int32_t i = 0; i < vRangeBulletCount_.GetItem(); i++) {
 			const Matrix4x4 &rotateY = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, rangeDiff / vRangeBulletCount_ * i + object_->transform_.rotate.y - rangeDiff * 0.5f);
-			const Vector3 &velocity = (Vector3::front() * rotateY) * vBulletSpeed_;
+			const Vector3 &velocity = (Vector3::front() * rotateY) * vRangeBulletSpeed_;
 
 			// 弾の生成 + 初期化
 			FireBullet(spawnPos, velocity, vRangeLifeTime_);

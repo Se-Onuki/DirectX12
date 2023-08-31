@@ -13,6 +13,7 @@ class GameScene;
 
 class ModelComp;
 class Rigidbody;
+class HealthComp;
 
 class FollowCamera;
 class Targeting;
@@ -61,6 +62,7 @@ private:
 
 	ModelComp *modelComp_ = nullptr;
 	Rigidbody *rigidbody_ = nullptr;
+	HealthComp *healthComp_ = nullptr;
 
 	Targeting *targeting_ = nullptr;
 
@@ -74,6 +76,15 @@ private:
 
 	// 追尾レティクル
 	std::unique_ptr<Sprite> reticle_ = nullptr;
+
+	std::unique_ptr<Sprite> healthBarFrame_ = nullptr;
+	std::unique_ptr<Sprite> healthBar_ = nullptr;
+
+	VariantItem<Vector2> vBarCentor_{ "barCentor", {640.f, 720.f - 64.f} };
+	Vector2 barFlameSize_;
+	VariantItem<Vector2> vBarFlame_{ "barFlame", {8.f ,8.f} };
+
+	VariantItem<Vector2> vBarScale_{ "barScale", {360.f,32.f} };
 
 	float sightScale_ = 1.f;
 
@@ -91,6 +102,9 @@ private:
 	static const char *const groupName_;
 
 	VariantItem<float> maxHealth_{ "maxHealth", 30.f };
+
+	VariantItem<float> vSpeedDown_{ "speedDown", 0.5f };
+	VariantItem<float> vJumpDown_{ "jumpDown", 0.5f };
 
 
 	VariantItem<float> colliderRadius_{ "colliderRadius", 2.f };

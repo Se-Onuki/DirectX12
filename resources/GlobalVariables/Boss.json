@@ -24,7 +24,8 @@
         "radius": 10.0,
         "rangeAngle": 45.0,
         "rangeBulletCount": 32,
-        "rangeCoolTime": 120,
-        "rangeLifeTime": 60
+        "rangeBulletSpeed": 3.5,
+        "rangeCoolTime": 90,
+        "rangeLifeTime": 45
     }
 }

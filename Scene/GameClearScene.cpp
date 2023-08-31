@@ -19,7 +19,7 @@ GameClearScene::~GameClearScene() {
 
 void GameClearScene::OnEnter()
 {
-	gameClearSprite_.reset(Sprite::Create(TextureManager::Load("UI/title.png"), MiddleCentor, TopRight));
+	gameClearSprite_.reset(Sprite::Create(TextureManager::Load("UI/gameClear.png"), MiddleCentor, TopRight));
 	gameClearSprite_->SetPivot({ 0.5f,0.5f });
 }
 
@@ -28,7 +28,7 @@ void GameClearScene::OnExit() {
 
 void GameClearScene::Update() {
 
-	sceneManager_->ChangeScene(new TitleScene, 60);
+	sceneManager_->ChangeScene(new TitleScene, 120);
 }
 
 void GameClearScene::Draw() {

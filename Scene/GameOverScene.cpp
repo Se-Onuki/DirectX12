@@ -19,6 +19,11 @@ GameOverScene::~GameOverScene() {
 
 void GameOverScene::OnEnter()
 {
+	backGround_.reset(Sprite::Create());
+	backGround_->SetPosition(MiddleCentor);
+	backGround_->SetPivot({ 0.5f,0.5f });
+	backGround_->SetScale(TopRight);
+
 	gameOverSprite_.reset(Sprite::Create(TextureManager::Load("UI/gameOver.png"), MiddleCentor, TopRight));
 	gameOverSprite_->SetPivot({ 0.5f,0.5f });
 }
@@ -28,7 +33,7 @@ void GameOverScene::OnExit() {
 
 void GameOverScene::Update() {
 
-	sceneManager_->ChangeScene(new TitleScene, 60);
+	sceneManager_->ChangeScene(new TitleScene, 120);
 }
 
 void GameOverScene::Draw() {
@@ -62,6 +67,7 @@ void GameOverScene::Draw() {
 #pragma region 前面スプライト
 
 	Sprite::StartDraw(commandList);
+	backGround_->Draw();
 
 	gameOverSprite_->Draw();
 

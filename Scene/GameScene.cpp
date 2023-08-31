@@ -299,10 +299,10 @@ void GameScene::PopEnemy() {
 }
 
 void GameScene::GameClear() {
-	sceneManager_->ChangeScene(new GameClearScene, 180);
+	sceneManager_->ChangeScene(new GameClearScene, 60);
 }
 
 void GameScene::GameOver() {
-	sceneManager_->ChangeScene(new GameOverScene, 180);
+	sceneManager_->ChangeScene(new GameOverScene, 60);
 
 }

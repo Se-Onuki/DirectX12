@@ -2,11 +2,24 @@
 #include "../Object.h"
 #include "../../File/GlobalVariables.h"
 #include "../../../DirectBase/2D/Sprite.h"
+#include <optional>
 
 class GameScene;
+class HealthComp;
 
 class BossComp : public IComponent {
 public:
+
+	enum class Behavior {
+		kRoot,   // 通常状態
+		kAttack, // 攻撃力
+	};
+
+	Behavior behavior_ = Behavior::kRoot;
+
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+
 	using IComponent::IComponent;
 	~BossComp() override = default;
 
@@ -45,6 +58,9 @@ private:
 
 	GameScene *gameScene_;
 
+	HealthComp *healthComp_ = nullptr;
+
+	std::unique_ptr<Sprite> bossText_ = nullptr;
 	std::unique_ptr<Sprite> healthBarFrame_ = nullptr;
 	std::unique_ptr<Sprite> healthBar_ = nullptr;
 
@@ -53,11 +69,12 @@ private:
 
 	VariantItem<int32_t> vBulletLifeTime_{ "bulletLifeTime", 60 };
 
-	VariantItem<int32_t> vRangeLifeTime_{ "rangeLifeTime", 30 };
-	VariantItem<int32_t> vRangeCoolTime_{ "rangeCoolTime", 120 };
+	VariantItem<int32_t> vRangeLifeTime_{ "rangeLifeTime", 45 };
+	VariantItem<int32_t> vRangeCoolTime_{ "rangeCoolTime", 90 };
 
 	VariantItem<int32_t> vRangeBulletCount_{ "rangeBulletCount", 32 };
-	VariantItem<float> vRangeAngle_{ "rangeAngle", 45 };
+	VariantItem<float> vRangeAngle_{ "rangeAngle", 45.f };
+	VariantItem<float> vRangeBulletSpeed_{ "rangeBulletSpeed", 3.5f };
 
 	VariantItem<int32_t> vFireCoolTime_{ "fireCoolTime", 10 };
 	VariantItem<float> vBulletSpeed_{ "bulletSpeed", 2.5f };
