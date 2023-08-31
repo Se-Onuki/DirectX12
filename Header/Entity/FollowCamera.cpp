@@ -4,6 +4,7 @@
 
 #include "../../externals/imgui/imgui.h"
 #include "../Math/Lerp.h"
+#include <algorithm>
 
 void FollowCamera::Init() {
 	viewProjection_.Init();
@@ -30,7 +31,7 @@ void FollowCamera::Update() {
 		interTarget_ = Lerp(interTarget_, target_->translate, 0.2f);
 
 		// 埋まりこみ対策
-		if (rotate_.x < minRotate_) { rotate_.x = minRotate_; }
+		rotate_.x = std::clamp(rotate_.x, minRotate_, 25.f * Angle::Dig2Rad);
 
 		const Matrix4x4 &mat = Matrix4x4::EulerRotate(rotate_);
 
@@ -62,6 +63,7 @@ bool FollowCamera::ImGuiWidget() {
 		ImGui::SliderAngle("vSpeed", &cameraRotSpeed_.x, 0.f, 360.f);
 		ImGui::DragFloat3("defaultOffset", &defaultOffset_.x);
 		ImGui::SliderAngle("minRotate", &minRotate_);
+		ImGui::SliderAngle("rot", &rotate_.x);
 
 
 		ImGui::TreePop();

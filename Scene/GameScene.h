@@ -14,7 +14,9 @@ class Enemy;
 class CollisionManager;
 
 class FollowCamera;
+
 class Ground;
+class SkyCylinder;
 
 class Input;
 class Audio;
@@ -56,6 +58,7 @@ private:
 
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Ground> ground_ = nullptr;
+	std::unique_ptr<SkyCylinder> sky_ = nullptr;
 
 	ViewProjection viewProjection_{};
 

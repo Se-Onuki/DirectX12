@@ -10,6 +10,8 @@
 #include "../Header/Model/ModelManager.h"
 #include "../Header/Entity/FollowCamera.h"
 #include "../Header/Object/Ground.h"
+#include "../Header/Object/SkyCylinder.h"
+
 #include "../Header/Entity/Component/ModelComp.h"
 #include "../Header/Entity/Component/PlayerComp.h"
 
@@ -49,6 +51,7 @@ void GameScene::OnEnter() {
 
 	ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
 	ModelManager::GetInstance()->AddModel("ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
+	ModelManager::GetInstance()->AddModel("skyCylinder", Model::LoadObjFile("", "skyCylinder.obj"));
 
 	AddPlayer();
 
@@ -56,6 +59,9 @@ void GameScene::OnEnter() {
 
 	ground_.reset(new Ground);
 	ground_->Init();
+
+	sky_.reset(new SkyCylinder);
+	sky_->Init();
 
 	light_.reset(DirectionLight::Create());
 }
@@ -171,6 +177,8 @@ void GameScene::Draw()
 
 	// モデルの描画
 	ground_->Draw(viewProjection_);
+	sky_->Draw(viewProjection_);
+
 	if (player_) { player_->Draw(viewProjection_); }
 
 	for (auto &pBullet : pBulletList_) {

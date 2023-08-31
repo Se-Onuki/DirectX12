@@ -252,6 +252,9 @@
     <ClCompile Include="Header\Entity\Component\Projectile.cpp">
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Object\SkyCylinder.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\String\String.hpp">
@@ -451,6 +454,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\ComponentManager.h">
       <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\SkyCylinder.h">
+      <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -21,6 +21,7 @@
 
 #include "../../Math/Lerp.h"
 #include <algorithm>
+#include <limits>
 #include "../../File/GlobalVariables.h"
 #include "../../../DirectBase/Base/SoLib.h"
 
@@ -256,8 +257,14 @@ void PlayerComp::UpdateUI() {
 	const Vector3 &segmentRotate = segmentDiff.Direction2Euler();
 	Vector3 rot = Angle::Lerp(followCamera_->GetRotate(), segmentRotate, cameraRotateSpeed_);
 	ImGui::DragFloat3("setRot", &rot.x);
-	// オイラー角の線形補間
-	followCamera_->SetRotate(rot);
+
+	if (!std::isnan(rot.x) || !std::isnan(rot.y) || !std::isnan(rot.z)) {
+		// オイラー角の線形補間
+		followCamera_->SetRotate(rot);
+	}
+	else {
+		ImGui::Text("rotateIs(nan)");
+	}
 	// followCamera_->Update();
 
 #pragma region 3D->2D

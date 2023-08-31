@@ -15,14 +15,16 @@
 
 namespace SoLib {
 
-	void ImGuiWidget(const char *const label, int32_t *const value);
-	void ImGuiWidget(const char *const label, float *const value);
-	void ImGuiWidget(const char *const label, double *const value);
-	void ImGuiWidget(const char *const label, Vector2 *const value);
-	void ImGuiWidget(const char *const label, Vector3 *const value);
-	void ImGuiWidget(const char *const label, Vector4 *const value);
+	bool ImGuiWidget(const char *const label, bool *const value);
+
+	bool ImGuiWidget(const char *const label, int32_t *const value);
+	bool ImGuiWidget(const char *const label, float *const value);
+	bool ImGuiWidget(const char *const label, double *const value);
+	bool ImGuiWidget(const char *const label, Vector2 *const value);
+	bool ImGuiWidget(const char *const label, Vector3 *const value);
+	bool ImGuiWidget(const char *const label, Vector4 *const value);
 
 	template<typename T>
-	void ImGuiWidget(VariantItem<T> *const value) { ImGuiWidget(value->GetKey().c_str(), &value->GetItem()); }
+	bool ImGuiWidget(VariantItem<T> *const value) { return ImGuiWidget(value->GetKey().c_str(), &value->GetItem()); }
 
 }
