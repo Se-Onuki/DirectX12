@@ -67,7 +67,7 @@ private:
 	std::unique_ptr<Sprite> healthBar_ = nullptr;
 
 	Vector3 target_;
-	int32_t coolTime_ = 0;
+	int32_t coolTime_ = 120;
 
 	VariantItem<int32_t> vBulletLifeTime_{ "bulletLifeTime", 60 };
 

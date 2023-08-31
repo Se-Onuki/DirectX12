@@ -28,5 +28,5 @@ private:
 
 	std::unique_ptr<Sprite> title_ = nullptr;
 
-	std::unique_ptr<Sprite> plane_ = nullptr;
+	// std::unique_ptr<Sprite> plane_ = nullptr;
 };

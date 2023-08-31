@@ -13,6 +13,7 @@
 #include "../Player.h"
 #include "../../../DirectBase/Base/WinApp.h"
 #include "../BossBullet.h"
+#include "Rigidbody.h"
 
 const char *const BossComp::groupName_ = "Boss";
 
@@ -73,9 +74,10 @@ void BossComp::Update() {
 		target_ = player->GetComponent<ColliderComp>()->GetGlobalCentor();
 	}
 
-	Vector3 targetDiff = target_ - object_->GetWorldPos();
+	const Vector3 &targetDiff = target_ - object_->GetWorldPos();
+	object_->transform_.translate += Vector3{ targetDiff.x ,0.f,targetDiff.z }.Nomalize() * 0.1f;
 
-	Vector3 bossRot = targetDiff.Direction2Euler();
+	const Vector3 &bossRot = targetDiff.Direction2Euler();
 	object_->transform_.rotate.y = bossRot.y;
 
 	Attack();
