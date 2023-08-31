@@ -103,6 +103,10 @@ void GameScene::Update() {
 	if (enemyList_.size() < 1u) {
 		GameClear();
 	}
+	if (player_ && !player_->GetActive()) {
+		RemovePlayer();
+		GameOver();
+	}
 
 #pragma region AddCollisionManager
 	collisionManager_->clear();
@@ -167,9 +171,6 @@ void GameScene::Update() {
 	viewProjection_.TransferMatrix();
 	if (input_->GetDirectInput()->IsTrigger(DIK_T)) {
 		GameClear();
-	}
-	if (player_ && !player_->GetActive()) {
-		GameOver();
 	}
 }
 
