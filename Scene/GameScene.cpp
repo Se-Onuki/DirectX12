@@ -53,7 +53,10 @@ void GameScene::OnEnter() {
 	modelManager->AddModel("playerHead", Model::LoadObjFile("Model/gunTank/", "playerHead.obj"));
 
 	ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
+
+	ModelManager::GetInstance()->AddModel("boss", Model::LoadObjFile("Model/Boss/", "Boss.obj"));
 	ModelManager::GetInstance()->AddModel("playerBullet", Model::LoadObjFile("Model/bullet/", "playerBullet.obj"));
+	ModelManager::GetInstance()->AddModel("enemyBullet", Model::LoadObjFile("Model/bullet/", "enemyBullet.obj"));
 	ModelManager::GetInstance()->AddModel("ground", Model::LoadObjFile("Model/Ground/", "Ground.obj"));
 	ModelManager::GetInstance()->AddModel("skyCylinder", Model::LoadObjFile("", "skyCylinder.obj"));
 

@@ -28,7 +28,7 @@ void BossComp::Init() {
 	colliderComp->SetRadius(vRadius_);
 	colliderComp->SetCentor(Vector3::up() * vRadius_);
 
-	Model *const enemyModel = ModelManager::GetInstance()->GetModel("sphere");
+	Model *const enemyModel = ModelManager::GetInstance()->GetModel("boss");
 	modelComp->AddBone("body", enemyModel, Transform{ .scale{Vector3::one() * vRadius_.GetItem()}, .translate{0.f,vRadius_,0.f} });
 
 	healthComp_->SetMaxHealth(vMaxHealth_);

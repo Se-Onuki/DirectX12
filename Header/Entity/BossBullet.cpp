@@ -32,7 +32,7 @@ void BossBulletComp::Init() {
 	projactile->SetDamage(1.f);
 
 
-	Model *const bulletModel = ModelManager::GetInstance()->GetModel("playerBullet");
+	Model *const bulletModel = ModelManager::GetInstance()->GetModel("enemyBullet");
 	modelComp_->AddBone("body", bulletModel, Transform{ .scale{2.f,2.f,5.f} });
 }
 
