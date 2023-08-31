@@ -22,10 +22,10 @@
             10.0
         ],
         "radius": 10.0,
-        "rangeAngle": 45.0,
+        "rangeAngle": 90.0,
         "rangeBulletCount": 32,
-        "rangeBulletSpeed": 3.5,
+        "rangeBulletSpeed": 0.5,
         "rangeCoolTime": 90,
-        "rangeLifeTime": 45
+        "rangeLifeTime": 180
     }
 }

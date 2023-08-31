@@ -2,6 +2,7 @@
 #include "../Object.h"
 #include "../../File/GlobalVariables.h"
 #include "../../../DirectBase/2D/Sprite.h"
+#include "../../Timer/Timer.h"
 #include <optional>
 
 class GameScene;
@@ -46,7 +47,7 @@ private:
 	void CoolTimeUpdate();
 	void AddCoolTime(uint32_t time) { coolTime_ += time; }
 
-	void MoveBehavior();
+	void AttackMove();
 	void AttackBehavior();
 
 	void Attack();
@@ -65,6 +66,10 @@ private:
 	std::unique_ptr<Sprite> bossText_ = nullptr;
 	std::unique_ptr<Sprite> healthBarFrame_ = nullptr;
 	std::unique_ptr<Sprite> healthBar_ = nullptr;
+
+	int32_t maxCount_ = 32;
+	int32_t bulletCount_ = 0;
+
 
 	Vector3 target_;
 	int32_t coolTime_ = 120;

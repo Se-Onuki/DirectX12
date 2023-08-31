@@ -80,7 +80,7 @@ void BossComp::Update() {
 	const Vector3 &bossRot = targetDiff.Direction2Euler();
 	object_->transform_.rotate.y = bossRot.y;
 
-	Attack();
+	AttackMove();
 
 	const float healthProgress = healthComp_->GetProgress();
 	healthBar_->SetScale(Vector2{ (vBarScale_->x - barFlameSize_.x * 2.f) * healthProgress , vBarScale_->y - barFlameSize_.y * 2.f });
@@ -152,7 +152,12 @@ void BossComp::CoolTimeUpdate() {
 	}
 }
 
-void BossComp::MoveBehavior() {
+void BossComp::AttackMove() {
+	if (++bulletCount_ >= maxCount_) {
+		bulletCount_ = 0;
+		AttackRange();
+	}
+	Attack();
 }
 
 void BossComp::Attack() {

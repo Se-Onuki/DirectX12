@@ -23,7 +23,7 @@ private:
 
 	ModelComp *modelComp_ = nullptr;
 
-	static const int32_t kLifeTime = 60 * 3;
+	static const int32_t kLifeTime = 60;
 	int32_t deathTimer_ = kLifeTime;
 	Vector3 velocity_{};
 
