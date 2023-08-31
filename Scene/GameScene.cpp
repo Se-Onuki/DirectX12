@@ -61,9 +61,10 @@ void GameScene::OnEnter() {
 	ModelManager::GetInstance()->AddModel("skyCylinder", Model::LoadObjFile("", "skyCylinder.obj"));
 
 	hudButton_.reset(Sprite::Create(TextureManager::Load("UI/hudButton.png")));
-	hudButton_->SetPosition(MiddleCentor);
+
+	hudButton_->SetPosition({ 640.f,630.f });
 	hudButton_->SetPivot({ 0.5f,0.5f });
-	hudButton_->SetScale(TopRight);
+	hudButton_->SetScale({ 1280.f,180.f });
 
 	AddPlayer();
 
