@@ -26,6 +26,6 @@
         "rangeBulletCount": 32,
         "rangeBulletSpeed": 0.5,
         "rangeCoolTime": 90,
-        "rangeLifeTime": 180
+        "rangeLifeTime": 240
     }
 }
