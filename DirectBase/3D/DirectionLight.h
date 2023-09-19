@@ -19,6 +19,8 @@ class DirectionLight {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	DirectionLight() = default;
+
 public:
 	struct Direction {
 		Vector4 color;		// 色(RGBA)

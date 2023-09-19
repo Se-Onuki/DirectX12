@@ -24,6 +24,8 @@ namespace SoLib {
 	bool ImGuiWidget(const char *const label, Vector3 *const value);
 	bool ImGuiWidget(const char *const label, Vector4 *const value);
 
+	bool ImGuiWidget(const char *const label, std::string *const value);
+
 	template<typename T>
 	bool ImGuiWidget(VariantItem<T> *const value) { return ImGuiWidget(value->GetKey().c_str(), &value->GetItem()); }
 

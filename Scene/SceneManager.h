@@ -7,7 +7,7 @@
 //#include "Scene.hpp"
 
 class SceneManager;
-class Object;
+class Entity;
 
 class IScene {
 public:

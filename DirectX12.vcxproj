@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -117,23 +117,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
-    <ClCompile Include="Header\Collision\Target.cpp" />
     <ClCompile Include="Header\Create\Create.cpp" />
-    <ClCompile Include="Header\Entity\BaseCharacter.cpp" />
-    <ClCompile Include="Header\Entity\BossBullet.cpp" />
-    <ClCompile Include="Header\Entity\Component\BossComp.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerBulletComp.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerComp.cpp" />
     <ClCompile Include="Header\Entity\Component\Projectile.cpp" />
     <ClCompile Include="Header\Entity\Component\Rigidbody.cpp" />
-    <ClCompile Include="Header\Entity\Enemy.cpp" />
-    <ClCompile Include="Header\Entity\FollowCamera.cpp" />
-    <ClCompile Include="Header\Entity\Object.cpp" />
-    <ClCompile Include="Header\Entity\Player.cpp" />
-    <ClCompile Include="Header\Entity\PlayerBullet.cpp" />
+    <ClCompile Include="Header\Entity\Entity.cpp" />
     <ClCompile Include="Header\File\GlobalVariables.cpp" />
     <ClCompile Include="Header\Math\Lerp.cpp" />
     <ClCompile Include="Header\Math\Math.cpp" />
@@ -145,14 +135,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Math\Vector2.cpp" />
     <ClCompile Include="Header\Math\Vector3.cpp" />
     <ClCompile Include="Header\Model\Model.cpp" />
-    <ClCompile Include="Header\Object\Ground.cpp" />
-    <ClCompile Include="Header\Object\SkyCylinder.cpp" />
     <ClCompile Include="Header\Render\Render.cpp" />
     <ClCompile Include="Header\Texture\Texture.cpp" />
     <ClCompile Include="Header\Timer\TImer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Scene\GameClearScene.cpp" />
-    <ClCompile Include="Scene\GameOverScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
@@ -182,25 +168,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
-    <ClInclude Include="Header\Collision\Target.h" />
     <ClInclude Include="Header\Create\Create.h" />
     <ClInclude Include="Header\Descriptor\DescriptorHandIe.h" />
-    <ClInclude Include="Header\Entity\BaseCharacter.h" />
-    <ClInclude Include="Header\Entity\BossBullet.h" />
-    <ClInclude Include="Header\Entity\Component\BossComp.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerBulletComp.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerComp.h" />
     <ClInclude Include="Header\Entity\Component\Projectile.h" />
     <ClInclude Include="Header\Entity\Component\Rigidbody.h" />
-    <ClInclude Include="Header\Entity\Enemy.h" />
-    <ClInclude Include="Header\Entity\Object.h" />
-    <ClInclude Include="Header\Entity\FollowCamera.h" />
-    <ClInclude Include="Header\Entity\Player.h" />
-    <ClInclude Include="Header\Entity\PlayerBullet.h" />
+    <ClInclude Include="Header\Entity\Entity.h" />
     <ClInclude Include="Header\File\GlobalVariables.h" />
     <ClInclude Include="Header\File\VariantItem.h" />
     <ClInclude Include="Header\Math\FloatArray.h" />
@@ -217,14 +193,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Model\MinecraftModel.h" />
     <ClInclude Include="Header\Model\Model.h" />
     <ClInclude Include="Header\Model\ModelManager.h" />
-    <ClInclude Include="Header\Object\Ground.h" />
-    <ClInclude Include="Header\Object\SkyCylinder.h" />
     <ClInclude Include="Header\Render\Render.hpp" />
     <ClInclude Include="Header\String\String.hpp" />
     <ClInclude Include="Header\Texture\Texture.h" />
     <ClInclude Include="Header\Timer\Timer.h" />
-    <ClInclude Include="Scene\GameClearScene.h" />
-    <ClInclude Include="Scene\GameOverScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />

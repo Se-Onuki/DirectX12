@@ -1,12 +1,12 @@
 #pragma once
-#include "../Object.h"
+#include "../Entity.h"
 
 class ProjectileComp :public IComponent {
 public:
 	using IComponent::IComponent;
 	~ProjectileComp() override = default;
 
-	void OnCollision(Object *other) override;
+	void OnCollision(Entity *other) override;
 
 	void SetDamage(const float value) { damage_ = value; }
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Object.h"
+#include "../Entity.h"
 
 class HealthComp :public IComponent {
 public:

@@ -32,8 +32,8 @@ void CollisionManager::CheckCollisionPair(ColliderComp *const A, ColliderComp *c
 	const Vector3 bPos = B->GetGlobalCentor();
 
 	if ((aPos - bPos).Length() <= A->GetRadius() + B->GetRadius()) {
-		Object *const aObject = A->object_;
-		Object *const bObject = B->object_;
+		Entity *const aObject = A->object_;
+		Entity *const bObject = B->object_;
 
 		aObject->OnCollision(bObject);
 		bObject->OnCollision(aObject);

@@ -3,8 +3,9 @@
 #include "../DirectBase/3D/DirectionLight.h"
 #include "../DirectBase/2D/Sprite.h"
 
-class Input;
-class Audio;
+#include "../DirectBase/Input/Input.h"
+#include "../DirectBase/Base/Audio.h"
+
 
 class TitleScene : public IScene {
 public:
@@ -25,8 +26,4 @@ private:
 
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
-
-	std::unique_ptr<Sprite> title_ = nullptr;
-
-	// std::unique_ptr<Sprite> plane_ = nullptr;
 };

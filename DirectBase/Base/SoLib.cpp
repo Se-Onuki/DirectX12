@@ -30,3 +30,8 @@ bool SoLib::ImGuiWidget(const char *const label, Vector3 *const value) {
 bool SoLib::ImGuiWidget(const char *const label, Vector4 *const value) {
 	return ImGui::DragFloat4(label, &value->x, 0.1f, 0.f, 100.f);
 }
+
+bool SoLib::ImGuiWidget(const char *const label, std::string *const value) {
+	ImGui::Text("\"%s\" : \"%s\"", label, value->c_str());
+	return false;
+}

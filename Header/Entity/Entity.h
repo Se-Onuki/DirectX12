@@ -9,7 +9,7 @@
 #include "../Math/Transform.h"
 #include "../../DirectBase/3D/ViewProjection/ViewProjection.h"
 
-class Object;
+class Entity;
 //class IScene;
 
 ///	
@@ -39,7 +39,7 @@ class IComponent {
 public:
 	/// @brief 自動的に呼ばれるコンストラクタ
 	/// @param object 紐づけられる実体のアドレス
-	IComponent(Object *const object) : object_(object) {}
+	IComponent(Entity *const object) : object_(object) {}
 	virtual ~IComponent() = default;
 
 
@@ -67,13 +67,13 @@ public:
 
 	/// @brief 接触時に実行される関数
 	/// @param Object* other : 接触相手のアドレスが代入される
-	virtual void OnCollision(Object *const) {};
+	virtual void OnCollision(Entity *const) {};
 
 	// 紐づけられた実体
-	Object *const object_ = nullptr;
+	Entity *const object_ = nullptr;
 };
 
-class Object {
+class Entity {
 	// 生きているか
 	bool isActive_ = false;
 	// コンポーネントの連想コンテナ
@@ -94,9 +94,9 @@ public:
 	// オブジェクトのSRT
 	Transform transform_;
 
-	Object() = default;
+	Entity() = default;
 	//Object(const Object&) = default;
-	virtual ~Object() = default;
+	virtual ~Entity() = default;
 
 	virtual void Init();
 	virtual void Reset();
@@ -141,7 +141,7 @@ public:
 
 	const Vector3 &GetWorldPos();
 
-	virtual void OnCollision(Object *const other);
+	virtual void OnCollision(Entity *const other);
 
 	void ImGuiWidget();
 
@@ -150,7 +150,7 @@ private:
 };
 
 template <typename T>
-T *const Object::AddComponent() {
+T *const Entity::AddComponent() {
 	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
 
 	// 既に存在する場合はその場で終了
@@ -171,7 +171,7 @@ T *const Object::AddComponent() {
 
 
 template <typename T>
-T *const Object::GetComponent() const {
+T *const Entity::GetComponent() const {
 	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
 
 	const auto &it = componentMap_.find(std::type_index(typeid(T)));

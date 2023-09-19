@@ -1,5 +1,5 @@
 #pragma once
-#include "../Object.h"
+#include "../Entity.h"
 
 #include <unordered_map>
 #include <memory>

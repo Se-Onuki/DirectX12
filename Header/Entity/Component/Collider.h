@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../Object.h"
+#include "../Entity.h"
+
 #include <stdint.h>
 #include <list>
 
@@ -91,7 +92,7 @@ public:
 
 	void push_back(ColliderComp *collider) { colliderList_.push_back(collider); }
 
-	void push_back(Object *object) {
+	void push_back(Entity *object) {
 		auto *const colliderComp = object->GetComponent<ColliderComp>();
 		if (colliderComp) {
 			colliderList_.push_back(colliderComp);

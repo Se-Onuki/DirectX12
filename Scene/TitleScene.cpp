@@ -17,13 +17,7 @@ TitleScene::TitleScene() {
 TitleScene::~TitleScene() {
 }
 
-void TitleScene::OnEnter()
-{
-	title_.reset(Sprite::Create(TextureManager::Load("UI/title.png"), MiddleCentor, TopRight));
-	title_->SetPivot({ 0.5f,0.5f });
-
-	/*plane_.reset(Sprite::Create(TextureManager::Load("debugfont.png"), MiddleCentor, Vector2{ 200.f,200.f }));
-	plane_->SetPivot({ 0.5f,0.5f });*/
+void TitleScene::OnEnter() {
 
 	light_.reset(DirectionLight::Create());
 }
@@ -72,9 +66,7 @@ void TitleScene::Draw() {
 
 	Sprite::StartDraw(commandList);
 
-	title_->Draw();
 
-	// plane_->Draw();
 
 	Sprite::EndDraw();
 
