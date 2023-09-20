@@ -1,7 +1,7 @@
 #pragma once
 #include "../Entity.h"
 
-#include "../../Math/Vector3.h"
+#include "../../../Utils/Math/Vector3.h"
 
 class Rigidbody : public IComponent {
 public:

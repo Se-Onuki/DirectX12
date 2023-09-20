@@ -5,11 +5,12 @@ SceneManager *IScene::sceneManager_ = nullptr;
 
 void SceneManager::Init() {
 	IScene::sceneManager_ = this;
+	transitionTimer_.Clear();
 }
 
 void SceneManager::Cancel() {
 	nextScene_.reset();
-	transitionTimer_.Init();
+	transitionTimer_.Clear();
 }
 
 void SceneManager::ChangeScene(IScene *const nextScene) {
@@ -32,7 +33,7 @@ void SceneManager::ChangeScene(IScene *const nextScene, const int &transitionTim
 	// 次のシーンのポインタを保存
 	nextScene_.reset(nextScene);
 	// 遷移タイマーを開始
-	transitionTimer_.Init(transitionTime);
+	transitionTimer_.Start(transitionTime);
 }
 
 void SceneManager::Update() {

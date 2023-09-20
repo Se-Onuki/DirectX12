@@ -23,7 +23,7 @@ void Entity::Update() {
 	if (modelComp)
 		modelComp->Update();
 }
-void Entity::Draw(const ViewProjection &vp) const {
+void Entity::Draw(const Camera &vp) const {
 	for (auto &component : componentMap_) {
 		component.second->Draw(vp);
 	}

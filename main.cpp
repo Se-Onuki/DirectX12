@@ -1,4 +1,4 @@
-#include "DirectBase/Base/LeakChecker.h"
+#include "Engine/DirectBase/Base/LeakChecker.h"
 
 #include <Windows.h>
 #include <cstdint>
@@ -21,23 +21,23 @@
 
 #include <string>
 
-#include "DirectBase/Base/WinApp.h"
-#include "DirectBase/Base/DirectXCommon.h"
+#include "Engine/DirectBase/Base/WinApp.h"
+#include "Engine/DirectBase/Base/DirectXCommon.h"
 
 #include "externals/DirectXTex/DirectXTex.h"
 
-#include "DirectBase/Base/TextureManager.h"
-#include "DirectBase/Base/Shader.h"
-#include "Header/Model/Model.h"
-#include "DirectBase/Base/ImGuiManager.h"
+#include "Engine/DirectBase/Base/TextureManager.h"
+#include "Engine/DirectBase/Base/Shader.h"
+#include "Engine/DirectBase/Model/Model.h"
+#include "Engine/DirectBase/Base/ImGuiManager.h"
 
 #include "Scene/SceneManager.h"
 #include "Scene/TitleScene.h"
 #include "Scene/GameScene.h"
-#include "DirectBase/Input/Input.h"
-#include "DirectBase/Base/Audio.h"
+#include "Engine/DirectBase/Input/Input.h"
+#include "Engine/DirectBase/Base/Audio.h"
 
-#include "Header/File/GlobalVariables.h"
+#include "Engine/DirectBase/File/GlobalVariables.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {

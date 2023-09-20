@@ -6,7 +6,7 @@ void ModelComp::Update() {
 	}
 }
 
-void ModelComp::Draw(const ViewProjection &vp) const {
+void ModelComp::Draw(const Camera &vp) const {
 	for (auto &model : modelTree_) {
 		model->Draw(vp);
 	}
@@ -50,7 +50,7 @@ void ModelComp::ModelBone::Update() {
 	}
 }
 
-void ModelComp::ModelBone::Draw(const ViewProjection &vp) const {
+void ModelComp::ModelBone::Draw(const Camera &vp) const {
 
 	this->model_->Draw(transform_, vp);
 

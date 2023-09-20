@@ -1,13 +1,9 @@
 #include "TitleScene.h"
 
-#include "../externals/imgui/imgui.h"
+#include <imgui.h>
 #include "GameScene.h"
-#include "../DirectBase/Base/DirectXCommon.h"
-#include "../DirectBase/2D/Sprite.h"
-#include "../Header/Model/Model.h"
-
-#include "../DirectBase/Input/Input.h"
-#include "../DirectBase/Base/Audio.h"
+#include "../Engine/DirectBase/Base/DirectXCommon.h"
+#include "../Engine/DirectBase/Model/ModelManager.h"
 
 TitleScene::TitleScene() {
 	input_ = Input::GetInstance();

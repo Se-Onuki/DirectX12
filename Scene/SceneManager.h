@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
-#include "../Header/Timer/Timer.h"
+#include "../Utils/SoLib/SoLib_Timer.h"
 //#include "Scene.hpp"
 
 class SceneManager;
@@ -31,7 +31,7 @@ public:
 class SceneManager {
 private:
 
-	Timer transitionTimer_{};
+	SoLib::Timer transitionTimer_{};
 	// 現在読み込んでいるシーン
 	std::unique_ptr<IScene> currentScene_ = nullptr;
 	// 次に遷移するシーン

@@ -3,8 +3,9 @@
 
 #include <unordered_map>
 #include <memory>
-#include "../../Model/Model.h"
-#include "../../Math/Transform.h"
+
+#include "../../../Engine/DirectBase/Model/Model.h"
+#include "../../../Utils/Math/Transform.h"
 
 class ModelComp : public IComponent {
 public:
@@ -23,7 +24,7 @@ public:
 		void SetParent(ModelBone *const parent);
 
 		void Update();
-		void Draw(const ViewProjection &vp) const;
+		void Draw(const Camera &vp) const;
 	};
 
 	//using ModelPair = std::pair<Transform, Model *>;
@@ -48,7 +49,7 @@ public:
 
 
 	void Update() override;
-	void Draw(const ViewProjection &vp)const override;
+	void Draw(const Camera &vp)const override;
 
 	ModelBone *const AddBone(const std::string &key, Model *const model, const Transform &srt = {});
 	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const Transform &srt);

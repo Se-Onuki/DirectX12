@@ -1,16 +1,10 @@
 #include "GameScene.h"
 
-#include "../externals/imgui/imgui.h"
-#include "../DirectBase/Base/DirectXCommon.h"
-#include "../DirectBase/Input/Input.h"
-#include "../DirectBase/Base/Audio.h"
+#include <imgui.h>
+#include "../Engine/DirectBase/Base/DirectXCommon.h"
+#include "../Engine/DirectBase/Model/ModelManager.h"
 
 #include "TitleScene.h"
-
-#include "../Header/Model/ModelManager.h"
-#include "../Header/Entity/FollowCamera.h"
-#include "../Header/Object/Ground.h"
-#include "../Header/Object/SkyCylinder.h"
 
 #include "../Header/Entity/Component/ModelComp.h"
 

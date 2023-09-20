@@ -6,8 +6,8 @@
 #include <type_traits>
 #include <string>
 
-#include "../Math/Transform.h"
-#include "../../DirectBase/3D/ViewProjection/ViewProjection.h"
+#include "../../Utils/Math/Transform.h"
+#include "../../Engine/DirectBase/Render/Camera.h"
 
 class Entity;
 //class IScene;
@@ -50,8 +50,8 @@ public:
 	/// @brief 毎フレーム実行される処理
 	virtual void Update() {};
 	/// @brief 描画処理
-	/// @param vp ViewProjectionクラス
-	virtual void Draw(const ViewProjection &) const {};
+	/// @param vp Cameraクラス
+	virtual void Draw(const Camera &) const {};
 
 	/// @brief jsonからの読み込み
 	/// @param groupName グループ名
@@ -101,7 +101,7 @@ public:
 	virtual void Init();
 	virtual void Reset();
 	virtual void Update();
-	virtual void Draw(const ViewProjection &vp) const;
+	virtual void Draw(const Camera &vp) const;
 
 	/*template<typename T>
 	bool HasComponent();*/

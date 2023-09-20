@@ -1,10 +1,11 @@
 #pragma once
 #include "SceneManager.h"
-#include "../DirectBase/3D/DirectionLight.h"
-#include "../DirectBase/2D/Sprite.h"
 
-#include "../DirectBase/Input/Input.h"
-#include "../DirectBase/Base/Audio.h"
+#include "../Engine/DirectBase/3D/DirectionLight.h"
+#include "../Engine/DirectBase/2D/Sprite.h"
+
+#include "../Engine/DirectBase/Input/Input.h"
+#include "../Engine/DirectBase/Base/Audio.h"
 
 class GameScene : public IScene {
 public:
