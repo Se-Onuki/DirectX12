@@ -21,6 +21,8 @@
 
 #include <string>
 
+#include "Engine/SolEngine.h"
+
 #include "Engine/DirectBase/Base/WinApp.h"
 #include "Engine/DirectBase/Base/DirectXCommon.h"
 
@@ -76,6 +78,24 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	audio->StaticInit();
 
 	input->Init();
+
+#pragma endregion
+	
+#pragma region クラス化の残骸
+
+	//SolEngine::StaticInit("SoLEngine");
+
+	//auto *const winApp = SolEngine::GetInstance()->GetWinApp();
+
+	//auto *const dxCommon = SolEngine::GetInstance()->GetDXCommon();
+	//ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+
+	//Input *const input = Input::GetInstance();
+	//const DirectInput *const directInput = DirectInput::GetInstance();
+
+	//TextureManager *const textureManager = TextureManager::GetInstance();
+
+	//Audio *const audio = Audio::GetInstance();
 
 #pragma endregion
 

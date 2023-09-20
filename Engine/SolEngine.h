@@ -25,6 +25,9 @@ public:
 		const char *title = "DirectXGame", UINT windowStyle = WS_OVERLAPPEDWINDOW,
 		int32_t clientWidth = WinApp::kWindowWidth, int32_t clientHeight = WinApp::kWindowHeight);
 
+	WinApp *const GetWinApp() const { return winApp_; }
+	DirectXCommon *const GetDXCommon() const { return dxCommon_; }
+
 private:
 
 	WinApp *winApp_ = nullptr;
