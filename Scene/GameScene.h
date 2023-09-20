@@ -3,6 +3,10 @@
 
 #include "../Engine/DirectBase/3D/DirectionLight.h"
 #include "../Engine/DirectBase/2D/Sprite.h"
+#include "../Engine/DirectBase/Render/Camera.h"
+
+#include "../Engine/DirectBase/Model/Model.h"
+#include "../Utils/Math/Transform.h"
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
@@ -22,6 +26,10 @@ private:
 
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
+
+	Model *model_ = nullptr;
+	Transform transform_;
+	Camera camera_;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };

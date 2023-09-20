@@ -20,11 +20,26 @@ GameScene::~GameScene() {
 
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
+
+	model_ = ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
+	transform_.InitResource();
+	camera_.Init();
 }
 
 void GameScene::OnExit() {}
 
 void GameScene::Update() {
+
+	ImGui::Begin("Camera");
+	camera_.ImGuiWidget();
+	ImGui::End();
+	camera_.UpdateMatrix();
+
+	ImGui::Begin("Sphere");
+	transform_.ImGuiWidget();
+	ImGui::End();
+
+	transform_.UpdateMatrix();
 }
 
 void GameScene::Draw()
@@ -52,6 +67,7 @@ void GameScene::Draw()
 	light_->SetLight(commandList);
 
 	// モデルの描画
+	model_->Draw(transform_, camera_);
 
 
 	Model::EndDraw();
