@@ -246,6 +246,9 @@
     <ClCompile Include="Engine\DirectBase\2D\Sprite.cpp">
       <Filter>Engine\2D</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\SolEngine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
