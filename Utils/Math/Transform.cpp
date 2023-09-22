@@ -10,15 +10,15 @@
 //Transform::Transform(const Transform &other) {
 //}
 
-Transform Transform::operator=(const Transform &other) noexcept {
-	other;
-	return Transform();
-}
-
-Transform Transform::operator=(Transform &&other) noexcept {
-	other;
-	return Transform{};
-}
+//Transform Transform::operator=(const Transform &other) noexcept {
+//	other;
+//	return Transform();
+//}
+//
+//Transform Transform::operator=(Transform &&other) noexcept {
+//	other;
+//	return Transform{};
+//}
 
 Matrix4x4 Transform::Affine() const
 {
@@ -34,14 +34,14 @@ void Transform::InitResource()
 
 void Transform::CreateConstBuffer()
 {
-	constBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(TransformMatrix));
+	//constBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(TransformMatrix));
 }
 
 void Transform::SetMap()
 {
-	HRESULT result = S_FALSE;
+	/*HRESULT result = S_FALSE;
 	result = constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
-	assert(SUCCEEDED(result));
+	assert(SUCCEEDED(result));*/
 }
 
 void Transform::CalcMatrix()
@@ -53,7 +53,7 @@ void Transform::CalcMatrix()
 }
 
 void Transform::TransferMatrix() {
-	mapData_->World = matWorld_;
+	mapBuffer_->World = matWorld_;
 }
 
 void Transform::UpdateMatrix()

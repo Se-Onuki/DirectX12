@@ -475,7 +475,7 @@ void Model::ImGuiWidget()
 void Model::Draw(const Transform &transform, const Camera &camera) const
 {
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constBuffer_->GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.constBuffer_->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
 		mesh->Draw(commandList_);
 	}

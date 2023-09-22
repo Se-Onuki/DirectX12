@@ -22,7 +22,7 @@ void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
 	model_ = ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
-	transform_.InitResource();
+	transform_.UpdateMatrix();
 	camera_.Init();
 }
 

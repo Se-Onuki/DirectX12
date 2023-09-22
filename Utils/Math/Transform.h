@@ -7,8 +7,9 @@
 #include "../../Engine/DirectBase/Base/CBuffer.h"
 
 struct Transform {
-	Transform operator=(const Transform &other) noexcept;
-	Transform operator=(Transform &&other) noexcept;
+	Transform &operator=(const Transform &other) = default;
+	//Transform &operator=(Transform &&other) = default;
+
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	struct TransformMatrix {
 		Matrix4x4 World;
@@ -22,8 +23,8 @@ struct Transform {
 	Matrix4x4 matWorld_{};	// ローカル . ワールド変換
 	const Transform *parent_ = nullptr;	// 親へのアドレス
 
-	ComPtr<ID3D12Resource> constBuffer_ = nullptr;
-	TransformMatrix *mapData_ = nullptr;	// マップ済みデータ
+	//ComPtr<ID3D12Resource> constBuffer_ = nullptr;
+	//TransformMatrix *mapData_ = nullptr;	// マップ済みデータ
 
 	CBuffer<TransformMatrix> mapBuffer_;
 

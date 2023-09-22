@@ -16,14 +16,26 @@ class CBuffer final {
 
 	T *mapData_;
 
-	inline operator bool() noexcept;
+public:
 
+	inline operator bool() const noexcept;		// 値が存在するか
+	inline operator T &() noexcept;				// 参照
+	inline operator const T &() const noexcept;	// const参照
+
+	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
+	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
+
+	inline CBuffer &operator=(const T &other);	// コピー演算子
+
+public:
+	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
+		return resources_->GetGPUVirtualAddress();
+	}
 
 public:
 
 	CBuffer();					// デフォルトコンストラクタ
 	CBuffer(const CBuffer &);	// コピーコンストラクタ
-	//CBuffer(CBuffer &&);		// ムーブコンストラクタ
 
 	~CBuffer();
 
@@ -33,8 +45,34 @@ private:
 };
 
 template<typename T>
-inline CBuffer<T>::operator bool() noexcept {
+inline CBuffer<T>::operator bool() const noexcept {
 	return resources_ != nullptr;
+}
+
+template<typename T>
+inline CBuffer<T>::operator T &() noexcept {
+	return *mapData_;
+}
+
+template<typename T>
+inline CBuffer<T>::operator const T &() const noexcept {
+	return *mapData_;
+}
+
+template<typename T>
+inline T *const CBuffer<T>::operator->() noexcept {
+	return mapData_;
+}
+
+template<typename T>
+inline const T *const CBuffer<T>::operator->() const noexcept {
+	return mapData_;
+}
+
+template<typename T>
+inline CBuffer<T> &CBuffer<T>::operator=(const T &other) {
+	*mapData_ = other;
+	return *this;
 }
 
 template<typename T>
