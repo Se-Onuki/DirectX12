@@ -24,6 +24,7 @@ public:
 	CBuffer();					// デフォルトコンストラクタ
 	CBuffer(const CBuffer &);	// コピーコンストラクタ
 	//CBuffer(CBuffer &&);		// ムーブコンストラクタ
+
 	~CBuffer();
 
 private:
@@ -59,13 +60,6 @@ inline CBuffer<T>::CBuffer(const CBuffer &other) {
 
 
 template<typename T>
-inline CBuffer<T>::~CBuffer() {
-	resources_->Release();
-	cbView_ = {};
-	mapData_ = nullptr;
-}
-
-template<typename T>
 inline void CBuffer<T>::CreateBuffer() {
 	HRESULT result = S_FALSE;
 	// 256バイト単位のアライメント
@@ -77,4 +71,11 @@ inline void CBuffer<T>::CreateBuffer() {
 	result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 	assert(SUCCEEDED(result));
 
+}
+
+template<typename T>
+inline CBuffer<T>::~CBuffer() {
+	resources_->Release();
+	cbView_ = {};
+	mapData_ = nullptr;
 }

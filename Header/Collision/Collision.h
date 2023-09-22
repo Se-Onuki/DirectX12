@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Math/Math.hpp"
-#include "../Math/Matrix4x4.h"
-#include "../Math/Vector3.h"
-#include "../Math/Transform.h"
+#include "../../Utils/Math/Math.hpp"
+#include "../../Utils/Math/Matrix4x4.h"
+#include "../../Utils/Math/Vector3.h"
+#include "../../Utils/Math/Transform.h"
 #include <functional>
 #include <string>
 #include <vector>
@@ -44,8 +44,7 @@ namespace Collision {
 
 struct OBB {
 	Vector3 centor; // 中心点
-	Vector3 orientations[3u] = {
-		Vector3::right(), Vector3::up(), Vector3::front() }; // ローカル座標軸。正規化、直交必須
+	Vector3 orientations[3u] = { Vector3::right, Vector3::up, Vector3::front }; // ローカル座標軸。正規化、直交必須
 	Vector3 size;                                           // 中心点からの各軸の半径
 
 	void SetRotate(const Vector3 &euler);

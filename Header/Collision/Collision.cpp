@@ -1,7 +1,7 @@
 #include "Collision.h"
 
-#include "../Math/Lerp.h"
-#include "../Render/Render.hpp"
+#include "../../Utils/SoLib/SoLib_Lerp.h"
+#include "../../Engine/DirectBase/Render/Render.h"
 #include <algorithm>
 
 #include <imgui.h>
@@ -60,9 +60,9 @@ float LineBase::ClosestProgress(const Vector3 &point) const {
 Plane Plane::Create(const Vector3 &Normal, const Vector3 &Point) {
 	Plane out;
 
-	LineBase line{ .origin = Vector3::zero(), .diff = Normal, .lineType = LineBase::LineType::Line };
+	LineBase line{ .origin = Vector3::zero, .diff = Normal, .lineType = LineBase::LineType::Line };
 	Vector3 centor = line.ClosestPoint(Point);
-	if (centor != Vector3::zero()) {
+	if (centor != Vector3::zero) {
 		out.normal = centor.Nomalize();
 		out.distance = centor.Length();
 	}
@@ -274,7 +274,7 @@ Collision::IsHitAxis(const Vector3 &axis, const Vector3 vertexA[8], const Vector
 const Vector3 Collision::HitPoint(const LineBase &line, const Plane &plane) {
 	const float dot = plane.normal * line.diff;
 	if (dot == 0.f)
-		return Vector3::zero(); // 平行
+		return Vector3::zero; // 平行
 	const float t = (plane.distance - (line.origin * plane.normal)) / dot;
 	return line.GetProgress(t);
 }
@@ -359,7 +359,7 @@ Vector3 Spring::GetAcceleration(const Ball &ball) {
 		Vector3 force = restoringForce + dampingForce;
 		return force / ball.mass;
 	}
-	return Vector3::zero();
+	return Vector3::zero;
 }
 
 void Pendulum::MoveSwing(const Vector3 &kGravity, const float deltaTime) {
@@ -397,7 +397,7 @@ void Ball::Update(const Plane &plane, const float deltaTime, const float elastic
 	}
 	// else acceleration = Vector3::zero();
 	position += velocity * deltaTime;
-	acceleration = Vector3::zero();
+	acceleration = Vector3::zero;
 }
 
 Vector3 Capsule::GetHitPoint(const Plane &plane) {
