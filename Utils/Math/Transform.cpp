@@ -10,6 +10,11 @@
 //Transform::Transform(const Transform &other) {
 //}
 
+Transform Transform::operator=(const Transform &other) noexcept {
+	other;
+	return Transform();
+}
+
 Transform Transform::operator=(Transform &&other) noexcept {
 	other;
 	return Transform{};

@@ -4,8 +4,10 @@
 
 #include <d3d12.h>
 #include <wrl.h>
+#include "../../Engine/DirectBase/Base/CBuffer.h"
 
 struct Transform {
+	Transform operator=(const Transform &other) noexcept;
 	Transform operator=(Transform &&other) noexcept;
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	struct TransformMatrix {
@@ -23,6 +25,7 @@ struct Transform {
 	ComPtr<ID3D12Resource> constBuffer_ = nullptr;
 	TransformMatrix *mapData_ = nullptr;	// マップ済みデータ
 
+	CBuffer<TransformMatrix> mapBuffer_;
 
 	_NODISCARD Matrix4x4 Affine() const;
 

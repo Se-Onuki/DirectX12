@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 
 
+DirectResourceLeakChecker DirectXCommon::leakChecker{}; // リークチェッカー
 
 void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBufferHeight)
 {
@@ -253,7 +254,7 @@ void DirectXCommon::InitDXGI_Device() {
 		//エラーの時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		// 警告の時に止まる
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, false);
 
 #pragma region エラー/警告の抑制
 

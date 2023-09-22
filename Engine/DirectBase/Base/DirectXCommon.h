@@ -5,14 +5,18 @@
 #include <dxgi1_6.h>
 #include <vector>
 #include <array>
-class DirectXCommon
-{
+
+#include "LeakChecker.h"
+
+class DirectXCommon {
 	DirectXCommon() = default;
 	DirectXCommon(const DirectXCommon &) = delete;
 	const DirectXCommon &operator=(const DirectXCommon &) = delete;
 	~DirectXCommon() = default;
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	static DirectResourceLeakChecker leakChecker; // リークチェッカー
 public:
 
 	static const uint32_t backBufferCount = 2;
