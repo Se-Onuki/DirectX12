@@ -29,7 +29,7 @@ private:
 
 	Model *model_ = nullptr;
 	Transform transform_;
-	Camera camera_;
+	Camera camera_{ Camera::Type::Othographic };
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };

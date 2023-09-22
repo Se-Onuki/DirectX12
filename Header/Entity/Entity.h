@@ -7,9 +7,10 @@
 #include <string>
 
 #include "../../Utils/Math/Transform.h"
-#include "../../Engine/DirectBase/Render/Camera.h"
+//#include "../../Engine/DirectBase/Render/Camera.h"
 
 class Entity;
+class Camera;
 //class IScene;
 
 ///	

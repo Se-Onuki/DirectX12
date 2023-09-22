@@ -24,8 +24,14 @@ void Camera::SetMap()
 }
 
 void Camera::CalcMatrix() {
-	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseSRT();
-	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	switch (cameraType_) {
+	case Camera::Type::Projecction:
+		CalcMatrix<Camera::Type::Projecction>();
+		break;
+	case Camera::Type::Othographic:
+		CalcMatrix<Camera::Type::Othographic>();
+		break;
+	}
 }
 
 void Camera::UpdateMatrix() {
