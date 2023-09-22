@@ -26,7 +26,7 @@ struct Transform {
 	//ComPtr<ID3D12Resource> constBuffer_ = nullptr;
 	//TransformMatrix *mapData_ = nullptr;	// マップ済みデータ
 
-	CBuffer<TransformMatrix> mapBuffer_;
+	CBuffer<TransformMatrix, 1u> mapBuffer_;
 
 	_NODISCARD Matrix4x4 Affine() const;
 
