@@ -2,8 +2,23 @@
 
 #include "../Create/Create.h"
 #include "../Base/DirectXCommon.h"
-#include "../Render/Render.h"
 
+#include "../Render/Render.h"
+#include "../Base/WinApp.h"
+
+
+template<>
+inline void Camera::CalcMatrix<Camera::Type::Projecction>() {
+	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseSRT();
+	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+}
+
+template<>
+inline void Camera::CalcMatrix<Camera::Type::Othographic>() {
+	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseSRT();
+	Vector2 windowSize = { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight };
+	matProjection_ = Render::MakeOrthographicMatrix(windowSize * -.5f, windowSize * +.5f, 0.f, 100.f);
+}
 
 void Camera::Init() {
 	CreateConstBuffer();

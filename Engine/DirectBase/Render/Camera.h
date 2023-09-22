@@ -7,9 +7,6 @@
 #include "../../../Utils/Math/Vector3.h"
 #include "../../../Utils/Math/Math.hpp"
 
-#include "../Render/Render.h"
-#include "../Base/WinApp.h"
-
 class Camera {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -65,15 +62,15 @@ public:
 	/// @brief 前方宣言
 	/// @tparam T カメラタイプ
 	template<Camera::Type T>
-	inline void CalcMatrix();
+	void CalcMatrix();
 
 	/// @brief 透視投影計算
 	template<>
-	inline void CalcMatrix<Camera::Type::Projecction>();
+	void CalcMatrix<Camera::Type::Projecction>();
 
 	/// @brief 正射影計算
 	template<>
-	inline void CalcMatrix<Camera::Type::Othographic>();
+	void CalcMatrix<Camera::Type::Othographic>();
 
 	void UpdateMatrix();
 
@@ -82,16 +79,3 @@ public:
 	bool ImGuiWidget();
 
 };
-
-template<>
-inline void Camera::CalcMatrix<Camera::Type::Projecction>() {
-	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseSRT();
-	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
-}
-
-template<>
-inline void Camera::CalcMatrix<Camera::Type::Othographic>() {
-	matView_ = Matrix4x4::Affine(Vector3::one(), rotation_, translation_).InverseSRT();
-	Vector2 windowSize = { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight };
-	matProjection_ = Render::MakeOrthographicMatrix(windowSize * -.5f, windowSize * +.5f, 0.f, 100.f);
-}
