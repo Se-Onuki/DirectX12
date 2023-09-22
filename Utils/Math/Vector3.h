@@ -42,7 +42,7 @@ struct Vector3 {
 			return *this / Length;
 		}
 		else {
-			return zero();
+			return zero;
 		}
 	}
 
@@ -94,6 +94,7 @@ struct Vector3 {
 
 	Vector3 &operator*=(const Matrix4x4 &Second);
 
+	inline const Vector3 &operator+() const { return *this; }
 	// 逆ベクトル
 	inline Vector3 operator-() const { return *this * -1; }
 
@@ -111,18 +112,15 @@ struct Vector3 {
 		return Vector3{ 0.f, -z, y };
 	}
 
-	inline static Vector3 zero() { return Vector3{ 0.f, 0.f, 0.f }; }
+	static const Vector3 zero;
 
-	static Vector3 up() { return Vector3{ 0, 1, 0 }; }
-	static Vector3 down() { return Vector3{ 0, -1, 0 }; }
+	static const Vector3 up;
 
-	static Vector3 front() { return Vector3{ 0, 0, 1 }; }
-	static Vector3 back() { return Vector3{ 0, 0, -1 }; }
+	static const Vector3 front;
 
-	static Vector3 right() { return Vector3{ 1, 0, 0 }; }
-	static Vector3 left() { return Vector3{ -1, 0, 0 }; }
+	static const Vector3 right;
 
-	static Vector3 one() { return Vector3{ 1.f, 1.f, 1.f }; }
+	static const Vector3 one;
 
 	inline Vector3 Reflect(Vector3 normal) const { return (*this) - normal * 2 * ((*this) * normal); }
 

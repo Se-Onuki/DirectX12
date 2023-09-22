@@ -159,6 +159,8 @@ class MinecraftModel {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	struct Face {
+		Face() = default;
+		Face(const Face &);
 		D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
 		D3D12_INDEX_BUFFER_VIEW ibView_ = {};
 
@@ -175,6 +177,8 @@ class MinecraftModel {
 	};
 
 	struct Cube {
+		Cube() = default;
+		Cube(const Cube &);
 		enum class FaceDirection : uint32_t {
 			UP,
 			Down,

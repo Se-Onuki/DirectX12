@@ -7,6 +7,14 @@
 #include <imgui.h>
 #include "Math.hpp"
 
+//Transform::Transform(const Transform &other) {
+//}
+
+Transform Transform::operator=(Transform &&other) noexcept {
+	other;
+	return Transform{};
+}
+
 Matrix4x4 Transform::Affine() const
 {
 	return Matrix4x4::Affine(scale, rotate, translate);

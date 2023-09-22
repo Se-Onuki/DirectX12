@@ -5,8 +5,8 @@
 #include <d3d12.h>
 #include <wrl.h>
 
-struct Transform
-{
+struct Transform {
+	Transform operator=(Transform &&other) noexcept;
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	struct TransformMatrix {
 		Matrix4x4 World;

@@ -2,6 +2,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <stdint.h>
+#include <assert.h>
 
 #include "../../../Utils/Math/Matrix4x4.h"
 #include "../../../Utils/Math/Vector3.h"
@@ -74,8 +75,18 @@ public:
 
 	void UpdateMatrix();
 
+	template<Camera::Type T>
+	void UpdateMatrix();
+
 	void TransferMatrix();
 
 	bool ImGuiWidget();
 
 };
+
+template<Camera::Type T>
+void Camera::UpdateMatrix() {
+	assert(cameraType_ == T && "入力した値とカメラ設定が一致しませんでした");
+	CalcMatrix<T>();
+	TransferMatrix();
+}

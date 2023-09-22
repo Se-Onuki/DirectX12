@@ -283,7 +283,7 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 
 			std::string token;
 			Transform uv{};
-			uv.scale = Vector3::one();
+			uv.scale = Vector3::one;
 
 			while (s >> token) {
 				if (token == "-o") {
@@ -614,6 +614,10 @@ void MinecraftModel::Cube::ResetTransform() {
 
 }
 
+MinecraftModel::Cube::Cube(const Cube &other) {
+	this->faces_ = other.faces_;
+}
+
 void MinecraftModel::Cube::Init() {
 	for (auto &face : faces_) {
 		face.Init();
@@ -661,8 +665,8 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 			vertices[left + back + up],
 			vertices[right + back + up],
 	},
-		Vector3::up()
-			);
+		+Vector3::up
+	);
 
 	faces_[(uint32_t)FaceDirection::Down].SetVertex(
 		{
@@ -671,7 +675,7 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 		vertices[left + front + down],
 		vertices[right + front + down],
 		},
-		Vector3::down()
+		-Vector3::up
 		);
 
 	faces_[(uint32_t)FaceDirection::FRONT].SetVertex(
@@ -681,7 +685,7 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 		vertices[right + front + down],
 		vertices[left + front + down],
 		},
-		Vector3::front()
+		+Vector3::front
 		);
 
 	faces_[(uint32_t)FaceDirection::BACK].SetVertex(
@@ -691,7 +695,7 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 		vertices[left + back + down],
 		vertices[right + back + down],
 		},
-		Vector3::back()
+		-Vector3::front
 		);
 
 	faces_[(uint32_t)FaceDirection::RIGHT].SetVertex(
@@ -701,7 +705,7 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 		vertices[right + back + down],
 		vertices[right + front + down],
 		},
-		Vector3::right()
+		+Vector3::right
 		);
 
 	faces_[(uint32_t)FaceDirection::LEFT].SetVertex(
@@ -711,7 +715,7 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 		vertices[left + front + down],
 		vertices[left + back + down],
 		},
-		Vector3::left()
+		-Vector3::right
 		);
 }
 
@@ -807,7 +811,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 			bone.transform_.rotate = rotate * Angle::Dig2Rad;
 		}
 		else {
-			bone.transform_.rotate = Vector3::zero();
+			bone.transform_.rotate = Vector3::zero;
 		}
 
 		// キューブ
@@ -839,6 +843,12 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 		}
 	}
 
+}
+
+MinecraftModel::Face::Face(const Face &other) {
+	CreateBuffer();
+	*vertices_ = *(other.vertices_);
+	*indexs_ = *(other.indexs_);
 }
 
 void MinecraftModel::Face::CreateBuffer() {
