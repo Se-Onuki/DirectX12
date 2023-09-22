@@ -24,6 +24,8 @@ public:
 public:
 
 	inline operator bool() const noexcept;		// 値が存在するか
+	inline operator std::array<T, U> &() noexcept;	// 配列の参照
+
 	inline operator T *() noexcept;				// 参照
 	inline operator const T *() const noexcept;	// const参照
 
@@ -53,6 +55,11 @@ private:
 template<typename T, uint32_t U>
 inline CBuffer<T, U>::operator bool() const noexcept {
 	return resources_ != nullptr;
+}
+
+template<typename T, uint32_t U>
+inline CBuffer<T, U>::operator std::array<T, U> &() noexcept {
+	return *reinterpret_cast<std::array<T, U> *>(mapData_);
 }
 
 template<typename T, uint32_t U>

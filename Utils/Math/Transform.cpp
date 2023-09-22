@@ -53,7 +53,7 @@ void Transform::CalcMatrix()
 }
 
 void Transform::TransferMatrix() {
-	mapBuffer_->World = matWorld_;
+	mapBuffer_[0].World = matWorld_;
 }
 
 void Transform::UpdateMatrix()
