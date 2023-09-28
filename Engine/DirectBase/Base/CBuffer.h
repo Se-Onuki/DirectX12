@@ -6,28 +6,23 @@
 #include "../Create/Create.h"
 #include "DirectXCommon.h"
 
-template<typename T, uint32_t U = 1u>
+template<typename T>
 class CBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
-	static_assert(U > 0u, "CBufferに設定された数値が1以上ではありません");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	ComPtr<ID3D12Resource> resources_ = nullptr;
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_{};
 
-	T *mapData_[U];
-public:
-
-	const uint32_t size_ = U;
+	T *mapData_;
 
 public:
 
 	inline operator bool() const noexcept;		// 値が存在するか
-	inline operator std::array<T, U> &() noexcept;	// 配列の参照
 
-	inline operator T *() noexcept;				// 参照
-	inline operator const T *() const noexcept;	// const参照
+	inline operator T &() noexcept;				// 参照
+	inline operator const T &() const noexcept;	// const参照
 
 	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
 	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
@@ -39,6 +34,7 @@ public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
 		return resources_->GetGPUVirtualAddress();
 	}
+
 
 public:
 
@@ -52,69 +48,55 @@ private:
 	void CreateBuffer();
 };
 
-template<typename T, uint32_t U>
-inline CBuffer<T, U>::operator bool() const noexcept {
+template<typename T>
+inline CBuffer<T>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
-template<typename T, uint32_t U>
-inline CBuffer<T, U>::operator std::array<T, U> &() noexcept {
-	return *reinterpret_cast<std::array<T, U> *>(mapData_);
-}
-
-template<typename T, uint32_t U>
-inline CBuffer<T, U>::operator T *() noexcept {
+template<typename T>
+inline CBuffer<T>::operator T &() noexcept {
 	return *mapData_;
 }
 
-template<typename T, uint32_t U>
-inline CBuffer<T, U>::operator const T *() const noexcept {
+template<typename T>
+inline CBuffer<T>::operator const T &() const noexcept {
 	return *mapData_;
 }
 
-template<typename T, uint32_t U>
-inline T *const CBuffer<T, U>::operator->() noexcept {
-	return *mapData_;
+template<typename T>
+inline T *const CBuffer<T>::operator->() noexcept {
+	return mapData_;
 }
 
-template<typename T, uint32_t U>
-inline const T *const CBuffer<T, U>::operator->() const noexcept {
-	return *mapData_;
+template<typename T>
+inline const T *const CBuffer<T>::operator->() const noexcept {
+	return mapData_;
 }
 
-template<typename T, uint32_t U>
-inline CBuffer<T, U> &CBuffer<T, U>::operator=(const T &other) {
+template<typename T>
+inline CBuffer<T> &CBuffer<T>::operator=(const T &other) {
 	*mapData_ = other;
 	return *this;
 }
 
-template<typename T, uint32_t U>
-inline CBuffer<T, U>::CBuffer() :size_(U) {
+template<typename T>
+inline CBuffer<T>::CBuffer() {
 	CreateBuffer();
 }
 
-template<typename T, uint32_t U>
-inline CBuffer<T, U>::CBuffer(const CBuffer &other) : size_(U) {
+template<typename T>
+inline CBuffer<T>::CBuffer(const CBuffer &other) {
 	CreateBuffer();
 
 	// データのコピー
 	*mapData_ = *other.mapData_;
 }
 
-//template<typename T>
-//inline CBuffer<T>::CBuffer(CBuffer &&other) {
-//	resources_ = other.resources_;
-//	cbView_ = other.cbView_;
-//	*mapData_ = *other.mapData_;
-//
-//}
-
-
-template<typename T, uint32_t U>
-inline void CBuffer<T, U>::CreateBuffer() {
+template<typename T>
+inline void CBuffer<T>::CreateBuffer() {
 	HRESULT result = S_FALSE;
 	// 256バイト単位のアライメント
-	resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), ((sizeof(T) * U) + 0xff) & ~0xff);
+	resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) + 0xff) & ~0xff);
 
 	cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
 	cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
@@ -124,8 +106,8 @@ inline void CBuffer<T, U>::CreateBuffer() {
 
 }
 
-template<typename T, uint32_t U>
-inline CBuffer<T, U>::~CBuffer() {
+template<typename T>
+inline CBuffer<T>::~CBuffer() {
 	resources_->Release();
 	//cbView_ = {};
 	//mapData_ = nullptr;
