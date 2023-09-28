@@ -117,7 +117,7 @@ class Model
 	static void CreatePipeLine();
 
 public:
-	enum class RootParameter {
+	enum class RootParameter : uint32_t {
 		kWorldTransform, // ワールド変換行列
 		kViewProjection, // ビュープロジェクション変換行列
 		kMaterial,       // マテリアル
