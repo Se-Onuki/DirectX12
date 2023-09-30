@@ -74,8 +74,8 @@ public:
 
 	VertexCBuffer<VertexData> vertexBuffer_;
 
-	std::vector<VertexData> vertices_;
-	std::vector<uint32_t> indexs_;
+	std::list<VertexData> vertices_;
+	std::list<uint32_t> indexs_;
 
 	Material *material_;
 
