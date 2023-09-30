@@ -6,114 +6,14 @@
 #include "../Create/Create.h"
 #include "DirectXCommon.h"
 
-#pragma region 配列版の定数バッファ
+#pragma region 単体定数バッファ
 
-/// @brief 配列版の定数バッファ
+/// @brief 定数バッファ
 /// @tparam T 型名
-/// @tparam U 配列の長さ
-template<typename T, size_t U = 1u>
+template<typename T>
 class CBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
-	static_assert(U > 0u, "CBufferに設定された数値が1以上ではありません");
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-	ComPtr<ID3D12Resource> resources_ = nullptr;
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_{};
-
-	T *mapData_;
-public:
-
-	const uint32_t size_ = U;
-
-public:
-
-	inline operator bool() const noexcept;		// 値が存在するか
-
-	inline CBuffer &operator=(const T &other);	// コピー演算子
-
-	size_t size()const noexcept { return U; }
-
-	T *const begin() noexcept { return mapData_; }
-	T *const end() noexcept { return mapData_[U]; }
-
-	T &operator[](size_t index) noexcept { return mapData_[index]; }
-	const T &operator[](size_t index) const noexcept { return mapData_[index]; }
-
-public:
-	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
-		return resources_->GetGPUVirtualAddress();
-	}
-
-public:
-
-	CBuffer();					// デフォルトコンストラクタ
-	CBuffer(const CBuffer &);	// コピーコンストラクタ
-
-	~CBuffer();
-
-private:
-
-	void CreateBuffer();
-};
-
-template<typename T, size_t U>
-inline CBuffer<T, U>::operator bool() const noexcept {
-	return resources_ != nullptr;
-}
-
-
-template<typename T, size_t U>
-inline CBuffer<T, U> &CBuffer<T, U>::operator=(const T &other) {
-	*mapData_ = other;
-	return *this;
-}
-
-template<typename T, size_t U>
-inline CBuffer<T, U>::CBuffer() :size_(U) {
-	CreateBuffer();
-}
-
-template<typename T, size_t U>
-inline CBuffer<T, U>::CBuffer(const CBuffer &other) {
-	CreateBuffer();
-
-	// データのコピー
-	*mapData_ = *other.mapData_;
-}
-
-
-template<typename T, size_t U>
-inline void CBuffer<T, U>::CreateBuffer() {
-	HRESULT result = S_FALSE;
-	// 256バイト単位のアライメント
-	resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), ((sizeof(T) * U) + 0xff) & ~0xff);
-
-	cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
-	cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
-
-	result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
-	assert(SUCCEEDED(result));
-
-}
-
-template<typename T, size_t U>
-inline CBuffer<T, U>::~CBuffer() {
-	resources_->Release();
-	//cbView_ = {};
-	//mapData_ = nullptr;
-}
-
-#pragma endregion
-
-#pragma region 単体の場合に特殊化した定数バッファ
-
-/// @brief 単体版定数バッファ
-/// @tparam T 型名
-template<typename T>
-class CBuffer<T, 1u> final {
-	// 静的警告
-	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	ComPtr<ID3D12Resource> resources_ = nullptr;
@@ -122,6 +22,11 @@ class CBuffer<T, 1u> final {
 	T *mapData_;
 
 public:
+
+	inline ID3D12Resource *const GetResources() noexcept { return &resources_.Get(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return &resources_.Get(); }
+
+	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return cbView_; }
 
 	inline operator bool() const noexcept;		// 値が存在するか
 
@@ -129,7 +34,7 @@ public:
 	inline operator const T &() const noexcept;	// const参照
 
 	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
-	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
+	inline T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
 
 
 	inline CBuffer &operator=(const T &other);	// コピー演算子
@@ -173,7 +78,7 @@ inline T *const CBuffer<T>::operator->() noexcept {
 }
 
 template<typename T>
-inline const T *const CBuffer<T>::operator->() const noexcept {
+inline T *const CBuffer<T>::operator->() const noexcept {
 	return mapData_;
 }
 
@@ -199,9 +104,11 @@ inline CBuffer<T>::CBuffer(const CBuffer &other) {
 template<typename T>
 inline void CBuffer<T>::CreateBuffer() {
 	HRESULT result = S_FALSE;
+
+
 	// 256バイト単位のアライメント
-	//resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) + 0xff) & ~0xff);
-	resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(T));
+	resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) + 0xff) & ~0xff);
+
 
 	cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
 	cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
@@ -217,5 +124,178 @@ inline CBuffer<T>::~CBuffer() {
 	//cbView_ = {};
 	//mapData_ = nullptr;
 }
+
+#pragma endregion
+
+#pragma region 配列の定数バッファ
+
+/// @brief 定数バッファ
+/// @tparam T 型名 
+template<typename T>
+class ArrayCBuffer final {
+	// 静的警告
+	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	ComPtr<ID3D12Resource> resources_ = nullptr;
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_{};
+
+	size_t size_;
+
+	T *mapData_;
+
+public:
+
+	inline ID3D12Resource *const GetResources() noexcept { return &resources_.Get(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return &resources_.Get(); }
+
+	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return cbView_; }
+
+	inline operator bool() const noexcept;		// 値が存在するか
+
+	inline operator T *() noexcept;				// 参照
+	inline operator const T *() const noexcept;	// const参照
+
+	inline T &operator[](size_t index) noexcept { return T[index]; }
+	inline const T &operator[](size_t index) const noexcept { return T[index]; }
+
+	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
+	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
+
+
+	inline ArrayCBuffer &operator=(const T &other);	// コピー演算子
+
+public:
+	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
+		return resources_->GetGPUVirtualAddress();
+	}
+
+
+public:
+
+	ArrayCBuffer();					// デフォルトコンストラクタ
+	template <typename U>
+	ArrayCBuffer(const U &);		// デフォルトコンストラクタ
+	ArrayCBuffer(const ArrayCBuffer &);	// コピーコンストラクタ
+
+	~ArrayCBuffer();
+
+	/// @brief バッファの計算
+	void CreateBuffer(size_t size);
+
+	void Copy(const T *const begin, const T *const end) {
+		std::copy(begin, end, mapData_);
+	}
+
+
+private:
+
+};
+
+template<typename T>
+inline ArrayCBuffer<T>::operator bool() const noexcept {
+	return resources_ != nullptr;
+}
+
+template<typename T>
+inline ArrayCBuffer<T>::operator T *() noexcept {
+	return *mapData_;
+}
+
+template<typename T>
+inline ArrayCBuffer<T>::operator const T *() const noexcept {
+	return *mapData_;
+}
+
+template<typename T>
+inline T *const ArrayCBuffer<T>::operator->() noexcept {
+	return *mapData_;
+}
+
+template<typename T>
+inline const T *const ArrayCBuffer<T>::operator->() const noexcept {
+	return *mapData_;
+}
+
+template<typename T>
+inline ArrayCBuffer<T> &ArrayCBuffer<T>::operator=(const T &other) {
+	*mapData_ = other;
+	return *this;
+}
+
+template<typename T>
+inline ArrayCBuffer<T>::ArrayCBuffer() :size_(0u) {
+	CreateBuffer(0u);
+}
+
+template<typename T>
+template <typename U>
+inline ArrayCBuffer<T>::ArrayCBuffer(const U &source) {
+	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
+	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
+	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
+
+	size_ = source.size();
+	CreateBuffer(size_);
+
+}
+
+template<typename T>
+inline ArrayCBuffer<T>::ArrayCBuffer(const ArrayCBuffer &other) {
+	CreateBuffer();
+
+	// データのコピー
+	*mapData_ = *other.mapData_;
+}
+
+//template<typename T>
+//inline CBuffer<T>::CBuffer(CBuffer &&other) {
+//	resources_ = other.resources_;
+//	cbView_ = other.cbView_;
+//	*mapData_ = *other.mapData_;
+//
+//}
+
+
+template<typename T>
+inline void ArrayCBuffer<T>::CreateBuffer(size_t size) {
+	// sizeが0以外である場合は領域を確保
+	if (size != 0u) {
+		HRESULT result = S_FALSE;
+		// 256バイト単位のアライメント
+		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
+
+		cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
+		cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
+
+		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
+		assert(SUCCEEDED(result));
+	}
+}
+
+template<typename T>
+inline ArrayCBuffer<T>::~ArrayCBuffer() {
+	resources_->Release();
+	//cbView_ = {};
+	//mapData_ = nullptr;
+}
+
+
+#pragma endregion
+
+
+
+#pragma region 頂点バッファ
+
+/// @brief 頂点バッファ
+/// @tparam T 頂点データの型 Index 添え字が有効か
+template <typename T, bool Index = true>
+class VertexCBuffer final {
+	ArrayCBuffer<T> vertexData_;
+	ArrayCBuffer<uint32_t> indexData_;
+
+public:
+	VertexCBuffer();
+};
 
 #pragma endregion

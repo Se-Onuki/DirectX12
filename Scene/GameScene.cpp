@@ -24,6 +24,8 @@ void GameScene::OnEnter() {
 	model_ = ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
 	transform_.UpdateMatrix();
 	camera_.Init();
+
+	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 }
 
 void GameScene::OnExit() {}
@@ -69,7 +71,6 @@ void GameScene::Draw()
 	// モデルの描画
 	model_->Draw(transform_, camera_);
 
-
 	Model::EndDraw();
 
 #pragma endregion
@@ -79,7 +80,7 @@ void GameScene::Draw()
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
-
+	sprite_->Draw();
 
 	Sprite::EndDraw();
 

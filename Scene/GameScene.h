@@ -28,6 +28,7 @@ private:
 	Audio *audio_ = nullptr;
 
 	Model *model_ = nullptr;
+	std::unique_ptr<Sprite> sprite_ = nullptr;
 	Transform transform_;
 	Camera camera_{ Camera::Type::Projecction };
 

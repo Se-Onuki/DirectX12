@@ -21,22 +21,9 @@ void Camera::CalcMatrix<Camera::Type::Othographic>() {
 }
 
 void Camera::Init() {
-	CreateConstBuffer();
-	SetMap();
 	UpdateMatrix();
 }
 
-void Camera::CreateConstBuffer()
-{
-	constBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(CameraMatrix));
-}
-
-void Camera::SetMap()
-{
-	HRESULT result = S_FALSE;
-	result = constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
-	assert(SUCCEEDED(result));
-}
 
 void Camera::CalcMatrix() {
 	switch (cameraType_) {
@@ -55,9 +42,9 @@ void Camera::UpdateMatrix() {
 }
 
 void Camera::TransferMatrix() {
-	mapData_->view = matView_;
-	mapData_->projection = matProjection_;
-	mapData_->cameraPos = translation_;
+	constData_->view = matView_;
+	constData_->projection = matProjection_;
+	constData_->cameraPos = translation_;
 }
 
 bool Camera::ImGuiWidget() {

@@ -8,6 +8,8 @@
 #include "../../Utils/Math/Transform.h"
 #include <array>
 
+#include "../Base/CBuffer.h"
+
 #include "../Base/LeakChecker.h"
 #include "../Base/TextureManager.h"
 
@@ -89,8 +91,7 @@ private:
 	uint32_t *indexMap_ = nullptr;
 	D3D12_INDEX_BUFFER_VIEW ibView_ = {};
 
-	ComPtr<ID3D12Resource> constResource_ = nullptr;
-	ConstData *constMap_ = nullptr;
+	CBuffer<ConstData> constData_;
 
 private:
 

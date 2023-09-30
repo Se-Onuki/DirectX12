@@ -327,10 +327,10 @@ void Sprite::Init(const uint32_t &textureHaundle) {
 
 void Sprite::Draw() const {
 	if (isVisible_) {	// 不可視であれば飛ばす
-		constMap_->matWorldProjection = transform_.matWorld_ * matProjection_;
+		constData_->matWorldProjection = transform_.matWorld_ * matProjection_;
 
 		// マテリアルCBufferの場所を設定
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)RootParameter::kConstData, constResource_->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)RootParameter::kConstData, constData_.GetGPUVirtualAddress());
 		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)RootParameter::kTexture, textureHaundle_);
 		// Spriteの描画
 		commandList_->IASetVertexBuffers(0, 1, &vbView_);	// VBVを設定
@@ -343,9 +343,8 @@ void Sprite::MapVertex()
 {
 #pragma region スプライトデータ
 
-	constResource_->Map(0, nullptr, reinterpret_cast<void **>(&constMap_));
-	constMap_->color = Vector4{ 1.f,1.f,1.f,1.f };
-	constMap_->matWorldProjection = Matrix4x4::Identity();
+	constData_->color = Vector4{ 1.f,1.f,1.f,1.f };
+	constData_->matWorldProjection = Matrix4x4::Identity();
 
 #pragma endregion
 
@@ -379,8 +378,6 @@ void Sprite::MapVertex()
 
 void Sprite::CreateBuffer() {
 	auto *const device = DirectXCommon::GetInstance()->GetDevice();
-
-	constResource_ = CreateBufferResource(device, sizeof(ConstData) * 1u);
 
 	vertexResource_ = CreateBufferResource(device, sizeof(VertexData) * 4u);
 	indexResource_ = CreateBufferResource(device, sizeof(uint32_t) * 6u);
@@ -430,7 +427,7 @@ void Sprite::ImGuiWidget() {
 	if (transform_.ImGuiWidget2D()) {
 		transform_.CalcMatrix();
 	}
-	ImGui::ColorEdit4("Color", &constMap_->color.x);
+	ImGui::ColorEdit4("Color", &constData_->color.x);
 	static char filePath[32];
 	ImGui::InputText("filePath", filePath, 32u);
 	if (ImGui::Button("Load")) {
@@ -523,12 +520,12 @@ Sprite *const Sprite::Create(const uint32_t textureHaundle, const Vector2 &posit
 
 void Sprite::SetColor(const Vector4 &color)
 {
-	constMap_->color = color;
+	constData_->color = color;
 }
 
 const Vector4 &Sprite::GetColor() const
 {
-	return constMap_->color;
+	return constData_->color;
 }
 
 

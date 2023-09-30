@@ -7,12 +7,13 @@
 #include "../../../Utils/Math/Matrix4x4.h"
 #include "../../../Utils/Math/Vector3.h"
 #include "../../../Utils/Math/Math.hpp"
+#include "../Base/CBuffer.h"
 
 class Camera {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public:
-	enum class Type : uint32_t {
+	enum class Type : bool {
 		Projecction,	// 透視投影行列
 		Othographic		// 正射影行列
 	};
@@ -26,8 +27,7 @@ public:
 	Camera(Camera::Type type) :cameraType_(type) {}
 	~Camera() = default;
 
-	ComPtr<ID3D12Resource> constBuffer_ = nullptr;
-	CameraMatrix *mapData_ = nullptr;	// マップ済みデータ
+	CBuffer<CameraMatrix> constData_;
 
 	const Type cameraType_;
 
@@ -53,10 +53,6 @@ public:
 	Matrix4x4 matProjection_{};
 
 	void Init();
-
-	void CreateConstBuffer();
-
-	void SetMap();
 
 	void CalcMatrix();
 
