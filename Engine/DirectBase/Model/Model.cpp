@@ -273,8 +273,8 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 			materialData->texHandle_ = TextureManager::Load("white2x2.png");
 		}
 		else if (identifier == "Kd") {
-			if (materialData && materialData->mapData_) {
-				Vector4 &color = materialData->mapData_->color;
+			if (materialData && materialData->materialBuff_) {
+				Vector4 &color = materialData->materialBuff_->color;
 				s >> color.x >> color.y >> color.z;
 			}
 		}
@@ -302,8 +302,8 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 				}
 			}
 			// uvTransformの値を代入する
-			if (materialData && materialData->mapData_) {
-				materialData->mapData_->uvTransform = uv.Affine();
+			if (materialData && materialData->materialBuff_) {
+				materialData->materialBuff_->uvTransform = uv.Affine();
 			}
 		}
 	}
@@ -524,7 +524,7 @@ void Mesh::SetMaterial(Material *const material) {
 
 void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, material_->texHandle_);
-	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->constBuffer_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
 	commandList->IASetIndexBuffer(&vertexBuffer_.GetIBView());
@@ -532,30 +532,27 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
 }
 
 void Material::CreateBuffer() {
-	constBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(MaterialData));
 	// マテリアルにデータを書き込む
-	// 書き込むためのアドレスを取得
-	constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
-	mapData_->color = Vector4{ 1.f,1.f,1.f,1.f };
-	mapData_->emissive = Vector4{ 0.f,0.f,0.f,0.f };
-	mapData_->uvTransform = Matrix4x4::Identity();
+	materialBuff_->color = Vector4{ 1.f,1.f,1.f,1.f };
+	materialBuff_->emissive = Vector4{ 0.f,0.f,0.f,0.f };
+	materialBuff_->uvTransform = Matrix4x4::Identity();
 }
 
 void Material::ImGuiWidget()
 {
 	if (ImGui::TreeNode(name_.c_str())) {
 		Transform transform;
-		transform.Create(mapData_->uvTransform);
+		transform.Create(materialBuff_->uvTransform);
 
 		if (transform.ImGuiWidget2D()) {
-			mapData_->uvTransform = transform.Affine();
+			materialBuff_->uvTransform = transform.Affine();
 		}
 		if (ImGui::Button("ResetTransform")) {
-			mapData_->uvTransform = Matrix4x4::Identity();
+			materialBuff_->uvTransform = Matrix4x4::Identity();
 		}
 
-		ImGui::ColorEdit4("BaseColor", &mapData_->color.x);
-		ImGui::ColorEdit4("EmissiveColor", &mapData_->emissive.x);
+		ImGui::ColorEdit4("BaseColor", &materialBuff_->color.x);
+		ImGui::ColorEdit4("EmissiveColor", &materialBuff_->emissive.x);
 
 		ImGui::TreePop();
 	}

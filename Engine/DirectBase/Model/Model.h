@@ -44,8 +44,8 @@ public:
 	std::string name_;			// マテリアル名
 	std::string textureName_;
 	uint32_t texHandle_ = 1u;
-	ComPtr<ID3D12Resource> constBuffer_;
-	MaterialData *mapData_ = nullptr;
+
+	CBuffer<MaterialData> materialBuff_;
 
 	void CreateBuffer();
 
