@@ -83,13 +83,8 @@ private:
 
 private:
 
-	ComPtr<ID3D12Resource> vertexResource_ = nullptr;
-	VertexData *vertexMap_ = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
-
-	ComPtr<ID3D12Resource> indexResource_ = nullptr;
-	uint32_t *indexMap_ = nullptr;
-	D3D12_INDEX_BUFFER_VIEW ibView_ = {};
+	// 頂点データ
+	VertexCBuffer<VertexData, true> vertexData_;
 
 	CBuffer<ConstData> constData_;
 

@@ -156,14 +156,19 @@ public:
 	inline operator T *() noexcept;				// 参照
 	inline operator const T *() const noexcept;	// const参照
 
-	inline T &operator[](size_t index) noexcept { return T[index]; }
-	inline const T &operator[](size_t index) const noexcept { return T[index]; }
+	inline T &operator[](size_t index) noexcept { return mapData_[index]; }
+	inline const T &operator[](size_t index) const noexcept { return mapData_[index]; }
 
 	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
 	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
 
+	size_t size() const noexcept { return size_; }
+	T *const begin() const noexcept { return &mapData_[0]; }
+	T *const end() const noexcept { return &mapData_[size_]; }
 
-	inline ArrayCBuffer &operator=(const T &other);	// コピー演算子
+
+	template <typename U>
+	inline ArrayCBuffer &operator=(const U &other);	// コピー演算子
 
 public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
@@ -174,16 +179,16 @@ public:
 public:
 
 	ArrayCBuffer();					// デフォルトコンストラクタ
+
 	template <typename U>
-	ArrayCBuffer(const U &);		// デフォルトコンストラクタ
-	ArrayCBuffer(const ArrayCBuffer &);	// コピーコンストラクタ
+	ArrayCBuffer(const U &source);		// コピーコンストラクタ
 
 	~ArrayCBuffer();
 
 	/// @brief バッファの計算
 	void CreateBuffer(size_t size);
 
-	void Copy(const T *const begin, const T *const end) {
+	void Copy(T *const begin, T *const end) {
 		std::copy(begin, end, mapData_);
 	}
 
@@ -218,8 +223,16 @@ inline const T *const ArrayCBuffer<T>::operator->() const noexcept {
 }
 
 template<typename T>
-inline ArrayCBuffer<T> &ArrayCBuffer<T>::operator=(const T &other) {
-	*mapData_ = other;
+template<typename U>
+inline ArrayCBuffer<T> &ArrayCBuffer<T>::operator=(const U &source) {
+	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
+	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
+	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
+
+	CreateBuffer(source.size());
+	size_ = source.size();
+	//Copy(source.begin(), source.end());
+	std::copy(source.begin(), source.end(), mapData_);
 	return *this;
 }
 
@@ -235,17 +248,9 @@ inline ArrayCBuffer<T>::ArrayCBuffer(const U &source) {
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
 
+	CreateBuffer(source.size());
 	size_ = source.size();
-	CreateBuffer(size_);
-
-}
-
-template<typename T>
-inline ArrayCBuffer<T>::ArrayCBuffer(const ArrayCBuffer &other) {
-	CreateBuffer();
-
-	// データのコピー
-	*mapData_ = *other.mapData_;
+	std::copy(source.begin(), source.end(), mapData_);
 }
 
 //template<typename T>
@@ -259,8 +264,8 @@ inline ArrayCBuffer<T>::ArrayCBuffer(const ArrayCBuffer &other) {
 
 template<typename T>
 inline void ArrayCBuffer<T>::CreateBuffer(size_t size) {
-	// sizeが0以外である場合は領域を確保
-	if (size != 0u) {
+	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
+	if (size != 0u && size_ != size) {
 		HRESULT result = S_FALSE;
 		// 256バイト単位のアライメント
 		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
@@ -291,11 +296,64 @@ inline ArrayCBuffer<T>::~ArrayCBuffer() {
 /// @tparam T 頂点データの型 Index 添え字が有効か
 template <typename T, bool Index = true>
 class VertexCBuffer final {
+
 	ArrayCBuffer<T> vertexData_;
+	D3D12_VERTEX_BUFFER_VIEW vbView_;
+
 	ArrayCBuffer<uint32_t> indexData_;
+	D3D12_INDEX_BUFFER_VIEW ibView_;
 
 public:
-	VertexCBuffer();
+	VertexCBuffer() = default;
+	VertexCBuffer(const VertexCBuffer &) = default;
+	~VertexCBuffer() = default;
+
+	auto &GetVertexData_()  noexcept { return vertexData_; }
+	const auto &GetVertexData_() const noexcept { return vertexData_; }
+	const auto &GetVBView() const noexcept { return vbView_; };
+
+	auto &GetIndexData_()  noexcept { return indexData_; }
+	const auto &GetIndexData_() const noexcept { return indexData_; }
+	const auto &GetIBView() const noexcept { return ibView_; };
+
+	template <typename U>
+	void SetVertexData(const U &source);
+	template <typename U>
+	void SetIndexData(const U &source);
 };
+
+template <typename T, bool Index>
+template <typename U>
+void VertexCBuffer<T, Index>::SetVertexData(const U &source) {
+	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
+	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
+	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
+
+	vertexData_ = source;
+
+	// 頂点バッファビューを作成する
+	// リソースの先頭のアドレスから使う
+	vbView_.BufferLocation = vertexData_.GetGPUVirtualAddress();
+	// 使用するリソースのサイズは頂点3つ分のサイズ
+	vbView_.SizeInBytes = sizeof(T) * 4;
+	// 1頂点あたりのサイズ
+	vbView_.StrideInBytes = sizeof(T);
+
+}
+
+template <typename T, bool Index>
+template <typename U>
+void VertexCBuffer<T, Index>::SetIndexData(const U &source) {
+	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
+	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
+	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
+
+	indexData_ = source;
+
+	// インデックスview
+	ibView_.BufferLocation = indexData_.GetGPUVirtualAddress();
+	ibView_.SizeInBytes = sizeof(uint32_t) * 6u;
+	ibView_.Format = DXGI_FORMAT_R32_UINT;
+}
 
 #pragma endregion

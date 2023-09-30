@@ -1,4 +1,6 @@
 #include "Sprite.h"
+#include <array>
+
 #include "../Base/TextureManager.h"
 #include "../Base/DirectXCommon.h"
 #include "../Create/Create.h"
@@ -333,8 +335,8 @@ void Sprite::Draw() const {
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)RootParameter::kConstData, constData_.GetGPUVirtualAddress());
 		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)RootParameter::kTexture, textureHaundle_);
 		// Spriteの描画
-		commandList_->IASetVertexBuffers(0, 1, &vbView_);	// VBVを設定
-		commandList_->IASetIndexBuffer(&ibView_);
+		commandList_->IASetVertexBuffers(0, 1, &vertexData_.GetVBView());	// VBVを設定
+		commandList_->IASetIndexBuffer(&vertexData_.GetIBView());
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	}
 }
@@ -350,52 +352,52 @@ void Sprite::MapVertex()
 
 #pragma region 頂点・インデックス
 
-	// 書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void **>(&vertexMap_));
+	//// 書き込むためのアドレスを取得
+	//vertexResource_->Map(0, nullptr, reinterpret_cast<void **>(&vertexMap_));
+
+	auto &vertexArray = vertexData_.GetVertexData_();
 
 	// 左下
-	vertexMap_[(uint32_t)VertexNumer::LDown].position = { 0.f, 1.f, 0.f, 1.f };
-	vertexMap_[(uint32_t)VertexNumer::LDown].texCoord = { 0.f,1.f };
+	vertexArray[(uint32_t)VertexNumer::LDown].position = { 0.f, 1.f, 0.f, 1.f };
+	vertexArray[(uint32_t)VertexNumer::LDown].texCoord = { 0.f,1.f };
 	// 左上
-	vertexMap_[(uint32_t)VertexNumer::LTop].position = { 0.f, 0.f, 0.f, 1.f };
-	vertexMap_[(uint32_t)VertexNumer::LTop].texCoord = { 0.f,0.f };
+	vertexArray[(uint32_t)VertexNumer::LTop].position = { 0.f, 0.f, 0.f, 1.f };
+	vertexArray[(uint32_t)VertexNumer::LTop].texCoord = { 0.f,0.f };
 	// 右下
-	vertexMap_[(uint32_t)VertexNumer::RDown].position = { 1.f, 1.f, 0.f, 1.f };
-	vertexMap_[(uint32_t)VertexNumer::RDown].texCoord = { 1.f,1.f };
+	vertexArray[(uint32_t)VertexNumer::RDown].position = { 1.f, 1.f, 0.f, 1.f };
+	vertexArray[(uint32_t)VertexNumer::RDown].texCoord = { 1.f,1.f };
 
 	// 右上
-	vertexMap_[(uint32_t)VertexNumer::RTop].position = { 1.f, 0.f, 0.f, 1.f };
-	vertexMap_[(uint32_t)VertexNumer::RTop].texCoord = { 1.f,0.f };
-
-	// インデックス
-	indexResource_->Map(0, nullptr, reinterpret_cast<void **>(&indexMap_));
-	indexMap_[0] = 0u; indexMap_[1] = 1u; indexMap_[2] = 2u;
-	indexMap_[3] = 1u; indexMap_[4] = 3u; indexMap_[5] = 2u;
+	vertexArray[(uint32_t)VertexNumer::RTop].position = { 1.f, 0.f, 0.f, 1.f };
+	vertexArray[(uint32_t)VertexNumer::RTop].texCoord = { 1.f,0.f };
 
 #pragma endregion
 
 }
 
 void Sprite::CreateBuffer() {
-	auto *const device = DirectXCommon::GetInstance()->GetDevice();
 
-	vertexResource_ = CreateBufferResource(device, sizeof(VertexData) * 4u);
-	indexResource_ = CreateBufferResource(device, sizeof(uint32_t) * 6u);
+	vertexData_.SetVertexData(std::array{ VertexData{},VertexData{},VertexData{},VertexData{} });
+	vertexData_.SetIndexData(std::array{ 0u,1u,2u, 1u,3u,2u });
+	//auto *const device = DirectXCommon::GetInstance()->GetDevice();
 
-
-	// 頂点バッファビューを作成する
-	// リソースの先頭のアドレスから使う
-	vbView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	// 使用するリソースのサイズは頂点3つ分のサイズ
-	vbView_.SizeInBytes = sizeof(VertexData) * 4;
-	// 1頂点あたりのサイズ
-	vbView_.StrideInBytes = sizeof(VertexData);
+	//vertexData_ = CreateBufferResource(device, sizeof(VertexData) * 4u);
+	//indexResource_ = CreateBufferResource(device, sizeof(uint32_t) * 6u);
 
 
-	// インデックスview
-	ibView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	ibView_.SizeInBytes = sizeof(uint32_t) * 6u;
-	ibView_.Format = DXGI_FORMAT_R32_UINT;
+	//// 頂点バッファビューを作成する
+	//// リソースの先頭のアドレスから使う
+	//vbView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	//// 使用するリソースのサイズは頂点3つ分のサイズ
+	//vbView_.SizeInBytes = sizeof(VertexData) * 4;
+	//// 1頂点あたりのサイズ
+	//vbView_.StrideInBytes = sizeof(VertexData);
+
+
+	//// インデックスview
+	//ibView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	//ibView_.SizeInBytes = sizeof(uint32_t) * 6u;
+	//ibView_.Format = DXGI_FORMAT_R32_UINT;
 
 }
 
@@ -476,14 +478,14 @@ Sprite *const Sprite::Create() {
 	return sprite;
 }
 
-void Sprite::CalcBuffer()
-{
-#pragma region MyRegion
+void Sprite::CalcBuffer() {
+	auto &vertexArray = vertexData_.GetVertexData_();
+#pragma region 座標データ
 
-	vertexMap_[(uint32_t)VertexNumer::LDown].position = { -pivot_.x, 1.f - pivot_.y, 0.f, 1.f };	// 左下 { 0, 1 }
-	vertexMap_[(uint32_t)VertexNumer::LTop].position = { -pivot_.x,  -pivot_.y, 0.f, 1.f };	// 左上 { 0, 0 }
-	vertexMap_[(uint32_t)VertexNumer::RDown].position = { 1.f - pivot_.x, 1.f - pivot_.y, 0.f, 1.f };	// 右下 { 1, 1 }
-	vertexMap_[(uint32_t)VertexNumer::RTop].position = { 1.f - pivot_.x, -pivot_.y, 0.f, 1.f };	// 右上 { 1, 0 }
+	vertexArray[(uint32_t)VertexNumer::LDown].position = { -pivot_.x, 1.f - pivot_.y, 0.f, 1.f };	// 左下 { 0, 1 }
+	vertexArray[(uint32_t)VertexNumer::LTop].position = { -pivot_.x,  -pivot_.y, 0.f, 1.f };	// 左上 { 0, 0 }
+	vertexArray[(uint32_t)VertexNumer::RDown].position = { 1.f - pivot_.x, 1.f - pivot_.y, 0.f, 1.f };	// 右下 { 1, 1 }
+	vertexArray[(uint32_t)VertexNumer::RTop].position = { 1.f - pivot_.x, -pivot_.y, 0.f, 1.f };	// 右上 { 1, 0 }
 
 #pragma endregion
 
@@ -492,10 +494,10 @@ void Sprite::CalcBuffer()
 	Vector2 texOrigin = { uv_.first.x / resourceDesc.Width,uv_.first.y / resourceDesc.Height };
 	Vector2 texDiff = { (uv_.first.x + uv_.second.x) / resourceDesc.Width, (uv_.first.y + uv_.second.y) / resourceDesc.Height };
 
-	vertexMap_[(uint32_t)VertexNumer::LDown].texCoord = { texOrigin.x,texDiff.y };	// 左下 { 0, 1 }
-	vertexMap_[(uint32_t)VertexNumer::LTop].texCoord = { texOrigin.x,texOrigin.y };	// 左上 { 0, 0 }
-	vertexMap_[(uint32_t)VertexNumer::RDown].texCoord = { texDiff.x,texDiff.y };	// 右下 { 1, 1 }
-	vertexMap_[(uint32_t)VertexNumer::RTop].texCoord = { texDiff.x,texOrigin.y };	// 右上 { 1, 0 }
+	vertexArray[(uint32_t)VertexNumer::LDown].texCoord = { texOrigin.x,texDiff.y };	// 左下 { 0, 1 }
+	vertexArray[(uint32_t)VertexNumer::LTop].texCoord = { texOrigin.x,texOrigin.y };	// 左上 { 0, 0 }
+	vertexArray[(uint32_t)VertexNumer::RDown].texCoord = { texDiff.x,texDiff.y };	// 右下 { 1, 1 }
+	vertexArray[(uint32_t)VertexNumer::RTop].texCoord = { texDiff.x,texOrigin.y };	// 右上 { 1, 0 }
 
 #pragma endregion
 
