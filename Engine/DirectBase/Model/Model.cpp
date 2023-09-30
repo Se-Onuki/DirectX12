@@ -484,53 +484,33 @@ void Model::Draw(const Transform &transform, const Camera &camera) const
 
 void Mesh::CreateBuffer()
 {
-	ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
+	//ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
 
-	HRESULT hr = S_FALSE;
+	//HRESULT hr = S_FALSE;
 
 #pragma region 頂点バッファ
+	//
+	//	vertexBuff_ = CreateBufferResource(device, sizeof(VertexData) * vertices_.size());
+	//
+	//	// リソースの先頭のアドレスから使う
+	//	vbView_.BufferLocation = vertexBuff_->GetGPUVirtualAddress();
+	//	// 使用するリソースの全体のサイズ
+	//	vbView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * vertices_.size());
+	//	// 1頂点あたりのサイズ
+	//	vbView_.StrideInBytes = sizeof(VertexData);
 
-	vertexBuff_ = CreateBufferResource(device, sizeof(VertexData) * vertices_.size());
 
-	// リソースの先頭のアドレスから使う
-	vbView_.BufferLocation = vertexBuff_->GetGPUVirtualAddress();
-	// 使用するリソースの全体のサイズ
-	vbView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * vertices_.size());
-	// 1頂点あたりのサイズ
-	vbView_.StrideInBytes = sizeof(VertexData);
-
-
-	// 頂点バッファへのデータ転送
-	VertexData *vertexMap = nullptr;
-	hr = vertexBuff_->Map(0, nullptr, (void **)&vertexMap);
-	if (SUCCEEDED(hr)) {
-		std::copy(vertices_.begin(), vertices_.end(), vertexMap);
-		//vertexBuff_->Unmap(0, nullptr);
-	}
+		// 頂点バッファへのデータ転送
+	vertexBuffer_.SetVertexData(vertices_);
 
 #pragma endregion
 
-	hr = S_FALSE;
+	//hr = S_FALSE;
 
 #pragma region インデックスバッファ
 
-	indexBuff_ = CreateBufferResource(device, sizeof(uint32_t) * indexs_.size());
-
-	// リソースの先頭のアドレスから使う
-	ibView_.BufferLocation = indexBuff_->GetGPUVirtualAddress();
-	// 使用するリソースの全体のサイズ
-	ibView_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indexs_.size());
-	// 1添え字あたりの型情報
-	ibView_.Format = DXGI_FORMAT_R32_UINT;
-
-
 	// 頂点バッファへのデータ転送
-	uint32_t *indexMap = nullptr;
-	hr = indexBuff_->Map(0, nullptr, (void **)&indexMap);
-	if (SUCCEEDED(hr)) {
-		std::copy(indexs_.begin(), indexs_.end(), indexMap);
-		//indexBuff_->Unmap(0, nullptr);
-	}
+	vertexBuffer_.SetIndexData(indexs_);
 
 #pragma endregion
 
@@ -561,8 +541,8 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, material_->texHandle_);
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->constBuffer_->GetGPUVirtualAddress());
 
-	commandList->IASetVertexBuffers(0, 1, &vbView_);
-	commandList->IASetIndexBuffer(&ibView_);
+	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
+	commandList->IASetIndexBuffer(&vertexBuffer_.GetIBView());
 	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexs_.size()), 1, 0, 0, 0);
 }
 

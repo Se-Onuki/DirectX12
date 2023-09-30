@@ -26,6 +26,7 @@ void GameScene::OnEnter() {
 	camera_.Init();
 
 	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
+	sprite_->SetScale({ 100.f,100.f });
 }
 
 void GameScene::OnExit() {}

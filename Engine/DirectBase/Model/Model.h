@@ -72,11 +72,7 @@ public:
 		}
 	};
 
-	D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
-	D3D12_INDEX_BUFFER_VIEW ibView_ = {};
-
-	ComPtr<ID3D12Resource> vertexBuff_;
-	ComPtr<ID3D12Resource> indexBuff_;
+	VertexCBuffer<VertexData> vertexBuffer_;
 
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indexs_;

@@ -335,7 +335,7 @@ void VertexCBuffer<T, Index>::SetVertexData(const U &source) {
 	// リソースの先頭のアドレスから使う
 	vbView_.BufferLocation = vertexData_.GetGPUVirtualAddress();
 	// 使用するリソースのサイズは頂点3つ分のサイズ
-	vbView_.SizeInBytes = sizeof(T) * 4;
+	vbView_.SizeInBytes = static_cast<UINT>(sizeof(T) * vertexData_.size());
 	// 1頂点あたりのサイズ
 	vbView_.StrideInBytes = sizeof(T);
 
@@ -352,7 +352,7 @@ void VertexCBuffer<T, Index>::SetIndexData(const U &source) {
 
 	// インデックスview
 	ibView_.BufferLocation = indexData_.GetGPUVirtualAddress();
-	ibView_.SizeInBytes = sizeof(uint32_t) * 6u;
+	ibView_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indexData_.size());
 	ibView_.Format = DXGI_FORMAT_R32_UINT;
 }
 
