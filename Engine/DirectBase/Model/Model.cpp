@@ -455,6 +455,8 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 	for (auto &mesh : result->meshList_) {
 		mesh->CreateBuffer();
 		mesh->indexMap_.clear();
+		mesh->vertices_.clear();
+		mesh->indexs_.clear();
 	}
 	return result;
 }
@@ -482,34 +484,17 @@ void Model::Draw(const Transform &transform, const Camera &camera) const
 
 }
 
-void Mesh::CreateBuffer()
-{
-	//ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
-
-	//HRESULT hr = S_FALSE;
+void Mesh::CreateBuffer() {
 
 #pragma region 頂点バッファ
-	//
-	//	vertexBuff_ = CreateBufferResource(device, sizeof(VertexData) * vertices_.size());
-	//
-	//	// リソースの先頭のアドレスから使う
-	//	vbView_.BufferLocation = vertexBuff_->GetGPUVirtualAddress();
-	//	// 使用するリソースの全体のサイズ
-	//	vbView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * vertices_.size());
-	//	// 1頂点あたりのサイズ
-	//	vbView_.StrideInBytes = sizeof(VertexData);
-
-
-		// 頂点バッファへのデータ転送
+	// 頂点バッファへのデータ転送
 	vertexBuffer_.SetVertexData(vertices_);
 
 #pragma endregion
 
-	//hr = S_FALSE;
-
 #pragma region インデックスバッファ
 
-	// 頂点バッファへのデータ転送
+	// indexバッファへのデータ転送
 	vertexBuffer_.SetIndexData(indexs_);
 
 #pragma endregion
@@ -543,7 +528,7 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
 	commandList->IASetIndexBuffer(&vertexBuffer_.GetIBView());
-	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexs_.size()), 1, 0, 0, 0);
+	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), 1, 0, 0, 0);
 }
 
 void Material::CreateBuffer() {

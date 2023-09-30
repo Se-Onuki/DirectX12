@@ -2,6 +2,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <array>
+#include <algorithm>
 
 #include "../Create/Create.h"
 #include "DirectXCommon.h"
@@ -267,6 +268,7 @@ inline void ArrayCBuffer<T>::CreateBuffer(size_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
 	if (size != 0u && size_ != size) {
 		HRESULT result = S_FALSE;
+		if (resources_ != nullptr) { resources_->Release(); }
 		// 256バイト単位のアライメント
 		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
 
@@ -308,12 +310,12 @@ public:
 	VertexCBuffer(const VertexCBuffer &) = default;
 	~VertexCBuffer() = default;
 
-	auto &GetVertexData_()  noexcept { return vertexData_; }
-	const auto &GetVertexData_() const noexcept { return vertexData_; }
+	auto &GetVertexData()  noexcept { return vertexData_; }
+	const auto &GetVertexData() const noexcept { return vertexData_; }
 	const auto &GetVBView() const noexcept { return vbView_; };
 
-	auto &GetIndexData_()  noexcept { return indexData_; }
-	const auto &GetIndexData_() const noexcept { return indexData_; }
+	auto &GetIndexData()  noexcept { return indexData_; }
+	const auto &GetIndexData() const noexcept { return indexData_; }
 	const auto &GetIBView() const noexcept { return ibView_; };
 
 	template <typename U>

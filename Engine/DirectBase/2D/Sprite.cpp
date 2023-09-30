@@ -355,7 +355,7 @@ void Sprite::MapVertex()
 	//// 書き込むためのアドレスを取得
 	//vertexResource_->Map(0, nullptr, reinterpret_cast<void **>(&vertexMap_));
 
-	auto &vertexArray = vertexData_.GetVertexData_();
+	auto &vertexArray = vertexData_.GetVertexData();
 
 	// 左下
 	vertexArray[(uint32_t)VertexNumer::LDown].position = { 0.f, 1.f, 0.f, 1.f };
@@ -479,7 +479,7 @@ Sprite *const Sprite::Create() {
 }
 
 void Sprite::CalcBuffer() {
-	auto &vertexArray = vertexData_.GetVertexData_();
+	auto &vertexArray = vertexData_.GetVertexData();
 #pragma region 座標データ
 
 	vertexArray[(uint32_t)VertexNumer::LDown].position = { -pivot_.x, 1.f - pivot_.y, 0.f, 1.f };	// 左下 { 0, 1 }
