@@ -14,7 +14,6 @@
 template <Render::CameraType T>
 class Camera;
 
-
 /// @brief 透視投影カメラ
 template<>
 class Camera<Render::CameraType::Projecction> {
@@ -54,15 +53,39 @@ public:
 	Matrix4x4 matView_{};
 	Matrix4x4 matProjection_{};
 
-	void Init();
+	void Init() { UpdateMatrix(); }
 
-	void CalcMatrix();
+	void CalcMatrix() {
+		matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
+		matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	}
 
-	void UpdateMatrix();
+	void UpdateMatrix() {
+		CalcMatrix();
+		TransferMatrix();
+	}
 
-	void TransferMatrix();
+	void TransferMatrix() {
+		constData_->view = matView_;
+		constData_->projection = matProjection_;
+		constData_->cameraPos = translation_;
+	}
 
-	bool ImGuiWidget();
+	bool ImGuiWidget() {
+
+		if (ImGui::TreeNode("Camera")) {
+			bool isUsing = false;
+
+			isUsing |= ImGui::DragFloat3("Rotate", &rotation_.x, Angle::Dig2Rad);
+
+			isUsing |= ImGui::DragFloat3("Transform", &translation_.x, 0.01f);
+
+			ImGui::TreePop();
+			return isUsing;
+		}
+		return false;
+	}
+
 
 };
 //

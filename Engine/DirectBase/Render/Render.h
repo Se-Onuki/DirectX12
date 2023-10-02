@@ -9,7 +9,7 @@ struct Matrix4x4;
 
 class Render {
 public:
-	enum CameraType : uint32_t {
+	enum class CameraType : uint32_t {
 		Projecction,	// 透視投影行列
 		Othographic		// 正射影行列
 	};

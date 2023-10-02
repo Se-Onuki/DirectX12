@@ -7,11 +7,15 @@
 #include "../Create/Create.h"
 #include "DirectXCommon.h"
 
+/// @brief 非ポインタ型である場合
+template<typename T>
+concept IsNotPointer = !requires{ std::is_pointer<T>::value_type; };
+
 #pragma region 単体定数バッファ
 
 /// @brief 定数バッファ
 /// @tparam T 型名
-template<typename T>
+template<IsNotPointer T>
 class CBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
@@ -58,43 +62,43 @@ private:
 	void CreateBuffer();
 };
 
-template<typename T>
+template<IsNotPointer T>
 inline CBuffer<T>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline CBuffer<T>::operator T &() noexcept {
 	return *mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline CBuffer<T>::operator const T &() const noexcept {
 	return *mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline T *const CBuffer<T>::operator->() noexcept {
 	return mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline T *const CBuffer<T>::operator->() const noexcept {
 	return mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline CBuffer<T> &CBuffer<T>::operator=(const T &other) {
 	*mapData_ = other;
 	return *this;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline CBuffer<T>::CBuffer() {
 	CreateBuffer();
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline CBuffer<T>::CBuffer(const CBuffer &other) {
 	CreateBuffer();
 
@@ -102,7 +106,7 @@ inline CBuffer<T>::CBuffer(const CBuffer &other) {
 	*mapData_ = *other.mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline void CBuffer<T>::CreateBuffer() {
 	HRESULT result = S_FALSE;
 
@@ -119,7 +123,7 @@ inline void CBuffer<T>::CreateBuffer() {
 
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline CBuffer<T>::~CBuffer() {
 	resources_->Release();
 	//cbView_ = {};
@@ -132,7 +136,7 @@ inline CBuffer<T>::~CBuffer() {
 
 /// @brief 定数バッファ
 /// @tparam T 型名 
-template<typename T>
+template<IsNotPointer T>
 class ArrayCBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
@@ -198,32 +202,32 @@ private:
 
 };
 
-template<typename T>
+template<IsNotPointer T>
 inline ArrayCBuffer<T>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline ArrayCBuffer<T>::operator T *() noexcept {
 	return *mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline ArrayCBuffer<T>::operator const T *() const noexcept {
 	return *mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline T *const ArrayCBuffer<T>::operator->() noexcept {
 	return *mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline const T *const ArrayCBuffer<T>::operator->() const noexcept {
 	return *mapData_;
 }
 
-template<typename T>
+template<IsNotPointer T>
 template<typename U>
 inline ArrayCBuffer<T> &ArrayCBuffer<T>::operator=(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
@@ -237,12 +241,12 @@ inline ArrayCBuffer<T> &ArrayCBuffer<T>::operator=(const U &source) {
 	return *this;
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline ArrayCBuffer<T>::ArrayCBuffer() :size_(0u) {
 	CreateBuffer(0u);
 }
 
-template<typename T>
+template<IsNotPointer T>
 template <typename U>
 inline ArrayCBuffer<T>::ArrayCBuffer(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
@@ -254,7 +258,7 @@ inline ArrayCBuffer<T>::ArrayCBuffer(const U &source) {
 	std::copy(source.begin(), source.end(), mapData_);
 }
 
-//template<typename T>
+//template<IsNotPointer T>
 //inline CBuffer<T>::CBuffer(CBuffer &&other) {
 //	resources_ = other.resources_;
 //	cbView_ = other.cbView_;
@@ -263,7 +267,7 @@ inline ArrayCBuffer<T>::ArrayCBuffer(const U &source) {
 //}
 
 
-template<typename T>
+template<IsNotPointer T>
 inline void ArrayCBuffer<T>::CreateBuffer(size_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
 	if (size != 0u && size_ != size) {
@@ -280,7 +284,7 @@ inline void ArrayCBuffer<T>::CreateBuffer(size_t size) {
 	}
 }
 
-template<typename T>
+template<IsNotPointer T>
 inline ArrayCBuffer<T>::~ArrayCBuffer() {
 	resources_->Release();
 	//cbView_ = {};
@@ -296,7 +300,7 @@ inline ArrayCBuffer<T>::~ArrayCBuffer() {
 
 /// @brief 頂点バッファ
 /// @tparam T 頂点データの型 Index 添え字が有効か
-template <typename T, bool Index = true>
+template <IsNotPointer T, bool Index = true>
 class VertexCBuffer final {
 
 	ArrayCBuffer<T> vertexData_;
@@ -324,7 +328,7 @@ public:
 	void SetIndexData(const U &source);
 };
 
-template <typename T, bool Index>
+template <IsNotPointer T, bool Index>
 template <typename U>
 void VertexCBuffer<T, Index>::SetVertexData(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
@@ -343,7 +347,7 @@ void VertexCBuffer<T, Index>::SetVertexData(const U &source) {
 
 }
 
-template <typename T, bool Index>
+template <IsNotPointer T, bool Index>
 template <typename U>
 void VertexCBuffer<T, Index>::SetIndexData(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");

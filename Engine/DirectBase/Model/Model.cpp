@@ -474,7 +474,7 @@ void Model::ImGuiWidget()
 	}
 }
 
-void Model::Draw(const Transform &transform, const Camera &camera) const
+void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const
 {
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());

@@ -7,10 +7,10 @@
 #include <string>
 
 #include "../../Utils/Math/Transform.h"
+#include "../../Engine/DirectBase/Render/Camera.h"
 //#include "../../Engine/DirectBase/Render/Camera.h"
 
 class Entity;
-class Camera;
 //class IScene;
 
 ///	
@@ -52,7 +52,7 @@ public:
 	virtual void Update() {};
 	/// @brief 描画処理
 	/// @param vp Cameraクラス
-	virtual void Draw(const Camera &) const {};
+	virtual void Draw(const Camera<Render::CameraType::Projecction> &) const {};
 
 	/// @brief jsonからの読み込み
 	/// @param groupName グループ名
@@ -102,7 +102,7 @@ public:
 	virtual void Init();
 	virtual void Reset();
 	virtual void Update();
-	virtual void Draw(const Camera &vp) const;
+	virtual void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
 
 	/*template<typename T>
 	bool HasComponent();*/

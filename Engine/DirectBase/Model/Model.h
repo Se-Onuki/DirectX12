@@ -132,8 +132,7 @@ public:
 	std::vector<std::unique_ptr<Mesh>> meshList_;
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
-
-	void Draw(const Transform &transform, const Camera &camera) const;
+	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();

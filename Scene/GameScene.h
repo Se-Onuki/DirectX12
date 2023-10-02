@@ -30,7 +30,7 @@ private:
 	Model *model_ = nullptr;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 	Transform transform_;
-	Camera camera_{ Render::CameraType::Projecction };
+	Camera<Render::CameraType::Projecction> camera_;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };

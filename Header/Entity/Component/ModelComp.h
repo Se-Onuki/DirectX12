@@ -24,7 +24,7 @@ public:
 		void SetParent(ModelBone *const parent);
 
 		void Update();
-		void Draw(const Camera &vp) const;
+		void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
 	};
 
 	//using ModelPair = std::pair<Transform, Model *>;
@@ -49,7 +49,7 @@ public:
 
 
 	void Update() override;
-	void Draw(const Camera &vp)const override;
+	void Draw(const Camera<Render::CameraType::Projecction> &vp)const override;
 
 	ModelBone *const AddBone(const std::string &key, Model *const model, const Transform &srt = {});
 	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const Transform &srt);
