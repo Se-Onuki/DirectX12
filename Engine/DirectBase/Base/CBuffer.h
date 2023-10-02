@@ -7,9 +7,9 @@
 #include "../Create/Create.h"
 #include "DirectXCommon.h"
 
-/// @brief 非ポインタ型である場合
+/// @brief 非ポインタ型である型
 template<typename T>
-concept IsNotPointer = !requires{ std::is_pointer<T>::value_type; };
+concept IsNotPointer = !std::is_pointer_v<T>;
 
 #pragma region 単体定数バッファ
 
