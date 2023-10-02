@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <imgui.h>
 
+#include "SoLib_Traits.h"	// 型情報など
+
 #include "../Math/Vector2.h"
 #include "../Math/Vector3.h"
 #include "../Math/Vector4.h"
@@ -13,14 +15,29 @@
 
 namespace SoLib {
 
-	bool ImGuiWidget(const char *const label, bool *const value);
+	// ImGuiの前方宣言
+	template<IsNotPointer T>
+	bool ImGuiWidget(const char *const label, T *const value) {
+		// 単体のポインタ型を渡す必要がある
+		static_assert(!std::is_pointer<T>::value, "多重ポインタ型が与えられました");
+		return false;
+	}
 
-	bool ImGuiWidget(const char *const label, int32_t *const value);
-	bool ImGuiWidget(const char *const label, float *const value);
-	bool ImGuiWidget(const char *const label, double *const value);
-	bool ImGuiWidget(const char *const label, Vector2 *const value);
-	bool ImGuiWidget(const char *const label, Vector3 *const value);
-	bool ImGuiWidget(const char *const label, Vector4 *const value);
+	template <>
+	bool ImGuiWidget<bool>(const char *const label, bool *const value);
+
+	template <>
+	bool ImGuiWidget<int32_t>(const char *const label, int32_t *const value);
+	template <>
+	bool ImGuiWidget<float>(const char *const label, float *const value);
+	template <>
+	bool ImGuiWidget<double>(const char *const label, double *const value);
+	template <>
+	bool ImGuiWidget<Vector2>(const char *const label, Vector2 *const value);
+	template <>
+	bool ImGuiWidget<Vector3>(const char *const label, Vector3 *const value);
+	template <>
+	bool ImGuiWidget<Vector4>(const char *const label, Vector4 *const value);
 
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 

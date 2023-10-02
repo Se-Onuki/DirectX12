@@ -8,6 +8,11 @@
 
 namespace SoLib {
 
+
+	/// @brief 非ポインタ型
+	template<typename T>
+	concept IsNotPointer = !std::is_pointer_v<T>;
+
 	template <typename T>
 	struct Traits;
 
