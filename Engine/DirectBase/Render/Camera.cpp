@@ -8,13 +8,13 @@
 
 
 template<>
-void Camera::CalcMatrix<Camera::Type::Projecction>() {
+void Camera::CalcMatrix<Render::CameraType::Projecction>() {
 	matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
 	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 }
 
 template<>
-void Camera::CalcMatrix<Camera::Type::Othographic>() {
+void Camera::CalcMatrix<Render::CameraType::Othographic>() {
 	matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
 	Vector2 windowSize = { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight };
 	matProjection_ = Render::MakeOrthographicMatrix(windowSize * -.5f, windowSize * +.5f, 0.f, 100.f);
@@ -27,11 +27,11 @@ void Camera::Init() {
 
 void Camera::CalcMatrix() {
 	switch (cameraType_) {
-	case Camera::Type::Projecction:
-		CalcMatrix<Camera::Type::Projecction>();
+	case Render::CameraType::Projecction:
+		CalcMatrix<Render::CameraType::Projecction>();
 		break;
-	case Camera::Type::Othographic:
-		CalcMatrix<Camera::Type::Othographic>();
+	case Render::CameraType::Othographic:
+		CalcMatrix<Render::CameraType::Othographic>();
 		break;
 	}
 }
