@@ -8,46 +8,36 @@
 
 
 template<>
-void Camera::CalcMatrix<Render::CameraType::Projecction>() {
+void Camera<Render::CameraType::Projecction>::CalcMatrix() {
 	matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
 	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 }
 
-template<>
-void Camera::CalcMatrix<Render::CameraType::Othographic>() {
-	matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
-	Vector2 windowSize = { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight };
-	matProjection_ = Render::MakeOrthographicMatrix(windowSize * -.5f, windowSize * +.5f, 0.f, 100.f);
-}
+//template<>
+//void Camera<Render::CameraType::Othographic>::CalcMatrix() {
+//	matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
+//	Vector2 windowSize = { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight };
+//	matProjection_ = Render::MakeOrthographicMatrix(windowSize * -.5f, windowSize * +.5f, 0.f, 100.f);
+//}
 
-void Camera::Init() {
+template<>
+void Camera<Render::CameraType::Projecction>::Init() {
 	UpdateMatrix();
 }
 
-
-void Camera::CalcMatrix() {
-	switch (cameraType_) {
-	case Render::CameraType::Projecction:
-		CalcMatrix<Render::CameraType::Projecction>();
-		break;
-	case Render::CameraType::Othographic:
-		CalcMatrix<Render::CameraType::Othographic>();
-		break;
-	}
-}
-
-void Camera::UpdateMatrix() {
+template<>
+void Camera<Render::CameraType::Projecction>::UpdateMatrix() {
 	CalcMatrix();
 	TransferMatrix();
 }
-
-void Camera::TransferMatrix() {
+template<>
+void Camera<Render::CameraType::Projecction>::TransferMatrix() {
 	constData_->view = matView_;
 	constData_->projection = matProjection_;
 	constData_->cameraPos = translation_;
 }
-
-bool Camera::ImGuiWidget() {
+template<>
+void Camera<Render::CameraType::Projecction>::ImGuiWidget() {
 
 	if (ImGui::TreeNode("Camera")) {
 		bool isUsing = false;
