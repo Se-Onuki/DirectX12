@@ -1,0 +1,31 @@
+{
+    "Boss": {
+        "barCentor": [
+            640.0,
+            90.0
+        ],
+        "barFlame": [
+            8.0,
+            8.0
+        ],
+        "barScale": [
+            512.0,
+            32.0
+        ],
+        "bulletLifeTime": 180,
+        "bulletSpeed": 2.0,
+        "fireCoolTime": 10,
+        "maxHealth": 300.0,
+        "nozzle": [
+            0.0,
+            10.0,
+            10.0
+        ],
+        "radius": 10.0,
+        "rangeAngle": 90.0,
+        "rangeBulletCount": 32,
+        "rangeBulletSpeed": 0.5,
+        "rangeCoolTime": 90,
+        "rangeLifeTime": 240
+    }
+}

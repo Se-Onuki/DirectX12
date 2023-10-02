@@ -3,8 +3,11 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
-#include "../Header/Timer/Timer.h"
+#include "../Utils/SoLib/SoLib_Timer.h"
 //#include "Scene.hpp"
+
+class SceneManager;
+class Entity;
 
 class IScene {
 public:
@@ -16,13 +19,19 @@ public:
 
 	virtual void Update() = 0;	// 更新処理
 	virtual void Draw() = 0;	// 描画処理
+
+	static SceneManager *sceneManager_;
+
+	/// 今後実装
+	// void AddObject(Object*const object);
+	// std::list<std::unique_ptr<Object>> objectList_;
 };
 
 
 class SceneManager {
 private:
 
-	Timer transitionTimer_{};
+	SoLib::Timer transitionTimer_{};
 	// 現在読み込んでいるシーン
 	std::unique_ptr<IScene> currentScene_ = nullptr;
 	// 次に遷移するシーン
@@ -36,6 +45,8 @@ private:
 
 public:
 
+	void Init();
+
 
 	/// @brief インスタンスの取得
 	/// @return インスタンスの実体
@@ -43,6 +54,8 @@ public:
 		static SceneManager instance;
 		return &instance;
 	}
+
+	void Cancel();
 
 
 	/// @brief シーン遷移

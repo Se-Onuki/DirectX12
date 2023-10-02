@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -58,6 +58,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -81,6 +82,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -96,18 +98,24 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectBase\2D\Sprite.cpp" />
-    <ClCompile Include="DirectBase\3D\DirectionLight.cpp" />
-    <ClCompile Include="DirectBase\3D\ViewProjection\ViewProjection.cpp" />
-    <ClCompile Include="DirectBase\Base\Audio.cpp" />
-    <ClCompile Include="DirectBase\Base\DirectXCommon.cpp" />
-    <ClCompile Include="DirectBase\Base\ImGuiManager.cpp" />
-    <ClCompile Include="DirectBase\Base\LeakChecker.cpp" />
-    <ClCompile Include="DirectBase\Base\PipelineState.cpp" />
-    <ClCompile Include="DirectBase\Base\Shader.cpp" />
-    <ClCompile Include="DirectBase\Base\TextureManager.cpp" />
-    <ClCompile Include="DirectBase\Base\WinApp.cpp" />
-    <ClCompile Include="DirectBase\Input\Input.cpp" />
+    <ClCompile Include="Engine\DirectBase\2D\Sprite.cpp" />
+    <ClCompile Include="Engine\DirectBase\3D\DirectionLight.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\Audio.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\ImGuiManager.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\LeakChecker.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\PipelineState.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\Shader.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\TextureManager.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\WinApp.cpp" />
+    <ClCompile Include="Engine\DirectBase\Create\Create.cpp" />
+    <ClCompile Include="Engine\DirectBase\File\GlobalVariables.cpp" />
+    <ClCompile Include="Engine\DirectBase\Input\Input.cpp" />
+    <ClCompile Include="Engine\DirectBase\Model\Model.cpp" />
+    <ClCompile Include="Engine\DirectBase\Render\Camera.cpp" />
+    <ClCompile Include="Engine\DirectBase\Render\Render.cpp" />
+    <ClCompile Include="Engine\DirectBase\Texture\Texture.cpp" />
+    <ClCompile Include="Engine\SolEngine.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -115,39 +123,60 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Header\Create\Create.cpp" />
-    <ClCompile Include="Header\Math\Lerp.cpp" />
-    <ClCompile Include="Header\Math\Math.cpp" />
-    <ClCompile Include="Header\Math\Matrix2x2.cpp" />
-    <ClCompile Include="Header\Math\Matrix3x3.cpp" />
-    <ClCompile Include="Header\Math\Matrix4x4.cpp" />
-    <ClCompile Include="Header\Math\Polar.cpp" />
-    <ClCompile Include="Header\Math\Transform.cpp" />
-    <ClCompile Include="Header\Math\Vector2.cpp" />
-    <ClCompile Include="Header\Math\Vector3.cpp" />
-    <ClCompile Include="Header\Model\Model.cpp" />
-    <ClCompile Include="Header\Render\Render.cpp" />
-    <ClCompile Include="Header\Texture\Texture.cpp" />
-    <ClCompile Include="Header\Timer\TImer.cpp" />
+    <ClCompile Include="Header\Collision\Collision.cpp" />
+    <ClCompile Include="Header\Entity\Component\Collider.cpp" />
+    <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
+    <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
+    <ClCompile Include="Header\Entity\Component\Projectile.cpp" />
+    <ClCompile Include="Header\Entity\Component\Rigidbody.cpp" />
+    <ClCompile Include="Header\Entity\Entity.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="Utils\Math\Angle.cpp" />
+    <ClCompile Include="Utils\Math\Math.cpp" />
+    <ClCompile Include="Utils\Math\Matrix2x2.cpp" />
+    <ClCompile Include="Utils\Math\Matrix3x3.cpp" />
+    <ClCompile Include="Utils\Math\Matrix4x4.cpp" />
+    <ClCompile Include="Utils\Math\Polar.cpp" />
+    <ClCompile Include="Utils\Math\Random.cpp" />
+    <ClCompile Include="Utils\Math\Transform.cpp" />
+    <ClCompile Include="Utils\Math\ValueRange.cpp" />
+    <ClCompile Include="Utils\Math\Vector2.cpp" />
+    <ClCompile Include="Utils\Math\Vector3.cpp" />
+    <ClCompile Include="Utils\SoLib\SoLib_Easing.cpp" />
+    <ClCompile Include="Utils\SoLib\SoLib_ImGui.cpp" />
+    <ClCompile Include="Utils\SoLib\SoLib_Lerp.cpp" />
+    <ClCompile Include="Utils\SoLib\SoLib_Timer.cpp" />
+    <ClCompile Include="Utils\Timer\TImer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectBase\2D\Sprite.h" />
-    <ClInclude Include="DirectBase\3D\DirectionLight.h" />
-    <ClInclude Include="DirectBase\3D\ViewProjection\ViewProjection.h" />
-    <ClInclude Include="DirectBase\Base\DirectXCommon.h" />
-    <ClInclude Include="DirectBase\Base\ImGuiManager.h" />
-    <ClInclude Include="DirectBase\Base\LeakChecker.h" />
-    <ClInclude Include="DirectBase\Base\PipelineState.h" />
-    <ClInclude Include="DirectBase\Base\ResourceLoader.h" />
-    <ClInclude Include="DirectBase\Base\Shader.h" />
-    <ClInclude Include="DirectBase\Base\Audio.h" />
-    <ClInclude Include="DirectBase\Base\TextureManager.h" />
-    <ClInclude Include="DirectBase\Base\WinApp.h" />
-    <ClInclude Include="DirectBase\Input\Input.h" />
+    <ClInclude Include="Engine\DirectBase\2D\Sprite.h" />
+    <ClInclude Include="Engine\DirectBase\3D\DirectionLight.h" />
+    <ClInclude Include="Engine\DirectBase\Base\Audio.h" />
+    <ClInclude Include="Engine\DirectBase\Base\CBuffer.h" />
+    <ClInclude Include="Engine\DirectBase\Base\DirectXCommon.h" />
+    <ClInclude Include="Engine\DirectBase\Base\ImGuiManager.h" />
+    <ClInclude Include="Engine\DirectBase\Base\LeakChecker.h" />
+    <ClInclude Include="Engine\DirectBase\Base\PipelineState.h" />
+    <ClInclude Include="Engine\DirectBase\Base\ResourceLoader.h" />
+    <ClInclude Include="Engine\DirectBase\Base\Shader.h" />
+    <ClInclude Include="Engine\DirectBase\Base\TextureManager.h" />
+    <ClInclude Include="Engine\DirectBase\Base\WinApp.h" />
+    <ClInclude Include="Engine\DirectBase\Create\Create.h" />
+    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandIe.h" />
+    <ClInclude Include="Engine\DirectBase\File\GlobalVariables.h" />
+    <ClInclude Include="Engine\DirectBase\File\VariantItem.h" />
+    <ClInclude Include="Engine\DirectBase\Input\Input.h" />
+    <ClInclude Include="Engine\DirectBase\Model\MinecraftModel.h" />
+    <ClInclude Include="Engine\DirectBase\Model\Model.h" />
+    <ClInclude Include="Engine\DirectBase\Model\ModelManager.h" />
+    <ClInclude Include="Engine\DirectBase\Render\Camera.h" />
+    <ClInclude Include="Engine\DirectBase\Render\Render.h" />
+    <ClInclude Include="Engine\DirectBase\String\String.h" />
+    <ClInclude Include="Engine\DirectBase\Texture\Texture.h" />
+    <ClInclude Include="Engine\SolEngine.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -156,28 +185,37 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="Header\Create\Create.h" />
-    <ClInclude Include="Header\Descriptor\DescriptorHandIe.h" />
-    <ClInclude Include="Header\Math\Lerp.h" />
-    <ClInclude Include="Header\Math\Math.hpp" />
-    <ClInclude Include="Header\Math\Matrix2x2.h" />
-    <ClInclude Include="Header\Math\Matrix3x3.h" />
-    <ClInclude Include="Header\Math\Matrix4x4.h" />
-    <ClInclude Include="Header\Math\Polar.h" />
-    <ClInclude Include="Header\Math\Transform.h" />
-    <ClInclude Include="Header\Math\Vector2.h" />
-    <ClInclude Include="Header\Math\Vector3.h" />
-    <ClInclude Include="Header\Math\Vector4.h" />
-    <ClInclude Include="Header\Model\MinecraftModel.h" />
-    <ClInclude Include="Header\Model\Model.h" />
-    <ClInclude Include="Header\Model\Object.h" />
-    <ClInclude Include="Header\Render\Render.hpp" />
-    <ClInclude Include="Header\String\String.hpp" />
-    <ClInclude Include="Header\Texture\Texture.h" />
-    <ClInclude Include="Header\Timer\Timer.h" />
+    <ClInclude Include="Header\Collision\Collision.h" />
+    <ClInclude Include="Header\Entity\Component\Collider.h" />
+    <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
+    <ClInclude Include="Header\Entity\Component\HealthComp.h" />
+    <ClInclude Include="Header\Entity\Component\ModelComp.h" />
+    <ClInclude Include="Header\Entity\Component\Projectile.h" />
+    <ClInclude Include="Header\Entity\Component\Rigidbody.h" />
+    <ClInclude Include="Header\Entity\Entity.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="Utils\Math\Angle.h" />
+    <ClInclude Include="Utils\Math\FloatArray.h" />
+    <ClInclude Include="Utils\Math\Math.hpp" />
+    <ClInclude Include="Utils\Math\Matrix2x2.h" />
+    <ClInclude Include="Utils\Math\Matrix3x3.h" />
+    <ClInclude Include="Utils\Math\Matrix4x4.h" />
+    <ClInclude Include="Utils\Math\Polar.h" />
+    <ClInclude Include="Utils\Math\Random.h" />
+    <ClInclude Include="Utils\Math\Transform.h" />
+    <ClInclude Include="Utils\Math\ValueRange.h" />
+    <ClInclude Include="Utils\Math\Vector2.h" />
+    <ClInclude Include="Utils\Math\Vector3.h" />
+    <ClInclude Include="Utils\Math\Vector4.h" />
+    <ClInclude Include="Utils\SoLib\SoLib.h" />
+    <ClInclude Include="Utils\SoLib\SoLib_Easing.h" />
+    <ClInclude Include="Utils\SoLib\SoLib_ImGui.h" />
+    <ClInclude Include="Utils\SoLib\SoLib_Lerp.h" />
+    <ClInclude Include="Utils\SoLib\SoLib_Timer.h" />
+    <ClInclude Include="Utils\SoLib\SoLib_Traits.h" />
+    <ClInclude Include="Utils\Timer\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

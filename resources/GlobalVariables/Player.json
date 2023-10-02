@@ -1,0 +1,38 @@
+{
+    "Player": {
+        "barCentor": [
+            640.0,
+            656.0
+        ],
+        "barFlame": [
+            8.0,
+            8.0
+        ],
+        "barScale": [
+            360.0,
+            32.0
+        ],
+        "bulletSpeed": 1.5,
+        "cameraRotateSpeed": 0.10000000149011612,
+        "colliderRadius": 2.0,
+        "defaultSightRadius": 150.0,
+        "fireCoolTime": 10,
+        "friction": 0.949999988079071,
+        "jumpDown": 0.5,
+        "jumpStrength": 750.0,
+        "maxHealth": 30.0,
+        "maxSightScale": 1.0,
+        "minSightScale": 0.5,
+        "moveSpeed": 75.0,
+        "nozzle": [
+            0.75,
+            2.0,
+            0.0
+        ],
+        "sightSpeed": [
+            15.0,
+            7.5
+        ],
+        "speedDown": 0.5
+    }
+}

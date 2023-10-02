@@ -1,10 +1,15 @@
 #pragma once
 #include "SceneManager.h"
-#include "../DirectBase/3D/ViewProjection/ViewProjection.h"
-#include "../DirectBase/3D/DirectionLight.h"
-#include "../DirectBase/2D/Sprite.h"
-#include "../Header/Model/Object.h"
-#include "../DirectBase/Base/Audio.h"
+
+#include "../Engine/DirectBase/3D/DirectionLight.h"
+#include "../Engine/DirectBase/2D/Sprite.h"
+#include "../Engine/DirectBase/Render/Camera.h"
+
+#include "../Engine/DirectBase/Model/Model.h"
+#include "../Utils/Math/Transform.h"
+
+#include "../Engine/DirectBase/Input/Input.h"
+#include "../Engine/DirectBase/Base/Audio.h"
 
 class GameScene : public IScene {
 public:
@@ -16,11 +21,16 @@ public:
 
 	void Update() override;
 	void Draw() override;
-public:
 
 private:
-	std::unique_ptr<DirectionLight> light_ = nullptr;
-	uint32_t bgm_;
-	//Audio::SoundData soundData{};
 
+	Input *input_ = nullptr;
+	Audio *audio_ = nullptr;
+
+	Model *model_ = nullptr;
+	std::unique_ptr<Sprite> sprite_ = nullptr;
+	Transform transform_;
+	Camera camera_{ Camera::Type::Projecction };
+
+	std::unique_ptr<DirectionLight> light_ = nullptr;
 };

@@ -1,39 +1,48 @@
 #include "GameScene.h"
-#include "../externals/imgui/imgui.h"
-#include "../DirectBase/Base/DirectXCommon.h"
+
+#include <imgui.h>
+#include "../Engine/DirectBase/Base/DirectXCommon.h"
+#include "../Engine/DirectBase/Model/ModelManager.h"
+
 #include "TitleScene.h"
-#include "../DirectBase/Input/Input.h"
+
+#include "../Header/Entity/Component/ModelComp.h"
 
 GameScene::GameScene() {
-	bgm_ = Audio::GetInstance()->LoadWave("resources/Alarm01.wav");
-	//soundData = SoundLoadWave("resources/Alarm01.wav");
-
+	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
+	// collisionManager_ = CollisionManager::GetInstance();
 }
 
 GameScene::~GameScene() {
-	//Audio::GetInstance()->Finalize();
-	//soundData.Unload();
+
 }
 
-void GameScene::OnEnter()
-{
-
+void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
-	//Audio::GetInstance()->PlayWave(soundData);
-	Audio::GetInstance()->PlayWave(bgm_);
+
+	model_ = ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
+	transform_.UpdateMatrix();
+	camera_.Init();
+
+	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
+	sprite_->SetScale({ 100.f,100.f });
 }
 
-void GameScene::OnExit()
-{
-}
+void GameScene::OnExit() {}
 
 void GameScene::Update() {
-	const DirectInput *const directInput = DirectInput::GetInstance();
-	//const XInput *const xInput = XInput::GetInstance();
-	if (directInput->IsPress(DIK_A)) {
-		light_->ImGuiWidget();
-	}
 
+	ImGui::Begin("Camera");
+	camera_.ImGuiWidget();
+	ImGui::End();
+	camera_.UpdateMatrix<Camera::Type::Projecction>();
+
+	ImGui::Begin("Sphere");
+	transform_.ImGuiWidget();
+	ImGui::End();
+
+	transform_.UpdateMatrix();
 }
 
 void GameScene::Draw()
@@ -61,6 +70,7 @@ void GameScene::Draw()
 	light_->SetLight(commandList);
 
 	// モデルの描画
+	model_->Draw(transform_, camera_);
 
 	Model::EndDraw();
 
@@ -71,6 +81,7 @@ void GameScene::Draw()
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
+	sprite_->Draw();
 
 	Sprite::EndDraw();
 

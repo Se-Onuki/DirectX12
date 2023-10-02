@@ -1,7 +1,11 @@
 #pragma once
 #include "SceneManager.h"
-#include "../DirectBase/3D/DirectionLight.h"
-#include "../DirectBase/2D/Sprite.h"
+
+#include "../Engine/DirectBase/3D/DirectionLight.h"
+#include "../Engine/DirectBase/2D/Sprite.h"
+
+#include "../Engine/DirectBase/Input/Input.h"
+#include "../Engine/DirectBase/Base/Audio.h"
 
 class TitleScene : public IScene {
 public:
@@ -16,11 +20,10 @@ public:
 public:
 
 private:
+
+	Input *input_ = nullptr;
+	Audio *audio_ = nullptr;
+
+
 	std::unique_ptr<DirectionLight> light_ = nullptr;
-
-	std::unique_ptr<Sprite> title_ = nullptr;
-
-	std::unique_ptr<Sprite> plane_ = nullptr;
-
-	Sprite::BlendMode blend_ = Sprite::BlendMode::kSubtract;
 };

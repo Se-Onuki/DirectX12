@@ -1,4 +1,4 @@
-#include "DirectBase/Base/LeakChecker.h"
+#include "Engine/DirectBase/Base/LeakChecker.h"
 
 #include <Windows.h>
 #include <cstdint>
@@ -21,19 +21,25 @@
 
 #include <string>
 
-#include "DirectBase/Base/WinApp.h"
-#include "DirectBase/Base/DirectXCommon.h"
+#include "Engine/SolEngine.h"
+
+#include "Engine/DirectBase/Base/WinApp.h"
+#include "Engine/DirectBase/Base/DirectXCommon.h"
 
 #include "externals/DirectXTex/DirectXTex.h"
 
-#include "DirectBase/Base/TextureManager.h"
-#include "DirectBase/Base/Shader.h"
-#include "Header/Model/Model.h"
-#include "DirectBase/Base/ImGuiManager.h"
+#include "Engine/DirectBase/Base/TextureManager.h"
+#include "Engine/DirectBase/Base/Shader.h"
+#include "Engine/DirectBase/Model/Model.h"
+#include "Engine/DirectBase/Base/ImGuiManager.h"
 
 #include "Scene/SceneManager.h"
+#include "Scene/TitleScene.h"
 #include "Scene/GameScene.h"
-#include "DirectBase/Input/Input.h"
+#include "Engine/DirectBase/Input/Input.h"
+#include "Engine/DirectBase/Base/Audio.h"
+
+#include "Engine/DirectBase/File/GlobalVariables.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -43,7 +49,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	WinApp::StaticInit();
 
 	WinApp *const winApp = WinApp::GetInstance();
-	winApp->CreateGameWindow("DirectXGame");
+	winApp->CreateGameWindow("SoLEngine");
 
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
@@ -75,8 +81,30 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+#pragma region クラス化の残骸
+
+	//SolEngine::StaticInit("SoLEngine");
+
+	//auto *const winApp = SolEngine::GetInstance()->GetWinApp();
+
+	//auto *const dxCommon = SolEngine::GetInstance()->GetDXCommon();
+	//ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+
+	//Input *const input = Input::GetInstance();
+	//const DirectInput *const directInput = DirectInput::GetInstance();
+
+	//TextureManager *const textureManager = TextureManager::GetInstance();
+
+	//Audio *const audio = Audio::GetInstance();
+
+#pragma endregion
+
+	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+	gVariable->LoadFile();
+
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
+	sceneManager->Init();
 	sceneManager->ChangeScene(new GameScene);
 
 
@@ -96,6 +124,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 
 
+
+		gVariable->Update();
 		// ゲームの処理
 		sceneManager->Update();
 
