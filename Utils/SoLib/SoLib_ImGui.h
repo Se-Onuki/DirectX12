@@ -16,6 +16,7 @@ namespace SoLib {
 	// ImGuiの前方宣言
 	template<typename T>
 	bool ImGuiWidget(const char *const label, T *const value) {
+		// 単体のポインタ型を渡す必要がある
 		static_assert(!std::is_pointer<T>::value, "多重ポインタ型が与えられました");
 		return false;
 	}
@@ -68,5 +69,5 @@ bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 #endif // _DEBUG
 
 	return isAction;
-	}
+}
 #pragma endregion
