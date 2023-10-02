@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <imgui.h>
 
+#include "SoLib_Traits.h"	// 型情報など
+
 #include "../Math/Vector2.h"
 #include "../Math/Vector3.h"
 #include "../Math/Vector4.h"
@@ -14,7 +16,7 @@
 namespace SoLib {
 
 	// ImGuiの前方宣言
-	template<typename T>
+	template<IsNotPointer T>
 	bool ImGuiWidget(const char *const label, T *const value) {
 		// 単体のポインタ型を渡す必要がある
 		static_assert(!std::is_pointer<T>::value, "多重ポインタ型が与えられました");
