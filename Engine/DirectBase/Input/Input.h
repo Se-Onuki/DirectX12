@@ -1,4 +1,5 @@
 #pragma once
+#include <wrl.h>
 
 #define DIRECTINPIT_VERSION 0x0800	// DirectInputのバージョン
 #include <dinput.h>
@@ -44,6 +45,8 @@ struct VirtualPad {
 
 class DirectInput
 {
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
 	DirectInput() = default;
 	DirectInput(const DirectInput &) = delete;
 	DirectInput operator=(const DirectInput &) = delete;
@@ -58,8 +61,8 @@ public:
 	void Init();
 	void Update();
 private:
-	IDirectInput8 *directInput_ = nullptr;
-	IDirectInputDevice8 *keyboard_ = nullptr;
+	ComPtr<IDirectInput8> directInput_ = nullptr;
+	ComPtr<IDirectInputDevice8> keyboard_ = nullptr;
 
 	bool inputTarget = 0u;
 	std::array<BYTE, 256u> key_[2u] = {};
