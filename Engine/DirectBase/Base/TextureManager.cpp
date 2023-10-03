@@ -52,6 +52,13 @@ void TextureManager::Reset() {
 
 void TextureManager::ImGuiWindow() {
 	ImGui::Begin("TextureManager");
+
+	static uint32_t index = 1;
+	index = ImGuiTextureSelecter(index);
+	ImGui::End();
+}
+
+uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
 	static char filePath[32];
 	ImGui::InputTextWithHint("textureLoad", "resources/...", filePath, 32u);
 	if (ImGui::Button("Load")) {
@@ -59,7 +66,6 @@ void TextureManager::ImGuiWindow() {
 		filePath[0] = '\0';
 	}
 
-	static uint32_t index = 1;
 	if (ImGui::BeginCombo("TextureList", textureArray_[index].name.c_str())) {
 
 		for (uint32_t i = 0; i < textureArray_.size(); i++) {
@@ -79,8 +85,7 @@ void TextureManager::ImGuiWindow() {
 		ImGui::Text("Width: %d\nHeight: %d", resourceDesc.Width, resourceDesc.Height);
 	}
 
-
-	ImGui::End();
+	return index;
 }
 
 void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const {

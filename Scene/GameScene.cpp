@@ -43,6 +43,8 @@ void GameScene::Update() {
 	transform_.ImGuiWidget();
 	ImGui::End();
 
+	TextureManager::GetInstance()->ImGuiWindow();
+
 	transform_.UpdateMatrix();
 }
 

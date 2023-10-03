@@ -43,6 +43,8 @@ public:
 
 	void ImGuiWindow();
 
+	uint32_t ImGuiTextureSelecter(uint32_t index);
+
 	ID3D12DescriptorHeap *const GetSRVHeap()const {
 		return srvHeap_.Get();
 	}
