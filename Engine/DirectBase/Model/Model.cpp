@@ -220,8 +220,7 @@ void Model::CreatePipeLine() {
 
 #pragma region BlendState(ブレンドステート)
 
-	// 全ての色要素を書き込む
-	//blendDesc.RenderTarget[0].RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	// NormalBlend
 	blendDesc.RenderTarget[0].BlendEnable = true;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
