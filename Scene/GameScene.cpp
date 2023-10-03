@@ -39,6 +39,7 @@ void GameScene::Update() {
 	camera_.UpdateMatrix();
 
 	ImGui::Begin("Sphere");
+	model_->ImGuiWidget();
 	transform_.ImGuiWidget();
 	ImGui::End();
 

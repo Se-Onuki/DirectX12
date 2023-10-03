@@ -16,7 +16,7 @@
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
 
-std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 2u> Model::graphicsPipelineState_ = { nullptr };
+std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u> Model::graphicsPipelineState_ = { nullptr };
 Microsoft::WRL::ComPtr<ID3D12RootSignature> Model::rootSignature_ = nullptr;
 
 void Model::StaticInit() {
@@ -192,7 +192,7 @@ void Model::CreatePipeLine() {
 #pragma region PSOを生成する
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();		// RootSignature
+	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
 	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
@@ -212,13 +212,13 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[0]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kNone)]));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
 
 
-#pragma region BlendState(ブレンドステート)
+#pragma region BlendState(ブレンドステート) ノーマルブレンド
 
 	// NormalBlend
 	blendDesc.RenderTarget[0].BlendEnable = true;
@@ -233,12 +233,95 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[1]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kNormal)]));
 	assert(SUCCEEDED(hr));
 
 
 #pragma endregion
 
+#pragma region BlendState(ブレンドステート) 加算合成
+
+	// NormalBlend
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kAdd)]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+#pragma region BlendState(ブレンドステート) 減算合成
+
+	// NormalBlend
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kSubtract)]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+#pragma region BlendState(ブレンドステート) 乗算合成
+
+	// NormalBlend
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_ALPHA;
+
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kMultily)]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+#pragma region BlendState(ブレンドステート) スクリーン合成
+
+	// NormalBlend
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kScreen)]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
 
 #pragma endregion
 
@@ -478,6 +561,7 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_);
 	}
 
@@ -551,7 +635,20 @@ void Material::ImGuiWidget()
 		}
 
 		ImGui::ColorEdit4("BaseColor", &materialBuff_->color.x);
-		ImGui::ColorEdit4("EmissiveColor", &materialBuff_->emissive.x);
+		ImGui::ColorEdit3("EmissiveColor", &materialBuff_->emissive.x);
+
+		const static std::array<std::string, 6u>blendStr{ "kNone", "kNormal","kAdd", "kSubtract", "kMultily", "kScreen" };
+
+		if (ImGui::BeginCombo("BlendMode", blendStr[static_cast<uint32_t>(blendMode_)].c_str())) {
+
+			for (uint32_t i = 0; i < blendStr.size(); i++) {
+				if (ImGui::Selectable(blendStr[i].c_str())) {
+					blendMode_ = static_cast<Model::BlendMode>(i);
+					break;
+				}
+			}
+			ImGui::EndCombo();
+		}
 
 		ImGui::TreePop();
 	}

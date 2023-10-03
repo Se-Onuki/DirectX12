@@ -24,6 +24,67 @@
 struct Transform;
 class ViewProjection;
 
+struct Material;
+struct Mesh;
+
+class Model
+{
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	// モデル用パイプライン
+	static std::array<ComPtr<ID3D12PipelineState>, 6u> graphicsPipelineState_;
+	static ComPtr<ID3D12RootSignature> rootSignature_;
+
+	static void CreatePipeLine();
+
+public:
+	enum class RootParameter : uint32_t {
+		kWorldTransform, // ワールド変換行列
+		kViewProjection, // ビュープロジェクション変換行列
+		kMaterial,       // マテリアル
+		kTexture,        // テクスチャ
+		kLight,          // ライト
+	};
+
+	enum class BlendMode : uint32_t {
+		kNone,		// ブレンド無し
+		kNormal,	// αブレンド
+		kAdd,		// 加算合成
+		kSubtract,	// 減算合成
+		kMultily,	// 乗算合成
+		kScreen,	// スクリーン合成
+
+		kTotal	// 総数
+	};
+
+	static void StaticInit();
+
+	Model() = default;
+	~Model() = default;
+
+	std::string name_;
+	std::vector<std::unique_ptr<Mesh>> meshList_;
+	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
+
+	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
+
+	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
+	static void EndDraw();
+	static const char *const defaultDirectory;
+
+	void ImGuiWidget();
+
+	[[nodiscard]] static Model *const CreateSphere();
+
+	[[nodiscard]] static Model *const LoadObjFile(const std::string &directoryPath, const std::string &fileName);
+private:
+	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
+
+	static ID3D12GraphicsCommandList *commandList_;
+
+};
+
+
+
 struct Material {
 
 private:
@@ -40,7 +101,7 @@ public:
 		Matrix4x4 uvTransform;
 	};
 
-
+	Model::BlendMode blendMode_ = Model::BlendMode::kNone;
 	std::string name_;			// マテリアル名
 	std::string textureName_;
 	uint32_t texHandle_ = 1u;
@@ -86,6 +147,7 @@ public:
 	void AddVertex(const VertexData &vertex);
 
 	void SetMaterial(Material *const material);
+	Material *const GetMaterial() const { return material_; }
 
 	void Draw(ID3D12GraphicsCommandList *const commandList) const;
 
@@ -104,51 +166,6 @@ namespace std {
 		}
 	};
 }
-
-class Model
-{
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// モデル用パイプライン
-	static std::array<ComPtr<ID3D12PipelineState>, 2u> graphicsPipelineState_;
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-
-	static void CreatePipeLine();
-
-public:
-	enum class RootParameter : uint32_t {
-		kWorldTransform, // ワールド変換行列
-		kViewProjection, // ビュープロジェクション変換行列
-		kMaterial,       // マテリアル
-		kTexture,        // テクスチャ
-		kLight,          // ライト
-	};
-
-	static void StaticInit();
-
-	Model() = default;
-	~Model() = default;
-
-	std::string name_;
-	std::vector<std::unique_ptr<Mesh>> meshList_;
-	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
-
-	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
-
-	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
-	static void EndDraw();
-	static const char *const defaultDirectory;
-
-	void ImGuiWidget();
-
-	[[nodiscard]] static Model *const CreateSphere();
-
-	[[nodiscard]] static Model *const LoadObjFile(const std::string &directoryPath, const std::string &fileName);
-private:
-	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
-
-	static ID3D12GraphicsCommandList *commandList_;
-
-};
 
 
 class MinecraftModel {
