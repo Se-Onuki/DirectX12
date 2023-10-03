@@ -34,12 +34,18 @@ PixelShaderOutput main(VertexShaderOutput input)
     float4 transformedUV = mul(float4(input.texCoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
     
+    // 色が不透明の場合破棄
+    if (textureColor.a < 0.9f)
+    {
+        discard;
+    }
+    
     
     float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
     if (gDirectionalLight.pattern == 0)
     {
-        output.color = textureColor;
-        output.color.w = gMaterial.color.w * textureColor.w; // α値
+        output.color.rgb = textureColor.rgb;
+        output.color.a = gMaterial.color.a * textureColor.a; // α値
         
     }
     else if (gDirectionalLight.pattern == 1)
@@ -55,6 +61,12 @@ PixelShaderOutput main(VertexShaderOutput input)
         output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
         output.color.a = gMaterial.color.a * textureColor.a; // α値
     }
-   
+    
+    // 色が不透明の場合破棄
+    if (output.color.a < 0.1f)
+    {
+        discard;
+    }
+    
     return output;
 }

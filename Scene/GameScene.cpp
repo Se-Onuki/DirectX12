@@ -7,6 +7,7 @@
 #include "TitleScene.h"
 
 #include "../Header/Entity/Component/ModelComp.h"
+#include "../Utils/SoLib/SoLib_ImGui.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -21,7 +22,7 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
-	model_ = ModelManager::GetInstance()->AddModel("sphere", Model::LoadObjFile("", "sphere.obj"));
+	model_ = ModelManager::GetInstance()->AddModel("Fence", Model::LoadObjFile("Model/Fence/", "fence.obj"));
 	transform_.UpdateMatrix();
 	camera_.Init();
 
@@ -44,6 +45,8 @@ void GameScene::Update() {
 	ImGui::End();
 
 	TextureManager::GetInstance()->ImGuiWindow();
+
+	light_->ImGuiWidget();
 
 	transform_.UpdateMatrix();
 }
