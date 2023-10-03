@@ -22,7 +22,9 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
-	model_ = ModelManager::GetInstance()->AddModel("Fence", Model::LoadObjFile("Model/Fence/", "fence.obj"));
+	ModelManager::GetInstance()->CreateDefaultModel();
+
+	model_ = ModelManager::GetInstance()->GetModel("Plane");
 	transform_.UpdateMatrix();
 	camera_.Init();
 

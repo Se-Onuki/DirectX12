@@ -32,6 +32,7 @@ public:
 		static TextureManager instance{};
 		return &instance;
 	}
+	static uint32_t LoadDefaultTexture() { return Load("white2x2.png"); }
 
 	void StartDraw();
 

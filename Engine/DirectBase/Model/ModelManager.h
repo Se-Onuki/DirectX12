@@ -13,6 +13,9 @@ public:
 		return &instance;
 	}
 
+	/// @brief 簡易的なモデルを作る
+	void CreateDefaultModel();
+
 	/// @brief モデルの追加
 	/// @param key 文字列キー
 	/// @param model モデルデータ
@@ -52,4 +55,8 @@ private:
 
 	// モデルマップ
 	std::unordered_map<std::string, std::unique_ptr<Model>> models_;
+
+private:
+
+	void CreatePlane();
 };
