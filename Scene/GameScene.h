@@ -33,4 +33,7 @@ private:
 	Camera<Render::CameraType::Projecction> camera_;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> instancingData_ = nullptr;
 };

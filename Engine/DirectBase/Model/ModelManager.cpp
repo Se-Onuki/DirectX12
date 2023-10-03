@@ -38,14 +38,8 @@ void ModelManager::CreatePlane() {
 
 	newModel->materialMap_["default"] = (std::make_unique<Material>());
 	auto &material = newModel->materialMap_["default"];
-	material->texHandle_ = TextureManager::LoadDefaultTexture();
-	material->name_ = "default";
 
-	material->materialBuff_ = Material::MaterialData{
-		.color = Vector4{1.f,1.f,1.f,1.f},
-		.emissive = {},
-		.uvTransform = Matrix4x4::Identity()
-	};
+	material->Create();
 
 	mesh->SetMaterial(material.get());
 

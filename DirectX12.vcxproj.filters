@@ -465,12 +465,21 @@
     <FxCompile Include="resources\shader\Object3d.VS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shader\Particle.PS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\Particle.VS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shader\Object3d.hlsli">
       <Filter>Engine\Shader</Filter>
     </None>
     <None Include="resources\shader\Sprite.hlsli">
+      <Filter>Engine\Shader</Filter>
+    </None>
+    <None Include="resources\shader\Particle.hlsli">
       <Filter>Engine\Shader</Filter>
     </None>
   </ItemGroup>

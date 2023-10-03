@@ -30,6 +30,17 @@ void GameScene::OnEnter() {
 
 	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });
+
+	const uint32_t instancingCount = 10u;
+	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+	instancingData_ = CreateBufferResource(device, sizeof(Transform::TransformMatrix) * instancingCount);
+
+	Transform::TransformMatrix *const instancingArray = nullptr;
+	instancingData_->Map(0, nullptr, reinterpret_cast<void **>(instancingArray));
+
+	for (uint32_t i = 0; i < instancingCount; ++i) {
+		instancingArray[i].World = Matrix4x4::Identity();
+	}
 }
 
 void GameScene::OnExit() {}
