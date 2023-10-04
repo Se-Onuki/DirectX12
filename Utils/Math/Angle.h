@@ -16,14 +16,10 @@ namespace Angle {
 	public:
 		Digree() = default;
 		Digree(float value) :angle_(value) {};
-		Digree(Radian value) { *this = static_cast<Digree>(value); }
+		Digree(const Radian &value);
 		Digree(const Digree &) = default;
 		inline Digree &operator=(const Digree &digree) {
 			angle_ = digree.angle_;
-			return *this;
-		}
-		inline Digree &operator=(const Radian &radian) {
-			*this = static_cast<Digree>(radian);
 			return *this;
 		}
 
@@ -31,8 +27,9 @@ namespace Angle {
 
 		inline Digree operator+() const { return angle_; }
 		inline Digree operator-() const { return -angle_; }
-		/// @brief 非明示的にDigreeを<Radian>に変換できる
-		inline operator Angle::Radian() const noexcept { return Radian{ angle_ * Dig2Rad }; }
+
+		/// @brief 非明示的にDigreeを[ Radian ]に変換できる
+		inline operator Angle::Radian() const noexcept;
 
 		const float &Get() const noexcept { return angle_; }
 		float &Get() noexcept { return angle_; }
@@ -46,14 +43,10 @@ namespace Angle {
 	public:
 		Radian() = default;
 		Radian(float value) :angle_(value) {};
-		Radian(Digree value) { *this = static_cast<Radian>(value); };
+		Radian(const Digree &value) { *this = static_cast<Radian>(value); };
 		Radian(const Radian &) = default;
 		inline Radian &operator=(const Radian &radian) {
 			angle_ = radian.angle_;
-			return *this;
-		}
-		inline Radian &operator=(const Digree &digree) {
-			*this = static_cast<Radian>(digree);
 			return *this;
 		}
 
@@ -61,10 +54,10 @@ namespace Angle {
 
 		inline Radian operator+() const { return angle_; }
 		inline Radian operator-() const { return -angle_; }
-		/// @brief 非明示的にRadianを<float>に変換できる
-		inline operator const float &() const noexcept { return angle_; }
+		/// @brief 非明示的にRadianを[ float ]に変換できる
+		//inline operator const float &() const noexcept { return angle_; }
 
-		/// @brief 明示的にRadianを<Digree>に変換できる
+		/// @brief 明示的にRadianを[ Digree ]に変換できる
 		inline explicit operator Digree () const noexcept { return Digree{ angle_ * Rad2Dig }; }
 
 		inline Radian &operator=(const Digree &value) noexcept { return *this = static_cast<Radian>(value); }
