@@ -16,7 +16,7 @@ class GlobalVariables {
 	GlobalVariables operator=(const GlobalVariables &) = delete;
 	~GlobalVariables() = default;
 
-	const std::string kDirectoryPath = "resources/GlobalVariables/";
+	const std::string kDirectoryPath = "Resources/GlobalVariables/";
 
 public:
 	/// @brief 保存できる型
@@ -179,5 +179,5 @@ inline void GlobalVariables::AddValue(const std::string &groupName, const Varian
 }
 template<typename T>
 inline void GlobalVariables::SetValue(const std::string &groupName, const VariantItem<T> &item) {
-	SetValue(groupName, item.GetKey(), item.GetItem());
+	AddValue(groupName, item.GetKey(), item.GetItem());
 }

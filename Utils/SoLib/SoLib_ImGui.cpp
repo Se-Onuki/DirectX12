@@ -73,6 +73,16 @@ bool SoLib::ImGuiWidget<Vector4>(const char *const label, Vector4 *const value) 
 #endif // _DEBUG
 }
 
+template<>
+bool SoLib::ImGuiWidget(const char *const label, Angle::Radian *const value) {
+#ifdef _DEBUG
+	return ImGui::SliderAngle(label, &value->Get(), 0.1f);
+#else
+	label;	value;
+	return false;
+#endif // _DEBUG
+}
+
 bool SoLib::ImGuiWidgetAngle(const char *const label, float *const value, float min, float max) {
 #ifdef _DEBUG
 	return ImGui::SliderAngle(label, value, min, max);
