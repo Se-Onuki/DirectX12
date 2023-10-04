@@ -550,9 +550,11 @@ Model *const Model::CreateSphere()
 
 void Model::ImGuiWidget()
 {
-
-	for (auto &material : materialMap_) {
-		material.second->ImGuiWidget();
+	if (ImGui::TreeNode(name_.c_str())) {
+		for (auto &material : materialMap_) {
+			material.second->ImGuiWidget();
+		}
+		ImGui::TreePop();
 	}
 }
 
