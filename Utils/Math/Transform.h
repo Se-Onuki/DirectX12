@@ -41,7 +41,4 @@ struct Transform {
 
 	void Create(const Matrix4x4 &mat);
 private:
-	void CreateConstBuffer();
-
-	void SetMap();
 };

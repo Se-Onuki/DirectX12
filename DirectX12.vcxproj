@@ -130,6 +130,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Component\Projectile.cpp" />
     <ClCompile Include="Header\Entity\Component\Rigidbody.cpp" />
     <ClCompile Include="Header\Entity\Entity.cpp" />
+    <ClCompile Include="Header\Object\BaseCharacter.cpp" />
+    <ClCompile Include="Header\Object\Enemy.cpp" />
+    <ClCompile Include="Header\Object\FollowCamera.cpp" />
+    <ClCompile Include="Header\Object\Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -193,6 +197,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Component\Projectile.h" />
     <ClInclude Include="Header\Entity\Component\Rigidbody.h" />
     <ClInclude Include="Header\Entity\Entity.h" />
+    <ClInclude Include="Header\Object\BaseCharacter.h" />
+    <ClInclude Include="Header\Object\Enemy.h" />
+    <ClInclude Include="Header\Object\FollowCamera.h" />
+    <ClInclude Include="Header\Object\Player.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />

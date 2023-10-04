@@ -179,5 +179,5 @@ inline void GlobalVariables::AddValue(const std::string &groupName, const Varian
 }
 template<typename T>
 inline void GlobalVariables::SetValue(const std::string &groupName, const VariantItem<T> &item) {
-	AddValue(groupName, item.GetKey(), item.GetItem());
+	SetValue(groupName, item.GetKey(), item.GetItem());
 }
