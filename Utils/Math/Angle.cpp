@@ -39,3 +39,12 @@ Vector3 Angle::Mod(const Vector3 &euler) {
 	}
 	return result;
 }
+
+Angle::Digree::Digree(const Radian &value) : angle_(value.Get() *Angle::Rad2Dig) {  }
+
+//inline Angle::Digree &Angle::Digree::operator=(const Radian &radian) {
+//	*this = static_cast<Digree>(radian);
+//	return *this;
+//}
+
+inline Angle::Digree::operator Angle::Radian() const noexcept { return Radian{ angle_ * Dig2Rad }; }

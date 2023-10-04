@@ -566,14 +566,15 @@ Model *const Model::CreateSphere()
 
 void Model::ImGuiWidget()
 {
-
-	for (auto &material : materialMap_) {
-		material.second->ImGuiWidget();
+	if (ImGui::TreeNode(name_.c_str())) {
+		for (auto &material : materialMap_) {
+			material.second->ImGuiWidget();
+		}
+		ImGui::TreePop();
 	}
 }
 
-void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const
-{
+void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const {
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
@@ -581,6 +582,15 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 		mesh->Draw(commandList_);
 	}
 
+}
+
+void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const {
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
+	for (auto &mesh : meshList_) {
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		mesh->Draw(commandList_, drawCount);
+	}
 }
 
 void Mesh::CreateBuffer() {
@@ -621,13 +631,13 @@ void Mesh::SetMaterial(Material *const material) {
 	material_ = material;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
+void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount) const {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, material_->texHandle_);
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
 	commandList->IASetIndexBuffer(&vertexBuffer_.GetIBView());
-	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), 1, 0, 0, 0);
+	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
 }
 
 void Material::CreateBuffer() {

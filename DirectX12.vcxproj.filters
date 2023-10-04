@@ -231,9 +231,6 @@
     <ClCompile Include="Utils\Math\Angle.cpp">
       <Filter>Utils\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Entity\Entity.cpp">
-      <Filter>Header\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\Math\Random.cpp">
       <Filter>Utils\Math</Filter>
     </ClCompile>
@@ -251,6 +248,21 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\ModelManager.cpp">
       <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Entity.cpp">
+      <Filter>Header\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Player.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\BaseCharacter.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Enemy.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\FollowCamera.cpp">
+      <Filter>Header\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -431,9 +443,6 @@
     <ClInclude Include="Utils\Math\Angle.h">
       <Filter>Utils\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Entity\Entity.h">
-      <Filter>Header\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\Math\Random.h">
       <Filter>Utils\Math</Filter>
     </ClInclude>
@@ -445,6 +454,21 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\2D\Sprite.h">
       <Filter>Engine\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Entity.h">
+      <Filter>Header\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\FollowCamera.h">
+      <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Player.h">
+      <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\BaseCharacter.h">
+      <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Enemy.h">
+      <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

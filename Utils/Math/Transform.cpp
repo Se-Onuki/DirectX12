@@ -27,21 +27,7 @@ Matrix4x4 Transform::Affine() const
 
 void Transform::InitResource()
 {
-	CreateConstBuffer();
-	SetMap();
 	UpdateMatrix();
-}
-
-void Transform::CreateConstBuffer()
-{
-	//constBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(TransformMatrix));
-}
-
-void Transform::SetMap()
-{
-	/*HRESULT result = S_FALSE;
-	result = constBuffer_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
-	assert(SUCCEEDED(result));*/
 }
 
 void Transform::CalcMatrix()

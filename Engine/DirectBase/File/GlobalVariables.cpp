@@ -52,27 +52,6 @@ void GlobalVariables::Update() {
 
 			// どの値が入っていた場合でも、ImGuiを呼び出す
 			std::visit([&itemName](auto &x) { SoLib::ImGuiWidget(itemName.c_str(), &x); }, item);
-
-			/*if (std::holds_alternative<int32_t>(item)) {
-				int32_t *ptr = std::get_if<int32_t>(&item);
-				ImGui::SliderInt(itemName.c_str(), ptr, 0, 100);
-			}
-			else if (std::holds_alternative<float>(item)) {
-				float *ptr = std::get_if<float>(&item);
-				ImGui::SliderFloat(itemName.c_str(), ptr, 0.f, 100.f);
-			}
-			else if (std::holds_alternative<Vector2>(item)) {
-				Vector2 *ptr = std::get_if<Vector2>(&item);
-				ImGui::SliderFloat2(itemName.c_str(), &ptr->x, -10.f, -10.f);
-			}
-			else if (std::holds_alternative<Vector3>(item)) {
-				Vector3 *ptr = std::get_if<Vector3>(&item);
-				ImGui::SliderFloat3(itemName.c_str(), &ptr->x, -10.f, -10.f);
-			}
-			else if (std::holds_alternative<Vector4>(item)) {
-				Vector4 *ptr = std::get_if<Vector4>(&item);
-				ImGui::SliderFloat4(itemName.c_str(), &ptr->x, -10.f, -10.f);
-			}*/
 		}
 
 		ImGui::Text("\n");

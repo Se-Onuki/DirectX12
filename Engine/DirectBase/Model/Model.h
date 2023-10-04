@@ -66,6 +66,7 @@ public:
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const;
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
@@ -149,7 +150,7 @@ public:
 	void SetMaterial(Material *const material);
 	Material *const GetMaterial() const { return material_; }
 
-	void Draw(ID3D12GraphicsCommandList *const commandList) const;
+	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u) const;
 
 
 };

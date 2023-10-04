@@ -11,60 +11,64 @@ namespace Angle {
 	constexpr float Dig2Rad = PI / 180.f;
 	constexpr float Rad2Dig = 180.f / PI;
 
-	//class Radian;
-	//class Digree {
-	//public:
-	//	Digree() = default;
-	//	Digree(float value) :angle_(value) {};
-	//	Digree(Radian value);
-	//	Digree(const Digree &) = default;
-	//	inline Digree &operator=(const Digree &digree) {
-	//		angle_ = digree.angle_;
-	//		return *this;
-	//	}
+	class Radian;
+	class Digree {
+	public:
+		Digree() = default;
+		Digree(float value) :angle_(value) {};
+		Digree(const Radian &value);
+		Digree(const Digree &) = default;
+		inline Digree &operator=(const Digree &digree) {
+			angle_ = digree.angle_;
+			return *this;
+		}
 
-	//	~Digree() = default;
+		~Digree() = default;
 
-	//	inline Digree operator+() const { return angle_; }
-	//	inline Digree operator-() const { return -angle_; }
-	//	/// @brief 明示的にDigreeを<Radian>に変換できる
-	//	inline explicit operator Angle::Radian() const noexcept;
+		inline Digree operator+() const { return angle_; }
+		inline Digree operator-() const { return -angle_; }
 
-	//	const float &Get() const noexcept { return angle_; }
-	//	float &Get() noexcept { return angle_; }
+		/// @brief 非明示的にDigreeを[ Radian ]に変換できる
+		inline operator Angle::Radian() const noexcept;
 
-	//private:
-	//	// 角度の値
-	//	float angle_;
-	//};
+		const float &Get() const noexcept { return angle_; }
+		float &Get() noexcept { return angle_; }
 
-	//class Radian {
-	//public:
-	//	Radian() = default;
-	//	Radian(float value) :angle_(value) {};
-	//	//Radian(Digree value) { angle_ = value.Get() * Dig2Rad; };
-	//	Radian(const Radian &) = default;
-	//	inline Radian &operator=(const Radian &digree) {
-	//		angle_ = digree.angle_;
-	//		return *this;
-	//	}
+	private:
+		// 角度の値
+		float angle_;
+	};
 
-	//	~Radian() = default;
+	class Radian {
+	public:
+		Radian() = default;
+		Radian(float value) :angle_(value) {};
+		Radian(const Digree &value) { *this = static_cast<Radian>(value); };
+		Radian(const Radian &) = default;
+		inline Radian &operator=(const Radian &radian) {
+			angle_ = radian.angle_;
+			return *this;
+		}
 
-	//	inline Radian operator+() const { return angle_; }
-	//	inline Radian operator-() const { return -angle_; }
-	//	/// @brief 非明示的にRadianを<float>に変換できる
-	//	inline operator const float &() const noexcept { return angle_; }
-	//	/// @brief 明示的にRadianを<Digree>に変換できる
-	//	//inline explicit operator Digree () const noexcept { return Digree{ angle_ * Rad2Dig }; }
+		~Radian() = default;
 
-	//	const float &Get() const noexcept { return angle_; }
-	//	float &Get() noexcept { return angle_; }
+		inline Radian operator+() const { return angle_; }
+		inline Radian operator-() const { return -angle_; }
+		/// @brief 非明示的にRadianを[ float ]に変換できる
+		//inline operator const float &() const noexcept { return angle_; }
 
-	//private:
-	//	// 角度の値
-	//	float angle_;
-	//};
+		/// @brief 明示的にRadianを[ Digree ]に変換できる
+		inline explicit operator Digree () const noexcept { return Digree{ angle_ * Rad2Dig }; }
+
+		inline Radian &operator=(const Digree &value) noexcept { return *this = static_cast<Radian>(value); }
+
+		const float &Get() const noexcept { return angle_; }
+		float &Get() noexcept { return angle_; }
+
+	private:
+		// 角度の値
+		float angle_;
+	};
 
 
 	Vector2 RadToVec2(float radian);

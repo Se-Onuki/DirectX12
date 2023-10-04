@@ -39,6 +39,9 @@ namespace SoLib {
 	template <>
 	bool ImGuiWidget<Vector4>(const char *const label, Vector4 *const value);
 
+	template <>
+	bool ImGuiWidget<Angle::Radian>(const char *const label, Angle::Radian *const value);
+
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 
 	template<typename T>
