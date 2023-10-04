@@ -258,9 +258,6 @@
     <ClCompile Include="Header\Object\BaseCharacter.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Enemy.cpp">
-      <Filter>Header\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Object\FollowCamera.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
@@ -465,9 +462,6 @@
       <Filter>Header\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\BaseCharacter.h">
-      <Filter>Header\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Object\Enemy.h">
       <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>

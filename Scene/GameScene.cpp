@@ -73,6 +73,15 @@ void GameScene::Update() {
 
 	ImGui::Begin("Sphere");
 	//model_->ImGuiWidget();
+	for (uint32_t i = 0u; i < 5u; ++i) {
+		Transform buffer;
+		buffer.Create(instancingArray_[i].World);
+		if (ImGui::TreeNode(("Transform" + std::to_string(i)).c_str())) {
+			buffer.ImGuiWidget();
+			ImGui::TreePop();
+		}
+		instancingArray_[i].World = buffer.Affine();
+	}
 	//transform_.ImGuiWidget();
 	ImGui::End();
 
