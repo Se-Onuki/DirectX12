@@ -13,7 +13,7 @@
 
 /// @brief 定数バッファ
 /// @tparam T 型名
-template<SoLib::IsNotPointer T>
+template<SoLib::IsNotPointer T, bool IsActive = true>
 class CBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
@@ -60,52 +60,52 @@ private:
 	void CreateBuffer();
 };
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::operator bool() const noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::operator T &() noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::operator T &() noexcept {
 	return *mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::operator const T &() const noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::operator const T &() const noexcept {
 	return *mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline T *const CBuffer<T>::operator->() noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline T *const CBuffer<T, IsActive>::operator->() noexcept {
 	return mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline T *const CBuffer<T>::operator->() const noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline T *const CBuffer<T, IsActive>::operator->() const noexcept {
 	return mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T> &CBuffer<T>::operator=(const T &other) {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive> &CBuffer<T, IsActive>::operator=(const T &other) {
 	*mapData_ = other;
 	return *this;
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::CBuffer() {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::CBuffer() {
 	CreateBuffer();
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::CBuffer(const CBuffer &other) {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::CBuffer(const CBuffer<T, IsActive> &other) {
 	CreateBuffer();
 
 	// データのコピー
 	*mapData_ = *other.mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline void CBuffer<T>::CreateBuffer() {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline void CBuffer<T, IsActive>::CreateBuffer() {
 	HRESULT result = S_FALSE;
 
 
@@ -121,8 +121,8 @@ inline void CBuffer<T>::CreateBuffer() {
 
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::~CBuffer() {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::~CBuffer() {
 	resources_->Release();
 	//cbView_ = {};
 	//mapData_ = nullptr;
@@ -130,12 +130,16 @@ inline CBuffer<T>::~CBuffer() {
 
 #pragma endregion
 
+// バッファ機能を持たないクラス
+template<SoLib::IsNotPointer T>
+class CBuffer<T, false> {};
+
 #pragma region 配列の定数バッファ
 
 /// @brief 定数バッファ
 /// @tparam T 型名 
 template<SoLib::IsNotPointer T>
-class ArrayCBuffer final {
+class StructuredBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -171,7 +175,7 @@ public:
 
 
 	template <typename U>
-	inline ArrayCBuffer &operator=(const U &other);	// コピー演算子
+	inline StructuredBuffer &operator=(const U &other);	// コピー演算子
 
 public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
@@ -181,12 +185,12 @@ public:
 
 public:
 
-	ArrayCBuffer();					// デフォルトコンストラクタ
+	StructuredBuffer();					// デフォルトコンストラクタ
 
 	template <typename U>
-	ArrayCBuffer(const U &source);		// コピーコンストラクタ
+	StructuredBuffer(const U &source);		// コピーコンストラクタ
 
-	~ArrayCBuffer();
+	~StructuredBuffer();
 
 	/// @brief バッファの計算
 	void CreateBuffer(size_t size);
@@ -201,33 +205,33 @@ private:
 };
 
 template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::operator bool() const noexcept {
+inline StructuredBuffer<T>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
 template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::operator T *() noexcept {
+inline StructuredBuffer<T>::operator T *() noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::operator const T *() const noexcept {
+inline StructuredBuffer<T>::operator const T *() const noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline T *const ArrayCBuffer<T>::operator->() noexcept {
+inline T *const StructuredBuffer<T>::operator->() noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline const T *const ArrayCBuffer<T>::operator->() const noexcept {
+inline const T *const StructuredBuffer<T>::operator->() const noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
 template<typename U>
-inline ArrayCBuffer<T> &ArrayCBuffer<T>::operator=(const U &source) {
+inline StructuredBuffer<T> &StructuredBuffer<T>::operator=(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
@@ -240,13 +244,13 @@ inline ArrayCBuffer<T> &ArrayCBuffer<T>::operator=(const U &source) {
 }
 
 template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::ArrayCBuffer() :size_(0u) {
+inline StructuredBuffer<T>::StructuredBuffer() :size_(0u) {
 	CreateBuffer(0u);
 }
 
 template<SoLib::IsNotPointer T>
 template <typename U>
-inline ArrayCBuffer<T>::ArrayCBuffer(const U &source) {
+inline StructuredBuffer<T>::StructuredBuffer(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
@@ -266,7 +270,7 @@ inline ArrayCBuffer<T>::ArrayCBuffer(const U &source) {
 
 
 template<SoLib::IsNotPointer T>
-inline void ArrayCBuffer<T>::CreateBuffer(size_t size) {
+inline void StructuredBuffer<T>::CreateBuffer(size_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
 	if (size != 0u && size_ != size) {
 		HRESULT result = S_FALSE;
@@ -283,7 +287,7 @@ inline void ArrayCBuffer<T>::CreateBuffer(size_t size) {
 }
 
 template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::~ArrayCBuffer() {
+inline StructuredBuffer<T>::~StructuredBuffer() {
 	resources_->Release();
 	//cbView_ = {};
 	//mapData_ = nullptr;
@@ -301,10 +305,10 @@ inline ArrayCBuffer<T>::~ArrayCBuffer() {
 template <SoLib::IsNotPointer T, bool Index = true>
 class VertexCBuffer final {
 
-	ArrayCBuffer<T> vertexData_;
+	StructuredBuffer<T> vertexData_;
 	D3D12_VERTEX_BUFFER_VIEW vbView_;
 
-	ArrayCBuffer<uint32_t> indexData_;
+	StructuredBuffer<uint32_t> indexData_;
 	D3D12_INDEX_BUFFER_VIEW ibView_;
 
 public:
