@@ -165,8 +165,6 @@ void GameScene::Update() {
 		bBullet->Update();
 	}
 
-	// ground_->Update();
-
 	if (followCamera_) {
 		viewProjection_.matView_ = followCamera_->GetViewMatrix();
 		viewProjection_.matProjection_ = followCamera_->GetProjectionMatrix();
