@@ -7,8 +7,7 @@
 
 #include <imgui.h>
 
-void TextureManager::StartDraw()
-{
+void TextureManager::StartDraw() {
 
 #pragma region 描画用DescriptorHeapの設定
 
@@ -20,8 +19,7 @@ void TextureManager::StartDraw()
 
 }
 
-uint32_t TextureManager::Load(const std::string &file_name)
-{
+uint32_t TextureManager::Load(const std::string &file_name) {
 	return GetInstance()->LoadInternal(file_name);
 }
 

@@ -137,7 +137,7 @@ void Player::UpdateWorldMatrix() {
 void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 	GlobalVariables *const gVariables = GlobalVariables::GetInstance();
 	const char *const groupName = "Player";
-	ApplyClobalVariables();
+	//ApplyClobalVariables();
 
 	BaseCharacter::Init(model);
 

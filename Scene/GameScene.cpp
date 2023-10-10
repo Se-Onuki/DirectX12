@@ -22,12 +22,39 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
-	model_ = ModelManager::GetInstance()->AddModel("Fence", Model::LoadObjFile("Model/Fence/", "fence.obj"));
+	// model_ = ModelManager::GetInstance()->AddModel("Fence", Model::LoadObjFile("Model/Fence/", "fence.obj"));
 	transform_.UpdateMatrix();
 	camera_.Init();
 
 	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });
+
+
+	Model *const playerBody =
+		ModelManager::GetInstance()->AddModel("playerBody", Model::LoadObjFile("Model/Player/", "body.obj"));
+	Model *const playerHead =
+		ModelManager::GetInstance()->AddModel("playerHead", Model::LoadObjFile("Model/Player/", "head.obj"));
+	Model *const playerLeft =
+		ModelManager::GetInstance()->AddModel("playerLeft", Model::LoadObjFile("Model/Player/", "left.obj"));
+	Model *const playerRight =
+		ModelManager::GetInstance()->AddModel("playerRight", Model::LoadObjFile("Model/Player/", "right.obj"));
+	Model *const playerWeapon =
+		ModelManager::GetInstance()->AddModel("playerWeapon", Model::LoadObjFile("Model/Player/", "hammer.obj"));
+
+	/*Model *const enemyBody =
+		ModelManager::GetInstance()->AddModel("enemyBody", Model::LoadObjFile("needle_Body"));*/
+
+	std::unordered_map<std::string, Model *> playerMap_{
+		{"body",   playerBody  },
+		{"head",   playerHead  },
+		{"right",  playerRight },
+		{"left",   playerLeft  },
+		{"weapon", playerWeapon},
+	};
+
+	player_.reset(new Player{});
+	player_->Init(playerMap_);
+
 }
 
 void GameScene::OnExit() {}
@@ -40,13 +67,15 @@ void GameScene::Update() {
 	camera_.UpdateMatrix();
 
 	ImGui::Begin("Sphere");
-	model_->ImGuiWidget();
+	//model_->ImGuiWidget();
 	transform_.ImGuiWidget();
 	ImGui::End();
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
 	light_->ImGuiWidget();
+
+	player_->Update();
 
 	transform_.UpdateMatrix();
 }
@@ -76,7 +105,8 @@ void GameScene::Draw()
 	light_->SetLight(commandList);
 
 	// モデルの描画
-	model_->Draw(transform_, camera_);
+	//model_->Draw(transform_, camera_);
+	player_->Draw(camera_);
 
 	Model::EndDraw();
 

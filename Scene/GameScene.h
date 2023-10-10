@@ -10,6 +10,7 @@
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
+#include "../Header/Object/Player.h"
 
 class GameScene : public IScene {
 public:
@@ -31,6 +32,8 @@ private:
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 	Transform transform_;
 	Camera<Render::CameraType::Projecction> camera_;
+
+	std::unique_ptr<Player> player_ = nullptr;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };
