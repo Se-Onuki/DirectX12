@@ -8,7 +8,7 @@
 
 #include "../Header/Entity/Component/ModelComp.h"
 #include "../Utils/SoLib/SoLib_ImGui.h"
-#include "../Engine/DirectBase/Descriptor/DescriptorHandIe.h"
+#include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -53,8 +53,8 @@ void GameScene::OnEnter() {
 	srvDesc_.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	srvDesc_.Buffer.StructureByteStride = sizeof(Transform::TransformMatrix);	// アライメントはC++準拠
 	srvDesc_.Buffer.NumElements = instancingCount;
-	instanceSrvHandleCPU_ = DescriptorHandIe::GetCPUHandle(srvHeap, srvSize, 127u);
-	instanceSrvHandleGPU_ = DescriptorHandIe::GetGPUHandle(srvHeap, srvSize, 127u);
+	instanceSrvHandleCPU_ = DescriptorHandle::GetCPUHandle(srvHeap, srvSize, 127u);
+	instanceSrvHandleGPU_ = DescriptorHandle::GetGPUHandle(srvHeap, srvSize, 127u);
 	device->CreateShaderResourceView(instancingData_.Get(), &srvDesc_, instanceSrvHandleCPU_);
 
 	for (uint32_t i = 0u; i < instancingCount; ++i) {

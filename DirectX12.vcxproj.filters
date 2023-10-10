@@ -395,7 +395,7 @@
     <ClInclude Include="Engine\DirectBase\File\VariantItem.h">
       <Filter>Engine\File</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandIe.h">
+    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandle.h">
       <Filter>Engine\Descriptor</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Create\Create.h">
@@ -463,6 +463,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\BaseCharacter.h">
       <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h">
+      <Filter>Engine\Descriptor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

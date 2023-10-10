@@ -7,6 +7,8 @@
 #include <string>
 #include <list>
 
+#include "../Descriptor/DescriptorManager.h"
+
 class TextureManager
 {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -47,7 +49,7 @@ public:
 	uint32_t ImGuiTextureSelecter(uint32_t index);
 
 	ID3D12DescriptorHeap *const GetSRVHeap()const {
-		return srvHeap_.Get();
+		return srvHeap_.GetHeap();
 	}
 
 	inline D3D12_RESOURCE_DESC GetResourceDesc(uint32_t index) {
@@ -72,7 +74,8 @@ private:
 	uint32_t nextIndex_ = static_cast<uint32_t>(-1);
 
 	// SRVデスクリプタヒープ
-	ComPtr<ID3D12DescriptorHeap> srvHeap_ = nullptr;
+	//ComPtr<ID3D12DescriptorHeap> srvHeap_ = nullptr;
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, maxTextureCount> srvHeap_;
 
 	// 根底ディレクトリ
 	std::string directoryPath_;
