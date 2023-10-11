@@ -30,6 +30,8 @@ struct Transform {
 
 	_NODISCARD Matrix4x4 Affine() const;
 
+	Vector3 GetWorldPosition()const { return *reinterpret_cast<const Vector3 *>(&matWorld_.m[3]); }
+
 	void InitResource();
 
 	void CalcMatrix();
@@ -39,6 +41,12 @@ struct Transform {
 	bool ImGuiWidget();
 	bool ImGuiWidget2D();
 
-	void Create(const Matrix4x4 &mat);
+	void MatToSRT(const Matrix4x4 &mat);
+
+	void SetParent(const Transform &parent);
+
+	void ConnectParent(const Transform &parent);
+
+	void DisConnectParent();
 private:
 };

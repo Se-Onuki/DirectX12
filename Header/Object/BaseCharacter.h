@@ -23,6 +23,7 @@ public:
 	virtual void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
 
 	const Transform &GetWorldTransform() const { return transformOrigin_; }
+	Transform &GetWorldTransform() { return transformOrigin_; }
 
 private:
 };

@@ -40,5 +40,7 @@ private:
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Skydome> skydome_ = nullptr;
 
+
+
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };

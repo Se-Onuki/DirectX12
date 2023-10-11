@@ -83,12 +83,18 @@ bool Transform::ImGuiWidget2D()
 	return false;
 }
 
-void Transform::Create(const Matrix4x4 &mat) {
+void Transform::MatToSRT(const Matrix4x4 &mat) {
 	// スケールの取得
 	//scale.x = std::sqrt(mat.m[0][0] * mat.m[0][0] + mat.m[0][1] * mat.m[0][1] + mat.m[0][2] * mat.m[0][2]);
+	scale.x = reinterpret_cast<const Vector3 *>(&mat.m[0])->Length();
+	scale.y = reinterpret_cast<const Vector3 *>(&mat.m[1])->Length();
+	scale.z = reinterpret_cast<const Vector3 *>(&mat.m[2])->Length();
+
+	/*
 	scale.x = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[0], *(__m128 *) mat.m[0], 0x71)));
 	scale.y = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[1], *(__m128 *) mat.m[1], 0x71)));
 	scale.z = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[2], *(__m128 *) mat.m[2], 0x71)));
+	*/
 
 	// 回転行列の取得
 	Matrix4x4 rotMat;
@@ -104,4 +110,32 @@ void Transform::Create(const Matrix4x4 &mat) {
 
 	// 移動量の取得
 	translate = *(Vector3 *)mat.m[3];
+}
+
+void Transform::SetParent(const Transform &parent) {
+	parent_ = &parent;
+}
+
+void Transform::ConnectParent(const Transform &parent) {
+	// 親子関係を解除
+	DisConnectParent();
+	// 接続する親の逆行列でローカル座標行列を算出
+	Matrix4x4 mat{ matWorld_ * parent.matWorld_.InverseSRT() };
+
+	// ローカル座標行列からSRTを適用
+	this->MatToSRT(mat);
+	// 親を設定
+	this->SetParent(parent);
+	// 座標更新
+	this->CalcMatrix();
+}
+
+void Transform::DisConnectParent() {
+	if (parent_ == nullptr) { return; }
+	this->CalcMatrix();
+
+	this->MatToSRT(matWorld_);
+	parent_ = nullptr;
+
+	this->CalcMatrix();
 }

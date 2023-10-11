@@ -81,6 +81,13 @@ void GameScene::Update() {
 	transform_.ImGuiWidget();
 	ImGui::End();
 
+	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
+		player_->GetWorldTransform().ConnectParent(transform_);
+	}
+	else if (input_->GetDirectInput()->IsTrigger(DIK_O)) {
+		player_->GetWorldTransform().DisConnectParent();
+	}
+
 	TextureManager::GetInstance()->ImGuiWindow();
 
 	light_->ImGuiWidget();
