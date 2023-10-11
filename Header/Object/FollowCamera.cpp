@@ -14,9 +14,10 @@ void FollowCamera::Update() {
 		Vector3 offset{ 0.f, 3.f, -15.f };
 		const auto &vPad = input_->GetXInput()->GetState();
 
-		const float rotateStick = vPad->stickL_.x;
-		rotate_.y += rotateStick * cameraRotSpeed_;
-
+		const float rotateStick = vPad->stickR_.x;
+		if (std::abs(rotateStick) >= 0.1f) {
+			rotate_.y += rotateStick * cameraRotSpeed_;
+		}
 		const Matrix4x4 &mat = Matrix4x4::EulerRotate(Matrix4x4::Yaw, rotate_.y);
 
 		offset = TransformNormal(offset, mat);
@@ -24,6 +25,7 @@ void FollowCamera::Update() {
 		camera_.rotation_.y = rotate_.y;
 
 		camera_.translation_ = target_->translate + offset;
+
 	}
 	camera_.UpdateMatrix();
 }

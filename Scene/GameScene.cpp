@@ -55,7 +55,11 @@ void GameScene::OnEnter() {
 	player_.reset(new Player{});
 	player_->Init(playerMap_);
 
-	player_->SetViewProjection(&camera_);
+	followCamera_.reset(new FollowCamera);
+	followCamera_->Init();
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+	player_->SetViewProjection(followCamera_->GetCamera());
+
 
 }
 
@@ -66,7 +70,8 @@ void GameScene::Update() {
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
 	ImGui::End();
-	camera_.UpdateMatrix();
+
+	//camera_.UpdateMatrix();
 
 	ImGui::Begin("Sphere");
 	//model_->ImGuiWidget();
@@ -78,6 +83,9 @@ void GameScene::Update() {
 	light_->ImGuiWidget();
 
 	player_->Update();
+
+	followCamera_->Update();
+	camera_ = *followCamera_->GetCamera();
 
 	transform_.UpdateMatrix();
 }

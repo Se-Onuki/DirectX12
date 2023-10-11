@@ -30,6 +30,7 @@ public:
 	};
 
 	Camera() = default;
+	Camera(const Camera &) = default;
 	~Camera() = default;
 
 	CBuffer<CameraMatrix> constData_;

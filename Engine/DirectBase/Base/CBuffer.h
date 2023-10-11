@@ -87,7 +87,7 @@ inline T *const CBuffer<T>::operator->() const noexcept {
 
 template<SoLib::IsNotPointer T>
 inline CBuffer<T> &CBuffer<T>::operator=(const T &other) {
-	*mapData_ = other;
+	*mapData_ = static_cast<T>(other);
 	return *this;
 }
 
