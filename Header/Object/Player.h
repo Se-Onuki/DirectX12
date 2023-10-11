@@ -65,7 +65,7 @@ public:
 	void Init(const std::unordered_map<std::string, Model *> &model) override;
 	void Update() override;
 	void Draw(const Camera<Render::CameraType::Projecction> &camera) const override;
-	void SetViewProjection(const Camera<Render::CameraType::Projecction> *const camera) { camera_ = camera; }
+	void SetCamera(const Camera<Render::CameraType::Projecction> *const camera) { camera_ = camera; }
 
 	Player();
 	~Player() override;

@@ -98,9 +98,9 @@ void Transform::MatToSRT(const Matrix4x4 &mat) {
 
 	// 回転行列の取得
 	Matrix4x4 rotMat;
-	*(__m128 *)rotMat.m[0] = _mm_div_ps(_mm_load_ps(mat.m[0]), _mm_set1_ps(scale.x));
-	*(__m128 *)rotMat.m[1] = _mm_div_ps(_mm_load_ps(mat.m[1]), _mm_set1_ps(scale.y));
-	*(__m128 *)rotMat.m[2] = _mm_div_ps(_mm_load_ps(mat.m[2]), _mm_set1_ps(scale.z));
+	*reinterpret_cast<__m128 *>(rotMat.m[0]) = _mm_div_ps(_mm_load_ps(mat.m[0]), _mm_set1_ps(scale.x));
+	*reinterpret_cast<__m128 *>(rotMat.m[1]) = _mm_div_ps(_mm_load_ps(mat.m[1]), _mm_set1_ps(scale.y));
+	*reinterpret_cast<__m128 *>(rotMat.m[2]) = _mm_div_ps(_mm_load_ps(mat.m[2]), _mm_set1_ps(scale.z));
 
 
 	// 回転角度の取得

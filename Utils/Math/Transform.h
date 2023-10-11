@@ -28,9 +28,9 @@ struct Transform {
 
 	CBuffer<TransformMatrix> mapBuffer_;
 
-	_NODISCARD Matrix4x4 Affine() const;
+	Matrix4x4 Affine() const;
 
-	Vector3 GetWorldPosition()const { return *reinterpret_cast<const Vector3 *>(&matWorld_.m[3]); }
+	Vector3 GetWorldPosition() const { return *reinterpret_cast<const Vector3 *>(&matWorld_.m[3]); }
 
 	void InitResource();
 
@@ -41,12 +41,19 @@ struct Transform {
 	bool ImGuiWidget();
 	bool ImGuiWidget2D();
 
+	/// @brief 行列からSRTを算出する
+	/// @param mat SRT行列
 	void MatToSRT(const Matrix4x4 &mat);
 
+	/// @brief 純粋な親子関係の構築
+	/// @param parent 親のTransform
 	void SetParent(const Transform &parent);
 
+	/// @brief グローバル座標を維持した親子関係の構築
+	/// @param parent 親のTransform
 	void ConnectParent(const Transform &parent);
 
+	/// @brief グローバル座標を維持した親子関係の破棄
 	void DisConnectParent();
 private:
 };

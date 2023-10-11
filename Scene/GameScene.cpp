@@ -59,7 +59,7 @@ void GameScene::OnEnter() {
 	followCamera_.reset(new FollowCamera);
 	followCamera_->Init();
 	followCamera_->SetTarget(&player_->GetWorldTransform());
-	player_->SetViewProjection(followCamera_->GetCamera());
+	player_->SetCamera(followCamera_->GetCamera());
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Init();
