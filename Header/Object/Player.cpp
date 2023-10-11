@@ -63,7 +63,7 @@ void Player::BehaviorRootUpdate() {
 
 	// 左スティックのデータを受け取る
 	Vector3 move{ vPad->stickL_.x, 0.f, vPad->stickL_.y };
-	if (move != Vector3::zero) {
+	if (move.Length() >= 0.1f) {
 
 		move = move.Nomalize() * moveSpeed_; // 速度を正規化
 		move =                               // カメラ方向に向けて回転
@@ -106,16 +106,16 @@ void Player::BehaviorAttackUpdate() {
 	}
 	floatingParameter_ = std::fmod(floatingParameter_, Angle::PI2);
 
-	transformWeapon_.rotate.x = std::clamp<float>(
+	transformWeapon_.rotate.x = -std::clamp<float>(
 		std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
 		attackClampAngle_);
 	transformLeft_.rotate.x =
-		std::clamp<float>(
+		-std::clamp<float>(
 			std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
 			attackClampAngle_) +
 		Angle::PI;
 	transformRight_.rotate.x =
-		std::clamp<float>(
+		-std::clamp<float>(
 			std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
 			attackClampAngle_) +
 		Angle::PI;
@@ -141,14 +141,6 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 
 	BaseCharacter::Init(model);
 
-	// メモリ確保
-	transformBody_.InitResource();
-	transformHead_.InitResource();
-	transformLeft_.InitResource();
-	transformRight_.InitResource();
-
-	transformWeapon_.InitResource();
-
 	// 親子関係
 	transformBody_.parent_ = &transformOrigin_;
 
@@ -159,10 +151,14 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 	transformWeapon_.parent_ = &transformBody_;
 
 	transformHead_.translate = { 0.f, 2.1f, 0.f };
+	transformHead_.rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
 	transformRight_.translate = { +0.75f, 1.5f, 0.f };
+	transformRight_.rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
 	transformLeft_.translate = { -0.75f, 1.5f, 0.f };
+	transformLeft_.rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
 
 	transformWeapon_.translate = { 0.f, 2.f, 0.f };
+	transformWeapon_.rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
 
 	gVariables->AddValue(groupName, "Head Translation", transformHead_.translate);
 	gVariables->AddValue(groupName, "ArmL Translation", transformLeft_.translate);

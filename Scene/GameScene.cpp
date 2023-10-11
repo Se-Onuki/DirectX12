@@ -55,6 +55,8 @@ void GameScene::OnEnter() {
 	player_.reset(new Player{});
 	player_->Init(playerMap_);
 
+	player_->SetViewProjection(&camera_);
+
 }
 
 void GameScene::OnExit() {}

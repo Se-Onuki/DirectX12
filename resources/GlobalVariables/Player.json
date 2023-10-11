@@ -1,38 +1,27 @@
 {
     "Player": {
-        "barCentor": [
-            640.0,
-            656.0
-        ],
-        "barFlame": [
-            8.0,
-            8.0
-        ],
-        "barScale": [
-            360.0,
-            32.0
-        ],
-        "bulletSpeed": 1.5,
-        "cameraRotateSpeed": 0.10000000149011612,
-        "colliderRadius": 2.0,
-        "defaultSightRadius": 150.0,
-        "fireCoolTime": 10,
-        "friction": 0.949999988079071,
-        "jumpDown": 0.5,
-        "jumpStrength": 750.0,
-        "maxHealth": 30.0,
-        "maxSightScale": 1.0,
-        "minSightScale": 0.5,
-        "moveSpeed": 75.0,
-        "nozzle": [
-            0.75,
-            2.0,
+        "ArmL Translation": [
+            -0.75,
+            1.5,
             0.0
         ],
-        "sightSpeed": [
-            15.0,
-            7.5
+        "ArmR Translation": [
+            0.75,
+            1.5,
+            0.0
         ],
-        "speedDown": 0.5
+        "Head Translation": [
+            0.0,
+            2.0999999046325684,
+            0.0
+        ],
+        "Test": 100,
+        "attackClampAngle": 1.919862151145935,
+        "attackCycle": 90,
+        "attackStartAngle": 0.0,
+        "attackSwingAngle": 2.268928050994873,
+        "floatingCycle": 50,
+        "floatingCycleRange": 0.20000000298023224,
+        "floatingSwayHand": 0.5239999890327454
     }
 }
