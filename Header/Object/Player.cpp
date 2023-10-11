@@ -58,7 +58,6 @@ void Player::BehaviorRootInit() { floatingParameter_ = 0.f; }
 void Player::BehaviorRootUpdate() {
 
 	//XINPUT_STATE inputState{};
-	//if (input_->GetJoystickState(0, inputState)) {
 	const auto &vPad = input_->GetXInput()->GetState();
 
 	// 左スティックのデータを受け取る
@@ -69,6 +68,9 @@ void Player::BehaviorRootUpdate() {
 		move =                               // カメラ方向に向けて回転
 			move *
 			Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, camera_->rotation_.y);
+		if (transformOrigin_.parent_) {
+			move = TransformNormal(move, transformOrigin_.parent_->matWorld_.InverseSRT());
+		}
 
 		transformOrigin_.translate += move; // 移動量を追加
 

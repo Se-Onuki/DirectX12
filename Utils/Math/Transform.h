@@ -6,8 +6,21 @@
 #include <wrl.h>
 #include "../../Engine/DirectBase/Base/CBuffer.h"
 
+struct Transform;
+
+struct SRT {
+	Vector3 scale;
+	Vector3 rotate;
+	Vector3 translate;
+
+	SRT &operator=(const Transform &other);
+	static SRT MatToSRT(const Matrix4x4 &mat);
+};
+
 struct Transform {
 	Transform &operator=(const Transform &other) = default;
+
+	Transform &operator=(const SRT &other);
 	//Transform &operator=(Transform &&other) = default;
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;

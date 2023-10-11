@@ -23,6 +23,7 @@ void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
 	// model_ = ModelManager::GetInstance()->AddModel("Fence", Model::LoadObjFile("Model/Fence/", "fence.obj"));
+	ModelManager::GetInstance()->AddModel("box", Model::LoadObjFile("", "box.obj"));
 	transform_.UpdateMatrix();
 	camera_.Init();
 
@@ -45,7 +46,7 @@ void GameScene::OnEnter() {
 	/*Model *const enemyBody =
 		ModelManager::GetInstance()->AddModel("enemyBody", Model::LoadObjFile("needle_Body"));*/
 
-	std::unordered_map<std::string, Model *> playerMap_{
+	std::unordered_map<std::string, Model *> playerMap{
 		{"body",   playerBody  },
 		{"head",   playerHead  },
 		{"right",  playerRight },
@@ -54,7 +55,7 @@ void GameScene::OnEnter() {
 	};
 
 	player_.reset(new Player{});
-	player_->Init(playerMap_);
+	player_->Init(playerMap);
 
 	followCamera_.reset(new FollowCamera);
 	followCamera_->Init();
@@ -63,6 +64,17 @@ void GameScene::OnEnter() {
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Init();
+
+	std::unordered_map<std::string, Model *> stageMap{
+		{"body", ModelManager::GetInstance()->GetModel("box")}
+	};
+
+	for (auto &platform : platform_) {
+		platform = std::make_unique<Platform>();
+		platform->Init(stageMap);
+	}
+
+	platform_[1u]->SetIsMove(true);
 
 }
 
@@ -81,8 +93,12 @@ void GameScene::Update() {
 	transform_.ImGuiWidget();
 	ImGui::End();
 
+	for (auto &platform : platform_) {
+		platform->Update();
+	}
+
 	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
-		player_->GetWorldTransform().ConnectParent(transform_);
+		player_->GetWorldTransform().ConnectParent(platform_[1]->GetWorldTransform());
 	}
 	else if (input_->GetDirectInput()->IsTrigger(DIK_O)) {
 		player_->GetWorldTransform().DisConnectParent();
@@ -98,6 +114,8 @@ void GameScene::Update() {
 	camera_ = *followCamera_->GetCamera();
 
 	transform_.UpdateMatrix();
+
+
 }
 
 void GameScene::Draw()
@@ -128,6 +146,10 @@ void GameScene::Draw()
 	//model_->Draw(transform_, camera_);
 	skydome_->Draw(camera_);
 	player_->Draw(camera_);
+
+	for (auto &platform : platform_) {
+		platform->Draw(camera_);
+	}
 
 	Model::EndDraw();
 

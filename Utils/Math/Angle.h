@@ -11,6 +11,11 @@ namespace Angle {
 	constexpr float Dig2Rad = PI / 180.f;
 	constexpr float Rad2Dig = 180.f / PI;
 
+	constexpr float Dig90 = Dig2Rad * 90.f;
+	constexpr float Dig180 = PI;
+	constexpr float Dig270 = Dig2Rad * 270.f;
+	constexpr float Dig360 = PI2;
+
 	class Radian;
 	class Digree {
 	public:

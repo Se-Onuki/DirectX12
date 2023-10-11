@@ -14,6 +14,7 @@
 #include "../Header/Object/Player.h"
 #include "../Header/Object/FollowCamera.h"
 #include "../Header/Object/Skydome.h"
+#include "../Header/Object/Platform.h"
 
 class GameScene : public IScene {
 public:
@@ -40,7 +41,7 @@ private:
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Skydome> skydome_ = nullptr;
 
-
+	std::array<std::unique_ptr<Platform>, 2u> platform_ = { nullptr };
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };

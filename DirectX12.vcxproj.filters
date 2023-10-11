@@ -264,6 +264,9 @@
     <ClCompile Include="Header\Object\Skydome.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Object\Platform.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -471,6 +474,9 @@
       <Filter>Header\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Skydome.h">
+      <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Platform.h">
       <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
