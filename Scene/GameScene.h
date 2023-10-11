@@ -10,8 +10,10 @@
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
+
 #include "../Header/Object/Player.h"
 #include "../Header/Object/FollowCamera.h"
+#include "../Header/Object/Skydome.h"
 
 class GameScene : public IScene {
 public:
@@ -36,6 +38,7 @@ private:
 
 	std::unique_ptr<Player> player_ = nullptr;
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
+	std::unique_ptr<Skydome> skydome_ = nullptr;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };

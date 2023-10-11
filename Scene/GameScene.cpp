@@ -29,6 +29,7 @@ void GameScene::OnEnter() {
 	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });
 
+	ModelManager::GetInstance()->AddModel("skydome", Model::LoadObjFile("", "skyCylinder.obj"));
 
 	Model *const playerBody =
 		ModelManager::GetInstance()->AddModel("playerBody", Model::LoadObjFile("Model/Player/", "body.obj"));
@@ -60,6 +61,8 @@ void GameScene::OnEnter() {
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	player_->SetViewProjection(followCamera_->GetCamera());
 
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Init();
 
 }
 
@@ -116,6 +119,7 @@ void GameScene::Draw()
 
 	// モデルの描画
 	//model_->Draw(transform_, camera_);
+	skydome_->Draw(camera_);
 	player_->Draw(camera_);
 
 	Model::EndDraw();
