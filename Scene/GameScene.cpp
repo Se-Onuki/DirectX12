@@ -83,7 +83,7 @@ void GameScene::OnExit() {}
 void GameScene::Update() {
 
 	ImGui::Begin("Camera");
-	camera_.ImGuiWidget();
+	followCamera_->ImGuiWidget();
 	ImGui::End();
 
 	//camera_.UpdateMatrix();
@@ -109,6 +109,7 @@ void GameScene::Update() {
 	light_->ImGuiWidget();
 
 	player_->Update();
+	player_->GetWorldTransform().ImGuiWidget();
 
 	followCamera_->Update();
 	camera_ = *followCamera_->GetCamera();

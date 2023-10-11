@@ -25,4 +25,6 @@ public:
 	const Matrix4x4 &GetProjectionMatrix() const;
 
 	const auto *const GetCamera() const { return &camera_; }
+
+	bool ImGuiWidget();
 };

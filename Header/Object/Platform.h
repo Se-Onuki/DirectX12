@@ -9,6 +9,7 @@ public:
 
 	void Init(const std::unordered_map<std::string, Model *> &model) override;
 	void Update() override;
+	void Draw(const Camera<Render::CameraType::Projecction> &vp) const override;
 
 	void SetPos(const Vector3 &pos) { centor_ = pos; }
 	void SetOffset(const Vector3 &offset) { offset_ = offset; }
@@ -19,6 +20,8 @@ public:
 	const OBB &GetCollider() const { return collider_; }
 
 private:
+
+	Transform modelTransform_;
 
 	OBB collider_;
 

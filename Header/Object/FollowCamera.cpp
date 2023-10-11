@@ -33,3 +33,16 @@ void FollowCamera::Update() {
 const Matrix4x4 &FollowCamera::GetViewMatrix() const { return camera_.matView_; }
 
 const Matrix4x4 &FollowCamera::GetProjectionMatrix() const { return camera_.matProjection_; }
+
+bool FollowCamera::ImGuiWidget() {
+
+	if (ImGui::TreeNode("FollowCamera")) {
+		bool isUsing = false;
+
+		isUsing |= ImGui::DragFloat3("Rotate", &rotate_.x, Angle::Dig2Rad);
+
+		ImGui::TreePop();
+		return isUsing;
+	}
+	return false;
+}

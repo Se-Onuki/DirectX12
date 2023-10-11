@@ -120,7 +120,7 @@ void Transform::ConnectParent(const Transform &parent) {
 	// 親子関係を解除
 	DisConnectParent();
 	// 接続する親の逆行列でローカル座標行列を算出
-	const Matrix4x4 &mat{ matWorld_ * parent.matWorld_.InverseSRT() };
+	const Matrix4x4 &mat{ matWorld_ * parent.matWorld_.InverseRT() };
 
 	// ローカル座標行列からSRTを適用
 	this->MatToSRT(mat);
@@ -138,7 +138,7 @@ void Transform::DisConnectParent() {
 	parent_ = nullptr;
 
 	// グローバル座標は変わらないので算出しない
-	// this->CalcMatrix();
+	 this->CalcMatrix();
 }
 
 SRT &SRT::operator=(const Transform &other) {
