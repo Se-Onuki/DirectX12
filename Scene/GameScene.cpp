@@ -72,9 +72,9 @@ void GameScene::Update() {
 	camera_.UpdateMatrix();
 
 	ImGui::Begin("Sphere");
-	//model_->ImGuiWidget();
+	model_->ImGuiWidget();
 	for (uint32_t i = 0u; i < 5u; ++i) {
-		Transform buffer;
+		static Transform buffer;
 		buffer.Create(instancingArray_[i].World);
 		if (ImGui::TreeNode(("Transform" + std::to_string(i)).c_str())) {
 			buffer.ImGuiWidget();

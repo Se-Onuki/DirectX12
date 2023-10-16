@@ -650,7 +650,7 @@ void Material::CreateBuffer() {
 void Material::ImGuiWidget()
 {
 	if (ImGui::TreeNode(name_.c_str())) {
-		Transform transform;
+		static Transform transform;
 		transform.Create(materialBuff_->uvTransform);
 
 		if (transform.ImGuiWidget2D()) {
@@ -689,6 +689,8 @@ void Material::Create() {
 
 	texHandle_ = TextureManager::LoadDefaultTexture();
 	name_ = "default";
+
+	blendMode_ = Model::BlendMode::kNone;
 
 	materialBuff_ = Material::MaterialData{
 		.color = Vector4{1.f,1.f,1.f,1.f},

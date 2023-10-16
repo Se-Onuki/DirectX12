@@ -39,6 +39,8 @@ void ModelManager::CreatePlane() {
 	newModel->materialMap_["default"] = (std::make_unique<Material>());
 	auto &material = newModel->materialMap_["default"];
 
+	newModel->name_ = "plane";
+
 	material->Create();
 
 	mesh->SetMaterial(material.get());
