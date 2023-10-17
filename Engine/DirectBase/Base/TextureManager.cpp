@@ -5,6 +5,8 @@
 #include "../../DirectBase/Descriptor/DescriptorHandle.h"
 #include "../../DirectBase/Render/Render.h"
 
+#include "DirectXCommon.h"
+
 #include <imgui.h>
 
 void TextureManager::StartDraw()
@@ -15,7 +17,7 @@ void TextureManager::StartDraw()
 	// 描画用のDescriptorHeapの設定。
 	//ID3D12DescriptorHeap *descriptorHeaps[] = { srvHeap_.Get() };
 	//commandList_->SetDescriptorHeaps(1, descriptorHeaps);
-	srvHeap_.SetHeaps(commandList_, 1);
+	srvHeap_->SetCommand(commandList_, 1);
 
 #pragma endregion
 
@@ -31,6 +33,7 @@ void TextureManager::Init(ID3D12Device *const device, ID3D12GraphicsCommandList 
 	device_ = device;
 	directoryPath_ = directoryPath;
 	commandList_ = commandList;
+	srvHeap_ = DirectXCommon::GetInstance()->GetSRVHeap();
 
 	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
@@ -144,8 +147,8 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
 	texture.name = file_name;
-	texture.cpuHandleSRV = DescriptorHandle::GetCPUHandle(srvHeap_.GetHeap(), descriptorSizeSRV_, handle);
-	texture.gpuHandleSRV = DescriptorHandle::GetGPUHandle(srvHeap_.GetHeap(), descriptorSizeSRV_, handle);
+	texture.cpuHandleSRV = DescriptorHandle::GetCPUHandle(srvHeap_->GetHeap(), descriptorSizeSRV_, handle);
+	texture.gpuHandleSRV = DescriptorHandle::GetGPUHandle(srvHeap_->GetHeap(), descriptorSizeSRV_, handle);
 
 	// SRVの作成
 	device_->CreateShaderResourceView(texture.textureResource.Get(), &srvDesc, texture.cpuHandleSRV);

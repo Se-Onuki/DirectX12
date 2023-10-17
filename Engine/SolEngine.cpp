@@ -38,7 +38,7 @@ void SolEngine::StaticInit(const char *title, UINT windowStyle, int32_t clientWi
 	textureManager->Init(instance->dxCommon_->GetDevice(), instance->commandList_);
 	TextureManager::Load("white2x2.png");
 
-	ImGuiManager::StaticInit(winApp->GetHWND(), instance->dxCommon_->GetDevice(), instance->dxCommon_->backBufferCount, textureManager->GetSRVHeap());
+	ImGuiManager::StaticInit(winApp->GetHWND(), instance->dxCommon_->GetDevice(), instance->dxCommon_->backBufferCount_, instance->dxCommon_->GetSRVHeap()->GetHeap());
 
 	Shader::StaticInit();
 	Model::StaticInit();

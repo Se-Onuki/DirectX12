@@ -48,10 +48,6 @@ public:
 
 	uint32_t ImGuiTextureSelecter(uint32_t index);
 
-	ID3D12DescriptorHeap *const GetSRVHeap()const {
-		return srvHeap_.GetHeap();
-	}
-
 	inline D3D12_RESOURCE_DESC GetResourceDesc(uint32_t index) {
 		return textureArray_.at(index).textureResource->GetDesc();
 	}
@@ -73,9 +69,7 @@ private:
 	// デスクリプタヒープを現在使用している量(size)
 	uint32_t nextIndex_ = static_cast<uint32_t>(-1);
 
-	// SRVデスクリプタヒープ
-	//ComPtr<ID3D12DescriptorHeap> srvHeap_ = nullptr;
-	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, maxTextureCount> srvHeap_;
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *srvHeap_;
 
 	// 根底ディレクトリ
 	std::string directoryPath_;
