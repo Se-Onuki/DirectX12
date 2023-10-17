@@ -34,7 +34,6 @@ void GameScene::OnEnter() {
 
 	auto *const device = DirectXCommon::GetInstance()->GetDevice();
 	auto *const srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
-	const auto srvSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	const uint32_t instancingCount = 5u;
 	instancingData_ = CreateBufferResource(device, sizeof(Transform::TransformMatrix) * instancingCount);
@@ -45,6 +44,7 @@ void GameScene::OnEnter() {
 		instancingArray_[i].World = Matrix4x4::Identity();
 	}
 
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_{};
 
 	srvDesc_.Format = DXGI_FORMAT_UNKNOWN;	// 構造体の形は不明であるため
 	srvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -53,8 +53,12 @@ void GameScene::OnEnter() {
 	srvDesc_.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	srvDesc_.Buffer.StructureByteStride = sizeof(Transform::TransformMatrix);	// アライメントはC++準拠
 	srvDesc_.Buffer.NumElements = instancingCount;
-	instanceSrvHandleCPU_ = DescriptorHandle::GetCPUHandle(srvHeap->GetHeap(), srvSize, 127u);
-	instanceSrvHandleGPU_ = DescriptorHandle::GetGPUHandle(srvHeap->GetHeap(), srvSize, 127u);
+
+	const auto &heapRange = srvHeap->RequestHeapAllocation(1u);
+	const auto &heapHandle = heapRange.GetHandle(0u);
+
+	instanceSrvHandleCPU_ = heapHandle.cpuHandle_;
+	instanceSrvHandleGPU_ = heapHandle.gpuHandle_;
 	device->CreateShaderResourceView(instancingData_.Get(), &srvDesc_, instanceSrvHandleCPU_);
 
 	for (uint32_t i = 0u; i < instancingCount; ++i) {

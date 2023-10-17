@@ -36,8 +36,6 @@ private:
 
 	Transform::TransformMatrix *instancingArray_ = nullptr;
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_{};
-
 	D3D12_CPU_DESCRIPTOR_HANDLE instanceSrvHandleCPU_;
 	D3D12_GPU_DESCRIPTOR_HANDLE instanceSrvHandleGPU_;
 

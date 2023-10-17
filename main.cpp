@@ -70,7 +70,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	textureManager->Init(dxCommon->GetDevice(), commandList);
 	TextureManager::Load("white2x2.png");
 
-	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), dxCommon->backBufferCount_, dxCommon->GetSRVHeap()->GetHeap());
+	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), dxCommon->backBufferCount_, dxCommon->GetSRVHeap());
 
 	Shader::StaticInit();
 	Model::StaticInit();

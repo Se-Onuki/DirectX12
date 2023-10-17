@@ -35,7 +35,7 @@ void TextureManager::Init(ID3D12Device *const device, ID3D12GraphicsCommandList 
 	commandList_ = commandList;
 	srvHeap_ = DirectXCommon::GetInstance()->GetSRVHeap();
 
-	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	heapRange_ = srvHeap_->RequestHeapAllocation(maxTextureCount);
 
 	Reset();
 }
@@ -43,7 +43,7 @@ void TextureManager::Init(ID3D12Device *const device, ID3D12GraphicsCommandList 
 void TextureManager::Reset() {
 	//HRESULT hr = S_FALSE;
 
-	nextIndex_ = alreadyUsedCount;
+	nextIndex_ = 0;
 	//srvHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, maxTextureCount, true);
 
 	for (size_t i = 0u; i < maxTextureCount; i++) {
@@ -57,7 +57,7 @@ void TextureManager::Reset() {
 void TextureManager::ImGuiWindow() {
 	ImGui::Begin("TextureManager");
 
-	static uint32_t index = 1;
+	static uint32_t index = LoadInternal("white2x2.png");
 	index = ImGuiTextureSelecter(index);
 	ImGui::End();
 }
@@ -118,7 +118,6 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 #pragma endregion
 
 	assert(nextIndex_ < maxTextureCount);
-	assert(nextIndex_ >= alreadyUsedCount);
 	uint32_t handle = nextIndex_;
 	Texture &texture = textureArray_[handle];
 
@@ -147,8 +146,9 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
 	texture.name = file_name;
-	texture.cpuHandleSRV = DescriptorHandle::GetCPUHandle(srvHeap_->GetHeap(), descriptorSizeSRV_, handle);
-	texture.gpuHandleSRV = DescriptorHandle::GetGPUHandle(srvHeap_->GetHeap(), descriptorSizeSRV_, handle);
+	const auto &heapHandle = srvHeap_->GetHandle(heapRange_.offset_, handle);
+	texture.cpuHandleSRV = heapHandle.cpuHandle_;
+	texture.gpuHandleSRV = heapHandle.gpuHandle_;
 
 	// SRVの作成
 	device_->CreateShaderResourceView(texture.textureResource.Get(), &srvDesc, texture.cpuHandleSRV);

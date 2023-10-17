@@ -21,7 +21,6 @@ class TextureManager
 public:
 
 	static const uint32_t maxTextureCount = 128u;
-	static const uint32_t alreadyUsedCount = 1u;
 
 	struct Texture {
 		ComPtr<ID3D12Resource> textureResource;
@@ -64,12 +63,13 @@ private:
 	ID3D12Device *device_ = nullptr;
 	// コマンドリスト(借用)
 	ID3D12GraphicsCommandList *commandList_ = nullptr;
-	// デスクリプタヒープの1要素の幅
-	uint32_t descriptorSizeSRV_ = 0;
+	// デスクリプタヒープ(借用)
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *srvHeap_;
+	// ヒープの使用位置
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
+
 	// デスクリプタヒープを現在使用している量(size)
 	uint32_t nextIndex_ = static_cast<uint32_t>(-1);
-
-	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *srvHeap_;
 
 	// 根底ディレクトリ
 	std::string directoryPath_;

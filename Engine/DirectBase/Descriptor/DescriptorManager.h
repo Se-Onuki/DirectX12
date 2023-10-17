@@ -18,10 +18,20 @@ public:
 		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle_;
 		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
 	};
+
+	/// @brief デスクリプタヒープの使用領域
 	struct HeapRange {
-		HeapRange(uint32_t offset, uint32_t width) : offset_(offset), width_(width) {}
-		const uint32_t offset_;
-		const uint32_t width_;
+		HeapRange() = default;
+		HeapRange(uint32_t offset, uint32_t width, DescHeap *descHeap) : offset_(offset), width_(width), descHeap_(descHeap) {}
+		uint32_t offset_;	// 始点
+		uint32_t width_;	// 使用範囲
+
+		/// @brief デスクリプタハンドルを取得する
+		/// @param index 添え字
+		/// @return デスクリプタハンドル
+		Handle GetHandle(const uint32_t index) const;
+	private:
+		DescHeap *descHeap_;// 使用しているデスクリプタヒープのアドレス
 	};
 
 	DescHeap(ID3D12Device *const device, uint32_t size);
@@ -29,12 +39,24 @@ public:
 	DescHeap &operator=(const DescHeap &) = delete;
 	~DescHeap() = default;
 
+	/// @brief コマンドリストにデスクリプタヒープを登録する
+	/// @param commandList コマンドリスト
+	/// @param numDescriptorHeaps 登録する番号
 	void SetCommand(ID3D12GraphicsCommandList *const commandList, uint32_t numDescriptorHeaps);
 
+	/// @brief デスクリプタヒープを取得する
+	/// @return 
 	auto *const GetHeap() const { return descriptorHeap_.Get(); }
 
+	/// @brief ハンドルを取得する
+	/// @param offset 始点
+	/// @param index 添え字
+	/// @return デスクリプタハンドル
 	Handle GetHandle(const uint32_t offset, const uint32_t index);
 
+	/// @brief デスクリプタの使用予約
+	/// @param width 使用量
+	/// @return デスクリプタヒープの使用領域
 	HeapRange RequestHeapAllocation(uint32_t width);
 
 
@@ -63,16 +85,22 @@ template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 inline  DescHeap<HeapType>::Handle DescHeap<HeapType>::GetHandle(const uint32_t offset, const uint32_t index) {
 	const uint32_t handle = offset + index;
 	Handle heapHandle;
-	heapHandle.cpuHandle_ = DescriptorHandle::GetCPUHandle(descriptorHeap_.GetHeap(), itemSize_, handle);
-	heapHandle.gpuHandle_ = DescriptorHandle::GetGPUHandle(descriptorHeap_.GetHeap(), itemSize_, handle);
+	heapHandle.cpuHandle_ = DescriptorHandle::GetCPUHandle(descriptorHeap_.Get(), itemSize_, handle);
+	heapHandle.gpuHandle_ = DescriptorHandle::GetGPUHandle(descriptorHeap_.Get(), itemSize_, handle);
 	return heapHandle;
 }
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 inline DescHeap<HeapType>::HeapRange DescHeap<HeapType>::RequestHeapAllocation(uint32_t width) {
-	HeapRange output{ usingIndex_, width };
+	HeapRange output{ usingIndex_, width, this };
 	usingIndex_ += width;
 	return output;
+}
+
+template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
+inline DescHeap<HeapType>::Handle DescHeap<HeapType>::HeapRange::GetHandle(const uint32_t index) const {
+	assert(width_ > index && "与えられた添え字が、許可された範囲をオーバーしました");
+	return descHeap_->GetHandle(offset_, index);
 }
 
 //template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
