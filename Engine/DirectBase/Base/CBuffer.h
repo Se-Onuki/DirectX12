@@ -193,12 +193,14 @@ public:
 	/// @brief バッファの計算
 	void CreateBuffer(uint32_t size);
 
+
 	void Copy(T *const begin, T *const end) {
 		std::copy(begin, end, mapData_);
 	}
 
-
 private:
+	/// @brief SrvDescを作成する
+	D3D12_SHADER_RESOURCE_VIEW_DESC CreateSrvDesc() const;
 
 };
 
@@ -269,23 +271,33 @@ template<SoLib::IsNotPointer T>
 inline void StructuredBuffer<T>::CreateBuffer(uint32_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
 	if (size != 0u && size_ != size) {
+		size_ = size;
 		HRESULT result = S_FALSE;
 		if (resources_ != nullptr) { resources_->Release(); }
 		// 256バイト単位のアライメント
 		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
 
-		srvDesc_.Format = DXGI_FORMAT_UNKNOWN;	// 構造体の形は不明であるため
-		srvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc_.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;	// textureではなくbufferとして使うため
-		srvDesc_.Buffer.FirstElement = 0;
-		srvDesc_.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-		srvDesc_.Buffer.StructureByteStride = sizeof(T);	// アライメントはC++準拠
-		srvDesc_.Buffer.NumElements = size;
+		srvDesc_ = CreateSrvDesc();
 
 		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 		assert(SUCCEEDED(result));
 	}
-	size_ = size;
+}
+
+template<SoLib::IsNotPointer T>
+inline D3D12_SHADER_RESOURCE_VIEW_DESC StructuredBuffer<T>::CreateSrvDesc() const
+{
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+
+	srvDesc.Format = DXGI_FORMAT_UNKNOWN;	// 構造体の形は不明であるため
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;	// textureではなくbufferとして使うため
+	srvDesc.Buffer.FirstElement = 0;
+	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	srvDesc.Buffer.StructureByteStride = sizeof(T);	// アライメントはC++準拠
+	srvDesc.Buffer.NumElements = size_;
+
+	return srvDesc;
 }
 
 template<SoLib::IsNotPointer T>
