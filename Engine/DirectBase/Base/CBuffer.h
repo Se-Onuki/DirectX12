@@ -124,8 +124,6 @@ inline void CBuffer<T, IsActive>::CreateBuffer() {
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive>::~CBuffer() {
 	resources_->Release();
-	//cbView_ = {};
-	//mapData_ = nullptr;
 }
 
 #pragma endregion
@@ -145,31 +143,31 @@ class StructuredBuffer final {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	ComPtr<ID3D12Resource> resources_ = nullptr;
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_{};
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_{};
 
-	size_t size_;
+	uint32_t size_;
 
 	T *mapData_;
 
 public:
 
-	inline ID3D12Resource *const GetResources() noexcept { return &resources_.Get(); }
-	inline const ID3D12Resource *const GetResources() const noexcept { return &resources_.Get(); }
+	inline ID3D12Resource *const GetResources() noexcept { return resources_.Get(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return resources_.Get(); }
 
-	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return cbView_; }
+	inline const D3D12_SHADER_RESOURCE_VIEW_DESC &GetDesc() const noexcept { return srvDesc_; }
 
 	inline operator bool() const noexcept;		// 値が存在するか
 
 	inline operator T *() noexcept;				// 参照
 	inline operator const T *() const noexcept;	// const参照
 
-	inline T &operator[](size_t index) noexcept { return mapData_[index]; }
-	inline const T &operator[](size_t index) const noexcept { return mapData_[index]; }
+	inline T &operator[](uint32_t index) noexcept { return mapData_[index]; }
+	inline const T &operator[](uint32_t index) const noexcept { return mapData_[index]; }
 
 	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
 	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
 
-	size_t size() const noexcept { return size_; }
+	uint32_t size() const noexcept { return size_; }
 	T *const begin() const noexcept { return &mapData_[0]; }
 	T *const end() const noexcept { return &mapData_[size_]; }
 
@@ -185,7 +183,7 @@ public:
 
 public:
 
-	StructuredBuffer();					// デフォルトコンストラクタ
+	StructuredBuffer(const uint32_t width = 0u);	// デフォルトコンストラクタ
 
 	template <typename U>
 	StructuredBuffer(const U &source);		// コピーコンストラクタ
@@ -193,7 +191,7 @@ public:
 	~StructuredBuffer();
 
 	/// @brief バッファの計算
-	void CreateBuffer(size_t size);
+	void CreateBuffer(uint32_t size);
 
 	void Copy(T *const begin, T *const end) {
 		std::copy(begin, end, mapData_);
@@ -236,16 +234,15 @@ inline StructuredBuffer<T> &StructuredBuffer<T>::operator=(const U &source) {
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
 
-	CreateBuffer(source.size());
-	size_ = source.size();
+	CreateBuffer(static_cast<uint32_t>(source.size()));
 	//Copy(source.begin(), source.end());
 	std::copy(source.begin(), source.end(), mapData_);
 	return *this;
 }
 
 template<SoLib::IsNotPointer T>
-inline StructuredBuffer<T>::StructuredBuffer() :size_(0u) {
-	CreateBuffer(0u);
+inline StructuredBuffer<T>::StructuredBuffer(const uint32_t width) {
+	CreateBuffer(width);
 }
 
 template<SoLib::IsNotPointer T>
@@ -255,8 +252,7 @@ inline StructuredBuffer<T>::StructuredBuffer(const U &source) {
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
 
-	CreateBuffer(source.size());
-	size_ = source.size();
+	CreateBuffer(static_cast<uint32_t>(source.size()));
 	std::copy(source.begin(), source.end(), mapData_);
 }
 
@@ -270,7 +266,7 @@ inline StructuredBuffer<T>::StructuredBuffer(const U &source) {
 
 
 template<SoLib::IsNotPointer T>
-inline void StructuredBuffer<T>::CreateBuffer(size_t size) {
+inline void StructuredBuffer<T>::CreateBuffer(uint32_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
 	if (size != 0u && size_ != size) {
 		HRESULT result = S_FALSE;
@@ -278,19 +274,23 @@ inline void StructuredBuffer<T>::CreateBuffer(size_t size) {
 		// 256バイト単位のアライメント
 		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
 
-		cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
-		cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
+		srvDesc_.Format = DXGI_FORMAT_UNKNOWN;	// 構造体の形は不明であるため
+		srvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc_.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;	// textureではなくbufferとして使うため
+		srvDesc_.Buffer.FirstElement = 0;
+		srvDesc_.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+		srvDesc_.Buffer.StructureByteStride = sizeof(T);	// アライメントはC++準拠
+		srvDesc_.Buffer.NumElements = size;
 
 		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 		assert(SUCCEEDED(result));
 	}
+	size_ = size;
 }
 
 template<SoLib::IsNotPointer T>
 inline StructuredBuffer<T>::~StructuredBuffer() {
 	resources_->Release();
-	//cbView_ = {};
-	//mapData_ = nullptr;
 }
 
 

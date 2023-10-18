@@ -35,34 +35,34 @@ void GameScene::OnEnter() {
 	auto *const device = DirectXCommon::GetInstance()->GetDevice();
 	auto *const srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
-	const uint32_t instancingCount = 5u;
-	instancingData_ = CreateBufferResource(device, sizeof(Transform::TransformMatrix) * instancingCount);
+	//const uint32_t instancingCount = 5u;
+	/*instancingData_ = CreateBufferResource(device, sizeof(Transform::TransformMatrix) * instancingCount);
 
-	instancingData_->Map(0, nullptr, reinterpret_cast<void **>(&instancingArray_));
+	instancingData_->Map(0, nullptr, reinterpret_cast<void **>(&instancingArray_));*/
 
-	for (uint32_t i = 0; i < instancingCount; ++i) {
-		instancingArray_[i].World = Matrix4x4::Identity();
-	}
+	//for (auto &transform : instanceTransform_) {
+	//	transform.World = Matrix4x4::Identity();
+	//}
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_{};
+	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 
-	srvDesc_.Format = DXGI_FORMAT_UNKNOWN;	// 構造体の形は不明であるため
-	srvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc_.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;	// textureではなくbufferとして使うため
-	srvDesc_.Buffer.FirstElement = 0;
-	srvDesc_.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc_.Buffer.StructureByteStride = sizeof(Transform::TransformMatrix);	// アライメントはC++準拠
-	srvDesc_.Buffer.NumElements = instancingCount;
+	//srvDesc.Format = DXGI_FORMAT_UNKNOWN;	// 構造体の形は不明であるため
+	//srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	//srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;	// textureではなくbufferとして使うため
+	//srvDesc.Buffer.FirstElement = 0;
+	//srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	//srvDesc.Buffer.StructureByteStride = sizeof(Transform::TransformMatrix);	// アライメントはC++準拠
+	//srvDesc.Buffer.NumElements = instancingCount;
 
 	const auto &heapRange = srvHeap->RequestHeapAllocation(1u);
 	const auto &heapHandle = heapRange.GetHandle(0u);
 
 	instanceSrvHandleCPU_ = heapHandle.cpuHandle_;
 	instanceSrvHandleGPU_ = heapHandle.gpuHandle_;
-	device->CreateShaderResourceView(instancingData_.Get(), &srvDesc_, instanceSrvHandleCPU_);
+	device->CreateShaderResourceView(instanceTransform_.GetResources(), &instanceTransform_.GetDesc(), instanceSrvHandleCPU_);
 
-	for (uint32_t i = 0u; i < instancingCount; ++i) {
-		instancingArray_[i].World = Matrix4x4::Identity();
+	for (auto &transform : instanceTransform_) {
+		transform.World = Matrix4x4::Identity();
 	}
 }
 
@@ -77,14 +77,14 @@ void GameScene::Update() {
 
 	ImGui::Begin("Sphere");
 	model_->ImGuiWidget();
-	for (uint32_t i = 0u; i < 5u; ++i) {
+	for (uint32_t i = 0u; i < instanceTransform_.size(); ++i) {
 		static Transform buffer;
-		buffer.Create(instancingArray_[i].World);
+		buffer.Create(instanceTransform_[i].World);
 		if (ImGui::TreeNode(("Transform" + std::to_string(i)).c_str())) {
 			buffer.ImGuiWidget();
 			ImGui::TreePop();
 		}
-		instancingArray_[i].World = buffer.Affine();
+		instanceTransform_[i].World = buffer.Affine();
 	}
 	//transform_.ImGuiWidget();
 	ImGui::End();
@@ -121,7 +121,7 @@ void GameScene::Draw()
 	light_->SetLight(commandList);
 
 	// モデルの描画
-	model_->Draw(instanceSrvHandleGPU_, 5u, camera_);
+	model_->Draw(instanceSrvHandleGPU_, instanceTransform_.size(), camera_);
 
 	Model::EndDraw();
 
