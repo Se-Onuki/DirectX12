@@ -85,23 +85,22 @@ bool Transform::ImGuiWidget2D()
 
 void Transform::MatToSRT(const Matrix4x4 &mat) {
 	// スケールの取得
-	//scale.x = std::sqrt(mat.m[0][0] * mat.m[0][0] + mat.m[0][1] * mat.m[0][1] + mat.m[0][2] * mat.m[0][2]);
-	scale.x = reinterpret_cast<const Vector3 *>(&mat.m[0])->Length();
-	scale.y = reinterpret_cast<const Vector3 *>(&mat.m[1])->Length();
-	scale.z = reinterpret_cast<const Vector3 *>(&mat.m[2])->Length();
-
-	/*
-	scale.x = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[0], *(__m128 *) mat.m[0], 0x71)));
-	scale.y = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[1], *(__m128 *) mat.m[1], 0x71)));
-	scale.z = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[2], *(__m128 *) mat.m[2], 0x71)));
-	*/
+	scale.x = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(mat.m[0]), _mm_load_ps(mat.m[0]), 0x71)));
+	scale.y = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(mat.m[1]), _mm_load_ps(mat.m[1]), 0x71)));
+	scale.z = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(mat.m[2]), _mm_load_ps(mat.m[2]), 0x71)));
 
 	// 回転行列の取得
 	Matrix4x4 rotMat;
-	*reinterpret_cast<__m128 *>(rotMat.m[0]) = _mm_div_ps(_mm_load_ps(mat.m[0]), _mm_set1_ps(scale.x));
-	*reinterpret_cast<__m128 *>(rotMat.m[1]) = _mm_div_ps(_mm_load_ps(mat.m[1]), _mm_set1_ps(scale.y));
-	*reinterpret_cast<__m128 *>(rotMat.m[2]) = _mm_div_ps(_mm_load_ps(mat.m[2]), _mm_set1_ps(scale.z));
-
+	if (scale == Vector3{ 1.f,1.f,1.f }) {
+		std::copy(&mat.m[0][0], &mat.m[0][3], &rotMat.m[0][0]);
+		std::copy(&mat.m[1][0], &mat.m[1][3], &rotMat.m[1][0]);
+		std::copy(&mat.m[2][0], &mat.m[2][3], &rotMat.m[2][0]);
+	}
+	else {
+		*reinterpret_cast<__m128 *>(rotMat.m[0]) = _mm_div_ps(_mm_load_ps(mat.m[0]), _mm_set1_ps(scale.x));
+		*reinterpret_cast<__m128 *>(rotMat.m[1]) = _mm_div_ps(_mm_load_ps(mat.m[1]), _mm_set1_ps(scale.y));
+		*reinterpret_cast<__m128 *>(rotMat.m[2]) = _mm_div_ps(_mm_load_ps(mat.m[2]), _mm_set1_ps(scale.z));
+	}
 
 	// 回転角度の取得
 	rotate.x = std::atan2(rotMat.m[1][2], rotMat.m[2][2]);
@@ -138,7 +137,7 @@ void Transform::DisConnectParent() {
 	parent_ = nullptr;
 
 	// グローバル座標は変わらないので算出しない
-	 this->CalcMatrix();
+	this->CalcMatrix();
 }
 
 SRT &SRT::operator=(const Transform &other) {

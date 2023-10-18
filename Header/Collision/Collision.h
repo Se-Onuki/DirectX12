@@ -49,6 +49,8 @@ struct OBB {
 
 	void SetRotate(const Vector3 &euler);
 
+	void SetMatrix(const Matrix4x4 &mat);
+
 	const Matrix4x4 GetWorldMatrix() const;
 	const Matrix4x4 GetInverseMatrix() const;
 

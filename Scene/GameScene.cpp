@@ -74,13 +74,31 @@ void GameScene::OnEnter() {
 		platform->Init(stageMap);
 	}
 
-	platform_[1u]->SetIsMove(true);
+	platform_[1u]->SetOffset({ 0.f,0.f,20.f });
+	platform_[1u]->SetPos(Vector3::zero);
+	platform_[1u]->SetRotSpeed({ 0.f,0.25f,0.f });
+
+	platform_[2u]->SetOffset({ 0.f,0.f,40.f });
+	platform_[2u]->SetPos(Vector3::zero);
+	platform_[2u]->SetRotSpeed({ 0.f,-0.125f,0.f });
+
+	platform_[3u]->SetPos({ 0.f,0.f,60.f });
 
 }
 
 void GameScene::OnExit() {}
 
+void GameScene::Reset() {
+	player_->GetWorldTransform().translate = Vector3::zero;
+}
+
 void GameScene::Update() {
+
+	const float deltaTime = ImGui::GetIO().DeltaTime;
+
+	if (player_->GetWorldTransform().translate.y < -20.f) {
+		Reset();
+	}
 
 	ImGui::Begin("Camera");
 	followCamera_->ImGuiWidget();
@@ -94,21 +112,39 @@ void GameScene::Update() {
 	ImGui::End();
 
 	for (auto &platform : platform_) {
-		platform->Update();
+		platform->Update(deltaTime);
 	}
 
+	bool isConnect = false;
+	for (auto &platform : platform_) {
+		if (Collision::IsHit(player_->GetCollider(), platform->GetCollider())) {
+			player_->GetWorldTransform().ConnectParent(platform->GetWorldTransform());
+			isConnect = true;
+		}
+	}
+	if (isConnect == false) {
+		player_->GetWorldTransform().DisConnectParent();
+	}
+
+	//if (Collision::IsHit(player_->GetCollider(), platform_[1]->GetCollider())) {
+	//	player_->GetWorldTransform().ConnectParent(platform_[1]->GetWorldTransform());
+	//}
+	//else {
+	//	player_->GetWorldTransform().DisConnectParent();
+	//}
+	/*
 	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
 		player_->GetWorldTransform().ConnectParent(platform_[1]->GetWorldTransform());
 	}
 	else if (input_->GetDirectInput()->IsTrigger(DIK_O)) {
 		player_->GetWorldTransform().DisConnectParent();
-	}
+	}*/
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
 	light_->ImGuiWidget();
 
-	player_->Update();
+	player_->Update(deltaTime);
 	player_->GetWorldTransform().ImGuiWidget();
 
 	followCamera_->Update();

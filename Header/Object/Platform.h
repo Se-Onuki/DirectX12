@@ -8,12 +8,12 @@ public:
 	~Platform() = default;
 
 	void Init(const std::unordered_map<std::string, Model *> &model) override;
-	void Update() override;
+	void Update(const float deltaTime) override;
 	void Draw(const Camera<Render::CameraType::Projecction> &vp) const override;
 
 	void SetPos(const Vector3 &pos) { centor_ = pos; }
 	void SetOffset(const Vector3 &offset) { offset_ = offset; }
-	void SetIsMove(bool isMove) { isMove_ = isMove; }
+	void SetRotSpeed(const Vector3 &speed) { rotSpeed_ = speed; }
 
 	void CalcCollider();
 
@@ -25,12 +25,11 @@ private:
 
 	OBB collider_;
 
-	bool isMove_ = false;
 
 	Vector3 centor_ = {};
-	Vector3 offset_ = { 0.f,0.f,20.f };
+	Vector3 offset_ = { 0.f,0.f,0.f };
+	Vector3 rotSpeed_ = { 0.f,0.f,0.f };
 
-	uint32_t nowTime_ = 0u;
-	uint32_t needTime_ = 360u;
+	float nowTime_ = 0.f;
 
 };

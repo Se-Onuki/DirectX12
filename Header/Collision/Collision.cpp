@@ -346,6 +346,14 @@ void OBB::SetRotate(const Vector3 &euler) {
 	std::memcpy(&orientations[2], &rotateMat.m[2], sizeof(Vector3));
 }
 
+void OBB::SetMatrix(const Matrix4x4 &mat) {
+	std::memcpy(&orientations[0], &mat.m[0], sizeof(Vector3));
+	std::memcpy(&orientations[1], &mat.m[1], sizeof(Vector3));
+	std::memcpy(&orientations[2], &mat.m[2], sizeof(Vector3));
+
+	std::memcpy(&centor, &mat.m[3], sizeof(Vector3));
+}
+
 Vector3 Spring::GetAcceleration(const Ball &ball) {
 	const Vector3 diff = ball.position - anchor;
 	const float length = diff.Length();

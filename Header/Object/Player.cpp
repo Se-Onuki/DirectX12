@@ -71,10 +71,15 @@ void Player::BehaviorRootUpdate() {
 		if (transformOrigin_.parent_) {
 			move = TransformNormal(move, transformOrigin_.parent_->matWorld_.InverseSRT());
 		}
-
 		transformOrigin_.translate += move; // 移動量を追加
 
 		transformOrigin_.rotate = move.Direction2Euler(); // ベクトルからオイラー角を算出
+	}
+
+	transformOrigin_.translate.y += -0.5f; // 移動量を追加
+	// もし、親コライダよりも
+	if (transformOrigin_.parent_ && transformOrigin_.translate.y < 0.f) {
+		transformOrigin_.translate.y = 0.f;
 	}
 
 	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {
@@ -128,6 +133,8 @@ void Player::BehaviorAttackUpdate() {
 void Player::UpdateWorldMatrix() {
 	transformOrigin_.UpdateMatrix();
 
+	collider_.SetMatrix(transformOrigin_.matWorld_);
+
 	transformBody_.UpdateMatrix();
 	transformHead_.UpdateMatrix();
 	transformRight_.UpdateMatrix();
@@ -177,9 +184,10 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 
 	input_ = Input::GetInstance();
 	InitFloatingGimmick();
+	collider_.size.y = 5.f;
 }
 
-void Player::Update() {
+void Player::Update([[maybe_unused]] const float deltaTime) {
 	if (behaviorRequest_) {
 		// 振舞いの更新
 		behavior_ = behaviorRequest_.value();

@@ -8,28 +8,33 @@ void Platform::Init(const std::unordered_map<std::string, Model *> &model) {
 
 	transformOrigin_.CalcMatrix();
 
+	const Vector3 radius = { 10.f,0.1f,10.f };
+
+	collider_.size = radius;
+
 	modelTransform_.SetParent(transformOrigin_);
-	modelTransform_.scale = { 10.f,0.1f,10.f };
+	modelTransform_.scale = radius;
 	modelTransform_.CalcMatrix();
 
 	CalcCollider();
 }
 
-void Platform::Update() {
+void Platform::Update(const float deltaTime) {
+
 	// 動作フラグが有効ならば
-	if (isMove_) {
-		// 時間を追加
-		++nowTime_;
+	if (rotSpeed_.Length() >= 0.f) {
 
-		float angle = Angle::Mod((static_cast<float>(nowTime_) / needTime_) * Angle::Dig360);
-
-		Vector3 diff = offset_ * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, angle);
-
-		transformOrigin_.rotate.y = angle;
-		transformOrigin_.translate = centor_ + diff;
-
-		transformOrigin_.CalcMatrix();
+		Vector3 angle = rotSpeed_ * deltaTime * Angle::Dig360;
+		transformOrigin_.rotate = Angle::Mod(transformOrigin_.rotate + angle);
 	}
+	Vector3 diff = offset_ * Matrix4x4::EulerRotate(transformOrigin_.rotate);
+
+	transformOrigin_.translate = centor_ + diff;
+
+
+	transformOrigin_.CalcMatrix();
+
+	collider_.SetMatrix(transformOrigin_.matWorld_);
 	modelTransform_.UpdateMatrix();
 	CalcCollider();
 }
@@ -41,9 +46,5 @@ void Platform::Draw(const Camera<Render::CameraType::Projecction> &camera) const
 }
 
 void Platform::CalcCollider() {
-	const SRT &srt = SRT::MatToSRT(modelTransform_.matWorld_);
-
-	collider_.size = srt.scale;
-	collider_.SetRotate(srt.rotate);
-	collider_.centor = srt.translate;
+	collider_.SetMatrix(transformOrigin_.matWorld_);
 }

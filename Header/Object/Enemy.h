@@ -8,7 +8,7 @@ public:
 	~Enemy() override;
 
 	void Init(const std::unordered_map<std::string, Model *> &model) override;
-	void Update() override;
+	void Update(const float deltaTime) override;
 	void Draw(const Camera<Render::CameraType::Projecction> &camera) const override;
 
 private:

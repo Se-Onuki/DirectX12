@@ -18,7 +18,7 @@ public:
 
 	virtual void Init(const std::unordered_map<std::string, Model *> &model);
 
-	virtual void Update();
+	virtual void Update(const float deltaTime);
 
 	virtual void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
 

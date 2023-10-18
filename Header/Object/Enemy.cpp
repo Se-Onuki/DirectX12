@@ -10,7 +10,7 @@ void Enemy::Init(const std::unordered_map<std::string, Model *> &model) {
 	BaseCharacter::Init(model);
 }
 
-void Enemy::Update() {
+void Enemy::Update(const float deltaTime) {
 	static float rotateAngle = 2.f * Angle::Dig2Rad;
 	static float moveSpeed = 0.3f;
 	ImGui::Begin("Enemy");
@@ -21,7 +21,7 @@ void Enemy::Update() {
 	transformOrigin_.translate +=
 		TransformNormal(Vector3::front * moveSpeed, transformOrigin_.matWorld_);
 	transformOrigin_.rotate.y += rotateAngle;
-	BaseCharacter::Update();
+	BaseCharacter::Update(deltaTime);
 }
 
 void Enemy::Draw(const Camera<Render::CameraType::Projecction> &camera) const {

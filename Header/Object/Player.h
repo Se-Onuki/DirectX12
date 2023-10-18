@@ -9,6 +9,8 @@
 
 #include "BaseCharacter.h"
 #include "../../Engine/DirectBase/File/VariantItem.h"
+#include "../Collision/Collision.h"
+
 
 class PlayerBullet;
 class Model;
@@ -48,6 +50,11 @@ class Player : public BaseCharacter {
 	VariantItem<float> attackSwingAngle_{ "SwayHand",130.f * Angle::Dig2Rad };
 	VariantItem<float> attackClampAngle_{ "ClampAngle",110.f * Angle::Dig2Rad };
 
+	OBB collider_;
+
+
+private:
+
 	void ApplyClobalVariables();
 
 	void InitFloatingGimmick();
@@ -61,11 +68,14 @@ class Player : public BaseCharacter {
 
 	void UpdateWorldMatrix();
 
+
 public:
 	void Init(const std::unordered_map<std::string, Model *> &model) override;
-	void Update() override;
+	void Update(const float deltaTime) override;
 	void Draw(const Camera<Render::CameraType::Projecction> &camera) const override;
+
 	void SetCamera(const Camera<Render::CameraType::Projecction> *const camera) { camera_ = camera; }
+	const OBB &GetCollider() const { return collider_; }
 
 	Player();
 	~Player() override;

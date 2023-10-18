@@ -24,6 +24,8 @@ public:
 	void OnEnter() override;
 	void OnExit() override;
 
+	void Reset();
+
 	void Update() override;
 	void Draw() override;
 
@@ -41,7 +43,7 @@ private:
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Skydome> skydome_ = nullptr;
 
-	std::array<std::unique_ptr<Platform>, 2u> platform_ = { nullptr };
+	std::array<std::unique_ptr<Platform>, 4u> platform_ = { nullptr };
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };
