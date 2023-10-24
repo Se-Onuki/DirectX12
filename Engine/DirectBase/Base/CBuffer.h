@@ -188,8 +188,8 @@ template<SoLib::IsNotPointer T>
 inline CBuffer<T, false> &CBuffer<T, false>::operator=(const T &other) {
 	if (mapData_) {
 		*mapData_ = static_cast<T>(other);
-		return *this;
 	}
+	return *this;
 }
 
 #pragma endregion

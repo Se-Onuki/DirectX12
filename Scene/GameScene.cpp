@@ -64,6 +64,7 @@ void GameScene::OnEnter() {
 	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 		transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
 		colorArray_[i].SetMapAddress(&instanceTransform_[i].color);
+		colorArray_[i] = Vector4{ 1.f,1.f,1.f,1.f };
 	}
 }
 
