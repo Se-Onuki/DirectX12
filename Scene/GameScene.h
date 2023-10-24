@@ -41,7 +41,7 @@ private:
 
 	std::array<BaseTransform<false>, 5u> transformArray_;
 
-	StructuredBuffer<TransformMatrix> instanceTransform_{ 5u };
+	ArrayBuffer<TransformMatrix> instanceTransform_{ 5u };
 
 	// Microsoft::WRL::ComPtr<ID3D12Resource> instancingData_ = nullptr;
 };

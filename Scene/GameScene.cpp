@@ -62,7 +62,7 @@ void GameScene::OnEnter() {
 	device->CreateShaderResourceView(instanceTransform_.GetResources(), &instanceTransform_.GetDesc(), instanceSrvHandleCPU_);
 
 	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-		transformArray_[i].mapBuffer_.SetMapAddress(&instanceTransform_[i]);
+		transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i]);
 	}
 }
 

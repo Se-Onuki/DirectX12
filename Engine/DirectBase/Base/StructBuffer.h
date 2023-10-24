@@ -14,9 +14,9 @@
 /// @brief 定数バッファ
 /// @tparam T 型名 
 template<SoLib::IsNotPointer T>
-class StructuredBuffer final {
+class ArrayBuffer final {
 	// 静的警告
-	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
+	static_assert(!std::is_pointer<T>::value, "ArrayBufferに与えた型がポインタ型です");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	ComPtr<ID3D12Resource> resources_ = nullptr;
@@ -50,7 +50,7 @@ public:
 
 
 	template <typename U>
-	inline StructuredBuffer &operator=(const U &other);	// コピー演算子
+	inline ArrayBuffer &operator=(const U &other);	// コピー演算子
 
 public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
@@ -60,12 +60,12 @@ public:
 
 public:
 
-	StructuredBuffer(const uint32_t width = 0u);	// デフォルトコンストラクタ
+	ArrayBuffer(const uint32_t width = 0u);	// デフォルトコンストラクタ
 
 	template <typename U>
-	StructuredBuffer(const U &source);		// コピーコンストラクタ
+	ArrayBuffer(const U &source);		// コピーコンストラクタ
 
-	~StructuredBuffer();
+	~ArrayBuffer();
 
 	/// @brief バッファの計算
 	void CreateBuffer(uint32_t size);
@@ -82,33 +82,33 @@ private:
 };
 
 template<SoLib::IsNotPointer T>
-inline StructuredBuffer<T>::operator bool() const noexcept {
+inline ArrayBuffer<T>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
 template<SoLib::IsNotPointer T>
-inline StructuredBuffer<T>::operator T *() noexcept {
+inline ArrayBuffer<T>::operator T *() noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline StructuredBuffer<T>::operator const T *() const noexcept {
+inline ArrayBuffer<T>::operator const T *() const noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline T *const StructuredBuffer<T>::operator->() noexcept {
+inline T *const ArrayBuffer<T>::operator->() noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline const T *const StructuredBuffer<T>::operator->() const noexcept {
+inline const T *const ArrayBuffer<T>::operator->() const noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
 template<typename U>
-inline StructuredBuffer<T> &StructuredBuffer<T>::operator=(const U &source) {
+inline ArrayBuffer<T> &ArrayBuffer<T>::operator=(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
@@ -120,13 +120,13 @@ inline StructuredBuffer<T> &StructuredBuffer<T>::operator=(const U &source) {
 }
 
 template<SoLib::IsNotPointer T>
-inline StructuredBuffer<T>::StructuredBuffer(const uint32_t width) {
+inline ArrayBuffer<T>::ArrayBuffer(const uint32_t width) {
 	CreateBuffer(width);
 }
 
 template<SoLib::IsNotPointer T>
 template <typename U>
-inline StructuredBuffer<T>::StructuredBuffer(const U &source) {
+inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
@@ -145,7 +145,7 @@ inline StructuredBuffer<T>::StructuredBuffer(const U &source) {
 
 
 template<SoLib::IsNotPointer T>
-inline void StructuredBuffer<T>::CreateBuffer(uint32_t size) {
+inline void ArrayBuffer<T>::CreateBuffer(uint32_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
 	if (size != 0u && size_ != size) {
 		size_ = size;
@@ -162,7 +162,7 @@ inline void StructuredBuffer<T>::CreateBuffer(uint32_t size) {
 }
 
 template<SoLib::IsNotPointer T>
-inline D3D12_SHADER_RESOURCE_VIEW_DESC StructuredBuffer<T>::CreateSrvDesc() const
+inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T>::CreateSrvDesc() const
 {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
 
@@ -178,7 +178,7 @@ inline D3D12_SHADER_RESOURCE_VIEW_DESC StructuredBuffer<T>::CreateSrvDesc() cons
 }
 
 template<SoLib::IsNotPointer T>
-inline StructuredBuffer<T>::~StructuredBuffer() {
+inline ArrayBuffer<T>::~ArrayBuffer() {
 	resources_->Release();
 }
 

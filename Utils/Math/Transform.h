@@ -28,10 +28,11 @@ struct BaseTransform {
 	Matrix4x4 matWorld_{};	// ローカル . ワールド変換
 	const BaseTransform *parent_ = nullptr;	// 親へのアドレス
 
-	//ComPtr<ID3D12Resource> constBuffer_ = nullptr;
-	//TransformMatrix *mapData_ = nullptr;	// マップ済みデータ
-
+public:
+	inline auto *const GetCBuffer() { return &mapBuffer_; }
 	CBuffer<TransformMatrix, IsBufferActive> mapBuffer_;
+
+public:
 
 	inline Matrix4x4 Affine() const;
 

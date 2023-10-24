@@ -9,10 +9,10 @@
 template <SoLib::IsNotPointer T, bool Index = true>
 class VertexBuffer final {
 
-	StructuredBuffer<T> vertexData_;
+	ArrayBuffer<T> vertexData_;
 	D3D12_VERTEX_BUFFER_VIEW vbView_;
 
-	StructuredBuffer<uint32_t> indexData_;
+	ArrayBuffer<uint32_t> indexData_;
 	D3D12_INDEX_BUFFER_VIEW ibView_;
 
 public:
