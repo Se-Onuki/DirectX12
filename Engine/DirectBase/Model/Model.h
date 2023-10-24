@@ -29,14 +29,12 @@ struct Mesh;
 
 class Model
 {
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// モデル用パイプライン
-	static std::array<ComPtr<ID3D12PipelineState>, 6u> graphicsPipelineState_;
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-
-	static void CreatePipeLine();
-
 public:
+	enum class PipelineType : uint32_t {
+		kModel,		// モデル用
+		kParticle,	// パーティクル用
+	};
+
 	enum class RootParameter : uint32_t {
 		kWorldTransform, // ワールド変換行列
 		kViewProjection, // ビュープロジェクション変換行列
@@ -55,7 +53,15 @@ public:
 
 		kTotal	// 総数
 	};
+private:
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	// モデル用パイプライン
+	static std::array<std::array<ComPtr<ID3D12PipelineState>, 6u>, 2u> graphicsPipelineState_;
+	static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
 
+	static void CreatePipeLine();
+
+public:
 	static void StaticInit();
 
 	Model() = default;
@@ -205,7 +211,8 @@ class MinecraftModel {
 		};
 		std::array<Face, (uint32_t)FaceDirection::kCount> faces_;
 		Transform transformLocal_;
-		void UpdateMatrix();
+
+		//void UpdateMatrix();
 
 		void Init();
 		void Draw(ID3D12GraphicsCommandList *const commandList);

@@ -16,8 +16,8 @@
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
 
-std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u> Model::graphicsPipelineState_ = { nullptr };
-Microsoft::WRL::ComPtr<ID3D12RootSignature> Model::rootSignature_ = nullptr;
+std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u>, 2u> Model::graphicsPipelineState_ = { nullptr };
+std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
 
 void Model::StaticInit() {
 	CreatePipeLine();
@@ -125,7 +125,7 @@ void Model::CreatePipeLine() {
 	}
 	// バイナリを元に作成
 	//Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-	hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(rootSignature_.GetAddressOf()));
+	hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(rootSignature_[static_cast<uint32_t>(PipelineType::kParticle)].GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
@@ -208,7 +208,7 @@ void Model::CreatePipeLine() {
 #pragma region PSOを生成する
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature
+	graphicsPipelineStateDesc.pRootSignature = rootSignature_[static_cast<uint32_t>(PipelineType::kParticle)].Get();	// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
 	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
@@ -228,7 +228,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kNone)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)]));
 	assert(SUCCEEDED(hr));
 
 #pragma endregion
@@ -249,7 +249,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kNormal)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNormal)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -270,7 +270,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kAdd)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kAdd)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -291,7 +291,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kSubtract)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kSubtract)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -312,7 +312,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kMultily)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kMultily)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -333,7 +333,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kScreen)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kScreen)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -418,8 +418,8 @@ void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 	commandList_ = commandList;
 
 	// RootSignatureを設定。
-	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList_->SetPipelineState(graphicsPipelineState_[0].Get());		// PSOを設定
+	commandList_->SetGraphicsRootSignature(rootSignature_[static_cast<uint32_t>(PipelineType::kParticle)].Get());
+	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][0].Get());		// PSOを設定
 
 
 	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
@@ -578,7 +578,7 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
-		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_);
 	}
 
@@ -588,7 +588,7 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 	for (auto &mesh : meshList_) {
-		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_, drawCount);
 	}
 }
