@@ -7,6 +7,7 @@
 #include <wrl.h>
 #include "../../Engine/DirectBase/Base/CBuffer.h"
 
+/// @brief GPUに渡す構造体
 struct TransformMatrix {
 	Matrix4x4 World;
 };
@@ -137,4 +138,18 @@ void BaseTransform<IsBufferActive>::Create(const Matrix4x4 &mat) {
 	translate = *(Vector3 *)mat.m[3];
 }
 
+/// @brief Transform構造体 (メモリ確保あり)
 using Transform = BaseTransform<true>;
+
+///
+/// - struct BaseTransform<true> 
+///		メモリを確保するTransform構造体。
+///		Modelの描画などではこれを使う。
+/// 
+///	- using Transform = BaseTransform<true>;
+///		BaseTransfrom<true>の入力簡易化のエイリアス。
+///	
+/// - struct BaseTransform<false>
+///		メモリを確保しないTransform構造体。
+///		StructuredBufferなどで使用する。
+/// 
