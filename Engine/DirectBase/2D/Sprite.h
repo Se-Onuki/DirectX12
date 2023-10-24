@@ -92,7 +92,7 @@ private:
 private:
 
 	// マッピング無しTransform
-	Transform transform_;
+	BaseTransform<false> transform_;
 
 private:
 
@@ -140,7 +140,7 @@ public:
 	void SetRotate(const float angle);
 	void SetPosition(const Vector2 &position);
 
-	const Transform &GetTransform() const { return transform_; }
+	const auto &GetTransform() const { return transform_; }
 
 	void SetColor(const Vector4 &color);
 	const Vector4 &GetColor()const;
