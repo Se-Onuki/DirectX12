@@ -82,7 +82,7 @@ void GameScene::Update() {
 	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 		if (ImGui::TreeNode(("Particle" + std::to_string(i)).c_str())) {
 			transformArray_[i].ImGuiWidget();
-			ImGui::ColorEdit4("Color", &colorArray_[i].Get()->x);
+			ImGui::ColorEdit4("Color", &colorArray_[i]->x);
 			ImGui::TreePop();
 		}
 		transformArray_[i].UpdateMatrix();
