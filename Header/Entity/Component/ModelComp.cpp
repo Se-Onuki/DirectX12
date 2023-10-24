@@ -13,7 +13,6 @@ void ModelComp::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
 }
 
 void ModelComp::ModelBone::Init(Model *const model) {
-	transform_.InitResource();
 	if (model) { model_ = model; }
 }
 

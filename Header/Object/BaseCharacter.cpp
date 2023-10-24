@@ -5,7 +5,6 @@
 
 void BaseCharacter::Init(const std::unordered_map<std::string, Model *> &model) {
 	modelMap_ = model;
-	transformOrigin_.InitResource();
 }
 
 void BaseCharacter::Update() { transformOrigin_.UpdateMatrix(); }

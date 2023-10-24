@@ -142,13 +142,7 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 	BaseCharacter::Init(model);
 
 	// メモリ確保
-	transformBody_.InitResource();
-	transformHead_.InitResource();
-	transformLeft_.InitResource();
-	transformRight_.InitResource();
-
-	transformWeapon_.InitResource();
-
+	
 	// 親子関係
 	transformBody_.parent_ = &transformOrigin_;
 

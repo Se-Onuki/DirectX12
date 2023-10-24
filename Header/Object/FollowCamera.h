@@ -1,8 +1,8 @@
 #pragma once
 #include "../../Engine/DirectBase/Render/Camera.h"
 #include "../../Utils/Math/Math.hpp"
+#include "../../Utils/Math/Transform.h"
 
-struct Transform;
 class Input;
 
 class FollowCamera {

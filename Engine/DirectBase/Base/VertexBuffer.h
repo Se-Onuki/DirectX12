@@ -20,11 +20,11 @@ public:
 	VertexBuffer(const VertexBuffer &) = default;
 	~VertexBuffer() = default;
 
-	auto &GetVertexData()  noexcept { return vertexData_; }
+	auto &GetVertexData() noexcept { return vertexData_; }
 	const auto &GetVertexData() const noexcept { return vertexData_; }
 	const auto &GetVBView() const noexcept { return vbView_; };
 
-	auto &GetIndexData()  noexcept { return indexData_; }
+	auto &GetIndexData() noexcept { return indexData_; }
 	const auto &GetIndexData() const noexcept { return indexData_; }
 	const auto &GetIBView() const noexcept { return ibView_; };
 

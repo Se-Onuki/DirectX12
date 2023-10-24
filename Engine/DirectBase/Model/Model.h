@@ -22,7 +22,6 @@
 #include "../../../Utils/Math/Transform.h"
 #include "../Base/VertexBuffer.h"
 
-struct Transform;
 class ViewProjection;
 
 struct Material;

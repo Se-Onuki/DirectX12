@@ -87,7 +87,7 @@ inline T *const CBuffer<T, IsActive>::operator->() const noexcept {
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive> &CBuffer<T, IsActive>::operator=(const T &other) {
-	*mapData_ = other;
+	*mapData_ = static_cast<T>(other);
 	return *this;
 }
 
@@ -128,12 +128,63 @@ inline CBuffer<T, IsActive>::~CBuffer() {
 
 #pragma endregion
 
+#pragma region バッファを持たないクラス
+
 // バッファ機能を持たないクラス
 template<SoLib::IsNotPointer T>
 class CBuffer<T, false> {
+public:
+	CBuffer() = default;		// デフォルトコンストラクタ
+	CBuffer(const CBuffer &) = default;	// コピーコンストラクタ
+	CBuffer &operator=(const CBuffer &) = default;	// コピー演算子
 
+	~CBuffer() = default;
 
+	inline operator bool() const noexcept;		// 値が存在するか
+
+	inline operator T &() noexcept;				// 参照
+	inline operator const T &() const noexcept;	// const参照
+
+	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
+	inline T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
+
+	inline CBuffer &operator=(const T &other);	// コピー演算子
+
+	void SetMapAddress(T *const ptr) { mapData_ = ptr; }
+
+private:
 	T *mapData_;
 };
 
+template<SoLib::IsNotPointer T>
+inline CBuffer<T, false>::operator bool() const noexcept {
+	return mapData_ != nullptr;
+}
 
+template<SoLib::IsNotPointer T>
+inline CBuffer<T, false>::operator T &() noexcept {
+	return *mapData_;
+}
+
+template<SoLib::IsNotPointer T>
+inline CBuffer<T, false>::operator const T &() const noexcept {
+	return *mapData_;
+}
+
+template<SoLib::IsNotPointer T>
+inline T *const CBuffer<T, false>::operator->() noexcept {
+	return mapData_;
+}
+
+template<SoLib::IsNotPointer T>
+inline T *const CBuffer<T, false>::operator->() const noexcept {
+	return mapData_;
+}
+
+template<SoLib::IsNotPointer T>
+inline CBuffer<T, false> &CBuffer<T, false>::operator=(const T &other) {
+	*mapData_ = static_cast<T>(other);
+	return *this;
+}
+
+#pragma endregion
