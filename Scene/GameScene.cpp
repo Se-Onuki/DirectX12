@@ -61,8 +61,8 @@ void GameScene::OnEnter() {
 	instanceSrvHandleGPU_ = heapHandle.gpuHandle_;
 	device->CreateShaderResourceView(instanceTransform_.GetResources(), &instanceTransform_.GetDesc(), instanceSrvHandleCPU_);
 
-	for (auto &transform : instanceTransform_) {
-		transform.World = Matrix4x4::Identity();
+	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
+		transformArray_[i].mapBuffer_.SetMapAddress(&instanceTransform_[i]);
 	}
 }
 
@@ -78,13 +78,11 @@ void GameScene::Update() {
 	ImGui::Begin("Sphere");
 	model_->ImGuiWidget();
 	for (uint32_t i = 0u; i < instanceTransform_.size(); ++i) {
-		static BaseTransform<false> buffer;
-		buffer.Create(instanceTransform_[i].World);
 		if (ImGui::TreeNode(("Transform" + std::to_string(i)).c_str())) {
-			buffer.ImGuiWidget();
+			transformArray_[i].ImGuiWidget();
 			ImGui::TreePop();
 		}
-		instanceTransform_[i].World = buffer.Affine();
+		transformArray_[i].UpdateMatrix();
 	}
 	//transform_.ImGuiWidget();
 	ImGui::End();
