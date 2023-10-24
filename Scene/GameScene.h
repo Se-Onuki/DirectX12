@@ -11,6 +11,11 @@
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
 
+struct Particle {
+	TransformMatrix transform;
+	Vector4 color;
+};
+
 class GameScene : public IScene {
 public:
 	GameScene();
@@ -40,8 +45,9 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE instanceSrvHandleGPU_;
 
 	std::array<BaseTransform<false>, 5u> transformArray_;
+	std::array<CBuffer<Vector4, false>, 5u> colorArray_;
 
-	ArrayBuffer<TransformMatrix> instanceTransform_{ 5u };
+	ArrayBuffer<Particle> instanceTransform_{ 5u };
 
 	// Microsoft::WRL::ComPtr<ID3D12Resource> instancingData_ = nullptr;
 };

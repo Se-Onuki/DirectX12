@@ -1,9 +1,10 @@
 #include "Particle.hlsli"
-struct TransformationMatrix
+struct ParticleMatrix
 {
-    //matrix WVP;
     matrix World;
+    float4 color;
 };
+
 struct ViewProjectionMatrix
 {
     matrix view;
@@ -11,7 +12,7 @@ struct ViewProjectionMatrix
     float3 cameraPos;
 };
 
-StructuredBuffer<TransformationMatrix> gTransformationMatrix : register(t0);
+StructuredBuffer<ParticleMatrix> gParticleMatrix : register(t0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 
 struct VertexShaderInput
@@ -25,9 +26,10 @@ VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID
 {
     VertexShaderOutput output;
     matrix matVP = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
-    matrix matWVP = mul(gTransformationMatrix[instanceId].World, matVP);
+    matrix matWVP = mul(gParticleMatrix[instanceId].World, matVP);
     output.position = mul(input.position, matWVP);
     output.texCoord = input.texCoord;
-    output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix[instanceId].World));
+    output.normal = normalize(mul(input.normal, (float3x3) gParticleMatrix[instanceId].World));
+    output.color = gParticleMatrix[instanceId].color;
     return output;
 }

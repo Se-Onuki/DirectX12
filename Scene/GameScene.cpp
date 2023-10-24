@@ -62,7 +62,8 @@ void GameScene::OnEnter() {
 	device->CreateShaderResourceView(instanceTransform_.GetResources(), &instanceTransform_.GetDesc(), instanceSrvHandleCPU_);
 
 	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-		transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i]);
+		transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
+		colorArray_[i].SetMapAddress(&instanceTransform_[i].color);
 	}
 }
 
@@ -78,8 +79,9 @@ void GameScene::Update() {
 	ImGui::Begin("Sphere");
 	model_->ImGuiWidget();
 	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-		if (ImGui::TreeNode(("Transform" + std::to_string(i)).c_str())) {
+		if (ImGui::TreeNode(("Particle" + std::to_string(i)).c_str())) {
 			transformArray_[i].ImGuiWidget();
+			ImGui::ColorEdit4("Color", &colorArray_[i].Get()->x);
 			ImGui::TreePop();
 		}
 		transformArray_[i].UpdateMatrix();

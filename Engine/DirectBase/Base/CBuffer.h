@@ -152,6 +152,9 @@ public:
 
 	void SetMapAddress(T *const ptr) { mapData_ = ptr; }
 
+	inline T *const Get() { return mapData_; }
+	inline const T *const Get() const { return mapData_; }
+
 private:
 	T *mapData_;
 };
