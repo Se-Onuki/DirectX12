@@ -9,6 +9,7 @@
 #include <array>
 
 #include "../Base/CBuffer.h"
+#include "../Base/VertexBuffer.h"
 
 #include "../Base/LeakChecker.h"
 #include "../Base/TextureManager.h"
@@ -84,7 +85,7 @@ private:
 private:
 
 	// 頂点データ
-	VertexCBuffer<VertexData, true> vertexData_;
+	VertexBuffer<VertexData, true> vertexData_;
 
 	CBuffer<ConstData> constData_;
 

@@ -166,7 +166,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Base\PipelineState.h" />
     <ClInclude Include="Engine\DirectBase\Base\ResourceLoader.h" />
     <ClInclude Include="Engine\DirectBase\Base\Shader.h" />
+    <ClInclude Include="Engine\DirectBase\Base\StructBuffer.h" />
     <ClInclude Include="Engine\DirectBase\Base\TextureManager.h" />
+    <ClInclude Include="Engine\DirectBase\Base\VertexBuffer.h" />
     <ClInclude Include="Engine\DirectBase\Base\WinApp.h" />
     <ClInclude Include="Engine\DirectBase\Create\Create.h" />
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandle.h" />

@@ -20,6 +20,7 @@
 #include <array>
 
 #include "../../../Utils/Math/Transform.h"
+#include "../Base/VertexBuffer.h"
 
 struct Transform;
 class ViewProjection;
@@ -134,7 +135,7 @@ public:
 		}
 	};
 
-	VertexCBuffer<VertexData> vertexBuffer_;
+	VertexBuffer<VertexData> vertexBuffer_;
 
 	std::list<VertexData> vertices_;
 	std::list<uint32_t> indexs_;

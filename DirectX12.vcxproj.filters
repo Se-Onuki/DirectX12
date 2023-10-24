@@ -467,6 +467,12 @@
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h">
       <Filter>Engine\Descriptor</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Base\StructBuffer.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Base\VertexBuffer.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
