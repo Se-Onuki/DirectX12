@@ -187,7 +187,7 @@ void Model::CreatePipeLine() {
 	// Depthの機能を有効にする
 	depthStencilDesc.DepthEnable = true;
 	// 書き込みします。
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	// 比較関数はLessEqual。つまり、近ければ表示される。
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
