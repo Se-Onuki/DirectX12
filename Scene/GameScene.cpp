@@ -77,7 +77,7 @@ void GameScene::Update() {
 
 	ImGui::Begin("Sphere");
 	model_->ImGuiWidget();
-	for (uint32_t i = 0u; i < instanceTransform_.size(); ++i) {
+	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 		if (ImGui::TreeNode(("Transform" + std::to_string(i)).c_str())) {
 			transformArray_[i].ImGuiWidget();
 			ImGui::TreePop();

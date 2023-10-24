@@ -7,6 +7,10 @@
 #include <wrl.h>
 #include "../../Engine/DirectBase/Base/CBuffer.h"
 
+struct TransformMatrix {
+	Matrix4x4 World;
+};
+
 /// @brief Transformクラス
 /// @tparam IsBufferActive ID3D12Resourceを確保するか否か
 template <bool IsBufferActive>
@@ -15,9 +19,6 @@ struct BaseTransform {
 	//Transform &operator=(Transform &&other) = default;
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	struct TransformMatrix {
-		Matrix4x4 World;
-	};
 
 	Vector3 scale = { 1.f,1.f,1.f };
 	Vector3 rotate{};
