@@ -56,11 +56,11 @@ void Model::CreatePipeLine() {
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].DescriptorTable.pDescriptorRanges = worldDescriptorRange;				// Tableの中身の配列を指定
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].DescriptorTable.NumDescriptorRanges = _countof(worldDescriptorRange);	// Tableで使用する数
 
-#pragma endregion
-
 	//rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	//rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
 	//rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
+
+#pragma endregion
 
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
@@ -156,15 +156,6 @@ void Model::CreatePipeLine() {
 
 #pragma endregion
 
-#pragma region BlendState(ブレンドステート)
-
-	// BlendStateの設定
-	D3D12_BLEND_DESC blendDesc{};
-	// 全ての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-#pragma endregion
-
 #pragma region RasterizerState(ラスタライザステート)
 
 	// RasterizerStateの設定
@@ -205,18 +196,18 @@ void Model::CreatePipeLine() {
 #pragma endregion
 
 
-#pragma region PSOを生成する
-
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_[static_cast<uint32_t>(PipelineType::kParticle)].Get();	// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
 	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
-	graphicsPipelineStateDesc.BlendState = blendDesc;					// BlendState
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
 
 	// DSVのFormatを設定する
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
+
+#pragma region PSOを生成する
+
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 書き込むRTVの情報
@@ -227,12 +218,29 @@ void Model::CreatePipeLine() {
 	// どのように画面に色を打ち込むかの設定(気にしなくても良い)
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)]));
-	assert(SUCCEEDED(hr));
 
 #pragma endregion
 
+	BuildPileLine(PipelineType::kParticle, graphicsPipelineStateDesc);
+#pragma endregion
+
+}
+
+void Model::BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc) {
+
+	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+	HRESULT hr = S_FALSE;
+
+	// BlendStateの設定
+	D3D12_BLEND_DESC blendDesc{};
+
+	// 全ての色要素を書き込む
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kNone)]));
+	assert(SUCCEEDED(hr));
 
 #pragma region BlendState(ブレンドステート) ノーマルブレンド
 
@@ -249,7 +257,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNormal)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kNormal)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -270,7 +278,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kAdd)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kAdd)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -291,7 +299,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kSubtract)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kSubtract)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -312,7 +320,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kMultily)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kMultily)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -333,11 +341,9 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kScreen)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kScreen)]));
 	assert(SUCCEEDED(hr));
 
-
-#pragma endregion
 
 #pragma endregion
 

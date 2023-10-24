@@ -60,6 +60,7 @@ private:
 	static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
 
 	static void CreatePipeLine();
+	static void BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc);
 
 public:
 	static void StaticInit();
