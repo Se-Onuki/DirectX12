@@ -8,7 +8,7 @@ Enemy::~Enemy() {}
 
 void Enemy::Init(const std::unordered_map<std::string, Model *> &model) {
 	BaseCharacter::Init(model);
-	collider_.size = Vector3::one;
+	collider_.size = Vector3::one * 2.f;
 }
 
 void Enemy::Update(const float deltaTime) {
