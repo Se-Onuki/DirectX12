@@ -42,6 +42,7 @@ void Entity::OnCollision(Entity *const other) {
 }
 
 void Entity::ImGuiWidget() {
+	transform_.ImGuiWidget();
 	for (auto &component : componentMap_) {
 		component.second->ImGuiWidget();
 	}

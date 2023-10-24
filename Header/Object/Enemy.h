@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseCharacter.h"
+#include "../Collision/Collision.h"
 
 class Enemy : public BaseCharacter {
 public:
@@ -11,5 +12,8 @@ public:
 	void Update(const float deltaTime) override;
 	void Draw(const Camera<Render::CameraType::Projecction> &camera) const override;
 
+	const OBB &GetCollider() const { return collider_; }
+
 private:
+	OBB collider_;
 };

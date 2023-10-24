@@ -15,6 +15,7 @@
 #include "../Header/Object/FollowCamera.h"
 #include "../Header/Object/Skydome.h"
 #include "../Header/Object/Platform.h"
+#include "../Header/Object/Enemy.h"
 
 class GameScene : public IScene {
 public:
@@ -40,6 +41,12 @@ private:
 	Camera<Render::CameraType::Projecction> camera_;
 
 	std::unique_ptr<Player> player_ = nullptr;
+
+	std::unique_ptr<Entity> goal_ = nullptr;
+	std::unique_ptr<OBB> goalCollider_ = nullptr;
+
+	std::unique_ptr<Enemy> enemy_ = nullptr;
+
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Skydome> skydome_ = nullptr;
 

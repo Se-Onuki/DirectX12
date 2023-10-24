@@ -43,8 +43,8 @@ void GameScene::OnEnter() {
 	Model *const playerWeapon =
 		ModelManager::GetInstance()->AddModel("playerWeapon", Model::LoadObjFile("Model/Player/", "hammer.obj"));
 
-	/*Model *const enemyBody =
-		ModelManager::GetInstance()->AddModel("enemyBody", Model::LoadObjFile("needle_Body"));*/
+	Model *const enemyBody =
+		ModelManager::GetInstance()->AddModel("enemyBody", Model::LoadObjFile("Model/Boss/", "Boss.obj"));
 
 	std::unordered_map<std::string, Model *> playerMap{
 		{"body",   playerBody  },
@@ -84,11 +84,32 @@ void GameScene::OnEnter() {
 
 	platform_[3u]->SetPos({ 0.f,0.f,60.f });
 
+	Model *const goalBox =
+		ModelManager::GetInstance()->AddModel("Goal", Model::LoadObjFile("", "box.obj"));
+	goalBox->materialMap_["Material"]->materialBuff_->color = { 1.f,0.f,0.f,1.f };
+
+	goal_ = std::make_unique<Entity>();
+	auto *const modelComp = goal_->AddComponent<ModelComp>();
+	modelComp->AddBone("Body", goalBox, Transform{});
+	goal_->transform_.translate = { 0.f,2.f,60.f };
+
+	goalCollider_ = std::make_unique<OBB>();
+	goalCollider_->size = Vector3::one;
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Init(std::unordered_map<std::string, Model *>{
+		{"body", enemyBody}
+	});
+	enemy_->GetWorldTransform().translate.y = 1.f;
+
+	enemy_->GetWorldTransform().SetParent(platform_[1u]->GetWorldTransform());
 }
 
 void GameScene::OnExit() {}
 
 void GameScene::Reset() {
+
+	player_->GetWorldTransform().DisConnectParent();
 	player_->GetWorldTransform().translate = Vector3::zero;
 }
 
@@ -96,7 +117,9 @@ void GameScene::Update() {
 
 	const float deltaTime = ImGui::GetIO().DeltaTime;
 
-	if (player_->GetWorldTransform().translate.y < -20.f) {
+	if (player_->GetWorldTransform().translate.y < -20.f
+		|| Collision::IsHit(*goalCollider_.get(), player_->GetCollider())
+		|| Collision::IsHit(enemy_->GetCollider(), player_->GetCollider())) {
 		Reset();
 	}
 
@@ -126,20 +149,6 @@ void GameScene::Update() {
 		player_->GetWorldTransform().DisConnectParent();
 	}
 
-	//if (Collision::IsHit(player_->GetCollider(), platform_[1]->GetCollider())) {
-	//	player_->GetWorldTransform().ConnectParent(platform_[1]->GetWorldTransform());
-	//}
-	//else {
-	//	player_->GetWorldTransform().DisConnectParent();
-	//}
-	/*
-	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
-		player_->GetWorldTransform().ConnectParent(platform_[1]->GetWorldTransform());
-	}
-	else if (input_->GetDirectInput()->IsTrigger(DIK_O)) {
-		player_->GetWorldTransform().DisConnectParent();
-	}*/
-
 	TextureManager::GetInstance()->ImGuiWindow();
 
 	light_->ImGuiWidget();
@@ -151,8 +160,13 @@ void GameScene::Update() {
 	camera_ = *followCamera_->GetCamera();
 
 	transform_.UpdateMatrix();
+	ImGui::Begin("Goal");
+	goal_->ImGuiWidget();
+	ImGui::End();
+	goal_->Update();
+	goalCollider_->SetMatrix(goal_->transform_.matWorld_);
 
-
+	enemy_->Update(deltaTime);
 }
 
 void GameScene::Draw()
@@ -187,6 +201,8 @@ void GameScene::Draw()
 	for (auto &platform : platform_) {
 		platform->Draw(camera_);
 	}
+	goal_->Draw(camera_);
+	enemy_->Draw(camera_);
 
 	Model::EndDraw();
 

@@ -8,6 +8,7 @@ Enemy::~Enemy() {}
 
 void Enemy::Init(const std::unordered_map<std::string, Model *> &model) {
 	BaseCharacter::Init(model);
+	collider_.size = Vector3::one;
 }
 
 void Enemy::Update(const float deltaTime) {
@@ -19,9 +20,13 @@ void Enemy::Update(const float deltaTime) {
 	ImGui::End();
 
 	transformOrigin_.translate +=
-		TransformNormal(Vector3::front * moveSpeed, transformOrigin_.matWorld_);
+		TransformNormal(Vector3::front * moveSpeed, Matrix4x4::EulerRotate(transformOrigin_.rotate));
 	transformOrigin_.rotate.y += rotateAngle;
+	transformOrigin_.translate.x = std::clamp(transformOrigin_.translate.x, -10.f, 10.f);
+	transformOrigin_.translate.z = std::clamp(transformOrigin_.translate.z, -10.f, 10.f);
+
 	BaseCharacter::Update(deltaTime);
+	collider_.SetMatrix(transformOrigin_.matWorld_);
 }
 
 void Enemy::Draw(const Camera<Render::CameraType::Projecction> &camera) const {
