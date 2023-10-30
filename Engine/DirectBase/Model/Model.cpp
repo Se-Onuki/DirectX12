@@ -656,7 +656,7 @@ void Material::CreateBuffer() {
 void Material::ImGuiWidget()
 {
 	if (ImGui::TreeNode(name_.c_str())) {
-		static Transform transform;
+		static BaseTransform<false> transform;
 		transform.Create(materialBuff_->uvTransform);
 
 		if (transform.ImGuiWidget2D()) {
