@@ -96,7 +96,7 @@ void Model::CreatePipeLine() {
 #pragma region InputLayout(インプットレイアウト)
 
 	// InputLayout
-	const std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs{
+	const std::array<D3D12_INPUT_ELEMENT_DESC, 3u> inputElementDescs{
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "POSITION",
 			.SemanticIndex = 0,
@@ -137,8 +137,9 @@ void Model::CreatePipeLine() {
 
 #pragma region Shader
 
-	Shader vertexShader = Shader::Compile(L"Particle.VS.hlsl", L"vs_6_0");
-	Shader pixelShader = Shader::Compile(L"Particle.PS.hlsl", L"ps_6_0");
+	PipelineState::ShaderSet particleShader;
+	particleShader.vertex = Shader::Compile(L"Particle.VS.hlsl", L"vs_6_0");
+	particleShader.pixel = Shader::Compile(L"Particle.PS.hlsl", L"ps_6_0");
 
 #pragma endregion
 
@@ -165,8 +166,8 @@ void Model::CreatePipeLine() {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get();	// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
-	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
-	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
+	graphicsPipelineStateDesc.VS = particleShader.vertex->GetBytecode();			// VertexShader
+	graphicsPipelineStateDesc.PS = particleShader.pixel->GetBytecode();			// PixelShader
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
 
 	// DSVのFormatを設定する
@@ -187,15 +188,20 @@ void Model::CreatePipeLine() {
 
 #pragma endregion
 
-
-	//graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].Create(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)], inputElementDescs, depthStencilDesc);
+	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetInputElementDescs(inputElementDescs);
+	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetShader(particleShader);
+	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].Create(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)], depthStencilDesc);
 	BuildPileLine(PipelineType::kParticle, graphicsPipelineStateDesc);
 
-	Shader vertexModelShader = Shader::Compile(L"Object3d.VS.hlsl", L"vs_6_0");
-	graphicsPipelineStateDesc.VS = vertexModelShader.GetBytecode();
 
-	Shader pixelModelShader = Shader::Compile(L"Object3d.PS.hlsl", L"ps_6_0");
-	graphicsPipelineStateDesc.PS = pixelModelShader.GetBytecode();
+	PipelineState::ShaderSet modelShader;
+	modelShader.vertex = Shader::Compile(L"Object3d.VS.hlsl", L"vs_6_0");
+	modelShader.pixel = Shader::Compile(L"Object3d.PS.hlsl", L"ps_6_0");
+
+	graphicsPipelineStateDesc.VS = modelShader.vertex->GetBytecode();
+	graphicsPipelineStateDesc.PS = modelShader.pixel->GetBytecode();
+
+
 
 	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get();	// RootSignature
 	graphicsPipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;

@@ -41,7 +41,7 @@
 //
 //}
 
-void PipelineState::Create(const RootSignature &rootSignature, const std::vector<D3D12_INPUT_ELEMENT_DESC> &inputElementDescs, const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc) {
+void PipelineState::Create(const RootSignature &rootSignature, const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc) {
 
 	HRESULT hr = S_FALSE;
 	//ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
@@ -51,8 +51,8 @@ void PipelineState::Create(const RootSignature &rootSignature, const std::vector
 #pragma region InputLayout(インプットレイアウト)
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	inputLayoutDesc.pInputElementDescs = inputElementDescs.data();
-	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs.size());
+	inputLayoutDesc.pInputElementDescs = inputElementDescs_.data();
+	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs_.size());
 
 #pragma endregion
 
@@ -73,6 +73,12 @@ void PipelineState::Create(const RootSignature &rootSignature, const std::vector
 
 
 	graphicsPipelineStateDesc_.pRootSignature = rootSignature.Get();		// RootSignature
+	if (shaderSet_.vertex) {
+		graphicsPipelineStateDesc_.VS = shaderSet_.vertex->GetBytecode();
+	}
+	if (shaderSet_.pixel) {
+		graphicsPipelineStateDesc_.PS = shaderSet_.pixel->GetBytecode();
+	}
 	graphicsPipelineStateDesc_.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc_.RasterizerState = rasterizerDesc;			// RasterizeState
 
@@ -95,6 +101,13 @@ void PipelineState::Create(const RootSignature &rootSignature, const std::vector
 
 #pragma endregion
 
+	// BlendStateの設定
+	D3D12_BLEND_DESC blendDesc{};
+
+	// 全ての色要素を書き込む
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	graphicsPipelineStateDesc_.BlendState = blendDesc;
+
 	// 実際に生成
 	hr = DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc_, IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(hr));
@@ -104,6 +117,6 @@ void PipelineState::Create(const RootSignature &rootSignature, const std::vector
 
 }
 
-void PipelineState::SetShader(const ShaderSet &shader) {
-	shader;
+void PipelineState::SetShader(const ShaderSet &shaderSet) {
+	shaderSet_ = shaderSet;
 }
