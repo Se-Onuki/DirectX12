@@ -32,13 +32,6 @@ void Model::CreatePipeLine() {
 
 #pragma region PSO(Pipeline State Object)
 
-#pragma region RootSigneture(ルートシグネチャ)
-
-	// RootSignature生成
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags =
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
 #pragma region RootParameter
 
 	// RootParameter作成
@@ -86,11 +79,6 @@ void Model::CreatePipeLine() {
 	rootParameters[(uint32_t)Model::RootParameter::kTexture].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
 	rootParameters[(uint32_t)Model::RootParameter::kTexture].DescriptorTable.pDescriptorRanges = descriptorRange;				// Tableの中身の配列を指定
 	rootParameters[(uint32_t)Model::RootParameter::kTexture].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	// Tableで使用する数
-
-#pragma endregion
-
-	descriptionRootSignature.pParameters = rootParameters.data();					// ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = static_cast<UINT>(rootParameters.size());		// 配列の長さ
 
 #pragma endregion
 
@@ -205,11 +193,12 @@ void Model::CreatePipeLine() {
 
 	Shader vertexModelShader = Shader::Compile(L"Object3d.VS.hlsl", L"vs_6_0");
 	graphicsPipelineStateDesc.VS = vertexModelShader.GetBytecode();
-	
+
 	Shader pixelModelShader = Shader::Compile(L"Object3d.PS.hlsl", L"ps_6_0");
 	graphicsPipelineStateDesc.PS = pixelModelShader.GetBytecode();
 
 	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get();	// RootSignature
+	graphicsPipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 
 	BuildPileLine(PipelineType::kModel, graphicsPipelineStateDesc);
 #pragma endregion
@@ -414,8 +403,8 @@ void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 	commandList_ = commandList;
 
 	// RootSignatureを設定。
-	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get());
-	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][0].Get());		// PSOを設定
+	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get());
+	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][0].Get());		// PSOを設定
 
 
 	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
@@ -571,6 +560,11 @@ void Model::ImGuiWidget()
 }
 
 void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const {
+	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get());
+	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][0].Get());
+	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
@@ -581,6 +575,11 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 }
 
 void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const {
+	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get());
+	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][0].Get());
+	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 	for (auto &mesh : meshList_) {

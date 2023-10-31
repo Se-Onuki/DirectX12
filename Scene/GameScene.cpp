@@ -35,25 +35,6 @@ void GameScene::OnEnter() {
 	auto *const device = DirectXCommon::GetInstance()->GetDevice();
 	auto *const srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
-	//const uint32_t instancingCount = 5u;
-	/*instancingData_ = CreateBufferResource(device, sizeof(Transform::TransformMatrix) * instancingCount);
-
-	instancingData_->Map(0, nullptr, reinterpret_cast<void **>(&instancingArray_));*/
-
-	//for (auto &transform : instanceTransform_) {
-	//	transform.World = Matrix4x4::Identity();
-	//}
-
-	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-
-	//srvDesc.Format = DXGI_FORMAT_UNKNOWN;	// 構造体の形は不明であるため
-	//srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	//srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;	// textureではなくbufferとして使うため
-	//srvDesc.Buffer.FirstElement = 0;
-	//srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	//srvDesc.Buffer.StructureByteStride = sizeof(Transform::TransformMatrix);	// アライメントはC++準拠
-	//srvDesc.Buffer.NumElements = instancingCount;
-
 	const auto &heapRange = srvHeap->RequestHeapAllocation(1u);
 	const auto &heapHandle = heapRange.GetHandle(0u);
 
@@ -87,13 +68,13 @@ void GameScene::Update() {
 		}
 		transformArray_[i].UpdateMatrix();
 	}
-	//transform_.ImGuiWidget();
 	ImGui::End();
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
 	light_->ImGuiWidget();
 
+	transform_.ImGuiWidget();
 	transform_.UpdateMatrix();
 }
 
@@ -120,6 +101,8 @@ void GameScene::Draw()
 	Model::StartDraw(commandList);
 
 	light_->SetLight(commandList);
+
+	model_->Draw(transform_, camera_);
 
 	// モデルの描画
 	model_->Draw(instanceSrvHandleGPU_, instanceTransform_.size(), camera_);

@@ -90,15 +90,8 @@ void DirectXCommon::StartDraw() {
 #pragma region ViewportとScissor(シザー)
 
 	// ビューポート
+	// クライアント領域のサイズと一緒にして画面全体に表示
 	D3D12_VIEWPORT viewport{ 0.f,0.f,WinApp::kWindowWidth ,WinApp::kWindowHeight,0.f,1.f };
-	//// クライアント領域のサイズと一緒にして画面全体に表示
-	//viewport.Width = WinApp::kWindowWidth;
-	//viewport.Height = WinApp::kWindowHeight;
-	//viewport.TopLeftX = 0;
-	//viewport.TopLeftY = 0;
-
-	//viewport.MinDepth = 0.f;
-	//viewport.MaxDepth = 1.f;
 
 	// シザー短形
 	D3D12_RECT scissorRect{};
@@ -121,13 +114,11 @@ void DirectXCommon::EndDraw() {
 
 #pragma region 画面状態の遷移
 
+	// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
+	// 今回はRenderTargetからPresentにする
 	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 		backBuffers_[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT);
-	// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
-	// 今回はRenderTargetからPresentにする
-	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	// TransitionBarrierを張る
 	commandList_->ResourceBarrier(1, &barrier);
 
