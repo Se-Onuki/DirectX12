@@ -22,6 +22,7 @@
 #include "../../../Utils/Math/Transform.h"
 #include "../Base/VertexBuffer.h"
 #include "../Base/RootSignature.h"
+#include "../Base/PipelineState.h"
 
 class ViewProjection;
 
@@ -60,6 +61,7 @@ private:
 	static std::array<std::array<ComPtr<ID3D12PipelineState>, 6u>, 2u> graphicsPipelineState_;
 	static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
 
+	static std::array<std::array<PipelineState, 6u>, 2u> graphicsPipelineStateClass_;
 	static std::array<RootSignature, 2u> rootSignatureClass_;
 
 	static void CreatePipeLine();

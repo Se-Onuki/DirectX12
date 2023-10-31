@@ -72,37 +72,38 @@ void PipelineState::Create(const RootSignature &rootSignature, const std::vector
 #pragma endregion
 
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();		// RootSignature
-	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
-	graphicsPipelineStateDesc.VS = vertexShader_.GetBytecode();			// VertexShader
-	graphicsPipelineStateDesc.PS = pixelShader_.GetBytecode();			// PixelShader
-	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
+	graphicsPipelineStateDesc_.pRootSignature = rootSignature.Get();		// RootSignature
+	graphicsPipelineStateDesc_.InputLayout = inputLayoutDesc;			// InputLayout
+	graphicsPipelineStateDesc_.RasterizerState = rasterizerDesc;			// RasterizeState
 
 	// DSVのFormatを設定する
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
+	graphicsPipelineStateDesc_.DepthStencilState = depthStencilDesc;
 
 #pragma region PSOを生成する
 
-	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	graphicsPipelineStateDesc_.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 書き込むRTVの情報
-	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	graphicsPipelineStateDesc_.NumRenderTargets = 1;
+	graphicsPipelineStateDesc_.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	// 利用するトポロジ(形状)のタイプ。三角形。
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	graphicsPipelineStateDesc_.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	// どのように画面に色を打ち込むかの設定(気にしなくても良い)
-	graphicsPipelineStateDesc.SampleDesc.Count = 1;
-	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	graphicsPipelineStateDesc_.SampleDesc.Count = 1;
+	graphicsPipelineStateDesc_.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
 
 #pragma endregion
 
 	// 実際に生成
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
+	hr = DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc_, IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(hr));
 
 
 #pragma endregion
 
+}
+
+void PipelineState::SetShader(const ShaderSet &shader) {
+	shader;
 }

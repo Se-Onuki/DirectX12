@@ -18,6 +18,7 @@ const char *const Model::defaultDirectory = "resources/";
 
 std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u>, 2u> Model::graphicsPipelineState_ = { nullptr };
 std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
+std::array<std::array<PipelineState, 6u>, 2u> Model::graphicsPipelineStateClass_ = {};
 std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
 
 void Model::StaticInit() {
@@ -57,10 +58,6 @@ void Model::CreatePipeLine() {
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].DescriptorTable.pDescriptorRanges = worldDescriptorRange;				// Tableの中身の配列を指定
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].DescriptorTable.NumDescriptorRanges = _countof(worldDescriptorRange);	// Tableで使用する数
 
-	//rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
-	//rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
-	//rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
-
 #pragma endregion
 
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
@@ -99,31 +96,41 @@ void Model::CreatePipeLine() {
 
 	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Create(rootParameters.data(), rootParameters.size());
 
+
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
+
+	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Create(rootParameters.data(), rootParameters.size());
+
 #pragma endregion
 
 #pragma region InputLayout(インプットレイアウト)
 
 	// InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
-
-	inputElementDescs[0].SemanticName = "POSITION";
-	inputElementDescs[0].SemanticIndex = 0;
-	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[1].SemanticName = "TEXCOORD";
-	inputElementDescs[1].SemanticIndex = 0;
-	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
+	const std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs{
+		D3D12_INPUT_ELEMENT_DESC{
+			.SemanticName = "POSITION",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		},
+		D3D12_INPUT_ELEMENT_DESC{
+			.SemanticName = "TEXCOORD",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32_FLOAT,
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		},
+		D3D12_INPUT_ELEMENT_DESC{
+			.SemanticName = "NORMAL",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32B32_FLOAT,
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		}
+	};
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
+	inputLayoutDesc.pInputElementDescs = inputElementDescs.data();
+	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs.size());
 
 #pragma endregion
 
@@ -192,7 +199,19 @@ void Model::CreatePipeLine() {
 
 #pragma endregion
 
+
+	//graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].Create(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)], inputElementDescs, depthStencilDesc);
 	BuildPileLine(PipelineType::kParticle, graphicsPipelineStateDesc);
+
+	Shader vertexModelShader = Shader::Compile(L"Object3d.VS.hlsl", L"vs_6_0");
+	graphicsPipelineStateDesc.VS = vertexModelShader.GetBytecode();
+	
+	Shader pixelModelShader = Shader::Compile(L"Object3d.PS.hlsl", L"ps_6_0");
+	graphicsPipelineStateDesc.PS = pixelModelShader.GetBytecode();
+
+	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get();	// RootSignature
+
+	BuildPileLine(PipelineType::kModel, graphicsPipelineStateDesc);
 #pragma endregion
 
 }
