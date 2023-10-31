@@ -97,25 +97,6 @@ void Model::CreatePipeLine() {
 
 #pragma endregion
 
-#pragma region Samplerの設定
-
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[] = {
-	{
-		.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR,			// バイナリフィルタ
-		.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,		// 0~1の範囲外をリピート
-		.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-		.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-		.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,		// 比較しない
-		.MaxLOD = D3D12_FLOAT32_MAX,						// ありったけのMipMapを使う
-		.ShaderRegister = 0,								// レジスタ番号 0を使う
-		.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL,	// PixelShaderで使う
-	}
-	};
-	descriptionRootSignature.pStaticSamplers = staticSamplers;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
-
-#pragma endregion
-
 	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Create(rootParameters.data(), rootParameters.size());
 
 #pragma endregion

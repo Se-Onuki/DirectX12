@@ -73,7 +73,7 @@ void PipelineState::Create(const RootSignature &rootSignature, const std::vector
 
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();	// RootSignature
+	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();		// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc.VS = vertexShader_.GetBytecode();			// VertexShader
 	graphicsPipelineStateDesc.PS = pixelShader_.GetBytecode();			// PixelShader
@@ -95,12 +95,13 @@ void PipelineState::Create(const RootSignature &rootSignature, const std::vector
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
+
+#pragma endregion
+
 	// 実際に生成
 	hr = DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(hr));
 
-
-#pragma endregion
 
 #pragma endregion
 
