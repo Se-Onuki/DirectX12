@@ -6,6 +6,10 @@ Microsoft::WRL::ComPtr<IDxcCompiler3> Shader::dxcCompiler_;
 Microsoft::WRL::ComPtr<IDxcIncludeHandler> Shader::includeHandler_;
 const std::wstring Shader::directoryPath_ = L"resources/shader/";
 
+inline Shader::operator bool() noexcept {
+	return shaderBlob_ != nullptr;
+}
+
 void Shader::StaticInit()
 {
 	HRESULT hr = S_FALSE;

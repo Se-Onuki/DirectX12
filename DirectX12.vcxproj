@@ -105,6 +105,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Base\ImGuiManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\LeakChecker.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\PipelineState.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\RootSignature.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\Shader.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\TextureManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\WinApp.cpp" />
@@ -165,6 +166,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Base\LeakChecker.h" />
     <ClInclude Include="Engine\DirectBase\Base\PipelineState.h" />
     <ClInclude Include="Engine\DirectBase\Base\ResourceLoader.h" />
+    <ClInclude Include="Engine\DirectBase\Base\RootSignature.h" />
     <ClInclude Include="Engine\DirectBase\Base\Shader.h" />
     <ClInclude Include="Engine\DirectBase\Base\StructBuffer.h" />
     <ClInclude Include="Engine\DirectBase\Base\TextureManager.h" />

@@ -18,6 +18,7 @@ const char *const Model::defaultDirectory = "resources/";
 
 std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u>, 2u> Model::graphicsPipelineState_ = { nullptr };
 std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
+std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
 
 void Model::StaticInit() {
 	CreatePipeLine();
@@ -25,8 +26,8 @@ void Model::StaticInit() {
 
 void Model::CreatePipeLine() {
 
-	HRESULT hr = S_FALSE;
-	ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
+	//HRESULT hr = S_FALSE;
+	//ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
 
 #pragma region PSO(Pipeline State Object)
 
@@ -40,7 +41,7 @@ void Model::CreatePipeLine() {
 #pragma region RootParameter
 
 	// RootParameter作成
-	D3D12_ROOT_PARAMETER rootParameters[5] = {};
+	std::array<D3D12_ROOT_PARAMETER, 5u> rootParameters = {};
 
 #pragma region kWorldTransform
 
@@ -91,8 +92,8 @@ void Model::CreatePipeLine() {
 
 #pragma endregion
 
-	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
+	descriptionRootSignature.pParameters = rootParameters.data();					// ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = static_cast<UINT>(rootParameters.size());		// 配列の長さ
 
 #pragma endregion
 
@@ -115,18 +116,7 @@ void Model::CreatePipeLine() {
 
 #pragma endregion
 
-	// シリアライズしてバイナリにする
-	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
-	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, signatureBlob.GetAddressOf(), errorBlob.GetAddressOf());
-	if (FAILED(hr)) {
-		DirectXCommon::Log(reinterpret_cast<char *>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	// バイナリを元に作成
-	//Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-	hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(rootSignature_[static_cast<uint32_t>(PipelineType::kParticle)].GetAddressOf()));
-	assert(SUCCEEDED(hr));
+	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Create(rootParameters.data(), rootParameters.size());
 
 #pragma endregion
 
@@ -197,7 +187,7 @@ void Model::CreatePipeLine() {
 
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature_[static_cast<uint32_t>(PipelineType::kParticle)].Get();	// RootSignature
+	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get();	// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
 	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
@@ -424,7 +414,7 @@ void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 	commandList_ = commandList;
 
 	// RootSignatureを設定。
-	commandList_->SetGraphicsRootSignature(rootSignature_[static_cast<uint32_t>(PipelineType::kParticle)].Get());
+	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get());
 	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][0].Get());		// PSOを設定
 
 
