@@ -49,7 +49,7 @@ public:
 	T *const end() const noexcept { return &mapData_[size_]; }
 
 
-	template <typename U>
+	template <SoLib::IsContainer U>
 	inline ArrayBuffer &operator=(const U &other);	// コピー演算子
 
 public:
@@ -107,12 +107,8 @@ inline const T *const ArrayBuffer<T>::operator->() const noexcept {
 }
 
 template<SoLib::IsNotPointer T>
-template<typename U>
+template<SoLib::IsContainer U>
 inline ArrayBuffer<T> &ArrayBuffer<T>::operator=(const U &source) {
-	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
-	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
-	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
-
 	CreateBuffer(static_cast<uint32_t>(source.size()));
 	//Copy(source.begin(), source.end());
 	std::copy(source.begin(), source.end(), mapData_);

@@ -17,6 +17,8 @@ public:
 	struct ShaderSet {
 		std::optional <Shader> vertex = std::nullopt;
 		std::optional<Shader> pixel = std::nullopt;
+
+		void SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc);
 	};
 
 	PipelineState() = default;
@@ -30,6 +32,8 @@ public:
 	void SetInputElementDescs(const T &inputElementDescs);
 
 private:
+
+	const RootSignature *rootSignature_ = nullptr;
 
 	ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
 

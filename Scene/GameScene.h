@@ -39,8 +39,6 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	// Transform::TransformMatrix *instancingArray_ = nullptr;
-
 	D3D12_CPU_DESCRIPTOR_HANDLE instanceSrvHandleCPU_;
 	D3D12_GPU_DESCRIPTOR_HANDLE instanceSrvHandleGPU_;
 
@@ -48,6 +46,4 @@ private:
 	std::array<CBuffer<Vector4, false>, 5u> colorArray_;
 
 	ArrayBuffer<Particle> instanceTransform_{ 5u };
-
-	// Microsoft::WRL::ComPtr<ID3D12Resource> instancingData_ = nullptr;
 };

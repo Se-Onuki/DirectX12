@@ -201,8 +201,6 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.VS = modelShader.vertex->GetBytecode();
 	graphicsPipelineStateDesc.PS = modelShader.pixel->GetBytecode();
 
-
-
 	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get();	// RootSignature
 	graphicsPipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 

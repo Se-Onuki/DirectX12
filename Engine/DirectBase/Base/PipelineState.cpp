@@ -46,6 +46,8 @@ void PipelineState::Create(const RootSignature &rootSignature, const D3D12_DEPTH
 	HRESULT hr = S_FALSE;
 	//ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
 
+	rootSignature_ = &rootSignature;
+
 #pragma region PSO(Pipeline State Object)
 
 #pragma region InputLayout(インプットレイアウト)
@@ -66,11 +68,6 @@ void PipelineState::Create(const RootSignature &rootSignature, const D3D12_DEPTH
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 #pragma endregion
-
-#pragma region DepthStencilState
-
-#pragma endregion
-
 
 	graphicsPipelineStateDesc_.pRootSignature = rootSignature.Get();		// RootSignature
 	if (shaderSet_.vertex) {
@@ -119,4 +116,13 @@ void PipelineState::Create(const RootSignature &rootSignature, const D3D12_DEPTH
 
 void PipelineState::SetShader(const ShaderSet &shaderSet) {
 	shaderSet_ = shaderSet;
+}
+
+void PipelineState::ShaderSet::SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc) {
+	if (vertex) {
+		pipelineDesc->VS = vertex->GetBytecode();
+	}
+	if (pixel) {
+		pipelineDesc->PS = pixel->GetBytecode();
+	}
 }
