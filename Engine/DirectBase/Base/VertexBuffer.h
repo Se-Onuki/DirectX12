@@ -1,6 +1,7 @@
 #pragma once
 
 #include "StructBuffer.h"
+#include "../../../Utils/SoLib/SoLib_Traits.h"
 
 #pragma region 頂点バッファ
 
@@ -28,14 +29,14 @@ public:
 	const auto &GetIndexData() const noexcept { return indexData_; }
 	const auto &GetIBView() const noexcept { return ibView_; };
 
-	template <typename U>
+	template <SoLib::IsContainer U>
 	void SetVertexData(const U &source);
-	template <typename U>
+	template <SoLib::IsContainer U>
 	void SetIndexData(const U &source);
 };
 
 template <SoLib::IsNotPointer T, bool Index>
-template <typename U>
+template <SoLib::IsContainer U>
 void VertexBuffer<T, Index>::SetVertexData(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
@@ -54,7 +55,7 @@ void VertexBuffer<T, Index>::SetVertexData(const U &source) {
 }
 
 template <SoLib::IsNotPointer T, bool Index>
-template <typename U>
+template <SoLib::IsContainer U>
 void VertexBuffer<T, Index>::SetIndexData(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");

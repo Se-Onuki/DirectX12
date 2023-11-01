@@ -45,6 +45,7 @@ public:
 	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
 
 	uint32_t size() const noexcept { return size_; }
+	T *const data() const noexcept { return mapData_; }
 	T *const begin() const noexcept { return &mapData_[0]; }
 	T *const end() const noexcept { return &mapData_[size_]; }
 
@@ -110,7 +111,6 @@ template<SoLib::IsNotPointer T>
 template<SoLib::IsContainer U>
 inline ArrayBuffer<T> &ArrayBuffer<T>::operator=(const U &source) {
 	CreateBuffer(static_cast<uint32_t>(source.size()));
-	//Copy(source.begin(), source.end());
 	std::copy(source.begin(), source.end(), mapData_);
 	return *this;
 }

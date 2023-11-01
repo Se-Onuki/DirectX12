@@ -377,8 +377,8 @@ void Sprite::MapVertex()
 
 void Sprite::CreateBuffer() {
 
-	vertexData_.SetVertexData(std::array{ VertexData{},VertexData{},VertexData{},VertexData{} });
-	vertexData_.SetIndexData(std::array{ 0u,1u,2u, 1u,3u,2u });
+	vertexData_.SetVertexData(std::array<VertexData, 4u>{ VertexData{}, VertexData{}, VertexData{}, VertexData{} });
+	vertexData_.SetIndexData(std::array<uint32_t, 6u>{ 0u, 1u, 2u, 1u, 3u, 2u });
 	//auto *const device = DirectXCommon::GetInstance()->GetDevice();
 
 	//vertexData_ = CreateBufferResource(device, sizeof(VertexData) * 4u);

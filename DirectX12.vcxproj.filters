@@ -264,6 +264,9 @@
     <ClCompile Include="Engine\DirectBase\Base\RootSignature.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Base\MemoryUsageManager.cpp">
+      <Filter>Engine\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -477,6 +480,9 @@
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Base\RootSignature.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Base\MemoryUsageManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
   </ItemGroup>
