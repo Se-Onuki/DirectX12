@@ -8,6 +8,7 @@
 #include "../Create/Create.h"
 
 #include "DescriptorHandle.h"
+#include "../Base/MemoryUsageManager.h"
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 class DescHeap {
@@ -23,8 +24,10 @@ public:
 	struct HeapRange {
 		HeapRange() = default;
 		HeapRange(uint32_t offset, uint32_t width, DescHeap *descHeap) : offset_(offset), width_(width), descHeap_(descHeap) {}
+		//HeapRange(const MemoryUsageManager::MemoryRange &memoryRange, DescHeap *descHeap) : offset_(memoryRange.offset), width_(memoryRange.length), descHeap_(descHeap), memoryRange_(memoryRange) {}
 		uint32_t offset_;	// 始点
 		uint32_t width_;	// 使用範囲
+		MemoryUsageManager::MemoryRange memoryRange_;
 
 		/// @brief デスクリプタハンドルを取得する
 		/// @param index 添え字
@@ -45,7 +48,7 @@ public:
 	void SetCommand(ID3D12GraphicsCommandList *const commandList, uint32_t numDescriptorHeaps);
 
 	/// @brief デスクリプタヒープを取得する
-	/// @return 
+	/// @return デスクリプタヒープのポインタ
 	auto *const GetHeap() const { return descriptorHeap_.Get(); }
 
 	/// @brief ハンドルを取得する
@@ -65,11 +68,11 @@ private:
 	const uint32_t heapSize_;
 	uint32_t itemSize_;
 
-	uint32_t usingIndex_ = 0u;
+	MemoryUsageManager memoryManager_;
 };
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
-DescHeap<HeapType>::DescHeap(ID3D12Device *const device, uint32_t size) : heapSize_(size) {
+DescHeap<HeapType>::DescHeap(ID3D12Device *const device, uint32_t size) : heapSize_(size), memoryManager_(size) {
 	itemSize_ = device->GetDescriptorHandleIncrementSize(HeapType);
 
 	descriptorHeap_ = CreateDescriptorHeap(device, HeapType, heapSize_, true);
@@ -92,8 +95,11 @@ inline  DescHeap<HeapType>::Handle DescHeap<HeapType>::GetHandle(const uint32_t 
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 inline DescHeap<HeapType>::HeapRange DescHeap<HeapType>::RequestHeapAllocation(uint32_t width) {
-	HeapRange output{ usingIndex_, width, this };
-	usingIndex_ += width;
+	auto memoryRange = memoryManager_.RequestRange(width);
+	if (not memoryRange) {
+		return HeapRange{};
+	}
+	HeapRange output{ memoryRange.offset, width, this };
 	return output;
 }
 
