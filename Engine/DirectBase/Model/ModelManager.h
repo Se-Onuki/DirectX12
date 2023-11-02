@@ -27,8 +27,12 @@ public:
 	/// @brief モデルデータの取得
 	/// @param key 文字列キー
 	/// @return モデルデータ
-	Model *const GetModel(const std::string &key) {
-		return models_[key].get();
+	Model *const GetModel(const std::string &key) const {
+		auto item = models_.find(key);
+		if (item != models_.end()) {
+			return item->second.get();
+		}
+		return nullptr;
 	}
 
 	/// @brief モデルの破棄

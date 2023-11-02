@@ -72,15 +72,13 @@ void BaseTransform<IsBufferActive>::TransferMatrix() {
 }
 
 template <bool IsBufferActive>
-void BaseTransform<IsBufferActive>::UpdateMatrix()
-{
+void BaseTransform<IsBufferActive>::UpdateMatrix() {
 	CalcMatrix();
 	TransferMatrix();
 }
 
 template <bool IsBufferActive>
-bool BaseTransform<IsBufferActive>::ImGuiWidget()
-{
+bool BaseTransform<IsBufferActive>::ImGuiWidget() {
 	if (ImGui::TreeNode("Transform")) {
 		bool isUsing = false;
 

@@ -279,6 +279,14 @@ const Vector3 Collision::HitPoint(const LineBase &line, const Plane &plane) {
 	return line.GetProgress(t);
 }
 
+Vector3 AABB::GetCentor() const {
+	return SoLib::Lerp(min, max, 0.5f);
+}
+
+Vector3 AABB::GetRadius() const {
+	return (max - min) / 2.f;
+}
+
 void AABB::ImGuiDebug(const std::string &group) {
 	if (ImGui::TreeNode(group.c_str())) {
 
@@ -290,7 +298,7 @@ void AABB::ImGuiDebug(const std::string &group) {
 	}
 }
 
-void AABB::Swaping() {
+AABB &AABB::Swaping() {
 	if (min.x > max.x) {
 		std::swap(min.x, max.x);
 	}
@@ -300,6 +308,7 @@ void AABB::Swaping() {
 	if (min.z > max.z) {
 		std::swap(min.z, max.z);
 	}
+	return *this;
 }
 
 void Sphere::ImGuiDebug(const std::string &group) {

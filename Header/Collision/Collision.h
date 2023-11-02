@@ -134,8 +134,11 @@ struct AABB {
 	Vector3 min;
 	Vector3 max;
 
+	Vector3 GetCentor() const;
+	Vector3 GetRadius() const;
+
 	void ImGuiDebug(const std::string &group);
-	void Swaping();
+	AABB &Swaping();
 };
 
 struct Ball {
