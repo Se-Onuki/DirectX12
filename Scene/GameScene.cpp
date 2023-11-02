@@ -92,7 +92,10 @@ void GameScene::Draw()
 
 	light_->SetLight(commandList);
 
+	Model::SetPipelineType(Model::PipelineType::kModel);
+
 	model_->Draw(transform_, camera_);
+	Model::SetPipelineType(Model::PipelineType::kParticle);
 
 	// モデルの描画
 	model_->Draw(instanceTransform_, camera_);

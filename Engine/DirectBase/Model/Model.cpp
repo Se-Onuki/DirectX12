@@ -20,6 +20,7 @@ std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u>, 2u> Mode
 std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
 std::array<std::array<PipelineState, 6u>, 2u> Model::graphicsPipelineStateClass_ = {};
 std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
+Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 
 void Model::StaticInit() {
 	CreatePipeLine();
@@ -563,11 +564,20 @@ void Model::ImGuiWidget()
 	}
 }
 
+void Model::SetPipelineType(const PipelineType pipelineType) {
+	// 設定されてるシグネチャとが一致していない場合
+	if (sPipelineType_ != pipelineType) {
+		sPipelineType_ = pipelineType;
+
+		commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(pipelineType)].Get());
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(pipelineType)][0].Get());
+		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
+		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+}
+
 void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const {
-	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get());
-	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][0].Get());
-	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());
@@ -579,10 +589,7 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 }
 
 void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const {
-	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get());
-	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][0].Get());
-	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	assert(sPipelineType_ == PipelineType::kParticle && "設定されたシグネチャがkParticleではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);

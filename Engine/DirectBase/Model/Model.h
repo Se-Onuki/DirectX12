@@ -32,8 +32,7 @@ class ViewProjection;
 struct Material;
 struct Mesh;
 
-class Model
-{
+class Model {
 public:
 	enum class PipelineType : uint32_t {
 		kModel,		// モデル用
@@ -63,6 +62,7 @@ private:
 	// モデル用パイプライン
 	static std::array<std::array<ComPtr<ID3D12PipelineState>, 6u>, 2u> graphicsPipelineState_;
 	static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
+	static PipelineType sPipelineType_;
 
 	static std::array<std::array<PipelineState, 6u>, 2u> graphicsPipelineStateClass_;
 	static std::array<RootSignature, 2u> rootSignatureClass_;
@@ -90,6 +90,8 @@ public:
 	static const char *const defaultDirectory;
 
 	void ImGuiWidget();
+
+	static void SetPipelineType(const PipelineType pipelineType);
 
 	[[nodiscard]] static Model *const CreateSphere();
 
@@ -273,5 +275,5 @@ public:
 
 template<typename T>
 inline void Model::Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const {
-	Draw(structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), camera);
+	Model::Draw(structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), camera);
 }
