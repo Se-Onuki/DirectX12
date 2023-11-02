@@ -36,6 +36,9 @@ namespace Collision {
 
 	const bool IsHitAxis(const Vector3 &axis, const Vector3 vertexA[8], const Vector3 vertexB[8]);
 
+	const float HitProgress(const LineBase &line, const Plane &plane);
+	const float HitProgress(const LineBase &line, const AABB &aabb);
+
 	const Vector3 HitPoint(const LineBase &line, const Plane &plane);
 
 	// const bool
@@ -135,6 +138,7 @@ struct AABB {
 	Vector3 max;
 
 	const AABB &AddPos(const Vector3 &vec);
+	AABB Extend(const Vector3 &vec) const;
 
 	Vector3 GetCentor() const;
 	Vector3 GetRadius() const;
@@ -190,3 +194,7 @@ struct Capsule {
 
 	Vector3 GetHitPoint(const Plane &plane);
 };
+
+/// @brief AABB同士の結合
+/// @return お互いの両端を取ったAABB
+AABB operator+(const AABB &first, const AABB &second);

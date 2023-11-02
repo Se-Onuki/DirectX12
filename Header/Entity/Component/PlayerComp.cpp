@@ -9,20 +9,23 @@ void PlayerComp::Init() {
 }
 
 void PlayerComp::Update() {
-	
+
 
 	static const auto *const keyBoard = input_->GetDirectInput();
 	static auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	if (keyBoard) {
-		if (keyBoard->IsPress(DIK_SPACE)) {
-			rigidbody->ApplyContinuousForce(Vector3{ 0.f,1.f,0.f });
+		if (keyBoard->IsTrigger(DIK_SPACE)) {
+			rigidbody->ApplyInstantForce(Vector3{ 0.f,20.f,0.f });
 		}
 	}
+	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
 	// 前の座標からどれだけ動いたか
 	Vector3 diff = object_->transform_.translate - rigidbody->GetBeforePos();
 
-	AABB beforeCollider = collider_.AddPos(rigidbody->GetBeforePos());
+	AABB beforeCollider = collider_;
+	beforeCollider.AddPos(rigidbody->GetBeforePos());
+	const AABB extendCollider = beforeCollider.Extend(diff);
 
 	const auto &vertexPos = beforeCollider.GetVertex();
 
@@ -35,17 +38,28 @@ void PlayerComp::Update() {
 
 	static auto *const levelManager = LevelElementManager::GetInstance();
 
+	float t = 1.f;
+
 	for (auto &[key, collider] : levelManager->blockCollider_) {
 		for (auto &box : collider.GetCollider()) {
+			// 拡張した箱が当たってたら詳細な判定
+			if (Collision::IsHit(extendCollider, box)) {
+				for (auto &line : vertexLine) {
+					if (Collision::IsHit(box, line)) {
 
-			// Todo : 現在地と終端地を含むSphereを使って簡易化する
-			for (auto &line : vertexLine) {
-				if (Collision::IsHit(box, line)) {
+						float value = Collision::HitProgress(line, box);
 
+						if (value < t) {
+							t = value;
+						}
+					}
 				}
 			}
 		}
 	}
+
+	object_->transform_.translate = rigidbody->GetBeforePos() + diff * t;
+
 }
 
 void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {

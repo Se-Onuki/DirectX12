@@ -271,10 +271,43 @@ Collision::IsHitAxis(const Vector3 &axis, const Vector3 vertexA[8], const Vector
 	return diffAll <= diffA + diffB;
 }
 
+const float Collision::HitProgress(const LineBase &line, const Plane &plane) {
+	const float dot = plane.normal * line.diff;
+	if (dot == 0.f) {
+		return 1.f; // 平行
+	}
+	return (plane.distance - (line.origin * plane.normal)) / dot;
+}
+
+const float Collision::HitProgress(const LineBase &line, const AABB &aabb) {
+
+	const Vector3 tMinVec{
+		{(aabb.min.x - line.origin.x) / line.diff.x},
+		{(aabb.min.y - line.origin.y) / line.diff.y},
+		{(aabb.min.z - line.origin.z) / line.diff.z} };
+	const Vector3 tMaxVec{
+		{(aabb.max.x - line.origin.x) / line.diff.x},
+		{(aabb.max.y - line.origin.y) / line.diff.y},
+		{(aabb.max.z - line.origin.z) / line.diff.z} };
+
+	const Vector3 tNear{
+		min(tMinVec.x, tMaxVec.x), min(tMinVec.y, tMaxVec.y), min(tMinVec.z, tMaxVec.z) };
+	const Vector3 tFar{
+		max(tMinVec.x, tMaxVec.x), max(tMinVec.y, tMaxVec.y), max(tMinVec.z, tMaxVec.z) };
+
+	const float tMin{ max(max(tNear.x, tNear.y), tNear.z) };
+	const float tMax{ min(min(tFar.x, tFar.y), tFar.z) };
+	if (tMin > 1.f && tMin != line.Clamp(tMin))
+		return 1.f;
+	if (tMax < 0.f && tMax != line.Clamp(tMax))
+		return 1.f;
+	return min(line.Clamp(tMin), line.Clamp(tMax));
+}
 const Vector3 Collision::HitPoint(const LineBase &line, const Plane &plane) {
 	const float dot = plane.normal * line.diff;
-	if (dot == 0.f)
+	if (dot == 0.f) {
 		return Vector3::zero; // 平行
+	}
 	const float t = (plane.distance - (line.origin * plane.normal)) / dot;
 	return line.GetProgress(t);
 }
@@ -285,6 +318,27 @@ const AABB &AABB::AddPos(const Vector3 &vec) {
 	max += vec;
 
 	return *this;
+}
+
+AABB AABB::Extend(const Vector3 &vec) const {
+
+	AABB result = *this;
+	result.Swaping();
+
+	for (uint32_t i = 0u; i < 3u; ++i) {
+		// もし正の数なら
+		if ((&vec.x)[i] > 0.f) {
+			// maxを加算
+			(&result.max.x)[i] += (&vec.x)[i];
+		}
+		// もし負数なら
+		else {
+			// minに加算
+			(&result.min.x)[i] += (&vec.x)[i];
+		}
+	}
+
+	return result;
 }
 
 Vector3 AABB::GetCentor() const {
@@ -442,4 +496,15 @@ Vector3 Capsule::GetHitPoint(const Plane &plane) {
 	// 戻す量
 	const Vector3 back = invDiff * (radius / dot);
 	return Collision::HitPoint(segment, plane) + back;
+}
+
+AABB operator+(const AABB &first, const AABB &second) {
+	AABB mergedAABB;
+	mergedAABB.min.x = min(first.min.x, second.min.x);
+	mergedAABB.min.y = min(first.min.y, second.min.y);
+	mergedAABB.min.z = min(first.min.z, second.min.z);
+	mergedAABB.max.x = max(first.max.x, second.max.x);
+	mergedAABB.max.y = max(first.max.y, second.max.y);
+	mergedAABB.max.z = max(first.max.z, second.max.z);
+	return mergedAABB;
 }
