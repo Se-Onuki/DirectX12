@@ -91,6 +91,8 @@ class Entity {
 	// Object *parent_ = nullptr;
 	// std::list<std::unique_ptr<Object>> children_;
 
+	float deltaTime_{};
+
 public:
 	// オブジェクトのSRT
 	Transform transform_;
@@ -101,7 +103,7 @@ public:
 
 	virtual void Init();
 	virtual void Reset();
-	virtual void Update();
+	virtual void Update(float deltaTime);
 	virtual void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
 
 	/*template<typename T>
@@ -145,6 +147,8 @@ public:
 	virtual void OnCollision(Entity *const other);
 
 	void ImGuiWidget();
+
+	float GetDeltaTime() const { return deltaTime_; }
 
 private:
 

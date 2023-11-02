@@ -9,6 +9,7 @@
 #include "../Header/Entity/Component/ModelComp.h"
 #include "../Utils/SoLib/SoLib_ImGui.h"
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
+#include "../Header/Entity/Component/Rigidbody.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -35,6 +36,10 @@ void GameScene::OnEnter() {
 
 	levelManager.Init();
 	levelManager.AddBlock(0u, AABB{ .min{-3.f,-1.f,-3.f}, .max{3.f,1.f,3.f} }.AddPos({ 0.f,3.f,0.f }));
+	levelManager.AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
+
+	player_ = std::make_unique<Entity>();
+	player_->AddComponent<Rigidbody>();
 
 	//for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 	//	transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);

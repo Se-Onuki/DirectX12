@@ -41,6 +41,7 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
+	std::unique_ptr<Entity> player_;
 	LevelElementManager levelManager{};
 
 	//std::array<BaseTransform<false>, 5u> transformArray_;

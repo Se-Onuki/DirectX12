@@ -12,7 +12,9 @@ void Entity::Reset() {
 	}
 }
 
-void Entity::Update() {
+void Entity::Update(float deltaTime) {
+	deltaTime_ = deltaTime;
+
 	auto *const modelComp = GetComponent<ModelComp>();
 	for (auto &component : componentMap_) {
 		if (modelComp != component.second.get())
