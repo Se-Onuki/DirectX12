@@ -267,6 +267,9 @@
     <ClCompile Include="Engine\DirectBase\Base\MemoryUsageManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Object\LevelElementManager.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -484,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Base\MemoryUsageManager.h">
       <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\LevelElementManager.h">
+      <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
