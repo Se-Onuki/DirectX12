@@ -47,9 +47,9 @@ public:
 	/// @param transform ブロックのSRT
 	void AddBlock(const uint32_t key, const AABB &box);
 
-private:
 
 	std::unordered_map<uint32_t, Platform> blockCollider_;
+private:
 
 };
 //

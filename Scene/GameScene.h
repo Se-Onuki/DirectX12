@@ -10,6 +10,7 @@
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
+#include "../Header/Object/LevelElementManager.h"
 
 struct Particle {
 	TransformMatrix transform;
@@ -40,8 +41,10 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	std::array<BaseTransform<false>, 5u> transformArray_;
-	std::array<CBuffer<Vector4, false>, 5u> colorArray_;
+	LevelElementManager levelManager{};
 
-	StructuredBuffer<Particle> instanceTransform_{ 5u };
+	//std::array<BaseTransform<false>, 5u> transformArray_;
+	//std::array<CBuffer<Vector4, false>, 5u> colorArray_;
+
+	//StructuredBuffer<Particle> instanceTransform_{ 5u };
 };

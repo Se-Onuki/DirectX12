@@ -80,4 +80,9 @@ namespace Angle {
 	float Mod(float radian);
 	Vector3 Mod(const Vector3 &euler);
 
+
 } // namespace Angle
+
+inline float operator""_deg(long double val) {
+	return static_cast<float>(val) * Angle::Dig2Rad;
+}

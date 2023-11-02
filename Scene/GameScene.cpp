@@ -24,6 +24,7 @@ void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
 	ModelManager::GetInstance()->CreateDefaultModel();
+	ModelManager::GetInstance()->AddModel("Box", Model::LoadObjFile("", "box.obj"));
 
 	model_ = ModelManager::GetInstance()->GetModel("Plane");
 	transform_.UpdateMatrix();
@@ -32,11 +33,14 @@ void GameScene::OnEnter() {
 	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });
 
-	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-		transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
-		colorArray_[i].SetMapAddress(&instanceTransform_[i].color);
-		colorArray_[i] = Vector4{ 1.f,1.f,1.f,1.f };
-	}
+	levelManager.Init();
+	levelManager.AddBlock(0u, AABB{ .min{-3.f,-1.f,-3.f}, .max{3.f,1.f,3.f} }.AddPos({ 0.f,3.f,0.f }));
+
+	//for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
+	//	transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
+	//	colorArray_[i].SetMapAddress(&instanceTransform_[i].color);
+	//	colorArray_[i] = Vector4{ 1.f,1.f,1.f,1.f };
+	//}
 }
 
 void GameScene::OnExit() {}
@@ -50,17 +54,30 @@ void GameScene::Update() {
 
 	ImGui::Begin("Sphere");
 	model_->ImGuiWidget();
-	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
+	/*for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 		if (ImGui::TreeNode(("Particle" + std::to_string(i)).c_str())) {
 			transformArray_[i].ImGuiWidget();
 			ImGui::ColorEdit4("Color", &colorArray_[i]->x);
 			ImGui::TreePop();
 		}
 		transformArray_[i].UpdateMatrix();
-	}
+	}*/
 	ImGui::End();
 
 	TextureManager::GetInstance()->ImGuiWindow();
+
+	levelManager.CalcCollision(0u);
+
+	ImGui::Begin("LevelManager");
+	if (ImGui::Button("Left")) {
+		levelManager.blockCollider_[0u].rotate_.z += 90._deg;
+	}
+	if (ImGui::Button("Right")) {
+		levelManager.blockCollider_[0u].rotate_.z += -90._deg;
+	}
+	levelManager.blockCollider_[0u].rotate_.z = Angle::Mod(levelManager.blockCollider_[0u].rotate_.z);
+
+	ImGui::End();
 
 	light_->ImGuiWidget();
 
@@ -95,10 +112,12 @@ void GameScene::Draw()
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
 	model_->Draw(transform_, camera_);
-	Model::SetPipelineType(Model::PipelineType::kParticle);
+	levelManager.Draw(camera_);
+
+	//Model::SetPipelineType(Model::PipelineType::kParticle);
 
 	// モデルの描画
-	model_->Draw(instanceTransform_, camera_);
+	// model_->Draw(instanceTransform_, camera_);
 
 	Model::EndDraw();
 

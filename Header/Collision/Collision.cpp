@@ -279,6 +279,14 @@ const Vector3 Collision::HitPoint(const LineBase &line, const Plane &plane) {
 	return line.GetProgress(t);
 }
 
+const AABB &AABB::AddPos(const Vector3 &vec) {
+
+	min += vec;
+	max += vec;
+
+	return *this;
+}
+
 Vector3 AABB::GetCentor() const {
 	return SoLib::Lerp(min, max, 0.5f);
 }
@@ -298,7 +306,7 @@ void AABB::ImGuiDebug(const std::string &group) {
 	}
 }
 
-AABB &AABB::Swaping() {
+const AABB &AABB::Swaping() {
 	if (min.x > max.x) {
 		std::swap(min.x, max.x);
 	}
