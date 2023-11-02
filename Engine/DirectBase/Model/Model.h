@@ -24,6 +24,9 @@
 #include "../Base/RootSignature.h"
 #include "../Base/PipelineState.h"
 
+#include "../Base/StructBuffer.h"
+#include "../Descriptor/DescriptorManager.h"
+
 class ViewProjection;
 
 struct Material;
@@ -79,6 +82,8 @@ public:
 
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const;
+	template <typename T>
+	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const;
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
@@ -265,3 +270,8 @@ public:
 	void LoadJson(const std::string &file_path);
 
 };
+
+template<typename T>
+inline void Model::Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const {
+	Draw(structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), camera);
+}
