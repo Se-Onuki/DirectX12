@@ -16,8 +16,8 @@ void ImGuiManager::StartFlame() {
 
 void ImGuiManager::StaticInit(const HWND &hwnd, ID3D12Device *const device, uint32_t backBufferCount, DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *const srvHeap) {
 
-	const auto &heapRange = srvHeap->RequestHeapAllocation(1u);
-	const auto &heapHandle = heapRange.GetHandle(0u);
+	GetInstance()->srvHeapRange_ = srvHeap->RequestHeapAllocation(1u);
+	const auto &heapHandle = GetInstance()->srvHeapRange_.GetHandle(0u);
 
 	//ImGuiの初期化
 	IMGUI_CHECKVERSION();

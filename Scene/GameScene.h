@@ -14,6 +14,7 @@
 struct Particle {
 	TransformMatrix transform;
 	Vector4 color;
+
 };
 
 class GameScene : public IScene {
@@ -39,11 +40,8 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE instanceSrvHandleCPU_;
-	D3D12_GPU_DESCRIPTOR_HANDLE instanceSrvHandleGPU_;
-
 	std::array<BaseTransform<false>, 5u> transformArray_;
 	std::array<CBuffer<Vector4, false>, 5u> colorArray_;
 
-	ArrayBuffer<Particle> instanceTransform_{ 5u };
+	StructuredBuffer<Particle> instanceTransform_{ 5u };
 };

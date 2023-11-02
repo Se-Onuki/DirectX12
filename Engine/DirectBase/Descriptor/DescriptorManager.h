@@ -23,11 +23,10 @@ public:
 	/// @brief デスクリプタヒープの使用領域
 	struct HeapRange {
 		HeapRange() = default;
-		HeapRange(uint32_t offset, uint32_t width, DescHeap *descHeap) : offset_(offset), width_(width), descHeap_(descHeap) {}
-		//HeapRange(const MemoryUsageManager::MemoryRange &memoryRange, DescHeap *descHeap) : offset_(memoryRange.offset), width_(memoryRange.length), descHeap_(descHeap), memoryRange_(memoryRange) {}
-		uint32_t offset_;	// 始点
-		uint32_t width_;	// 使用範囲
-		MemoryUsageManager::MemoryRange memoryRange_;
+		//HeapRange(uint32_t offset, uint32_t width, DescHeap *descHeap) : offset_(offset), width_(width), descHeap_(descHeap) {}
+		HeapRange(std::shared_ptr<MemoryUsageManager::MemoryRange> &memoryRange, DescHeap *descHeap) : memoryRange_(memoryRange), descHeap_(descHeap) {}
+		~HeapRange();
+		std::shared_ptr<MemoryUsageManager::MemoryRange> memoryRange_;
 
 		/// @brief デスクリプタハンドルを取得する
 		/// @param index 添え字
@@ -95,20 +94,23 @@ inline  DescHeap<HeapType>::Handle DescHeap<HeapType>::GetHandle(const uint32_t 
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 inline DescHeap<HeapType>::HeapRange DescHeap<HeapType>::RequestHeapAllocation(uint32_t width) {
-	auto memoryRange = memoryManager_.RequestRange(width);
+	auto memoryRange{ memoryManager_.RequestRange(width) };
 	if (not memoryRange) {
 		return HeapRange{};
 	}
-	HeapRange output{ memoryRange.offset, width, this };
+	HeapRange output{ memoryRange, this };
 	return output;
 }
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 inline DescHeap<HeapType>::Handle DescHeap<HeapType>::HeapRange::GetHandle(const uint32_t index) const {
-	assert(width_ > index && "与えられた添え字が、許可された範囲をオーバーしました");
-	return descHeap_->GetHandle(offset_, index);
+	assert(memoryRange_->length > index && "与えられた添え字が、許可された範囲をオーバーしました");
+	return descHeap_->GetHandle(memoryRange_->offset, index);
 }
 
+template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
+inline DescHeap<HeapType>::HeapRange::~HeapRange() {
+}
 //template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 //class DescriptorManager {
 //	DescriptorManager() = default;

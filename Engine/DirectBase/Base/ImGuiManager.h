@@ -37,4 +37,7 @@ public:
 	static void Draw(ID3D12GraphicsCommandList *const commandList);
 
 	static void Finalize();
+
+private:
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange srvHeapRange_;
 };

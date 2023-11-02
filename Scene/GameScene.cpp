@@ -32,7 +32,7 @@ void GameScene::OnEnter() {
 	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });
 
-	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+	/*auto *const device = DirectXCommon::GetInstance()->GetDevice();
 	auto *const srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
 	const auto &heapRange = srvHeap->RequestHeapAllocation(1u);
@@ -40,7 +40,7 @@ void GameScene::OnEnter() {
 
 	instanceSrvHandleCPU_ = heapHandle.cpuHandle_;
 	instanceSrvHandleGPU_ = heapHandle.gpuHandle_;
-	device->CreateShaderResourceView(instanceTransform_.GetResources(), &instanceTransform_.GetDesc(), instanceSrvHandleCPU_);
+	device->CreateShaderResourceView(instanceTransform_.GetResources(), &instanceTransform_.GetDesc(), instanceSrvHandleCPU_);*/
 
 	for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 		transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
@@ -105,7 +105,7 @@ void GameScene::Draw()
 	model_->Draw(transform_, camera_);
 
 	// モデルの描画
-	model_->Draw(instanceSrvHandleGPU_, instanceTransform_.size(), camera_);
+	model_->Draw(instanceTransform_.GetHeapRange().GetHandle(0u).gpuHandle_, instanceTransform_.size(), camera_);
 
 	Model::EndDraw();
 

@@ -146,7 +146,7 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
 	texture.name = file_name;
-	const auto &heapHandle = srvHeap_->GetHandle(heapRange_.offset_, handle);
+	const auto &heapHandle = srvHeap_->GetHandle(heapRange_.memoryRange_->offset, handle);
 	texture.cpuHandleSRV = heapHandle.cpuHandle_;
 	texture.gpuHandleSRV = heapHandle.gpuHandle_;
 

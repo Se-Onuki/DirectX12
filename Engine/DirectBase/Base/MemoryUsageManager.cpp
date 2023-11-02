@@ -1,6 +1,6 @@
 #include "MemoryUsageManager.h"
 
-MemoryUsageManager::MemoryRange MemoryUsageManager::RequestRange(uint32_t length) {
+std::shared_ptr<MemoryUsageManager::MemoryRange> MemoryUsageManager::RequestRange(uint32_t length) {
 	for (uint32_t i = 0; i < size_ - length + 1; ++i) {
 		if (dataBitset_[i] == false) {
 			bool isFree = true;
@@ -15,12 +15,12 @@ MemoryUsageManager::MemoryRange MemoryUsageManager::RequestRange(uint32_t length
 				for (uint32_t j = i; j < i + length; ++j) {
 					dataBitset_[j] = true;
 				}
-				return MemoryRange{ .offset = i, .length = length, .pManager_ = this };
+				return std::make_shared<MemoryRange>(i, length, this);
 			}
 		}
 	}
 	// 連続した未使用領域が見つからない場合、無効なデータを返す。
-	return MemoryRange::Null();
+	return std::make_shared<MemoryRange>(MemoryRange::Null());
 }
 
 bool MemoryUsageManager::Free(const MemoryRange &memory) {
@@ -34,4 +34,9 @@ bool MemoryUsageManager::Free(const MemoryRange &memory) {
 		dataBitset_[memory.offset + i] = false;
 	}
 	return true;
+}
+
+MemoryUsageManager::MemoryRange::~MemoryRange() {
+	if (not *this) { return; }
+	this->pManager_->Free(*this);
 }

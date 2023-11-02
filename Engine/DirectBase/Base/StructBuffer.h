@@ -180,3 +180,62 @@ inline ArrayBuffer<T>::~ArrayBuffer() {
 
 
 #pragma endregion
+
+template<SoLib::IsNotPointer T>
+class StructuredBuffer {
+public:
+	StructuredBuffer(uint32_t size = 0u);
+	StructuredBuffer &operator= (const StructuredBuffer &) = default;
+	~StructuredBuffer() = default;
+public:
+
+	inline ID3D12Resource *const GetResources() noexcept { return arrayBuffer_.GetResources(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return arrayBuffer_.GetResources(); }
+
+	inline const D3D12_SHADER_RESOURCE_VIEW_DESC &GetDesc() const noexcept { return arrayBuffer_.GetDesc(); }
+
+	inline operator bool() const noexcept { return static_cast<bool>(arrayBuffer_); }		// 値が存在するか
+
+	inline operator T *() noexcept { return arrayBuffer_.data(); }			// 参照
+	inline operator const T *() const noexcept { return arrayBuffer_.data(); }	// const参照
+
+	inline T &operator[](uint32_t index) noexcept { return arrayBuffer_[index]; }
+	inline const T &operator[](uint32_t index) const noexcept { return arrayBuffer_[index]; }
+
+	inline T *const operator->() noexcept { return arrayBuffer_.data(); }					// dataのメンバへのアクセス
+	inline const T *const operator->() const noexcept { return arrayBuffer_.data(); }	// dataのメンバへのアクセス(const)
+
+	uint32_t size() const noexcept { return arrayBuffer_.size(); }
+	T *const data() const noexcept { return arrayBuffer_.data(); }
+	T *const begin() const noexcept { return &arrayBuffer_.begin(); }
+	T *const end() const noexcept { return &arrayBuffer_.end(); }
+
+
+	template <SoLib::IsContainer U>
+	inline StructuredBuffer &operator=(const U &other);	// コピー演算子
+
+	const auto &GetHeapRange() const { return heapRange_; }
+
+
+private:
+	ArrayBuffer<T> arrayBuffer_;
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
+
+};
+
+template<SoLib::IsNotPointer T>
+inline StructuredBuffer<T>::StructuredBuffer(uint32_t size) {
+	arrayBuffer_.CreateBuffer(size);
+
+	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+	auto *const srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
+
+	heapRange_ = srvHeap->RequestHeapAllocation(1u);
+	device->CreateShaderResourceView(GetResources(), &GetDesc(), heapRange_.GetHandle(0u).cpuHandle_);
+}
+
+template<SoLib::IsNotPointer T>
+template<SoLib::IsContainer U>
+inline StructuredBuffer<T> &StructuredBuffer<T>::operator=(const U &other) {
+	arrayBuffer_ = other;
+}
