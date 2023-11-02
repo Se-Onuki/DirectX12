@@ -36,9 +36,13 @@ public:
 	bool hasCollider_ = false;
 	float radius_ = 1.f;
 
+	const Vector3 &GetBeforePos() const { return beforePos_; }
+
 private:
 	Vector3 velocity_{};
 	Vector3 acceleration_{};
+
+	Vector3 beforePos_;
 
 	Vector3 maxSpeed_{ -1.f,-1.f,-1.f };	// 負数である場合は処理しない
 

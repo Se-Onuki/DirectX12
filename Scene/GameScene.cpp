@@ -10,6 +10,7 @@
 #include "../Utils/SoLib/SoLib_ImGui.h"
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
 #include "../Header/Entity/Component/Rigidbody.h"
+#include "../Header/Entity/Component/PlayerComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -34,12 +35,27 @@ void GameScene::OnEnter() {
 	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });
 
-	levelManager.Init();
-	levelManager.AddBlock(0u, AABB{ .min{-3.f,-1.f,-3.f}, .max{3.f,1.f,3.f} }.AddPos({ 0.f,3.f,0.f }));
-	levelManager.AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
+	levelManager = LevelElementManager::GetInstance();
+
+	levelManager->Init();
+	levelManager->AddBlock(0u, AABB{ .min{-3.f,-1.f,-3.f}, .max{3.f,1.f,3.f} }.AddPos({ 0.f,3.f,0.f }));
+	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
+
+#pragma region Player
+
+	Model *const boxModel = ModelManager::GetInstance()->GetModel("Box");
 
 	player_ = std::make_unique<Entity>();
+	//auto*const rigidbody =
 	player_->AddComponent<Rigidbody>();
+	auto *const modelComp =
+		player_->AddComponent<ModelComp>();
+	modelComp->AddBone("Body", boxModel);
+
+	player_->AddComponent<PlayerComp>();
+
+
+#pragma endregion
 
 	//for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 	//	transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
@@ -51,6 +67,8 @@ void GameScene::OnEnter() {
 void GameScene::OnExit() {}
 
 void GameScene::Update() {
+
+	const float deltaTime = ImGui::GetIO().DeltaTime;
 
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
@@ -71,18 +89,20 @@ void GameScene::Update() {
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
-	levelManager.CalcCollision(0u);
-
 	ImGui::Begin("LevelManager");
 	if (ImGui::Button("Left")) {
-		levelManager.blockCollider_[0u].rotate_.z += 90._deg;
+		levelManager->blockCollider_[0u].rotate_.z += 90._deg;
 	}
 	if (ImGui::Button("Right")) {
-		levelManager.blockCollider_[0u].rotate_.z += -90._deg;
+		levelManager->blockCollider_[0u].rotate_.z += -90._deg;
 	}
-	levelManager.blockCollider_[0u].rotate_.z = Angle::Mod(levelManager.blockCollider_[0u].rotate_.z);
+	levelManager->blockCollider_[0u].rotate_.z = Angle::Mod(levelManager->blockCollider_[0u].rotate_.z);
 
 	ImGui::End();
+
+	levelManager->CalcCollision(0u);
+
+	player_->Update(deltaTime);
 
 	light_->ImGuiWidget();
 
@@ -117,7 +137,9 @@ void GameScene::Draw()
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
 	model_->Draw(transform_, camera_);
-	levelManager.Draw(camera_);
+	levelManager->Draw(camera_);
+
+	player_->Draw(camera_);
 
 	//Model::SetPipelineType(Model::PipelineType::kParticle);
 

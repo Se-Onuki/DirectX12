@@ -141,6 +141,8 @@ struct AABB {
 
 	void ImGuiDebug(const std::string &group);
 	const AABB &Swaping();
+
+	std::array<Vector3, 8u> GetVertex() const;
 };
 
 struct Ball {

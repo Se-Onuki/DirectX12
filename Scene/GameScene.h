@@ -42,7 +42,7 @@ private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	std::unique_ptr<Entity> player_;
-	LevelElementManager levelManager{};
+	LevelElementManager* levelManager{};
 
 	//std::array<BaseTransform<false>, 5u> transformArray_;
 	//std::array<CBuffer<Vector4, false>, 5u> colorArray_;

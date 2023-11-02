@@ -6,8 +6,11 @@
 #include "../Collision/Collision.h"
 #include "../../Engine/DirectBase/Model/Model.h"
 
-class LevelElementManager
-{
+class LevelElementManager {
+	LevelElementManager() = default;
+	LevelElementManager(const LevelElementManager &) = delete;
+	LevelElementManager &operator=(const LevelElementManager &) = delete;
+	~LevelElementManager() = default;
 public:
 
 	class Platform {
@@ -23,6 +26,8 @@ public:
 
 		void Draw(const Model *const model, const Camera3D &camera) const;
 
+		const auto &GetCollider() const { return collisionBox_; }
+
 	private:
 		std::list<Transform> transform_;
 		std::list<AABB> referenceBox_;
@@ -30,8 +35,11 @@ public:
 	};
 
 public:
-	LevelElementManager() = default;
-	~LevelElementManager() = default;
+
+	static auto *const GetInstance() {
+		static LevelElementManager instance{};
+		return &instance;
+	}
 
 	void Init();
 

@@ -319,6 +319,23 @@ const AABB &AABB::Swaping() {
 	return *this;
 }
 
+std::array<Vector3, 8u> AABB::GetVertex() const {
+	std::array<Vector3, 8u> result{
+
+		// lower
+		Vector3{ min.x, min.y, min.z },
+		Vector3{ min.x, min.y, max.z },
+		Vector3{ max.x, min.y, max.z },
+		Vector3{ max.x, min.y, min.z },
+		// higher
+		Vector3{ min.x, max.y, min.z },
+		Vector3{ min.x, max.y, max.z },
+		Vector3{ max.x, max.y, max.z },
+		Vector3{ max.x, max.y, min.z },
+	};
+	return result;
+}
+
 void Sphere::ImGuiDebug(const std::string &group) {
 
 	if (ImGui::TreeNode(group.c_str())) {

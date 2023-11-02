@@ -129,6 +129,11 @@ void operator>> (const GlobalVariables::Group &group, VariantItem<T> &value) {
 	value = T{};
 }
 
+template<typename T>
+void operator<< (GlobalVariables::Group &group, const VariantItem<T> &value) {
+	group[value.GetKey()] = value.GetItem();
+}
+
 //
 //template<typename T>
 //void operator<< (GlobalVariables::Group &group, VariantItem<T> &value) {

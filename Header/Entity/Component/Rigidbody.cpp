@@ -7,7 +7,7 @@ void Rigidbody::Init() {
 
 void Rigidbody::Update() {
 
-	// const Vector3 beforePos = object_->transform_.translate;
+	beforePos_ = object_->transform_.translate;
 	// const Vector3 &afterPos = object_->transform_.translate;
 
 	velocity_ += acceleration_;

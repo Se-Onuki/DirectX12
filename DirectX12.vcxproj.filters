@@ -270,6 +270,9 @@
     <ClCompile Include="Header\Object\LevelElementManager.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -490,6 +493,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\LevelElementManager.h">
       <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerComp.h">
+      <Filter>Header\Entity\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
