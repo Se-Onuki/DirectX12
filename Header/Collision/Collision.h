@@ -137,7 +137,7 @@ struct AABB {
 	Vector3 min;
 	Vector3 max;
 
-	const AABB &AddPos(const Vector3 &vec);
+	const AABB AddPos(const Vector3 &vec) const;
 	AABB Extend(const Vector3 &vec) const;
 
 	Vector3 GetCentor() const;

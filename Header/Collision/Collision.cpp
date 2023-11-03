@@ -312,12 +312,12 @@ const Vector3 Collision::HitPoint(const LineBase &line, const Plane &plane) {
 	return line.GetProgress(t);
 }
 
-const AABB &AABB::AddPos(const Vector3 &vec) {
+const AABB AABB::AddPos(const Vector3 &vec) const  {
+	AABB result = *this;
+	result.min += vec;
+	result.max += vec;
 
-	min += vec;
-	max += vec;
-
-	return *this;
+	return result;
 }
 
 AABB AABB::Extend(const Vector3 &vec) const {

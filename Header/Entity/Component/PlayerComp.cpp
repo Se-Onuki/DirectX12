@@ -4,15 +4,17 @@
 
 void PlayerComp::Init() {
 	input_ = Input::GetInstance();
-	collider_.min = -Vector3::one;
-	collider_.max = Vector3::one;
+	collider_.min = -Vector3::one *0.5f;
+	collider_.max = Vector3::one * 0.5f;
+	auto *const rigidbody = object_->GetComponent<Rigidbody>();
+	rigidbody->ApplyInstantForce(Vector3{ 0.f,1000000.f,0.f });
 }
 
 void PlayerComp::Update() {
 
 
 	static const auto *const keyBoard = input_->GetDirectInput();
-	static auto *const rigidbody = object_->GetComponent<Rigidbody>();
+	 auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	if (keyBoard) {
 		if (keyBoard->IsTrigger(DIK_SPACE)) {
 			rigidbody->ApplyInstantForce(Vector3{ 0.f,20.f,0.f });
@@ -23,15 +25,14 @@ void PlayerComp::Update() {
 	// 前の座標からどれだけ動いたか
 	Vector3 diff = object_->transform_.translate - rigidbody->GetBeforePos();
 
-	AABB beforeCollider = collider_;
-	beforeCollider.AddPos(rigidbody->GetBeforePos());
+	const AABB beforeCollider = collider_.AddPos(rigidbody->GetBeforePos());
 	const AABB extendCollider = beforeCollider.Extend(diff);
 
 	const auto &vertexPos = beforeCollider.GetVertex();
 
 	std::array<LineBase, 8u> vertexLine;
 	for (uint32_t i = 0u; i < 8u; ++i) {
-		vertexLine[i].lineType = LineBase::LineType::Segment;
+	//	vertexLine[i].lineType = LineBase::LineType::Segment;
 		vertexLine[i].origin = vertexPos[i];
 		vertexLine[i].diff = diff;
 	}
