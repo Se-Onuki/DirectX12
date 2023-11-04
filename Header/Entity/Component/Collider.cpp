@@ -1,5 +1,9 @@
 #include "Collider.h"
 
+void CollisionManager::push_back(const AABB &aabb) {
+	constantBox_.push_back(aabb);
+}
+
 void CollisionManager::ChackAllCollision() {
 
 	ColliderComp *colliderA, *colliderB;

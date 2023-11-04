@@ -20,6 +20,8 @@ struct Capsule;
 
 namespace Collision {
 	const bool IsHit(const LineBase &line, const Plane &plane);
+	inline const bool IsHit(const Plane &plane, const LineBase &line) { return IsHit(line, plane); }
+
 	const bool IsHit(const Sphere &sphereA, const Sphere &sphereB);
 	const bool IsHit(const Sphere &sphere, const Plane &plane);
 	const bool IsHit(const LineBase &line, const Triangle &triangle);

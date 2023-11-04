@@ -11,6 +11,7 @@
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
 #include "../Header/Entity/Component/Rigidbody.h"
 #include "../Header/Entity/Component/PlayerComp.h"
+#include "../Header/Entity/Component/Collider.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -73,6 +74,9 @@ void GameScene::OnExit() {}
 void GameScene::Update() {
 
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+	static auto *const colliderManager = CollisionManager::GetInstance();
+
+	colliderManager->clear();
 
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
@@ -105,6 +109,7 @@ void GameScene::Update() {
 	ImGui::End();
 
 	levelManager->CalcCollision(0u);
+	colliderManager->push_back(levelManager->blockCollider_[0u].GetCollider());
 
 	player_->Update(deltaTime);
 

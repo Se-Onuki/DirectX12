@@ -28,7 +28,6 @@ class ColliderComp : public IComponent {
 
 protected:
 
-
 	Vector3 centor_{};
 	float radius_ = 0.5f;
 
@@ -75,6 +74,7 @@ public:
 
 class CollisionManager {
 	std::list<ColliderComp *> colliderList_;
+	std::list<AABB> constantBox_;
 
 	CollisionManager() = default;
 	CollisionManager(const CollisionManager &) = delete;
@@ -88,6 +88,7 @@ public:
 	}
 	void clear() {
 		colliderList_.clear();
+		constantBox_.clear();
 	}
 
 	void push_back(ColliderComp *collider) { colliderList_.push_back(collider); }
@@ -98,7 +99,34 @@ public:
 			colliderList_.push_back(colliderComp);
 		}
 	}
+	void push_back(const AABB &aabb);
+
+
+	template <SoLib::IsContainer T>
+	void push_back(const T &container);
+
+	template <typename T>
+	void push_back(const T &item);
+
+	const std::list<AABB> &GetBox() const { return constantBox_; }
 
 	void ChackAllCollision();
 	void CheckCollisionPair(ColliderComp *const A, ColliderComp *const B);
 };
+//
+//template<SoLib::IsContainer T, typename>
+//inline void CollisionManager::push_back(const T &container) {
+//	for (auto &item : container) {
+//		push_back(&item);
+//	}
+//}
+
+template<SoLib::IsContainer T>
+inline void CollisionManager::push_back(const T &container) {
+
+	for (auto &item : container) {
+		push_back(item);
+	}
+
+
+}
