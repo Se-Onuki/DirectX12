@@ -145,10 +145,12 @@ struct Vector3 {
 
 	Vector2 ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
 
-	inline operator std::array<float, 3u>() const {
-		std::array<float, 3u> result;
-		std::memcpy(result.data(), &x, sizeof(Vector3));
-		return result;
+	inline operator std::array<float, 3u> &() {
+		return *reinterpret_cast<std::array<float, 3u>*>(this);
+	}
+
+	inline operator const std::array<float, 3u> &() const {
+		return *reinterpret_cast<const std::array<float, 3u>*>(this);
 	}
 
 	float *const begin() { return &x; }

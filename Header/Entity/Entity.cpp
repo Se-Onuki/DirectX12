@@ -52,7 +52,11 @@ void Entity::OnCollision(Entity *const other) {
 }
 
 void Entity::ImGuiWidget() {
+	transform_.ImGuiWidget();
 	for (auto &component : componentMap_) {
 		component.second->ImGuiWidget();
 	}
+}
+
+IComponent::IComponent(Entity *const object) : object_(object), transform_(&static_cast<BaseTransform&>(object->transform_)) {
 }

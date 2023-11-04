@@ -10,7 +10,7 @@ void Rigidbody::Update() {
 
 	static auto *const collisionManager = CollisionManager::GetInstance();
 
-	beforePos_ = object_->transform_.translate;
+	beforePos_ = transform_->translate;
 	// const Vector3 &afterPos = object_->transform_.translate;
 
 	velocity_ += acceleration_;
@@ -29,7 +29,7 @@ void Rigidbody::Update() {
 		}
 	}
 
-	object_->transform_.translate += fixVelocity;
+	transform_->translate += fixVelocity;
 
 	const auto& boxArray = collisionManager->GetBox();
 

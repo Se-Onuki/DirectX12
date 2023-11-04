@@ -41,8 +41,8 @@ void CollisionManager::CheckCollisionPair(ColliderComp *const A, ColliderComp *c
 }
 
 Vector3 ColliderComp::GetGlobalCentor() const {
-	object_->transform_.CalcMatrix();
-	return centor_ * object_->transform_.matWorld_;
+	transform_->CalcMatrix();
+	return centor_ * transform_->matWorld_;
 }
 
 CollisionFilter operator|(CollisionFilter A, CollisionFilter B) {

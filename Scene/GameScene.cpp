@@ -26,20 +26,33 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
-	ModelManager::GetInstance()->CreateDefaultModel();
+	// モデルの読み込み
+	ModelManager::GetInstance()->CreateDefaultModel(); // デフォルトモデルの読み込み
 	ModelManager::GetInstance()->AddModel("Box", Model::LoadObjFile("", "box.obj"));
+	ModelManager::GetInstance()->AddModel("PlayerBody", Model::LoadObjFile("Model/PlayerModel/Body/", "Body.obj")); // プレイヤーの体
+	ModelManager::GetInstance()->AddModel("PlayerEye", Model::LoadObjFile("Model/PlayerModel/Eye/", "Eye.obj")); // プレイヤーの瞳
+	ModelManager::GetInstance()->AddModel("PlayerHelmet", Model::LoadObjFile("Model/PlayerModel/Helmet/", "Helmet.obj")); // プレイヤーのヘルメット
+	ModelManager::GetInstance()->AddModel("PlayerLing", Model::LoadObjFile("Model/PlayerModel/Ling/", "Ling.obj")); // プレイヤーの輪っか
+	ModelManager::GetInstance()->AddModel("PlayerArm_L", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_L.obj")); // プレイヤーの左腕
+	ModelManager::GetInstance()->AddModel("PlayerArm_R", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_R.obj")); // プレイヤーの右腕
+	ModelManager::GetInstance()->AddModel("PlayerFoot_L", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_L.obj")); // プレイヤーの左足
+	ModelManager::GetInstance()->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_R.obj")); // プレイヤーの右足
 
-	/*model_ = ModelManager::GetInstance()->GetModel("Plane");
-	transform_.UpdateMatrix();*/
+	//model_ = ModelManager::GetInstance()->GetModel("Plane");
+
+	//BaseTransform transform;
+	//transform_ = transform;
 	camera_.Init();
 
-	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
-	sprite_->SetScale({ 100.f,100.f });
+	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
+	sprite_->SetScale({ 100.f,100.f });*/
 
 	levelManager = LevelElementManager::GetInstance();
 
 	levelManager->Init();
-	levelManager->AddBlock(0u, AABB{ .min{-3.f,-1.f,-3.f}, .max{3.f,1.f,3.f} }.AddPos({ 0.f,3.f,0.f }));
+	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,1.f,15.f }));
+
+	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,3.f,0.f }));
 	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
 
 	levelManager->blockCollider_[0u].rotate_.z = 180._deg;
@@ -49,7 +62,6 @@ void GameScene::OnEnter() {
 #pragma region Player
 
 	Model *const boxModel = ModelManager::GetInstance()->GetModel("Box");
-
 	player_ = std::make_unique<Entity>();
 	//auto*const rigidbody =
 	player_->AddComponent<Rigidbody>();
@@ -61,6 +73,9 @@ void GameScene::OnEnter() {
 
 
 #pragma endregion
+
+	playerAnim_ = std::make_unique<Entity>();
+	playerAnim_->AddComponent<PlayerAnimComp>();
 
 	//for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 	//	transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
@@ -81,6 +96,7 @@ void GameScene::Update() {
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
 	ImGui::End();
+	camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 	camera_.UpdateMatrix();
 
 	ImGui::Begin("Sphere");
@@ -113,10 +129,17 @@ void GameScene::Update() {
 
 	player_->Update(deltaTime);
 
+	ImGui::Begin("Player");
+	player_->ImGuiWidget();
+	ImGui::End();
+
+	//playerAnim_->Update(deltaTime);
+
 	light_->ImGuiWidget();
 
-	//transform_.ImGuiWidget();
-//	transform_.UpdateMatrix();
+	//transform_->ImGuiWidget();
+	//transform_->UpdateMatrix();
+
 }
 
 void GameScene::Draw()
@@ -145,7 +168,7 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	//	model_->Draw(transform_, camera_);
+	//model_->Draw(transform_, camera_);
 	levelManager->Draw(camera_);
 
 	player_->Draw(camera_);
@@ -154,6 +177,9 @@ void GameScene::Draw()
 
 	// モデルの描画
 	// model_->Draw(instanceTransform_, camera_);
+
+	// 描画
+	//playerAnim_->Draw(camera_);
 
 	Model::EndDraw();
 
@@ -164,7 +190,7 @@ void GameScene::Draw()
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
-	sprite_->Draw();
+	/*sprite_->Draw();*/
 
 	Sprite::EndDraw();
 

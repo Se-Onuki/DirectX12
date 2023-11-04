@@ -16,7 +16,7 @@ public:
 
 	void Draw(const Camera3D &camera) const override;
 
-	VariantItem<float> vJumpPower_{ "power", 10.f };
+	VariantItem<float> vMoveSpeed{ "MoveSpeed", 10.f };
 
 private:
 
