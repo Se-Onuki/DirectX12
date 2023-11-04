@@ -69,7 +69,6 @@ void PlayerComp::Update() {
 		Vector3 velocity = rigidbody->GetVelocity();
 		for (uint32_t i = 0u; i < 3u; ++i) {
 			(&velocity.x)[i] *= 1.f - std::abs((&hitSurfaceNormal.x)[i]);
-
 		}
 		rigidbody->SetVelocity(velocity);
 	}

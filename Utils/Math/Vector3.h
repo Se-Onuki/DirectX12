@@ -3,6 +3,7 @@
 #include "Vector2.h"
 
 #include <cmath>
+#include <array>
 
 struct Matrix4x4;
 
@@ -142,6 +143,8 @@ struct Vector3 {
 	Vector3 Scaling(const Vector3 &other) const;
 
 	Vector2 ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
+
+	inline operator std::array<float, 3u>() const { return std::array<float, 3u>{x,y,z}; }
 
 private:
 };
