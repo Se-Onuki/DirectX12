@@ -99,7 +99,8 @@ public:
 			colliderList_.push_back(colliderComp);
 		}
 	}
-	void push_back(const AABB &aabb);
+	void push_back(const AABB &aabb) { constantBox_.push_back(aabb); }
+
 
 
 	template <SoLib::IsContainer T>
