@@ -36,8 +36,8 @@ void LevelElementManager::Platform::AddBox(const AABB &box) {
 	transform_.emplace_back();
 
 	auto &newTransform = transform_.back();
-	newTransform.translate = box.GetCentor();
-	newTransform.scale = box.GetRadius();
+	newTransform->translate = box.GetCentor();
+	newTransform->scale = box.GetRadius();
 }
 
 void LevelElementManager::Platform::CalcCollision() {
@@ -51,9 +51,9 @@ void LevelElementManager::Platform::CalcCollision() {
 		collisionBox_.push_back(newBox.Swaping());
 
 
-		itTransform->translate = newBox.GetCentor();
-		itTransform->scale = newBox.GetRadius();
-		itTransform->UpdateMatrix();
+		(*itTransform)->translate = newBox.GetCentor();
+		(*itTransform)->scale = newBox.GetRadius();
+		(*itTransform)->UpdateMatrix();
 
 		++itTransform;
 	}

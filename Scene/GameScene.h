@@ -34,7 +34,7 @@ private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 
-//	Model *model_ = nullptr;
+	Model *model_ = nullptr;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 	//Transform transform_;
 	Camera<Render::CameraType::Projecction> camera_;
@@ -44,7 +44,9 @@ private:
 	std::unique_ptr<Entity> player_;
 	LevelElementManager* levelManager{};
 
-	//std::array<BaseTransform<false>, 5u> transformArray_;
+	std::array<BaseTransform, 5u> transformArray_;
+
+	Transform transform_;
 	//std::array<CBuffer<Vector4, false>, 5u> colorArray_;
 
 	//StructuredBuffer<Particle> instanceTransform_{ 5u };

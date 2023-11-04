@@ -40,7 +40,7 @@ class IComponent {
 public:
 	/// @brief 自動的に呼ばれるコンストラクタ
 	/// @param object 紐づけられる実体のアドレス
-	IComponent(Entity *const object) : object_(object) {}
+	IComponent(Entity *const object);
 	virtual ~IComponent() = default;
 
 
@@ -72,6 +72,7 @@ public:
 
 	// 紐づけられた実体
 	Entity *const object_ = nullptr;
+	BaseTransform *const transform_;
 };
 
 class Entity {
@@ -95,7 +96,7 @@ class Entity {
 
 public:
 	// オブジェクトのSRT
-	Transform transform_;
+	BaseTransform transform_;
 
 	Entity() = default;
 	//Object(const Object&) = default;
