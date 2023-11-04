@@ -370,7 +370,7 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 		else if (identifier == "map_Kd") {
 
 			std::string token;
-			Transform uv{};
+			BaseTransform uv{};
 			uv.scale = Vector3::one;
 
 			while (s >> token) {
@@ -580,7 +580,7 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_);
@@ -656,7 +656,7 @@ void Material::CreateBuffer() {
 void Material::ImGuiWidget()
 {
 	if (ImGui::TreeNode(name_.c_str())) {
-		static BaseTransform<false> transform;
+		static BaseTransform transform;
 		transform.Create(materialBuff_->uvTransform);
 
 		if (transform.ImGuiWidget2D()) {
@@ -833,7 +833,7 @@ void MinecraftModel::Bone::Draw(ID3D12GraphicsCommandList *const commandList) {
 	}
 }
 void MinecraftModel::Bone::UpdateTransform() {
-	transform_.UpdateMatrix();
+	transform_->UpdateMatrix();
 	for (auto &child : children_) {
 		child.second.UpdateTransform();
 	}
@@ -842,7 +842,7 @@ void MinecraftModel::Bone::UpdateTransform() {
 void MinecraftModel::Bone::SetParent(Bone *const parent)
 {
 	parent_ = parent;
-	transform_.parent_ = parent->transform_.parent_;
+	transform_->parent_ = parent->transform_->parent_;
 }
 
 void MinecraftModel::Draw(ID3D12GraphicsCommandList *const commandList) {
@@ -892,7 +892,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 			bone.SetParent(&bones_[parentName]);
 		}
 		else {
-			bone.transform_.parent_ = &transformOrigin_;
+			bone.transform_->parent_ = &transformOrigin_;
 		}
 
 		// 座標構築
@@ -903,7 +903,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 			(float)pivotJson.at(1).get<double>(),
 			(float)pivotJson.at(2).get<double>()
 		};
-		bone.transform_.translate = pivot / 16.f;
+		bone.transform_->translate = pivot / 16.f;
 
 		// 回転
 		const auto &rotateJson = boneJson.find("rotation");
@@ -913,10 +913,10 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 				(float)rotateJson->at(1).get<double>(),
 				(float)rotateJson->at(2).get<double>()
 			};
-			bone.transform_.rotate = rotate * Angle::Dig2Rad;
+			bone.transform_->rotate = rotate * Angle::Dig2Rad;
 		}
 		else {
-			bone.transform_.rotate = Vector3::zero;
+			bone.transform_->rotate = Vector3::zero;
 		}
 
 		// キューブ

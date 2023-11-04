@@ -56,3 +56,6 @@ void Entity::ImGuiWidget() {
 		component.second->ImGuiWidget();
 	}
 }
+
+IComponent::IComponent(Entity *const object) : object_(object), transform_(&static_cast<BaseTransform&>(object->transform_)) {
+}

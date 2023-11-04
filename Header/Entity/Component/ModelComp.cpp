@@ -17,9 +17,9 @@ void ModelComp::ModelBone::Init(Model *const model) {
 }
 
 void ModelComp::ModelBone::SetTransform(const Transform &srt) {
-	transform_.scale = srt.scale;
-	transform_.rotate = srt.rotate;
-	transform_.translate = srt.translate;
+	transform_->scale = srt->scale;
+	transform_->rotate = srt->rotate;
+	transform_->translate = srt->translate;
 }
 
 ModelComp::ModelBone *const ModelComp::ModelBone::AddChild(Model *const model) {
@@ -37,12 +37,12 @@ void ModelComp::ModelBone::AddChild(ModelBone *const child) {
 
 void ModelComp::ModelBone::SetParent(ModelBone *const parent) {
 	parent_ = parent;
-	transform_.parent_ = &parent->transform_;
+	transform_->parent_ = &parent->transform_;
 }
 
 void ModelComp::ModelBone::Update() {
 
-	transform_.UpdateMatrix();
+	transform_->UpdateMatrix();
 
 	for (auto &child : children_) {
 		child->Update();
@@ -63,7 +63,7 @@ ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *co
 	auto *const newBone = new ModelBone;
 	newBone->Init(model);
 
-	newBone->transform_.parent_ = &object_->transform_;
+	newBone->transform_->parent_ = static_cast<BaseTransform *>(&object_->transform_);
 
 	newBone->SetTransform(srt);
 

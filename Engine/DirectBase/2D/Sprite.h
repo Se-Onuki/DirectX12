@@ -92,7 +92,7 @@ private:
 private:
 
 	// マッピング無しTransform
-	BaseTransform<false> transform_;
+	BaseTransform transform_;
 
 private:
 

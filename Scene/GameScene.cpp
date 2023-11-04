@@ -37,8 +37,10 @@ void GameScene::OnEnter() {
 	ModelManager::GetInstance()->AddModel("PlayerFoot_L", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_L.obj")); // プレイヤーの左足
 	ModelManager::GetInstance()->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_R.obj")); // プレイヤーの右足
 
-	/*model_ = ModelManager::GetInstance()->GetModel("Plane");
-	transform_.UpdateMatrix();*/
+	//model_ = ModelManager::GetInstance()->GetModel("Plane");
+
+	//BaseTransform transform;
+	//transform_ = transform;
 	camera_.Init();
 
 	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
@@ -124,8 +126,9 @@ void GameScene::Update() {
 
 	light_->ImGuiWidget();
 
-	//transform_.ImGuiWidget();
-//	transform_.UpdateMatrix();
+	//transform_->ImGuiWidget();
+	//transform_->UpdateMatrix();
+
 }
 
 void GameScene::Draw()
@@ -154,8 +157,8 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	//	model_->Draw(transform_, camera_);
-	levelManager->Draw(camera_);
+	//model_->Draw(transform_, camera_);
+	//levelManager->Draw(camera_);
 
 	//player_->Draw(camera_);
 

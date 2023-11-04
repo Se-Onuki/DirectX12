@@ -25,7 +25,7 @@ void PlayerComp::Update() {
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
 	// 前の座標からどれだけ動いたか
-	Vector3 diff = object_->transform_.translate - rigidbody->GetBeforePos();
+	Vector3 diff = transform_->translate - rigidbody->GetBeforePos();
 
 	const AABB beforeCollider = collider_.AddPos(rigidbody->GetBeforePos());
 	const AABB extendCollider = beforeCollider.Extend(diff);
@@ -64,7 +64,7 @@ void PlayerComp::Update() {
 		}
 	}
 
-	object_->transform_.translate = rigidbody->GetBeforePos() + diff * t;
+	transform_->translate = rigidbody->GetBeforePos() + diff * t;
 	if (t < 1.f) {
 		Vector3 velocity = rigidbody->GetVelocity();
 		for (uint32_t i = 0u; i < 3u; ++i) {
