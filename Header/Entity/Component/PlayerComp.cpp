@@ -19,7 +19,7 @@ void PlayerComp::Update() {
 	auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	if (keyBoard) {
 		if (keyBoard->IsTrigger(DIK_SPACE)) {
-			rigidbody->ApplyInstantForce(Vector3{ 0.f,20.f,0.f });
+			rigidbody->ApplyInstantForce(Vector3{ 0.f,10.f,0.f });
 		}
 	}
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
@@ -41,6 +41,8 @@ void PlayerComp::Update() {
 
 	float t = 1.f;
 
+	Vector3 hitSurfaceNormal{};
+
 	for (auto &[key, collider] : levelManager->blockCollider_) {
 		for (auto &box : collider.GetCollider()) {
 			// 拡張した箱が当たってたら詳細な判定
@@ -49,9 +51,11 @@ void PlayerComp::Update() {
 					if (Collision::IsHit(box, line)) {
 
 						float value = Collision::HitProgress(line, box);
-						if (box.GetNormal(line.GetProgress(value)) * line.diff < 0.f) {
+						const Vector3 normal = box.GetNormal(line.GetProgress(value));
+						if (normal * line.diff < 0.f) {
 							if (value < t) {
 								t = value;
+								hitSurfaceNormal = normal;
 							}
 						}
 					}
@@ -61,6 +65,14 @@ void PlayerComp::Update() {
 	}
 
 	object_->transform_.translate = rigidbody->GetBeforePos() + diff * t;
+	if (t < 1.f) {
+		Vector3 velocity = rigidbody->GetVelocity();
+		for (uint32_t i = 0u; i < 3u; ++i) {
+			(&velocity.x)[i] *= 1.f - std::abs((&hitSurfaceNormal.x)[i]);
+
+		}
+		rigidbody->SetVelocity(velocity);
+	}
 
 }
 
