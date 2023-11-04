@@ -25,15 +25,24 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
-	ModelManager::GetInstance()->CreateDefaultModel();
+	// モデルの読み込み
+	ModelManager::GetInstance()->CreateDefaultModel(); // デフォルトモデルの読み込み
 	ModelManager::GetInstance()->AddModel("Box", Model::LoadObjFile("", "box.obj"));
+	ModelManager::GetInstance()->AddModel("PlayerBody", Model::LoadObjFile("Model/Player/Body/", "Body.obj")); // プレイヤーの体
+	ModelManager::GetInstance()->AddModel("PlayerEye", Model::LoadObjFile("Model/Player/Eye/", "Eye.obj")); // プレイヤーの瞳
+	ModelManager::GetInstance()->AddModel("PlayerHelmet", Model::LoadObjFile("Model/Player/Helmet/", "Helmet.obj")); // プレイヤーのヘルメット
+	ModelManager::GetInstance()->AddModel("PlayerLing", Model::LoadObjFile("Model/Player/Ling/", "Ling.obj")); // プレイヤーの輪っか
+	ModelManager::GetInstance()->AddModel("PlayerArm_L", Model::LoadObjFile("Model/Player/Arm/", "Arm_L.obj")); // プレイヤーの左腕
+	ModelManager::GetInstance()->AddModel("PlayerArm_R", Model::LoadObjFile("Model/Player/Arm/", "Arm_R.obj")); // プレイヤーの右腕
+	ModelManager::GetInstance()->AddModel("PlayerFoot_L", Model::LoadObjFile("Model/Player/Foot/", "Foot_L.obj")); // プレイヤーの左足
+	ModelManager::GetInstance()->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/Player/Foot/", "Foot_R.obj")); // プレイヤーの右足
 
 	/*model_ = ModelManager::GetInstance()->GetModel("Plane");
 	transform_.UpdateMatrix();*/
 	camera_.Init();
 
-	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
-	sprite_->SetScale({ 100.f,100.f });
+	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
+	sprite_->SetScale({ 100.f,100.f });*/
 
 	levelManager = LevelElementManager::GetInstance();
 
@@ -47,19 +56,22 @@ void GameScene::OnEnter() {
 
 #pragma region Player
 
-	Model *const boxModel = ModelManager::GetInstance()->GetModel("Box");
+	//Model *const boxModel = ModelManager::GetInstance()->GetModel("Box");
+	//player_ = std::make_unique<Entity>();
+	////auto*const rigidbody =
+	//player_->AddComponent<Rigidbody>();
+	//auto *const modelComp =
+	//	player_->AddComponent<ModelComp>();
+	//modelComp->AddBone("Body", playerBodyModel);
+	//modelComp->AddBone("Body", playerHelmetModel);
 
-	player_ = std::make_unique<Entity>();
-	//auto*const rigidbody =
-	player_->AddComponent<Rigidbody>();
-	auto *const modelComp =
-		player_->AddComponent<ModelComp>();
-	modelComp->AddBone("Body", boxModel);
-
-	player_->AddComponent<PlayerComp>();
+	//player_->AddComponent<PlayerComp>();
 
 
 #pragma endregion
+
+	playerAnim_ = std::make_unique<Entity>();
+	playerAnim_->AddComponent<PlayerAnimComp>();
 
 	//for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 	//	transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
@@ -106,7 +118,9 @@ void GameScene::Update() {
 
 	levelManager->CalcCollision(0u);
 
-	player_->Update(deltaTime);
+	//player_->Update(deltaTime);
+
+	playerAnim_->Update(deltaTime);
 
 	light_->ImGuiWidget();
 
@@ -143,12 +157,15 @@ void GameScene::Draw()
 	//	model_->Draw(transform_, camera_);
 	levelManager->Draw(camera_);
 
-	player_->Draw(camera_);
+	//player_->Draw(camera_);
 
 	//Model::SetPipelineType(Model::PipelineType::kParticle);
 
 	// モデルの描画
 	// model_->Draw(instanceTransform_, camera_);
+
+	// 描画
+	playerAnim_->Draw(camera_);
 
 	Model::EndDraw();
 
@@ -159,7 +176,7 @@ void GameScene::Draw()
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
-	sprite_->Draw();
+	/*sprite_->Draw();*/
 
 	Sprite::EndDraw();
 

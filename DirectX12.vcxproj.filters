@@ -25,9 +25,6 @@
     <Filter Include="Header\FollowCamera">
       <UniqueIdentifier>{045a8eee-9582-423c-bec6-9aca40ef0678}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header\Object">
-      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header\Entity\Component">
       <UniqueIdentifier>{a686d45a-498c-4ad2-b9e7-3cbab9f39e24}</UniqueIdentifier>
     </Filter>
@@ -90,6 +87,12 @@
     </Filter>
     <Filter Include="Utils\SoLib">
       <UniqueIdentifier>{718943a2-fecd-4a48-a88c-ffda723192fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Component\Object">
+      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Component\PlayerAnimations">
+      <UniqueIdentifier>{b03e6b46-6746-49e2-adac-3e9df5f4a824}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -253,13 +256,13 @@
       <Filter>Header\Entity</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Player.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Header\Entity\Component\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\BaseCharacter.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Header\Entity\Component\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\FollowCamera.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Header\Entity\Component\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Base\RootSignature.cpp">
       <Filter>Engine\Base</Filter>
@@ -268,10 +271,19 @@
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\LevelElementManager.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Header\Entity\Component\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerComp.cpp">
       <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerAnimComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerAnimations\BaseAnimation.cpp">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationManager.cpp">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -468,13 +480,13 @@
       <Filter>Header\Entity</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\FollowCamera.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Header\Entity\Component\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Player.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Header\Entity\Component\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\BaseCharacter.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Header\Entity\Component\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h">
       <Filter>Engine\Descriptor</Filter>
@@ -492,10 +504,22 @@
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\LevelElementManager.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Header\Entity\Component\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerComp.h">
       <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerAnimComp.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationManager.h">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerAnimations\BaseAnimation.h">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationList.h">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
