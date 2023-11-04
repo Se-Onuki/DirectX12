@@ -297,11 +297,16 @@ const float Collision::HitProgress(const LineBase &line, const AABB &aabb) {
 
 	const float tMin{ max(max(tNear.x, tNear.y), tNear.z) };
 	const float tMax{ min(min(tFar.x, tFar.y), tFar.z) };
-	if (tMin > 1.f && tMin != line.Clamp(tMin))
+	if (tMin > 1.f && tMin != line.Clamp(tMin)) {
 		return 1.f;
-	if (tMax < 0.f && tMax != line.Clamp(tMax))
+	}
+	if (tMax < 0.f && tMax != line.Clamp(tMax)) {
 		return 1.f;
-	return min(line.Clamp(tMin), line.Clamp(tMax));
+	}
+	if (tMin <= tMax) {
+		return line.Clamp(tMin);
+	}
+	return 1.f;
 }
 const Vector3 Collision::HitPoint(const LineBase &line, const Plane &plane) {
 	const float dot = plane.normal * line.diff;
@@ -312,7 +317,7 @@ const Vector3 Collision::HitPoint(const LineBase &line, const Plane &plane) {
 	return line.GetProgress(t);
 }
 
-const AABB AABB::AddPos(const Vector3 &vec) const  {
+const AABB AABB::AddPos(const Vector3 &vec) const {
 	AABB result = *this;
 	result.min += vec;
 	result.max += vec;
@@ -347,6 +352,29 @@ Vector3 AABB::GetCentor() const {
 
 Vector3 AABB::GetRadius() const {
 	return (max - min) / 2.f;
+}
+
+Vector3 AABB::GetNormal(const Vector3 &surface) const {
+	Vector3 result{};
+	// 各法線の軸
+	static const std::array<Vector3, 3u> normal{
+		Vector3::up,
+		Vector3::right,
+		Vector3::front,
+	};
+	// スケーリングした表面座標
+	const Vector3 scalingSurface = (surface - this->GetCentor()).Scaling(this->GetRadius());
+
+	for (uint32_t i = 0u; i < 3u; ++i) {
+		// 法線情報との内積
+		const Vector3 dot = normal[i] * (normal[i] * scalingSurface);
+		// dotの絶対値が大きい要素を返す
+		if (result.LengthSQ() < dot.LengthSQ()) {
+			result = dot;
+		}
+	}
+
+	return result.Nomalize();
 }
 
 void AABB::ImGuiDebug(const std::string &group) {

@@ -143,6 +143,8 @@ struct AABB {
 	Vector3 GetCentor() const;
 	Vector3 GetRadius() const;
 
+	Vector3 GetNormal(const Vector3 &surface) const;
+
 	void ImGuiDebug(const std::string &group);
 	const AABB &Swaping();
 

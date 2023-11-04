@@ -47,3 +47,15 @@ Vector3 &Vector3::operator*=(const Matrix4x4 &Second) {
 	assert(w != 0.0f);
 	return *this = (result / w); // 演算子のオーバーライド
 }
+
+Vector3 Vector3::Scaling(const Vector3 &other) const {
+	Vector3 result{};
+
+	for (uint32_t i = 0u; i < 3u; ++i) {
+		if ((&other.x)[i] != 0.f) {
+			(&result.x)[i] = (&x)[i] / (&other.x)[i];
+		}
+	}
+
+	return result;
+}

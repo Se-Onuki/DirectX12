@@ -139,6 +139,8 @@ struct Vector3 {
 		return out;
 	}
 
+	Vector3 Scaling(const Vector3 &other) const;
+
 	Vector2 ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
 
 private:
