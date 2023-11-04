@@ -12,6 +12,8 @@
 #include "../Engine/DirectBase/Base/Audio.h"
 #include "../Header/Object/LevelElementManager.h"
 
+#include "../Header/Entity/Component/PlayerAnimComp.h"
+
 struct Particle {
 	TransformMatrix transform;
 	Vector4 color;
@@ -34,15 +36,17 @@ private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 
-	Model *model_ = nullptr;
+	/*Model *model_ = nullptr;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
-	Transform transform_;
+	Transform transform_;*/
 	Camera<Render::CameraType::Projecction> camera_;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	std::unique_ptr<Entity> player_;
 	LevelElementManager* levelManager{};
+
+	std::unique_ptr<Entity> playerAnim_;
 
 	//std::array<BaseTransform<false>, 5u> transformArray_;
 	//std::array<CBuffer<Vector4, false>, 5u> colorArray_;
