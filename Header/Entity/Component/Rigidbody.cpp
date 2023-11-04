@@ -16,9 +16,9 @@ void Rigidbody::Update() {
 	const Vector3 maxSpeed = maxSpeed_ * object_->GetDeltaTime();
 
 	// 最大速度のポインタ(配列として扱う)
-	const float *const maxSpeedPtr = reinterpret_cast<const float *>(&maxSpeed);
+	const float *const maxSpeedPtr = maxSpeed.data();
 	// 修正前の座標のポインタ
-	float *const fixVelocityPtr = reinterpret_cast<float *>(&fixVelocity);
+	float *const fixVelocityPtr = fixVelocity.data();
 	// 各要素をclampする(最大速度が負数なら無効化)
 	for (uint32_t i = 0u; i < 3u; ++i) {
 		if (maxSpeedPtr[i] > 0.f) {

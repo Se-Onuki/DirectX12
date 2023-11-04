@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <array>
+#include <tuple>
 
 struct Matrix4x4;
 
@@ -144,7 +145,22 @@ struct Vector3 {
 
 	Vector2 ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
 
-	inline operator std::array<float, 3u>() const { return std::array<float, 3u>{x,y,z}; }
+	inline operator std::array<float, 3u>() const {
+		std::array<float, 3u> result;
+		std::memcpy(result.data(), &x, sizeof(Vector3));
+		return result;
+	}
+
+	float *const begin() { return &x; }
+	const float *const begin() const { return &x; }
+
+	float *const end() { return &z; }
+	const float *const end() const { return &z; }
+
+	uint32_t size() const { return 3u; }
+
+	float *const data() { return &x; }
+	const float *const data() const { return &x; }
 
 private:
 };
