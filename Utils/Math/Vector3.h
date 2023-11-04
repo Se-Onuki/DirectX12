@@ -154,8 +154,8 @@ struct Vector3 {
 	float *const begin() { return &x; }
 	const float *const begin() const { return &x; }
 
-	float *const end() { return &z; }
-	const float *const end() const { return &z; }
+	float *const end() { return &x + 3u; }
+	const float *const end() const { return &x + 3u; }
 
 	uint32_t size() const { return 3u; }
 
