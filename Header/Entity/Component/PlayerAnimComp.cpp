@@ -19,6 +19,8 @@ void PlayerAnimComp::Init()
 
 void PlayerAnimComp::Update()
 {
+	// 自分自身のモデルコンポーネント
+	auto *const modelComp = object_->GetComponent<ModelComp>();
 
 	ImGui::Begin("playerAnim");
 	if (ImGui::TreeNode("Base")) {
@@ -28,45 +30,45 @@ void PlayerAnimComp::Update()
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Body")) {
-		ImGui::DragFloat3("scale", &object_->GetComponent<ModelComp>()->GetBone("Body")->transform_->scale.x, 0.05f);
-		ImGui::DragFloat3("rotate", &object_->GetComponent<ModelComp>()->GetBone("Body")->transform_->rotate.x, 0.01f);
-		ImGui::DragFloat3("translate", &object_->GetComponent<ModelComp>()->GetBone("Body")->transform_->translate.x, 0.5f);
+		ImGui::DragFloat3("scale", &modelComp->GetBone("Body")->transform_->scale.x, 0.05f);
+		ImGui::DragFloat3("rotate", &modelComp->GetBone("Body")->transform_->rotate.x, 0.01f);
+		ImGui::DragFloat3("translate", &modelComp->GetBone("Body")->transform_->translate.x, 0.5f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Eye")) {
-		ImGui::DragFloat3("scale", &object_->GetComponent<ModelComp>()->GetBone("Eye")->transform_->scale.x, 0.05f);
-		ImGui::DragFloat3("rotate", &object_->GetComponent<ModelComp>()->GetBone("Eye")->transform_->rotate.x, 0.01f);
-		ImGui::DragFloat3("translate", &object_->GetComponent<ModelComp>()->GetBone("Eye")->transform_->translate.x, 0.5f);
+		ImGui::DragFloat3("scale", &modelComp->GetBone("Eye")->transform_->scale.x, 0.05f);
+		ImGui::DragFloat3("rotate", &modelComp->GetBone("Eye")->transform_->rotate.x, 0.01f);
+		ImGui::DragFloat3("translate", &modelComp->GetBone("Eye")->transform_->translate.x, 0.5f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Ling")) {
-		ImGui::DragFloat3("scale", &object_->GetComponent<ModelComp>()->GetBone("Ling")->transform_->scale.x, 0.05f);
-		ImGui::DragFloat3("rotate", &object_->GetComponent<ModelComp>()->GetBone("Ling")->transform_->rotate.x, 0.01f);
-		ImGui::DragFloat3("translate", &object_->GetComponent<ModelComp>()->GetBone("Ling")->transform_->translate.x, 0.5f);
+		ImGui::DragFloat3("scale", &modelComp->GetBone("Ling")->transform_->scale.x, 0.05f);
+		ImGui::DragFloat3("rotate", &modelComp->GetBone("Ling")->transform_->rotate.x, 0.01f);
+		ImGui::DragFloat3("translate", &modelComp->GetBone("Ling")->transform_->translate.x, 0.5f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Arm_L")) {
-		ImGui::DragFloat3("scale", &object_->GetComponent<ModelComp>()->GetBone("Arm_L")->transform_->scale.x, 0.05f);
-		ImGui::DragFloat3("rotate", &object_->GetComponent<ModelComp>()->GetBone("Arm_L")->transform_->rotate.x, 0.01f);
-		ImGui::DragFloat3("translate", &object_->GetComponent<ModelComp>()->GetBone("Arm_L")->transform_->translate.x, 0.5f);
+		ImGui::DragFloat3("scale", &modelComp->GetBone("Arm_L")->transform_->scale.x, 0.05f);
+		ImGui::DragFloat3("rotate", &modelComp->GetBone("Arm_L")->transform_->rotate.x, 0.01f);
+		ImGui::DragFloat3("translate", &modelComp->GetBone("Arm_L")->transform_->translate.x, 0.5f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Arm_R")) {
-		ImGui::DragFloat3("scale", &object_->GetComponent<ModelComp>()->GetBone("Arm_R")->transform_->scale.x, 0.05f);
-		ImGui::DragFloat3("rotate", &object_->GetComponent<ModelComp>()->GetBone("Arm_R")->transform_->rotate.x, 0.01f);
-		ImGui::DragFloat3("translate", &object_->GetComponent<ModelComp>()->GetBone("Arm_R")->transform_->translate.x, 0.5f);
+		ImGui::DragFloat3("scale", &modelComp->GetBone("Arm_R")->transform_->scale.x, 0.05f);
+		ImGui::DragFloat3("rotate", &modelComp->GetBone("Arm_R")->transform_->rotate.x, 0.01f);
+		ImGui::DragFloat3("translate", &modelComp->GetBone("Arm_R")->transform_->translate.x, 0.5f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Foot_L")) {
-		ImGui::DragFloat3("scale", &object_->GetComponent<ModelComp>()->GetBone("Foot_L")->transform_->scale.x, 0.05f);
-		ImGui::DragFloat3("rotate", &object_->GetComponent<ModelComp>()->GetBone("Foot_L")->transform_->rotate.x, 0.01f);
-		ImGui::DragFloat3("translate", &object_->GetComponent<ModelComp>()->GetBone("Foot_L")->transform_->translate.x, 0.5f);
+		ImGui::DragFloat3("scale", &modelComp->GetBone("Foot_L")->transform_->scale.x, 0.05f);
+		ImGui::DragFloat3("rotate", &modelComp->GetBone("Foot_L")->transform_->rotate.x, 0.01f);
+		ImGui::DragFloat3("translate", &modelComp->GetBone("Foot_L")->transform_->translate.x, 0.5f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Foot_R")) {
-		ImGui::DragFloat3("scale", &object_->GetComponent<ModelComp>()->GetBone("Foot_R")->transform_->scale.x, 0.05f);
-		ImGui::DragFloat3("rotate", &object_->GetComponent<ModelComp>()->GetBone("Foot_R")->transform_->rotate.x, 0.01f);
-		ImGui::DragFloat3("translate", &object_->GetComponent<ModelComp>()->GetBone("Foot_R")->transform_->translate.x, 0.5f);
+		ImGui::DragFloat3("scale", &modelComp->GetBone("Foot_R")->transform_->scale.x, 0.05f);
+		ImGui::DragFloat3("rotate", &modelComp->GetBone("Foot_R")->transform_->rotate.x, 0.01f);
+		ImGui::DragFloat3("translate", &modelComp->GetBone("Foot_R")->transform_->translate.x, 0.5f);
 		ImGui::TreePop();
 	}
 	ImGui::End();
