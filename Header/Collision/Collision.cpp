@@ -357,7 +357,7 @@ Vector3 AABB::GetRadius() const {
 Vector3 AABB::GetNormal(const Vector3 &surface) const {
 	Vector3 result{};
 	// 各法線の軸
-	static const std::array<Vector3, 3u> normal{
+	static const std::array<Vector3, 3u> normalArray{
 		Vector3::up,
 		Vector3::right,
 		Vector3::front,
@@ -365,9 +365,9 @@ Vector3 AABB::GetNormal(const Vector3 &surface) const {
 	// スケーリングした表面座標
 	const Vector3 scalingSurface = (surface - this->GetCentor()).Scaling(this->GetRadius());
 
-	for (uint32_t i = 0u; i < 3u; ++i) {
+	for (auto&normal: normalArray) {
 		// 法線情報との内積
-		const Vector3 dot = normal[i] * (normal[i] * scalingSurface);
+		const Vector3 dot = normal * (normal * scalingSurface);
 		// dotの絶対値が大きい要素を返す
 		if (result.LengthSQ() < dot.LengthSQ()) {
 			result = dot;

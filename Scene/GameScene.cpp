@@ -28,8 +28,8 @@ void GameScene::OnEnter() {
 	ModelManager::GetInstance()->CreateDefaultModel();
 	ModelManager::GetInstance()->AddModel("Box", Model::LoadObjFile("", "box.obj"));
 
-	model_ = ModelManager::GetInstance()->GetModel("Plane");
-	transform_.UpdateMatrix();
+	/*model_ = ModelManager::GetInstance()->GetModel("Plane");
+	transform_.UpdateMatrix();*/
 	camera_.Init();
 
 	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
@@ -72,7 +72,7 @@ void GameScene::OnExit() {}
 
 void GameScene::Update() {
 
-	const float deltaTime = ImGui::GetIO().DeltaTime;
+	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
@@ -80,7 +80,7 @@ void GameScene::Update() {
 	camera_.UpdateMatrix();
 
 	ImGui::Begin("Sphere");
-	model_->ImGuiWidget();
+	//model_->ImGuiWidget();
 	/*for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
 		if (ImGui::TreeNode(("Particle" + std::to_string(i)).c_str())) {
 			transformArray_[i].ImGuiWidget();
@@ -110,8 +110,8 @@ void GameScene::Update() {
 
 	light_->ImGuiWidget();
 
-	transform_.ImGuiWidget();
-	transform_.UpdateMatrix();
+	//transform_.ImGuiWidget();
+//	transform_.UpdateMatrix();
 }
 
 void GameScene::Draw()
@@ -140,7 +140,7 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	model_->Draw(transform_, camera_);
+	//	model_->Draw(transform_, camera_);
 	levelManager->Draw(camera_);
 
 	player_->Draw(camera_);

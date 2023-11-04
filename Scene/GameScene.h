@@ -34,9 +34,9 @@ private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 
-	Model *model_ = nullptr;
+//	Model *model_ = nullptr;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
-	Transform transform_;
+	//Transform transform_;
 	Camera<Render::CameraType::Projecction> camera_;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
