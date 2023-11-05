@@ -74,6 +74,13 @@ public: // アクセッサ等
 	/// <param name="gv">グローバル変数クラス実体</param>
 	/// <param name="groupName">グループ名</param>
 	void AddItem(GlobalVariables* gv, std::string groupName);
+
+	/// <summary>
+	/// グローバル変数クラスに値をセットする関数
+	/// </summary>
+	/// <param name="gv">グローバル変数クラス実体</param>
+	/// <param name="groupName">グループ名</param>
+	void SetItem(GlobalVariables* gv, std::string groupName);
 	/// <summary>
 	/// グローバル変数クラスの値を適用
 	/// </summary>

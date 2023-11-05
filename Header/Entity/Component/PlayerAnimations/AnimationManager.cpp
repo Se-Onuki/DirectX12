@@ -37,4 +37,11 @@ void AnimationManager::Update()
 	// 現在アニメーションを更新
 	currentAnimation_->Update(deltaTime);
 
+#ifdef _DEBUG
+	animParameters_->SetItem();
+	// 適用
+	animParameters_->ApplyItem();
+#endif // _DEBUG
+
+
 }

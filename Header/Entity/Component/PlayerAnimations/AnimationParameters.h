@@ -30,6 +30,11 @@ public: // メンバ関数
 	void AddItem();
 
 	/// <summary>
+	/// グローバル変数クラスに値を適用
+	/// </summary>
+	void SetItem();
+
+	/// <summary>
 	/// グローバル変数クラスから値を取得
 	/// </summary>
 	void ApplyItem();

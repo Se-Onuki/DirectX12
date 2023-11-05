@@ -44,6 +44,12 @@ void AnimationParameters::AddItem()
 	globalVariables_->AddValue(idleName, "Idle_AnimationTime", idleAnimationTime_);
 }
 
+void AnimationParameters::SetItem()
+{
+	startIdle_.SetItem(globalVariables_, "IdleStart");
+	endIdle_.SetItem(globalVariables_, "IdleEnd");
+}
+
 void AnimationParameters::ApplyItem()
 {
 	// アイドル関係
