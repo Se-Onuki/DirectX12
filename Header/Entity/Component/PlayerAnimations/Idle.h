@@ -24,15 +24,5 @@ private: // メンバ変数
 	// リターントリガー
 	bool isReturn_;
 
-	// 腕振り始端角度
-	Vector3 armSwingStartAngle_;
-	// 腕振り終端角度
-	Vector3 armSwingEndAngle_;
-
-	// 体振り始端角度
-	Vector3 bodySwingStartAngle_;
-	// 体振り終端角度
-	Vector3 bodySwingEndAngle_;
-
 };
 

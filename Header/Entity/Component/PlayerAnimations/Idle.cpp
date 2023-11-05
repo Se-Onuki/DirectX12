@@ -12,32 +12,22 @@ void Idle::Initialize()
 	// リターントリガーfalse
 	isReturn_ = false;
 
-	// グローバル変数から値を読む
-	armSwingStartAngle_ = globalVariables_->Get<Vector3>("Idle", "Idle_ArmSwingStartAngle");
-	armSwingEndAngle_ = globalVariables_->Get<Vector3>("Idle", "Idle_ArmSwingEndAngle");
-	bodySwingStartAngle_ = globalVariables_->Get<Vector3>("Idle", "Idle_BodySwingStartAngle");
-	bodySwingEndAngle_ = globalVariables_->Get<Vector3>("Idle", "Idle_BodySwingEndAngle");
+	// エンティティの現在状態を取得
+	bone_.Initialize(entity_);
+
+	startBone_ = GetTargetBone("IdleStart");
+	endBone_ = GetTargetBone("IdleEnd");
 }
 
 void Idle::Update(float deltaTime)
 {
-	// 警告回避用
-	deltaTime;
-
-	// 自分自身のモデルコンポーネント取得
-	auto* const modelComp = entity_->GetComponent<ModelComp>();
-
 	// イージングによってアニメーション
 	if (animT_ < animationTime_ / 2.0f) {
 		if (isReturn_) {
-			modelComp->GetBone("Arm_L")->transform_->rotate = AnimEasing::EaseInOut(animT_, armSwingStartAngle_, armSwingEndAngle_, animationTime_ / 2.0f);
-			modelComp->GetBone("Arm_R")->transform_->rotate = AnimEasing::EaseInOut(animT_, armSwingStartAngle_, armSwingEndAngle_, animationTime_ / 2.0f);
-			modelComp->GetBone("Body")->transform_->rotate = AnimEasing::EaseInOut(animT_, bodySwingStartAngle_, bodySwingEndAngle_, animationTime_ / 2.0f);
+			bone_.bone_ = AnimEasing::Ease(AnimEasing::KEaseInOut, animT_, startBone_, endBone_, animationTime_ / 2.0f);
 		}
 		else {
-			modelComp->GetBone("Arm_L")->transform_->rotate = AnimEasing::EaseInOut(animT_, armSwingEndAngle_, armSwingStartAngle_, animationTime_ / 2.0f);
-			modelComp->GetBone("Arm_R")->transform_->rotate = AnimEasing::EaseInOut(animT_, armSwingEndAngle_, armSwingStartAngle_, animationTime_ / 2.0f);
-			modelComp->GetBone("Body")->transform_->rotate = AnimEasing::EaseInOut(animT_, bodySwingEndAngle_, bodySwingStartAngle_, animationTime_ / 2.0f);
+			bone_.bone_ = AnimEasing::Ease(AnimEasing::KEaseInOut, animT_, endBone_, startBone_, animationTime_ / 2.0f);
 		}
 
 		// 経過フレーム分加算
@@ -52,13 +42,14 @@ void Idle::Update(float deltaTime)
 			isReturn_ = true;
 	}
 
+	// 
+	bone_.SetToEntity();
+
 	// デバッグ時のみグローバル変数から値を読む
 #ifdef _DEBUG
 	// 適用
-	animationTime_ = globalVariables_->Get<float>("Idle", "Idle_AnimationTime");
-	armSwingStartAngle_ = globalVariables_->Get<Vector3>("Idle", "Idle_ArmSwingStartAngle");
-	armSwingEndAngle_ = globalVariables_->Get<Vector3>("Idle", "Idle_ArmSwingEndAngle");
-	bodySwingStartAngle_ = globalVariables_->Get<Vector3>("Idle", "Idle_BodySwingStartAngle");
-	bodySwingEndAngle_ = globalVariables_->Get<Vector3>("Idle", "Idle_BodySwingEndAngle");
+	startBone_ = GetTargetBone("IdleStart");
+	endBone_ = GetTargetBone("IdleEnd");
+
 #endif // _DEBUG
 }

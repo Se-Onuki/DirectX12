@@ -2,6 +2,7 @@
 #include "../../../../externals/imgui/imgui.h"
 #include"../../../../Engine/DirectBase/File/VariantItem.h"
 #include "../../../../Utils/Math/Vector3.h"
+#include "PlayerBone.h"
 
 // クラスの前方宣言
 class GlobalVariables;
@@ -41,12 +42,10 @@ private: // メンバ変数
 	// アイドル状態のアニメーション時間
 	float idleAnimationTime_ = 1.0f;
 
-	// アイドル状態の腕振り角度
-	Vector3 armSwingStartAngle_ = { 0.0f, 0.0f, 0.0f }; // 始端
-	Vector3 armSwingEndAngle_ = { 0.0f, 0.0f, 0.0f }; // 終端
-	// アイドル状態の体振り角度
-	Vector3 bodySwingStartAngle_ = {0.0f, 0.0f, 0.0f };	// 始端
-	Vector3 bodySwingEndAngle_ =  { 0.0f, 0.0f, 0.0f }; // 終端
+	// 
+	PlayerBone startIdle_;
+	PlayerBone endIdle_;
+
 #pragma endregion
 
 };
