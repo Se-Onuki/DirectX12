@@ -11,7 +11,6 @@ void Rigidbody::Update() {
 	static auto *const collisionManager = CollisionManager::GetInstance();
 
 	beforePos_ = transform_->translate;
-	// const Vector3 &afterPos = object_->transform_.translate;
 
 	velocity_ += acceleration_;
 	Vector3 fixVelocity = velocity_ * object_->GetDeltaTime();

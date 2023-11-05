@@ -60,7 +60,6 @@ void PlayerComp::Update() {
 	float t = 1.f;
 
 	Vector3 hitSurfaceNormal{};
-
 	for (auto &[key, collider] : levelManager->blockCollider_) {
 		for (auto &box : collider.GetCollider()) {
 			// 拡張した箱が当たってたら詳細な判定
@@ -84,6 +83,8 @@ void PlayerComp::Update() {
 
 	transform_->translate = rigidbody->GetBeforePos() + diff * t;
 	if (t < 1.f) {
+		Vector3 wallShear = (diff - (diff * hitSurfaceNormal) * hitSurfaceNormal) * (1.f - t);
+		transform_->translate += wallShear;
 		Vector3 velocity = rigidbody->GetVelocity();
 		for (uint32_t i = 0u; i < 3u; ++i) {
 			velocity.data()[i] *= 1.f - std::abs(hitSurfaceNormal.data()[i]);
