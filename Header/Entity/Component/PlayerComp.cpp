@@ -42,56 +42,68 @@ void PlayerComp::Update() {
 	}
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
-	// 前の座標からどれだけ動いたか
-	Vector3 diff = transform_->translate - rigidbody->GetBeforePos();
 
-	const AABB beforeCollider = collider_.AddPos(rigidbody->GetBeforePos());
-	const AABB extendCollider = beforeCollider.Extend(diff);
 
-	const auto &vertexPos = beforeCollider.GetVertex();
+	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
-	std::array<LineBase, 8u> vertexLine;
-	for (uint32_t i = 0u; i < 8u; ++i) {
-		//	vertexLine[i].lineType = LineBase::LineType::Segment;
-		vertexLine[i].origin = vertexPos[i];
-		vertexLine[i].diff = diff;
-	}
+	while (true) {
 
-	float t = 1.f;
+		float t = 1.f;
 
-	Vector3 hitSurfaceNormal{};
-	for (auto &[key, collider] : levelManager->blockCollider_) {
-		for (auto &box : collider.GetCollider()) {
-			// 拡張した箱が当たってたら詳細な判定
-			if (Collision::IsHit(extendCollider, box)) {
-				for (auto &line : vertexLine) {
-					if (Collision::IsHit(box, line)) {
+		const AABB beforeCollider = collider_.AddPos(moveLine.origin);
+		const AABB extendCollider = beforeCollider.Extend(moveLine.diff);
 
-						float value = Collision::HitProgress(line, box);
-						const Vector3 normal = box.GetNormal(line.GetProgress(value));
-						if (normal * line.diff < 0.f) {
-							if (value < t) {
-								t = value;
-								hitSurfaceNormal = normal;
+		const auto &vertexPos = beforeCollider.GetVertex();
+
+		std::array<LineBase, 8u> vertexLine;
+		for (uint32_t i = 0u; i < vertexLine.size(); ++i) {
+			vertexLine[i].origin = vertexPos[i];
+			vertexLine[i].diff = moveLine.diff;
+		}
+
+
+		Vector3 hitSurfaceNormal{};
+		for (auto &[key, collider] : levelManager->blockCollider_) {
+			for (auto &box : collider.GetCollider()) {
+				// 拡張した箱が当たってたら詳細な判定
+				if (Collision::IsHit(extendCollider, box)) {
+					for (auto &line : vertexLine) {
+						if (Collision::IsHit(box, line)) {
+
+							float value = Collision::HitProgress(line, box);
+							const Vector3 normal = box.GetNormal(line.GetProgress(value));
+							if (normal * line.diff < 0.f) {
+								if (value < t) {
+									t = value;
+									hitSurfaceNormal = normal;
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-	}
 
-	transform_->translate = rigidbody->GetBeforePos() + diff * t;
-	if (t < 1.f) {
-		Vector3 wallShear = (diff - (diff * hitSurfaceNormal) * hitSurfaceNormal) * (1.f - t);
-		transform_->translate += wallShear;
-		Vector3 velocity = rigidbody->GetVelocity();
-		for (uint32_t i = 0u; i < 3u; ++i) {
-			velocity.data()[i] *= 1.f - std::abs(hitSurfaceNormal.data()[i]);
+		if (t < 1.f) {
+
+			moveLine.origin = moveLine.GetProgress(t);
+			Vector3 wallShear = (moveLine.diff - (moveLine.diff * hitSurfaceNormal) * hitSurfaceNormal) * (1.f - t);
+			moveLine.diff = wallShear;
+			Vector3 velocity = rigidbody->GetVelocity();
+			for (uint32_t i = 0u; i < 3u; ++i) {
+				velocity.data()[i] *= 1.f - std::abs(hitSurfaceNormal.data()[i]);
+			}
+			rigidbody->SetVelocity(velocity);
 		}
-		rigidbody->SetVelocity(velocity);
+		else {
+			moveLine.origin = moveLine.GetEnd();
+			break;
+		}
+
 	}
 
+
+	transform_->translate = moveLine.origin;
 }
 
 void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {
