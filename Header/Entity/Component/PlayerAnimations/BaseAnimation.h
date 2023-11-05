@@ -1,5 +1,8 @@
 #pragma once
 #include "../../Entity.h"
+#include "../ModelComp.h"
+#include "AnimEasing.h"
+#include "../../../../Engine/DirectBase/File/GlobalVariables.h"
 
 /// <summary>
 /// アニメーション基底クラス
@@ -39,6 +42,9 @@ public: // アクセッサ等
 	bool GetIsEnd() { return isEnd_; }
 protected: // 継承先メンバ変数
 
+	// グローバル変数クラス
+	GlobalVariables* globalVariables_ = nullptr;
+
 	// アニメーションさせるエンティティ
 	Entity* entity_ = nullptr;
 
@@ -47,8 +53,6 @@ protected: // 継承先メンバ変数
 	// アニメーション演出時間秒数
 	float animationTime_;
 
-	// ループトリガー
-	bool isLoop_;
 	// 終了トリガー
 	bool isEnd_;
 

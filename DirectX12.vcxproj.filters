@@ -285,6 +285,15 @@
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationManager.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerAnimations\Idle.cpp">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationParameters.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimEasing.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -520,6 +529,15 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationList.h">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerAnimations\Idle.h">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationParameters.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimEasing.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

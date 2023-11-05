@@ -2,7 +2,8 @@
 
 void BaseAnimation::Initialize()
 {
-	// 基底クラスでは記述しない
+	// グローバル変数クラスのインスタンス取得
+	globalVariables_ = GlobalVariables::GetInstance();
 }
 
 void BaseAnimation::Update(float deltaTime)
