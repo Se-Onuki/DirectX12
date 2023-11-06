@@ -24,34 +24,13 @@ public: // メンバ関数
 	/// </summary>
 	void Update();
 
-	/// <summary>
-	/// グローバル変数クラスに値を追加
-	/// </summary>
-	void AddItem();
-
-	/// <summary>
-	/// グローバル変数クラスに値を適用
-	/// </summary>
-	void SetItem();
-
-	/// <summary>
-	/// グローバル変数クラスから値を取得
-	/// </summary>
-	void ApplyItem();
-
 private: // メンバ変数
 
 	GlobalVariables* globalVariables_ = nullptr;
 
-#pragma region Idle
-	// 
+	// アイドルアニメーションのキー
 	AnimationKeys idleAnimKeys_;
-
-#pragma endregion
-
-#pragma region Move
-
-#pragma endregion
-
+	// 移動アニメーションキー
+	AnimationKeys MoveAnimKeys_;
 };
 

@@ -7,10 +7,6 @@ void AnimationManager::Initialize()
 	animParameters_ = std::make_unique<AnimationParameters>(); // 生成
 	animParameters_->Initialize();							   // 初期化
 
-	// 調整追加
-	animParameters_->AddItem();
-	animParameters_->ApplyItem();
-
 	// 現在アニメーションをアイドルに設定
 	currentAnimation_ = new BaseAnimation();	 // インスタンス生成
 	currentAnimation_->SetEntity(entity_);		 // アニメーションさせるエンティティをセット
@@ -38,7 +34,7 @@ void AnimationManager::Update()
 #ifdef _DEBUG
 	ImGui::Begin("AnimManager");
 	ImGui::RadioButton("PlayIdle", &imGuiNextbehavior_, kIdle);
-	//ImGui::RadioButton("PlayMove", &imGuiNextbehavior_, kMove);
+	ImGui::RadioButton("PlayMove", &imGuiNextbehavior_, kMove);
 
 	ImGui::Checkbox("isLoop", &imGuiIsLoop_);
 
@@ -65,6 +61,7 @@ void AnimationManager::SetNextAnimation(Behavior next, bool isLoop, float transi
 		nextAnimation_->Initialize("Idle", isLoop, transitionTime);
 		break;
 	case AnimationManager::kMove:
+		nextAnimation_->Initialize("Move", isLoop, transitionTime);
 		break;
 	case AnimationManager::kJump:
 		break;
