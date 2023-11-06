@@ -45,9 +45,10 @@ public: // アクセッサ等
 	/// <summary>
 	/// 引数で指定したボーンの値を取得するゲッター
 	/// </summary>
-	/// <param name="groupName">取得するボーン名</param>
+	/// <param name="groupName">取得するボーンのグループ名</param>
+	/// <param name="boneName">取得するボーン名</param>
 	/// <returns>目標ボーン</returns>
-	PlayerBone::Bone GetTargetBone(std::string groupName);
+	PlayerBone::Bone GetTargetBone(std::string groupName, std::string boneName);
 
 protected: // 継承先メンバ変数
 

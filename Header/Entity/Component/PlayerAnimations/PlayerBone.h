@@ -73,20 +73,23 @@ public: // アクセッサ等
 	/// </summary>
 	/// <param name="gv">グローバル変数クラス実体</param>
 	/// <param name="groupName">グループ名</param>
-	void AddItem(GlobalVariables* gv, std::string groupName);
+	/// <param name="boneName">ボーン名</param> 
+	void AddItem(GlobalVariables* gv, std::string groupName, std::string boneName);
 
 	/// <summary>
 	/// グローバル変数クラスに値をセットする関数
 	/// </summary>
 	/// <param name="gv">グローバル変数クラス実体</param>
 	/// <param name="groupName">グループ名</param>
-	void SetItem(GlobalVariables* gv, std::string groupName);
+	/// <param name="boneName">ボーン名</param>
+	void SetItem(GlobalVariables* gv, std::string groupName, std::string boneName);
 	/// <summary>
 	/// グローバル変数クラスの値を適用
 	/// </summary>
 	/// <param name="gv">グローバル変数クラス実体</param>
-	/// <param name="groupName"></param>
-	void ApplyItem(GlobalVariables* gv, std::string groupName);
+	/// <param name="groupName">グループ名</param>
+	/// <param name="boneName">ボーン名</param>
+	void ApplyItem(GlobalVariables* gv, std::string groupName, std::string boneName);
 
 	/// <summary>
 	/// ImGui表示関数

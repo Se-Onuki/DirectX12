@@ -15,8 +15,8 @@ void Idle::Initialize()
 	// エンティティの現在状態を取得
 	bone_.Initialize(entity_);
 
-	startBone_ = GetTargetBone("IdleStart");
-	endBone_ = GetTargetBone("IdleEnd");
+	startBone_ = GetTargetBone("Idle", "IdleStart");
+	endBone_ = GetTargetBone("Idle", "IdleEnd");
 }
 
 void Idle::Update(float deltaTime)
@@ -48,8 +48,9 @@ void Idle::Update(float deltaTime)
 	// デバッグ時のみグローバル変数から値を読む
 #ifdef _DEBUG
 	// 適用
-	startBone_ = GetTargetBone("IdleStart");
-	endBone_ = GetTargetBone("IdleEnd");
+	startBone_ = GetTargetBone("Idle", "IdleStart");
+	endBone_ = GetTargetBone("Idle", "IdleEnd");
+	animationTime_ = globalVariables_->Get<float>("Idle", "Idle_AnimationTime");
 
 #endif // _DEBUG
 }

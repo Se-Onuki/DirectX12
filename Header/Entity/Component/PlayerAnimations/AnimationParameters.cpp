@@ -27,8 +27,8 @@ void AnimationParameters::Update()
 	const char* const idleName = "Idle";
 	// グローバル変数クラスに一度アイテムを追加
 	
-	startIdle_.AddItem(globalVariables_, "IdleStart");
-	endIdle_.AddItem(globalVariables_, "IdleEnd");
+	startIdle_.AddItem(globalVariables_, "Idle", "IdleStart");
+	endIdle_.AddItem(globalVariables_, "Idle", "IdleEnd");
 	globalVariables_->SetValue(idleName, "Idle_AnimationTime", idleAnimationTime_);
 
 #endif // _DEBUG
@@ -39,15 +39,15 @@ void AnimationParameters::AddItem()
 	// アイドル関係
 	const char* const idleName = "Idle";
 	// グローバル変数クラスに一度アイテムを追加
-	startIdle_.AddItem(globalVariables_, "IdleStart");
-	endIdle_.AddItem(globalVariables_, "IdleEnd");
+	startIdle_.AddItem(globalVariables_, "Idle", "IdleStart");
+	endIdle_.AddItem(globalVariables_, "Idle", "IdleEnd");
 	globalVariables_->AddValue(idleName, "Idle_AnimationTime", idleAnimationTime_);
 }
 
 void AnimationParameters::SetItem()
 {
-	startIdle_.SetItem(globalVariables_, "IdleStart");
-	endIdle_.SetItem(globalVariables_, "IdleEnd");
+	startIdle_.SetItem(globalVariables_, "Idle", "IdleStart");
+	endIdle_.SetItem(globalVariables_, "Idle", "IdleEnd");
 }
 
 void AnimationParameters::ApplyItem()
@@ -55,7 +55,7 @@ void AnimationParameters::ApplyItem()
 	// アイドル関係
 	const char* const idleName = "Idle";
 	// グローバル変数クラスに一度アイテムを追加
-	startIdle_.ApplyItem(globalVariables_, "IdleStart");
-	endIdle_.ApplyItem(globalVariables_, "IdleEnd");
+	startIdle_.ApplyItem(globalVariables_, "Idle", "IdleStart");
+	endIdle_.ApplyItem(globalVariables_, "Idle", "IdleEnd");
 	idleAnimationTime_ = globalVariables_->Get<float>(idleName, "Idle_AnimationTime");
 }
