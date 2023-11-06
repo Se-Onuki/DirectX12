@@ -53,5 +53,15 @@ private: // メンバ変数
 
 #pragma endregion
 
+#pragma region Move
+	// 移動アニメーション時間
+	float moveAnimationTime_ = 1.0f;
+
+	// 
+	PlayerBone startMove_;
+	PlayerBone endMove_;
+
+#pragma endregion
+
 };
 

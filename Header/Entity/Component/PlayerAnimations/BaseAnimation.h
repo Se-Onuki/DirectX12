@@ -20,7 +20,8 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化関数
 	/// </summary>
-	virtual void Initialize();
+	/// <param name="transitionTime">遷移秒数</param>
+	virtual void Initialize(float transitionTime = 0.0f);
 
 	/// <summary>
 	/// 更新関数
@@ -41,6 +42,11 @@ public: // アクセッサ等
 	/// </summary>
 	/// <returns>終了状態</returns>
 	bool GetIsEnd() { return isEnd_; }
+	/// <summary>
+	/// 終了状態セッター
+	/// </summary>
+	/// <param name="isEnd">終了状態</param>
+	void SetIsEnd(bool isEnd) { isEnd_ = isEnd; }
 
 	/// <summary>
 	/// 引数で指定したボーンの値を取得するゲッター
@@ -49,6 +55,12 @@ public: // アクセッサ等
 	/// <param name="boneName">取得するボーン名</param>
 	/// <returns>目標ボーン</returns>
 	PlayerBone::Bone GetTargetBone(std::string groupName, std::string boneName);
+
+	/// <summary>
+	/// 引数で指定したボーンの値を取得するゲッター
+	/// </summary>
+	/// <returns>プレイヤーボーン</returns>
+	PlayerBone::Bone GetPlayerBone();
 
 protected: // 継承先メンバ変数
 
@@ -70,8 +82,12 @@ protected: // 継承先メンバ変数
 	// アニメーション演出時間秒数
 	float animationTime_;
 
+	// 遷移開始直前のボーン情報を取得
+	PlayerBone::Bone prevBone_;
 	// 遷移中トリガー
 	bool isTransitioning_;
+	// 遷移秒数
+	float transitionTime_;
 
 	// 終了トリガー
 	bool isEnd_;

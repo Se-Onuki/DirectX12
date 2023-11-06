@@ -42,8 +42,9 @@ public: // アクセッサ等
 	/// <summary>
 	/// 次のアニメーションセッター
 	/// </summary>
-	/// <param name="next">次のアニメーション実体</param>
-	void SetNextAnimation(BaseAnimation* next) { nextAnimation_ = next; }
+	/// <param name="next">次にどのアニメーションを再生するか</param>
+	/// <param name="transitionTime">遷移の際の時間</param>
+	void SetNextAnimation(Behavior next, float transitionTime = 0);
 
 private: // メンバ変数
 
@@ -58,6 +59,19 @@ private: // メンバ変数
 
 	// 次のアニメーション
 	BaseAnimation* nextAnimation_ = nullptr;
+
+	// 次のアニメーションへの遷移秒数
+	float transitionTime_;
+
+#ifdef _DEBUG // ImGUiデバッグ用
+
+	// 遷移秒数設定用
+	float imGuiTransitionTime_ = 0.0f;
+	// 次のアニメーション
+	int imGuiNextbehavior_ = kIdle;
+
+#endif // _DEBUG // ImGUiデバッグ用
+
 
 };
 

@@ -1,13 +1,13 @@
-#include "Idle.h"
+#include "Move.h"
 
-void Idle::Initialize(float transitionTime)
+void Move::Initialize(float transitionTime)
 {
 	// 基底クラスの初期化
 	BaseAnimation::Initialize(transitionTime);
 
 	// t　初期化
 	animT_ = 0.0f;
-	animationTime_ = globalVariables_->Get<float>("Idle", "Idle_AnimationTime");
+	animationTime_ = globalVariables_->Get<float>("Move", "Move_AnimationTime");
 
 	// リターントリガーfalse
 	isReturn_ = true;
@@ -15,11 +15,11 @@ void Idle::Initialize(float transitionTime)
 	// エンティティの現在状態を取得
 	bone_.Initialize(entity_);
 
-	startBone_ = GetTargetBone("Idle", "IdleStart");
-	endBone_ = GetTargetBone("Idle", "IdleEnd");
+	startBone_ = GetTargetBone("Move", "MoveStart");
+	endBone_ = GetTargetBone("Move", "MoveEnd");
 }
 
-void Idle::Update(float deltaTime)
+void Move::Update(float deltaTime)
 {
 	if (isTransitioning_) {
 		// イージングによってアニメーション
@@ -62,9 +62,9 @@ void Idle::Update(float deltaTime)
 	// デバッグ時のみグローバル変数から値を読む
 #ifdef _DEBUG
 	// 適用
-	startBone_ = GetTargetBone("Idle", "IdleStart");
-	endBone_ = GetTargetBone("Idle", "IdleEnd");
-	animationTime_ = globalVariables_->Get<float>("Idle", "Idle_AnimationTime");
+	startBone_ = GetTargetBone("Move", "MoveStart");
+	endBone_ = GetTargetBone("Move", "MoveEnd");
+	animationTime_ = globalVariables_->Get<float>("Move", "Move_AnimationTime");
 
 #endif // _DEBUG
 }

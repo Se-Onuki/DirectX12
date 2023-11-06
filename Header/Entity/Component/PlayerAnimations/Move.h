@@ -2,9 +2,9 @@
 #include "BaseAnimation.h"
 
 /// <summary>
-/// 待機アニメーションクラス
+/// 移動アニメーションクラス
 /// </summary>
-class Idle : public BaseAnimation
+class Move : public BaseAnimation
 {
 public: // メンバ関数
 
