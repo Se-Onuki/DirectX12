@@ -132,6 +132,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationManager.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationParameters.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimEasing.cpp" />
@@ -213,6 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.h" />
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationList.h" />
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationManager.h" />
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationParameters.h" />

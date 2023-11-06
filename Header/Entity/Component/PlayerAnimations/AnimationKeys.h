@@ -1,0 +1,51 @@
+#pragma once
+#include <vector>
+#include <string>
+#include "AnimEasing.h"
+#include "PlayerBone.h"
+
+// クラスの前方宣言
+class GlobalVariables;
+
+/// <summary>
+/// アニメーションキー
+/// </summary>
+class AnimationKeys
+{
+public: // パブリックなサブクラス
+
+	//　キーフレーム1つ
+	struct Key {
+		PlayerBone bone;
+		int type;
+		float animationTime;
+	};
+
+public: // メンバ関数
+
+	void Initialize(std::string groupName);
+
+	void AddKey();
+
+	void AddKeyInfo();
+	void SetKeyInfo();
+	void ApplyKeyInfo();
+
+	/// <summary>
+	/// ImGuiの表示
+	/// </summary>
+	void ShowImGUi();
+
+private: // メンバ変数
+
+	// グローバル変数クラス
+	GlobalVariables* gv_;
+
+	// キーフレーム数
+	int keyCount_;
+	// このキーフレーム達が所属するグループ名
+	std::string groupName_;
+	// アニメーションキー達
+	std::vector<Key> keys_;
+};
+

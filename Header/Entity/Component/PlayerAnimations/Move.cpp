@@ -13,7 +13,7 @@ void Move::Initialize(float transitionTime)
 	isReturn_ = true;
 
 	// エンティティの現在状態を取得
-	bone_.Initialize(entity_);
+	//bone_.Initialize(entity_);
 
 	startBone_ = GetTargetBone("Move", "MoveStart");
 	endBone_ = GetTargetBone("Move", "MoveEnd");

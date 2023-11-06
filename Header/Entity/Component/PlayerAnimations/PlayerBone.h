@@ -54,12 +54,12 @@ public: //　メンバ関数
 	/// <summary>
 	/// 初期化関数
 	/// </summary>
-	void Initialize();
+	void Initialize(std::string groupName, std::string boneName);
 	/// <summary>
 	/// 初期化関数
 	/// </summary>
 	/// <param name="player">プレイヤー</param>
-	void Initialize(Entity* player);
+	void Initialize(Entity* player, std::string groupName, std::string boneName);
 
 public: // アクセッサ等
 
@@ -72,30 +72,30 @@ public: // アクセッサ等
 	/// グローバル変数クラスに自分自身を登録する関数
 	/// </summary>
 	/// <param name="gv">グローバル変数クラス実体</param>
-	/// <param name="groupName">グループ名</param>
-	/// <param name="boneName">ボーン名</param> 
-	void AddItem(GlobalVariables* gv, std::string groupName, std::string boneName);
+	void AddItem(GlobalVariables* gv);
 
 	/// <summary>
 	/// グローバル変数クラスに値をセットする関数
 	/// </summary>
 	/// <param name="gv">グローバル変数クラス実体</param>
-	/// <param name="groupName">グループ名</param>
-	/// <param name="boneName">ボーン名</param>
-	void SetItem(GlobalVariables* gv, std::string groupName, std::string boneName);
+	void SetItem(GlobalVariables* gv);
 	/// <summary>
 	/// グローバル変数クラスの値を適用
 	/// </summary>
 	/// <param name="gv">グローバル変数クラス実体</param>
-	/// <param name="groupName">グループ名</param>
-	/// <param name="boneName">ボーン名</param>
-	void ApplyItem(GlobalVariables* gv, std::string groupName, std::string boneName);
+	void ApplyItem(GlobalVariables* gv);
 
 	/// <summary>
 	/// ImGui表示関数
 	/// </summary>
 	/// <param name="groupName">グループ名</param>
-	void DisplayImGui(std::string groupName);
+	void DisplayImGui();
+
+	/// <summary>
+	/// ボーン名のゲッター
+	/// </summary>
+	/// <returns>ボーン名</returns>
+	std::string GetBoneName() { return boneName_; }
 
 public: // パブリックなメンバ関数
 
@@ -103,6 +103,12 @@ public: // パブリックなメンバ関数
 	Bone bone_;
 
 private: // メンバ変数
+
+	// 所属するグループ名
+	std::string groupName_;
+	// 所属するボーン名
+	std::string boneName_;
+
 	// プレイヤー
 	Entity* player_ = nullptr;
 };

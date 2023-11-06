@@ -309,6 +309,9 @@
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\Move.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.cpp">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -559,6 +562,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\Move.h">
       <Filter>Header\Entity\Component\PlayerAnimations\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.h">
+      <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 #include "../../../../externals/imgui/imgui.h"
 #include"../../../../Engine/DirectBase/File/VariantItem.h"
 #include "../../../../Utils/Math/Vector3.h"
-#include "PlayerBone.h"
+#include "AnimationKeys.h"
 
 // クラスの前方宣言
 class GlobalVariables;
@@ -44,22 +44,12 @@ private: // メンバ変数
 	GlobalVariables* globalVariables_ = nullptr;
 
 #pragma region Idle
-	// アイドル状態のアニメーション時間
-	float idleAnimationTime_ = 1.0f;
-
 	// 
-	PlayerBone startIdle_;
-	PlayerBone endIdle_;
+	AnimationKeys idleAnimKeys_;
 
 #pragma endregion
 
 #pragma region Move
-	// 移動アニメーション時間
-	float moveAnimationTime_ = 1.0f;
-
-	// 
-	PlayerBone startMove_;
-	PlayerBone endMove_;
 
 #pragma endregion
 
