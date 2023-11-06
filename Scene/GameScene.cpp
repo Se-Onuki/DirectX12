@@ -93,12 +93,6 @@ void GameScene::Update() {
 
 	colliderManager->clear();
 
-	ImGui::Begin("Camera");
-	camera_.ImGuiWidget();
-	ImGui::End();
-	camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
-	camera_.UpdateMatrix();
-
 	ImGui::Begin("Sphere");
 	//model_->ImGuiWidget();
 	/*for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
@@ -132,6 +126,13 @@ void GameScene::Update() {
 	ImGui::Begin("Player");
 	player_->ImGuiWidget();
 	ImGui::End();
+
+	ImGui::Begin("Camera");
+	camera_.ImGuiWidget();
+	ImGui::End();
+	camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
+	camera_.UpdateMatrix();
+
 
 	//playerAnim_->Update(deltaTime);
 

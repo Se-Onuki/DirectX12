@@ -52,8 +52,8 @@ Vector3 Vector3::Scaling(const Vector3 &other) const {
 	Vector3 result{};
 
 	for (uint32_t i = 0u; i < 3u; ++i) {
-		if ((&other.x)[i] != 0.f) {
-			(&result.x)[i] = (&x)[i] / (&other.x)[i];
+		if (other.data()[i] != 0.f) {
+			result.data()[i] = this->data()[i] / other.data()[i];
 		}
 	}
 

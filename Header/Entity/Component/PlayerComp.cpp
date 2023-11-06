@@ -43,39 +43,39 @@ void PlayerComp::Update() {
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
 
-
 	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
 	while (true) {
 
 		float t = 1.f;
-
-		const AABB beforeCollider = collider_.AddPos(moveLine.origin);
-		const AABB extendCollider = beforeCollider.Extend(moveLine.diff);
-
-		const auto &vertexPos = beforeCollider.GetVertex();
-
-		std::array<LineBase, 8u> vertexLine;
-		for (uint32_t i = 0u; i < vertexLine.size(); ++i) {
-			vertexLine[i].origin = vertexPos[i];
-			vertexLine[i].diff = moveLine.diff;
-		}
-
-
 		Vector3 hitSurfaceNormal{};
-		for (auto &[key, collider] : levelManager->blockCollider_) {
-			for (auto &box : collider.GetCollider()) {
-				// 拡張した箱が当たってたら詳細な判定
-				if (Collision::IsHit(extendCollider, box)) {
-					for (auto &line : vertexLine) {
-						if (Collision::IsHit(box, line)) {
+		if (moveLine.diff.LengthSQ() > 0.f) {
+			const AABB beforeCollider = collider_.AddPos(moveLine.origin);
+			const AABB extendCollider = beforeCollider.Extend(moveLine.diff);
 
-							float value = Collision::HitProgress(line, box);
-							const Vector3 normal = box.GetNormal(line.GetProgress(value));
-							if (normal * line.diff < 0.f) {
-								if (value < t) {
-									t = value;
-									hitSurfaceNormal = normal;
+			const auto &vertexPos = beforeCollider.GetVertex();
+
+			std::array<LineBase, 8u> vertexLine;
+			for (uint32_t i = 0u; i < vertexLine.size(); ++i) {
+				vertexLine[i].origin = vertexPos[i];
+				vertexLine[i].diff = moveLine.diff;
+			}
+
+
+			for (const auto &[key, collider] : levelManager->blockCollider_) {
+				for (auto &box : collider.GetCollider()) {
+					// 拡張した箱が当たってたら詳細な判定
+					if (Collision::IsHit(extendCollider, box)) {
+						for (auto &line : vertexLine) {
+							if (Collision::IsHit(box, line)) {
+
+								float value = Collision::HitProgress(line, box);
+								const Vector3 normal = box.GetNormal(line.GetProgress(value));
+								if (normal * line.diff < 0.f) {
+									if (value < t) {
+										t = value;
+										hitSurfaceNormal = normal;
+									}
 								}
 							}
 						}
@@ -83,7 +83,6 @@ void PlayerComp::Update() {
 				}
 			}
 		}
-
 		if (t < 1.f) {
 
 			moveLine.origin = moveLine.GetProgress(t);

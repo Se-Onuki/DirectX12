@@ -20,6 +20,8 @@ public:
 
 private:
 
+	uint32_t registeredGroups_;
+
 	AABB collider_;
 
 	Input *input_;
