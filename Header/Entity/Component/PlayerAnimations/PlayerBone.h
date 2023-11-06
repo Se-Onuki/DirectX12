@@ -96,6 +96,11 @@ public: // アクセッサ等
 	/// </summary>
 	/// <returns>ボーン名</returns>
 	std::string GetBoneName() { return boneName_; }
+	/// <summary>
+	/// ボーン名セッター
+	/// </summary>
+	/// <param name="name">ボーン名</param>
+	void SetBoneName(std::string name) { boneName_ = name; }
 
 public: // パブリックなメンバ関数
 

@@ -43,8 +43,9 @@ public: // アクセッサ等
 	/// 次のアニメーションセッター
 	/// </summary>
 	/// <param name="next">次にどのアニメーションを再生するか</param>
+	/// <param name="isLoop">ループさせるか</param>
 	/// <param name="transitionTime">遷移の際の時間</param>
-	void SetNextAnimation(Behavior next, float transitionTime = 0);
+	void SetNextAnimation(Behavior next, bool isLoop, float transitionTime = 0);
 
 private: // メンバ変数
 
@@ -60,11 +61,10 @@ private: // メンバ変数
 	// 次のアニメーション
 	BaseAnimation* nextAnimation_ = nullptr;
 
-	// 次のアニメーションへの遷移秒数
-	float transitionTime_;
-
 #ifdef _DEBUG // ImGUiデバッグ用
 
+	// ループトリガー
+	bool imGuiIsLoop_ = false;
 	// 遷移秒数設定用
 	float imGuiTransitionTime_ = 0.0f;
 	// 次のアニメーション

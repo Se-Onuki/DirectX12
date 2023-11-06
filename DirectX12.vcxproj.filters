@@ -97,9 +97,6 @@
     <Filter Include="Header\Entity\Component\PlayerAnimations\Parameters">
       <UniqueIdentifier>{6f979f12-bf0c-4c98-98c5-eb20c68f8d62}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header\Entity\Component\PlayerAnimations\Animation">
-      <UniqueIdentifier>{8caf6fab-fe4c-46c8-b2a2-dd34ae4f31b3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header\Entity\Component\PlayerAnimations\Math">
       <UniqueIdentifier>{0b6e6905-b307-4e07-80bf-2c9934c00803}</UniqueIdentifier>
     </Filter>
@@ -300,14 +297,8 @@
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\PlayerBone.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Entity\Component\PlayerAnimations\Idle.cpp">
-      <Filter>Header\Entity\Component\PlayerAnimations\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimEasing.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Header\Entity\Component\PlayerAnimations\Move.cpp">
-      <Filter>Header\Entity\Component\PlayerAnimations\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
@@ -554,14 +545,8 @@
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\PlayerBone.h">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\Idle.h">
-      <Filter>Header\Entity\Component\PlayerAnimations\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimEasing.h">
       <Filter>Header\Entity\Component\PlayerAnimations\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\Move.h">
-      <Filter>Header\Entity\Component\PlayerAnimations\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.h">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>

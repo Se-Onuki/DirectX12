@@ -205,16 +205,5 @@ public: // パブリックなメンバ関数
 	/// <param name="end">終了値</param>
 	/// <returns>イージングされた値(float)</returns>
 	static int EaseInOut(float t, int start, int end);
-
-	/// <summary>
-	/// 輪っか以外の全てのボーンをイージングにて動作させる線形補間関数
-	/// </summary>
-	/// <param name="type">イージングタイプ</param>
-	/// <param name="t">現在のt</param>
-	/// <param name="start">開始値</param>
-	/// <param name="end">終端値</param>
-	/// <param name="time">時間</param>
-	/// <returns>イージングされた値(float)</returns>
-	static PlayerBone::Bone Ease(EaseingType type, float t, PlayerBone::Bone start, PlayerBone::Bone end, float time);
 };
 

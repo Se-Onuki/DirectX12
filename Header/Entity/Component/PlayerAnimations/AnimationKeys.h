@@ -36,16 +36,20 @@ public: // メンバ関数
 	/// </summary>
 	void ShowImGUi();
 
+public: // キーたち
+
+	// キーフレーム数
+	int keyCount_;
+
+	// アニメーションキー達
+	std::vector<Key> keys_;
+
 private: // メンバ変数
 
 	// グローバル変数クラス
 	GlobalVariables* gv_;
-
-	// キーフレーム数
-	int keyCount_;
 	// このキーフレーム達が所属するグループ名
 	std::string groupName_;
-	// アニメーションキー達
-	std::vector<Key> keys_;
+	
 };
 

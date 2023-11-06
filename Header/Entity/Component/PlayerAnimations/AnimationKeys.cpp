@@ -6,7 +6,6 @@ void AnimationKeys::Initialize(std::string groupName)
 	// グループ名の取得
 	groupName_ = groupName;
 	keyCount_ = 0;
-
 	gv_ = GlobalVariables::GetInstance();
 }
 
@@ -46,7 +45,7 @@ void AnimationKeys::SetKeyInfo()
 {
 	// キーフレーム数を取得
 	keyCount_ = (int)keys_.size();
-	gv_->AddValue(groupName_, "KeyCount", keyCount_);
+	gv_->SetValue(groupName_, "KeyCount", keyCount_);
 	// 全ての情報をグローバル変数に追加する
 	for (int i = 0; i < (int)keys_.size(); i++) {
 		keys_[i].bone.SetItem(gv_);
@@ -68,7 +67,7 @@ void AnimationKeys::ApplyKeyInfo()
 		PlayerBone bone;
 		// 引数の値を代入する
 		tempKey.bone = bone;
-		std::string fullBoneName = groupName_ + std::to_string((int)keys_.size());
+		std::string fullBoneName = "key : " + std::to_string((int)keys_.size());
 		tempKey.bone.Initialize(groupName_, fullBoneName);
 		tempKey.bone.ApplyItem(gv_);
 		tempKey.type = gv_->Get<int>(groupName_, fullBoneName + "EasingType");
@@ -83,7 +82,7 @@ void AnimationKeys::ApplyKeyInfo()
 
 void AnimationKeys::ShowImGUi()
 {
-	ImGui::Begin("AnimManager");
+	ImGui::Begin("AnimManager", nullptr, ImGuiWindowFlags_MenuBar);
 	if (ImGui::BeginMenuBar()) {
 		if (ImGui::BeginMenu(groupName_.c_str())) {
 			ImGui::DragInt("KeyCount", &keyCount_, 0.0f, 0, 100);
@@ -100,6 +99,10 @@ void AnimationKeys::ShowImGUi()
 					ApplyKeyInfo();
 				}
 
+				if (ImGui::Button("SaveFile")) {
+					gv_->SaveFile(groupName_);
+				}
+
 				ImGui::TreePop();
 			}
 			// 全ての情報を表示する
@@ -113,10 +116,15 @@ void AnimationKeys::ShowImGUi()
 				if (ImGui::Button(name.c_str())) {
 					keys_.erase(keys_.begin() + i);
 					keyCount_ = (int)keys_.size();
+					for (int j = 0; j < keyCount_; j++) {
+						std::string fullBoneName = "key : " + std::to_string(j);
+						keys_[j].bone.SetBoneName(fullBoneName);
+					}
 				}
 			}
+			ImGui::EndMenu();
 		}
-		ImGui::EndMenu();
+		
 	}
 	ImGui::EndMenuBar();
 	ImGui::End();

@@ -4,5 +4,3 @@
 ==================================*/
 
 #include "BaseAnimation.h"
-#include "Idle.h"
-#include "Move.h"

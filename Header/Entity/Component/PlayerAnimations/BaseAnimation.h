@@ -3,7 +3,7 @@
 #include "../ModelComp.h"
 #include "AnimEasing.h"
 #include "../../../../Engine/DirectBase/File/GlobalVariables.h"
-#include "PlayerBone.h"
+#include "AnimationKeys.h"
 
 /// <summary>
 /// アニメーション基底クラス
@@ -16,18 +16,20 @@ public: // メンバ関数
 	BaseAnimation() = default;
 	// デストラクタ
 	~BaseAnimation() = default;
-
+	
 	/// <summary>
 	/// 初期化関数
 	/// </summary>
+	/// <param name="name">読みこむパラメーター名</param>
+	/// <param name="isLoop">ループするか</param>
 	/// <param name="transitionTime">遷移秒数</param>
-	virtual void Initialize(float transitionTime = 0.0f);
+	void Initialize(std::string name, bool isLoop, float transitionTime = 0.0f);
 
 	/// <summary>
 	/// 更新関数
 	/// </summary>
 	/// <param name="deltaTime">経過秒数</param>
-	virtual void Update(float deltaTime);
+	void Update(float deltaTime);
 
 public: // アクセッサ等
 
@@ -62,6 +64,17 @@ public: // アクセッサ等
 	/// <returns>プレイヤーボーン</returns>
 	PlayerBone::Bone GetPlayerBone();
 
+	/// <summary>
+	/// 全てのボーンをイージングにて動作させる線形補間関数
+	/// </summary>
+	/// <param name="type">イージングタイプ</param>
+	/// <param name="t">現在のt</param>
+	/// <param name="start">開始値</param>
+	/// <param name="end">終端値</param>
+	/// <param name="time">時間</param>
+	/// <returns>イージングされた値(float)</returns>
+	PlayerBone::Bone Ease(AnimEasing::EaseingType type, float t, PlayerBone::Bone start, PlayerBone::Bone end, float time);
+
 protected: // 継承先メンバ変数
 
 	// グローバル変数クラス
@@ -73,14 +86,14 @@ protected: // 継承先メンバ変数
 	// 現在ボーン
 	PlayerBone bone_;
 
-	// アニメーション用ボーン
-	PlayerBone::Bone startBone_; // 始端
-	PlayerBone::Bone endBone_;	 // 終端
+	// アニメーションキー
+	AnimationKeys animKeys_;
 
-	// アニメーション演出用t
+	// 現在再生中のキー
+	int playKey_;
+
+	// 演出用t
 	float animT_;
-	// アニメーション演出時間秒数
-	float animationTime_;
 
 	// 遷移開始直前のボーン情報を取得
 	PlayerBone::Bone prevBone_;
@@ -88,6 +101,9 @@ protected: // 継承先メンバ変数
 	bool isTransitioning_;
 	// 遷移秒数
 	float transitionTime_;
+
+	// ループトリガー
+	bool isLoop_;
 
 	// 終了トリガー
 	bool isEnd_;
