@@ -51,6 +51,23 @@ public: // アクセッサ等
 	void SetIsEnd(bool isEnd) { isEnd_ = isEnd; }
 
 	/// <summary>
+	/// 再生状態ゲッター
+	/// </summary>
+	/// <returns>再生状態</returns>
+	bool GetIsPlay() { return isPlaying_; }
+	/// <summary>
+	/// 再生状態セッター
+	/// </summary>
+	/// <param name="play">再生状態</param>
+	void SetIsPlay(bool play) { isPlaying_ = play; }
+
+	/// <summary>
+	/// 再生中キーのゲッター
+	/// </summary>
+	/// <returns>再生中キー</returns>
+	int GetPlayKey() { return playKey_; }
+
+	/// <summary>
 	/// 引数で指定したボーンの値を取得するゲッター
 	/// </summary>
 	/// <param name="groupName">取得するボーンのグループ名</param>
@@ -101,6 +118,8 @@ protected: // 継承先メンバ変数
 	bool isTransitioning_;
 	// 遷移秒数
 	float transitionTime_;
+
+	bool isPlaying_;
 
 	// ループトリガー
 	bool isLoop_;

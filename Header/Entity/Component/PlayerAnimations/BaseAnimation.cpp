@@ -26,6 +26,7 @@ void BaseAnimation::Initialize(std::string name, bool isLoop, float transitionTi
 	animKeys_.Initialize(name);
 	animKeys_.ApplyKeyInfo();
 
+	isPlaying_ = true;
 	isLoop_ = isLoop;
 	isEnd_ = false;
 }
@@ -34,40 +35,54 @@ void BaseAnimation::Update(float deltaTime)
 {
 
 	animKeys_.ApplyKeyInfo();
-
-	if (isTransitioning_) {
-		// イージングによってアニメーション
-		if (animT_ < transitionTime_) {
-			bone_.bone_ = Ease(AnimEasing::KEaseInOut, animT_, prevBone_, animKeys_.keys_[0].bone.bone_, transitionTime_);
-			// 経過フレーム分加算
-			animT_ += deltaTime;
-		}
-		else {
-			animT_ = 0.0f;
-			// 遷移トリガーfalse
-			isTransitioning_ = false;
-		}
-	}
-	else {
-		if (animT_ < animKeys_.keys_[playKey_].animationTime && playKey_ < animKeys_.keyCount_ - 1 && animKeys_.keyCount_ > 0) {
-			bone_.bone_ = Ease(
-				(AnimEasing::EaseingType)animKeys_.keys_[playKey_].type, animT_,
-				animKeys_.keys_[playKey_].bone.bone_, animKeys_.keys_[playKey_ + 1].bone.bone_, animKeys_.keys_[playKey_].animationTime);
-			// 経過フレーム分加算
-			animT_ += deltaTime;
-		}
-		else {
-			if (playKey_ < animKeys_.keyCount_ - 1) {
-				playKey_++;
+	if (isPlaying_) {
+		if (isTransitioning_) {
+			// イージングによってアニメーション
+			if (animT_ < transitionTime_) {
+				bone_.bone_ = Ease((AnimEasing::EaseingType)animKeys_.keys_[0].type, animT_, prevBone_, animKeys_.keys_[0].bone.bone_, transitionTime_);
+				// 経過フレーム分加算
+				animT_ += deltaTime;
+			}
+			else {
 				animT_ = 0.0f;
+				// 遷移トリガーfalse
+				isTransitioning_ = false;
+			}
+		}
+		else {
+			if (animT_ < animKeys_.keys_[playKey_].animationTime) {
+				
+				int targetKey = playKey_ + 1;
+				if (playKey_ == animKeys_.keyCount_ - 1)
+					if (isLoop_)
+						targetKey = 0;
+
+				bone_.bone_ = Ease(
+					(AnimEasing::EaseingType)animKeys_.keys_[playKey_].type, animT_,
+					animKeys_.keys_[playKey_].bone.bone_, animKeys_.keys_[targetKey].bone.bone_, animKeys_.keys_[playKey_].animationTime);
+				// 経過フレーム分加算
+				animT_ += deltaTime;
 			}
 			else {
 				if (isLoop_) {
-					animT_ = 0.0f;
-					playKey_ = 0;
+					if (playKey_ < animKeys_.keyCount_ - 1) {
+						playKey_++;
+						animT_ = 0.0f;
+					}
+					else {
+						animT_ = 0.0f;
+						playKey_ = 0;
+					}
 				}
-				else
-					isEnd_ = true;
+				else {
+					if (playKey_ < animKeys_.keyCount_ - 2) {
+						playKey_++;
+						animT_ = 0.0f;
+					}
+					else {
+						isEnd_ = true;
+					}
+				}
 			}
 		}
 	}
@@ -126,7 +141,9 @@ PlayerBone::Bone BaseAnimation::GetPlayerBone()
 	tempBone.arm_L.rotate = modelComp->GetBone("Arm_L")->transform_->rotate;
 	tempBone.arm_L.translate = modelComp->GetBone("Arm_L")->transform_->translate;
 	tempBone.arm_R.scale = modelComp->GetBone("Arm_R")->transform_->scale;
-	tempBone.arm_R.rotate = modelComp->GetBone("Arm_R")->transform_->rotate;
+	tempBone.arm_R.rotate.x = modelComp->GetBone("Arm_R")->transform_->rotate.x;
+	tempBone.arm_R.rotate.y = modelComp->GetBone("Arm_R")->transform_->rotate.y;
+	tempBone.arm_R.rotate.z = -modelComp->GetBone("Arm_R")->transform_->rotate.z;
 	tempBone.arm_R.translate = modelComp->GetBone("Arm_R")->transform_->translate;
 	tempBone.foot_L.scale = modelComp->GetBone("Foot_L")->transform_->scale;
 	tempBone.foot_L.rotate = modelComp->GetBone("Foot_L")->transform_->rotate;

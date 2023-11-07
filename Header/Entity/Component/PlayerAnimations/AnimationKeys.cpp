@@ -7,6 +7,9 @@ void AnimationKeys::Initialize(std::string groupName)
 	groupName_ = groupName;
 	keyCount_ = 0;
 	gv_ = GlobalVariables::GetInstance();
+
+	// コピーキーの初期化
+	copiedKey_.Initialize();
 }
 
 void AnimationKeys::AddKey()
@@ -119,6 +122,18 @@ void AnimationKeys::ShowImGUi()
 					for (int j = 0; j < keyCount_; j++) {
 						std::string fullBoneName = "key : " + std::to_string(j);
 						keys_[j].bone.SetBoneName(fullBoneName);
+					}
+				}
+
+				name = "CopyKey : " + std::to_string(i);
+				if (ImGui::Button(name.c_str()))
+					copiedKey_ = keys_[i];
+
+				if (copiedKey_.bone.GetBoneName() != "None") {
+					name = "PasteKey : " + std::to_string(i);
+					if (ImGui::Button(name.c_str())) {
+						copiedKey_.bone.SetBoneName(keys_[i].bone.GetBoneName());
+						keys_[i] = copiedKey_;
 					}
 				}
 			}

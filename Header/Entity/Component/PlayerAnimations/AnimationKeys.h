@@ -19,6 +19,12 @@ public: // パブリックなサブクラス
 		PlayerBone bone;
 		int type;
 		float animationTime;
+
+		void Initialize() {
+			bone.Initialize("None", "None");
+			type = AnimEasing::kLinear;
+			animationTime = 0.0f;
+		}
 	};
 
 public: // メンバ関数
@@ -51,5 +57,7 @@ private: // メンバ変数
 	// このキーフレーム達が所属するグループ名
 	std::string groupName_;
 	
-};
+	// コピーされたキー
+	Key copiedKey_;
 
+};

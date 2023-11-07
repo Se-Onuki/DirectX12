@@ -15,6 +15,11 @@ void AnimationManager::Initialize()
 
 void AnimationManager::Update()
 {
+	// FPSカウンターの表示
+	ImGui::Begin("Control panel");
+	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
+	ImGui::End();
+
 	// 更新
 	animParameters_->Update();
 
@@ -36,6 +41,9 @@ void AnimationManager::Update()
 	ImGui::RadioButton("PlayIdle", &imGuiNextbehavior_, kIdle);
 	ImGui::RadioButton("PlayMove", &imGuiNextbehavior_, kMove);
 
+	int key = currentAnimation_->GetPlayKey();
+	ImGui::DragInt("NowPlayKey", &key, 0.05f);
+
 	ImGui::Checkbox("isLoop", &imGuiIsLoop_);
 
 	ImGui::DragFloat("transitionTime", &imGuiTransitionTime_, 0.05f, 0.0f, 5.0f);
@@ -45,6 +53,18 @@ void AnimationManager::Update()
 		currentAnimation_->SetIsEnd(true);
 		SetNextAnimation((Behavior)imGuiNextbehavior_, imGuiIsLoop_, imGuiTransitionTime_);
 	}
+
+	if (!currentAnimation_->GetIsEnd()) {
+		if (currentAnimation_->GetIsPlay()) {
+			if (ImGui::Button("StopAnim"))
+				currentAnimation_->SetIsPlay(false);
+		}
+		else {
+			if (ImGui::Button("ReplayAnim"))
+				currentAnimation_->SetIsPlay(true);
+		}
+	}
+		
 	ImGui::End();
 #endif // _DEBUG
 }
