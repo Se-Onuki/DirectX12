@@ -88,11 +88,11 @@
     <Filter Include="Utils\SoLib">
       <UniqueIdentifier>{718943a2-fecd-4a48-a88c-ffda723192fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header\Entity\Component\Object">
-      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header\Entity\Component\PlayerAnimations">
       <UniqueIdentifier>{b03e6b46-6746-49e2-adac-3e9df5f4a824}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object">
+      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -256,13 +256,13 @@
       <Filter>Header\Entity</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Player.cpp">
-      <Filter>Header\Entity\Component\Object</Filter>
+      <Filter>Header\Entity\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\BaseCharacter.cpp">
-      <Filter>Header\Entity\Component\Object</Filter>
+      <Filter>Header\Entity\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\FollowCamera.cpp">
-      <Filter>Header\Entity\Component\Object</Filter>
+      <Filter>Header\Entity\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Base\RootSignature.cpp">
       <Filter>Engine\Base</Filter>
@@ -271,7 +271,7 @@
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\LevelElementManager.cpp">
-      <Filter>Header\Entity\Component\Object</Filter>
+      <Filter>Header\Entity\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerComp.cpp">
       <Filter>Header\Entity\Component</Filter>
@@ -480,13 +480,13 @@
       <Filter>Header\Entity</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\FollowCamera.h">
-      <Filter>Header\Entity\Component\Object</Filter>
+      <Filter>Header\Entity\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Player.h">
-      <Filter>Header\Entity\Component\Object</Filter>
+      <Filter>Header\Entity\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\BaseCharacter.h">
-      <Filter>Header\Entity\Component\Object</Filter>
+      <Filter>Header\Entity\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h">
       <Filter>Engine\Descriptor</Filter>
@@ -504,7 +504,7 @@
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\LevelElementManager.h">
-      <Filter>Header\Entity\Component\Object</Filter>
+      <Filter>Header\Entity\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerComp.h">
       <Filter>Header\Entity\Component</Filter>
