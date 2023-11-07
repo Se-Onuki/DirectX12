@@ -60,11 +60,3 @@ public:
 private:
 
 };
-//
-//template <SoLib::IsContainer T>
-//inline void LevelElementManager::AddBlock(const std::string &key, T &entities) {
-//	static_assert(std::is_same_v<typename T::value_type, Entity *>, "与えられた引数はEntity*型を持つコンテナ型ではありません");
-//	for (Entity *entity : entities) {
-//		AddBlock(key, entity);
-//	}
-//}

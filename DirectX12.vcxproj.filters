@@ -521,6 +521,9 @@
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationList.h">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Object\LevelManager.h">
+      <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
