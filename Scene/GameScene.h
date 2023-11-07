@@ -12,10 +12,18 @@
 #include "../Engine/DirectBase/Base/Audio.h"
 #include "../Header/Object/LevelElementManager.h"
 
-struct Particle {
+struct ParticleData {
 	TransformMatrix transform;
 	Vector4 color;
 
+};
+
+struct Particle {
+	BaseTransform transform_;
+	CMapTarget<Vector4> color_;
+
+	using map_struct = ParticleData;
+	Particle &operator=(map_struct *const target);
 };
 
 class GameScene : public IScene {
@@ -42,12 +50,9 @@ private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	std::unique_ptr<Entity> player_;
-	LevelElementManager* levelManager{};
-
-	std::array<BaseTransform, 5u> transformArray_;
+	LevelElementManager *levelManager{};
 
 	Transform transform_;
-	//std::array<CBuffer<Vector4, false>, 5u> colorArray_;
 
-	//StructuredBuffer<Particle> instanceTransform_{ 5u };
+	StructuredBuffer<Particle> instanceTransform_{ 5u };
 };

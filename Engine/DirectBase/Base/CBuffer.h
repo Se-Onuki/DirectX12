@@ -286,6 +286,13 @@ public:
 	friend ConstantContainer;
 
 	T *const operator=(T *const) = delete;
+	T &operator=(const T &other) {
+		if (target_) {
+			*target_ = other;
+		}
+		return *target_;
+	};
+	T *const operator <<(T *const target) { return target_ = target; };
 
 	inline operator T *const() { return target_; }
 	inline operator const T *const() const { return target_; }

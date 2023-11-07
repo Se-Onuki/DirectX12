@@ -63,11 +63,10 @@ void GameScene::OnEnter() {
 
 #pragma endregion
 
-	//for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-	//	transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
-	//	colorArray_[i].SetMapAddress(&instanceTransform_[i].color);
-	//	colorArray_[i] = Vector4{ 1.f,1.f,1.f,1.f };
-	//}
+	for (uint32_t i = 0u; i < instanceTransform_.size(); ++i) {
+		//particle_[i] = (&instanceTransform_[i]);
+		instanceTransform_[i].color_ = Vector4{ 1.f,1.f,1.f,1.f };
+	}
 }
 
 void GameScene::OnExit() {}
@@ -83,14 +82,14 @@ void GameScene::Update() {
 
 	ImGui::Begin("Sphere");
 	model_->ImGuiWidget();
-	/*for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
+	for (uint32_t i = 0u; i < instanceTransform_.size(); ++i) {
 		if (ImGui::TreeNode(("Particle" + std::to_string(i)).c_str())) {
-			transformArray_[i].ImGuiWidget();
-			ImGui::ColorEdit4("Color", &colorArray_[i]->x);
+			instanceTransform_[i].transform_.ImGuiWidget();
+			ImGui::ColorEdit4("Color", &instanceTransform_[i].color_->x);
 			ImGui::TreePop();
 		}
-		transformArray_[i].UpdateMatrix();
-	}*/
+		instanceTransform_[i].transform_.UpdateMatrix();
+	}
 	ImGui::End();
 
 	TextureManager::GetInstance()->ImGuiWindow();
@@ -148,10 +147,10 @@ void GameScene::Draw()
 
 	//player_->Draw(camera_);
 
-	//Model::SetPipelineType(Model::PipelineType::kParticle);
+	Model::SetPipelineType(Model::PipelineType::kParticle);
+	model_->Draw(instanceTransform_, camera_);
 
 	// モデルの描画
-	// model_->Draw(instanceTransform_, camera_);
 
 	Model::EndDraw();
 
@@ -168,4 +167,12 @@ void GameScene::Draw()
 
 #pragma endregion
 
+}
+
+Particle &Particle::operator=(map_struct *const target) {
+	if (target) {
+		transform_.mapTarget_ << &target->transform;
+		color_ << &target->color;
+	}
+	return *this;
 }
