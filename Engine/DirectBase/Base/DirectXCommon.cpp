@@ -424,12 +424,11 @@ void DirectXCommon::FPSManager::Update() {
 
 	if (elapsed < kMinCheckTime) {
 		// 経過するまで微小なスリープを行う
-		if (std::chrono::steady_clock::now() - reference_ < kMinTime) {
+		while (std::chrono::steady_clock::now() - reference_ < kMinTime) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 	}
 
 	reference_ = std::chrono::steady_clock::now();
-
 
 }
