@@ -55,7 +55,7 @@ void GameScene::OnEnter() {
 	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,3.f,0.f }));
 	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
 
-	levelManager->blockCollider_[0u].rotate_.z = 180._deg;
+	// levelManager->blockCollider_[0u].center_.translate.z = 180._deg;
 
 	levelManager->CalcCollision(0u);
 
@@ -109,12 +109,12 @@ void GameScene::Update() {
 
 	ImGui::Begin("LevelManager");
 	if (ImGui::Button("Left")) {
-		levelManager->blockCollider_[0u].rotate_.z += 90._deg;
+		levelManager->blockCollider_[0u].center_.rotate.z += 90._deg;
 	}
 	if (ImGui::Button("Right")) {
-		levelManager->blockCollider_[0u].rotate_.z += -90._deg;
+		levelManager->blockCollider_[0u].center_.rotate.z += -90._deg;
 	}
-	levelManager->blockCollider_[0u].rotate_.z = Angle::Mod(levelManager->blockCollider_[0u].rotate_.z);
+	levelManager->blockCollider_[0u].center_.rotate.z = Angle::Mod(levelManager->blockCollider_[0u].center_.rotate.z);
 
 	ImGui::End();
 

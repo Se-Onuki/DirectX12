@@ -31,36 +31,37 @@ void LevelElementManager::AddBlock(const uint32_t key, const AABB &box) {
 //	blockEntity_[key].emplace_back(entity);
 //}
 
-void LevelElementManager::Platform::AddBox(const AABB &box) {
-	referenceBox_.push_back(box);
-	transform_.emplace_back();
-
-	auto &newTransform = transform_.back();
-	newTransform->translate = box.GetCentor();
-	newTransform->scale = box.GetRadius();
+void LevelElementManager::Platform::AddBox(const AABB &aabb) {
+	auto &box = boxList_.emplace_back(aabb);
+	box.transform_->parent_ = &center_;
 }
 
 void LevelElementManager::Platform::CalcCollision() {
-	const auto &rotateMat = Matrix4x4::EulerRotate(rotate_);
+	center_.CalcMatrix();
+	const auto &affineMat = center_.matWorld_;
 	collisionBox_.clear();
-	auto itTransform = transform_.begin();
-	for (auto &box : referenceBox_) {
-		AABB newBox = box;
-		newBox.min *= rotateMat;
-		newBox.max *= rotateMat;
+
+	for (auto &box : boxList_) {
+		AABB newBox = box.referenceBox_;
+		newBox.min *= affineMat;
+		newBox.max *= affineMat;
 		collisionBox_.push_back(newBox.Swaping());
 
 
-		(*itTransform)->translate = newBox.GetCentor();
-		(*itTransform)->scale = newBox.GetRadius();
-		(*itTransform)->UpdateMatrix();
+		box.transform_->UpdateMatrix();
 
-		++itTransform;
 	}
 }
 
 void LevelElementManager::Platform::Draw(const Model *const model, const Camera3D &camera) const {
-	for (const auto &transform : transform_) {
-		model->Draw(transform, camera);
+	for (const auto &box : boxList_) {
+		model->Draw(box.transform_, camera);
 	}
+}
+
+LevelElementManager::Box::Box(const AABB &aabb) {
+	transform_->translate = aabb.GetCentor();
+	transform_->scale = aabb.GetRadius();
+
+	referenceBox_ = aabb;
 }

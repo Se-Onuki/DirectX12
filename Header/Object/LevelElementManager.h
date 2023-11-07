@@ -13,13 +13,20 @@ class LevelElementManager {
 	~LevelElementManager() = default;
 public:
 
+	class Box {
+	public:
+		Box(const AABB &aabb);
+
+		Transform transform_;
+		AABB referenceBox_;
+	};
+
 	class Platform {
 	public:
 		Platform() = default;
 		~Platform() = default;
 
-		Vector3 rotate_;
-		Vector3 origin_;
+		BaseTransform center_;
 
 		void AddBox(const AABB &box);
 		void CalcCollision();
@@ -29,9 +36,9 @@ public:
 		const auto &GetCollider() const { return collisionBox_; }
 
 	private:
-		std::list<Transform> transform_;
-		std::list<AABB> referenceBox_;
 		std::list<AABB> collisionBox_;
+
+		std::list<Box> boxList_;
 	};
 
 public:
