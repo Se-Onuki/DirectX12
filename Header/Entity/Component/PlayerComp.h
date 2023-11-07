@@ -16,9 +16,15 @@ public:
 
 	void Draw(const Camera3D &camera) const override;
 
-	VariantItem<float> vMoveSpeed{ "MoveSpeed", 10.f };
+	void ApplyVariables(const char *const groupName) override;
+	void AddVariable(const char *const groupName) const override;
+
+	VariantItem<float> vMoveSpeed{ "MoveSpeed", 1000.f };
+	VariantItem<float> vJumpPower{ "JumpPower", 5.f };
 
 private:
+
+	static const std::string groupName_;
 
 	uint32_t registeredGroups_;
 

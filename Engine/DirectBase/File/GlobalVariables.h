@@ -36,6 +36,7 @@ public:
 	/// @param groupName グループ名
 	/// @return 紐づいた Group
 	const Group &GetGroup(const std::string &groupName) const;
+	Group &GetGroup(const std::string &groupName);
 
 	Group &operator[](const std::string &groupName) { return datas_[groupName]; }
 

@@ -679,7 +679,7 @@ void Material::ImGuiWidget()
 					break;
 				}
 			}
-			ImGui::EndCombo();
+			ImGui::EndCombo(); 
 		}
 
 		if (ImGui::TreeNode("Texture")) {

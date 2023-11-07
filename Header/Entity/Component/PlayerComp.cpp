@@ -1,17 +1,23 @@
 #include "PlayerComp.h"
 #include "Rigidbody.h"
 #include "../../Object/LevelElementManager.h"
+#include "../../../Engine/DirectBase/File/GlobalVariables.h"
+
+const std::string PlayerComp::groupName_ = "Player";
 
 void PlayerComp::Init() {
+	ApplyVariables(groupName_.c_str());
 	input_ = Input::GetInstance();
 	collider_.min = -Vector3::one;
 	collider_.max = Vector3::one;
 	//auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	//rigidbody->ApplyInstantForce(Vector3{ 0.f,1000000.f,0.f });
+
+	AddVariable(groupName_.c_str());
 }
 
 void PlayerComp::Update() {
-
+	ApplyVariables(groupName_.c_str());
 
 	static const auto *const keyBoard = input_->GetDirectInput();
 	static auto *const levelManager = LevelElementManager::GetInstance();
@@ -20,7 +26,7 @@ void PlayerComp::Update() {
 	auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	if (keyBoard) {
 		if (keyBoard->IsTrigger(DIK_SPACE)) {
-			rigidbody->ApplyInstantForce(Vector3{ 0.f,8.f,0.f });
+			rigidbody->ApplyInstantForce(Vector3{ 0.f,vJumpPower,0.f });
 		}
 
 
@@ -38,8 +44,11 @@ void PlayerComp::Update() {
 			inputVec += Vector3::right;
 		}
 
-		rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
+		inputVec = inputVec.Nomalize();
+
+
 	}
+	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
 
@@ -103,8 +112,24 @@ void PlayerComp::Update() {
 
 
 	transform_->translate = moveLine.origin;
+	rigidbody->SetVelocity({ 0.f,rigidbody->GetVelocity().y,0.f });
 }
 
 void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {
 
+}
+
+void PlayerComp::ApplyVariables(const char *const groupName) {
+	const GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+	const auto &cGroup = gVariable->GetGroup(groupName);
+
+	cGroup >> vMoveSpeed;
+	cGroup >> vJumpPower;
+}
+
+void PlayerComp::AddVariable(const char *const groupName) const {
+	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+	auto &group = gVariable->GetGroup(groupName);
+	group << vMoveSpeed;
+	group << vJumpPower;
 }
