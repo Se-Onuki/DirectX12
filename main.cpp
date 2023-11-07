@@ -124,6 +124,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 
 
+#ifdef _DEBUG
+
+		ImGui::Begin("Flame");
+		ImGui::Text("FPS   : %f", ImGui::GetIO().Framerate);
+		ImGui::Text("Delta : %f", ImGui::GetIO().DeltaTime);
+
+		ImGui::End();
+
+#endif // _DEBUG
+
 
 		gVariable->Update();
 		// ゲームの処理

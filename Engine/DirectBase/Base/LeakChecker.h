@@ -17,7 +17,7 @@ private:
 	static uint32_t loadCount;
 
 	DirectResourceLeakChecker(const DirectResourceLeakChecker &) = delete;
-	DirectResourceLeakChecker operator=(const DirectResourceLeakChecker &) = delete;
+	DirectResourceLeakChecker &operator=(const DirectResourceLeakChecker &) = delete;
 
 public:
 	DirectResourceLeakChecker() {

@@ -13,6 +13,8 @@ void WinApp::StaticInit()
 
 #pragma endregion
 
+	timeBeginPeriod(1u);
+
 }
 void WinApp::Finalize()
 {
@@ -41,8 +43,7 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 #endif // _DEBUG
 
 	// メッセージに応じてゲーム固有の処理を行う
-	switch (msg)
-	{
+	switch (msg) {
 		// ウィンドウが破棄された
 	case WM_DESTROY:
 		// OSに対して、アプリの終了を伝える
