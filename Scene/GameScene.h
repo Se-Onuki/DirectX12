@@ -11,20 +11,8 @@
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
 #include "../Header/Object/LevelElementManager.h"
+#include "../Header/Object/Particle.h"
 
-struct ParticleData {
-	TransformMatrix transform;
-	Vector4 color;
-
-};
-
-struct Particle {
-	BaseTransform transform_;
-	CMapTarget<Vector4> color_;
-
-	using map_struct = ParticleData;
-	Particle &operator=(map_struct *const target);
-};
 
 class GameScene : public IScene {
 public:
@@ -54,5 +42,5 @@ private:
 
 	Transform transform_;
 
-	StructuredBuffer<Particle> instanceTransform_{ 5u };
+	StructuredBuffer<Particle> particleArray_{ 5u };
 };

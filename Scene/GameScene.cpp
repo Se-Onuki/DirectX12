@@ -63,9 +63,9 @@ void GameScene::OnEnter() {
 
 #pragma endregion
 
-	for (uint32_t i = 0u; i < instanceTransform_.size(); ++i) {
+	for (uint32_t i = 0u; i < particleArray_.size(); ++i) {
 		//particle_[i] = (&instanceTransform_[i]);
-		instanceTransform_[i].color_ = Vector4{ 1.f,1.f,1.f,1.f };
+		particleArray_[i].color_ = Vector4{ 1.f,1.f,1.f,1.f };
 	}
 }
 
@@ -82,13 +82,13 @@ void GameScene::Update() {
 
 	ImGui::Begin("Sphere");
 	model_->ImGuiWidget();
-	for (uint32_t i = 0u; i < instanceTransform_.size(); ++i) {
+	for (uint32_t i = 0u; i < particleArray_.size(); ++i) {
 		if (ImGui::TreeNode(("Particle" + std::to_string(i)).c_str())) {
-			instanceTransform_[i].transform_.ImGuiWidget();
-			ImGui::ColorEdit4("Color", &instanceTransform_[i].color_->x);
+			particleArray_[i].transform_.ImGuiWidget();
+			ImGui::ColorEdit4("Color", &particleArray_[i].color_->x);
 			ImGui::TreePop();
 		}
-		instanceTransform_[i].transform_.UpdateMatrix();
+		particleArray_[i].transform_.UpdateMatrix();
 	}
 	ImGui::End();
 
@@ -148,7 +148,7 @@ void GameScene::Draw()
 	//player_->Draw(camera_);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
-	model_->Draw(instanceTransform_, camera_);
+	model_->Draw(particleArray_, camera_);
 
 	// モデルの描画
 
@@ -167,12 +167,4 @@ void GameScene::Draw()
 
 #pragma endregion
 
-}
-
-Particle &Particle::operator=(map_struct *const target) {
-	if (target) {
-		transform_.mapTarget_ << &target->transform;
-		color_ << &target->color;
-	}
-	return *this;
 }

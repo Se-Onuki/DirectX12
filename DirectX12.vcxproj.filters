@@ -273,6 +273,9 @@
     <ClCompile Include="Header\Entity\Component\PlayerComp.cpp">
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Object\Particle.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -496,6 +499,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerComp.h">
       <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle.h">
+      <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
