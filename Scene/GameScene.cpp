@@ -26,17 +26,19 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
+	static auto *const modelManager = ModelManager::GetInstance();
+
 	// モデルの読み込み
-	ModelManager::GetInstance()->CreateDefaultModel(); // デフォルトモデルの読み込み
-	ModelManager::GetInstance()->AddModel("Box", Model::LoadObjFile("", "box.obj"));
-	ModelManager::GetInstance()->AddModel("PlayerBody", Model::LoadObjFile("Model/PlayerModel/Body/", "Body.obj")); // プレイヤーの体
-	ModelManager::GetInstance()->AddModel("PlayerEye", Model::LoadObjFile("Model/PlayerModel/Eye/", "Eye.obj")); // プレイヤーの瞳
-	ModelManager::GetInstance()->AddModel("PlayerHelmet", Model::LoadObjFile("Model/PlayerModel/Helmet/", "Helmet.obj")); // プレイヤーのヘルメット
-	ModelManager::GetInstance()->AddModel("PlayerLing", Model::LoadObjFile("Model/PlayerModel/Ling/", "Ling.obj")); // プレイヤーの輪っか
-	ModelManager::GetInstance()->AddModel("PlayerArm_L", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_L.obj")); // プレイヤーの左腕
-	ModelManager::GetInstance()->AddModel("PlayerArm_R", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_R.obj")); // プレイヤーの右腕
-	ModelManager::GetInstance()->AddModel("PlayerFoot_L", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_L.obj")); // プレイヤーの左足
-	ModelManager::GetInstance()->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_R.obj")); // プレイヤーの右足
+	modelManager->CreateDefaultModel(); // デフォルトモデルの読み込み
+	modelManager->AddModel("Box", Model::LoadObjFile("", "box.obj"));
+	modelManager->AddModel("PlayerBody", Model::LoadObjFile("Model/PlayerModel/Body/", "Body.obj")); // プレイヤーの体
+	modelManager->AddModel("PlayerEye", Model::LoadObjFile("Model/PlayerModel/Eye/", "Eye.obj")); // プレイヤーの瞳
+	modelManager->AddModel("PlayerHelmet", Model::LoadObjFile("Model/PlayerModel/Helmet/", "Helmet.obj")); // プレイヤーのヘルメット
+	modelManager->AddModel("PlayerLing", Model::LoadObjFile("Model/PlayerModel/Ling/", "Ling.obj")); // プレイヤーの輪っか
+	modelManager->AddModel("PlayerArm_L", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_L.obj")); // プレイヤーの左腕
+	modelManager->AddModel("PlayerArm_R", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_R.obj")); // プレイヤーの右腕
+	modelManager->AddModel("PlayerFoot_L", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_L.obj")); // プレイヤーの左足
+	modelManager->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_R.obj")); // プレイヤーの右足
 
 	//model_ = ModelManager::GetInstance()->GetModel("Plane");
 
