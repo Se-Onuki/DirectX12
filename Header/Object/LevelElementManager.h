@@ -6,6 +6,9 @@
 #include "../Collision/Collision.h"
 #include "../../Engine/DirectBase/Model/Model.h"
 
+#include "../../Engine/DirectBase/File/VariantItem.h"
+#include "../../Utils/SoLib/SoLib_Timer.h"
+
 class LevelElementManager {
 	LevelElementManager() = default;
 	LevelElementManager(const LevelElementManager &) = delete;
@@ -27,15 +30,22 @@ public:
 		~Platform() = default;
 
 		BaseTransform center_;
+		Vector3 startRot_;
+		Vector3 targetRot_;
+
+		VariantItem<float> vLerpTime_{ "LerpTime",1.f };
 
 		void AddBox(const AABB &box);
 		void CalcCollision();
+
+		void Update(float deltaTime);
 
 		void Draw(const Model *const model, const Camera3D &camera) const;
 
 		const auto &GetCollider() const { return collisionBox_; }
 
 	private:
+		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
 
 		std::list<Box> boxList_;
@@ -57,6 +67,7 @@ public:
 	void Draw(const Camera3D &camera);
 
 	void CalcCollision(const uint32_t key);
+	void CalcCollision();
 
 	/// @brief ブロックを追加
 	/// @param transform ブロックのSRT

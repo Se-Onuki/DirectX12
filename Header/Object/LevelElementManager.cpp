@@ -5,6 +5,8 @@ void LevelElementManager::Init() {
 }
 
 void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
+
+
 }
 
 void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
@@ -23,6 +25,12 @@ void LevelElementManager::CalcCollision(const uint32_t key) {
 	blockCollider_[key].CalcCollision();
 }
 
+void LevelElementManager::CalcCollision() {
+	for (auto &[key, platform] : blockCollider_) {
+		platform.CalcCollision();
+	}
+}
+
 void LevelElementManager::AddBlock(const uint32_t key, const AABB &box) {
 	blockCollider_[key].AddBox(box);
 }
@@ -32,7 +40,8 @@ void LevelElementManager::AddBlock(const uint32_t key, const AABB &box) {
 //}
 
 void LevelElementManager::Platform::AddBox(const AABB &aabb) {
-	auto &box = boxList_.emplace_back(aabb);
+	boxList_.emplace_back(aabb);
+	auto &box = boxList_.back();
 	box.transform_->parent_ = &center_;
 }
 
@@ -50,6 +59,18 @@ void LevelElementManager::Platform::CalcCollision() {
 
 		box.transform_->UpdateMatrix();
 
+	}
+}
+
+void LevelElementManager::Platform::Update(float deltaTime) {
+	timer_.Update(deltaTime);
+
+	if (timer_.IsActive() && timer_.IsFinish()) {
+		center_.rotate = Angle::Lerp(startRot_, targetRot_, timer_.GetProgress());
+	}
+
+	if (timer_.IsActive()) {
+		this->CalcCollision();
 	}
 }
 
