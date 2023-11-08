@@ -7,6 +7,8 @@
 #include <string>
 #include <list>
 
+#include "../Descriptor/DescriptorManager.h"
+
 class TextureManager
 {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -19,7 +21,6 @@ class TextureManager
 public:
 
 	static const uint32_t maxTextureCount = 128u;
-	static const uint32_t alreadyUsedCount = 1u;
 
 	struct Texture {
 		ComPtr<ID3D12Resource> textureResource;
@@ -32,6 +33,7 @@ public:
 		static TextureManager instance{};
 		return &instance;
 	}
+	static uint32_t LoadDefaultTexture() { return Load("white2x2.png"); }
 
 	void StartDraw();
 
@@ -44,10 +46,6 @@ public:
 	void ImGuiWindow();
 
 	uint32_t ImGuiTextureSelecter(uint32_t index);
-
-	ID3D12DescriptorHeap *const GetSRVHeap()const {
-		return srvHeap_.Get();
-	}
 
 	inline D3D12_RESOURCE_DESC GetResourceDesc(uint32_t index) {
 		return textureArray_.at(index).textureResource->GetDesc();
@@ -65,13 +63,13 @@ private:
 	ID3D12Device *device_ = nullptr;
 	// コマンドリスト(借用)
 	ID3D12GraphicsCommandList *commandList_ = nullptr;
-	// デスクリプタヒープの1要素の幅
-	uint32_t descriptorSizeSRV_ = 0;
+	// デスクリプタヒープ(借用)
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *srvHeap_;
+	// ヒープの使用位置
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
+
 	// デスクリプタヒープを現在使用している量(size)
 	uint32_t nextIndex_ = static_cast<uint32_t>(-1);
-
-	// SRVデスクリプタヒープ
-	ComPtr<ID3D12DescriptorHeap> srvHeap_ = nullptr;
 
 	// 根底ディレクトリ
 	std::string directoryPath_;

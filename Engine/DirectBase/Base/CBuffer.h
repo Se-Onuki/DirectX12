@@ -13,7 +13,7 @@
 
 /// @brief 定数バッファ
 /// @tparam T 型名
-template<SoLib::IsNotPointer T>
+template<SoLib::IsNotPointer T, bool IsActive = true>
 class CBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
@@ -60,52 +60,52 @@ private:
 	void CreateBuffer();
 };
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::operator bool() const noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::operator T &() noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::operator T &() noexcept {
 	return *mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::operator const T &() const noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::operator const T &() const noexcept {
 	return *mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline T *const CBuffer<T>::operator->() noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline T *const CBuffer<T, IsActive>::operator->() noexcept {
 	return mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline T *const CBuffer<T>::operator->() const noexcept {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline T *const CBuffer<T, IsActive>::operator->() const noexcept {
 	return mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T> &CBuffer<T>::operator=(const T &other) {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive> &CBuffer<T, IsActive>::operator=(const T &other) {
 	*mapData_ = static_cast<T>(other);
 	return *this;
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::CBuffer() {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::CBuffer() {
 	CreateBuffer();
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::CBuffer(const CBuffer &other) {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::CBuffer(const CBuffer<T, IsActive> &other) {
 	CreateBuffer();
 
 	// データのコピー
 	*mapData_ = *other.mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-inline void CBuffer<T>::CreateBuffer() {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline void CBuffer<T, IsActive>::CreateBuffer() {
 	HRESULT result = S_FALSE;
 
 
@@ -121,21 +121,91 @@ inline void CBuffer<T>::CreateBuffer() {
 
 }
 
-template<SoLib::IsNotPointer T>
-inline CBuffer<T>::~CBuffer() {
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::~CBuffer() {
 	resources_->Release();
-	//cbView_ = {};
-	//mapData_ = nullptr;
 }
 
 #pragma endregion
 
-#pragma region 配列の定数バッファ
+#pragma region バッファを持たないクラス
 
-/// @brief 定数バッファ
-/// @tparam T 型名 
+// バッファ機能を持たないクラス
 template<SoLib::IsNotPointer T>
-class ArrayCBuffer final {
+class CBuffer<T, false> {
+public:
+	CBuffer() = default;		// デフォルトコンストラクタ
+	CBuffer(const CBuffer &) = default;	// コピーコンストラクタ
+	CBuffer &operator=(const CBuffer &) = default;	// コピー演算子
+
+	~CBuffer() = default;
+
+	inline operator bool() const noexcept;		// 値が存在するか
+
+	inline operator T &() noexcept;				// 参照
+	inline operator const T &() const noexcept;	// const参照
+
+	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
+	inline T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
+
+	inline CBuffer &operator=(const T &other);	// コピー演算子
+
+	inline void operator=(T *const ptr) { mapData_ = ptr; }
+
+	void SetMapAddress(T *const ptr) { mapData_ = ptr; }
+
+	inline T *const Get() { return mapData_; }
+	inline const T *const Get() const { return mapData_; }
+
+private:
+	T *mapData_;
+};
+
+template<SoLib::IsNotPointer T>
+inline CBuffer<T, false>::operator bool() const noexcept {
+	return mapData_ != nullptr;
+}
+
+template<SoLib::IsNotPointer T>
+inline CBuffer<T, false>::operator T &() noexcept {
+	return *mapData_;
+}
+
+template<SoLib::IsNotPointer T>
+inline CBuffer<T, false>::operator const T &() const noexcept {
+	return *mapData_;
+}
+
+template<SoLib::IsNotPointer T>
+inline T *const CBuffer<T, false>::operator->() noexcept {
+	return mapData_;
+}
+
+template<SoLib::IsNotPointer T>
+inline T *const CBuffer<T, false>::operator->() const noexcept {
+	return mapData_;
+}
+
+template<SoLib::IsNotPointer T>
+inline CBuffer<T, false> &CBuffer<T, false>::operator=(const T &other) {
+	if (mapData_) {
+		*mapData_ = static_cast<T>(other);
+	}
+	return *this;
+}
+
+#pragma endregion
+
+
+#pragma region mapアドレスを外部に持たせたクラス
+
+//template <SoLib::IsNotPointer T, typename = void>
+//class ConstantContainer {
+//	static_assert(std::is_same<T, T>::value, "Tがuse_structエイリアスを持っていません。");
+//};
+
+template <SoLib::IsNotPointer T>
+class ConstantContainer/*<T, std::void_t<typename T::map_struct>> */ {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -143,35 +213,34 @@ class ArrayCBuffer final {
 	ComPtr<ID3D12Resource> resources_ = nullptr;
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_{};
 
-	size_t size_;
-
-	T *mapData_;
+	T data_;
 
 public:
+	// リソースとして保持する構造体
+	using map_struct = typename T::map_struct;
 
 	inline ID3D12Resource *const GetResources() noexcept { return &resources_.Get(); }
 	inline const ID3D12Resource *const GetResources() const noexcept { return &resources_.Get(); }
 
 	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return cbView_; }
 
-	inline operator bool() const noexcept;		// 値が存在するか
+	inline operator T &() noexcept { return data_; }				// 参照
+	inline operator const T &() const noexcept { return data_; }	// const参照
 
-	inline operator T *() noexcept;				// 参照
-	inline operator const T *() const noexcept;	// const参照
+	inline T *const operator->() noexcept { return &data_; }				// dataのメンバへのアクセス
+	inline const T *const operator->() const noexcept { return &data_; }	// dataのメンバへのアクセス(const)
 
-	inline T &operator[](size_t index) noexcept { return mapData_[index]; }
-	inline const T &operator[](size_t index) const noexcept { return mapData_[index]; }
-
-	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
-	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
-
-	size_t size() const noexcept { return size_; }
-	T *const begin() const noexcept { return &mapData_[0]; }
-	T *const end() const noexcept { return &mapData_[size_]; }
+	inline T *const operator&() noexcept { return &data_; }					// dataのメンバへのアクセス
+	inline const T *const operator&() const noexcept { return &data_; }		// dataのメンバへのアクセス(const)
 
 
-	template <typename U>
-	inline ArrayCBuffer &operator=(const U &other);	// コピー演算子
+	inline T &operator=(const T &other) {	// コピー演算子
+		data_ = static_cast<T>(other);
+		if (data_.mapTarget_ && other.mapTarget_) {
+			*data_.mapTarget_ = *other.mapTarget_;
+		}
+		return data_;
+	}
 
 public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
@@ -181,183 +250,62 @@ public:
 
 public:
 
-	ArrayCBuffer();					// デフォルトコンストラクタ
-
-	template <typename U>
-	ArrayCBuffer(const U &source);		// コピーコンストラクタ
-
-	~ArrayCBuffer();
-
-	/// @brief バッファの計算
-	void CreateBuffer(size_t size);
-
-	void Copy(T *const begin, T *const end) {
-		std::copy(begin, end, mapData_);
-	}
-
+	ConstantContainer(const T &data = {}) : data_(data) { CreateBuffer(); };
+	T &operator=(const ConstantContainer &other) { return *this = static_cast<const T &>(other); }
+	~ConstantContainer() = default;
 
 private:
 
-};
-
-template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::operator bool() const noexcept {
-	return resources_ != nullptr;
-}
-
-template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::operator T *() noexcept {
-	return *mapData_;
-}
-
-template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::operator const T *() const noexcept {
-	return *mapData_;
-}
-
-template<SoLib::IsNotPointer T>
-inline T *const ArrayCBuffer<T>::operator->() noexcept {
-	return *mapData_;
-}
-
-template<SoLib::IsNotPointer T>
-inline const T *const ArrayCBuffer<T>::operator->() const noexcept {
-	return *mapData_;
-}
-
-template<SoLib::IsNotPointer T>
-template<typename U>
-inline ArrayCBuffer<T> &ArrayCBuffer<T>::operator=(const U &source) {
-	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
-	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
-	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
-
-	CreateBuffer(source.size());
-	size_ = source.size();
-	//Copy(source.begin(), source.end());
-	std::copy(source.begin(), source.end(), mapData_);
-	return *this;
-}
-
-template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::ArrayCBuffer() :size_(0u) {
-	CreateBuffer(0u);
-}
-
-template<SoLib::IsNotPointer T>
-template <typename U>
-inline ArrayCBuffer<T>::ArrayCBuffer(const U &source) {
-	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
-	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
-	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
-
-	CreateBuffer(source.size());
-	size_ = source.size();
-	std::copy(source.begin(), source.end(), mapData_);
-}
-
-//template<SoLib::IsNotPointer T>
-//inline CBuffer<T>::CBuffer(CBuffer &&other) {
-//	resources_ = other.resources_;
-//	cbView_ = other.cbView_;
-//	*mapData_ = *other.mapData_;
-//
-//}
-
-
-template<SoLib::IsNotPointer T>
-inline void ArrayCBuffer<T>::CreateBuffer(size_t size) {
-	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
-	if (size != 0u && size_ != size) {
+	void CreateBuffer() {
 		HRESULT result = S_FALSE;
-		if (resources_ != nullptr) { resources_->Release(); }
+
 		// 256バイト単位のアライメント
-		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
+		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(map_struct) + 0xff) & ~0xff);
+
 
 		cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
 		cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
 
-		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
+		//map_struct *const target = nullptr;
+		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&data_.mapTarget_));
 		assert(SUCCEEDED(result));
+
 	}
-}
-
-template<SoLib::IsNotPointer T>
-inline ArrayCBuffer<T>::~ArrayCBuffer() {
-	resources_->Release();
-	//cbView_ = {};
-	//mapData_ = nullptr;
-}
-
-
-#pragma endregion
-
-
-
-#pragma region 頂点バッファ
-
-/// @brief 頂点バッファ
-/// @tparam T 頂点データの型 Index 添え字が有効か
-template <SoLib::IsNotPointer T, bool Index = true>
-class VertexCBuffer final {
-
-	ArrayCBuffer<T> vertexData_;
-	D3D12_VERTEX_BUFFER_VIEW vbView_;
-
-	ArrayCBuffer<uint32_t> indexData_;
-	D3D12_INDEX_BUFFER_VIEW ibView_;
-
-public:
-	VertexCBuffer() = default;
-	VertexCBuffer(const VertexCBuffer &) = default;
-	~VertexCBuffer() = default;
-
-	auto &GetVertexData()  noexcept { return vertexData_; }
-	const auto &GetVertexData() const noexcept { return vertexData_; }
-	const auto &GetVBView() const noexcept { return vbView_; };
-
-	auto &GetIndexData()  noexcept { return indexData_; }
-	const auto &GetIndexData() const noexcept { return indexData_; }
-	const auto &GetIBView() const noexcept { return ibView_; };
-
-	template <typename U>
-	void SetVertexData(const U &source);
-	template <typename U>
-	void SetIndexData(const U &source);
 };
 
-template <SoLib::IsNotPointer T, bool Index>
-template <typename U>
-void VertexCBuffer<T, Index>::SetVertexData(const U &source) {
-	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
-	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
-	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
+/// @brief マッピングされるアドレスをコピーするためだけのクラス
+/// @tparam T 保存する型
+template <SoLib::IsNotPointer T>
+class CMapTarget {
+public:
+	CMapTarget() = default;
+	CMapTarget(const CMapTarget &) {};
+	CMapTarget &operator=(const CMapTarget &) { return *this; };
+	~CMapTarget() = default;
 
-	vertexData_ = source;
+	friend ConstantContainer<T>;
 
-	// 頂点バッファビューを作成する
-	// リソースの先頭のアドレスから使う
-	vbView_.BufferLocation = vertexData_.GetGPUVirtualAddress();
-	// 使用するリソースのサイズは頂点3つ分のサイズ
-	vbView_.SizeInBytes = static_cast<UINT>(sizeof(T) * vertexData_.size());
-	// 1頂点あたりのサイズ
-	vbView_.StrideInBytes = sizeof(T);
+	T *const operator=(T *const) = delete;
+	T &operator=(const T &other) {
+		if (target_) {
+			*target_ = other;
+		}
+		return *target_;
+	};
+	T *const operator <<(T *const target) { return target_ = target; };
 
-}
+	inline operator T *const() { return target_; }
+	inline operator const T *const() const { return target_; }
 
-template <SoLib::IsNotPointer T, bool Index>
-template <typename U>
-void VertexCBuffer<T, Index>::SetIndexData(const U &source) {
-	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
-	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
-	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
+	inline T *const operator->() noexcept { return target_; }				// dataのメンバへのアクセス
+	inline const T *const operator->() const noexcept { return target_; }	// dataのメンバへのアクセス(const)
 
-	indexData_ = source;
+	inline operator bool() const { return target_; }
 
-	// インデックスview
-	ibView_.BufferLocation = indexData_.GetGPUVirtualAddress();
-	ibView_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indexData_.size());
-	ibView_.Format = DXGI_FORMAT_R32_UINT;
-}
+private:
+
+	T *target_ = nullptr;
+
+};
 
 #pragma endregion

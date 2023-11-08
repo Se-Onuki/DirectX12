@@ -9,6 +9,7 @@
 #include <array>
 
 #include "../Base/CBuffer.h"
+#include "../Base/VertexBuffer.h"
 
 #include "../Base/LeakChecker.h"
 #include "../Base/TextureManager.h"
@@ -84,14 +85,14 @@ private:
 private:
 
 	// 頂点データ
-	VertexCBuffer<VertexData, true> vertexData_;
+	VertexBuffer<VertexData, true> vertexData_;
 
 	CBuffer<ConstData> constData_;
 
 private:
 
 	// マッピング無しTransform
-	Transform transform_;
+	BaseTransform transform_;
 
 private:
 
@@ -139,7 +140,7 @@ public:
 	void SetRotate(const float angle);
 	void SetPosition(const Vector2 &position);
 
-	const Transform &GetTransform() const { return transform_; }
+	const auto &GetTransform() const { return transform_; }
 
 	void SetColor(const Vector4 &color);
 	const Vector4 &GetColor()const;

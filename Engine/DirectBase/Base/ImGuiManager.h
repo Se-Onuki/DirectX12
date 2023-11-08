@@ -5,6 +5,7 @@
 #include <d3d12.h>
 
 #include <imgui.h>
+#include "../Descriptor/DescriptorManager.h"
 
 class DirectXCommon;
 
@@ -29,11 +30,14 @@ public:
 		return &instance;
 	}
 
-	static void StaticInit(const HWND &hwnd, ID3D12Device *const device, uint32_t backBufferCount, ID3D12DescriptorHeap *const srvHeap);
+	static void StaticInit(const HWND &hwnd, ID3D12Device *const device, uint32_t backBufferCount, DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *const srvHeap);
 
 	static void CreateCommand();
 
 	static void Draw(ID3D12GraphicsCommandList *const commandList);
 
 	static void Finalize();
+
+private:
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange srvHeapRange_;
 };

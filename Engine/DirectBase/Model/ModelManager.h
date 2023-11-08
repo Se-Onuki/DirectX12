@@ -13,6 +13,9 @@ public:
 		return &instance;
 	}
 
+	/// @brief 簡易的なモデルを作る
+	void CreateDefaultModel();
+
 	/// @brief モデルの追加
 	/// @param key 文字列キー
 	/// @param model モデルデータ
@@ -24,8 +27,12 @@ public:
 	/// @brief モデルデータの取得
 	/// @param key 文字列キー
 	/// @return モデルデータ
-	Model *const GetModel(const std::string &key) {
-		return models_[key].get();
+	Model *const GetModel(const std::string &key) const {
+		auto item = models_.find(key);
+		if (item != models_.end()) {
+			return item->second.get();
+		}
+		return nullptr;
 	}
 
 	/// @brief モデルの破棄
@@ -52,4 +59,6 @@ private:
 
 	// モデルマップ
 	std::unordered_map<std::string, std::unique_ptr<Model>> models_;
+
+private:
 };

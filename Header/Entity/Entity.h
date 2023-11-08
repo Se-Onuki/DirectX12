@@ -40,7 +40,7 @@ class IComponent {
 public:
 	/// @brief 自動的に呼ばれるコンストラクタ
 	/// @param object 紐づけられる実体のアドレス
-	IComponent(Entity *const object) : object_(object) {}
+	IComponent(Entity *const object);
 	virtual ~IComponent() = default;
 
 
@@ -72,6 +72,7 @@ public:
 
 	// 紐づけられた実体
 	Entity *const object_ = nullptr;
+	BaseTransform *const transform_;
 };
 
 class Entity {
@@ -91,9 +92,11 @@ class Entity {
 	// Object *parent_ = nullptr;
 	// std::list<std::unique_ptr<Object>> children_;
 
+	float deltaTime_{};
+
 public:
 	// オブジェクトのSRT
-	Transform transform_;
+	BaseTransform transform_;
 
 	Entity() = default;
 	//Object(const Object&) = default;
@@ -101,7 +104,7 @@ public:
 
 	virtual void Init();
 	virtual void Reset();
-	virtual void Update();
+	virtual void Update(float deltaTime);
 	virtual void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
 
 	/*template<typename T>
@@ -145,6 +148,8 @@ public:
 	virtual void OnCollision(Entity *const other);
 
 	void ImGuiWidget();
+
+	float GetDeltaTime() const { return deltaTime_; }
 
 private:
 

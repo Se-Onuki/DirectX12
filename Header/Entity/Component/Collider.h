@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <list>
+#include "../../Collision/Collision.h"
 
 enum class CollisionFilter : uint32_t {
 	Player = 0b00001,
@@ -26,7 +27,6 @@ class ColliderComp : public IComponent {
 	uint32_t collisionCancel_ = 0x0;
 
 protected:
-
 
 
 	Vector3 centor_{};

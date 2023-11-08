@@ -118,3 +118,6 @@ public:
 	bool ImGuiWidget();
 
 };
+
+/// @brief 3次元カメラ
+using Camera3D = Camera<Render::CameraType::Projecction>;

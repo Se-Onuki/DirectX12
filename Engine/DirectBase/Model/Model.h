@@ -20,23 +20,25 @@
 #include <array>
 
 #include "../../../Utils/Math/Transform.h"
+#include "../Base/VertexBuffer.h"
+#include "../Base/RootSignature.h"
+#include "../Base/PipelineState.h"
 
-struct Transform;
+#include "../Base/StructBuffer.h"
+#include "../Descriptor/DescriptorManager.h"
+
 class ViewProjection;
 
 struct Material;
 struct Mesh;
 
-class Model
-{
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// モデル用パイプライン
-	static std::array<ComPtr<ID3D12PipelineState>, 6u> graphicsPipelineState_;
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-
-	static void CreatePipeLine();
-
+class Model {
 public:
+	enum class PipelineType : uint32_t {
+		kModel,		// モデル用
+		kParticle,	// パーティクル用
+	};
+
 	enum class RootParameter : uint32_t {
 		kWorldTransform, // ワールド変換行列
 		kViewProjection, // ビュープロジェクション変換行列
@@ -55,7 +57,20 @@ public:
 
 		kTotal	// 総数
 	};
+private:
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	// モデル用パイプライン
+	static std::array<std::array<ComPtr<ID3D12PipelineState>, 6u>, 2u> graphicsPipelineState_;
+	static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
+	static PipelineType sPipelineType_;
 
+	static std::array<std::array<PipelineState, 6u>, 2u> graphicsPipelineStateClass_;
+	static std::array<RootSignature, 2u> rootSignatureClass_;
+
+	static void CreatePipeLine();
+	static void BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc);
+
+public:
 	static void StaticInit();
 
 	Model() = default;
@@ -66,12 +81,19 @@ public:
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const;
+	template <typename T>
+	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const;
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
 	static const char *const defaultDirectory;
 
 	void ImGuiWidget();
+
+	static void SetPipelineType(const PipelineType pipelineType);
+
+	[[nodiscard]] static Model *CreatePlane();
 
 	[[nodiscard]] static Model *const CreateSphere();
 
@@ -133,7 +155,7 @@ public:
 		}
 	};
 
-	VertexCBuffer<VertexData> vertexBuffer_;
+	VertexBuffer<VertexData> vertexBuffer_;
 
 	std::list<VertexData> vertices_;
 	std::list<uint32_t> indexs_;
@@ -149,7 +171,7 @@ public:
 	void SetMaterial(Material *const material);
 	Material *const GetMaterial() const { return material_; }
 
-	void Draw(ID3D12GraphicsCommandList *const commandList) const;
+	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u) const;
 
 
 };
@@ -204,7 +226,8 @@ class MinecraftModel {
 		};
 		std::array<Face, (uint32_t)FaceDirection::kCount> faces_;
 		Transform transformLocal_;
-		void UpdateMatrix();
+
+		//void UpdateMatrix();
 
 		void Init();
 		void Draw(ID3D12GraphicsCommandList *const commandList);
@@ -251,3 +274,8 @@ public:
 	void LoadJson(const std::string &file_path);
 
 };
+
+template<typename T>
+inline void Model::Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const {
+	Model::Draw(structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), camera);
+}

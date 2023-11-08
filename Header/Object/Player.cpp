@@ -13,9 +13,9 @@ void Player::ApplyClobalVariables() {
 	gVariables;
 	const char *groupName = "Player";
 	groupName;
-	transformHead_.translate = gVariables->Get<Vector3>(groupName, "Head Translation");
-	transformLeft_.translate = gVariables->Get<Vector3>(groupName, "ArmL Translation");
-	transformRight_.translate = gVariables->Get<Vector3>(groupName, "ArmR Translation");
+	transformHead_->translate = gVariables->Get<Vector3>(groupName, "Head Translation");
+	transformLeft_->translate = gVariables->Get<Vector3>(groupName, "ArmL Translation");
+	transformRight_->translate = gVariables->Get<Vector3>(groupName, "ArmR Translation");
 
 	floatingCycle_ = gVariables->Get<decltype(floatingCycle_)>(groupName, "floatingCycle");
 	floatingSwayHand_ = gVariables->Get<decltype(floatingSwayHand_)>(groupName, "floatingSwayHand");
@@ -35,9 +35,9 @@ void Player::UpdateFloatingGimmick() {
 	const float step = Angle::PI2 / floatingCycle_;
 
 	ImGui::Begin("Player");
-	ImGui::SliderFloat3("Head Transform", &transformHead_.translate.x, -10.f, 10.f);
-	ImGui::SliderFloat3("Left Transform", &transformLeft_.translate.x, -10.f, 10.f);
-	ImGui::SliderFloat3("Right Transform", &transformRight_.translate.x, -10.f, 10.f);
+	ImGui::SliderFloat3("Head Transform", &transformHead_->translate.x, -10.f, 10.f);
+	ImGui::SliderFloat3("Left Transform", &transformLeft_->translate.x, -10.f, 10.f);
+	ImGui::SliderFloat3("Right Transform", &transformRight_->translate.x, -10.f, 10.f);
 	ImGui::SliderInt("Cycle", &floatingCycle_, 1, 360);
 	ImGui::SliderFloat("CycleRange", &floatingCycleRange_, 0.f, 3.f);
 	ImGui::SliderAngle("SwayHand", &floatingSwayHand_, 0.f, 360.f);
@@ -46,11 +46,11 @@ void Player::UpdateFloatingGimmick() {
 	floatingParameter_ += step;
 	floatingParameter_ = std::fmod(floatingParameter_, Angle::PI2);
 
-	transformBody_.translate.y =
+	transformBody_->translate.y =
 		std::sin(floatingParameter_) * floatingCycleRange_ + originPos;
 
-	transformRight_.rotate.x = std::sin(floatingParameter_) * floatingSwayHand_;
-	transformLeft_.rotate.x = std::sin(floatingParameter_) * floatingSwayHand_;
+	transformRight_->rotate.x = std::sin(floatingParameter_) * floatingSwayHand_;
+	transformLeft_->rotate.x = std::sin(floatingParameter_) * floatingSwayHand_;
 }
 
 void Player::BehaviorRootInit() { floatingParameter_ = 0.f; }
@@ -68,18 +68,18 @@ void Player::BehaviorRootUpdate() {
 		move =                               // カメラ方向に向けて回転
 			move *
 			Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, camera_->rotation_.y);
-		if (transformOrigin_.parent_) {
-			move = TransformNormal(move, transformOrigin_.parent_->matWorld_.InverseSRT());
+		if (transformOrigin_->parent_) {
+			move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
 		}
-		transformOrigin_.translate += move; // 移動量を追加
+		transformOrigin_->translate += move; // 移動量を追加
 
-		transformOrigin_.rotate = move.Direction2Euler(); // ベクトルからオイラー角を算出
+		transformOrigin_->rotate = move.Direction2Euler(); // ベクトルからオイラー角を算出
 	}
 
-	transformOrigin_.translate.y += -0.5f; // 移動量を追加
+	transformOrigin_->translate.y += -0.5f; // 移動量を追加
 	// もし、親コライダよりも
-	if (transformOrigin_.parent_ && transformOrigin_.translate.y < 0.f) {
-		transformOrigin_.translate.y = 0.f;
+	if (transformOrigin_->parent_ && transformOrigin_->translate.y < 0.f) {
+		transformOrigin_->translate.y = 0.f;
 	}
 
 	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {
@@ -98,9 +98,9 @@ void Player::BehaviorAttackUpdate() {
 	const float step = Angle::PI2 / attackCycle_;
 
 	ImGui::Begin("Player");
-	ImGui::SliderFloat3("Head Transform", &transformHead_.translate.x, -10.f, 10.f);
-	ImGui::SliderFloat3("Left Transform", &transformLeft_.translate.x, -10.f, 10.f);
-	ImGui::SliderFloat3("Right Transform", &transformRight_.translate.x, -10.f, 10.f);
+	ImGui::SliderFloat3("Head Transform", &transformHead_->translate.x, -10.f, 10.f);
+	ImGui::SliderFloat3("Left Transform", &transformLeft_->translate.x, -10.f, 10.f);
+	ImGui::SliderFloat3("Right Transform", &transformRight_->translate.x, -10.f, 10.f);
 	ImGui::SliderInt("Cycle", &attackCycle_, 1, 360);
 	ImGui::SliderAngle("CycleRange", &attackStartAngle_.GetItem());
 	ImGui::SliderAngle("SwayHand", &attackSwingAngle_.GetItem());
@@ -113,15 +113,15 @@ void Player::BehaviorAttackUpdate() {
 	}
 	floatingParameter_ = std::fmod(floatingParameter_, Angle::PI2);
 
-	transformWeapon_.rotate.x = -std::clamp<float>(
+	transformWeapon_->rotate.x = -std::clamp<float>(
 		std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
 		attackClampAngle_);
-	transformLeft_.rotate.x =
+	transformLeft_->rotate.x =
 		-std::clamp<float>(
 			std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
 			attackClampAngle_) +
 		Angle::PI;
-	transformRight_.rotate.x =
+	transformRight_->rotate.x =
 		-std::clamp<float>(
 			std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
 			attackClampAngle_) +
@@ -131,16 +131,16 @@ void Player::BehaviorAttackUpdate() {
 }
 
 void Player::UpdateWorldMatrix() {
-	transformOrigin_.UpdateMatrix();
+	transformOrigin_->UpdateMatrix();
 
-	collider_.SetMatrix(transformOrigin_.matWorld_);
+	collider_.SetMatrix(transformOrigin_->matWorld_);
 
-	transformBody_.UpdateMatrix();
-	transformHead_.UpdateMatrix();
-	transformRight_.UpdateMatrix();
-	transformLeft_.UpdateMatrix();
+	transformBody_->UpdateMatrix();
+	transformHead_->UpdateMatrix();
+	transformRight_->UpdateMatrix();
+	transformLeft_->UpdateMatrix();
 
-	transformWeapon_.UpdateMatrix();
+	transformWeapon_->UpdateMatrix();
 }
 
 void Player::Init(const std::unordered_map<std::string, Model *> &model) {
@@ -151,27 +151,27 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 	BaseCharacter::Init(model);
 
 	// 親子関係
-	transformBody_.parent_ = &transformOrigin_;
+	transformBody_->parent_ = &transformOrigin_;
 
-	transformHead_.parent_ = &transformBody_;
-	transformLeft_.parent_ = &transformBody_;
-	transformRight_.parent_ = &transformBody_;
+	transformHead_->parent_ = &transformBody_;
+	transformLeft_->parent_ = &transformBody_;
+	transformRight_->parent_ = &transformBody_;
 
-	transformWeapon_.parent_ = &transformBody_;
+	transformWeapon_->parent_ = &transformBody_;
 
-	transformHead_.translate = { 0.f, 2.1f, 0.f };
-	transformHead_.rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
-	transformRight_.translate = { +0.75f, 1.5f, 0.f };
-	transformRight_.rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
-	transformLeft_.translate = { -0.75f, 1.5f, 0.f };
-	transformLeft_.rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
+	transformHead_->translate = { 0.f, 2.1f, 0.f };
+	transformHead_->rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
+	transformRight_->translate = { +0.75f, 1.5f, 0.f };
+	transformRight_->rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
+	transformLeft_->translate = { -0.75f, 1.5f, 0.f };
+	transformLeft_->rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
 
-	transformWeapon_.translate = { 0.f, 2.f, 0.f };
-	transformWeapon_.rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
+	transformWeapon_->translate = { 0.f, 2.f, 0.f };
+	transformWeapon_->rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
 
-	gVariables->AddValue(groupName, "Head Translation", transformHead_.translate);
-	gVariables->AddValue(groupName, "ArmL Translation", transformLeft_.translate);
-	gVariables->AddValue(groupName, "ArmR Translation", transformRight_.translate);
+	gVariables->AddValue(groupName, "Head Translation", transformHead_->translate);
+	gVariables->AddValue(groupName, "ArmL Translation", transformLeft_->translate);
+	gVariables->AddValue(groupName, "ArmR Translation", transformRight_->translate);
 
 	gVariables->AddValue(groupName, "floatingCycle", floatingCycle_);
 	gVariables->AddValue(groupName, "floatingSwayHand", floatingSwayHand_);

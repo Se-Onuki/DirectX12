@@ -34,6 +34,8 @@ void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBu
 	descriptorSizeSRV = device_.Get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	descriptorSizeRTV = device_.Get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeDSV = device_.Get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+	srvHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>>(device_.Get(), srvCount_);
 }
 
 void DirectXCommon::Finalize()
@@ -88,15 +90,8 @@ void DirectXCommon::StartDraw() {
 #pragma region ViewportとScissor(シザー)
 
 	// ビューポート
+	// クライアント領域のサイズと一緒にして画面全体に表示
 	D3D12_VIEWPORT viewport{ 0.f,0.f,WinApp::kWindowWidth ,WinApp::kWindowHeight,0.f,1.f };
-	//// クライアント領域のサイズと一緒にして画面全体に表示
-	//viewport.Width = WinApp::kWindowWidth;
-	//viewport.Height = WinApp::kWindowHeight;
-	//viewport.TopLeftX = 0;
-	//viewport.TopLeftY = 0;
-
-	//viewport.MinDepth = 0.f;
-	//viewport.MaxDepth = 1.f;
 
 	// シザー短形
 	D3D12_RECT scissorRect{};
@@ -119,13 +114,11 @@ void DirectXCommon::EndDraw() {
 
 #pragma region 画面状態の遷移
 
+	// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
+	// 今回はRenderTargetからPresentにする
 	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 		backBuffers_[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PRESENT);
-	// 画面に映す処理は全て終わり、画面に映すので、状態を遷移
-	// 今回はRenderTargetからPresentにする
-	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	// TransitionBarrierを張る
 	commandList_->ResourceBarrier(1, &barrier);
 
@@ -345,7 +338,7 @@ void DirectXCommon::CreateRenderTarget()
 	HRESULT hr;
 
 	// RTV用のヒープでディスクリプタの数は2。RTVはShader内で触るものではないので、ShaderVisibleはfalse
-	rtvHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, backBufferCount, false);
+	rtvHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, backBufferCount_, false);
 
 
 
@@ -412,5 +405,30 @@ void DirectXCommon::CreateDepthStencile()
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;	// 2dTexture
 	// DSVHeapの先頭にDSVを構築する。
 	device_.Get()->CreateDepthStencilView(depthBuffer_.Get(), &dsvDesc, dsvHeap_->GetCPUDescriptorHandleForHeapStart());
+
+}
+
+void DirectXCommon::FPSManager::Init() {
+	reference_ = std::chrono::steady_clock::now();
+}
+
+void DirectXCommon::FPSManager::Update() {
+	static const std::chrono::microseconds kMinTime{ uint64_t(1000000.f / 60.f) };
+	static const std::chrono::microseconds kMinCheckTime{ uint64_t(1000000.f / 65.f) };
+
+	// 現在の時間
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	// 前回記録からの経過時間を取得する
+	std::chrono::microseconds elapsed =
+		std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
+
+	if (elapsed < kMinCheckTime) {
+		// 経過するまで微小なスリープを行う
+		while (std::chrono::steady_clock::now() - reference_ < kMinTime) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
+	}
+
+	reference_ = std::chrono::steady_clock::now();
 
 }

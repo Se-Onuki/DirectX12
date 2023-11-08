@@ -2,15 +2,17 @@
 #include <d3d12.h>
 #include <cstdint>
 
-namespace DescriptorHandIe {
+namespace DescriptorHandle {
 	inline D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle(ID3D12DescriptorHeap *const descriptorHeap, const uint32_t &descriptorSize, const uint32_t &index) {
-		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		static const D3D12_CPU_DESCRIPTOR_HANDLE handleCPUStart = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		auto handleCPU = handleCPUStart;
 		handleCPU.ptr += (static_cast<uint64_t>(descriptorSize) * index);
 		return handleCPU;
 	}
 
 	inline D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(ID3D12DescriptorHeap *const descriptorHeap, const uint32_t &descriptorSize, const uint32_t &index) {
-		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+		static const D3D12_GPU_DESCRIPTOR_HANDLE handleGPUStart = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+		auto handleGPU = handleGPUStart;
 		handleGPU.ptr += (static_cast<uint64_t>(descriptorSize) * index);
 		return handleGPU;
 	}

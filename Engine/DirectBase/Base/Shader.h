@@ -34,6 +34,8 @@ class Shader {
 
 public:
 
+	inline operator bool() noexcept;
+
 	Shader() = default;
 	~Shader() = default;
 

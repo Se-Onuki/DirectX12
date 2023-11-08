@@ -8,6 +8,9 @@
 
 #include "../Header/Entity/Component/ModelComp.h"
 #include "../Utils/SoLib/SoLib_ImGui.h"
+#include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
+#include "../Header/Entity/Component/Rigidbody.h"
+#include "../Header/Entity/Component/PlayerComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -24,11 +27,7 @@ void GameScene::OnEnter() {
 
 	// model_ = ModelManager::GetInstance()->AddModel("Fence", Model::LoadObjFile("Model/Fence/", "fence.obj"));
 	ModelManager::GetInstance()->AddModel("box", Model::LoadObjFile("", "box.obj"));
-	transform_.UpdateMatrix();
 	camera_.Init();
-
-	sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
-	sprite_->SetScale({ 100.f,100.f });
 
 	ModelManager::GetInstance()->AddModel("skydome", Model::LoadObjFile("", "skyCylinder.obj"));
 
@@ -100,24 +99,24 @@ void GameScene::OnEnter() {
 	enemy_->Init(std::unordered_map<std::string, Model *>{
 		{"body", enemyBody}
 	});
-	enemy_->GetWorldTransform().translate.y = 1.f;
+	enemy_->GetWorldTransform()->translate.y = 1.f;
 
-	enemy_->GetWorldTransform().SetParent(platform_[1u]->GetWorldTransform());
+	enemy_->GetWorldTransform()->SetParent(platform_[1u]->GetWorldTransform());
 }
 
 void GameScene::OnExit() {}
 
 void GameScene::Reset() {
 
-	player_->GetWorldTransform().DisConnectParent();
-	player_->GetWorldTransform().translate = Vector3::zero;
+	player_->GetWorldTransform()->DisConnectParent();
+	player_->GetWorldTransform()->translate = Vector3::zero;
 }
 
 void GameScene::Update() {
 
 	const float deltaTime = ImGui::GetIO().DeltaTime;
 
-	if (player_->GetWorldTransform().translate.y < -20.f
+	if (player_->GetWorldTransform()->translate.y < -20.f
 		|| Collision::IsHit(*goalCollider_.get(), player_->GetCollider())
 		|| Collision::IsHit(enemy_->GetCollider(), player_->GetCollider())) {
 		Reset();
@@ -131,7 +130,6 @@ void GameScene::Update() {
 
 	ImGui::Begin("Sphere");
 	//model_->ImGuiWidget();
-	transform_.ImGuiWidget();
 	ImGui::End();
 
 	for (auto &platform : platform_) {
@@ -141,29 +139,30 @@ void GameScene::Update() {
 	bool isConnect = false;
 	for (auto &platform : platform_) {
 		if (Collision::IsHit(player_->GetCollider(), platform->GetCollider())) {
-			player_->GetWorldTransform().ConnectParent(platform->GetWorldTransform());
+			player_->GetWorldTransform()->ConnectParent(platform->GetWorldTransform());
 			isConnect = true;
 		}
 	}
 	if (isConnect == false) {
-		player_->GetWorldTransform().DisConnectParent();
+		player_->GetWorldTransform()->DisConnectParent();
 	}
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
+	player_->Update(deltaTime);
+
 	light_->ImGuiWidget();
 
 	player_->Update(deltaTime);
-	player_->GetWorldTransform().ImGuiWidget();
+	player_->GetWorldTransform()->ImGuiWidget();
 
 	followCamera_->Update();
 	camera_ = *followCamera_->GetCamera();
 
-	transform_.UpdateMatrix();
 	ImGui::Begin("Goal");
 	goal_->ImGuiWidget();
 	ImGui::End();
-	goal_->Update();
+	goal_->Update(deltaTime);
 	goalCollider_->SetMatrix(goal_->transform_.matWorld_);
 
 	enemy_->Update(deltaTime);
@@ -193,6 +192,14 @@ void GameScene::Draw()
 
 	light_->SetLight(commandList);
 
+	Model::SetPipelineType(Model::PipelineType::kModel);
+
+	//levelManager->Draw(camera_);
+
+	//player_->Draw(camera_);
+
+	//Model::SetPipelineType(Model::PipelineType::kParticle);
+
 	// モデルの描画
 	//model_->Draw(transform_, camera_);
 	skydome_->Draw(camera_);
@@ -213,7 +220,6 @@ void GameScene::Draw()
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
-	sprite_->Draw();
 
 	Sprite::EndDraw();
 

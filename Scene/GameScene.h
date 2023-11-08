@@ -10,6 +10,9 @@
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
+#include "../Header/Object/LevelElementManager.h"
+#include "../Header/Object/Particle.h"
+
 
 #include "../Header/Object/Player.h"
 #include "../Header/Object/FollowCamera.h"
@@ -35,9 +38,6 @@ private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 
-	Model *model_ = nullptr;
-	std::unique_ptr<Sprite> sprite_ = nullptr;
-	Transform transform_;
 	Camera<Render::CameraType::Projecction> camera_;
 
 	std::unique_ptr<Player> player_ = nullptr;
@@ -53,4 +53,5 @@ private:
 	std::array<std::unique_ptr<Platform>, 4u> platform_ = { nullptr };
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
 };

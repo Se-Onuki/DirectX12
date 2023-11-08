@@ -246,6 +246,9 @@
     <ClCompile Include="Engine\SolEngine.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\ModelManager.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
     <ClCompile Include="Header\Entity\Entity.cpp">
       <Filter>Header\Entity</Filter>
     </ClCompile>
@@ -255,10 +258,22 @@
     <ClCompile Include="Header\Object\BaseCharacter.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Enemy.cpp">
+    <ClCompile Include="Header\Object\FollowCamera.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\FollowCamera.cpp">
+    <ClCompile Include="Engine\DirectBase\Base\RootSignature.cpp">
+      <Filter>Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Base\MemoryUsageManager.cpp">
+      <Filter>Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\LevelElementManager.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Skydome.cpp">
@@ -401,7 +416,7 @@
     <ClInclude Include="Engine\DirectBase\File\VariantItem.h">
       <Filter>Engine\File</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandIe.h">
+    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandle.h">
       <Filter>Engine\Descriptor</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Create\Create.h">
@@ -470,7 +485,28 @@
     <ClInclude Include="Header\Object\BaseCharacter.h">
       <Filter>Header\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\Enemy.h">
+    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h">
+      <Filter>Engine\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Base\StructBuffer.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Base\VertexBuffer.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Base\RootSignature.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Base\MemoryUsageManager.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\LevelElementManager.h">
+      <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerComp.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle.h">
       <Filter>Header\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Skydome.h">
@@ -498,12 +534,21 @@
     <FxCompile Include="resources\shader\Object3d.VS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shader\Particle.PS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\Particle.VS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shader\Object3d.hlsli">
       <Filter>Engine\Shader</Filter>
     </None>
     <None Include="resources\shader\Sprite.hlsli">
+      <Filter>Engine\Shader</Filter>
+    </None>
+    <None Include="resources\shader\Particle.hlsli">
       <Filter>Engine\Shader</Filter>
     </None>
   </ItemGroup>

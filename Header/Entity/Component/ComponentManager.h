@@ -22,7 +22,7 @@ public:
 
 
 private:
-	std::unordered_map<std::string, IComponent *(*)(Object *const object)> componentMap_;
+	std::unordered_map<std::string, IComponent *(*)(Entity *const object)> componentMap_;
 };
 
 template<typename T>

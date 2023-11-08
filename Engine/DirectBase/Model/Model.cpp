@@ -16,8 +16,11 @@
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
 
-std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u> Model::graphicsPipelineState_ = { nullptr };
-Microsoft::WRL::ComPtr<ID3D12RootSignature> Model::rootSignature_ = nullptr;
+std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u>, 2u> Model::graphicsPipelineState_ = { nullptr };
+std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
+std::array<std::array<PipelineState, 6u>, 2u> Model::graphicsPipelineStateClass_ = {};
+std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
+Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 
 void Model::StaticInit() {
 	CreatePipeLine();
@@ -25,26 +28,31 @@ void Model::StaticInit() {
 
 void Model::CreatePipeLine() {
 
-	HRESULT hr = S_FALSE;
-	ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
+	//HRESULT hr = S_FALSE;
+	//ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
 
 #pragma region PSO(Pipeline State Object)
-
-#pragma region RootSigneture(ルートシグネチャ)
-
-	// RootSignature生成
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags =
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 #pragma region RootParameter
 
 	// RootParameter作成
-	D3D12_ROOT_PARAMETER rootParameters[5] = {};
+	std::array<D3D12_ROOT_PARAMETER, 5u> rootParameters = {};
 
-	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
-	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
-	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
+#pragma region kWorldTransform
+
+	// DescriptorRangeの設定
+	D3D12_DESCRIPTOR_RANGE worldDescriptorRange[1] = {};
+	worldDescriptorRange[0].BaseShaderRegister = 0;	// 0から始める
+	worldDescriptorRange[0].NumDescriptors = 1;		// 数は1つ
+	worldDescriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;	// SRVを使う
+	worldDescriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;	// Offsetを自動計算
+
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;			// DescriptorTableを使う
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;					// VertexShaderで使う
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].DescriptorTable.pDescriptorRanges = worldDescriptorRange;				// Tableの中身の配列を指定
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].DescriptorTable.NumDescriptorRanges = _countof(worldDescriptorRange);	// Tableで使用する数
+
+#pragma endregion
 
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
@@ -75,77 +83,43 @@ void Model::CreatePipeLine() {
 
 #pragma endregion
 
-	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
+	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Create(rootParameters.data(), rootParameters.size());
 
-#pragma endregion
 
-#pragma region Samplerの設定
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
+	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
 
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[] = {
-	{
-		.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR,			// バイナリフィルタ
-		.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,		// 0~1の範囲外をリピート
-		.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-		.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-		.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,		// 比較しない
-		.MaxLOD = D3D12_FLOAT32_MAX,						// ありったけのMipMapを使う
-		.ShaderRegister = 0,								// レジスタ番号 0を使う
-		.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL,	// PixelShaderで使う
-	}
-	};
-	descriptionRootSignature.pStaticSamplers = staticSamplers;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
-
-#pragma endregion
-
-	// シリアライズしてバイナリにする
-	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
-	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, signatureBlob.GetAddressOf(), errorBlob.GetAddressOf());
-	if (FAILED(hr)) {
-		DirectXCommon::Log(reinterpret_cast<char *>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	// バイナリを元に作成
-	//Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-	hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(rootSignature_.GetAddressOf()));
-	assert(SUCCEEDED(hr));
+	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Create(rootParameters.data(), rootParameters.size());
 
 #pragma endregion
 
 #pragma region InputLayout(インプットレイアウト)
 
 	// InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
-
-	inputElementDescs[0].SemanticName = "POSITION";
-	inputElementDescs[0].SemanticIndex = 0;
-	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[1].SemanticName = "TEXCOORD";
-	inputElementDescs[1].SemanticIndex = 0;
-	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
+	const std::array<D3D12_INPUT_ELEMENT_DESC, 3u> inputElementDescs{
+		D3D12_INPUT_ELEMENT_DESC{
+			.SemanticName = "POSITION",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		},
+		D3D12_INPUT_ELEMENT_DESC{
+			.SemanticName = "TEXCOORD",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32_FLOAT,
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		},
+		D3D12_INPUT_ELEMENT_DESC{
+			.SemanticName = "NORMAL",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32B32_FLOAT,
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		}
+	};
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
-
-#pragma endregion
-
-#pragma region BlendState(ブレンドステート)
-
-	// BlendStateの設定
-	D3D12_BLEND_DESC blendDesc{};
-	// 全ての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	inputLayoutDesc.pInputElementDescs = inputElementDescs.data();
+	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs.size());
 
 #pragma endregion
 
@@ -164,8 +138,9 @@ void Model::CreatePipeLine() {
 
 #pragma region Shader
 
-	Shader vertexShader = Shader::Compile(L"Object3D.VS.hlsl", L"vs_6_0");
-	Shader pixelShader = Shader::Compile(L"Object3D.PS.hlsl", L"ps_6_0");
+	PipelineState::ShaderSet particleShader;
+	particleShader.vertex = Shader::Compile(L"Particle.VS.hlsl", L"vs_6_0");
+	particleShader.pixel = Shader::Compile(L"Particle.PS.hlsl", L"ps_6_0");
 
 #pragma endregion
 
@@ -180,7 +155,7 @@ void Model::CreatePipeLine() {
 	// Depthの機能を有効にする
 	depthStencilDesc.DepthEnable = true;
 	// 書き込みします。
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	// 比較関数はLessEqual。つまり、近ければ表示される。
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
@@ -189,18 +164,18 @@ void Model::CreatePipeLine() {
 #pragma endregion
 
 
-#pragma region PSOを生成する
-
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature
+	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get();	// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
-	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
-	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
-	graphicsPipelineStateDesc.BlendState = blendDesc;					// BlendState
+	graphicsPipelineStateDesc.VS = particleShader.vertex->GetBytecode();			// VertexShader
+	graphicsPipelineStateDesc.PS = particleShader.pixel->GetBytecode();			// PixelShader
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
 
 	// DSVのFormatを設定する
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
+
+#pragma region PSOを生成する
+
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 書き込むRTVの情報
@@ -211,12 +186,45 @@ void Model::CreatePipeLine() {
 	// どのように画面に色を打ち込むかの設定(気にしなくても良い)
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kNone)]));
-	assert(SUCCEEDED(hr));
 
 #pragma endregion
 
+	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetInputElementDescs(inputElementDescs);
+	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetShader(particleShader);
+	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].Create(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)], depthStencilDesc);
+	BuildPileLine(PipelineType::kParticle, graphicsPipelineStateDesc);
+
+
+	PipelineState::ShaderSet modelShader;
+	modelShader.vertex = Shader::Compile(L"Object3d.VS.hlsl", L"vs_6_0");
+	modelShader.pixel = Shader::Compile(L"Object3d.PS.hlsl", L"ps_6_0");
+
+	graphicsPipelineStateDesc.VS = modelShader.vertex->GetBytecode();
+	graphicsPipelineStateDesc.PS = modelShader.pixel->GetBytecode();
+
+	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get();	// RootSignature
+	graphicsPipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+
+	BuildPileLine(PipelineType::kModel, graphicsPipelineStateDesc);
+#pragma endregion
+
+}
+
+void Model::BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc) {
+
+	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+	HRESULT hr = S_FALSE;
+
+	// BlendStateの設定
+	D3D12_BLEND_DESC blendDesc{};
+
+	// 全ての色要素を書き込む
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kNone)]));
+	assert(SUCCEEDED(hr));
 
 #pragma region BlendState(ブレンドステート) ノーマルブレンド
 
@@ -233,7 +241,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kNormal)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kNormal)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -254,7 +262,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kAdd)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kAdd)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -275,7 +283,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kSubtract)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kSubtract)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -296,7 +304,7 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kMultily)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kMultily)]));
 	assert(SUCCEEDED(hr));
 
 
@@ -317,11 +325,9 @@ void Model::CreatePipeLine() {
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	// 実際に生成
-	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(BlendMode::kScreen)]));
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kScreen)]));
 	assert(SUCCEEDED(hr));
 
-
-#pragma endregion
 
 #pragma endregion
 
@@ -364,7 +370,7 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 		else if (identifier == "map_Kd") {
 
 			std::string token;
-			Transform uv{};
+			BaseTransform uv{};
 			uv.scale = Vector3::one;
 
 			while (s >> token) {
@@ -402,8 +408,8 @@ void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 	commandList_ = commandList;
 
 	// RootSignatureを設定。
-	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList_->SetPipelineState(graphicsPipelineState_[0].Get());		// PSOを設定
+	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get());
+	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][0].Get());		// PSOを設定
 
 
 	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
@@ -558,15 +564,79 @@ void Model::ImGuiWidget()
 	}
 }
 
-void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const
-{
+void Model::SetPipelineType(const PipelineType pipelineType) {
+	// 設定されてるシグネチャとが一致していない場合
+	if (sPipelineType_ != pipelineType) {
+		sPipelineType_ = pipelineType;
+
+		commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(pipelineType)].Get());
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(pipelineType)][0].Get());
+		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
+		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+}
+
+Model *Model::CreatePlane() {
+	Model *const newModel = new Model{};
+
+	newModel->meshList_.push_back(std::make_unique<Mesh>());
+	auto &mesh = *newModel->meshList_.begin();
+
+	auto &vertexArray = mesh->vertexBuffer_;
+	vertexArray.SetVertexData(std::array{ Mesh::VertexData{},Mesh::VertexData{},Mesh::VertexData{},Mesh::VertexData{} });
+	vertexArray.SetIndexData(std::array{ 0u,1u,2u, 1u,3u,2u });
+
+	// 左下
+	vertexArray.GetVertexData()[0u].position = { -0.5f, -0.5f, 0.f, 1.f };
+	vertexArray.GetVertexData()[0u].texCoord = { 0.f,1.f };
+	vertexArray.GetVertexData()[0u].normal = { 0.f, 0.f, -1.f };
+	// 左上
+	vertexArray.GetVertexData()[1u].position = { -0.5f, +0.5f, 0.f, 1.f };
+	vertexArray.GetVertexData()[1u].texCoord = { 0.f,0.f };
+	vertexArray.GetVertexData()[1u].normal = { 0.f, 0.f, -1.f };
+
+	// 右下
+	vertexArray.GetVertexData()[2u].position = { +0.5f, -0.5f, 0.f, 1.f };
+	vertexArray.GetVertexData()[2u].texCoord = { 1.f,1.f };
+	vertexArray.GetVertexData()[2u].normal = { 0.f, 0.f, -1.f };
+	// 右上
+	vertexArray.GetVertexData()[3u].position = { +0.5f, +0.5f, 0.f, 1.f };
+	vertexArray.GetVertexData()[3u].texCoord = { 1.f,0.f };
+	vertexArray.GetVertexData()[3u].normal = { 0.f, 0.f, -1.f };
+
+	newModel->materialMap_["default"] = (std::make_unique<Material>());
+	auto &material = newModel->materialMap_["default"];
+
+	newModel->name_ = "plane";
+
+	material->Create();
+
+	mesh->SetMaterial(material.get());
+
+	return newModel;
+}
+
+void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const {
+	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
+
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.mapBuffer_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
-		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_);
 	}
 
+}
+
+void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const {
+	assert(sPipelineType_ == PipelineType::kParticle && "設定されたシグネチャがkParticleではありません");
+
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
+	for (auto &mesh : meshList_) {
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		mesh->Draw(commandList_, drawCount);
+	}
 }
 
 void Mesh::CreateBuffer() {
@@ -607,13 +677,13 @@ void Mesh::SetMaterial(Material *const material) {
 	material_ = material;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList *const commandList) const {
+void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount) const {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, material_->texHandle_);
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
 	commandList->IASetIndexBuffer(&vertexBuffer_.GetIBView());
-	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), 1, 0, 0, 0);
+	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
 }
 
 void Material::CreateBuffer() {
@@ -626,7 +696,7 @@ void Material::CreateBuffer() {
 void Material::ImGuiWidget()
 {
 	if (ImGui::TreeNode(name_.c_str())) {
-		Transform transform;
+		static BaseTransform transform;
 		transform.MatToSRT(materialBuff_->uvTransform);
 
 		if (transform.ImGuiWidget2D()) {
@@ -663,6 +733,16 @@ void Material::ImGuiWidget()
 
 void Material::Create() {
 
+	texHandle_ = TextureManager::LoadDefaultTexture();
+	name_ = "default";
+
+	blendMode_ = Model::BlendMode::kNone;
+
+	materialBuff_ = Material::MaterialData{
+		.color = Vector4{1.f,1.f,1.f,1.f},
+		.emissive = {},
+		.uvTransform = Matrix4x4::Identity()
+	};
 }
 
 
@@ -793,7 +873,7 @@ void MinecraftModel::Bone::Draw(ID3D12GraphicsCommandList *const commandList) {
 	}
 }
 void MinecraftModel::Bone::UpdateTransform() {
-	transform_.UpdateMatrix();
+	transform_->UpdateMatrix();
 	for (auto &child : children_) {
 		child.second.UpdateTransform();
 	}
@@ -802,7 +882,7 @@ void MinecraftModel::Bone::UpdateTransform() {
 void MinecraftModel::Bone::SetParent(Bone *const parent)
 {
 	parent_ = parent;
-	transform_.parent_ = parent->transform_.parent_;
+	transform_->parent_ = parent->transform_->parent_;
 }
 
 void MinecraftModel::Draw(ID3D12GraphicsCommandList *const commandList) {
@@ -852,7 +932,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 			bone.SetParent(&bones_[parentName]);
 		}
 		else {
-			bone.transform_.parent_ = &transformOrigin_;
+			bone.transform_->parent_ = &transformOrigin_;
 		}
 
 		// 座標構築
@@ -863,7 +943,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 			(float)pivotJson.at(1).get<double>(),
 			(float)pivotJson.at(2).get<double>()
 		};
-		bone.transform_.translate = pivot / 16.f;
+		bone.transform_->translate = pivot / 16.f;
 
 		// 回転
 		const auto &rotateJson = boneJson.find("rotation");
@@ -873,10 +953,10 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 				(float)rotateJson->at(1).get<double>(),
 				(float)rotateJson->at(2).get<double>()
 			};
-			bone.transform_.rotate = rotate * Angle::Dig2Rad;
+			bone.transform_->rotate = rotate * Angle::Dig2Rad;
 		}
 		else {
-			bone.transform_.rotate = Vector3::zero;
+			bone.transform_->rotate = Vector3::zero;
 		}
 
 		// キューブ

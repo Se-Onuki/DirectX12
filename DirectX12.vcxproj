@@ -59,6 +59,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -83,6 +84,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -104,7 +106,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Base\DirectXCommon.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\ImGuiManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\LeakChecker.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\MemoryUsageManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\PipelineState.cpp" />
+    <ClCompile Include="Engine\DirectBase\Base\RootSignature.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\Shader.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\TextureManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\WinApp.cpp" />
@@ -112,6 +116,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\File\GlobalVariables.cpp" />
     <ClCompile Include="Engine\DirectBase\Input\Input.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\Model.cpp" />
+    <ClCompile Include="Engine\DirectBase\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Camera.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Render.cpp" />
     <ClCompile Include="Engine\DirectBase\Texture\Texture.cpp" />
@@ -127,6 +132,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerComp.cpp" />
     <ClCompile Include="Header\Entity\Component\Projectile.cpp" />
     <ClCompile Include="Header\Entity\Component\Rigidbody.cpp" />
     <ClCompile Include="Header\Entity\Entity.cpp" />
@@ -135,6 +141,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\FollowCamera.cpp" />
     <ClCompile Include="Header\Object\Platform.cpp" />
     <ClCompile Include="Header\Object\Skydome.cpp" />
+    <ClCompile Include="Header\Object\LevelElementManager.cpp" />
+    <ClCompile Include="Header\Object\Particle.cpp" />
     <ClCompile Include="Header\Object\Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
@@ -165,13 +173,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Base\DirectXCommon.h" />
     <ClInclude Include="Engine\DirectBase\Base\ImGuiManager.h" />
     <ClInclude Include="Engine\DirectBase\Base\LeakChecker.h" />
+    <ClInclude Include="Engine\DirectBase\Base\MemoryUsageManager.h" />
     <ClInclude Include="Engine\DirectBase\Base\PipelineState.h" />
     <ClInclude Include="Engine\DirectBase\Base\ResourceLoader.h" />
+    <ClInclude Include="Engine\DirectBase\Base\RootSignature.h" />
     <ClInclude Include="Engine\DirectBase\Base\Shader.h" />
+    <ClInclude Include="Engine\DirectBase\Base\StructBuffer.h" />
     <ClInclude Include="Engine\DirectBase\Base\TextureManager.h" />
+    <ClInclude Include="Engine\DirectBase\Base\VertexBuffer.h" />
     <ClInclude Include="Engine\DirectBase\Base\WinApp.h" />
     <ClInclude Include="Engine\DirectBase\Create\Create.h" />
-    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandIe.h" />
+    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandle.h" />
+    <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h" />
     <ClInclude Include="Engine\DirectBase\File\GlobalVariables.h" />
     <ClInclude Include="Engine\DirectBase\File\VariantItem.h" />
     <ClInclude Include="Engine\DirectBase\Input\Input.h" />
@@ -196,12 +209,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerComp.h" />
     <ClInclude Include="Header\Entity\Component\Projectile.h" />
     <ClInclude Include="Header\Entity\Component\Rigidbody.h" />
     <ClInclude Include="Header\Entity\Entity.h" />
     <ClInclude Include="Header\Object\BaseCharacter.h" />
     <ClInclude Include="Header\Object\Enemy.h" />
     <ClInclude Include="Header\Object\FollowCamera.h" />
+    <ClInclude Include="Header\Object\LevelElementManager.h" />
+    <ClInclude Include="Header\Object\Particle.h" />
     <ClInclude Include="Header\Object\Platform.h" />
     <ClInclude Include="Header\Object\Skydome.h" />
     <ClInclude Include="Header\Object\Player.h" />
@@ -254,6 +270,22 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="resources\shader\Particle.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="resources\shader\Particle.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -273,6 +305,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shader\Object3d.hlsli" />
+    <None Include="resources\shader\Particle.hlsli" />
     <None Include="resources\shader\Sprite.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

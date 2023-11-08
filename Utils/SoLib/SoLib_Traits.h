@@ -12,6 +12,25 @@ namespace SoLib {
 	template<typename T>
 	concept IsNotPointer = !std::is_pointer_v<T>;
 
+
+	template<typename T>
+	concept IsContainer = requires(T a) {
+		{ a.size() } -> std::convertible_to<std::size_t>;
+		{ a.begin() } -> std::input_or_output_iterator;
+		{ a.end() } -> std::input_or_output_iterator;
+	};
+
+	template <typename T, typename U>
+	concept IsContainsType = requires(T a) {
+		{ a.size() } -> std::convertible_to<std::size_t>;
+		{ a.begin() } -> std::input_or_output_iterator;
+		{ a.end() } -> std::input_or_output_iterator;
+
+			requires IsContainer<T>; // Tがコンテナであることを確認
+			requires std::same_as<typename T::value_type, U>; // Tの要素の型がUであることを確認
+	};
+
+
 	template <typename T>
 	struct Traits;
 

@@ -1,51 +1,39 @@
 #pragma once
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "Math.hpp"
 
 #include <d3d12.h>
 #include <wrl.h>
 #include "../../Engine/DirectBase/Base/CBuffer.h"
 
-struct Transform;
-
-struct SRT {
-	Vector3 scale;
-	Vector3 rotate;
-	Vector3 translate;
-
-	SRT &operator=(const Transform &other);
-	static SRT MatToSRT(const Matrix4x4 &mat);
+/// @brief GPUに渡す構造体
+struct TransformMatrix {
+	Matrix4x4 World;
 };
 
-struct Transform {
-	Transform &operator=(const Transform &other) = default;
+/// @brief Transformクラス
+struct BaseTransform {
+	BaseTransform &operator=(const BaseTransform &other) = default;
 
-	Transform &operator=(const SRT &other);
-	//Transform &operator=(Transform &&other) = default;
+	using map_struct = TransformMatrix;
+	CMapTarget<TransformMatrix> mapTarget_;
+
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	struct TransformMatrix {
-		Matrix4x4 World;
-	};
-
 
 	Vector3 scale = { 1.f,1.f,1.f };
 	Vector3 rotate{};
 	Vector3 translate{};
 
+	Matrix4x4 rotateMat_{};
+
 	Matrix4x4 matWorld_{};	// ローカル . ワールド変換
-	const Transform *parent_ = nullptr;	// 親へのアドレス
+	const BaseTransform *parent_ = nullptr;	// 親へのアドレス
 
-	//ComPtr<ID3D12Resource> constBuffer_ = nullptr;
-	//TransformMatrix *mapData_ = nullptr;	// マップ済みデータ
-
-	CBuffer<TransformMatrix> mapBuffer_;
+public:
 
 	Matrix4x4 Affine() const;
-
-	Vector3 GetWorldPosition() const { return *reinterpret_cast<const Vector3 *>(&matWorld_.m[3]); }
-
-	void InitResource();
 
 	void CalcMatrix();
 	void TransferMatrix();
@@ -60,13 +48,25 @@ struct Transform {
 
 	/// @brief 純粋な親子関係の構築
 	/// @param parent 親のTransform
-	void SetParent(const Transform &parent);
+	void SetParent(const BaseTransform &parent);
 
 	/// @brief グローバル座標を維持した親子関係の構築
 	/// @param parent 親のTransform
-	void ConnectParent(const Transform &parent);
+	void ConnectParent(const BaseTransform &parent);
 
 	/// @brief グローバル座標を維持した親子関係の破棄
 	void DisConnectParent();
 private:
 };
+
+/// @brief Transform構造体 (メモリ確保あり)
+using Transform = ConstantContainer<BaseTransform>;
+
+///
+///	- using Transform = ConstantContainer<BaseTransform>;
+///		メモリ確保を行うTransformの
+///	
+/// - struct BaseTransform
+///		メモリを確保しないTransform構造体。
+///		StructuredBufferなどで使用する。
+/// 

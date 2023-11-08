@@ -271,12 +271,110 @@ Collision::IsHitAxis(const Vector3 &axis, const Vector3 vertexA[8], const Vector
 	return diffAll <= diffA + diffB;
 }
 
+const float Collision::HitProgress(const LineBase &line, const Plane &plane) {
+	const float dot = plane.normal * line.diff;
+	if (dot == 0.f) {
+		return 1.f; // 平行
+	}
+	return (plane.distance - (line.origin * plane.normal)) / dot;
+}
+
+const float Collision::HitProgress(const LineBase &line, const AABB &aabb) {
+
+	const Vector3 tMinVec{
+		{(aabb.min.x - line.origin.x) / line.diff.x},
+		{(aabb.min.y - line.origin.y) / line.diff.y},
+		{(aabb.min.z - line.origin.z) / line.diff.z} };
+	const Vector3 tMaxVec{
+		{(aabb.max.x - line.origin.x) / line.diff.x},
+		{(aabb.max.y - line.origin.y) / line.diff.y},
+		{(aabb.max.z - line.origin.z) / line.diff.z} };
+
+	const Vector3 tNear{
+		min(tMinVec.x, tMaxVec.x), min(tMinVec.y, tMaxVec.y), min(tMinVec.z, tMaxVec.z) };
+	const Vector3 tFar{
+		max(tMinVec.x, tMaxVec.x), max(tMinVec.y, tMaxVec.y), max(tMinVec.z, tMaxVec.z) };
+
+	const float tMin{ max(max(tNear.x, tNear.y), tNear.z) };
+	const float tMax{ min(min(tFar.x, tFar.y), tFar.z) };
+	if (tMin > 1.f && tMin != line.Clamp(tMin)) {
+		return 1.f;
+	}
+	if (tMax < 0.f && tMax != line.Clamp(tMax)) {
+		return 1.f;
+	}
+	if (tMin <= tMax) {
+		return line.Clamp(tMin);
+	}
+	return 1.f;
+}
 const Vector3 Collision::HitPoint(const LineBase &line, const Plane &plane) {
 	const float dot = plane.normal * line.diff;
-	if (dot == 0.f)
+	if (dot == 0.f) {
 		return Vector3::zero; // 平行
+	}
 	const float t = (plane.distance - (line.origin * plane.normal)) / dot;
 	return line.GetProgress(t);
+}
+
+const AABB AABB::AddPos(const Vector3 &vec) const {
+	AABB result = *this;
+	result.min += vec;
+	result.max += vec;
+
+	return result;
+}
+
+AABB AABB::Extend(const Vector3 &vec) const {
+
+	AABB result = *this;
+	result.Swaping();
+
+	for (uint32_t i = 0u; i < 3u; ++i) {
+		// もし正の数なら
+		if ((&vec.x)[i] > 0.f) {
+			// maxを加算
+			(&result.max.x)[i] += (&vec.x)[i];
+		}
+		// もし負数なら
+		else {
+			// minに加算
+			(&result.min.x)[i] += (&vec.x)[i];
+		}
+	}
+
+	return result;
+}
+
+Vector3 AABB::GetCentor() const {
+	return SoLib::Lerp(min, max, 0.5f);
+}
+
+Vector3 AABB::GetRadius() const {
+	return (max - min) / 2.f;
+}
+
+Vector3 AABB::GetNormal(const Vector3 &surface) const {
+	Vector3 result{};
+	// 各法線の軸
+	static const std::array<Vector3, 3u> normalArray{
+		Vector3::up,
+		Vector3::right,
+		Vector3::front,
+	};
+	// スケーリングした表面座標
+	const Vector3 scalingSurface = (surface - this->GetCentor()).Scaling(this->GetRadius());
+
+	for (auto&normal: normalArray) {
+		// 法線情報との内積
+		const Vector3 dot = normal * (normal * scalingSurface);
+		// dotの絶対値が大きい要素を返す
+		if (result.LengthSQ() < dot.LengthSQ()) {
+			result = dot;
+		}
+	}
+
+	return result.Nomalize();
 }
 
 void AABB::ImGuiDebug(const std::string &group) {
@@ -290,7 +388,7 @@ void AABB::ImGuiDebug(const std::string &group) {
 	}
 }
 
-void AABB::Swaping() {
+const AABB &AABB::Swaping() {
 	if (min.x > max.x) {
 		std::swap(min.x, max.x);
 	}
@@ -300,6 +398,24 @@ void AABB::Swaping() {
 	if (min.z > max.z) {
 		std::swap(min.z, max.z);
 	}
+	return *this;
+}
+
+std::array<Vector3, 8u> AABB::GetVertex() const {
+	std::array<Vector3, 8u> result{
+
+		// lower
+		Vector3{ min.x, min.y, min.z },
+		Vector3{ min.x, min.y, max.z },
+		Vector3{ max.x, min.y, max.z },
+		Vector3{ max.x, min.y, min.z },
+		// higher
+		Vector3{ min.x, max.y, min.z },
+		Vector3{ min.x, max.y, max.z },
+		Vector3{ max.x, max.y, max.z },
+		Vector3{ max.x, max.y, min.z },
+	};
+	return result;
 }
 
 void Sphere::ImGuiDebug(const std::string &group) {
@@ -416,4 +532,15 @@ Vector3 Capsule::GetHitPoint(const Plane &plane) {
 	// 戻す量
 	const Vector3 back = invDiff * (radius / dot);
 	return Collision::HitPoint(segment, plane) + back;
+}
+
+AABB operator+(const AABB &first, const AABB &second) {
+	AABB mergedAABB;
+	mergedAABB.min.x = min(first.min.x, second.min.x);
+	mergedAABB.min.y = min(first.min.y, second.min.y);
+	mergedAABB.min.z = min(first.min.z, second.min.z);
+	mergedAABB.max.x = max(first.max.x, second.max.x);
+	mergedAABB.max.y = max(first.max.y, second.max.y);
+	mergedAABB.max.z = max(first.max.z, second.max.z);
+	return mergedAABB;
 }

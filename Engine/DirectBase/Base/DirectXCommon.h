@@ -5,8 +5,12 @@
 #include <dxgi1_6.h>
 #include <vector>
 #include <array>
+#include <memory>
+#include <chrono>
 
 #include "LeakChecker.h"
+
+#include "../Descriptor/DescriptorManager.h"
 
 class DirectXCommon {
 	DirectXCommon() = default;
@@ -18,8 +22,20 @@ class DirectXCommon {
 
 	static DirectResourceLeakChecker leakChecker; // リークチェッカー
 public:
+	class FPSManager {
+	public:
+		FPSManager() = default;
+		~FPSManager() = default;
 
-	static const uint32_t backBufferCount = 2;
+		void Init();
+		void Update();
+
+	private:
+		std::chrono::steady_clock::time_point reference_;
+	};
+
+	static const uint32_t backBufferCount_ = 2u;
+	static const uint32_t srvCount_ = 256u;
 
 private:
 
@@ -51,12 +67,15 @@ private:
 	ComPtr<IDXGISwapChain4> swapChain_;
 
 	ComPtr<ID3D12DescriptorHeap> rtvHeap_;
-	std::array<ComPtr<ID3D12Resource>, backBufferCount> backBuffers_;
+	std::array<ComPtr<ID3D12Resource>, backBufferCount_> backBuffers_;
 
 	ComPtr<ID3D12Fence> fence_;
 
 	ComPtr<ID3D12Resource> depthBuffer_;
 	ComPtr<ID3D12DescriptorHeap> dsvHeap_;
+
+	// SRVデスクリプタヒープ
+	std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>> srvHeap_;
 public:
 
 	void Init(WinApp *winApp, int32_t backBufferWidth = WinApp::kWindowWidth,
@@ -67,6 +86,10 @@ public:
 	}
 	ID3D12GraphicsCommandList *const GetCommandList()const {
 		return commandList_.Get();
+	}
+
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *const GetSRVHeap() {
+		return srvHeap_.get();
 	}
 
 	/// @brief 各種破棄

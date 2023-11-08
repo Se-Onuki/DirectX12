@@ -70,7 +70,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	textureManager->Init(dxCommon->GetDevice(), commandList);
 	TextureManager::Load("white2x2.png");
 
-	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), dxCommon->backBufferCount, textureManager->GetSRVHeap());
+	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), dxCommon->backBufferCount_, dxCommon->GetSRVHeap());
 
 	Shader::StaticInit();
 	Model::StaticInit();
@@ -123,6 +123,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		/// ↓ゲーム処理↓
 		///
 
+
+#ifdef _DEBUG
+
+		ImGui::Begin("Flame");
+		ImGui::Text("FPS   : %f", ImGui::GetIO().Framerate);
+		ImGui::Text("Delta : %f", ImGui::GetIO().DeltaTime);
+
+		ImGui::End();
+
+#endif // _DEBUG
 
 
 		gVariable->Update();

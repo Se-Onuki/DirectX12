@@ -4,17 +4,17 @@
 void Platform::Init(const std::unordered_map<std::string, Model *> &model) {
 	BaseCharacter::Init(model);
 
-	transformOrigin_.translate = centor_;
+	transformOrigin_->translate = centor_;
 
-	transformOrigin_.CalcMatrix();
+	transformOrigin_->CalcMatrix();
 
 	const Vector3 radius = { 10.f,0.1f,10.f };
 
 	collider_.size = radius;
 
-	modelTransform_.SetParent(transformOrigin_);
-	modelTransform_.scale = radius;
-	modelTransform_.CalcMatrix();
+	modelTransform_->SetParent(transformOrigin_);
+	modelTransform_->scale = radius;
+	modelTransform_->CalcMatrix();
 
 	CalcCollider();
 }
@@ -25,17 +25,17 @@ void Platform::Update(const float deltaTime) {
 	if (rotSpeed_.Length() >= 0.f) {
 
 		Vector3 angle = rotSpeed_ * deltaTime * Angle::Dig360;
-		transformOrigin_.rotate = Angle::Mod(transformOrigin_.rotate + angle);
+		transformOrigin_->rotate = Angle::Mod(transformOrigin_->rotate + angle);
 	}
-	Vector3 diff = offset_ * Matrix4x4::EulerRotate(transformOrigin_.rotate);
+	Vector3 diff = offset_ * Matrix4x4::EulerRotate(transformOrigin_->rotate);
 
-	transformOrigin_.translate = centor_ + diff;
+	transformOrigin_->translate = centor_ + diff;
 
 
-	transformOrigin_.CalcMatrix();
+	transformOrigin_->CalcMatrix();
 
-	collider_.SetMatrix(transformOrigin_.matWorld_);
-	modelTransform_.UpdateMatrix();
+	collider_.SetMatrix(transformOrigin_->matWorld_);
+	modelTransform_->UpdateMatrix();
 	CalcCollider();
 }
 
@@ -46,5 +46,5 @@ void Platform::Draw(const Camera<Render::CameraType::Projecction> &camera) const
 }
 
 void Platform::CalcCollider() {
-	collider_.SetMatrix(transformOrigin_.matWorld_);
+	collider_.SetMatrix(transformOrigin_->matWorld_);
 }

@@ -17,7 +17,7 @@ class GlobalVariables {
 	GlobalVariables operator=(const GlobalVariables &) = delete;
 	~GlobalVariables() = default;
 
-	const std::string kDirectoryPath = "Resources/GlobalVariables/";
+	const std::string kDirectoryPath = "resources/GlobalVariables/";
 
 public:
 	/// @brief 保存できる型
@@ -127,6 +127,11 @@ void operator>> (const GlobalVariables::Group &group, VariantItem<T> &value) {
 	}
 	assert(0 && "存在しない型を取得しようとしました。");
 	value = T{};
+}
+
+template<typename T>
+void operator<< (GlobalVariables::Group &group, const VariantItem<T> &value) {
+	group[value.GetKey()] = value.GetItem();
 }
 
 //
