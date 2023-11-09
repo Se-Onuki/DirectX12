@@ -107,12 +107,14 @@ void GameScene::Update() {
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
+	levelManager->Update(deltaTime);
+
 	ImGui::Begin("LevelManager");
 	if (ImGui::Button("Left")) {
-		levelManager->blockCollider_[0u].center_.rotate.z += 90._deg;
+		levelManager->blockCollider_[0u].SetRotate(levelManager->blockCollider_[0u].center_.rotate + Vector3::front * 90._deg);
 	}
 	if (ImGui::Button("Right")) {
-		levelManager->blockCollider_[0u].center_.rotate.z += -90._deg;
+		levelManager->blockCollider_[0u].SetRotate(levelManager->blockCollider_[0u].center_.rotate + Vector3::front * -90._deg);
 	}
 	levelManager->blockCollider_[0u].center_.rotate.z = Angle::Mod(levelManager->blockCollider_[0u].center_.rotate.z);
 

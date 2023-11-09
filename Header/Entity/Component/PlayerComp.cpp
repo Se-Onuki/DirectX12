@@ -45,8 +45,6 @@ void PlayerComp::Update() {
 		}
 
 		inputVec = inputVec.Nomalize();
-
-
 	}
 	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });

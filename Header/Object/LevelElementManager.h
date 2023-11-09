@@ -40,6 +40,8 @@ public:
 
 		void Update(float deltaTime);
 
+		void SetRotate(const Vector3 &target);
+
 		void Draw(const Model *const model, const Camera3D &camera) const;
 
 		const auto &GetCollider() const { return collisionBox_; }

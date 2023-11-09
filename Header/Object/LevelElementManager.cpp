@@ -5,7 +5,9 @@ void LevelElementManager::Init() {
 }
 
 void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
-
+	for (auto &[key, platform] : blockCollider_) {
+		platform.Update(deltaTime);
+	}
 
 }
 
@@ -65,13 +67,25 @@ void LevelElementManager::Platform::CalcCollision() {
 void LevelElementManager::Platform::Update(float deltaTime) {
 	timer_.Update(deltaTime);
 
-	if (timer_.IsActive() && timer_.IsFinish()) {
-		center_.rotate = Angle::Lerp(startRot_, targetRot_, timer_.GetProgress());
-	}
 
 	if (timer_.IsActive()) {
+		center_.rotate = Angle::Lerp(startRot_, targetRot_, timer_.GetProgress());
+		center_.UpdateMatrix();
+		for (auto &box : boxList_) {
+			box.transform_->UpdateMatrix();
+
+		}
+
+	}
+	if (timer_.IsActive() && timer_.IsFinish()) {
+		startRot_ = targetRot_;
 		this->CalcCollision();
 	}
+}
+
+void LevelElementManager::Platform::SetRotate(const Vector3 &target) {
+	targetRot_ = Angle::Mod(target);
+	timer_.Start(vLerpTime_);
 }
 
 void LevelElementManager::Platform::Draw(const Model *const model, const Camera3D &camera) const {
