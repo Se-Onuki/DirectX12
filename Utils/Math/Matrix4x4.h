@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector4.h"
 #include <immintrin.h>
+#include <array>
 
 struct Vector3;
 
@@ -21,13 +22,18 @@ struct Matrix4x4 final {
 			  {E, F, G, H},
 			  {I, J, K, L},
 			  {M, N, O, P}
-		} {}
+		}
+	{}
 
 	inline Matrix4x4(const Vector4 &A, const Vector4 &B, const Vector4 &C, const Vector4 &D) {
 		std::memcpy(m[0], &A, sizeof(Vector4));
 		std::memcpy(m[1], &B, sizeof(Vector4));
 		std::memcpy(m[2], &C, sizeof(Vector4));
 		std::memcpy(m[3], &D, sizeof(Vector4));
+	}
+
+	inline Matrix4x4(const std::array<std::array<float, 4u>, 4u> &floatArray) {
+		std::memcpy(m, &floatArray, sizeof(Matrix4x4));
 	}
 
 	float m[4][4];
@@ -72,10 +78,16 @@ struct Matrix4x4 final {
 		return *this == Second;
 	}
 
+	static Matrix4x4 Rotate(const Matrix4x4 &mat);
+
+	static Matrix4x4 Scale(const Vector3 &scale);
+
 	static Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);
 
 	static Matrix4x4 EulerRotate(EulerAngle, float angle);
 	static Matrix4x4 EulerRotate(const Vector3 &angle);
+
+	static Matrix4x4 Translate(const Vector3 &translate);
 
 	/// @brief 単位行列関数
 	/// @return 単位行列
@@ -91,7 +103,7 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &sec) const {
 	__m128 row1 = _mm_load_ps(sec.m[1]);
 	__m128 row2 = _mm_load_ps(sec.m[2]);
 	__m128 row3 = _mm_load_ps(sec.m[3]);
-	for (int i = 0; i < 4; i++) {
+	for (uint32_t i = 0u; i < 4u; ++i) {
 		__m128 brod0 = _mm_set1_ps(m[i][0]);
 		__m128 brod1 = _mm_set1_ps(m[i][1]);
 		__m128 brod2 = _mm_set1_ps(m[i][2]);

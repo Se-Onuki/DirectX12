@@ -26,7 +26,12 @@ struct BaseTransform {
 	Vector3 rotate{};
 	Vector3 translate{};
 
-	Matrix4x4 rotateMat_{};
+	Matrix4x4 rotateMat_ = {
+		{1.f},
+		{0.f,1.f},
+		{0.f,0.f,1.f},
+		{0.f,0.f,0.f,1.f}
+	};
 
 	Matrix4x4 matWorld_{};	// ローカル . ワールド変換
 	const BaseTransform *parent_ = nullptr;	// 親へのアドレス
@@ -41,6 +46,8 @@ public:
 
 	bool ImGuiWidget();
 	bool ImGuiWidget2D();
+
+	const Vector3 &GetGrobalPos() const { return *reinterpret_cast<const Vector3 *const>(matWorld_.m[3]); }
 
 	/// @brief 行列からSRTを算出する
 	/// @param mat SRT行列

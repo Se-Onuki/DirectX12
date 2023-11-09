@@ -24,7 +24,7 @@ void FollowCamera::Update() {
 
 		camera_.rotation_.y = rotate_.y;
 
-		camera_.translation_ = target_->translate + offset;
+		camera_.translation_ = target_->GetGrobalPos() + offset;
 
 	}
 	camera_.UpdateMatrix();

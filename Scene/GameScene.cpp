@@ -153,7 +153,7 @@ void GameScene::Update() {
 
 	light_->ImGuiWidget();
 
-	player_->Update(deltaTime);
+	//player_->Update(deltaTime);
 	player_->GetWorldTransform()->ImGuiWidget();
 
 	followCamera_->Update();

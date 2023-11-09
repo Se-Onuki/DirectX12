@@ -370,7 +370,7 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 		else if (identifier == "map_Kd") {
 
 			std::string token;
-			BaseTransform uv{};
+			BaseTransform uv{ .rotateMat_ = Matrix4x4::Identity() };
 			uv.scale = Vector3::one;
 
 			while (s >> token) {

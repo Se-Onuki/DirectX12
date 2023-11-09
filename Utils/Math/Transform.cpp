@@ -7,7 +7,7 @@
 
 Matrix4x4 BaseTransform::Affine() const
 {
-	return Matrix4x4::Affine(scale, rotate, translate);
+	return Matrix4x4::Scale(scale) * (rotateMat_ * Matrix4x4::EulerRotate(rotate)) * Matrix4x4::Translate(translate);
 }
 
 
@@ -78,16 +78,17 @@ void BaseTransform::MatToSRT(const Matrix4x4 &mat) {
 	scale.z = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(mat.m[2]), _mm_load_ps(mat.m[2]), 0x71)));
 
 	// 回転行列の取得
-	Matrix4x4 rotMat;
+	Matrix4x4 rotMat = Matrix4x4::Identity();
 	*(__m128 *)rotMat.m[0] = _mm_div_ps(_mm_load_ps(mat.m[0]), _mm_set1_ps(scale.x));
 	*(__m128 *)rotMat.m[1] = _mm_div_ps(_mm_load_ps(mat.m[1]), _mm_set1_ps(scale.y));
 	*(__m128 *)rotMat.m[2] = _mm_div_ps(_mm_load_ps(mat.m[2]), _mm_set1_ps(scale.z));
 
+	rotateMat_ = rotMat;
 
-	// 回転角度の取得
-	rotate.x = std::atan2(rotMat.m[1][2], rotMat.m[2][2]);
-	rotate.y = std::atan2(-rotMat.m[0][2], std::sqrt(rotMat.m[1][2] * rotMat.m[1][2] + rotMat.m[2][2] * rotMat.m[2][2]));
-	rotate.z = std::atan2(rotMat.m[0][1], rotMat.m[0][0]);
+	//// 回転角度の取得
+	//rotate.x = std::atan2(rotMat.m[1][2], rotMat.m[2][2]);
+	//rotate.y = std::atan2(-rotMat.m[0][2], std::sqrt(rotMat.m[1][2] * rotMat.m[1][2] + rotMat.m[2][2] * rotMat.m[2][2]));
+	//rotate.z = std::atan2(rotMat.m[0][1], rotMat.m[0][0]);
 
 	// 移動量の取得
 	translate = *(Vector3 *)mat.m[3];

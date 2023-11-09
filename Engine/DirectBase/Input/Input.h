@@ -13,6 +13,7 @@
 #pragma comment (lib, "xinput.lib")
 
 #include <array>
+#include <algorithm>
 #include <stdint.h>
 #include "../../../Utils/Math/Vector2.h"
 
@@ -68,6 +69,13 @@ private:
 	std::array<BYTE, 256u> key_[2u] = {};
 
 public:
+	bool IsAnyPress() const {
+		return std::any_of(key_[inputTarget].begin(), key_[inputTarget].end(), [](BYTE element) {
+			return element;
+			}
+		);
+	}
+
 	bool IsPress(const uint8_t key) const {
 		return key_[inputTarget][key];
 	}

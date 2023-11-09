@@ -58,22 +58,47 @@ void Player::BehaviorRootInit() { floatingParameter_ = 0.f; }
 void Player::BehaviorRootUpdate() {
 
 	//XINPUT_STATE inputState{};
-	const auto &vPad = input_->GetXInput()->GetState();
+	auto vPad = *input_->GetXInput()->GetState();
+
+	static auto *const directInput = input_->GetDirectInput();
+	if (directInput->IsAnyPress()) {
+		vPad.stickL_ = Vector2::zero();
+		if (directInput->IsPress(DIK_W)) {
+			++vPad.stickL_.y;
+		}
+		if (directInput->IsPress(DIK_S)) {
+			--vPad.stickL_.y;
+		}
+
+		if (directInput->IsPress(DIK_A)) {
+			--vPad.stickL_.x;
+		}
+		if (directInput->IsPress(DIK_D)) {
+			++vPad.stickL_.x;
+		}
+		vPad.stickL_ = vPad.stickL_.Nomalize();
+	}
 
 	// 左スティックのデータを受け取る
-	Vector3 move{ vPad->stickL_.x, 0.f, vPad->stickL_.y };
+	Vector3 move{ vPad.stickL_.x, 0.f, vPad.stickL_.y };
 	if (move.Length() >= 0.1f) {
 
+		
+
 		move = move.Nomalize() * moveSpeed_; // 速度を正規化
-		move =                               // カメラ方向に向けて回転
-			move *
-			Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, camera_->rotation_.y);
+		Matrix4x4 inputRotateMatrix = Matrix4x4::Identity();
+		inputRotateMatrix *= Matrix4x4::Rotate(camera_->matView_.InverseSRT());
+		//move = TransformNormal(move, camera_->matView_);
 		if (transformOrigin_->parent_) {
-			move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
+
+			inputRotateMatrix *= Matrix4x4::Rotate(transformOrigin_->parent_->matWorld_.InverseSRT());
+			//move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
 		}
+
+		move *= inputRotateMatrix;
 		transformOrigin_->translate += move; // 移動量を追加
 
-		transformOrigin_->rotate = move.Direction2Euler(); // ベクトルからオイラー角を算出
+		transformOrigin_->rotateMat_ = inputRotateMatrix; // ベクトルからオイラー角を算出
 	}
 
 	transformOrigin_->translate.y += -0.5f; // 移動量を追加
@@ -82,7 +107,7 @@ void Player::BehaviorRootUpdate() {
 		transformOrigin_->translate.y = 0.f;
 	}
 
-	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {
+	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER) || (vPad.button_ & static_cast<WORD>(KeyCode::RIGHT_SHOULDER))) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 	//}
