@@ -306,6 +306,9 @@
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -559,6 +562,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.h">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\FollowCameraComp.h">
+      <Filter>Header\Entity\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

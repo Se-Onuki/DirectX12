@@ -45,8 +45,6 @@ void PlayerComp::Update() {
 		}
 
 		inputVec = inputVec.Nomalize();
-
-
 	}
 	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
@@ -81,6 +79,11 @@ void PlayerComp::Update() {
 								float value = Collision::HitProgress(line, box);
 								const Vector3 normal = box.GetNormal(line.GetProgress(value));
 								if (normal * line.diff < 0.f) {
+									Vector3 minDiff = box.min - line.origin;
+									Vector3 maxDiff = box.max - line.origin;
+									if (normal * line.diff == 1) {
+
+									}
 									if (value < t) {
 										t = value;
 										hitSurfaceNormal = normal;

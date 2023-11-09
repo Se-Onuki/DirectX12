@@ -6,6 +6,9 @@
 #include "../Collision/Collision.h"
 #include "../../Engine/DirectBase/Model/Model.h"
 
+#include "../../Engine/DirectBase/File/VariantItem.h"
+#include "../../Utils/SoLib/SoLib_Timer.h"
+
 class LevelElementManager {
 	LevelElementManager() = default;
 	LevelElementManager(const LevelElementManager &) = delete;
@@ -13,25 +16,45 @@ class LevelElementManager {
 	~LevelElementManager() = default;
 public:
 
+	class Box {
+	public:
+		Box(const AABB &aabb);
+
+		Transform transform_;
+		AABB referenceBox_;
+	};
+
 	class Platform {
 	public:
 		Platform() = default;
 		~Platform() = default;
 
-		Vector3 rotate_;
-		Vector3 origin_;
+		BaseTransform center_;
+		Vector3 startRot_;
+		Vector3 targetRot_;
+
+		Vector3 rotateAxis_ = Vector3::front;
+
+		VariantItem<float> vLerpTime_{ "LerpTime",1.f };
 
 		void AddBox(const AABB &box);
 		void CalcCollision();
+
+		void Update(float deltaTime);
+
+		void AddRotate(const float targetRot);
+
+		void SetAxis(const Vector3 &axis) { rotateAxis_ = axis.Nomalize(); }
 
 		void Draw(const Model *const model, const Camera3D &camera) const;
 
 		const auto &GetCollider() const { return collisionBox_; }
 
 	private:
-		std::list<Transform> transform_;
-		std::list<AABB> referenceBox_;
+		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
+
+		std::list<Box> boxList_;
 	};
 
 public:
@@ -50,6 +73,7 @@ public:
 	void Draw(const Camera3D &camera);
 
 	void CalcCollision(const uint32_t key);
+	void CalcCollision();
 
 	/// @brief ブロックを追加
 	/// @param transform ブロックのSRT
