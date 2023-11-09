@@ -13,7 +13,7 @@ public: // サブクラス
 	/// <summary>
 	/// イージングタイプ列挙子
 	/// </summary>
-	enum EaseingType {
+	enum EasingType {
 		kLinear,
 		kEaseIn,
 		kEaseOut,

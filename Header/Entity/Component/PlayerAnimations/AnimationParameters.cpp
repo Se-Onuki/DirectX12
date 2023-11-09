@@ -6,11 +6,15 @@ void AnimationParameters::Initialize()
 	// グローバル変数クラスにインスタンス取得
 	globalVariables_ = GlobalVariables::GetInstance();
 
+	// 各種キーの初期化
 	idleAnimKeys_.Initialize("Idle");
 	moveAnimKeys_.Initialize("Move");
 	startJumpAnimKeys_.Initialize("StartJump");
 	hoveringAnimKeys_.Initialize("Hovering");
 	landAnimKeys_.Initialize("Land");
+	startRotateAnimKeys_.Initialize("RotateStart");
+	rotatingAnimKeys_.Initialize("Rotating");
+	rotateEndAnimationKeys_.Initialize("RotateEnd");
 }
 
 void AnimationParameters::Update()
@@ -21,5 +25,8 @@ void AnimationParameters::Update()
 	startJumpAnimKeys_.ShowImGUi();
 	hoveringAnimKeys_.ShowImGUi();
 	landAnimKeys_.ShowImGUi();
+	startRotateAnimKeys_.ShowImGUi();
+	rotatingAnimKeys_.ShowImGUi();
+	rotateEndAnimationKeys_.ShowImGUi();
 #endif // _DEBUG
 }

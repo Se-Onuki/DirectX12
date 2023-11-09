@@ -22,8 +22,9 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="name">読みこむパラメーター名</param>
 	/// <param name="isLoop">ループするか</param>
+	/// <param name="type"></param>
 	/// <param name="transitionTime">遷移秒数</param>
-	void Initialize(std::string name, bool isLoop, float transitionTime = 0.0f);
+	void Initialize(std::string name, bool isLoop, AnimEasing::EasingType type = AnimEasing::kLinear, float transitionTime = 0.0f);
 
 	/// <summary>
 	/// 更新関数
@@ -90,7 +91,7 @@ public: // アクセッサ等
 	/// <param name="end">終端値</param>
 	/// <param name="time">時間</param>
 	/// <returns>イージングされた値(float)</returns>
-	PlayerBone::Bone Ease(AnimEasing::EaseingType type, float t, PlayerBone::Bone start, PlayerBone::Bone end, float time);
+	PlayerBone::Bone Ease(AnimEasing::EasingType type, float t, PlayerBone::Bone start, PlayerBone::Bone end, float time);
 
 protected: // 継承先メンバ変数
 
@@ -118,6 +119,8 @@ protected: // 継承先メンバ変数
 	bool isTransitioning_;
 	// 遷移秒数
 	float transitionTime_;
+	// 遷移タイプ
+	AnimEasing::EasingType transitionType_;
 
 	bool isPlaying_;
 

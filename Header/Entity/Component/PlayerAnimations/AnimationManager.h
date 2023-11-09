@@ -19,6 +19,9 @@ public: // サブクラス
 		kJumpStart,
 		kHovering,
 		kLand,
+		kRotateStart,
+		kRotating,
+		kRotateEnd
 	};
 
 public: // メンバ関数
@@ -40,14 +43,15 @@ public: // アクセッサ等
 	/// </summary>
 	/// <param name="entity">アニメーションさせるエンティティ</param>
 	void SetEntity(Entity* entity) { entity_ = entity; }
-
+	
 	/// <summary>
 	/// 次のアニメーションセッター
 	/// </summary>
 	/// <param name="next">次にどのアニメーションを再生するか</param>
 	/// <param name="isLoop">ループさせるか</param>
+	/// <param name="type">遷移イージングのタイプ</param>
 	/// <param name="transitionTime">遷移の際の時間</param>
-	void SetNextAnimation(Behavior next, bool isLoop, float transitionTime = 0);
+	void SetNextAnimation(Behavior next, bool isLoop, AnimEasing::EasingType type = AnimEasing::kLinear, float transitionTime = 0);
 
 private: // メンバ変数
 
@@ -69,6 +73,8 @@ private: // メンバ変数
 	bool imGuiIsLoop_ = false;
 	// 遷移秒数設定用
 	float imGuiTransitionTime_ = 0.0f;
+	// 遷移のイージングタイプ
+	int imGuiTransitonType_ = AnimEasing::kLinear;
 	// 次のアニメーション
 	int imGuiNextbehavior_ = kIdle;
 

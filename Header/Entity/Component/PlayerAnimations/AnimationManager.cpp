@@ -50,11 +50,20 @@ void AnimationManager::Update()
 	ImGui::Checkbox("isLoop", &imGuiIsLoop_);
 
 	ImGui::DragFloat("transitionTime", &imGuiTransitionTime_, 0.005f, 0.0f, 5.0f);
+	if (ImGui::TreeNode("TransitionType")) {
+		ImGui::RadioButton("Linear", &imGuiTransitonType_, AnimEasing::kLinear);
+		ImGui::RadioButton("EaseIn", &imGuiTransitonType_, AnimEasing::kEaseIn);
+		ImGui::RadioButton("EaseOut", &imGuiTransitonType_, AnimEasing::kEaseOut);
+		ImGui::RadioButton("EaseInOut", &imGuiTransitonType_, AnimEasing::KEaseInOut);
+
+		ImGui::TreePop();
+	}
+	
 
 	// アニメーション再生
 	if (ImGui::Button("PlayAnim")) {
 		currentAnimation_->SetIsEnd(true);
-		SetNextAnimation((Behavior)imGuiNextbehavior_, imGuiIsLoop_, imGuiTransitionTime_);
+		SetNextAnimation((Behavior)imGuiNextbehavior_, imGuiIsLoop_, (AnimEasing::EasingType)imGuiTransitonType_, imGuiTransitionTime_);
 	}
 
 	if (!currentAnimation_->GetIsEnd()) {
@@ -72,7 +81,7 @@ void AnimationManager::Update()
 #endif // _DEBUG
 }
 
-void AnimationManager::SetNextAnimation(Behavior next, bool isLoop, float transitionTime)
+void AnimationManager::SetNextAnimation(Behavior next, bool isLoop, AnimEasing::EasingType type, float transitionTime)
 {
 	nextAnimation_ = new BaseAnimation();
 	nextAnimation_->SetEntity(entity_);
@@ -81,20 +90,29 @@ void AnimationManager::SetNextAnimation(Behavior next, bool isLoop, float transi
 	switch (next)
 	{
 	case AnimationManager::kIdle:
-		nextAnimation_->Initialize("Idle", isLoop, transitionTime);
+		nextAnimation_->Initialize("Idle", isLoop, type, transitionTime);
 		break;
 	case AnimationManager::kMove:
-		nextAnimation_->Initialize("Move", isLoop, transitionTime);
+		nextAnimation_->Initialize("Move", isLoop, type, transitionTime);
 		break;
 	case AnimationManager::kJumpStart:
-		nextAnimation_->Initialize("StartJump", isLoop, transitionTime);
+		nextAnimation_->Initialize("StartJump", isLoop, type, transitionTime);
 		break;
-		case AnimationManager::kHovering:
-		nextAnimation_->Initialize("Hovering", isLoop, transitionTime);
+	case AnimationManager::kHovering:
+		nextAnimation_->Initialize("Hovering", isLoop, type, transitionTime);
 		break;
-		case AnimationManager::kLand:
-		nextAnimation_->Initialize("Land", isLoop, transitionTime);
+	case AnimationManager::kLand:
+		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
 		break;
-
+	case AnimationManager::kRotateStart:
+		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
+		break;
+	case AnimationManager::kRotating:
+		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
+		break;
+	case AnimationManager::kRotateEnd:
+		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
+		break;
+		
 	}
 }
