@@ -54,14 +54,14 @@ void GameScene::OnEnter() {
 	levelManager = LevelElementManager::GetInstance();
 
 	levelManager->Init();
-	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,1.f,15.f }));
+	levelManager->AddBlock(1u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,1.f,20.f }));
 
 	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,3.f,0.f }));
 	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
 
 	// levelManager->blockCollider_[0u].center_.translate.z = 180._deg;
 
-	levelManager->CalcCollision(0u);
+	levelManager->CalcCollision();
 
 #pragma region Player
 

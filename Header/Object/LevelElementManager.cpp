@@ -27,9 +27,6 @@ void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
 }
 
 void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
-}
-
-void LevelElementManager::Draw(const Camera3D &camera) {
 	static const ModelManager *const modelManager = ModelManager::GetInstance();
 	const Model *const model = modelManager->GetModel("Box");
 
@@ -37,6 +34,15 @@ void LevelElementManager::Draw(const Camera3D &camera) {
 		platform.Draw(model, camera);
 	}
 }
+//
+//void LevelElementManager::Draw(const Camera3D &camera) {
+//	/*static const ModelManager *const modelManager = ModelManager::GetInstance();
+//	const Model *const model = modelManager->GetModel("Box");
+//
+//	for (const auto &[key, platform] : blockCollider_) {
+//		platform.Draw(model, camera);
+//	}*/
+//}
 
 void LevelElementManager::CalcCollision(const uint32_t key) {
 	blockCollider_[key].CalcCollision();

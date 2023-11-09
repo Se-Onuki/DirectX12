@@ -49,9 +49,13 @@ void PlayerComp::Update() {
 	}
 	// カメラの角度を元に計算
 	inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
+	float movePower{};
+	if (inputVec.LengthSQ() != 0.f) {
+		movePower = inputVec.Length() / inputVec.Nomalize().Length();
+	}
 	// カメラの上下方向を破棄
 	inputVec.y = 0.f;
-	inputVec.Nomalize();
+	inputVec = inputVec.Nomalize() * movePower;
 
 	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });

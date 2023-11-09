@@ -70,7 +70,7 @@ public:
 
 	void Draw(const Camera3D &camera) const;
 
-	void Draw(const Camera3D &camera);
+	//void Draw(const Camera3D &camera);
 
 	void CalcCollision(const uint32_t key);
 	void CalcCollision();
