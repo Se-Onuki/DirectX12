@@ -1,5 +1,6 @@
 #include "LevelElementManager.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
+#include "../../Utils/SoLib/SoLib_Easing.h"
 
 void LevelElementManager::Init() {
 }
@@ -69,7 +70,7 @@ void LevelElementManager::Platform::Update(float deltaTime) {
 
 
 	if (timer_.IsActive()) {
-		center_.rotate = Angle::Lerp(startRot_, targetRot_, timer_.GetProgress());
+		center_.rotate = Angle::Lerp(startRot_, targetRot_, SoLib::easeInOutQuad(timer_.GetProgress()));
 		center_.UpdateMatrix();
 		for (auto &box : boxList_) {
 			box.transform_->UpdateMatrix();
