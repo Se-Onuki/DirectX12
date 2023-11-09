@@ -22,9 +22,11 @@ void FollowCameraComp::ImGuiWidget() {
 }
 
 void FollowCameraComp::AddRotate(const Vector3 &euler) {
-	rotate_ += euler;
-	camera_.rotation_ += euler;
-	camera_.UpdateMatrix();
+	if (euler.LengthSQ() != 0.f) {
+		rotate_ += euler;
+		camera_.rotation_ += euler;
+		camera_.UpdateMatrix();
+	}
 }
 
 void FollowCameraComp::SetTarget(BaseTransform *const target) {
