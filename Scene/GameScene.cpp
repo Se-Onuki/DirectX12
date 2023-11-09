@@ -110,34 +110,34 @@ void GameScene::Update() {
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
-	ImGui::Begin("LevelManager");
-	if (ImGui::Button("Left")) {
-		levelManager->blockCollider_[0u].rotate_.z += 90._deg;
-	}
-	if (ImGui::Button("Right")) {
-		levelManager->blockCollider_[0u].rotate_.z += -90._deg;
-	}
-	levelManager->blockCollider_[0u].rotate_.z = Angle::Mod(levelManager->blockCollider_[0u].rotate_.z);
+	//ImGui::Begin("LevelManager");
+	//if (ImGui::Button("Left")) {
+	//	levelManager->blockCollider_[0u].rotate_.z += 90._deg;
+	//}
+	//if (ImGui::Button("Right")) {
+	//	levelManager->blockCollider_[0u].rotate_.z += -90._deg;
+	//}
+	//levelManager->blockCollider_[0u].rotate_.z = Angle::Mod(levelManager->blockCollider_[0u].rotate_.z);
 
-	ImGui::End();
+	//ImGui::End();
 
-	levelManager->CalcCollision(0u);
-	colliderManager->push_back(levelManager->blockCollider_[0u].GetCollider());
+	//levelManager->CalcCollision(0u);
+	//colliderManager->push_back(levelManager->blockCollider_[0u].GetCollider());
 
-	player_->Update(deltaTime);
+	//player_->Update(deltaTime);
 
-	ImGui::Begin("Player");
-	player_->ImGuiWidget();
-	ImGui::End();
+	//ImGui::Begin("Player");
+	//player_->ImGuiWidget();
+	//ImGui::End();
 
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
 	ImGui::End();
-	camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
+	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 	camera_.UpdateMatrix();
 
 
-	//playerAnim_->Update(deltaTime);
+	playerAnim_->Update(deltaTime);
 
 	light_->ImGuiWidget();
 
@@ -173,16 +173,16 @@ void GameScene::Draw()
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
 	//model_->Draw(transform_, camera_);
-	levelManager->Draw(camera_);
+	//levelManager->Draw(camera_);
 
-	player_->Draw(camera_);
+	//player_->Draw(camera_);
+	// 描画
+	playerAnim_->Draw(camera_);
 
 	//Model::SetPipelineType(Model::PipelineType::kParticle);
 
 	// モデルの描画
 
-	// 描画
-	//playerAnim_->Draw(camera_);
 
 	Model::EndDraw();
 
