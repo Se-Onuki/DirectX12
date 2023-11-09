@@ -84,8 +84,8 @@ void LevelElementManager::Platform::Update(float deltaTime) {
 	}
 }
 
-void LevelElementManager::Platform::SetRotate(const Vector3 &target) {
-	targetRot_ = Angle::Mod(target);
+void LevelElementManager::Platform::AddRotate(const float targetRot) {
+	targetRot_ = Angle::Mod(rotateAxis_ * targetRot + startRot_);
 	timer_.Start(vLerpTime_);
 }
 

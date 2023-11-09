@@ -111,16 +111,16 @@ void GameScene::Update() {
 
 	ImGui::Begin("LevelManager");
 	if (ImGui::Button("Left")) {
-		levelManager->blockCollider_[0u].SetRotate(levelManager->blockCollider_[0u].center_.rotate + Vector3::front * 90._deg);
+		levelManager->blockCollider_[0u].AddRotate( 90._deg);
 	}
 	if (ImGui::Button("Right")) {
-		levelManager->blockCollider_[0u].SetRotate(levelManager->blockCollider_[0u].center_.rotate + Vector3::front * -90._deg);
+		levelManager->blockCollider_[0u].AddRotate( -90._deg);
 	}
-	levelManager->blockCollider_[0u].center_.rotate.z = Angle::Mod(levelManager->blockCollider_[0u].center_.rotate.z);
+	//levelManager->blockCollider_[0u].center_.rotate.z = Angle::Mod(levelManager->blockCollider_[0u].center_.rotate.z);
 
 	ImGui::End();
 
-	levelManager->CalcCollision(0u);
+	//levelManager->CalcCollision(0u);
 	colliderManager->push_back(levelManager->blockCollider_[0u].GetCollider());
 
 	player_->Update(deltaTime);

@@ -33,6 +33,8 @@ public:
 		Vector3 startRot_;
 		Vector3 targetRot_;
 
+		Vector3 rotateAxis_ = Vector3::front;
+
 		VariantItem<float> vLerpTime_{ "LerpTime",1.f };
 
 		void AddBox(const AABB &box);
@@ -40,7 +42,9 @@ public:
 
 		void Update(float deltaTime);
 
-		void SetRotate(const Vector3 &target);
+		void AddRotate(const float targetRot);
+
+		void SetAxis(const Vector3 &axis) { rotateAxis_ = axis.Nomalize(); }
 
 		void Draw(const Model *const model, const Camera3D &camera) const;
 
