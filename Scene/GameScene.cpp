@@ -130,14 +130,14 @@ void GameScene::Update() {
 
 	ImGui::Begin("LevelManager");
 	if (ImGui::Button("Left")) {
-		levelManager->blockCollider_[0u].AddRotate(90._deg);
+		levelManager->GetPlatform(0u)->AddRotate(90._deg);
 	}
 	if (ImGui::Button("Right")) {
-		levelManager->blockCollider_[0u].AddRotate(-90._deg);
+		levelManager->GetPlatform(0u)->AddRotate(-90._deg);
 	}
 	ImGui::End();
 
-	colliderManager->push_back(levelManager->blockCollider_[0u].GetCollider());
+	colliderManager->push_back(levelManager->GetPlatform(0u)->GetCollider());
 
 	player_->Update(deltaTime);
 

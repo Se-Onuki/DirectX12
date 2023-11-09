@@ -30,6 +30,17 @@ void PlayerComp::Update() {
 			rigidbody->ApplyInstantForce(Vector3{ 0.f,vJumpPower,0.f });
 		}
 
+		if (keyBoard->IsTrigger(DIK_E)) {
+			if (auto *const platform = levelManager->GetPlatform(registeredGroups_)) {
+				platform->AddRotate(-90._deg);
+			}
+		}
+		if (keyBoard->IsTrigger(DIK_Q)) {
+			if (auto *const platform = levelManager->GetPlatform(registeredGroups_)) {
+				platform->AddRotate(90._deg);
+			}
+		}
+
 
 		if (keyBoard->IsPress(DIK_W)) {
 			inputVec += Vector3::front;
@@ -61,12 +72,14 @@ void PlayerComp::Update() {
 	inputVec.y = 0.f;
 	inputVec = inputVec.Nomalize() * movePower;
 
+
 	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
 
 	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
+	int32_t hitGroup = -1;
 	while (true) {
 
 		float t = 1.f;
@@ -84,7 +97,6 @@ void PlayerComp::Update() {
 				vertexLine[i].origin = vertexPos[i];
 				vertexLine[i].diff = moveLine.diff;
 			}
-
 
 			for (const auto &[key, collider] : levelManager->blockCollider_) {
 				for (auto &box : collider.GetCollider()) {
@@ -105,7 +117,7 @@ void PlayerComp::Update() {
 										t = value;
 										hitSurfaceNormal = normal;
 										if (normal * Vector3::up == 1.f) {
-											registeredGroups_ = static_cast<int32_t>(key);
+											hitGroup = static_cast<int32_t>(key);
 										}
 									}
 								}
@@ -114,7 +126,9 @@ void PlayerComp::Update() {
 					}
 				}
 			}
+
 		}
+		registeredGroups_ = hitGroup;
 		if (t < 1.f) {
 
 			moveLine.origin = moveLine.GetProgress(t);

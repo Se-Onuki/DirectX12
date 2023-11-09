@@ -58,6 +58,18 @@ void LevelElementManager::AddBlock(const uint32_t key, const AABB &box) {
 	blockCollider_[key].AddBox(box);
 }
 
+LevelElementManager::Platform *const LevelElementManager::GetPlatform(int32_t index) {
+	if (index < 0) {
+		return nullptr;
+	}
+
+	PlatformMap::iterator itPlatform = blockCollider_.find(index);
+	if (itPlatform == blockCollider_.end()) {
+		return nullptr;
+	}
+	return &itPlatform->second;
+}
+
 //void LevelElementManager::AddBlock(const std::string &key, Entity *const entity) {
 //	blockEntity_[key].emplace_back(entity);
 //}

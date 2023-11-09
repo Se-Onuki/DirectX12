@@ -81,8 +81,10 @@ public:
 
 	const LineBase &GetStageLine() const { return stageLine_; }
 
+	Platform *const GetPlatform(int32_t index);
 
-	std::unordered_map<uint32_t, Platform> blockCollider_;
+	using PlatformMap = std::unordered_map<uint32_t, Platform>;
+	PlatformMap blockCollider_;
 
 private:
 	Transform lineStart_;
