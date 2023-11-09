@@ -49,7 +49,7 @@ void PlayerComp::Update() {
 	}
 	// カメラの角度を元に計算
 	inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
-	float movePower{};
+	float movePower = 1.f;
 	if (inputVec.LengthSQ() != 0.f) {
 		movePower = inputVec.Length() / inputVec.Nomalize().Length();
 	}
