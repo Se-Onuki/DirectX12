@@ -17,6 +17,8 @@ public:
 
 	void Draw(const Camera3D &camera) const override;
 
+	void ImGuiWidget() override;
+
 	void ApplyVariables(const char *const groupName) override;
 	void AddVariable(const char *const groupName) const override;
 
@@ -31,7 +33,8 @@ private:
 
 	static const std::string groupName_;
 
-	uint32_t registeredGroups_;
+	// 所属するグループ
+	int32_t registeredGroups_ = -1;
 
 	AABB collider_;
 

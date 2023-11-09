@@ -47,12 +47,16 @@ void PlayerComp::Update() {
 
 		inputVec = inputVec.Nomalize();
 	}
-	// カメラの角度を元に計算
-	inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
+	// 入力強度を取得
 	float movePower = 1.f;
+	// もし入力が0でないなら強度に応じた値
 	if (inputVec.LengthSQ() != 0.f) {
 		movePower = inputVec.Length() / inputVec.Nomalize().Length();
 	}
+
+	// カメラの角度を元に計算
+	inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
+
 	// カメラの上下方向を破棄
 	inputVec.y = 0.f;
 	inputVec = inputVec.Nomalize() * movePower;
@@ -73,6 +77,8 @@ void PlayerComp::Update() {
 
 			const auto &vertexPos = beforeCollider.GetVertex();
 
+			LineBase centorLine;
+
 			std::array<LineBase, 8u> vertexLine;
 			for (uint32_t i = 0u; i < vertexLine.size(); ++i) {
 				vertexLine[i].origin = vertexPos[i];
@@ -92,12 +98,15 @@ void PlayerComp::Update() {
 								if (normal * line.diff < 0.f) {
 									Vector3 minDiff = box.min - line.origin;
 									Vector3 maxDiff = box.max - line.origin;
-									if (normal * line.diff == 1) {
+									if (normal * line.diff == -1.f) {
 
 									}
 									if (value < t) {
 										t = value;
 										hitSurfaceNormal = normal;
+										if (normal * Vector3::up == 1.f) {
+											registeredGroups_ = static_cast<int32_t>(key);
+										}
 									}
 								}
 							}
@@ -131,6 +140,10 @@ void PlayerComp::Update() {
 
 void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {
 
+}
+
+void PlayerComp::ImGuiWidget() {
+	ImGui::Text("KeyGroup : %i", registeredGroups_);
 }
 
 void PlayerComp::ApplyVariables(const char *const groupName) {

@@ -151,6 +151,8 @@ struct AABB {
 	void ImGuiDebug(const std::string &group);
 	const AABB &Swaping();
 
+	/// @brief 全ての頂点情報を取得する
+	/// @return 各種頂点 [ 下面4つ , 上面4つ]
 	std::array<Vector3, 8u> GetVertex() const;
 };
 
