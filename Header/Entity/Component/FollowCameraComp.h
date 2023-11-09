@@ -3,6 +3,8 @@
 #include "../../../Engine/DirectBase/Render/Camera.h"
 #include "../../../Utils/Math/Vector3.h"
 #include "../../../Utils/Math/Matrix4x4.h"
+#include "../../Collision/Collision.h"
+#include "../../../Engine/DirectBase/File/VariantItem.h"
 
 class FollowCameraComp : public IComponent {
 public:
@@ -14,14 +16,19 @@ public:
 	void AddRotate(const Vector3 &euler);
 
 	void SetTarget(BaseTransform *const target);
+	void SetLine(const LineBase &target);
 
 	const auto &GetCamera() const { return camera_; }
 
+	VariantItem<float> vLerpValue{ "LerpValue", 0.75f };
+
 private:
+
+	LineBase line_;
 
 	BaseTransform *pTarget_ = nullptr;
 
-	Vector3 offset_{ 0.f,3.f,-15.f };
+	VariantItem<Vector3> offset_{ "Offset",{ 0.f,6.f,-30.f } };
 
 	Vector3 rotate_;
 

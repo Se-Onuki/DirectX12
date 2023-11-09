@@ -8,8 +8,9 @@ const std::string PlayerComp::groupName_ = "Player";
 void PlayerComp::Init() {
 	ApplyVariables(groupName_.c_str());
 	input_ = Input::GetInstance();
-	collider_.min = -Vector3::one;
-	collider_.max = Vector3::one;
+	const Vector3 radius{ 0.75f,0.99f,0.75f };
+	collider_.min = -radius;
+	collider_.max = radius;
 	//auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	//rigidbody->ApplyInstantForce(Vector3{ 0.f,1000000.f,0.f });
 

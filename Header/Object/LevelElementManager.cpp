@@ -1,6 +1,7 @@
 #include "LevelElementManager.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../Utils/SoLib/SoLib_Easing.h"
+#include "../../Utils/SoLib/SoLib_ImGui.h"
 
 void LevelElementManager::Init() {
 }
@@ -9,6 +10,16 @@ void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
 	for (auto &[key, platform] : blockCollider_) {
 		platform.Update(deltaTime);
 	}
+
+	ImGui::Begin("StageLine");
+	SoLib::ImGuiWidget("StartPos", &lineStart_->translate);
+	SoLib::ImGuiWidget("EndPos", &lineEnd_->translate);
+	ImGui::End();
+
+	lineStart_->UpdateMatrix();
+	lineEnd_->UpdateMatrix();
+	stageLine_.origin = lineStart_->GetGrobalPos();
+	stageLine_.diff = lineEnd_->GetGrobalPos() - stageLine_.origin;
 
 }
 

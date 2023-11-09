@@ -124,6 +124,7 @@ void GameScene::Update() {
 	TextureManager::GetInstance()->ImGuiWindow();
 
 	levelManager->Update(deltaTime);
+	followCamera_->AddComponent<FollowCameraComp>()->SetLine(levelManager->GetStageLine());
 
 	ImGui::Begin("LevelManager");
 	if (ImGui::Button("Left")) {
