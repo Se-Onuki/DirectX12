@@ -234,7 +234,7 @@ public:
 	inline const T *const operator&() const noexcept { return &data_; }		// dataのメンバへのアクセス(const)
 
 
-	inline T &operator=(const T &other) {	// コピー演算子
+	inline ConstantContainer &operator=(const T &other) {	// コピー演算子
 		data_ = static_cast<const T &>(other);
 		if (data_.mapTarget_ && other.mapTarget_) {
 			*data_.mapTarget_ = *other.mapTarget_;

@@ -4,6 +4,7 @@
 #include "../../Collision/Collision.h"
 
 #include "../../../Engine/DirectBase/File/VariantItem.h"
+#include "FollowCameraComp.h"
 
 class PlayerComp : public IComponent {
 public:
@@ -22,7 +23,11 @@ public:
 	VariantItem<float> vMoveSpeed{ "MoveSpeed", 1000.f };
 	VariantItem<float> vJumpPower{ "JumpPower", 5.f };
 
+	void SetFollowCamera(FollowCameraComp *const followCamera) { pFollowCamera_ = followCamera; }
+
 private:
+
+	FollowCameraComp *pFollowCamera_ = nullptr;
 
 	static const std::string groupName_;
 

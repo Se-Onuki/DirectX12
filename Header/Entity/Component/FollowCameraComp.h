@@ -13,6 +13,8 @@ public:
 
 	void Update() override;
 
+	void ImGuiWidget() override;
+
 	void AddRotate(const Vector3 &euler);
 
 	void SetTarget(BaseTransform *const target);
@@ -29,6 +31,7 @@ private:
 	BaseTransform *pTarget_ = nullptr;
 
 	VariantItem<Vector3> offset_{ "Offset",{ 0.f,6.f,-30.f } };
+	VariantItem<Vector3> addOffset_{ "AddOffset",{ 0.f,6.f,0.f } };
 
 	Vector3 rotate_;
 

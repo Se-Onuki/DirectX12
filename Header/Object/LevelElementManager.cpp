@@ -4,6 +4,9 @@
 #include "../../Utils/SoLib/SoLib_ImGui.h"
 
 void LevelElementManager::Init() {
+	if (lineStart_->translate == lineEnd_->translate) {
+		lineEnd_->translate.z = lineStart_->translate.z + 1.f;
+	}
 }
 
 void LevelElementManager::Update([[maybe_unused]] float deltaTime) {

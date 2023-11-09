@@ -86,6 +86,8 @@ void GameScene::OnEnter() {
 
 #pragma endregion
 
+	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
+
 	cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;
 
@@ -152,6 +154,7 @@ void GameScene::Update() {
 	}
 
 	followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
+	followCamera_->ImGuiWidget();
 	followCamera_->Update(deltaTime);
 
 	ImGui::Begin("Camera");
