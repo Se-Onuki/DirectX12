@@ -3,6 +3,8 @@
 #include "../Entity.h"
 #include "../../../Engine/DirectBase/File/VariantItem.h"
 
+#include "PlayerAnimations/AnimationManager.h"
+
 /// <summary>
 /// プレイヤーアニメーションコンポーネント
 /// </summary>
@@ -20,13 +22,12 @@ public: // メンバ関数
 	/// </summary>
 	void Init() override;
 
+	/// <summary>
+	/// 更新関数
+	/// </summary>
 	void Update() override;
 
-
-	//void Draw(const Camera3D& camera) const override;
-
 private: // メンバ変数
-
 	// モデルのトランスフォーム
 	Transform bodyTransform_; // 体のトランスフォーム
 	Transform eyeTransform_; // 瞳のトランスフォーム
@@ -36,5 +37,7 @@ private: // メンバ変数
 	Transform FootTransform_L_; // 左足トランスフォーム
 	Transform FootTransform_R_; // 右足トランスフォーム
 
+	// アニメーションマネージャー
+	AnimationManager* animManager_ = nullptr;
 };
 
