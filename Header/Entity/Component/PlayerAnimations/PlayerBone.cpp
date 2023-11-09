@@ -88,6 +88,7 @@ void PlayerBone::AddItem(GlobalVariables* gv)
 	gv->AddValue(groupName_, boneName_ + "Arm_L_Rotate", bone_.arm_L.rotate);
 	gv->AddValue(groupName_, boneName_ + "Arm_L_Translate", bone_.arm_L.translate);
 	gv->AddValue(groupName_, boneName_ + "Arm_R_Scale", bone_.arm_R.scale);
+	bone_.arm_R.rotate.z *= -1.0f;
 	gv->AddValue(groupName_, boneName_ + "Arm_R_Rotate", bone_.arm_R.rotate);
 	gv->AddValue(groupName_, boneName_ + "Arm_R_Translate", bone_.arm_R.translate);
 	gv->AddValue(groupName_, boneName_ + "Foot_L_Scale", bone_.foot_L.scale);
@@ -113,6 +114,7 @@ void PlayerBone::SetItem(GlobalVariables* gv)
 	gv->SetValue(groupName_, boneName_ + "Arm_L_Rotate", bone_.arm_L.rotate);
 	gv->SetValue(groupName_, boneName_ + "Arm_L_Translate", bone_.arm_L.translate);
 	gv->SetValue(groupName_, boneName_ + "Arm_R_Scale", bone_.arm_R.scale);
+	bone_.arm_R.rotate.z *= -1.0f;
 	gv->SetValue(groupName_, boneName_ + "Arm_R_Rotate", bone_.arm_R.rotate);
 	gv->SetValue(groupName_, boneName_ + "Arm_R_Translate", bone_.arm_R.translate);
 	gv->SetValue(groupName_, boneName_ + "Foot_L_Scale", bone_.foot_L.scale);

@@ -72,6 +72,9 @@ private: // メンバ変数
 	// 次のアニメーション
 	int imGuiNextbehavior_ = kIdle;
 
+	// アニメーションキーコピー用
+	AnimationKeys imGuiCopyKeys_;
+
 #endif // _DEBUG // ImGUiデバッグ用
 
 

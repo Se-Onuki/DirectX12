@@ -49,7 +49,7 @@ void AnimationManager::Update()
 
 	ImGui::Checkbox("isLoop", &imGuiIsLoop_);
 
-	ImGui::DragFloat("transitionTime", &imGuiTransitionTime_, 0.05f, 0.0f, 5.0f);
+	ImGui::DragFloat("transitionTime", &imGuiTransitionTime_, 0.005f, 0.0f, 5.0f);
 
 	// アニメーション再生
 	if (ImGui::Button("PlayAnim")) {
