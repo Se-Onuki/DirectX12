@@ -347,3 +347,22 @@ Matrix4x4 Matrix4x4::operator/=(const float &Second) {
 	this->m[3][3] /= Second;
 	return *this;
 }
+
+Matrix4x4 Matrix4x4::LookAtLH(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector) {
+	Vector3 zaxis = (cameraTarget - cameraPosition).Nomalize();
+	Vector3 xaxis = cameraUpVector.cross(zaxis).Nomalize();
+	Vector3 yaxis = zaxis.cross(xaxis);
+
+	return Matrix4x4{
+		{ xaxis.x, yaxis.x, zaxis.x, 0.f	},
+		{ xaxis.y, yaxis.y, zaxis.y, 0.f	},
+		{ xaxis.z, yaxis.z, zaxis.z, 0.f	},
+		{
+			xaxis * cameraPosition,
+			yaxis * cameraPosition,
+			zaxis * cameraPosition,	
+			1.f	
+		},
+	};
+
+}
