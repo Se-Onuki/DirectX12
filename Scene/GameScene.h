@@ -36,15 +36,16 @@ private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 
-//	Model *model_ = nullptr;
+	//	Model *model_ = nullptr;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 	//Transform transform_;
-	Camera<Render::CameraType::Projecction> camera_;
+	Camera3D camera_;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	std::unique_ptr<Entity> player_;
-	LevelElementManager* levelManager{};
+	std::unique_ptr<Entity> followCamera_ = nullptr;
+	LevelElementManager *levelManager{};
 
 	std::unique_ptr<Entity> playerAnim_;
 

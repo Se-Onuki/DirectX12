@@ -130,6 +130,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
+    <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationManager.cpp" />
@@ -206,6 +207,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Collision\Collision.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
+    <ClInclude Include="Header\Entity\Component\FollowCameraComp.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationList.h" />
