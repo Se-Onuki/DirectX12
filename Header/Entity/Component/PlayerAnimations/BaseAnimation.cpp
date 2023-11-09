@@ -171,7 +171,6 @@ PlayerBone::Bone BaseAnimation::Ease(AnimEasing::EasingType type, float t, Playe
 		tempBone.body.rotate = AnimEasing::Linear(t, start.body.rotate, end.body.rotate, time);
 		tempBone.body.translate = AnimEasing::Linear(t, start.body.translate, end.body.translate, time);
 		tempBone.ling.scale = AnimEasing::Linear(t, start.ling.scale, end.ling.scale, time);
-		tempBone.ling.rotate = AnimEasing::Linear(t, start.ling.rotate, end.ling.rotate, time);
 		tempBone.ling.translate = AnimEasing::Linear(t, start.ling.translate, end.ling.translate, time);
 		tempBone.eye.scale = AnimEasing::Linear(t, start.eye.scale, end.eye.scale, time);
 		tempBone.eye.rotate = AnimEasing::Linear(t, start.eye.rotate, end.eye.rotate, time);
@@ -194,7 +193,6 @@ PlayerBone::Bone BaseAnimation::Ease(AnimEasing::EasingType type, float t, Playe
 		tempBone.body.rotate = AnimEasing::EaseIn(t, start.body.rotate, end.body.rotate, time);
 		tempBone.body.translate = AnimEasing::EaseIn(t, start.body.translate, end.body.translate, time);
 		tempBone.ling.scale = AnimEasing::EaseIn(t, start.ling.scale, end.ling.scale, time);
-		tempBone.ling.rotate = AnimEasing::EaseIn(t, start.ling.rotate, end.ling.rotate, time);
 		tempBone.ling.translate = AnimEasing::EaseIn(t, start.ling.translate, end.ling.translate, time);
 		tempBone.eye.scale = AnimEasing::EaseIn(t, start.eye.scale, end.eye.scale, time);
 		tempBone.eye.rotate = AnimEasing::EaseIn(t, start.eye.rotate, end.eye.rotate, time);
@@ -217,7 +215,6 @@ PlayerBone::Bone BaseAnimation::Ease(AnimEasing::EasingType type, float t, Playe
 		tempBone.body.rotate = AnimEasing::EaseOut(t, start.body.rotate, end.body.rotate, time);
 		tempBone.body.translate = AnimEasing::EaseOut(t, start.body.translate, end.body.translate, time);
 		tempBone.ling.scale = AnimEasing::EaseOut(t, start.ling.scale, end.ling.scale, time);
-		tempBone.ling.rotate = AnimEasing::EaseOut(t, start.ling.rotate, end.ling.rotate, time);
 		tempBone.ling.translate = AnimEasing::EaseOut(t, start.ling.translate, end.ling.translate, time);
 		tempBone.eye.scale = AnimEasing::EaseOut(t, start.eye.scale, end.eye.scale, time);
 		tempBone.eye.rotate = AnimEasing::EaseOut(t, start.eye.rotate, end.eye.rotate, time);
@@ -240,7 +237,6 @@ PlayerBone::Bone BaseAnimation::Ease(AnimEasing::EasingType type, float t, Playe
 		tempBone.body.rotate = AnimEasing::EaseInOut(t, start.body.rotate, end.body.rotate, time);
 		tempBone.body.translate = AnimEasing::EaseInOut(t, start.body.translate, end.body.translate, time);
 		tempBone.ling.scale = AnimEasing::EaseInOut(t, start.ling.scale, end.ling.scale, time);
-		tempBone.ling.rotate = AnimEasing::EaseInOut(t, start.ling.rotate, end.ling.rotate, time);
 		tempBone.ling.translate = AnimEasing::EaseInOut(t, start.ling.translate, end.ling.translate, time);
 		tempBone.eye.scale = AnimEasing::EaseInOut(t, start.eye.scale, end.eye.scale, time);
 		tempBone.eye.rotate = AnimEasing::EaseInOut(t, start.eye.rotate, end.eye.rotate, time);
