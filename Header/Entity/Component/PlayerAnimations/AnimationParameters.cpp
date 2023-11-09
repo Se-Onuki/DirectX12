@@ -7,13 +7,19 @@ void AnimationParameters::Initialize()
 	globalVariables_ = GlobalVariables::GetInstance();
 
 	idleAnimKeys_.Initialize("Idle");
-	MoveAnimKeys_.Initialize("Move");
+	moveAnimKeys_.Initialize("Move");
+	startJumpAnimKeys_.Initialize("StartJump");
+	hoveringAnimKeys_.Initialize("Hovering");
+	landAnimKeys_.Initialize("Land");
 }
 
 void AnimationParameters::Update()
 {
 #ifdef _DEBUG
 	idleAnimKeys_.ShowImGUi();
-	MoveAnimKeys_.ShowImGUi();
+	moveAnimKeys_.ShowImGUi();
+	startJumpAnimKeys_.ShowImGUi();
+	hoveringAnimKeys_.ShowImGUi();
+	landAnimKeys_.ShowImGUi();
 #endif // _DEBUG
 }

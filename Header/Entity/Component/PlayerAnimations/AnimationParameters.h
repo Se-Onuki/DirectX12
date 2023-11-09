@@ -31,6 +31,14 @@ private: // メンバ変数
 	// アイドルアニメーションのキー
 	AnimationKeys idleAnimKeys_;
 	// 移動アニメーションキー
-	AnimationKeys MoveAnimKeys_;
+	AnimationKeys moveAnimKeys_;
+
+	// ジャンプアニメーション開始キー
+	AnimationKeys startJumpAnimKeys_;
+	// 滞空アニメーションキー
+	AnimationKeys hoveringAnimKeys_;
+	// 着地アニメーションキー
+	AnimationKeys landAnimKeys_;
+
 };
 

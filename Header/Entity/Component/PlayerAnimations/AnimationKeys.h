@@ -57,7 +57,14 @@ private: // メンバ変数
 	// このキーフレーム達が所属するグループ名
 	std::string groupName_;
 	
+#ifdef _DEBUG // ImGui用の変数
+
+	// このトリガーがTrueの時値をAddし続ける
+	bool ImGuiKeepAdding_ = false;
 	// コピーされたキー
 	Key copiedKey_;
+
+#endif // _DEBUG
+
 
 };

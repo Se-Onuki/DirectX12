@@ -16,7 +16,9 @@ public: // サブクラス
 	enum Behavior {
 		kIdle,
 		kMove,
-		kJump
+		kJumpStart,
+		kHovering,
+		kLand,
 	};
 
 public: // メンバ関数

@@ -50,39 +50,44 @@ void BaseAnimation::Update(float deltaTime)
 			}
 		}
 		else {
-			if (animT_ < animKeys_.keys_[playKey_].animationTime) {
-				
-				int targetKey = playKey_ + 1;
-				if (playKey_ == animKeys_.keyCount_ - 1)
-					if (isLoop_)
-						targetKey = 0;
+			if (animKeys_.keyCount_ > 1) {
+				if (animT_ < animKeys_.keys_[playKey_].animationTime) {
 
-				bone_.bone_ = Ease(
-					(AnimEasing::EaseingType)animKeys_.keys_[playKey_].type, animT_,
-					animKeys_.keys_[playKey_].bone.bone_, animKeys_.keys_[targetKey].bone.bone_, animKeys_.keys_[playKey_].animationTime);
-				// 経過フレーム分加算
-				animT_ += deltaTime;
-			}
-			else {
-				if (isLoop_) {
-					if (playKey_ < animKeys_.keyCount_ - 1) {
-						playKey_++;
-						animT_ = 0.0f;
-					}
-					else {
-						animT_ = 0.0f;
-						playKey_ = 0;
-					}
+					int targetKey = playKey_ + 1;
+					if (playKey_ == animKeys_.keyCount_ - 1)
+						if (isLoop_)
+							targetKey = 0;
+
+					bone_.bone_ = Ease(
+						(AnimEasing::EaseingType)animKeys_.keys_[playKey_].type, animT_,
+						animKeys_.keys_[playKey_].bone.bone_, animKeys_.keys_[targetKey].bone.bone_, animKeys_.keys_[playKey_].animationTime);
+					// 経過フレーム分加算
+					animT_ += deltaTime;
 				}
 				else {
-					if (playKey_ < animKeys_.keyCount_ - 2) {
-						playKey_++;
-						animT_ = 0.0f;
+					if (isLoop_) {
+						if (playKey_ < animKeys_.keyCount_ - 1) {
+							playKey_++;
+							animT_ = 0.0f;
+						}
+						else {
+							animT_ = 0.0f;
+							playKey_ = 0;
+						}
 					}
 					else {
-						isEnd_ = true;
+						if (playKey_ < animKeys_.keyCount_ - 2) {
+							playKey_++;
+							animT_ = 0.0f;
+						}
+						else {
+							isEnd_ = true;
+						}
 					}
 				}
+			}
+			else {
+				bone_.bone_ = animKeys_.keys_[0].bone.bone_;
 			}
 		}
 	}

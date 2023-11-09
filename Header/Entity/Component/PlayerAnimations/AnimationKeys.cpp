@@ -93,7 +93,13 @@ void AnimationKeys::ShowImGUi()
 				if (ImGui::Button("AddKey"))
 					AddKey();
 
-				if (ImGui::Button("AddKeyInfo")) {
+				if (!ImGuiKeepAdding_) {
+					if (ImGui::Button("AddKeyInfo")) {
+						AddKeyInfo();
+						SetKeyInfo();
+					}
+				}
+				else {
 					AddKeyInfo();
 					SetKeyInfo();
 				}
@@ -104,6 +110,15 @@ void AnimationKeys::ShowImGUi()
 
 				if (ImGui::Button("SaveFile")) {
 					gv_->SaveFile(groupName_);
+				}
+
+				if (!ImGuiKeepAdding_) {
+					if (ImGui::Button("Enable KeepAdd"))
+						ImGuiKeepAdding_ = true;
+				}
+				else {
+					if (ImGui::Button("Disable KeepAdd"))
+						ImGuiKeepAdding_ = false;
 				}
 
 				ImGui::TreePop();

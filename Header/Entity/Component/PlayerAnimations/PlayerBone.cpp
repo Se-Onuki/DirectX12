@@ -154,43 +154,43 @@ void PlayerBone::DisplayImGui()
 		if (ImGui::TreeNode("Body")) {
 			ImGui::DragFloat3("Body_Scale", &bone_.body.scale.x, 0.05f, -100.0f, 100.0f);
 			ImGui::DragFloat3("Body_Rotate", &bone_.body.rotate.x, 0.01f, (float)-std::numbers::pi * 2.0f, (float)std::numbers::pi * 2.0f);
-			ImGui::DragFloat3("Body_Translate", &bone_.body.translate.x, 0.05f, -1000.0f, 1000.0f);
+			ImGui::DragFloat3("Body_Translate", &bone_.body.translate.x, 0.005f, -1000.0f, 1000.0f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Eye")) {
 			ImGui::DragFloat3("Eye_Scale", &bone_.eye.scale.x, 0.05f, -100.0f, 100.0f);
 			ImGui::DragFloat3("Eye_Rotate", &bone_.eye.rotate.x, 0.01f, (float)-std::numbers::pi * 2.0f, (float)std::numbers::pi * 2.0f);
-			ImGui::DragFloat3("Eye_Translate", &bone_.eye.translate.x, 0.05f, -1000.0f, 1000.0f);
+			ImGui::DragFloat3("Eye_Translate", &bone_.eye.translate.x, 0.005f, -1000.0f, 1000.0f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Ling")) {
 			ImGui::DragFloat3("Ling_Scale", &bone_.ling.scale.x, 0.05f, -100.0f, 100.0f);
 			ImGui::DragFloat3("Ling_Rotate", &bone_.ling.rotate.x, 0.01f, (float)-std::numbers::pi * 2.0f, (float)std::numbers::pi * 2.0f);
-			ImGui::DragFloat3("Ling_Translate", &bone_.ling.translate.x, 0.05f, -1000.0f, 1000.0f);
+			ImGui::DragFloat3("Ling_Translate", &bone_.ling.translate.x, 0.005f, -1000.0f, 1000.0f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Arm_L")) {
 			ImGui::DragFloat3("Arm_L_Scale", &bone_.arm_L.scale.x, 0.05f, -100.0f, 100.0f);
 			ImGui::DragFloat3("Arm_L_Rotate", &bone_.arm_L.rotate.x, 0.01f, (float)-std::numbers::pi * 2.0f, (float)std::numbers::pi * 2.0f);
-			ImGui::DragFloat3("Arm_L_Translate", &bone_.arm_L.translate.x, 0.05f, -1000.0f, 1000.0f);
+			ImGui::DragFloat3("Arm_L_Translate", &bone_.arm_L.translate.x, 0.005f, -1000.0f, 1000.0f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Arm_R")) {
 			ImGui::DragFloat3("Arm_R_Scale", &bone_.arm_R.scale.x, 0.05f, -100.0f, 100.0f);
 			ImGui::DragFloat3("Arm_R_Rotate", &bone_.arm_R.rotate.x, 0.01f, (float)-std::numbers::pi * 2.0f, (float)std::numbers::pi * 2.0f);
-			ImGui::DragFloat3("Arm_R_Translate", &bone_.arm_R.translate.x, 0.05f, -1000.0f, 1000.0f);
+			ImGui::DragFloat3("Arm_R_Translate", &bone_.arm_R.translate.x, 0.005f, -1000.0f, 1000.0f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Foot_L")) {
-			ImGui::DragFloat3("Foot_L_Scale", &bone_.foot_L.scale.x, 0.5f, -100.0f, 100.0f);
+			ImGui::DragFloat3("Foot_L_Scale", &bone_.foot_L.scale.x, 0.05f, -100.0f, 100.0f);
 			ImGui::DragFloat3("Foot_L_Rotate", &bone_.foot_L.rotate.x, 0.01f, (float)-std::numbers::pi * 2.0f, (float)std::numbers::pi * 2.0f);
-			ImGui::DragFloat3("Foot_L_Translate", &bone_.foot_L.translate.x, 0.5f, -1000.0f, 1000.0f);
+			ImGui::DragFloat3("Foot_L_Translate", &bone_.foot_L.translate.x, 0.005f, -1000.0f, 1000.0f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Foot_R")) {
-			ImGui::DragFloat3("Foot_R_Scale", &bone_.foot_R.scale.x, 0.5f, -100.0f, 100.0f);
+			ImGui::DragFloat3("Foot_R_Scale", &bone_.foot_R.scale.x, 0.05f, -100.0f, 100.0f);
 			ImGui::DragFloat3("Foot_R_Rotate", &bone_.foot_R.rotate.x, 0.01f, (float)-std::numbers::pi * 2.0f, (float)std::numbers::pi * 2.0f);
-			ImGui::DragFloat3("Foot_R_Translate", &bone_.foot_R.translate.x, 0.5f, -1000.0f, 1000.0f);
+			ImGui::DragFloat3("Foot_R_Translate", &bone_.foot_R.translate.x, 0.005f, -1000.0f, 1000.0f);
 			ImGui::TreePop();
 		}
 		ImGui::TreePop();
