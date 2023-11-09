@@ -43,6 +43,17 @@ public:
 	bool ImGuiWidget2D();
 
 	void MatToSRT(const Matrix4x4 &mat);
+
+	/// @brief 純粋な親子関係の構築
+/// @param parent 親のTransform
+	void SetParent(const BaseTransform &parent);
+
+	/// @brief グローバル座標を維持した親子関係の構築
+	/// @param parent 親のTransform
+	void ConnectParent(const BaseTransform &parent);
+
+	/// @brief グローバル座標を維持した親子関係の破棄
+	void DisConnectParent();
 private:
 };
 

@@ -697,7 +697,7 @@ void Material::ImGuiWidget()
 {
 	if (ImGui::TreeNode(name_.c_str())) {
 		static BaseTransform transform;
-		transform.Create(materialBuff_->uvTransform);
+		transform.MatToSRT(materialBuff_->uvTransform);
 
 		if (transform.ImGuiWidget2D()) {
 			materialBuff_->uvTransform = transform.Affine();
