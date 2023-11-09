@@ -13,6 +13,7 @@
 #include "../Header/Entity/Component/PlayerComp.h"
 #include "../Header/Entity/Component/Collider.h"
 #include "../Header/Entity/Component/PlayerAnimComp.h"
+#include "../Header/Entity/Component/FollowCameraComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -77,6 +78,17 @@ void GameScene::OnEnter() {
 
 #pragma endregion
 
+#pragma region FollowCamera
+
+	followCamera_ = std::make_unique<Entity>();
+	auto *const followComp = followCamera_->AddComponent<FollowCameraComp>();
+	followComp->SetTarget(&player_->transform_);
+
+#pragma endregion
+
+	cameraList_[0u] = &followComp->GetCamera();
+	cameraList_[1u] = &camera_;
+
 	//playerAnim_ = std::make_unique<Entity>();
 	//playerAnim_->AddComponent<PlayerAnimComp>();
 
@@ -119,11 +131,8 @@ void GameScene::Update() {
 	if (ImGui::Button("Right")) {
 		levelManager->blockCollider_[0u].AddRotate(-90._deg);
 	}
-	//levelManager->blockCollider_[0u].center_.rotate.z = Angle::Mod(levelManager->blockCollider_[0u].center_.rotate.z);
-
 	ImGui::End();
 
-	//levelManager->CalcCollision(0u);
 	colliderManager->push_back(levelManager->blockCollider_[0u].GetCollider());
 
 	player_->Update(deltaTime);
@@ -132,11 +141,19 @@ void GameScene::Update() {
 	player_->ImGuiWidget();
 	ImGui::End();
 
+	followCamera_->Update(deltaTime);
+
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
 	ImGui::End();
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 	camera_.UpdateMatrix();
+
+	if (input_->GetDirectInput()->IsTrigger(DIK_0)) {
+		if (++cameraTarget_ == cameraList_.end()) {
+			cameraTarget_ = cameraList_.begin();
+		}
+	}
 
 
 	//playerAnim_->Update(deltaTime);
@@ -174,10 +191,12 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	//model_->Draw(transform_, camera_);
-	levelManager->Draw(camera_);
+	const auto &camera = **cameraTarget_;
 
-	player_->Draw(camera_);
+	//model_->Draw(transform_, camera_);
+	levelManager->Draw(camera);
+
+	player_->Draw(camera);
 	// 描画
 	//playerAnim_->Draw(camera_);
 

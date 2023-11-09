@@ -21,9 +21,9 @@ private:
 
 	BaseTransform *pTarget_ = nullptr;
 
-	Vector3 offset_;
+	Vector3 offset_{ 0.f,3.f,-15.f };
 
-	Matrix4x4 rotateMat_;
+	Vector3 rotate_;
 
 	Camera3D camera_;
 };

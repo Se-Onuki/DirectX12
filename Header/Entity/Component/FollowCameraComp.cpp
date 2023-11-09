@@ -1,13 +1,14 @@
 #include "FollowCameraComp.h"
 
 void FollowCameraComp::Update() {
-	/*pTarget_->Get
 
-	camera_.translation_ + */
+	camera_.translation_ = offset_ * Matrix4x4::EulerRotate(rotate_) + pTarget_->GetGrobalPos();
+	camera_.UpdateMatrix();
 }
 
 void FollowCameraComp::AddRotate(const Vector3 &euler) {
-	camera_.rotation_ += euler;
+	rotate_ += euler;
+	camera_.rotation_ = rotate_;
 	camera_.UpdateMatrix();
 }
 
