@@ -31,6 +31,8 @@ struct BaseTransform {
 
 public:
 
+	const Vector3 &GetGrobalPos() const { return *reinterpret_cast<const Vector3 *const>(matWorld_.m[3]); }
+
 	Matrix4x4 Affine() const;
 
 	void CalcMatrix();
@@ -40,7 +42,7 @@ public:
 	bool ImGuiWidget();
 	bool ImGuiWidget2D();
 
-	void Create(const Matrix4x4 &mat);
+	void MatToSRT(const Matrix4x4 &mat);
 private:
 };
 

@@ -70,7 +70,7 @@ bool BaseTransform::ImGuiWidget2D()
 }
 
 
-void BaseTransform::Create(const Matrix4x4 &mat) {
+void BaseTransform::MatToSRT(const Matrix4x4 &mat) {
 	// スケールの取得
 	//scale.x = std::sqrt(mat.m[0][0] * mat.m[0][0] + mat.m[0][1] * mat.m[0][1] + mat.m[0][2] * mat.m[0][2]);
 	scale.x = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(*(__m128 *)mat.m[0], *(__m128 *) mat.m[0], 0x71)));
