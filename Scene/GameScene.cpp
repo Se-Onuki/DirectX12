@@ -105,6 +105,7 @@ void GameScene::Update() {
 
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	static auto *const colliderManager = CollisionManager::GetInstance();
+	static const auto *const keyBoard = input_->GetDirectInput();
 
 	colliderManager->clear();
 
@@ -141,15 +142,25 @@ void GameScene::Update() {
 	player_->ImGuiWidget();
 	ImGui::End();
 
+	Vector3 euler{};
+	if (keyBoard->IsPress(DIK_RIGHT)) {
+		euler += Vector3::up * -5._deg;
+	}
+	if (keyBoard->IsPress(DIK_LEFT)) {
+		euler += Vector3::up * 5._deg;
+	}
+
+	followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
 	followCamera_->Update(deltaTime);
 
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
 	ImGui::End();
+
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 	camera_.UpdateMatrix();
 
-	if (input_->GetDirectInput()->IsTrigger(DIK_0)) {
+	if (keyBoard->IsTrigger(DIK_0)) {
 		if (++cameraTarget_ == cameraList_.end()) {
 			cameraTarget_ = cameraList_.begin();
 		}
