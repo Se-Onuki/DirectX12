@@ -407,3 +407,28 @@ void DirectXCommon::CreateDepthStencile()
 	device_.Get()->CreateDepthStencilView(depthBuffer_.Get(), &dsvDesc, dsvHeap_->GetCPUDescriptorHandleForHeapStart());
 
 }
+
+void DirectXCommon::FPSManager::Init() {
+	reference_ = std::chrono::steady_clock::now();
+}
+
+void DirectXCommon::FPSManager::Update() {
+	static const std::chrono::microseconds kMinTime{ uint64_t(1000000.f / 60.f) };
+	static const std::chrono::microseconds kMinCheckTime{ uint64_t(1000000.f / 65.f) };
+
+	// 現在の時間
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	// 前回記録からの経過時間を取得する
+	std::chrono::microseconds elapsed =
+		std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
+
+	if (elapsed < kMinCheckTime) {
+		// 経過するまで微小なスリープを行う
+		while (std::chrono::steady_clock::now() - reference_ < kMinTime) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
+	}
+
+	reference_ = std::chrono::steady_clock::now();
+
+}

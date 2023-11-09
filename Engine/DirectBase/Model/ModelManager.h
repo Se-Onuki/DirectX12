@@ -61,6 +61,4 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<Model>> models_;
 
 private:
-
-	void CreatePlane();
 };

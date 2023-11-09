@@ -93,6 +93,8 @@ public:
 
 	static void SetPipelineType(const PipelineType pipelineType);
 
+	[[nodiscard]] static Model *CreatePlane();
+
 	[[nodiscard]] static Model *const CreateSphere();
 
 	[[nodiscard]] static Model *const LoadObjFile(const std::string &directoryPath, const std::string &fileName);

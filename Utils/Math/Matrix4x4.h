@@ -72,6 +72,15 @@ struct Matrix4x4 final {
 		return *this == Second;
 	}
 
+	/// @brief 指定範囲を切り抜く関数
+	/// @tparam row 行(y要素数)
+	/// @tparam column 列(x要素数)
+	/// @return 切り出した行列(その他は単位行列)
+	template <uint8_t row, uint8_t column>
+	Matrix4x4 Crop() const;
+
+	Matrix4x4 GetRotate() const { return this->Crop<3u, 3u>(); }
+
 	static Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);
 
 	static Matrix4x4 EulerRotate(EulerAngle, float angle);
@@ -121,5 +130,18 @@ Matrix4x4 Matrix4x4::InverseSRT() const {
 		 -_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[3]), *(__m128 *) & vecZ2, 0x71)), 1.f}
 	};
 };
+
+template<uint8_t row, uint8_t column>
+inline Matrix4x4 Matrix4x4::Crop() const {
+	Matrix4x4 result = Matrix4x4::Identity();
+
+	for (uint32_t y = 0; y < row; ++y) {
+		for (uint32_t x = 0; x < column; ++x) {
+			result.m[y][x] = m[y][x];
+		}
+	}
+
+	return result;
+}
 
 #pragma endregion

@@ -285,6 +285,9 @@
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationManager.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Object\Particle.cpp">
+      <Filter>Header\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -523,6 +526,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\LevelManager.h">
       <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle.h">
+      <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

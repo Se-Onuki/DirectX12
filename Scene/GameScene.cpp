@@ -12,6 +12,7 @@
 #include "../Header/Entity/Component/Rigidbody.h"
 #include "../Header/Entity/Component/PlayerComp.h"
 #include "../Header/Entity/Component/Collider.h"
+#include "../Header/Entity/Component/PlayerAnimComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -179,7 +180,6 @@ void GameScene::Draw()
 	//Model::SetPipelineType(Model::PipelineType::kParticle);
 
 	// モデルの描画
-	// model_->Draw(instanceTransform_, camera_);
 
 	// 描画
 	//playerAnim_->Draw(camera_);

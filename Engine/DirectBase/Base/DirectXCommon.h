@@ -6,6 +6,7 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <chrono>
 
 #include "LeakChecker.h"
 
@@ -21,6 +22,17 @@ class DirectXCommon {
 
 	static DirectResourceLeakChecker leakChecker; // リークチェッカー
 public:
+	class FPSManager {
+	public:
+		FPSManager() = default;
+		~FPSManager() = default;
+
+		void Init();
+		void Update();
+
+	private:
+		std::chrono::steady_clock::time_point reference_;
+	};
 
 	static const uint32_t backBufferCount_ = 2u;
 	static const uint32_t srvCount_ = 256u;

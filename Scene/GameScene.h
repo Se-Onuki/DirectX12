@@ -11,14 +11,7 @@
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
 #include "../Header/Object/LevelElementManager.h"
-
-#include "../Header/Entity/Component/PlayerAnimComp.h"
-
-struct Particle {
-	TransformMatrix transform;
-	Vector4 color;
-
-};
+#include "../Header/Object/Particle.h"
 
 class GameScene : public IScene {
 public:
