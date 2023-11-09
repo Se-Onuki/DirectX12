@@ -23,6 +23,7 @@ void AnimationKeys::AddKey()
 	tempKey.bone.Initialize(groupName_, fullBoneName);
 	tempKey.type = AnimEasing::kLinear;
 	tempKey.animationTime = 1.0f;
+	tempKey.lingRotateSpeed = 0.05f;
 
 	// キーを追加する
 	keys_.push_back(tempKey);
@@ -41,6 +42,7 @@ void AnimationKeys::AddKeyInfo()
 		keys_[i].bone.AddItem(gv_);
 		gv_->AddValue(groupName_, keys_[i].bone.GetBoneName() + "EasingType", keys_[i].type);
 		gv_->AddValue(groupName_, keys_[i].bone.GetBoneName() + "AnimationTime", keys_[i].animationTime);
+		gv_->AddValue(groupName_, keys_[i].bone.GetBoneName() + "RotateSpeed", keys_[i].lingRotateSpeed);
 	}
 }
 
@@ -54,6 +56,7 @@ void AnimationKeys::SetKeyInfo()
 		keys_[i].bone.SetItem(gv_);
 		gv_->SetValue(groupName_, keys_[i].bone.GetBoneName() + "EasingType", keys_[i].type);
 		gv_->SetValue(groupName_, keys_[i].bone.GetBoneName() + "AnimationTime", keys_[i].animationTime);
+		gv_->SetValue(groupName_, keys_[i].bone.GetBoneName() + "RotateSpeed", keys_[i].lingRotateSpeed);
 	}
 }
 
@@ -75,6 +78,7 @@ void AnimationKeys::ApplyKeyInfo()
 		tempKey.bone.ApplyItem(gv_);
 		tempKey.type = gv_->Get<int>(groupName_, fullBoneName + "EasingType");
 		tempKey.animationTime = gv_->Get<float>(groupName_, fullBoneName + "AnimationTime");
+		tempKey.lingRotateSpeed = gv_->Get<float>(groupName_, fullBoneName + "RotateSpeed");
 
 		// キーを追加する
 		keys_.push_back(tempKey);
@@ -130,6 +134,8 @@ void AnimationKeys::ShowImGUi()
 				ImGui::SliderInt(name.c_str(), &keys_[i].type, 0, 3);
 				name = "AnimationTime" + std::to_string(i);
 				ImGui::DragFloat(name.c_str(), &keys_[i].animationTime, 0.05f, 0.05f, 10.0f);
+				name = "RotateSpeed" + std::to_string(i);
+				ImGui::DragFloat(name.c_str(), &keys_[i].lingRotateSpeed, 0.001f, 0.001f, 1.0f);
 				name = "Delete : " + std::to_string(i);
 				if (ImGui::Button(name.c_str())) {
 					keys_.erase(keys_.begin() + i);

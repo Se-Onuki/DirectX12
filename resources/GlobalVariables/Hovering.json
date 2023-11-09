@@ -108,6 +108,7 @@
             0.0,
             0.0
         ],
+        "key : 0RotateSpeed": 0.05000000074505806,
         "key : 1AnimationTime": 1.5,
         "key : 1Arm_L_Rotate": [
             0.0,
@@ -214,6 +215,7 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "key : 1RotateSpeed": 0.05000000074505806
     }
 }

@@ -43,6 +43,9 @@ void AnimationManager::Update()
 	ImGui::RadioButton("PlayJumpStart", &imGuiNextbehavior_, kJumpStart);
 	ImGui::RadioButton("PlayHovering", &imGuiNextbehavior_, kHovering);
 	ImGui::RadioButton("PlayLand", &imGuiNextbehavior_, kLand);
+	ImGui::RadioButton("PlayRotateStart", &imGuiNextbehavior_, kRotateStart);
+	ImGui::RadioButton("PlayRotating", &imGuiNextbehavior_, kRotating);
+	ImGui::RadioButton("PlayRotateEnd", &imGuiNextbehavior_, kRotateEnd);
 
 	int key = currentAnimation_->GetPlayKey();
 	ImGui::DragInt("NowPlayKey", &key, 0.05f);
@@ -105,13 +108,13 @@ void AnimationManager::SetNextAnimation(Behavior next, bool isLoop, AnimEasing::
 		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
 		break;
 	case AnimationManager::kRotateStart:
-		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
+		nextAnimation_->Initialize("RotateStart", isLoop, type, transitionTime);
 		break;
 	case AnimationManager::kRotating:
-		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
+		nextAnimation_->Initialize("Rotating", isLoop, type, transitionTime);
 		break;
 	case AnimationManager::kRotateEnd:
-		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
+		nextAnimation_->Initialize("RotateEnd", isLoop, type, transitionTime);
 		break;
 		
 	}
