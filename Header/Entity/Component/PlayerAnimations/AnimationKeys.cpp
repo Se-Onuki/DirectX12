@@ -131,7 +131,7 @@ void AnimationKeys::ShowImGUi()
 			for (int i = 0; i < (int)keys_.size(); i++) {
 				keys_[i].bone.DisplayImGui();
 				std::string name = "EasingType" + std::to_string(i);
-				ImGui::SliderInt(name.c_str(), &keys_[i].type, 0, 3);
+				ImGui::SliderInt(name.c_str(), &keys_[i].type, 0, 4);
 				name = "AnimationTime" + std::to_string(i);
 				ImGui::DragFloat(name.c_str(), &keys_[i].animationTime, 0.05f, 0.05f, 10.0f);
 				name = "RotateSpeed" + std::to_string(i);

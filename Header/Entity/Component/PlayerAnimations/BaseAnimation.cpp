@@ -272,7 +272,30 @@ PlayerBone::Bone BaseAnimation::Ease(AnimEasing::EasingType type, float t, Playe
 		tempBone.foot_R.rotate = AnimEasing::EaseInOut(t, start.foot_R.rotate, end.foot_R.rotate, time);
 		tempBone.foot_R.translate = AnimEasing::EaseInOut(t, start.foot_R.translate, end.foot_R.translate, time);
 		break;
+	case AnimEasing::kEaseInOutBack:
+		tempBone.body.scale = AnimEasing::EaseInOutBack(t, start.body.scale, end.body.scale, time);
+		tempBone.body.rotate = AnimEasing::EaseInOutBack(t, start.body.rotate, end.body.rotate, time);
+		tempBone.body.translate = AnimEasing::EaseInOutBack(t, start.body.translate, end.body.translate, time);
+		tempBone.ling.scale = AnimEasing::EaseInOutBack(t, start.ling.scale, end.ling.scale, time);
+		tempBone.ling.rotate.x = AnimEasing::EaseInOutBack(t, start.ling.rotate.x, end.ling.rotate.x, time);
+		tempBone.ling.rotate.z = AnimEasing::EaseInOutBack(t, start.ling.rotate.z, end.ling.rotate.z, time);
+		tempBone.ling.translate = AnimEasing::EaseInOutBack(t, start.ling.translate, end.ling.translate, time);
+		tempBone.eye.scale = AnimEasing::EaseInOutBack(t, start.eye.scale, end.eye.scale, time);
+		tempBone.eye.rotate = AnimEasing::EaseInOutBack(t, start.eye.rotate, end.eye.rotate, time);
+		tempBone.eye.translate = AnimEasing::EaseInOutBack(t, start.eye.translate, end.eye.translate, time);
+		tempBone.arm_L.scale = AnimEasing::EaseInOutBack(t, start.arm_L.scale, end.arm_L.scale, time);
+		tempBone.arm_L.rotate = AnimEasing::EaseInOutBack(t, start.arm_L.rotate, end.arm_L.rotate, time);
+		tempBone.arm_L.translate = AnimEasing::EaseInOutBack(t, start.arm_L.translate, end.arm_L.translate, time);
+		tempBone.arm_R.scale = AnimEasing::EaseInOutBack(t, start.arm_R.scale, end.arm_R.scale, time);
+		tempBone.arm_R.rotate = AnimEasing::EaseInOutBack(t, start.arm_R.rotate, end.arm_R.rotate, time);
+		tempBone.arm_R.translate = AnimEasing::EaseInOutBack(t, start.arm_R.translate, end.arm_R.translate, time);
+		tempBone.foot_L.scale = AnimEasing::EaseInOutBack(t, start.foot_L.scale, end.foot_L.scale, time);
+		tempBone.foot_L.rotate = AnimEasing::EaseInOutBack(t, start.foot_L.rotate, end.foot_L.rotate, time);
+		tempBone.foot_L.translate = AnimEasing::EaseInOutBack(t, start.foot_L.translate, end.foot_L.translate, time);
+		tempBone.foot_R.scale = AnimEasing::EaseInOutBack(t, start.foot_R.scale, end.foot_R.scale, time);
+		tempBone.foot_R.rotate = AnimEasing::EaseInOutBack(t, start.foot_R.rotate, end.foot_R.rotate, time);
+		tempBone.foot_R.translate = AnimEasing::EaseInOutBack(t, start.foot_R.translate, end.foot_R.translate, time);
+		break;
 	}
-
 	return tempBone;
 }

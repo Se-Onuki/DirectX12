@@ -2,12 +2,12 @@
 
 float AnimEasing::Linear(float t, float start, float end, float time)
 {
-    return (float)((1.0 - t / time) * start + t / time * end);
+	return (float)((1.0 - t / time) * start + t / time * end);
 }
 
 int AnimEasing::Linear(float t, int start, int end, float time)
 {
-    return (int)((1.0 - t / time) * (float)start + t / time * (float)end);
+	return (int)((1.0 - t / time) * (float)start + t / time * (float)end);
 }
 
 Vector3 AnimEasing::Linear(float t, Vector3 start, Vector3 end, float time)
@@ -128,9 +128,7 @@ Vector3 AnimEasing::EaseInOut(float t, Vector3 start, Vector3 end, float time)
 
 	float easeT = -(cosf((float)std::numbers::pi * t / time) - 1.0f) / 2.0f;
 
-	result.x = (float)((1.0 - easeT) * start.x + easeT * end.x);
-	result.y = (float)((1.0 - easeT) * start.y + easeT * end.y);
-	result.z = (float)((1.0 - easeT) * start.z + easeT * end.z);
+	result = SoLib::Lerp(start, end, easeT);
 
 	return result;
 
@@ -146,4 +144,17 @@ int AnimEasing::EaseInOut(float t, int start, int end)
 {
 	float easeT = -(cosf((float)std::numbers::pi * t) - 1.0f) / 2.0f;
 	return (int)((1.0 - easeT) * start + easeT * end);
+}
+
+float AnimEasing::EaseInOutBack(float t, float start, float end, float time) {
+	float easeT = -(cosf((float)std::numbers::pi * t / time) - 1.0f) / 2.0f;
+
+	return SoLib::Lerp(start, end, SoLib::easeInOutBack(easeT));
+}
+
+Vector3 AnimEasing::EaseInOutBack(float t, const Vector3& start, const Vector3& end, float time)
+{
+	float easeT = -(cosf((float)std::numbers::pi * t / time) - 1.0f) / 2.0f;
+
+	return SoLib::Lerp(start, end, SoLib::easeInOutBack(easeT));
 }
