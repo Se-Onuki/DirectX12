@@ -1,7 +1,7 @@
 {
     "RotateStart": {
         "KeyCount": 9,
-        "key : 0AnimationTime": 0.550000011920929,
+        "key : 0AnimationTime": 0.3499999940395355,
         "key : 0Arm_L_Rotate": [
             -0.20000000298023224,
             0.0,
@@ -217,7 +217,7 @@
             0.0
         ],
         "key : 1RotateSpeed": 0.05000000074505806,
-        "key : 2AnimationTime": 0.3499999940395355,
+        "key : 2AnimationTime": 0.30000001192092896,
         "key : 2Arm_L_Rotate": [
             -0.11999999731779099,
             0.0,
@@ -433,7 +433,7 @@
             0.0
         ],
         "key : 3RotateSpeed": 0.05000000074505806,
-        "key : 4AnimationTime": 1.0,
+        "key : 4AnimationTime": 0.6499999761581421,
         "key : 4Arm_L_Rotate": [
             -0.11999999731779099,
             0.0,
@@ -649,7 +649,7 @@
             0.0
         ],
         "key : 5RotateSpeed": 0.05000000074505806,
-        "key : 6AnimationTime": 0.550000011920929,
+        "key : 6AnimationTime": 0.4000000059604645,
         "key : 6Arm_L_Rotate": [
             0.0,
             0.0,
@@ -753,10 +753,10 @@
         ],
         "key : 6Ling_Translate": [
             0.0,
-            0.0,
+            -0.0,
             0.0
         ],
-        "key : 6RotateSpeed": 0.25,
+        "key : 6RotateSpeed": 0.10000000149011612,
         "key : 7AnimationTime": 1.5,
         "key : 7Arm_L_Rotate": [
             0.0,
@@ -789,7 +789,7 @@
             0.0
         ],
         "key : 7Body_Rotate": [
-            0.3499999940395355,
+            0.20000000298023224,
             0.0,
             0.0
         ],
