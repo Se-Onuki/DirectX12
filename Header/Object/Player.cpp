@@ -83,8 +83,6 @@ void Player::BehaviorRootUpdate() {
 	Vector3 move{ vPad.stickL_.x, 0.f, vPad.stickL_.y };
 	if (move.Length() >= 0.1f) {
 
-
-
 		move = move.Nomalize() * moveSpeed_; // 速度を正規化
 		Matrix4x4 inputRotateMatrix = Matrix4x4::Identity();
 		inputRotateMatrix *= Matrix4x4::Rotate(camera_->matView_.InverseSRT());
@@ -98,7 +96,17 @@ void Player::BehaviorRootUpdate() {
 		move *= inputRotateMatrix;
 		transformOrigin_->translate += move; // 移動量を追加
 
-		transformOrigin_->rotateMat_ = inputRotateMatrix; // ベクトルからオイラー角を算出
+		Vector3 moveCross = Vector3::front.cross(move.Nomalize());
+		float moveDot = Vector3::front * move.Nomalize();
+
+		Matrix4x4 rotateMat = Matrix4x4::AnyAngleRotate(moveCross.Nomalize(), moveDot, moveCross.Length());
+
+		// もし、180度であった場合は調整
+		if (moveDot == -1.f) {
+			rotateMat = Matrix4x4::AnyAngleRotate(Vector3::up, moveDot, moveCross.Length());
+		}
+
+		transformOrigin_->rotateMat_ = rotateMat; // ベクトルから回転行列を算出
 	}
 
 	transformOrigin_->translate.y += -0.5f; // 移動量を追加
