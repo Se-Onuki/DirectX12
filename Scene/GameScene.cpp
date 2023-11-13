@@ -10,7 +10,6 @@
 #include "../Utils/SoLib/SoLib_ImGui.h"
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
 #include "../Header/Entity/Component/Rigidbody.h"
-#include "../Header/Entity/Component/PlayerComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -101,7 +100,7 @@ void GameScene::OnEnter() {
 	});
 	enemy_->GetWorldTransform()->translate.y = 1.f;
 
-	enemy_->GetWorldTransform()->SetParent(platform_[1u]->GetWorldTransform());
+	enemy_->SetPlatform(platform_[1u].get());
 }
 
 void GameScene::OnExit() {}
@@ -117,8 +116,8 @@ void GameScene::Update() {
 	const float deltaTime = ImGui::GetIO().DeltaTime;
 
 	if (player_->GetWorldTransform()->translate.y < -20.f
-		|| Collision::IsHit(*goalCollider_.get(), player_->GetCollider())
-		|| Collision::IsHit(enemy_->GetCollider(), player_->GetCollider())) {
+		|| Collision::IsHit(*goalCollider_.get(), *player_->GetCollider())
+		|| Collision::IsHit(enemy_->GetCollider(), *player_->GetCollider())) {
 		Reset();
 	}
 
@@ -138,7 +137,7 @@ void GameScene::Update() {
 
 	bool isConnect = false;
 	for (auto &platform : platform_) {
-		if (Collision::IsHit(player_->GetCollider(), platform->GetCollider())) {
+		if (Collision::IsHit(*player_->GetCollider(), platform->GetCollider())) {
 			player_->GetWorldTransform()->ConnectParent(platform->GetWorldTransform());
 			isConnect = true;
 		}

@@ -16,6 +16,14 @@ const GlobalVariables::Group &GlobalVariables::GetGroup(const std::string &group
 	return itGroup->second;
 }
 
+GlobalVariables::Group &GlobalVariables::GetGroup(const std::string &groupName) {
+	// グループ内を検索
+	const auto &itGroup = datas_.find(groupName);
+	assert(itGroup != datas_.end());
+
+	return itGroup->second;
+}
+
 const GlobalVariables::Item &GlobalVariables::Get(const std::string &groupName, const std::string &key) const {
 
 	// グループの検索

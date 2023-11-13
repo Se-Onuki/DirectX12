@@ -43,7 +43,7 @@ class Player : public BaseCharacter {
 
 	int32_t floatingCycle_ = 120u;
 	float floatingCycleRange_ = 0.2f;
-	float floatingSwayHand_ = 30 * Angle::Dig2Rad;
+	float floatingSwayHand_ = 30._deg;
 
 	int32_t attackCycle_ = 90u;
 	VariantItem<float> attackStartAngle_{ "CycleRange", 0.f * Angle::Dig2Rad };
@@ -51,6 +51,8 @@ class Player : public BaseCharacter {
 	VariantItem<float> attackClampAngle_{ "ClampAngle",110.f * Angle::Dig2Rad };
 
 	OBB collider_;
+
+	OBB weaponCollider_;
 
 
 private:
@@ -75,7 +77,9 @@ public:
 	void Draw(const Camera<Render::CameraType::Projecction> &camera) const override;
 
 	void SetCamera(const Camera<Render::CameraType::Projecction> *const camera) { camera_ = camera; }
-	const OBB &GetCollider() const { return collider_; }
+
+	const OBB *const GetCollider() const { return &collider_; }
+	const OBB *const GetWeaponCollider()const { return &weaponCollider_; }
 
 	Player();
 	~Player() override;

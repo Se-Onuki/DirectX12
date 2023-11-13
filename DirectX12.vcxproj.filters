@@ -267,12 +267,6 @@
     <ClCompile Include="Engine\DirectBase\Base\MemoryUsageManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\LevelElementManager.cpp">
-      <Filter>Header\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Header\Entity\Component\PlayerComp.cpp">
-      <Filter>Header\Entity\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Object\Particle.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
@@ -281,6 +275,9 @@
     </ClCompile>
     <ClCompile Include="Header\Object\Platform.cpp">
       <Filter>Header\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -500,12 +497,6 @@
     <ClInclude Include="Engine\DirectBase\Base\MemoryUsageManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\LevelElementManager.h">
-      <Filter>Header\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Entity\Component\PlayerComp.h">
-      <Filter>Header\Entity\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Object\Particle.h">
       <Filter>Header\Object</Filter>
     </ClInclude>
@@ -514,6 +505,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\Platform.h">
       <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

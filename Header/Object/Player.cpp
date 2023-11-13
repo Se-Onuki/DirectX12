@@ -10,9 +10,9 @@
 
 void Player::ApplyClobalVariables() {
 	GlobalVariables *const gVariables = GlobalVariables::GetInstance();
-	gVariables;
 	const char *groupName = "Player";
-	groupName;
+	auto &gGroup = gVariables->GetGroup(groupName);
+
 	transformHead_->translate = gVariables->Get<Vector3>(groupName, "Head Translation");
 	transformLeft_->translate = gVariables->Get<Vector3>(groupName, "ArmL Translation");
 	transformRight_->translate = gVariables->Get<Vector3>(groupName, "ArmR Translation");
@@ -22,10 +22,10 @@ void Player::ApplyClobalVariables() {
 	floatingCycleRange_ =
 		gVariables->Get<decltype(floatingCycleRange_)>(groupName, "floatingCycleRange");
 
-	attackClampAngle_ = gVariables->Get<float>(groupName, "attackClampAngle");
+	gGroup << attackClampAngle_;
 	attackCycle_ = gVariables->Get<decltype(attackCycle_)>(groupName, "attackCycle");
-	attackStartAngle_ = gVariables->Get<float>(groupName, "attackStartAngle");
-	attackSwingAngle_ = gVariables->Get<float>(groupName, "attackSwingAngle");
+	gGroup << attackStartAngle_;
+	gGroup << attackSwingAngle_;
 }
 
 void Player::InitFloatingGimmick() { floatingParameter_ = 0.f; }
@@ -83,7 +83,7 @@ void Player::BehaviorRootUpdate() {
 	Vector3 move{ vPad.stickL_.x, 0.f, vPad.stickL_.y };
 	if (move.Length() >= 0.1f) {
 
-		
+
 
 		move = move.Nomalize() * moveSpeed_; // 速度を正規化
 		Matrix4x4 inputRotateMatrix = Matrix4x4::Identity();

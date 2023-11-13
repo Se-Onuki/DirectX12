@@ -10,7 +10,6 @@
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
-#include "../Header/Object/LevelElementManager.h"
 #include "../Header/Object/Particle.h"
 
 

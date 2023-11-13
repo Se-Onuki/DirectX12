@@ -2,6 +2,7 @@
 
 #include "BaseCharacter.h"
 #include "../Collision/Collision.h"
+#include "Platform.h"
 
 class Enemy : public BaseCharacter {
 public:
@@ -14,6 +15,9 @@ public:
 
 	const OBB &GetCollider() const { return collider_; }
 
+	void SetPlatform(const Platform *const platform = nullptr);
+
 private:
 	OBB collider_;
+	const Platform *pPlatform_ = nullptr;
 };
