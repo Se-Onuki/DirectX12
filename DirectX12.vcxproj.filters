@@ -503,6 +503,9 @@
     <ClInclude Include="Header\Object\Particle.h">
       <Filter>Header\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Math\Quaternion.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

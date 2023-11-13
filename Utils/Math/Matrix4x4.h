@@ -30,6 +30,10 @@ struct Matrix4x4 final {
 		std::memcpy(m[3], &D, sizeof(Vector4));
 	}
 
+	inline Matrix4x4(const std::array<Vector4, 4u> &vec) {
+		std::memcpy(m, vec.data(), sizeof(Matrix4x4));
+	}
+
 	float m[4][4];
 
 	void Printf(const int &x, const int &y) const;
@@ -86,6 +90,8 @@ struct Matrix4x4 final {
 	static Matrix4x4 EulerRotate(EulerAngle, float angle);
 	static Matrix4x4 EulerRotate(const Vector3 &angle);
 
+	static Matrix4x4 AnyAxisRotation();
+
 	/// @brief 単位行列関数
 	/// @return 単位行列
 	static Matrix4x4 Identity() {
@@ -93,9 +99,9 @@ struct Matrix4x4 final {
 	}
 
 	static Matrix4x4 LookAtLH(
-		const Vector3& cameraPosition, // 視点の位置
-		const Vector3& cameraTarget,   // 目標の位置
-		const Vector3& cameraUpVector  // 上方を示すベクトル
+		const Vector3 &cameraPosition, // 視点の位置
+		const Vector3 &cameraTarget,   // 目標の位置
+		const Vector3 &cameraUpVector  // 上方を示すベクトル
 	);
 };
 #pragma region 4x4Func
