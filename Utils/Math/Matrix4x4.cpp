@@ -195,6 +195,21 @@ Matrix4x4 Matrix4x4::Translate(const Vector3 &translate) {
 	};
 }
 
+Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float angle) {
+
+	const float cosTheta = std::cos(angle);
+	const float sinTheta = std::sin(angle);
+
+	const float minusCosTheta = 1.f - cosTheta;
+
+	return Matrix4x4{
+		Vector4{ std::powf(axis.x, 2) * minusCosTheta + cosTheta,		axis.x * axis.y * minusCosTheta + axis.z * sinTheta,	axis.x * axis.y * minusCosTheta - axis.y * sinTheta,	0.f },
+		Vector4{ axis.x * axis.y * minusCosTheta - axis.z * sinTheta,	std::powf(axis.y, 2) * minusCosTheta + cosTheta,		axis.y * axis.z * minusCosTheta + axis.x * sinTheta,	0.f },
+		Vector4{ axis.x * axis.z * minusCosTheta + axis.y * sinTheta,	axis.y * axis.z * minusCosTheta - axis.x * sinTheta,	std::powf(axis.z,2) * minusCosTheta + cosTheta,			0.f },
+		Vector4{ 0.f, 0.f, 0.f, 0.f },
+	};
+}
+
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4 &Second) const {
 	return (Matrix4x4{
 		this->m[0][0] + Second.m[0][0], this->m[0][1] + Second.m[0][1],

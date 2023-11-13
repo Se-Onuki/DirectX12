@@ -89,6 +89,8 @@ struct Matrix4x4 final {
 
 	static Matrix4x4 Translate(const Vector3 &translate);
 
+	static Matrix4x4 AnyAngleRotate(const Vector3 &axis, const float angle);
+
 	/// @brief 単位行列関数
 	/// @return 単位行列
 	static Matrix4x4 Identity() {
