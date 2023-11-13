@@ -94,13 +94,15 @@ void GameScene::OnEnter() {
 	goalCollider_ = std::make_unique<OBB>();
 	goalCollider_->size = Vector3::one;
 
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Init(std::unordered_map<std::string, Model *>{
+	auto enemy = std::make_unique<Enemy>();
+	enemy->Init(std::unordered_map<std::string, Model *>{
 		{"body", enemyBody}
 	});
-	enemy_->GetWorldTransform()->translate.y = 1.f;
+	enemy->GetWorldTransform()->translate.y = 1.f;
 
-	enemy_->SetPlatform(platform_[1u].get());
+	enemy->SetPlatform(platform_[1u].get());
+
+	enemyList_.push_back(std::move(enemy));
 }
 
 void GameScene::OnExit() {}
@@ -115,9 +117,33 @@ void GameScene::Update() {
 
 	const float deltaTime = ImGui::GetIO().DeltaTime;
 
-	if (player_->GetWorldTransform()->translate.y < -20.f
-		|| Collision::IsHit(*goalCollider_.get(), *player_->GetCollider())
-		|| Collision::IsHit(enemy_->GetCollider(), *player_->GetCollider())) {
+	// オブジェクトを全て走査して、死亡していたら破棄して除外する
+	enemyList_.remove_if(
+		[](std::unique_ptr<Enemy> &object) {
+			// もし死んでいたら
+			if (not object->GetIsAlive()) {
+				// 破棄して除外
+				object.reset();
+				return true;
+			}
+			// 死んでいないなら
+			// そのまま無視
+			return false;
+		}
+	);
+
+	const OBB *const weapon = player_->GetWeaponCollider();
+	if (weapon) {
+		for (auto &enemy : enemyList_) {
+			if (Collision::IsHit(*weapon, enemy->GetCollider())) {
+				enemy->SetIsAlive(false);
+			}
+		}
+	}
+
+
+	if (not player_ || player_->GetWorldTransform()->translate.y < -20.f
+		|| Collision::IsHit(*goalCollider_.get(), *player_->GetCollider())) {
 		Reset();
 	}
 
@@ -164,7 +190,10 @@ void GameScene::Update() {
 	goal_->Update(deltaTime);
 	goalCollider_->SetMatrix(goal_->transform_.matWorld_);
 
-	enemy_->Update(deltaTime);
+
+	for (auto &enemy : enemyList_) {
+		enemy->Update(deltaTime);
+	}
 }
 
 void GameScene::Draw()
@@ -193,14 +222,6 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	//levelManager->Draw(camera_);
-
-	//player_->Draw(camera_);
-
-	//Model::SetPipelineType(Model::PipelineType::kParticle);
-
-	// モデルの描画
-	//model_->Draw(transform_, camera_);
 	skydome_->Draw(camera_);
 	player_->Draw(camera_);
 
@@ -208,7 +229,10 @@ void GameScene::Draw()
 		platform->Draw(camera_);
 	}
 	goal_->Draw(camera_);
-	enemy_->Draw(camera_);
+
+	for (auto &enemy : enemyList_) {
+		enemy->Draw(camera_);
+	}
 
 	Model::EndDraw();
 

@@ -8,8 +8,8 @@
 #include "../../Engine/DirectBase/File/GlobalVariables.h"
 #include "../../Utils/SoLib/SoLib_Lerp.h"
 
-void Player::ApplyClobalVariables() {
-	GlobalVariables *const gVariables = GlobalVariables::GetInstance();
+void Player::ApplyGlobalVariables() {
+	const GlobalVariables *const gVariables = GlobalVariables::GetInstance();
 	const char *groupName = "Player";
 	auto &gGroup = gVariables->GetGroup(groupName);
 
@@ -22,8 +22,27 @@ void Player::ApplyClobalVariables() {
 	floatingCycleRange_ =
 		gVariables->Get<decltype(floatingCycleRange_)>(groupName, "floatingCycleRange");
 
-	gGroup << attackClampAngle_;
+	gGroup >> attackClampAngle_;
 	attackCycle_ = gVariables->Get<decltype(attackCycle_)>(groupName, "attackCycle");
+	gGroup >> attackStartAngle_;
+	gGroup >> attackSwingAngle_;
+}
+
+void Player::AddGlobalVariables() {
+	GlobalVariables *const gVariables = GlobalVariables::GetInstance();
+	const char *const groupName = "Player";
+	auto &gGroup = gVariables->GetGroup(groupName);
+
+	gVariables->AddValue(groupName, "Head Translation", transformHead_->translate);
+	gVariables->AddValue(groupName, "ArmL Translation", transformLeft_->translate);
+	gVariables->AddValue(groupName, "ArmR Translation", transformRight_->translate);
+
+	gVariables->AddValue(groupName, "floatingCycle", floatingCycle_);
+	gVariables->AddValue(groupName, "floatingSwayHand", floatingSwayHand_);
+	gVariables->AddValue(groupName, "floatingCycleRange", floatingCycleRange_);
+
+	gVariables->AddValue(groupName, "attackCycle", attackCycle_);
+	gGroup << attackClampAngle_;
 	gGroup << attackStartAngle_;
 	gGroup << attackSwingAngle_;
 }
@@ -124,6 +143,18 @@ void Player::BehaviorRootUpdate() {
 	UpdateWorldMatrix();
 }
 
+void Player::BehaviorDashInit() {
+	dashTimer_.Start(vDashTime_);
+}
+
+void Player::BehaviorDashUpdate(float deltaTime) {
+	dashTimer_.Update(deltaTime);
+
+	Vector3 moveVec = Vector3::front;
+	moveVec = TransformNormal(moveVec, transformOrigin_->matWorld_);
+
+}
+
 void Player::BehaviorAttackInit() { floatingParameter_ = 0.f; }
 
 void Player::BehaviorAttackUpdate() {
@@ -177,9 +208,8 @@ void Player::UpdateWorldMatrix() {
 }
 
 void Player::Init(const std::unordered_map<std::string, Model *> &model) {
-	GlobalVariables *const gVariables = GlobalVariables::GetInstance();
-	const char *const groupName = "Player";
-	//ApplyClobalVariables();
+
+	this->ApplyGlobalVariables();
 
 	BaseCharacter::Init(model);
 
@@ -193,27 +223,16 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 	transformWeapon_->parent_ = &transformBody_;
 
 	transformHead_->translate = { 0.f, 2.1f, 0.f };
-	transformHead_->rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
+	transformHead_->rotate += { 0.f, 180._deg, 0.f };
 	transformRight_->translate = { +0.75f, 1.5f, 0.f };
-	transformRight_->rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
+	transformRight_->rotate += { 0.f, 180._deg, 0.f };
 	transformLeft_->translate = { -0.75f, 1.5f, 0.f };
-	transformLeft_->rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
+	transformLeft_->rotate += { 0.f, 180._deg, 0.f };
 
 	transformWeapon_->translate = { 0.f, 2.f, 0.f };
-	transformWeapon_->rotate += { 0.f, 180.f * Angle::Dig2Rad, 0.f };
+	transformWeapon_->rotate += { 0.f, 180._deg, 0.f };
 
-	gVariables->AddValue(groupName, "Head Translation", transformHead_->translate);
-	gVariables->AddValue(groupName, "ArmL Translation", transformLeft_->translate);
-	gVariables->AddValue(groupName, "ArmR Translation", transformRight_->translate);
-
-	gVariables->AddValue(groupName, "floatingCycle", floatingCycle_);
-	gVariables->AddValue(groupName, "floatingSwayHand", floatingSwayHand_);
-	gVariables->AddValue(groupName, "floatingCycleRange", floatingCycleRange_);
-
-	gVariables->AddValue(groupName, "attackCycle", attackCycle_);
-	gVariables->AddValue(groupName, attackClampAngle_);
-	gVariables->AddValue(groupName, attackStartAngle_);
-	gVariables->AddValue(groupName, attackSwingAngle_);
+	AddGlobalVariables();
 
 	input_ = Input::GetInstance();
 	InitFloatingGimmick();
@@ -221,6 +240,8 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 }
 
 void Player::Update([[maybe_unused]] const float deltaTime) {
+	this->ApplyGlobalVariables();
+
 	if (behaviorRequest_) {
 		// 振舞いの更新
 		behavior_ = behaviorRequest_.value();
@@ -228,6 +249,9 @@ void Player::Update([[maybe_unused]] const float deltaTime) {
 		switch (behavior_) {
 		case Player::Behavior::kRoot:
 			BehaviorRootInit();
+			break;
+		case Player::Behavior::kDash:
+			BehaviorDashInit();
 			break;
 		case Player::Behavior::kAttack:
 			BehaviorAttackInit();
@@ -240,12 +264,12 @@ void Player::Update([[maybe_unused]] const float deltaTime) {
 	case Player::Behavior::kRoot:
 		BehaviorRootUpdate();
 		break;
+	case Player::Behavior::kDash:
+		BehaviorDashUpdate(deltaTime);
+		break;
 	case Player::Behavior::kAttack:
 		BehaviorAttackUpdate();
 		break;
-	}
-	if (input_->GetDirectInput()->IsTrigger(DIK_R)) {
-		ApplyClobalVariables();
 	}
 }
 
@@ -255,8 +279,9 @@ void Player::Draw(const Camera<Render::CameraType::Projecction> &camera) const {
 	modelMap_.at("right")->Draw(transformRight_, camera);
 	modelMap_.at("left")->Draw(transformLeft_, camera);
 
-	if (behavior_ == Player::Behavior::kAttack)
+	if (behavior_ == Player::Behavior::kAttack) {
 		modelMap_.at("weapon")->Draw(transformWeapon_, camera);
+	}
 }
 
 Player::Player() { input_ = Input::GetInstance(); }

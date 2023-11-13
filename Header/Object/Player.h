@@ -10,6 +10,7 @@
 #include "BaseCharacter.h"
 #include "../../Engine/DirectBase/File/VariantItem.h"
 #include "../Collision/Collision.h"
+#include "../../Utils/SoLib/SoLib_Timer.h"
 
 
 class PlayerBullet;
@@ -19,7 +20,8 @@ class Player : public BaseCharacter {
 
 	enum class Behavior {
 		kRoot,   // 通常状態
-		kAttack, // 攻撃力
+		kDash,   // ダッシュ状態
+		kAttack, // 攻撃状態
 	};
 
 	Behavior behavior_ = Behavior::kRoot;
@@ -32,6 +34,8 @@ class Player : public BaseCharacter {
 	Transform transformRight_;
 
 	Transform transformWeapon_;
+
+	Transform weaponColliderViewer_;
 
 	Input *input_ = nullptr;
 	const Camera<Render::CameraType::Projecction> *camera_ = nullptr;
@@ -50,6 +54,11 @@ class Player : public BaseCharacter {
 	VariantItem<float> attackSwingAngle_{ "SwayHand",130.f * Angle::Dig2Rad };
 	VariantItem<float> attackClampAngle_{ "ClampAngle",110.f * Angle::Dig2Rad };
 
+	VariantItem<float> vDashSpeed_{ "DashSpeed",10.f };
+	VariantItem<float> vDashTime_{ "DashTime",1.f };
+
+	SoLib::DeltaTimer dashTimer_;
+
 	OBB collider_;
 
 	OBB weaponCollider_;
@@ -57,13 +66,17 @@ class Player : public BaseCharacter {
 
 private:
 
-	void ApplyClobalVariables();
+	void ApplyGlobalVariables();
+	void AddGlobalVariables();
 
 	void InitFloatingGimmick();
 	void UpdateFloatingGimmick();
 
 	void BehaviorRootInit();
 	void BehaviorRootUpdate();
+
+	void BehaviorDashInit();
+	void BehaviorDashUpdate(float deltaTime);
 
 	void BehaviorAttackInit();
 	void BehaviorAttackUpdate();
@@ -79,7 +92,12 @@ public:
 	void SetCamera(const Camera<Render::CameraType::Projecction> *const camera) { camera_ = camera; }
 
 	const OBB *const GetCollider() const { return &collider_; }
-	const OBB *const GetWeaponCollider()const { return &weaponCollider_; }
+	const OBB *const GetWeaponCollider()const {
+		if (behavior_ == Behavior::kAttack) {
+			return &weaponCollider_;
+		}
+		return nullptr;
+	}
 
 	Player();
 	~Player() override;

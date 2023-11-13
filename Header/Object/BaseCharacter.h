@@ -25,5 +25,12 @@ public:
 	const Transform &GetWorldTransform() const { return transformOrigin_; }
 	Transform &GetWorldTransform() { return transformOrigin_; }
 
+	void SetIsAlive(bool alive) { isAlive_ = alive; }
+	bool GetIsAlive() const { return isAlive_; }
+
 private:
+
+	bool isAlive_ = true;
+	
+
 };

@@ -44,7 +44,7 @@ private:
 	std::unique_ptr<Entity> goal_ = nullptr;
 	std::unique_ptr<OBB> goalCollider_ = nullptr;
 
-	std::unique_ptr<Enemy> enemy_ = nullptr;
+	std::list<std::unique_ptr<Enemy>> enemyList_;
 
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Skydome> skydome_ = nullptr;
