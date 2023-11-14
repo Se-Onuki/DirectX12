@@ -12,6 +12,12 @@ void ModelComp::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
 	}
 }
 
+void ModelComp::Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const {
+	for (auto &model : modelTree_) {
+		model->Draw(vp, material);
+	}
+}
+
 void ModelComp::ModelBone::Init(Model *const model) {
 	if (model) { model_ = model; }
 }
@@ -55,6 +61,14 @@ void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &v
 
 	for (auto &child : children_) {
 		child->Draw(vp);
+	}
+}
+
+void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const {
+	this->model_->Draw(transform_, vp, material);
+
+	for (auto &child : children_) {
+		child->Draw(vp, material);
 	}
 }
 

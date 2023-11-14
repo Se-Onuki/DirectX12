@@ -55,16 +55,19 @@ public:
 		kMultily,	// 乗算合成
 		kScreen,	// スクリーン合成
 
+		kBacker,	// 後ろならば
+		kAlways,	// 常に
+
 		kTotal	// 総数
 	};
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// モデル用パイプライン
-	static std::array<std::array<ComPtr<ID3D12PipelineState>, 6u>, 2u> graphicsPipelineState_;
+	static std::array<std::array<ComPtr<ID3D12PipelineState>, 8u>, 2u> graphicsPipelineState_;
 	static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
 	static PipelineType sPipelineType_;
 
-	static std::array<std::array<PipelineState, 6u>, 2u> graphicsPipelineStateClass_;
+	static std::array<std::array<PipelineState, 8u>, 2u> graphicsPipelineStateClass_;
 	static std::array<RootSignature, 2u> rootSignatureClass_;
 
 	static void CreatePipeLine();

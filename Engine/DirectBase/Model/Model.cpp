@@ -16,9 +16,9 @@
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
 
-std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u>, 2u> Model::graphicsPipelineState_ = { nullptr };
+std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 8u>, 2u> Model::graphicsPipelineState_ = { nullptr };
 std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
-std::array<std::array<PipelineState, 6u>, 2u> Model::graphicsPipelineStateClass_ = {};
+std::array<std::array<PipelineState, 8u>, 2u> Model::graphicsPipelineStateClass_ = {};
 std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
 Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 
@@ -331,6 +331,33 @@ void Model::BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC 
 
 #pragma endregion
 
+#pragma region 奥ならば表示
+
+	graphicsPipelineStateDesc.BlendState = D3D12_BLEND_DESC{};
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	graphicsPipelineStateDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kBacker)]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+
+#pragma region 常に表示
+
+	graphicsPipelineStateDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kAlways)]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+
 }
 
 void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fileName) {
@@ -634,7 +661,7 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
-		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(material.blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_, 1u, &material);
 	}
 
@@ -735,7 +762,7 @@ void Material::ImGuiWidget()
 					break;
 				}
 			}
-			ImGui::EndCombo(); 
+			ImGui::EndCombo();
 		}
 
 		if (ImGui::TreeNode("Texture")) {

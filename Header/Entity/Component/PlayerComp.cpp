@@ -2,6 +2,7 @@
 #include "Rigidbody.h"
 #include "../../Object/LevelElementManager.h"
 #include "../../../Engine/DirectBase/File/GlobalVariables.h"
+#include "ModelComp.h"
 
 const std::string PlayerComp::groupName_ = "Player";
 
@@ -11,6 +12,11 @@ void PlayerComp::Init() {
 	const Vector3 radius{ 0.75f,0.99f,0.75f };
 	collider_.min = -radius;
 	collider_.max = radius;
+
+	backMaterial_.Create();
+	backMaterial_.blendMode_ = Model::BlendMode::kBacker;
+	backMaterial_.materialBuff_->color = Vector4{ 0.f,0.f,0.f,1.f };
+
 	//auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	//rigidbody->ApplyInstantForce(Vector3{ 0.f,1000000.f,0.f });
 
@@ -153,7 +159,8 @@ void PlayerComp::Update() {
 }
 
 void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {
-
+	const auto *const modelComp = object_->GetComponent<ModelComp>();
+	modelComp->Draw(camera, backMaterial_);
 }
 
 void PlayerComp::ImGuiWidget() {

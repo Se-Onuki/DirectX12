@@ -5,6 +5,7 @@
 
 #include "../../../Engine/DirectBase/File/VariantItem.h"
 #include "FollowCameraComp.h"
+#include "../../../Engine/DirectBase/Model/Model.h"
 
 class PlayerComp : public IComponent {
 public:
@@ -40,4 +41,6 @@ private:
 
 	Input *input_;
 
+
+	Material backMaterial_;
 };
