@@ -50,6 +50,8 @@ public:
 
 		const auto &GetCollider() const { return collisionBox_; }
 
+		void ImGuiWidget();
+
 	private:
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;

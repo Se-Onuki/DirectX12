@@ -26,7 +26,24 @@ void LevelElementManager::ImGuiWidget() {
 		stageLine_.SetEnd(lineEnd_->translate);
 	}
 
+	static PlatformMap::iterator platformItr = blockCollider_.begin();
+	std::vector<int32_t> items;
+	for (const auto &pair : blockCollider_) {
+		items.push_back(pair.first);
+	}
 
+	if (ImGui::BeginCombo("PlatformList", std::to_string(platformItr->first).c_str())) {
+
+		for (PlatformMap::iterator it = blockCollider_.begin(); it != blockCollider_.end(); it++) {
+			if (ImGui::Selectable(std::to_string(it->first).c_str())) {
+				platformItr = it;
+				break;
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	platformItr->second.ImGuiWidget();
 
 }
 
@@ -71,7 +88,7 @@ void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
 }
 void LevelElementManager::DebugDraw([[maybe_unused]] const Camera3D &camera) const {
 
-	const auto *const sphere = ModelManager::GetInstance()->GetModel("Box");
+	const auto *const sphere = ModelManager::GetInstance()->GetModel("RedBox");
 
 	sphere->Draw(lineStart_, camera);
 	sphere->Draw(lineEnd_, camera);
@@ -168,6 +185,24 @@ void LevelElementManager::Platform::AddRotate(const float targetRot) {
 void LevelElementManager::Platform::Draw(const Model *const model, const Camera3D &camera) const {
 	for (const auto &box : boxList_) {
 		model->Draw(box.transform_, camera);
+	}
+}
+
+void LevelElementManager::Platform::ImGuiWidget() {
+
+	ImGui::NewLine();
+	bool isEdited = false;
+	static bool isSeparate = false;
+	ImGui::Checkbox("Separate", &isSeparate);
+	ImGui::SameLine();
+	isEdited |= ImGui::DragFloat3("CentorPos", &center_.translate.x);
+	if (isSeparate) {
+
+	}
+
+
+	if (isEdited) {
+		this->CalcCollision();
 	}
 }
 
