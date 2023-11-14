@@ -401,6 +401,15 @@ Vector3 AABB::GetNormal(const Vector3 &surface, const Vector3 &direction) const 
 	return result.Nomalize();
 }
 
+AABB AABB::Create(const Vector3 &origin, const Vector3 &radius) {
+	AABB result{};
+	result.min = -radius;
+	result.max = radius;
+	result.Swaping();
+
+	return result.AddPos(origin);
+}
+
 void AABB::ImGuiDebug(const std::string &group) {
 	if (ImGui::TreeNode(group.c_str())) {
 

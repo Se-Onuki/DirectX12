@@ -195,9 +195,16 @@ void LevelElementManager::Platform::ImGuiWidget() {
 	static bool isSeparate = false;
 	ImGui::Checkbox("Separate", &isSeparate);
 	ImGui::SameLine();
+
+	Vector3 preCentor = center_.translate;
 	isEdited |= ImGui::DragFloat3("CentorPos", &center_.translate.x);
 	if (isSeparate) {
-
+		Vector3 centorDeff = center_.translate - preCentor * Matrix4x4::EulerRotate(-center_.rotate);
+		for (auto &box : boxList_) {
+			box.transform_->translate -= centorDeff;
+			box.referenceBox_.max -= centorDeff;
+			box.referenceBox_.min -= centorDeff;
+		}
 	}
 
 

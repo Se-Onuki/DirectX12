@@ -150,6 +150,12 @@ struct AABB {
 	Vector3 GetNormal(const Vector3 &surface) const;
 	Vector3 GetNormal(const Vector3 &surface, const Vector3 &direction) const;
 
+	/// @brief 新規生成
+	/// @param origin 原点
+	/// @param radius 半径
+	/// @return AABB構造体
+	static AABB Create(const Vector3 &origin, const Vector3 &radius);
+
 	void ImGuiDebug(const std::string &group);
 	const AABB &Swaping();
 
