@@ -34,6 +34,8 @@ void GameScene::OnEnter() {
 	modelManager->CreateDefaultModel(); // デフォルトモデルの読み込み
 	modelManager->AddModel("Box", Model::LoadObjFile("", "box.obj"));
 	modelManager->AddModel("RedBox", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 1.f,0.f,0.f,1.f };
+	modelManager->AddModel("GrassModel", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 0.f,0.5f,0.f,1.f };
+	modelManager->AddModel("DirtModel", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 0.5f,0.5f,0.f,1.f };
 
 	modelManager->AddModel("PlayerBody", Model::LoadObjFile("Model/PlayerModel/Body/", "Body.obj")); // プレイヤーの体
 	modelManager->AddModel("PlayerEye", Model::LoadObjFile("Model/PlayerModel/Eye/", "Eye.obj")); // プレイヤーの瞳

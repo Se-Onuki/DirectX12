@@ -48,6 +48,10 @@ void LevelElementManager::ImGuiWidget() {
 }
 
 void LevelElementManager::Init() {
+	const auto *const modelManager = ModelManager::GetInstance();
+	groundModels_[static_cast<uint32_t>(GroundType::kDirt)] = modelManager->GetModel("DirtModel");
+	groundModels_[static_cast<uint32_t>(GroundType::kGrass)] = modelManager->GetModel("GrassModel");
+
 	if (lineStart_->translate == lineEnd_->translate) {
 		lineEnd_->translate.z = lineStart_->translate.z + 1.f;
 	}
@@ -70,11 +74,11 @@ void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
 }
 
 void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
-	static const ModelManager *const modelManager = ModelManager::GetInstance();
-	const Model *const model = modelManager->GetModel("Box");
+	//static const ModelManager *const modelManager = ModelManager::GetInstance();
 
 	for (const auto &[key, platform] : blockCollider_) {
-		platform.Draw(model, camera);
+		// const Model *const model = groundModels_[platform.]
+		platform.Draw(camera);
 	}
 
 #ifdef _DEBUG
@@ -182,20 +186,37 @@ void LevelElementManager::Platform::AddRotate(const float targetRot) {
 	timer_.Start(vLerpTime_);
 }
 
-void LevelElementManager::Platform::Draw(const Model *const model, const Camera3D &camera) const {
+void LevelElementManager::Platform::Draw(const Camera3D &camera) const {
 	for (const auto &box : boxList_) {
-		model->Draw(box.transform_, camera);
+		LevelElementManager::GetInstance()->GetGroundModel()[static_cast<uint32_t>(box.groundType_)]->Draw(box.transform_, camera);
 	}
 }
 
 void LevelElementManager::Platform::ImGuiWidget() {
 
-	ImGui::NewLine();
 	bool isEdited = false;
+
+
+	int32_t e;
+	static std::array<Vector3, 3u> axisList = {
+		Vector3::right,
+		Vector3::up,
+		Vector3::front
+	};
+	for (std::uint32_t i = 0; i < axisList.size(); ++i) {
+		if (axisList[i] == rotateAxis_) {
+			e = i; // 一致した場合、インデックスを返す
+		}
+	};
+	isEdited |= ImGui::RadioButton("RotateX", &e, 0); ImGui::SameLine();
+	isEdited |= ImGui::RadioButton("RotateY", &e, 1); ImGui::SameLine();
+	isEdited |= ImGui::RadioButton("RotateZ", &e, 2);
+	rotateAxis_ = axisList[e];
+
+	ImGui::NewLine();
 	static bool isSeparate = false;
 	ImGui::Checkbox("Separate", &isSeparate);
 	ImGui::SameLine();
-
 	Vector3 preCentor = center_.translate;
 	isEdited |= ImGui::DragFloat3("CentorPos", &center_.translate.x);
 	if (isSeparate) {
