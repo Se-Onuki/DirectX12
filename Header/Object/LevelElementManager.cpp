@@ -6,10 +6,16 @@
 #include "imgui.h"
 
 void LevelElementManager::ImGuiWidget() {
+
+	ImGui::Checkbox("DebugViewer", &debugDrawer_);
+
 	// カメラの位置は編集されたか
 	bool isCameraEditedBy = false;
-	isCameraEditedBy |= ImGui::SliderFloat3("CameraLineStart", &lineStart_->translate.x, -100.f, -100.f);
-	isCameraEditedBy |= ImGui::SliderFloat3("CameraLineEnd", &lineEnd_->translate.x, -100.f, -100.f);
+	isCameraEditedBy |= ImGui::DragFloat3("CameraLineStart", &lineStart_->translate.x, 1.f);
+	isCameraEditedBy |= ImGui::DragFloat3("CameraLineEnd", &lineEnd_->translate.x, 1.f);
+	if (lineStart_->translate == lineEnd_->translate) {
+		lineEnd_->translate.z++;
+	}
 
 	// もし編集されたら
 	if (isCameraEditedBy) {
@@ -28,23 +34,22 @@ void LevelElementManager::Init() {
 	if (lineStart_->translate == lineEnd_->translate) {
 		lineEnd_->translate.z = lineStart_->translate.z + 1.f;
 	}
+
+	lineStart_->scale = Vector3::one * 0.5f;
+	lineEnd_->scale = Vector3::one * 0.5f;
+
+	lineStart_->UpdateMatrix();
+	lineEnd_->UpdateMatrix();
+
+	stageLine_.origin = lineStart_->translate;
+	stageLine_.SetEnd(lineEnd_->translate);
+
 }
 
 void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
 	for (auto &[key, platform] : blockCollider_) {
 		platform.Update(deltaTime);
 	}
-
-	ImGui::Begin("StageLine");
-	SoLib::ImGuiWidget("StartPos", &lineStart_->translate);
-	SoLib::ImGuiWidget("EndPos", &lineEnd_->translate);
-	ImGui::End();
-
-	lineStart_->UpdateMatrix();
-	lineEnd_->UpdateMatrix();
-	stageLine_.origin = lineStart_->GetGrobalPos();
-	stageLine_.diff = lineEnd_->GetGrobalPos() - stageLine_.origin;
-
 }
 
 void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
@@ -54,8 +59,24 @@ void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
 	for (const auto &[key, platform] : blockCollider_) {
 		platform.Draw(model, camera);
 	}
+
+#ifdef _DEBUG
+
+	if (debugDrawer_) {
+		this->DebugDraw(camera);
+	}
+
+#endif // _DEBUG
+
 }
 void LevelElementManager::DebugDraw([[maybe_unused]] const Camera3D &camera) const {
+
+	const auto *const sphere = ModelManager::GetInstance()->GetModel("Box");
+
+	sphere->Draw(lineStart_, camera);
+	sphere->Draw(lineEnd_, camera);
+
+
 }
 //
 //void LevelElementManager::Draw(const Camera3D &camera) {

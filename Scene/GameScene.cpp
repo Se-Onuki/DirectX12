@@ -108,7 +108,8 @@ void GameScene::Update() {
 	followCamera_->AddComponent<FollowCameraComp>()->SetLine(levelManager->GetStageLine());
 
 	ImGui::Begin("LevelManager");
-	
+	levelManager->ImGuiWidget();
+
 	ImGui::End();
 
 

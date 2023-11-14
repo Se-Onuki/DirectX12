@@ -93,4 +93,5 @@ private:
 	Transform lineEnd_;
 	LineBase stageLine_;
 
+	bool debugDrawer_ = false;
 };
