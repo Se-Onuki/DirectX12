@@ -90,15 +90,6 @@ void GameScene::OnEnter() {
 
 	cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;
-
-	//playerAnim_ = std::make_unique<Entity>();
-	//playerAnim_->AddComponent<PlayerAnimComp>();
-
-	//for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-	//	transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
-	//	colorArray_[i].SetMapAddress(&instanceTransform_[i].color);
-	//	colorArray_[i] = Vector4{ 1.f,1.f,1.f,1.f };
-	//}
 }
 
 void GameScene::OnExit() {}
@@ -111,33 +102,15 @@ void GameScene::Update() {
 
 	colliderManager->clear();
 
-	ImGui::Begin("Sphere");
-	//model_->ImGuiWidget();
-	/*for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-		if (ImGui::TreeNode(("Particle" + std::to_string(i)).c_str())) {
-			transformArray_[i].ImGuiWidget();
-			ImGui::ColorEdit4("Color", &colorArray_[i]->x);
-			ImGui::TreePop();
-		}
-		transformArray_[i].UpdateMatrix();
-	}*/
-	ImGui::End();
-
 	TextureManager::GetInstance()->ImGuiWindow();
 
 	levelManager->Update(deltaTime);
 	followCamera_->AddComponent<FollowCameraComp>()->SetLine(levelManager->GetStageLine());
 
 	ImGui::Begin("LevelManager");
-	if (ImGui::Button("Left")) {
-		levelManager->GetPlatform(0u)->AddRotate(90._deg);
-	}
-	if (ImGui::Button("Right")) {
-		levelManager->GetPlatform(0u)->AddRotate(-90._deg);
-	}
+	
 	ImGui::End();
 
-	colliderManager->push_back(levelManager->GetPlatform(0u)->GetCollider());
 
 	player_->Update(deltaTime);
 

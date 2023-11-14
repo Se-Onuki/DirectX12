@@ -3,6 +3,27 @@
 #include "../../Utils/SoLib/SoLib_Easing.h"
 #include "../../Utils/SoLib/SoLib_ImGui.h"
 
+#include "imgui.h"
+
+void LevelElementManager::ImGuiWidget() {
+	// カメラの位置は編集されたか
+	bool isCameraEditedBy = false;
+	isCameraEditedBy |= ImGui::SliderFloat3("CameraLineStart", &lineStart_->translate.x, -100.f, -100.f);
+	isCameraEditedBy |= ImGui::SliderFloat3("CameraLineEnd", &lineEnd_->translate.x, -100.f, -100.f);
+
+	// もし編集されたら
+	if (isCameraEditedBy) {
+		lineStart_->UpdateMatrix();
+		lineEnd_->UpdateMatrix();
+
+		stageLine_.origin = lineStart_->translate;
+		stageLine_.SetEnd(lineEnd_->translate);
+	}
+
+
+
+}
+
 void LevelElementManager::Init() {
 	if (lineStart_->translate == lineEnd_->translate) {
 		lineEnd_->translate.z = lineStart_->translate.z + 1.f;
@@ -33,6 +54,8 @@ void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
 	for (const auto &[key, platform] : blockCollider_) {
 		platform.Draw(model, camera);
 	}
+}
+void LevelElementManager::DebugDraw([[maybe_unused]] const Camera3D &camera) const {
 }
 //
 //void LevelElementManager::Draw(const Camera3D &camera) {

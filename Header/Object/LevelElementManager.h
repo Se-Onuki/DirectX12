@@ -64,13 +64,15 @@ public:
 		return &instance;
 	}
 
+	void ImGuiWidget();
+
 	void Init();
 
 	void Update(float deltaTime);
 
 	void Draw(const Camera3D &camera) const;
 
-	//void Draw(const Camera3D &camera);
+	void DebugDraw(const Camera3D &camera) const;
 
 	void CalcCollision(const uint32_t key);
 	void CalcCollision();

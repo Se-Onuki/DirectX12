@@ -122,11 +122,13 @@ struct LineBase final {
 	Vector3 diff;   // 終点へのベクトル
 	LineType lineType = LineType::Segment;
 
-	[[nodiscard]] Vector3 GetEnd() const { return origin + diff; }
-	[[nodiscard]] Vector3 GetProgress(const float &t) const;
-	[[nodiscard]] Vector3 Project(const Vector3 &point) const;
-	[[nodiscard]] Vector3 ClosestPoint(const Vector3 &point) const;
-	[[nodiscard]] const float Clamp(const float &t) const;
+	void SetEnd(const Vector3 &end) { diff = end - origin; }
+
+	Vector3 GetEnd() const { return origin + diff; }
+	Vector3 GetProgress(const float &t) const;
+	Vector3 Project(const Vector3 &point) const;
+	Vector3 ClosestPoint(const Vector3 &point) const;
+	const float Clamp(const float &t) const;
 
 	void ImGuiDebug(const std::string &group);
 
