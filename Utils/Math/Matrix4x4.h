@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector4.h"
 #include <immintrin.h>
+#include <array>
 
 struct Vector3;
 
