@@ -628,6 +628,18 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 
 }
 
+void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera, const Material &material) const {
+	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
+
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
+	for (auto &mesh : meshList_) {
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		mesh->Draw(commandList_, 1u, &material);
+	}
+
+}
+
 void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const {
 	assert(sPipelineType_ == PipelineType::kParticle && "設定されたシグネチャがkParticleではありません");
 
@@ -677,10 +689,14 @@ void Mesh::SetMaterial(Material *const material) {
 	material_ = material;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount) const {
+void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const Material *const material) const {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, material_->texHandle_);
-	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
-
+	if (material) {
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material->materialBuff_.GetGPUVirtualAddress());
+	}
+	else {
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
+	}
 	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
 	commandList->IASetIndexBuffer(&vertexBuffer_.GetIBView());
 	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);

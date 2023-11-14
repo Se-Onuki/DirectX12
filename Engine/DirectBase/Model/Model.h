@@ -81,6 +81,7 @@ public:
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
+	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera, const Material &material) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const;
 	template <typename T>
 	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const;
@@ -171,7 +172,7 @@ public:
 	void SetMaterial(Material *const material);
 	Material *const GetMaterial() const { return material_; }
 
-	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u) const;
+	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const Material *const material = nullptr) const;
 
 
 };
