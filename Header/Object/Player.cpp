@@ -29,9 +29,12 @@ void Player::ApplyGlobalVariables() {
 
 	gGroup >> vDashSpeed_;
 	gGroup >> vDashTime_;
+
+	gGroup >> vWeaponCollisionOffset_;
+	gGroup >> vWeaponCollisionRadius_;
 }
 
-void Player::AddGlobalVariables() {
+void Player::AddGlobalVariables() const {
 	GlobalVariables *const gVariables = GlobalVariables::GetInstance();
 	const char *const groupName = "Player";
 	auto &gGroup = gVariables->GetGroup(groupName);
@@ -51,6 +54,9 @@ void Player::AddGlobalVariables() {
 
 	gGroup << vDashSpeed_;
 	gGroup << vDashTime_;
+
+	gGroup << vWeaponCollisionOffset_;
+	gGroup << vWeaponCollisionRadius_;
 }
 
 void Player::InitFloatingGimmick() { floatingParameter_ = 0.f; }
@@ -156,6 +162,7 @@ void Player::BehaviorRootUpdate() {
 }
 
 void Player::BehaviorDashInit() {
+	floatingParameter_ = 0.f;
 	dashTimer_.Start(vDashTime_);
 }
 
@@ -214,7 +221,13 @@ void Player::BehaviorAttackUpdate() {
 			attackClampAngle_) +
 		Angle::PI;
 
+	weaponColliderViewer_->translate = vWeaponCollisionOffset_;
+	weaponColliderViewer_->scale = Vector3::one * vWeaponCollisionRadius_;
+
 	UpdateWorldMatrix();
+
+	weaponCollider_.centor = weaponColliderViewer_->GetGrobalPos();
+	weaponCollider_.radius = vWeaponCollisionRadius_;
 }
 
 void Player::UpdateWorldMatrix() {
@@ -228,6 +241,7 @@ void Player::UpdateWorldMatrix() {
 	transformLeft_->UpdateMatrix();
 
 	transformWeapon_->UpdateMatrix();
+	weaponColliderViewer_->UpdateMatrix();
 }
 
 void Player::Init(const std::unordered_map<std::string, Model *> &model) {
@@ -254,6 +268,9 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 
 	transformWeapon_->translate = { 0.f, 2.f, 0.f };
 	transformWeapon_->rotate += { 0.f, 180._deg, 0.f };
+
+	weaponColliderViewer_->SetParent(transformWeapon_);
+
 
 	AddGlobalVariables();
 

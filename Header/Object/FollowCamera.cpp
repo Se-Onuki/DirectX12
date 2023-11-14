@@ -2,13 +2,37 @@
 #include "../../Engine/DirectBase/Input/Input.h"
 #include "../../Utils/Math/Transform.h"
 #include <Xinput.h>
+#include "../../Engine/DirectBase/File/GlobalVariables.h"
+#include "../../Utils/SoLib/SoLib_Lerp.h"
+
+void FollowCamera::ApplyGlobalVariables() {
+	GlobalVariables *const gVariables = GlobalVariables::GetInstance();
+	const char *const groupName = "FollowCamera";
+
+	gVariables->CreateGroups(groupName);
+	auto &gGroup = gVariables->GetGroup(groupName);
+
+	gGroup >> vFollowProgress_;
+
+}
+
+void FollowCamera::AddGlobalVariables() const {
+	GlobalVariables *const gVariables = GlobalVariables::GetInstance();
+	const char *const groupName = "FollowCamera";
+	auto &gGroup = gVariables->GetGroup(groupName);
+
+	gGroup << vFollowProgress_;
+}
 
 void FollowCamera::Init() {
+	ApplyGlobalVariables();
 	camera_.Init();
 	input_ = Input::GetInstance();
+	AddGlobalVariables();
 }
 
 void FollowCamera::Update() {
+	ApplyGlobalVariables();
 	if (target_) {
 
 		Vector3 offset{ 0.f, 3.f, -15.f };
@@ -23,8 +47,9 @@ void FollowCamera::Update() {
 		offset = TransformNormal(offset, mat);
 
 		camera_.rotation_.y = rotate_.y;
+		originPos_ = SoLib::Lerp(originPos_, target_->GetGrobalPos(), vFollowProgress_);
 
-		camera_.translation_ = target_->GetGrobalPos() + offset;
+		camera_.translation_ = originPos_ + offset;
 
 	}
 	camera_.UpdateMatrix();

@@ -109,6 +109,21 @@ void GameScene::OnExit() {}
 
 void GameScene::Reset() {
 
+	enemyList_.clear();
+
+	Model *const enemyBody =
+		ModelManager::GetInstance()->GetModel("enemyBody");
+
+	auto enemy = std::make_unique<Enemy>();
+	enemy->Init(std::unordered_map<std::string, Model *>{
+		{"body", enemyBody}
+	});
+	enemy->GetWorldTransform()->translate.y = 1.f;
+
+	enemy->SetPlatform(platform_[1u].get());
+
+	enemyList_.push_back(std::move(enemy));
+
 	player_->GetWorldTransform()->DisConnectParent();
 	player_->GetWorldTransform()->translate = Vector3::zero;
 }
@@ -119,7 +134,8 @@ void GameScene::Update() {
 
 	// オブジェクトを全て走査して、死亡していたら破棄して除外する
 	enemyList_.remove_if(
-		[](std::unique_ptr<Enemy> &object) {
+		[](std::unique_ptr<Enemy> &object)
+		{
 			// もし死んでいたら
 			if (not object->GetIsAlive()) {
 				// 破棄して除外
@@ -132,10 +148,10 @@ void GameScene::Update() {
 		}
 	);
 
-	const OBB *const weapon = player_->GetWeaponCollider();
+	const auto*const weapon = player_->GetWeaponCollider();
 	if (weapon) {
 		for (auto &enemy : enemyList_) {
-			if (Collision::IsHit(*weapon, enemy->GetCollider())) {
+			if (Collision::IsHit(enemy->GetCollider(), *weapon)) {
 				enemy->SetIsAlive(false);
 			}
 		}
@@ -144,6 +160,7 @@ void GameScene::Update() {
 	for (auto &enemy : enemyList_) {
 		if (Collision::IsHit(*player_->GetCollider(), enemy->GetCollider())) {
 			Reset();
+			break;
 		}
 	}
 
@@ -239,6 +256,8 @@ void GameScene::Draw()
 	for (auto &enemy : enemyList_) {
 		enemy->Draw(camera_);
 	}
+
+	//ModelManager::GetInstance()->GetModel("box")->Draw(player_->GetWeaponCollisionTransform(), camera_);
 
 	Model::EndDraw();
 

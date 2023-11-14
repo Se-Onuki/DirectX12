@@ -21,6 +21,12 @@
         ],
         "SwayHand": 2.268928050994873,
         "Test": 100,
+        "WeaponCollisionOffset": [
+            0.0,
+            4.599999904632568,
+            0.0
+        ],
+        "WeaponCollisonRadius": 1.149999976158142,
         "attackClampAngle": 1.919862151145935,
         "attackCycle": 90,
         "attackStartAngle": 0.0,

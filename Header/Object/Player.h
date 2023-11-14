@@ -57,17 +57,20 @@ class Player : public BaseCharacter {
 	VariantItem<float> vDashSpeed_{ "DashSpeed",4.f };
 	VariantItem<float> vDashTime_{ "DashTime",0.075f };
 
+	VariantItem<Vector3> vWeaponCollisionOffset_{ "WeaponCollisionOffset",{} };
+	VariantItem<float> vWeaponCollisionRadius_{ "WeaponCollisonRadius",0.75f };
+
 	SoLib::DeltaTimer dashTimer_;
 
 	OBB collider_;
 
-	OBB weaponCollider_;
+	Sphere weaponCollider_;
 
 
 private:
 
 	void ApplyGlobalVariables();
-	void AddGlobalVariables();
+	void AddGlobalVariables() const;
 
 	void InitFloatingGimmick();
 	void UpdateFloatingGimmick();
@@ -92,12 +95,14 @@ public:
 	void SetCamera(const Camera<Render::CameraType::Projecction> *const camera) { camera_ = camera; }
 
 	const OBB *const GetCollider() const { return &collider_; }
-	const OBB *const GetWeaponCollider()const {
+	const Sphere *const GetWeaponCollider()const {
 		if (behavior_ == Behavior::kAttack) {
 			return &weaponCollider_;
 		}
 		return nullptr;
 	}
+
+	const Transform &GetWeaponCollisionTransform() const { return weaponColliderViewer_; }
 
 	Player();
 	~Player() override;
