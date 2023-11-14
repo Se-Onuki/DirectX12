@@ -8,6 +8,7 @@
 
 #include "../../Engine/DirectBase/File/VariantItem.h"
 #include "../../Utils/SoLib/SoLib_Timer.h"
+#include <array>
 
 class LevelElementManager {
 	LevelElementManager() = default;
@@ -16,9 +17,18 @@ class LevelElementManager {
 	~LevelElementManager() = default;
 public:
 
+	enum class GroundType {
+		kGrass,
+		kDirt,
+
+		kSize
+	};
+
 	class Box {
 	public:
 		Box(const AABB &aabb);
+
+		GroundType groundType_ = GroundType::kGrass;
 
 		Transform transform_;
 		AABB referenceBox_;
@@ -46,11 +56,16 @@ public:
 
 		void SetAxis(const Vector3 &axis) { rotateAxis_ = axis.Nomalize(); }
 
-		void Draw(const Model *const model, const Camera3D &camera) const;
+		void Draw(const Camera3D &camera) const;
 
 		const auto &GetCollider() const { return collisionBox_; }
 
+		void ImGuiWidget();
+
 	private:
+
+
+
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
 
@@ -64,13 +79,15 @@ public:
 		return &instance;
 	}
 
+	void ImGuiWidget();
+
 	void Init();
 
 	void Update(float deltaTime);
 
 	void Draw(const Camera3D &camera) const;
 
-	void Draw(const Camera3D &camera);
+	void DebugDraw(const Camera3D &camera) const;
 
 	void CalcCollision(const uint32_t key);
 	void CalcCollision();
@@ -79,8 +96,20 @@ public:
 	/// @param transform ブロックのSRT
 	void AddBlock(const uint32_t key, const AABB &box);
 
+	const LineBase &GetStageLine() const { return stageLine_; }
 
-	std::unordered_map<uint32_t, Platform> blockCollider_;
+	Platform *const GetPlatform(int32_t index);
+
+	using PlatformMap = std::unordered_map<uint32_t, Platform>;
+	PlatformMap blockCollider_;
+
+	const auto &GetGroundModel() const { return groundModels_; }
+
 private:
+	std::array<Model *, 2u> groundModels_;
+	Transform lineStart_;
+	Transform lineEnd_;
+	LineBase stageLine_;
 
+	bool debugDrawer_ = false;
 };

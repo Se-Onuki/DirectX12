@@ -13,6 +13,7 @@
 #include "../Header/Entity/Component/PlayerComp.h"
 #include "../Header/Entity/Component/Collider.h"
 #include "../Header/Entity/Component/PlayerAnimComp.h"
+#include "../Header/Entity/Component/FollowCameraComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -32,6 +33,10 @@ void GameScene::OnEnter() {
 	// モデルの読み込み
 	modelManager->CreateDefaultModel(); // デフォルトモデルの読み込み
 	modelManager->AddModel("Box", Model::LoadObjFile("", "box.obj"));
+	modelManager->AddModel("RedBox", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 1.f,0.f,0.f,1.f };
+	modelManager->AddModel("GrassModel", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 0.f,0.5f,0.f,1.f };
+	modelManager->AddModel("DirtModel", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 0.5f,0.5f,0.f,1.f };
+
 	modelManager->AddModel("PlayerBody", Model::LoadObjFile("Model/PlayerModel/Body/", "Body.obj")); // プレイヤーの体
 	modelManager->AddModel("PlayerEye", Model::LoadObjFile("Model/PlayerModel/Eye/", "Eye.obj")); // プレイヤーの瞳
 	modelManager->AddModel("PlayerHelmet", Model::LoadObjFile("Model/PlayerModel/Helmet/", "Helmet.obj")); // プレイヤーのヘルメット
@@ -53,14 +58,14 @@ void GameScene::OnEnter() {
 	levelManager = LevelElementManager::GetInstance();
 
 	levelManager->Init();
-	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,1.f,15.f }));
+	levelManager->AddBlock(1u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,20.f }));
 
-	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,3.f,0.f }));
+	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,0.f }));
 	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
-
+	//levelManager->blockCollider_[0u].AddRotate(180._deg);
 	// levelManager->blockCollider_[0u].center_.translate.z = 180._deg;
 
-	levelManager->CalcCollision(0u);
+	levelManager->CalcCollision();
 
 #pragma region Player
 
@@ -77,14 +82,18 @@ void GameScene::OnEnter() {
 
 #pragma endregion
 
-	//playerAnim_ = std::make_unique<Entity>();
-	//playerAnim_->AddComponent<PlayerAnimComp>();
+#pragma region FollowCamera
 
-	//for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-	//	transformArray_[i].GetCBuffer()->SetMapAddress(&instanceTransform_[i].transform);
-	//	colorArray_[i].SetMapAddress(&instanceTransform_[i].color);
-	//	colorArray_[i] = Vector4{ 1.f,1.f,1.f,1.f };
-	//}
+	followCamera_ = std::make_unique<Entity>();
+	auto *const followComp = followCamera_->AddComponent<FollowCameraComp>();
+	followComp->SetTarget(&player_->transform_);
+
+#pragma endregion
+
+	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
+
+	cameraList_[0u] = &followComp->GetCamera();
+	cameraList_[1u] = &camera_;
 }
 
 void GameScene::OnExit() {}
@@ -93,38 +102,20 @@ void GameScene::Update() {
 
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	static auto *const colliderManager = CollisionManager::GetInstance();
+	static const auto *const keyBoard = input_->GetDirectInput();
 
 	colliderManager->clear();
-
-	ImGui::Begin("Sphere");
-	//model_->ImGuiWidget();
-	/*for (uint32_t i = 0u; i < transformArray_.size(); ++i) {
-		if (ImGui::TreeNode(("Particle" + std::to_string(i)).c_str())) {
-			transformArray_[i].ImGuiWidget();
-			ImGui::ColorEdit4("Color", &colorArray_[i]->x);
-			ImGui::TreePop();
-		}
-		transformArray_[i].UpdateMatrix();
-	}*/
-	ImGui::End();
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
 	levelManager->Update(deltaTime);
+	followCamera_->AddComponent<FollowCameraComp>()->SetLine(levelManager->GetStageLine());
 
 	ImGui::Begin("LevelManager");
-	if (ImGui::Button("Left")) {
-		levelManager->blockCollider_[0u].AddRotate(90._deg);
-	}
-	if (ImGui::Button("Right")) {
-		levelManager->blockCollider_[0u].AddRotate(-90._deg);
-	}
-	//levelManager->blockCollider_[0u].center_.rotate.z = Angle::Mod(levelManager->blockCollider_[0u].center_.rotate.z);
+	levelManager->ImGuiWidget();
 
 	ImGui::End();
 
-	//levelManager->CalcCollision(0u);
-	colliderManager->push_back(levelManager->blockCollider_[0u].GetCollider());
 
 	player_->Update(deltaTime);
 
@@ -132,11 +123,30 @@ void GameScene::Update() {
 	player_->ImGuiWidget();
 	ImGui::End();
 
+	Vector3 euler{};
+	if (keyBoard->IsPress(DIK_RIGHT)) {
+		euler += Vector3::up * -5._deg;
+	}
+	if (keyBoard->IsPress(DIK_LEFT)) {
+		euler += Vector3::up * 5._deg;
+	}
+
+	followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
+	followCamera_->ImGuiWidget();
+	followCamera_->Update(deltaTime);
+
 	ImGui::Begin("Camera");
 	camera_.ImGuiWidget();
 	ImGui::End();
+
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 	camera_.UpdateMatrix();
+
+	if (keyBoard->IsTrigger(DIK_0)) {
+		if (++cameraTarget_ == cameraList_.end()) {
+			cameraTarget_ = cameraList_.begin();
+		}
+	}
 
 
 	//playerAnim_->Update(deltaTime);
@@ -174,10 +184,12 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	//model_->Draw(transform_, camera_);
-	levelManager->Draw(camera_);
+	const auto &camera = **cameraTarget_;
 
-	player_->Draw(camera_);
+	//model_->Draw(transform_, camera_);
+	levelManager->Draw(camera);
+
+	player_->Draw(camera);
 	// 描画
 	//playerAnim_->Draw(camera_);
 

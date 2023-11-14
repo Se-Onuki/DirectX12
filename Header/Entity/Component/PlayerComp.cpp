@@ -8,8 +8,9 @@ const std::string PlayerComp::groupName_ = "Player";
 void PlayerComp::Init() {
 	ApplyVariables(groupName_.c_str());
 	input_ = Input::GetInstance();
-	collider_.min = -Vector3::one;
-	collider_.max = Vector3::one;
+	const Vector3 radius{ 0.75f,0.99f,0.75f };
+	collider_.min = -radius;
+	collider_.max = radius;
 	//auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	//rigidbody->ApplyInstantForce(Vector3{ 0.f,1000000.f,0.f });
 
@@ -29,6 +30,17 @@ void PlayerComp::Update() {
 			rigidbody->ApplyInstantForce(Vector3{ 0.f,vJumpPower,0.f });
 		}
 
+		if (keyBoard->IsTrigger(DIK_E)) {
+			if (auto *const platform = levelManager->GetPlatform(registeredGroups_)) {
+				platform->AddRotate(-90._deg);
+			}
+		}
+		if (keyBoard->IsTrigger(DIK_Q)) {
+			if (auto *const platform = levelManager->GetPlatform(registeredGroups_)) {
+				platform->AddRotate(90._deg);
+			}
+		}
+
 
 		if (keyBoard->IsPress(DIK_W)) {
 			inputVec += Vector3::front;
@@ -46,12 +58,28 @@ void PlayerComp::Update() {
 
 		inputVec = inputVec.Nomalize();
 	}
+	// 入力強度を取得
+	float movePower = 1.f;
+	// もし入力が0でないなら強度に応じた値
+	if (inputVec.LengthSQ() != 0.f) {
+		movePower = inputVec.Length() / inputVec.Nomalize().Length();
+	}
+
+	// カメラの角度を元に計算
+	inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
+
+	// カメラの上下方向を破棄
+	inputVec.y = 0.f;
+	inputVec = inputVec.Nomalize() * movePower;
+
+
 	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
 
 	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
+	int32_t hitGroup = -1;
 	while (true) {
 
 		float t = 1.f;
@@ -62,12 +90,13 @@ void PlayerComp::Update() {
 
 			const auto &vertexPos = beforeCollider.GetVertex();
 
+			LineBase centorLine;
+
 			std::array<LineBase, 8u> vertexLine;
 			for (uint32_t i = 0u; i < vertexLine.size(); ++i) {
 				vertexLine[i].origin = vertexPos[i];
 				vertexLine[i].diff = moveLine.diff;
 			}
-
 
 			for (const auto &[key, collider] : levelManager->blockCollider_) {
 				for (auto &box : collider.GetCollider()) {
@@ -81,12 +110,15 @@ void PlayerComp::Update() {
 								if (normal * line.diff < 0.f) {
 									Vector3 minDiff = box.min - line.origin;
 									Vector3 maxDiff = box.max - line.origin;
-									if (normal * line.diff == 1) {
+									if (normal * line.diff == -1.f) {
 
 									}
 									if (value < t) {
 										t = value;
 										hitSurfaceNormal = normal;
+										if (normal * Vector3::up == 1.f) {
+											hitGroup = static_cast<int32_t>(key);
+										}
 									}
 								}
 							}
@@ -94,7 +126,9 @@ void PlayerComp::Update() {
 					}
 				}
 			}
+
 		}
+		registeredGroups_ = hitGroup;
 		if (t < 1.f) {
 
 			moveLine.origin = moveLine.GetProgress(t);
@@ -120,6 +154,10 @@ void PlayerComp::Update() {
 
 void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {
 
+}
+
+void PlayerComp::ImGuiWidget() {
+	ImGui::Text("KeyGroup : %i", registeredGroups_);
 }
 
 void PlayerComp::ApplyVariables(const char *const groupName) {

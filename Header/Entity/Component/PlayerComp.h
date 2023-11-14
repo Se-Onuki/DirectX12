@@ -4,6 +4,7 @@
 #include "../../Collision/Collision.h"
 
 #include "../../../Engine/DirectBase/File/VariantItem.h"
+#include "FollowCameraComp.h"
 
 class PlayerComp : public IComponent {
 public:
@@ -16,17 +17,24 @@ public:
 
 	void Draw(const Camera3D &camera) const override;
 
+	void ImGuiWidget() override;
+
 	void ApplyVariables(const char *const groupName) override;
 	void AddVariable(const char *const groupName) const override;
 
 	VariantItem<float> vMoveSpeed{ "MoveSpeed", 1000.f };
 	VariantItem<float> vJumpPower{ "JumpPower", 5.f };
 
+	void SetFollowCamera(FollowCameraComp *const followCamera) { pFollowCamera_ = followCamera; }
+
 private:
+
+	FollowCameraComp *pFollowCamera_ = nullptr;
 
 	static const std::string groupName_;
 
-	uint32_t registeredGroups_;
+	// 所属するグループ
+	int32_t registeredGroups_ = -1;
 
 	AABB collider_;
 
