@@ -284,8 +284,6 @@ public:
 	CMapTarget &operator=(const CMapTarget &) { return *this; };
 	~CMapTarget() = default;
 
-	friend ConstantContainer;
-
 	T *const operator=(T *const) = delete;
 	T &operator=(const T &other) {
 		if (target_) {

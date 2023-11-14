@@ -566,6 +566,9 @@
     <ClInclude Include="Header\Entity\Component\FollowCameraComp.h">
       <Filter>Header\Entity\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Math\Quaternion.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
