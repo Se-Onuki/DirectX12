@@ -10,11 +10,16 @@
             1.5,
             0.0
         ],
+        "ClampAngle": 1.919862151145935,
+        "CycleRange": 0.0,
+        "DashSpeed": 4.0,
+        "DashTime": 0.07500000298023224,
         "Head Translation": [
             0.0,
             2.0999999046325684,
             0.0
         ],
+        "SwayHand": 2.268928050994873,
         "Test": 100,
         "attackClampAngle": 1.919862151145935,
         "attackCycle": 90,

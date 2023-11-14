@@ -141,8 +141,14 @@ void GameScene::Update() {
 		}
 	}
 
+	for (auto &enemy : enemyList_) {
+		if (Collision::IsHit(*player_->GetCollider(), enemy->GetCollider())) {
+			Reset();
+		}
+	}
 
-	if (not player_ || player_->GetWorldTransform()->translate.y < -20.f
+
+	if (player_->GetWorldTransform()->translate.y < -20.f
 		|| Collision::IsHit(*goalCollider_.get(), *player_->GetCollider())) {
 		Reset();
 	}

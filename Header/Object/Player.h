@@ -54,8 +54,8 @@ class Player : public BaseCharacter {
 	VariantItem<float> attackSwingAngle_{ "SwayHand",130.f * Angle::Dig2Rad };
 	VariantItem<float> attackClampAngle_{ "ClampAngle",110.f * Angle::Dig2Rad };
 
-	VariantItem<float> vDashSpeed_{ "DashSpeed",10.f };
-	VariantItem<float> vDashTime_{ "DashTime",1.f };
+	VariantItem<float> vDashSpeed_{ "DashSpeed",4.f };
+	VariantItem<float> vDashTime_{ "DashTime",0.075f };
 
 	SoLib::DeltaTimer dashTimer_;
 

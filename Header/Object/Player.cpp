@@ -26,6 +26,9 @@ void Player::ApplyGlobalVariables() {
 	attackCycle_ = gVariables->Get<decltype(attackCycle_)>(groupName, "attackCycle");
 	gGroup >> attackStartAngle_;
 	gGroup >> attackSwingAngle_;
+
+	gGroup >> vDashSpeed_;
+	gGroup >> vDashTime_;
 }
 
 void Player::AddGlobalVariables() {
@@ -45,6 +48,9 @@ void Player::AddGlobalVariables() {
 	gGroup << attackClampAngle_;
 	gGroup << attackStartAngle_;
 	gGroup << attackSwingAngle_;
+
+	gGroup << vDashSpeed_;
+	gGroup << vDashTime_;
 }
 
 void Player::InitFloatingGimmick() { floatingParameter_ = 0.f; }
@@ -96,6 +102,9 @@ void Player::BehaviorRootUpdate() {
 			++vPad.stickL_.x;
 		}
 		vPad.stickL_ = vPad.stickL_.Nomalize();
+		if (directInput->IsPress(DIK_LSHIFT)) {
+			vPad.button_ |= static_cast<WORD>(KeyCode::RIGHT_SHOULDER);
+		}
 	}
 
 	// 左スティックのデータを受け取る
@@ -117,15 +126,15 @@ void Player::BehaviorRootUpdate() {
 
 		Vector3 moveCross = Vector3::front.cross(move.Nomalize());
 		float moveDot = Vector3::front * move.Nomalize();
-
+		// ベクトルから回転行列を算出
 		Matrix4x4 rotateMat = Matrix4x4::AnyAngleRotate(moveCross.Nomalize(), moveDot, moveCross.Length());
 
 		// もし、180度であった場合は調整
 		if (moveDot == -1.f) {
-			rotateMat = Matrix4x4::AnyAngleRotate(Vector3::up, moveDot, moveCross.Length());
+			rotateMat = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, 180._deg);
 		}
 
-		transformOrigin_->rotateMat_ = rotateMat; // ベクトルから回転行列を算出
+		transformOrigin_->rotateMat_ = rotateMat;
 	}
 
 	transformOrigin_->translate.y += -0.5f; // 移動量を追加
@@ -136,6 +145,9 @@ void Player::BehaviorRootUpdate() {
 
 	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER) || (vPad.button_ & static_cast<WORD>(KeyCode::RIGHT_SHOULDER))) {
 		behaviorRequest_ = Behavior::kAttack;
+	}
+	if (input_->GetXInput()->IsPress(KeyCode::A) || (vPad.button_ & static_cast<WORD>(KeyCode::A))) {
+		behaviorRequest_ = Behavior::kDash;
 	}
 	//}
 
@@ -151,8 +163,19 @@ void Player::BehaviorDashUpdate(float deltaTime) {
 	dashTimer_.Update(deltaTime);
 
 	Vector3 moveVec = Vector3::front;
-	moveVec = TransformNormal(moveVec, transformOrigin_->matWorld_);
+	Matrix4x4 localMat = transformOrigin_->matWorld_;
+	if (transformOrigin_->parent_) {
+		localMat *= transformOrigin_->parent_->matWorld_.InverseSRT();
+	}
+	moveVec = TransformNormal(moveVec, localMat) * vDashSpeed_;
+	transformOrigin_->translate += moveVec;
 
+	UpdateWorldMatrix();
+
+	// 時間が切れたら終了
+	if (dashTimer_.IsFinish()) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
 }
 
 void Player::BehaviorAttackInit() { floatingParameter_ = 0.f; }
