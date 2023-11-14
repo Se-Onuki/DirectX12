@@ -91,7 +91,9 @@ struct Matrix4x4 final {
 	static Matrix4x4 EulerRotate(EulerAngle, float angle);
 	static Matrix4x4 EulerRotate(const Vector3 &angle);
 
-	static Matrix4x4 AnyAxisRotation();
+	static Matrix4x4 AnyAngleRotate(const Vector3 &axis, const float angle);
+
+	static Matrix4x4 AnyAngleRotate(const Vector3 &axis, const float cos, const float sin);
 
 	/// @brief 単位行列関数
 	/// @return 単位行列

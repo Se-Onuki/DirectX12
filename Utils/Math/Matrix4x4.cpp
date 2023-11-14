@@ -165,6 +165,27 @@ Matrix4x4 Matrix4x4::EulerRotate(const Vector3 &rotate) {
 		1 };
 }
 
+Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float angle) {
+
+	const float cosTheta = std::cos(angle);
+	const float sinTheta = std::sin(angle);
+
+	return AnyAngleRotate(axis, cosTheta, sinTheta);
+}
+
+Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float cos, const float sin) {
+
+	const float minusCosTheta = 1.f - cos;
+
+	return Matrix4x4{
+		Vector4{ std::powf(axis.x, 2) * minusCosTheta + cos,		axis.x * axis.y * minusCosTheta + axis.z * sin,	axis.x * axis.y * minusCosTheta - axis.y * sin,	0.f },
+		Vector4{ axis.x * axis.y * minusCosTheta - axis.z * sin,	std::powf(axis.y, 2) * minusCosTheta + cos,		axis.y * axis.z * minusCosTheta + axis.x * sin,	0.f },
+		Vector4{ axis.x * axis.z * minusCosTheta + axis.y * sin,	axis.y * axis.z * minusCosTheta - axis.x * sin,	std::powf(axis.z,2) * minusCosTheta + cos,			0.f },
+		Vector4{ 0.f, 0.f, 0.f, 1.f },
+	};
+}
+
+
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4 &Second) const {
 	return (Matrix4x4{
 		this->m[0][0] + Second.m[0][0], this->m[0][1] + Second.m[0][1],
@@ -360,8 +381,8 @@ Matrix4x4 Matrix4x4::LookAtLH(const Vector3 &cameraPosition, const Vector3 &came
 		{
 			xaxis * cameraPosition,
 			yaxis * cameraPosition,
-			zaxis * cameraPosition,	
-			1.f	
+			zaxis * cameraPosition,
+			1.f
 		},
 	};
 
