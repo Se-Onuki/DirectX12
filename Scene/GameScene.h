@@ -18,6 +18,8 @@
 #include "../Header/Object/Skydome.h"
 #include "../Header/Object/Platform.h"
 #include "../Header/Object/Enemy.h"
+#include "../Engine/DirectBase/Base/StructBuffer.h"
+#include "../Header/Object/CollisionDrawer.h"
 
 class GameScene : public IScene {
 public:
@@ -52,5 +54,7 @@ private:
 	std::array<std::unique_ptr<Platform>, 4u> platform_ = { nullptr };
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
+	CollisionDrawer *collisionDrawer_;
 
 };

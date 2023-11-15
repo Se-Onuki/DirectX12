@@ -19,9 +19,11 @@ class Model;
 class Player : public BaseCharacter {
 
 	enum class Behavior {
-		kRoot,   // 通常状態
-		kDash,   // ダッシュ状態
-		kAttack, // 攻撃状態
+		kRoot,		// 通常状態
+		kDash,		// ダッシュ状態
+		kBrake,		// ブレーキ状態
+		kAttack,	// 攻撃状態
+		kJump,		// ジャンプ状態
 	};
 
 	Behavior behavior_ = Behavior::kRoot;

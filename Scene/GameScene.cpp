@@ -15,6 +15,8 @@ GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	// collisionManager_ = CollisionManager::GetInstance();
+
+	collisionDrawer_ = CollisionDrawer::GetInstance();
 }
 
 GameScene::~GameScene() {
@@ -148,7 +150,7 @@ void GameScene::Update() {
 		}
 	);
 
-	const auto*const weapon = player_->GetWeaponCollider();
+	const auto *const weapon = player_->GetWeaponCollider();
 	if (weapon) {
 		for (auto &enemy : enemyList_) {
 			if (Collision::IsHit(enemy->GetCollider(), *weapon)) {
