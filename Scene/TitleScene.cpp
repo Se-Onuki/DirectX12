@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
 #include "../Engine/DirectBase/Model/ModelManager.h"
+#include "../Utils/SoLib/SoLib.h"
 
 TitleScene::TitleScene() {
 	input_ = Input::GetInstance();
@@ -23,9 +24,10 @@ void TitleScene::OnExit() {
 
 void TitleScene::Update() {
 
-	if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
-		sceneManager_->ChangeScene(new GameScene, 60);
-	}
+	rotateMat_ = Matrix4x4::AnyAngleRotate(axis_, angle_);
+
+	ImGui::Text("rotateMat<%s> :\n%s", SoLib::Traits<decltype(rotateMat_)>::Name, SoLib::to_string(rotateMat_).c_str());
+
 }
 
 void TitleScene::Draw() {

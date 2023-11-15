@@ -105,7 +105,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->Init();
-	sceneManager->ChangeScene(new GameScene);
+	sceneManager->ChangeScene(new TitleScene);
 
 
 	// ウィンドウのxボタンが押されるまでループ

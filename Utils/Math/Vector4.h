@@ -124,5 +124,19 @@ struct Vector4 {
 		return (this->x == vec.x) && (this->y == vec.y) && (this->z == vec.z) && (this->w == vec.w);
 	}
 
+	static uint32_t size() { return 4u; }
+
+	float *const begin() { return &x; }
+	const float *const begin() const { return &x; }
+	const float *const cbegin() const { return &x; }
+
+	float *const end() { return begin() + size(); }
+	const float *const end() const { return end(); }
+	const float *const cend() const { return end(); }
+
+	float *const data() { return begin(); }
+	const float *const data() const { return begin(); }
+	const float *const cdata() const { return begin(); }
+
 private:
 };
