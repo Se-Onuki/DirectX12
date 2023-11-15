@@ -506,6 +506,9 @@
     <ClInclude Include="Utils\Math\Quaternion.h">
       <Filter>Utils\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Math\Matrix.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
