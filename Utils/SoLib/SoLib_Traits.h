@@ -163,64 +163,54 @@ namespace SoLib {
 	};
 
 
-	// 仮に変換できない型が与えられた場合には空文字を返す
 	template <typename T, typename = void>
 	struct has_to_string : std::false_type {};
 
-	// std::to_stringが存在する場合には true_type になる特殊化
 	template <typename T>
 	struct has_to_string<T, std::void_t<decltype(std::to_string(std::declval<T>()))>> : std::true_type {};
 
 	template <typename T>
-	std::string to_string_custom(const T &data);
-
-	template<typename T>
 	std::string to_string(const T &data) {
 		if constexpr (has_to_string<T>::value) {
 			return std::to_string(data);
 		}
-		else {
-			return SoLib::to_string_custom(data);
-		}
-	}
-
-	template <typename T>
-	std::string to_string_custom(const T &data) {
-		uint32_t itemCount = Traits<T>::Size;
-		if (itemCount == 0u) {
+		else if constexpr (Traits<T>::Size == 0u) {
 			return "";
 		}
-		std::string result;
+		else {
 
-		if constexpr (Traits<T>::Rows > 1u) {
-			result += "{\n";
-		}
-		for (uint32_t y = 0; y < Traits<T>::Rows; ++y) {
+			std::string result;
+
 			if constexpr (Traits<T>::Rows > 1u) {
-				result += "\t";
+				result += "{\n";
 			}
-			if constexpr (Traits<T>::Columns > 1u) {
-				result += "{ ";
-			}
-			for (uint32_t x = 0u; x < Traits<T>::Columns; ++x) {
-				result += to_string(*(Traits<T>::CBegin(data) + y * Traits<T>::Columns + x));
-				if (x < Traits<T>::Columns - 1u) {
-					result += ", ";
+			for (uint32_t y = 0; y < Traits<T>::Rows; ++y) {
+				if constexpr (Traits<T>::Rows > 1u) {
+					result += "\t";
+				}
+				if constexpr (Traits<T>::Columns > 1u) {
+					result += "{ ";
+				}
+				for (uint32_t x = 0u; x < Traits<T>::Columns; ++x) {
+					result += to_string(*(Traits<T>::CBegin(data) + y * Traits<T>::Columns + x));
+					if (x < Traits<T>::Columns - 1u) {
+						result += ", ";
+					}
+				}
+				if constexpr (Traits<T>::Columns > 1u) {
+					result += " }";
+				}
+				if (y < Traits<T>::Rows - 1u) {
+					result += ",\n";
 				}
 			}
-			if constexpr (Traits<T>::Columns > 1u) {
-				result += " }";
-			}
-			if (y < Traits<T>::Rows - 1u) {
-				result += ",\n";
-			}
-		}
 
-		if constexpr (Traits<T>::Rows > 1u) {
-			result += "\n}";
-		}
+			if constexpr (Traits<T>::Rows > 1u) {
+				result += "\n}";
+			}
 
-		return result;
+			return result;
+		}
 	}
 
 }
