@@ -17,8 +17,8 @@ private: //
 	// シングルトンパターンの設定
 	ParticleManager() = default;
 	~ParticleManager() = default;
-	ParticleManager(const ParticleManager&) = delete;
-	const ParticleManager& operator=(const ParticleManager&) = delete;
+	ParticleManager(const ParticleManager &) = delete;
+	const ParticleManager &operator=(const ParticleManager &) = delete;
 
 public:
 
@@ -26,7 +26,7 @@ public:
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>シングルトンインスタンス</returns>
-	static ParticleManager* GetInstance() {
+	static ParticleManager *GetInstance() {
 		static ParticleManager instance;
 		return &instance;
 	};
@@ -43,9 +43,9 @@ public:
 	/// <param name="deltaTime">経過秒数</param>
 	void Update(float deltaTime);
 
-	void Draw(const Camera3D& camera);
+	void Draw(const Camera3D &camera);
 
-	IParticle* AddParticle(const Model* const modelKey, std::unique_ptr<IParticle> particle);
+	IParticle *AddParticle(const Model *const modelKey, std::unique_ptr<IParticle> particle);
 
 private: // メンバ変数
 
@@ -54,7 +54,7 @@ private: // メンバ変数
 
 	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
 
-	std::unordered_map<const Model*, std::unique_ptr<ParticleList>> particleMap_;
+	std::unordered_map<const Model *, std::unique_ptr<ParticleList>> particleMap_;
 
 };
 
@@ -64,9 +64,9 @@ public:
 
 	void Update(float deltaTime);
 
-	IParticle* const push_back(std::unique_ptr<IParticle> particle);
+	IParticle *const push_back(std::unique_ptr<IParticle> particle);
 
-	const auto& GetParticleList() { return particles_; }
+	const auto &GetParticleList() { return particles_; }
 
 	uint32_t size() const { return static_cast<uint32_t>(particles_.size()); }
 
@@ -76,12 +76,17 @@ public:
 	auto end() { return particles_.end(); }
 	auto end() const { return particles_.cend(); }
 
-	void SetModel(const Model* const model) { model_ = model; }
+	void SetModel(const Model *const model) { model_ = model; }
 
-private: // 
+	void SetLocation(const uint32_t location) { indexLocation_ = location; }
+	const auto &GetLoaction() const { return indexLocation_; }
+
+private:
+
+	CBuffer<uint32_t> indexLocation_;
 
 	// 
-	const Model* model_;
+	const Model *model_;
 	// 
 	std::list<std::unique_ptr<IParticle>> particles_;
 };
@@ -100,11 +105,11 @@ public:
 
 public:
 
-	const BaseTransform& GetTransform()const { return transform_; }
+	const BaseTransform &GetTransform()const { return transform_; }
 
-	const Vector4& GetColor() const { return color_; }
+	const Vector4 &GetColor() const { return color_; }
 
-	const bool& GetisAlive() const { return isAlive_; }
+	const bool &GetisAlive() const { return isAlive_; }
 
 
 	BaseTransform transform_;
