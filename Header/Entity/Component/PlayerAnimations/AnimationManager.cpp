@@ -8,7 +8,7 @@ void AnimationManager::Initialize()
 	animParameters_->Initialize();							   // 初期化
 
 	// 現在アニメーションをアイドルに設定
-	currentAnimation_ = new BaseAnimation();	 // インスタンス生成
+	currentAnimation_ = std::make_unique<BaseAnimation>();	 // インスタンス生成
 	currentAnimation_->SetEntity(entity_);		 // アニメーションさせるエンティティをセット
 	currentAnimation_->Initialize("Idle", true); // 初期化
 }
@@ -29,7 +29,7 @@ void AnimationManager::Update()
 	if (nextAnimation_ != nullptr) {
 		// 現在アニメーションが終了している場合
 		if (currentAnimation_->GetIsEnd()) {
-			currentAnimation_ = nextAnimation_;  // 現在アニメーションに次のアニメーションをセット
+			currentAnimation_ = std::move(nextAnimation_);  // 現在アニメーションに次のアニメーションをセット
 			nextAnimation_ = nullptr;			 // アニメーションを破棄
 		}
 	}
@@ -61,7 +61,7 @@ void AnimationManager::Update()
 
 		ImGui::TreePop();
 	}
-	
+
 
 	// アニメーション再生
 	if (ImGui::Button("PlayAnim")) {
@@ -79,19 +79,18 @@ void AnimationManager::Update()
 				currentAnimation_->SetIsPlay(true);
 		}
 	}
-		
+
 	ImGui::End();
 #endif // _DEBUG
 }
 
 void AnimationManager::SetNextAnimation(Behavior next, bool isLoop, AnimEasing::EasingType type, float transitionTime)
 {
-	nextAnimation_ = new BaseAnimation();
+	nextAnimation_ = std::make_unique<BaseAnimation>();
 	nextAnimation_->SetEntity(entity_);
 
 	// 次のアニメーションを設定
-	switch (next)
-	{
+	switch (next) {
 	case AnimationManager::kIdle:
 		nextAnimation_->Initialize("Idle", isLoop, type, transitionTime);
 		break;
@@ -116,6 +115,6 @@ void AnimationManager::SetNextAnimation(Behavior next, bool isLoop, AnimEasing::
 	case AnimationManager::kRotateEnd:
 		nextAnimation_->Initialize("RotateEnd", isLoop, type, transitionTime);
 		break;
-		
+
 	}
 }

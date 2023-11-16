@@ -6,6 +6,7 @@
 #include "../../../Engine/DirectBase/File/VariantItem.h"
 #include "FollowCameraComp.h"
 #include "../../../Engine/DirectBase/Model/Model.h"
+#include "PlayerAnimations/AnimationManager.h"
 
 class PlayerComp : public IComponent {
 public:
@@ -41,6 +42,7 @@ private:
 
 	Input *input_;
 
+	AnimationManager::Behavior state_;
 
 	Material backMaterial_;
 };

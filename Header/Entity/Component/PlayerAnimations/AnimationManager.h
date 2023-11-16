@@ -62,10 +62,10 @@ private: // メンバ変数
 	Entity* entity_ = nullptr;
 
 	// 現在のアニメーション
-	BaseAnimation* currentAnimation_ = nullptr;
+	std::unique_ptr<BaseAnimation> currentAnimation_ = nullptr;
 
 	// 次のアニメーション
-	BaseAnimation* nextAnimation_ = nullptr;
+	std::unique_ptr<BaseAnimation> nextAnimation_ = nullptr;
 
 #ifdef _DEBUG // ImGUiデバッグ用
 

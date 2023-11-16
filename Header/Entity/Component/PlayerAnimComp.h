@@ -38,6 +38,6 @@ private: // メンバ変数
 	Transform FootTransform_R_; // 右足トランスフォーム
 
 	// アニメーションマネージャー
-	AnimationManager* animManager_ = nullptr;
+	std::unique_ptr<AnimationManager> animManager_ = nullptr;
 };
 
