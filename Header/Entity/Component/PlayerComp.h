@@ -42,7 +42,5 @@ private:
 
 	Input *input_;
 
-	AnimationManager::Behavior state_;
-
 	Material backMaterial_;
 };

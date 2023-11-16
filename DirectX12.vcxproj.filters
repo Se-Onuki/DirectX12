@@ -103,6 +103,9 @@
     <Filter Include="Header\Entity\Object\Particle">
       <UniqueIdentifier>{f27eee7f-b96d-41b7-8091-4390e104378f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Component\PlayerState">
+      <UniqueIdentifier>{6fd80726-859d-44d9-8609-ea70a82ea95a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -323,6 +326,9 @@
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerState\IPlayerState.cpp">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -595,6 +601,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\StarParticle.h">
       <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerState\IPlayerState.h">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

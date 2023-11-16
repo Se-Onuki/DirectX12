@@ -88,6 +88,7 @@ void GameScene::OnEnter() {
 	modelComp->AddBone("Body", boxModel);
 
 	player_->AddComponent<PlayerComp>();
+	player_->AddComponent<PlayerAnimComp>();
 
 	// particleManager->AddParticle(modelManager->GetModel("PlayerLing"), std::make_unique<StarParticle>(player_->transform_.rotate));
 
