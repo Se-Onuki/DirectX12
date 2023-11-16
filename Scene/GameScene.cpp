@@ -18,6 +18,7 @@
 #include "../Header/Object/Particle/ParticleManager.h"
 #include "../Header/Object/Particle/TestParticle.h"
 #include "../Header/Object/Particle/StarParticle.h"
+#include "../Header/Entity/Component/CannonComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -109,9 +110,8 @@ void GameScene::OnEnter() {
 
 
 
-	cannon_ = std::unique_ptr<Entity>();
+	cannon_ = std::make_unique<Entity>();
 	cannon_->AddComponent<CannonComp>();
-
 
 }
 

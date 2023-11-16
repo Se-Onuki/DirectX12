@@ -4,7 +4,7 @@
 class CannonComp : public IComponent {
 public:
 	using IComponent::IComponent;
-	~CannonComp() = default;
+	~CannonComp() override = default;
 
 private:
 
