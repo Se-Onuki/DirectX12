@@ -15,7 +15,7 @@ class PlayerBone
 private: // サブクラス
 
 	// SRT構造体
-	struct Transform {
+	struct InnerTransform {
 		Vector3 scale;	   // 拡縮
 		Vector3 rotate;	   // 回転
 		Vector3 translate; // 位置
@@ -30,13 +30,13 @@ private: // サブクラス
 public: // パブリックなサブクラス
 
 	struct Bone {
-		Transform body;   // 体
-		Transform eye;	  // 瞳
-		Transform ling;	  // 輪っか
-		Transform arm_L;  // 左腕
-		Transform arm_R;  // 右腕
-		Transform foot_L; // 左足
-		Transform foot_R; // 右足
+		InnerTransform body;   // 体
+		InnerTransform eye;	  // 瞳
+		InnerTransform ling;	  // 輪っか
+		InnerTransform arm_L;  // 左腕
+		InnerTransform arm_R;  // 右腕
+		InnerTransform foot_L; // 左足
+		InnerTransform foot_R; // 右足
 
 		void Initilaize() {
 			body.Initilaize();   // 体
