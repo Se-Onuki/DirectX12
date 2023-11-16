@@ -34,8 +34,15 @@ void Entity::Update(float deltaTime) {
 }
 
 void Entity::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
+	auto *const modelComp = GetComponent<ModelComp>();
+
+	if (modelComp) {
+		modelComp->Draw(vp);
+	}
 	for (auto &component : componentMap_) {
-		component.second->Draw(vp);
+		if (modelComp != component.second.get()) {
+			component.second->Draw(vp);
+		}
 	}
 }
 
@@ -58,5 +65,5 @@ void Entity::ImGuiWidget() {
 	}
 }
 
-IComponent::IComponent(Entity *const object) : object_(object), transform_(&static_cast<BaseTransform&>(object->transform_)) {
+IComponent::IComponent(Entity *const object) : object_(object), transform_(&static_cast<BaseTransform &>(object->transform_)) {
 }

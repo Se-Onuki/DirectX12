@@ -122,11 +122,13 @@ struct LineBase final {
 	Vector3 diff;   // 終点へのベクトル
 	LineType lineType = LineType::Segment;
 
-	[[nodiscard]] Vector3 GetEnd() const { return origin + diff; }
-	[[nodiscard]] Vector3 GetProgress(const float &t) const;
-	[[nodiscard]] Vector3 Project(const Vector3 &point) const;
-	[[nodiscard]] Vector3 ClosestPoint(const Vector3 &point) const;
-	[[nodiscard]] const float Clamp(const float &t) const;
+	void SetEnd(const Vector3 &end) { diff = end - origin; }
+
+	Vector3 GetEnd() const { return origin + diff; }
+	Vector3 GetProgress(const float &t) const;
+	Vector3 Project(const Vector3 &point) const;
+	Vector3 ClosestPoint(const Vector3 &point) const;
+	const float Clamp(const float &t) const;
 
 	void ImGuiDebug(const std::string &group);
 
@@ -146,10 +148,19 @@ struct AABB {
 	Vector3 GetRadius() const;
 
 	Vector3 GetNormal(const Vector3 &surface) const;
+	Vector3 GetNormal(const Vector3 &surface, const Vector3 &direction) const;
+
+	/// @brief 新規生成
+	/// @param origin 原点
+	/// @param radius 半径
+	/// @return AABB構造体
+	static AABB Create(const Vector3 &origin, const Vector3 &radius);
 
 	void ImGuiDebug(const std::string &group);
 	const AABB &Swaping();
 
+	/// @brief 全ての頂点情報を取得する
+	/// @return 各種頂点 [ 下面4つ , 上面4つ]
 	std::array<Vector3, 8u> GetVertex() const;
 };
 

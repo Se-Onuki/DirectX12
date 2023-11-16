@@ -25,6 +25,7 @@ public:
 
 		void Update();
 		void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
+		void Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const;
 	};
 
 	//using ModelPair = std::pair<Transform, Model *>;
@@ -50,12 +51,14 @@ public:
 
 	void Update() override;
 	void Draw(const Camera<Render::CameraType::Projecction> &vp)const override;
+	void Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const;
 
 	ModelBone *const AddBone(const std::string &key, Model *const model, const Transform &srt = {});
 	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const Transform &srt);
 
 	ModelBone *const GetBone(const std::string &key) { return modelKey_.at(key); }
 
+	const auto &GetModelTree() const { return modelTree_; }
 
 private:
 	std::list<std::unique_ptr<ModelBone>> modelTree_;

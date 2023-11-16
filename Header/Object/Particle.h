@@ -8,8 +8,8 @@ struct Particle {
 		Vector4 color;
 	};
 	BaseTransform transform_;
-	CMapTarget<Vector4> color_;
-
+	Vector4 color_;
+	
 	using map_struct = ParticleData;
 	Particle &operator=(map_struct *const target);
 };

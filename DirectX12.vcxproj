@@ -130,6 +130,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
+    <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.cpp" />
@@ -147,6 +148,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\FollowCamera.cpp" />
     <ClCompile Include="Header\Object\LevelElementManager.cpp" />
     <ClCompile Include="Header\Object\Particle.cpp" />
+    <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="Header\Object\Particle\ParticleManager.cpp" />
+    <ClCompile Include="Header\Object\Particle\StarParticle.cpp" />
+    <ClCompile Include="Header\Object\Particle\TestParticle.cpp" />
     <ClCompile Include="Header\Object\Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
@@ -211,6 +216,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Collision\Collision.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
+    <ClInclude Include="Header\Entity\Component\FollowCameraComp.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.h" />
@@ -230,6 +236,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\LevelElementManager.h" />
     <ClInclude Include="Header\Object\LevelManager.h" />
     <ClInclude Include="Header\Object\Particle.h" />
+    <ClInclude Include="Header\Object\Particle\ParticleEmitter.h" />
+    <ClInclude Include="Header\Object\Particle\ParticleManager.h" />
+    <ClInclude Include="Header\Object\Particle\StarParticle.h" />
+    <ClInclude Include="Header\Object\Particle\TestParticle.h" />
     <ClInclude Include="Header\Object\Player.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
@@ -241,6 +251,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\Math\Matrix3x3.h" />
     <ClInclude Include="Utils\Math\Matrix4x4.h" />
     <ClInclude Include="Utils\Math\Polar.h" />
+    <ClInclude Include="Utils\Math\Quaternion.h" />
     <ClInclude Include="Utils\Math\Random.h" />
     <ClInclude Include="Utils\Math\Transform.h" />
     <ClInclude Include="Utils\Math\ValueRange.h" />

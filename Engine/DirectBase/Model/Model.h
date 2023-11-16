@@ -40,11 +40,14 @@ public:
 	};
 
 	enum class RootParameter : uint32_t {
-		kWorldTransform, // ワールド変換行列
-		kViewProjection, // ビュープロジェクション変換行列
-		kMaterial,       // マテリアル
-		kTexture,        // テクスチャ
-		kLight,          // ライト
+		kWorldTransform,	// ワールド変換行列
+		kViewProjection,	// ビュープロジェクション変換行列
+		kMaterial,			// マテリアル
+		kTexture,			// テクスチャ
+		kLight,				// ライト
+		kInstanceLocation,	// インスタンス先頭値
+
+		kSize,				// enumのサイズ
 	};
 
 	enum class BlendMode : uint32_t {
@@ -55,16 +58,19 @@ public:
 		kMultily,	// 乗算合成
 		kScreen,	// スクリーン合成
 
+		kBacker,	// 後ろならば
+		kAlways,	// 常に
+
 		kTotal	// 総数
 	};
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// モデル用パイプライン
-	static std::array<std::array<ComPtr<ID3D12PipelineState>, 6u>, 2u> graphicsPipelineState_;
+	static std::array<std::array<ComPtr<ID3D12PipelineState>, 8u>, 2u> graphicsPipelineState_;
 	static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
 	static PipelineType sPipelineType_;
 
-	static std::array<std::array<PipelineState, 6u>, 2u> graphicsPipelineStateClass_;
+	static std::array<std::array<PipelineState, 8u>, 2u> graphicsPipelineStateClass_;
 	static std::array<RootSignature, 2u> rootSignatureClass_;
 
 	static void CreatePipeLine();
@@ -81,7 +87,8 @@ public:
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
-	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const;
+	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera, const Material &material) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t>& drawIndex, const Camera<Render::CameraType::Projecction> &camera) const;
 	template <typename T>
 	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const;
 
@@ -171,7 +178,7 @@ public:
 	void SetMaterial(Material *const material);
 	Material *const GetMaterial() const { return material_; }
 
-	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u) const;
+	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const Material *const material = nullptr) const;
 
 
 };

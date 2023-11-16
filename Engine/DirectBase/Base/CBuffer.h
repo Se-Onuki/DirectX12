@@ -189,7 +189,7 @@ inline T *const CBuffer<T, false>::operator->() const noexcept {
 template<SoLib::IsNotPointer T>
 inline CBuffer<T, false> &CBuffer<T, false>::operator=(const T &other) {
 	if (mapData_) {
-		*mapData_ = static_cast<T>(other);
+		*mapData_ = static_cast<const T &>(other);
 	}
 	return *this;
 }
@@ -234,8 +234,8 @@ public:
 	inline const T *const operator&() const noexcept { return &data_; }		// dataのメンバへのアクセス(const)
 
 
-	inline T &operator=(const T &other) {	// コピー演算子
-		data_ = static_cast<T>(other);
+	inline ConstantContainer &operator=(const T &other) {	// コピー演算子
+		data_ = static_cast<const T &>(other);
 		if (data_.mapTarget_ && other.mapTarget_) {
 			*data_.mapTarget_ = *other.mapTarget_;
 		}
@@ -250,8 +250,9 @@ public:
 
 public:
 
-	ConstantContainer(const T &data = {}) : data_(data) { CreateBuffer(); };
-	T &operator=(const ConstantContainer &other) { return *this = static_cast<const T &>(other); }
+	ConstantContainer() { CreateBuffer(); };
+
+	ConstantContainer &operator=(const ConstantContainer &other);
 	~ConstantContainer() = default;
 
 private:
@@ -283,8 +284,6 @@ public:
 	CMapTarget &operator=(const CMapTarget &) { return *this; };
 	~CMapTarget() = default;
 
-	friend ConstantContainer;
-
 	T *const operator=(T *const) = delete;
 	T &operator=(const T &other) {
 		if (target_) {
@@ -309,3 +308,9 @@ private:
 };
 
 #pragma endregion
+
+template<SoLib::IsNotPointer T>
+inline ConstantContainer<T> &ConstantContainer<T>::operator=(const ConstantContainer<T> &other) {
+	*this = other.data_;
+	return *this;
+}
