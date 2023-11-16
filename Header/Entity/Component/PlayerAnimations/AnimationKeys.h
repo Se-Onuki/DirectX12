@@ -19,11 +19,13 @@ public: // パブリックなサブクラス
 		PlayerBone bone;
 		int type;
 		float animationTime;
+		float lingRotateSpeed;
 
 		void Initialize() {
 			bone.Initialize("None", "None");
 			type = AnimEasing::kLinear;
 			animationTime = 0.0f;
+			lingRotateSpeed = 0.0f;
 		}
 	};
 

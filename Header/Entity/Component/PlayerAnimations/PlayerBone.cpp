@@ -134,7 +134,9 @@ void PlayerBone::ApplyItem(GlobalVariables* gv)
 	bone_.eye.rotate = gv->Get<Vector3>(groupName_, boneName_ + "Eye_Rotate");
 	bone_.eye.translate = gv->Get<Vector3>(groupName_, boneName_ + "Eye_Translate");
 	bone_.ling.scale = gv->Get<Vector3>(groupName_, boneName_ + "Ling_Scale");
-	bone_.ling.rotate = gv->Get<Vector3>(groupName_, boneName_ + "Ling_Rotate");
+	Vector3 rotate = gv->Get<Vector3>(groupName_, boneName_ + "Ling_Rotate");
+	bone_.ling.rotate.x = rotate.x;
+	bone_.ling.rotate.z = rotate.z;
 	bone_.ling.translate = gv->Get<Vector3>(groupName_, boneName_ + "Ling_Translate");
 	bone_.arm_L.scale = gv->Get<Vector3>(groupName_, boneName_ + "Arm_L_Scale");
 	bone_.arm_L.rotate = gv->Get<Vector3>(groupName_, boneName_ + "Arm_L_Rotate");
