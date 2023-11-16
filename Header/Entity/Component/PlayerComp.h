@@ -42,7 +42,7 @@ private:
 
 	Input *input_;
 
-	AnimationManager::Behavior state_;
+	PlayerBehavior state_;
 
 	Material backMaterial_;
 };

@@ -1,4 +1,5 @@
 #include "AnimationManager.h"
+#include "BaseAnimation.h"
 
 void AnimationManager::Initialize()
 {
@@ -66,7 +67,7 @@ void AnimationManager::Update()
 	// アニメーション再生
 	if (ImGui::Button("PlayAnim")) {
 		currentAnimation_->SetIsEnd(true);
-		SetNextAnimation((Behavior)imGuiNextbehavior_, imGuiIsLoop_, (AnimEasing::EasingType)imGuiTransitonType_, imGuiTransitionTime_);
+		SetNextAnimation((PlayerBehavior)imGuiNextbehavior_, imGuiIsLoop_, (AnimEasing::EasingType)imGuiTransitonType_, imGuiTransitionTime_);
 	}
 
 	if (!currentAnimation_->GetIsEnd()) {
@@ -84,37 +85,39 @@ void AnimationManager::Update()
 #endif // _DEBUG
 }
 
-void AnimationManager::SetNextAnimation(Behavior next, bool isLoop, AnimEasing::EasingType type, float transitionTime)
+void AnimationManager::SetNextAnimation(PlayerBehavior next, bool isLoop, AnimEasing::EasingType type, float transitionTime)
 {
 	nextAnimation_ = std::make_unique<BaseAnimation>();
 	nextAnimation_->SetEntity(entity_);
 
 	// 次のアニメーションを設定
 	switch (next) {
-	case AnimationManager::kIdle:
+	case PlayerBehavior::kIdle:
 		nextAnimation_->Initialize("Idle", isLoop, type, transitionTime);
 		break;
-	case AnimationManager::kMove:
+	case PlayerBehavior::kMove:
 		nextAnimation_->Initialize("Move", isLoop, type, transitionTime);
 		break;
-	case AnimationManager::kJumpStart:
+	case PlayerBehavior::kJumpStart:
 		nextAnimation_->Initialize("StartJump", isLoop, type, transitionTime);
 		break;
-	case AnimationManager::kHovering:
+	case PlayerBehavior::kHovering:
 		nextAnimation_->Initialize("Hovering", isLoop, type, transitionTime);
 		break;
-	case AnimationManager::kLand:
+	case PlayerBehavior::kLand:
 		nextAnimation_->Initialize("Land", isLoop, type, transitionTime);
 		break;
-	case AnimationManager::kRotateStart:
+	case PlayerBehavior::kRotateStart:
 		nextAnimation_->Initialize("RotateStart", isLoop, type, transitionTime);
 		break;
-	case AnimationManager::kRotating:
+	case PlayerBehavior::kRotating:
 		nextAnimation_->Initialize("Rotating", isLoop, type, transitionTime);
 		break;
-	case AnimationManager::kRotateEnd:
+	case PlayerBehavior::kRotateEnd:
 		nextAnimation_->Initialize("RotateEnd", isLoop, type, transitionTime);
 		break;
-
 	}
+
+	// ビヘイビアをセット
+	nextAnimation_->SetBehavior(next);
 }
