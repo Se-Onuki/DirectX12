@@ -31,8 +31,8 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
-	static auto *const modelManager = ModelManager::GetInstance();
-	static auto *const particleManager = ParticleManager::GetInstance();
+	static auto* const modelManager = ModelManager::GetInstance();
+	static auto* const particleManager = ParticleManager::GetInstance();
 
 	// パーティクルマネージャの初期化
 	particleManager->Init(256); // パーティクルの最大数は256
@@ -59,7 +59,7 @@ void GameScene::OnEnter() {
 	//transform_ = transform;
 	camera_.Init();
 
-	particleManager->AddParticle(modelManager->GetModel("Plane"), std::make_unique<TestParticle>());
+	particleManager->AddParticle(modelManager->GetModel("Plane"), std::make_unique<TestParticle>())->transform_.translate.z += 10.f;
 	particleManager->AddParticle(modelManager->GetModel("Box"), std::make_unique<TestParticle>());
 
 	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
@@ -79,11 +79,11 @@ void GameScene::OnEnter() {
 
 #pragma region Player
 
-	Model *const boxModel = ModelManager::GetInstance()->GetModel("Box");
+	Model* const boxModel = ModelManager::GetInstance()->GetModel("Box");
 	player_ = std::make_unique<Entity>();
 	//auto*const rigidbody =
 	player_->AddComponent<Rigidbody>();
-	auto *const modelComp =
+	auto* const modelComp =
 		player_->AddComponent<ModelComp>();
 	modelComp->AddBone("Body", boxModel);
 
@@ -95,7 +95,7 @@ void GameScene::OnEnter() {
 #pragma region FollowCamera
 
 	followCamera_ = std::make_unique<Entity>();
-	auto *const followComp = followCamera_->AddComponent<FollowCameraComp>();
+	auto* const followComp = followCamera_->AddComponent<FollowCameraComp>();
 	followComp->SetTarget(&player_->transform_);
 
 #pragma endregion
@@ -111,9 +111,9 @@ void GameScene::OnExit() {}
 void GameScene::Update() {
 
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
-	static auto *const colliderManager = CollisionManager::GetInstance();
+	static auto* const colliderManager = CollisionManager::GetInstance();
 	static auto* const particleManager = ParticleManager::GetInstance();
-	static const auto *const keyBoard = input_->GetDirectInput();
+	static const auto* const keyBoard = input_->GetDirectInput();
 
 	colliderManager->clear();
 
@@ -173,8 +173,8 @@ void GameScene::Update() {
 
 void GameScene::Draw()
 {
-	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
-	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+	DirectXCommon* const dxCommon = DirectXCommon::GetInstance();
+	ID3D12GraphicsCommandList* const commandList = dxCommon->GetCommandList();
 
 #pragma region 背面スプライト
 
@@ -197,7 +197,7 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	const auto &camera = **cameraTarget_;
+	const auto& camera = **cameraTarget_;
 
 	//model_->Draw(transform_, camera_);
 	levelManager->Draw(camera);

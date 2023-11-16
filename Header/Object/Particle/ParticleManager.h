@@ -45,7 +45,7 @@ public:
 
 	void Draw(const Camera3D& camera);
 
-	void AddParticle(const Model* const modelKey, std::unique_ptr<IParticle> particle);
+	IParticle* AddParticle(const Model* const modelKey, std::unique_ptr<IParticle> particle);
 
 private: // メンバ変数
 
@@ -106,11 +106,11 @@ public:
 
 	const bool& GetisAlive() const { return isAlive_; }
 
-protected:
 
 	BaseTransform transform_;
 	Vector4 color_;
 
+protected:
 	bool isAlive_ = true;
 
 };

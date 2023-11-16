@@ -39,6 +39,7 @@ void ParticleManager::Draw(const Camera3D& camera) {
 			// 書き込み先にパーティクルのデータを渡す
 			particles_[targetIndex].transform.World = particle->GetTransform().matWorld_;
 			particles_[targetIndex].color = particle->GetColor();
+			targetIndex++;
 		}
 		// パーティクルの量と先頭位置を設定
 		sizeAndIndex.push_back({ static_cast<uint32_t>(particles.size()), index });
@@ -47,8 +48,11 @@ void ParticleManager::Draw(const Camera3D& camera) {
 	}
 	// 量と先頭位置のリストのイテレータ
 	std::list<std::pair<uint32_t, uint32_t>>::const_iterator indexItr = sizeAndIndex.cbegin();
-	// 
+	// GPUアドレスを取得
 	const auto& gpuAddress = heapRange_.GetHandle(0u).gpuHandle_;
+
+	// 構造体のサイズ
+	//const uint32_t matrixSize = sizeof(decltype(particles_)::map_matrix);
 
 	// パーティクルのモデルと集合を1つづつ取得
 	for (const auto& [model, particleList] : particleMap_) {
@@ -63,7 +67,7 @@ void ParticleManager::Draw(const Camera3D& camera) {
 
 }
 
-void ParticleManager::AddParticle(const Model* const modelKey, std::unique_ptr<IParticle> particle) {
+IParticle* ParticleManager::AddParticle(const Model* const modelKey, std::unique_ptr<IParticle> particle) {
 	// パーティクルリストがなかった場合作成
 	decltype(particleMap_)::iterator particleListItr = particleMap_.find(modelKey);
 	if (particleListItr == particleMap_.end()) {
@@ -71,7 +75,7 @@ void ParticleManager::AddParticle(const Model* const modelKey, std::unique_ptr<I
 		particleMap_[modelKey]->SetModel(modelKey);
 	}
 	// パーティクルを追加
-	particleMap_[modelKey]->push_back(std::move(particle));
+	return particleMap_[modelKey]->push_back(std::move(particle));
 }
 
 void ParticleList::Update(float deltaTime)
@@ -83,8 +87,9 @@ void ParticleList::Update(float deltaTime)
 		return false;
 		});
 
-	for (auto& particle : particles_)
+	for (auto& particle : particles_) {
 		particle->Update(deltaTime);
+	}
 }
 
 IParticle* const ParticleList::push_back(std::unique_ptr<IParticle> particle) {
