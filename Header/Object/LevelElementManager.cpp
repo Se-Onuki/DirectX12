@@ -228,6 +228,20 @@ void LevelElementManager::Platform::ImGuiWidget() {
 		}
 	}
 
+	static std::list<Box>::iterator boxItr = boxList_.begin();
+	if (ImGui::BeginCombo("BoxList", std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*boxItr))).c_str())) {
+
+		for (decltype(boxList_)::iterator it = boxList_.begin(); it != boxList_.end(); it++) {
+			if (ImGui::Selectable(std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*it))).c_str())) {
+				boxItr = it;
+				break;
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	boxItr->ImGuiWidget();
+
 
 	if (isEdited) {
 		this->CalcCollision();
@@ -239,4 +253,14 @@ LevelElementManager::Box::Box(const AABB &aabb) {
 	transform_->scale = aabb.GetRadius();
 
 	referenceBox_ = aabb;
+}
+
+bool LevelElementManager::Box::ImGuiWidget() {
+	int32_t e = static_cast<int32_t>(groundType_);
+	ImGui::RadioButton("Grass", &e, 0); ImGui::SameLine();
+	ImGui::RadioButton("Dirt", &e, 1);
+
+	groundType_ = static_cast<GroundType>(e);
+
+	return false;
 }

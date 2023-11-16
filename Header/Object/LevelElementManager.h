@@ -9,6 +9,7 @@
 #include "../../Engine/DirectBase/File/VariantItem.h"
 #include "../../Utils/SoLib/SoLib_Timer.h"
 #include <array>
+#include <map>
 
 class LevelElementManager {
 	LevelElementManager() = default;
@@ -32,6 +33,8 @@ public:
 
 		Transform transform_;
 		AABB referenceBox_;
+
+		bool ImGuiWidget();
 	};
 
 	class Platform {
@@ -100,7 +103,7 @@ public:
 
 	Platform *const GetPlatform(int32_t index);
 
-	using PlatformMap = std::unordered_map<uint32_t, Platform>;
+	using PlatformMap = std::map<uint32_t, Platform>;
 	PlatformMap blockCollider_;
 
 	const auto &GetGroundModel() const { return groundModels_; }
