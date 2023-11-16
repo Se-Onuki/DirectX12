@@ -27,6 +27,14 @@ public: // メンバ関数
 	/// </summary>
 	void Update() override;
 
+public: // アクセッサ等
+
+	/// <summary>
+	/// アニメーションマネージャーゲッター
+	/// </summary>
+	/// <returns>アニメーションマネージャー</returns>
+	AnimationManager* GetAnimManager() { return animManager_.get(); }
+
 private: // メンバ変数
 	// モデルのトランスフォーム
 	Transform bodyTransform_; // 体のトランスフォーム

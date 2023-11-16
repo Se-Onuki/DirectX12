@@ -66,9 +66,9 @@ void BaseAnimation::Update(float deltaTime)
 					bone_.bone_ = Ease(
 						(AnimEasing::EasingType)animKeys_.keys_[playKey_].type, animT_,
 						animKeys_.keys_[playKey_].bone.bone_, animKeys_.keys_[targetKey].bone.bone_, animKeys_.keys_[playKey_].animationTime);
-					
+
 					bone_.bone_.ling.rotate.y = bone_.bone_.ling.rotate.y + animKeys_.keys_[playKey_].lingRotateSpeed;
-					if(bone_.bone_.ling.rotate.y >= (float)std::numbers::pi * 2.0f)
+					if (bone_.bone_.ling.rotate.y >= (float)std::numbers::pi * 2.0f)
 						bone_.bone_.ling.rotate.y = bone_.bone_.ling.rotate.y - (float)std::numbers::pi * 2.0f;
 					// 経過フレーム分加算
 					animT_ += deltaTime;
@@ -136,7 +136,7 @@ PlayerBone::Bone BaseAnimation::GetTargetBone(std::string groupName, std::string
 	return tempBone;
 }
 
-PlayerBone::Bone BaseAnimation::GetPlayerBone()
+ PlayerBone::Bone BaseAnimation::GetPlayerBone()
 {
 	// 一時保存用
 	PlayerBone::Bone tempBone;
@@ -169,7 +169,7 @@ PlayerBone::Bone BaseAnimation::GetPlayerBone()
 	return tempBone;
 }
 
-PlayerBone::Bone BaseAnimation::Ease(AnimEasing::EasingType type, float t, PlayerBone::Bone start, PlayerBone::Bone end, float time)
+PlayerBone::Bone BaseAnimation::Ease(AnimEasing::EasingType type, float t, const PlayerBone::Bone& start, const PlayerBone::Bone& end, float time)
 {
 	PlayerBone::Bone tempBone;
 	tempBone.Initilaize();

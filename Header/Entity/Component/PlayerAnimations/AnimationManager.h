@@ -1,7 +1,21 @@
 #pragma once
 #include <optional>
-#include "AnimationList.h"
+#include "BaseAnimation.h"
 #include "AnimationParameters.h"
+
+/// <summary>
+/// 行動列挙子
+/// </summary>
+enum PlayerBehavior : uint32_t {
+	kIdle,
+	kMove,
+	kJumpStart,
+	kHovering,
+	kLand,
+	kRotateStart,
+	kRotating,
+	kRotateEnd
+};
 
 /// <summary>
 /// プレイヤーのアニメーションマネージャー
@@ -10,19 +24,6 @@ class AnimationManager
 {
 public: // サブクラス
 
-	/// <summary>
-	/// 行動列挙子
-	/// </summary>
-	enum Behavior {
-		kIdle,
-		kMove,
-		kJumpStart,
-		kHovering,
-		kLand,
-		kRotateStart,
-		kRotating,
-		kRotateEnd
-	};
 
 public: // メンバ関数
 
@@ -43,7 +44,7 @@ public: // アクセッサ等
 	/// </summary>
 	/// <param name="entity">アニメーションさせるエンティティ</param>
 	void SetEntity(Entity* entity) { entity_ = entity; }
-	
+
 	/// <summary>
 	/// 次のアニメーションセッター
 	/// </summary>
@@ -51,7 +52,13 @@ public: // アクセッサ等
 	/// <param name="isLoop">ループさせるか</param>
 	/// <param name="type">遷移イージングのタイプ</param>
 	/// <param name="transitionTime">遷移の際の時間</param>
-	void SetNextAnimation(Behavior next, bool isLoop, AnimEasing::EasingType type = AnimEasing::kLinear, float transitionTime = 0);
+	void SetNextAnimation(PlayerBehavior next, bool isLoop, AnimEasing::EasingType type = AnimEasing::kLinear, float transitionTime = 0);
+
+	/// <summary>
+	/// 現在の再生中のアニメーションゲッター
+	/// </summary>
+	/// <returns>現在再生中のアニメーション</returns>
+	PlayerBehavior GetNowState()const { return currentAnimation_->GetBehavior(); }
 
 private: // メンバ変数
 
