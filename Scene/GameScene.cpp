@@ -17,6 +17,7 @@
 
 #include "../Header/Object/Particle/ParticleManager.h"
 #include "../Header/Object/Particle/TestParticle.h"
+#include "../Header/Object/Particle/StarParticle.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -59,8 +60,7 @@ void GameScene::OnEnter() {
 	//transform_ = transform;
 	camera_.Init();
 
-	particleManager->AddParticle(modelManager->GetModel("Plane"), std::make_unique<TestParticle>())->transform_.translate.z += 10.f;
-	particleManager->AddParticle(modelManager->GetModel("Box"), std::make_unique<TestParticle>());
+	//particleManager->AddParticle(modelManager->GetModel("Plane"), std::make_unique<TestParticle>());
 
 	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });*/
@@ -89,6 +89,7 @@ void GameScene::OnEnter() {
 
 	player_->AddComponent<PlayerComp>();
 
+	particleManager->AddParticle(modelManager->GetModel("PlayerLing"), std::make_unique<StarParticle>(player_->transform_.rotate));
 
 #pragma endregion
 

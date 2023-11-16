@@ -321,6 +321,9 @@
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -588,6 +591,9 @@
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\StarParticle.h">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
   </ItemGroup>
