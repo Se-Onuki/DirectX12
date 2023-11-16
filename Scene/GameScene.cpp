@@ -208,6 +208,8 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 	static auto* const particleManager = ParticleManager::GetInstance();
+
+	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
 	particleManager->Draw(camera);
 
 	// モデルの描画
