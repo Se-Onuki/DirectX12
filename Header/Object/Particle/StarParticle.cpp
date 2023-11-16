@@ -1,15 +1,16 @@
 #include "StarParticle.h"
 
-StarParticle::StarParticle(const Vector3& emissionDirection)
+StarParticle::StarParticle(const Vector3& translate, const Vector3& direction)
 {
 	// 引数の値をメンバ変数に代入
-	emissionDirection_ = &emissionDirection;
+	transform_.translate = translate;
+	emissionDirection_ = &direction;
+
 }
 
 void StarParticle::Init()
 {
-	color_ = { 1.f,1.f,1.f,1.f };
-	transform_.translate.y = 3.0f;
+	
 }
 
 void StarParticle::Update([[maybe_unused]] float deltaTime)
@@ -17,5 +18,10 @@ void StarParticle::Update([[maybe_unused]] float deltaTime)
 	transform_.rotate.y += 0.01f;
 	transform_.rotate.y = Angle::Mod(transform_.rotate.y);
 
+
+
+	// トランスフォームの計算と転送
 	transform_.CalcMatrix();
+	// タイマー更新
+	timer_.Update(deltaTime);
 }

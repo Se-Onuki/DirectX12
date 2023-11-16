@@ -12,8 +12,9 @@ public: // メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="emmitionDirection">放出方向</param>
-	StarParticle(const Vector3& emissionDirection);
+	/// <param name="translate">プレイヤー座標</param>
+	/// <param name="direction">プレイヤーの向き</param>
+	StarParticle(const Vector3& translate,  const Vector3& direction);
 
 	/// <summary>
 	/// 初期化関数
@@ -32,8 +33,7 @@ private: // メンバ変数
 	// 粒子の放出方向
 	const Vector3* emissionDirection_;
 
-	// 演出用t
-	float t_;
+	
 
 };
 
