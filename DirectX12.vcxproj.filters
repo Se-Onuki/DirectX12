@@ -100,6 +100,9 @@
     <Filter Include="Header\Entity\Component\PlayerAnimations\Math">
       <UniqueIdentifier>{0b6e6905-b307-4e07-80bf-2c9934c00803}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\Particle">
+      <UniqueIdentifier>{f27eee7f-b96d-41b7-8091-4390e104378f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -291,9 +294,6 @@
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationManager.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Particle.cpp">
-      <Filter>Header\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationParameters.cpp">
       <Filter>Header\Entity\Component\PlayerAnimations\Parameters</Filter>
     </ClCompile>
@@ -308,6 +308,21 @@
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp">
       <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\ParticleManager.cpp">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle.cpp">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
+      <Filter>Header\Entity\Object\Particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -548,9 +563,6 @@
     <ClInclude Include="Header\Object\LevelManager.h">
       <Filter>Header\Entity\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\Particle.h">
-      <Filter>Header\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationParameters.h">
       <Filter>Header\Entity\Component\PlayerAnimations\Parameters</Filter>
     </ClInclude>
@@ -568,6 +580,21 @@
     </ClInclude>
     <ClInclude Include="Utils\Math\Quaternion.h">
       <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\ParticleManager.h">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle.h">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\TestParticle.h">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\ParticleEmitter.h">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\StarParticle.h">
+      <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

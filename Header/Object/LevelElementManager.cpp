@@ -140,7 +140,7 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(int32_t in
 //}
 
 void LevelElementManager::Platform::AddBox(const AABB &aabb) {
-	boxList_.emplace_back(aabb);
+	boxList_.emplace_back(aabb, this);
 	auto &box = boxList_.back();
 	box.transform_->parent_ = &center_;
 }
@@ -193,6 +193,10 @@ void LevelElementManager::Platform::Draw(const Camera3D &camera) const {
 }
 
 void LevelElementManager::Platform::ImGuiWidget() {
+	ImGui::NewLine();
+
+	ImGui::BulletText("PlatformEditor");
+
 
 	bool isEdited = false;
 
@@ -213,7 +217,6 @@ void LevelElementManager::Platform::ImGuiWidget() {
 	isEdited |= ImGui::RadioButton("RotateZ", &e, 2);
 	rotateAxis_ = axisList[e];
 
-	ImGui::NewLine();
 	static bool isSeparate = false;
 	ImGui::Checkbox("Separate", &isSeparate);
 	ImGui::SameLine();
@@ -240,7 +243,7 @@ void LevelElementManager::Platform::ImGuiWidget() {
 		ImGui::EndCombo();
 	}
 
-	boxItr->ImGuiWidget();
+	isEdited |= boxItr->ImGuiWidget();
 
 
 	if (isEdited) {
@@ -248,19 +251,33 @@ void LevelElementManager::Platform::ImGuiWidget() {
 	}
 }
 
-LevelElementManager::Box::Box(const AABB &aabb) {
+LevelElementManager::Box::Box(const AABB &aabb, Platform *parent) {
 	transform_->translate = aabb.GetCentor();
 	transform_->scale = aabb.GetRadius();
+	parent_ = parent;
 
 	referenceBox_ = aabb;
 }
 
 bool LevelElementManager::Box::ImGuiWidget() {
+	ImGui::NewLine();
+	ImGui::BulletText("BoxEditor");
+
+	bool isEdited = false;
 	int32_t e = static_cast<int32_t>(groundType_);
-	ImGui::RadioButton("Grass", &e, 0); ImGui::SameLine();
-	ImGui::RadioButton("Dirt", &e, 1);
+	isEdited |= ImGui::RadioButton("Grass", &e, 0); ImGui::SameLine();
+	isEdited |= ImGui::RadioButton("Dirt", &e, 1);
 
 	groundType_ = static_cast<GroundType>(e);
 
-	return false;
+	const Vector3 beforeCentorPos = referenceBox_.GetCentor() * parent_->center_.matWorld_;
+	Vector3 boxCentor = beforeCentorPos;
+	if (ImGui::DragFloat3("BoxCentorPos", &boxCentor.x, 1.f)) {
+		Vector3 move = (boxCentor - beforeCentorPos) * parent_->center_.matWorld_.InverseRT();
+		referenceBox_ = referenceBox_.AddPos(move);
+		transform_->translate += move;
+		isEdited |= true;
+	}
+
+	return isEdited;
 }

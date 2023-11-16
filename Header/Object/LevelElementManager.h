@@ -25,14 +25,18 @@ public:
 		kSize
 	};
 
+	class Platform;
+
 	class Box {
 	public:
-		Box(const AABB &aabb);
+		Box(const AABB &aabb, Platform *parent);
 
 		GroundType groundType_ = GroundType::kGrass;
 
 		Transform transform_;
 		AABB referenceBox_;
+
+		Platform *parent_ = nullptr;
 
 		bool ImGuiWidget();
 	};

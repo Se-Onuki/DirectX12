@@ -15,6 +15,10 @@
 #include "../Header/Entity/Component/PlayerAnimComp.h"
 #include "../Header/Entity/Component/FollowCameraComp.h"
 
+#include "../Header/Object/Particle/ParticleManager.h"
+#include "../Header/Object/Particle/TestParticle.h"
+#include "../Header/Object/Particle/StarParticle.h"
+
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -29,6 +33,10 @@ void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
 	static auto *const modelManager = ModelManager::GetInstance();
+	static auto *const particleManager = ParticleManager::GetInstance();
+
+	// パーティクルマネージャの初期化
+	particleManager->Init(256); // パーティクルの最大数は256
 
 	// モデルの読み込み
 	modelManager->CreateDefaultModel(); // デフォルトモデルの読み込み
@@ -51,6 +59,8 @@ void GameScene::OnEnter() {
 	//BaseTransform transform;
 	//transform_ = transform;
 	camera_.Init();
+
+	//particleManager->AddParticle(modelManager->GetModel("Plane"), std::make_unique<TestParticle>());
 
 	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });*/
@@ -79,6 +89,7 @@ void GameScene::OnEnter() {
 
 	player_->AddComponent<PlayerComp>();
 
+	// particleManager->AddParticle(modelManager->GetModel("PlayerLing"), std::make_unique<StarParticle>(player_->transform_.rotate));
 
 #pragma endregion
 
@@ -102,11 +113,14 @@ void GameScene::Update() {
 
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	static auto *const colliderManager = CollisionManager::GetInstance();
+	static auto *const particleManager = ParticleManager::GetInstance();
 	static const auto *const keyBoard = input_->GetDirectInput();
 
 	colliderManager->clear();
 
 	TextureManager::GetInstance()->ImGuiWindow();
+
+	particleManager->Update(deltaTime);
 
 	levelManager->Update(deltaTime);
 	followCamera_->AddComponent<FollowCameraComp>()->SetLine(levelManager->GetStageLine());
@@ -142,7 +156,7 @@ void GameScene::Update() {
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 	camera_.UpdateMatrix();
 
-	if (keyBoard->IsTrigger(DIK_0)) {
+	if (keyBoard->IsTrigger(DIK_RSHIFT)) {
 		if (++cameraTarget_ == cameraList_.end()) {
 			cameraTarget_ = cameraList_.begin();
 		}
@@ -193,7 +207,11 @@ void GameScene::Draw()
 	// 描画
 	//playerAnim_->Draw(camera_);
 
-	//Model::SetPipelineType(Model::PipelineType::kParticle);
+	Model::SetPipelineType(Model::PipelineType::kParticle);
+	static auto *const particleManager = ParticleManager::GetInstance();
+
+	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
+	particleManager->Draw(camera);
 
 	// モデルの描画
 
