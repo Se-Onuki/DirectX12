@@ -43,7 +43,7 @@ private:
 	std::array<const Camera3D *, 2u> cameraList_;
 	std::array<const Camera3D *, 2u>::iterator cameraTarget_ = cameraList_.begin();
 
-	//std::unique_ptr<Entity> playerAnim_;
+	std::unique_ptr<Entity> playerAnim_;
 
 	//std::array<BaseTransform<false>, 5u> transformArray_;
 	//std::array<CBuffer<Vector4, false>, 5u> colorArray_;
