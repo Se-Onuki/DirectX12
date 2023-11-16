@@ -60,7 +60,7 @@ void ParticleManager::Draw(const Camera3D& camera) {
 		// もし、サイズが0なら飛ばす
 		if (particleList->GetParticleList().size() == 0u) { continue; }
 		// インスタンシングで描画。
-		model->Draw(gpuAddress, indexItr->first, indexItr->second, camera);
+		model->Draw(gpuAddress, indexItr->first , indexItr->second, camera);
 		// 次の先頭位置に更新
 		indexItr++;
 	}
