@@ -84,14 +84,11 @@ void GameScene::OnEnter() {
 	//auto*const rigidbody =
 	player_->AddComponent<Rigidbody>();
 	//auto *const modelComp =
-		player_->AddComponent<ModelComp>();
+	player_->AddComponent<ModelComp>();
 	//modelComp->AddBone("Body", boxModel);
 
 	player_->AddComponent<PlayerComp>();
 	player_->AddComponent<PlayerAnimComp>();
-
-	player_->AddComponent<PlayerAnimComp>();
-
 
 	// particleManager->AddParticle(modelManager->GetModel("PlayerLing"), std::make_unique<StarParticle>(player_->transform_.rotate));
 
@@ -109,6 +106,13 @@ void GameScene::OnEnter() {
 
 	cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;
+
+
+
+	cannon_ = std::unique_ptr<Entity>();
+	cannon_->AddComponent<CannonComp>();
+
+
 }
 
 void GameScene::OnExit() {}

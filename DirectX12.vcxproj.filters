@@ -605,6 +605,9 @@
     <ClInclude Include="Header\Entity\Component\PlayerState\IPlayerState.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Entity\Component\CannonComp.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
