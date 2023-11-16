@@ -309,10 +309,16 @@
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp">
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Particle\BaseParticle.cpp">
+    <ClCompile Include="Header\Object\Particle\ParticleManager.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle.cpp">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClCompile>
   </ItemGroup>
@@ -572,10 +578,16 @@
     <ClInclude Include="Utils\Math\Quaternion.h">
       <Filter>Utils\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\Particle\BaseParticle.h">
+    <ClInclude Include="Header\Object\Particle\ParticleManager.h">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle.h">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\TestParticle.h">
+      <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\ParticleEmitter.h">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,8 +13,8 @@
 #include <fstream>
 #include <json.hpp>
 
-ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
-const char *const Model::defaultDirectory = "resources/";
+ID3D12GraphicsCommandList* Model::commandList_ = nullptr;
+const char* const Model::defaultDirectory = "resources/";
 
 std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 8u>, 2u> Model::graphicsPipelineState_ = { nullptr };
 std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
@@ -100,15 +100,15 @@ void Model::CreatePipeLine() {
 	const std::array<D3D12_INPUT_ELEMENT_DESC, 3u> inputElementDescs{
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "POSITION",
-			.SemanticIndex = 0,
-			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
-			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+				.SemanticIndex = 0,
+				.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
-		D3D12_INPUT_ELEMENT_DESC{
-			.SemanticName = "TEXCOORD",
-			.SemanticIndex = 0,
-			.Format = DXGI_FORMAT_R32G32_FLOAT,
-			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_ELEMENT_DESC{
+				.SemanticName = "TEXCOORD",
+				.SemanticIndex = 0,
+				.Format = DXGI_FORMAT_R32G32_FLOAT,
+				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "NORMAL",
@@ -212,7 +212,7 @@ void Model::CreatePipeLine() {
 
 void Model::BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc) {
 
-	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+	auto* const device = DirectXCommon::GetInstance()->GetDevice();
 	HRESULT hr = S_FALSE;
 
 	// BlendStateの設定
@@ -360,9 +360,9 @@ void Model::BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC 
 
 }
 
-void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fileName) {
+void Model::LoadMtlFile(const std::string& directoryPath, const std::string& fileName) {
 
-	Material *materialData = nullptr;
+	Material* materialData = nullptr;
 	std::string line;
 
 	std::ifstream file{ Model::defaultDirectory + directoryPath + fileName };
@@ -389,7 +389,7 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 		}
 		else if (identifier == "Kd") {
 			if (materialData && materialData->materialBuff_) {
-				Vector4 &color = materialData->materialBuff_->color;
+				Vector4& color = materialData->materialBuff_->color;
 				s >> color.x >> color.y >> color.z;
 			}
 		}
@@ -430,7 +430,7 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 }
 
 
-void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
+void Model::StartDraw(ID3D12GraphicsCommandList* const commandList) {
 	assert(!commandList_ && "EndDrawが呼び出されていません");
 	commandList_ = commandList;
 
@@ -447,7 +447,7 @@ void Model::EndDraw() {
 	commandList_ = nullptr;
 }
 
-Model *const Model::LoadObjFile(const std::string &directoryPath, const std::string &fileName) {
+Model* const Model::LoadObjFile(const std::string& directoryPath, const std::string& fileName) {
 
 #pragma region 1. ファイルを開く
 
@@ -456,7 +456,7 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 
 #pragma endregion
 
-	Model *const result = new Model;
+	Model* const result = new Model;
 
 	result->name_ = fileName.substr(0, fileName.size() - 4);
 
@@ -464,8 +464,8 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 
 	//meshList_.emplace_back(new Mesh);
 
-	Mesh *modelData = nullptr;				// 構築するModelData
-	Material *materialData = nullptr;		// マテリアルの共用
+	Mesh* modelData = nullptr;				// 構築するModelData
+	Material* materialData = nullptr;		// マテリアルの共用
 
 	result->meshList_.emplace_back(new Mesh);
 
@@ -567,7 +567,7 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 	}
 #pragma endregion
 
-	for (auto &mesh : result->meshList_) {
+	for (auto& mesh : result->meshList_) {
 		mesh->CreateBuffer();
 		mesh->indexMap_.clear();
 		mesh->vertices_.clear();
@@ -576,7 +576,7 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 	return result;
 }
 
-Model *const Model::CreateSphere()
+Model* const Model::CreateSphere()
 {
 	return nullptr;
 }
@@ -584,7 +584,7 @@ Model *const Model::CreateSphere()
 void Model::ImGuiWidget()
 {
 	if (ImGui::TreeNode(name_.c_str())) {
-		for (auto &material : materialMap_) {
+		for (auto& material : materialMap_) {
 			material.second->ImGuiWidget();
 		}
 		ImGui::TreePop();
@@ -603,15 +603,15 @@ void Model::SetPipelineType(const PipelineType pipelineType) {
 	}
 }
 
-Model *Model::CreatePlane() {
-	Model *const newModel = new Model{};
+Model* Model::CreatePlane() {
+	Model* const newModel = new Model{};
 
 	newModel->meshList_.push_back(std::make_unique<Mesh>());
-	auto &mesh = *newModel->meshList_.begin();
+	auto& mesh = *newModel->meshList_.begin();
 
-	auto &vertexArray = mesh->vertexBuffer_;
-	vertexArray.SetVertexData(std::array{ Mesh::VertexData{},Mesh::VertexData{},Mesh::VertexData{},Mesh::VertexData{} });
-	vertexArray.SetIndexData(std::array{ 0u,1u,2u, 1u,3u,2u });
+	auto& vertexArray = mesh->vertexBuffer_;
+	vertexArray.SetVertexData(std::array{ Mesh::VertexData{}, Mesh::VertexData{}, Mesh::VertexData{}, Mesh::VertexData{} });
+	vertexArray.SetIndexData(std::array{ 0u, 1u, 2u, 1u, 3u, 2u });
 
 	// 左下
 	vertexArray.GetVertexData()[0u].position = { -0.5f, -0.5f, 0.f, 1.f };
@@ -632,7 +632,7 @@ Model *Model::CreatePlane() {
 	vertexArray.GetVertexData()[3u].normal = { 0.f, 0.f, -1.f };
 
 	newModel->materialMap_["default"] = (std::make_unique<Material>());
-	auto &material = newModel->materialMap_["default"];
+	auto& material = newModel->materialMap_["default"];
 
 	newModel->name_ = "plane";
 
@@ -643,38 +643,38 @@ Model *Model::CreatePlane() {
 	return newModel;
 }
 
-void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const {
+void Model::Draw(const Transform& transform, const Camera<Render::CameraType::Projecction>& camera) const {
 	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
-	for (auto &mesh : meshList_) {
+	for (auto& mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_);
 	}
 
 }
 
-void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera, const Material &material) const {
+void Model::Draw(const Transform& transform, const Camera<Render::CameraType::Projecction>& camera, const Material& material) const {
 	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
-	for (auto &mesh : meshList_) {
+	for (auto& mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(material.blendMode_)].Get());		// PSOを設定
-		mesh->Draw(commandList_, 1u, &material);
+		mesh->Draw(commandList_, 1u, 0u, &material);
 	}
 
 }
 
-void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const {
+void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE& transformSRV, uint32_t drawCount, uint32_t drawIndex, const Camera<Render::CameraType::Projecction>& camera) const {
 	assert(sPipelineType_ == PipelineType::kParticle && "設定されたシグネチャがkParticleではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
-	for (auto &mesh : meshList_) {
+	for (auto& mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
-		mesh->Draw(commandList_, drawCount);
+		mesh->Draw(commandList_, drawCount, drawIndex);
 	}
 }
 
@@ -695,7 +695,7 @@ void Mesh::CreateBuffer() {
 
 }
 
-void Mesh::AddVertex(const VertexData &vertex) {
+void Mesh::AddVertex(const VertexData& vertex) {
 	size_t hashValue = std::hash<VertexData>()(vertex);
 	auto it = indexMap_.find(hashValue);
 	if (it != indexMap_.end()) {
@@ -711,12 +711,12 @@ void Mesh::AddVertex(const VertexData &vertex) {
 	}
 }
 
-void Mesh::SetMaterial(Material *const material) {
+void Mesh::SetMaterial(Material* const material) {
 	if (!material) return;
 	material_ = material;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const Material *const material) const {
+void Mesh::Draw(ID3D12GraphicsCommandList* const commandList, uint32_t drawCount, uint32_t drawIndex, const Material* const material) const {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, material_->texHandle_);
 	if (material) {
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material->materialBuff_.GetGPUVirtualAddress());
@@ -726,7 +726,7 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount
 	}
 	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
 	commandList->IASetIndexBuffer(&vertexBuffer_.GetIBView());
-	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
+	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), drawCount, 0, 0, drawIndex);
 }
 
 void Material::CreateBuffer() {
@@ -752,7 +752,7 @@ void Material::ImGuiWidget()
 		ImGui::ColorEdit4("BaseColor", &materialBuff_->color.x);
 		ImGui::ColorEdit3("EmissiveColor", &materialBuff_->emissive.x);
 
-		const static std::array<std::string, 6u>blendStr{ "kNone", "kNormal","kAdd", "kSubtract", "kMultily", "kScreen" };
+		const static std::array<std::string, 6u>blendStr{ "kNone", "kNormal", "kAdd", "kSubtract", "kMultily", "kScreen" };
 
 		if (ImGui::BeginCombo("BlendMode", blendStr[static_cast<uint32_t>(blendMode_)].c_str())) {
 
@@ -802,28 +802,28 @@ void MinecraftModel::Cube::ResetTransform() {
 
 }
 
-MinecraftModel::Cube::Cube(const Cube &other) {
+MinecraftModel::Cube::Cube(const Cube& other) {
 	this->faces_ = other.faces_;
 }
 
 void MinecraftModel::Cube::Init() {
-	for (auto &face : faces_) {
+	for (auto& face : faces_) {
 		face.Init();
 	}
 }
 
-void MinecraftModel::Face::Draw(ID3D12GraphicsCommandList *const commandList) {
+void MinecraftModel::Face::Draw(ID3D12GraphicsCommandList* const commandList) {
 	commandList->IASetVertexBuffers(0, 1, &vbView_);
 	commandList->IASetIndexBuffer(&ibView_);
 	commandList->DrawIndexedInstanced(6u, 1, 0, 0, 0);
 }
-void MinecraftModel::Cube::Draw(ID3D12GraphicsCommandList *const commandList) {
-	for (auto &face : faces_) {
+void MinecraftModel::Cube::Draw(ID3D12GraphicsCommandList* const commandList) {
+	for (auto& face : faces_) {
 		face.Draw(commandList);
 	}
 }
 
-void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size) {
+void MinecraftModel::Cube::SetVertex(const Vector3& origin, const Vector3& size) {
 	enum vertexPos {
 		left = 0b0000,
 		right = 0b0001,
@@ -835,15 +835,15 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 
 	const Vector3 centor = origin + size / 2.f;
 	std::array<Vector3, 8u> vertices{
-		centor + Vector3{-size.x,size.y,size.z},	// 左遠
-		centor + Vector3{size.x,size.y,size.z},		// 右遠
-		centor + Vector3{-size.x,size.y,-size.z},	// 左近
-		centor + Vector3{size.x,size.y,-size.z},	// 右近
+		centor + Vector3{-size.x, size.y, size.z},	// 左遠
+			centor + Vector3{size.x, size.y, size.z},		// 右遠
+			centor + Vector3{-size.x, size.y, -size.z},	// 左近
+			centor + Vector3{size.x, size.y, -size.z},	// 右近
 
-		centor + Vector3{-size.x,-size.y,size.z},	// 左遠
-		centor + Vector3{size.x,-size.y,size.z}, 	// 右遠
-		centor + Vector3{-size.x,-size.y,-size.z},	// 左近,
-		centor + Vector3{size.x,-size.y,-size.z},	// 右近
+			centor + Vector3{-size.x, -size.y, size.z},	// 左遠
+			centor + Vector3{size.x, -size.y, size.z}, 	// 右遠
+			centor + Vector3{-size.x, -size.y, -size.z},	// 左近,
+			centor + Vector3{size.x, -size.y, -size.z},	// 右近
 	};
 
 	faces_[(uint32_t)FaceDirection::UP].SetVertex(
@@ -907,34 +907,34 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 		);
 }
 
-void MinecraftModel::Bone::Draw(ID3D12GraphicsCommandList *const commandList) {
-	for (auto &cube : cubes_) {
+void MinecraftModel::Bone::Draw(ID3D12GraphicsCommandList* const commandList) {
+	for (auto& cube : cubes_) {
 		cube.Draw(commandList);
 	}
-	for (auto &child : children_) {
+	for (auto& child : children_) {
 		child.second.Draw(commandList);
 	}
 }
 void MinecraftModel::Bone::UpdateTransform() {
 	transform_->UpdateMatrix();
-	for (auto &child : children_) {
+	for (auto& child : children_) {
 		child.second.UpdateTransform();
 	}
 }
 
-void MinecraftModel::Bone::SetParent(Bone *const parent)
+void MinecraftModel::Bone::SetParent(Bone* const parent)
 {
 	parent_ = parent;
 	transform_->parent_ = parent->transform_->parent_;
 }
 
-void MinecraftModel::Draw(ID3D12GraphicsCommandList *const commandList) {
-	for (auto &bone : bones_) {
+void MinecraftModel::Draw(ID3D12GraphicsCommandList* const commandList) {
+	for (auto& bone : bones_) {
 		bone.second.Draw(commandList);
 	}
 }
 
-void MinecraftModel::LoadJson(const std::string &file_path)
+void MinecraftModel::LoadJson(const std::string& file_path)
 {
 	std::ifstream ifs;
 	ifs.open(file_path);
@@ -951,7 +951,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 	ifs.close();
 
 
-	const auto &geometry = root["minecraft:geometry"][0];
+	const auto& geometry = root["minecraft:geometry"][0];
 
 #pragma region 単ピクセルサイズ
 
@@ -960,18 +960,18 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 
 #pragma endregion
 
-	const auto &bones = geometry["bones"];
-	for (const auto &boneJson : bones) {
+	const auto& bones = geometry["bones"];
+	for (const auto& boneJson : bones) {
 		// ボーン名
-		const std::string &boneName = boneJson["name"];
+		const std::string& boneName = boneJson["name"];
 		// ボーンの構築、名前設定
-		Bone &bone = bones_[boneName];
+		Bone& bone = bones_[boneName];
 		bone.name_ = boneName;
 
 		// 親子関係
-		const auto &parent = boneJson.find("parent");
+		const auto& parent = boneJson.find("parent");
 		if (parent != boneJson.end()) {
-			const std::string &parentName = parent->get<std::string>();
+			const std::string& parentName = parent->get<std::string>();
 			bone.SetParent(&bones_[parentName]);
 		}
 		else {
@@ -980,7 +980,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 
 		// 座標構築
 		// 原点
-		const auto &pivotJson = boneJson["pivot"];
+		const auto& pivotJson = boneJson["pivot"];
 		Vector3 pivot = Vector3{
 			(float)pivotJson.at(0).get<double>(),
 			(float)pivotJson.at(1).get<double>(),
@@ -989,7 +989,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 		bone.transform_->translate = pivot / 16.f;
 
 		// 回転
-		const auto &rotateJson = boneJson.find("rotation");
+		const auto& rotateJson = boneJson.find("rotation");
 		if (rotateJson != boneJson.end()) {
 			Vector3 rotate = Vector3{
 				(float)rotateJson->at(0).get<double>(),
@@ -1003,21 +1003,21 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 		}
 
 		// キューブ
-		const auto &cubesJson = boneJson.find("cubes");
+		const auto& cubesJson = boneJson.find("cubes");
 		if (cubesJson != boneJson.end()) {
-			for (const auto &cubeText : *cubesJson) {
+			for (const auto& cubeText : *cubesJson) {
 				// Cubeの構築
 				bone.cubes_.emplace_back();
-				Cube &cube = bone.cubes_.back();
+				Cube& cube = bone.cubes_.back();
 				cube.Init();
 
-				const auto &originJson = cubeText.at("origin");
+				const auto& originJson = cubeText.at("origin");
 				Vector3 origin = Vector3{
 					(float)originJson.at(0).get<double>(),
 					(float)originJson.at(1).get<double>(),
 					(float)originJson.at(2).get<double>()
 				};
-				const auto &sizeJson = cubeText.at("size");
+				const auto& sizeJson = cubeText.at("size");
 				Vector3 size = Vector3{
 					(float)sizeJson.at(0).get<double>(),
 					(float)sizeJson.at(1).get<double>(),
@@ -1033,14 +1033,14 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 
 }
 
-MinecraftModel::Face::Face(const Face &other) {
+MinecraftModel::Face::Face(const Face& other) {
 	CreateBuffer();
 	*vertices_ = *(other.vertices_);
 	*indexs_ = *(other.indexs_);
 }
 
 void MinecraftModel::Face::CreateBuffer() {
-	auto *const device = DirectXCommon::GetInstance()->GetDevice();
+	auto* const device = DirectXCommon::GetInstance()->GetDevice();
 
 	const uint32_t vertexCount = 4u;
 	const uint32_t indexCount = 6u;
@@ -1048,8 +1048,8 @@ void MinecraftModel::Face::CreateBuffer() {
 	vertexBuff_ = CreateBufferResource(device, sizeof(Mesh::VertexData) * vertexCount);
 	indexBuff_ = CreateBufferResource(device, sizeof(uint32_t) * indexCount);
 
-	vertexBuff_->Map(0, nullptr, reinterpret_cast<void **>(&vertices_));
-	indexBuff_->Map(0, nullptr, reinterpret_cast<void **>(&indexs_));
+	vertexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertices_));
+	indexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&indexs_));
 
 	// 頂点バッファビューを作成する
 	// リソースの先頭のアドレスから使う
@@ -1073,7 +1073,7 @@ void MinecraftModel::Face::Init() {
 	indexs_[3] = 1u; indexs_[4] = 3u; indexs_[5] = 2u;
 }
 
-void MinecraftModel::Face::SetVertex(const std::array<Vector3, 4u> &vertex, const Vector3 &face)
+void MinecraftModel::Face::SetVertex(const std::array<Vector3, 4u>& vertex, const Vector3& face)
 {
 	for (uint8_t i = 0u; i < 4u; i++) {
 		vertices_[i].position = Vector4{ vertex[i].x,vertex[i].y,vertex[i].z,1.f };
