@@ -21,7 +21,7 @@ public:
 
 private:
 
-	VariantItem<float> vFirePower_;
+	VariantItem<float> vFirePower_{ "FirePower", 10.f };
 
 	float angle_;
 
