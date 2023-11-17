@@ -341,6 +341,8 @@ void Model::BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC 
 	graphicsPipelineStateDesc.BlendState = D3D12_BLEND_DESC{};
 	graphicsPipelineStateDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
+	// 書き込みをしない
+	graphicsPipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	graphicsPipelineStateDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER;
 
 	// 実際に生成

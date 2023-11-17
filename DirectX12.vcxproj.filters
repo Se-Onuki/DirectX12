@@ -330,6 +330,9 @@
     <ClCompile Include="Header\Entity\Component\PlayerState\IPlayerState.cpp">
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\CannonComp.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
