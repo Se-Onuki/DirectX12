@@ -174,7 +174,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\SoLib\SoLib_ImGui.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Lerp.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Timer.cpp" />
-    <ClCompile Include="Utils\Timer\TImer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\DirectBase\2D\Sprite.h" />
@@ -251,6 +250,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\Math\Angle.h" />
     <ClInclude Include="Utils\Math\FloatArray.h" />
     <ClInclude Include="Utils\Math\Math.hpp" />
+    <ClInclude Include="Utils\Math\Matrix.h" />
     <ClInclude Include="Utils\Math\Matrix2x2.h" />
     <ClInclude Include="Utils\Math\Matrix3x3.h" />
     <ClInclude Include="Utils\Math\Matrix4x4.h" />
@@ -268,7 +268,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\SoLib\SoLib_Lerp.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Timer.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Traits.h" />
-    <ClInclude Include="Utils\Timer\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

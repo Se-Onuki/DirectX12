@@ -153,16 +153,21 @@ struct Vector3 {
 		return *reinterpret_cast<const std::array<float, 3u>*>(this);
 	}
 
+
+
+	static uint32_t size() { return 3u; }
+
 	float *const begin() { return &x; }
 	const float *const begin() const { return &x; }
+	const float *const cbegin() const { return &x; }
 
-	float *const end() { return &x + 3u; }
-	const float *const end() const { return &x + 3u; }
+	float *const end() { return begin() + size(); }
+	const float *const end() const { return end(); }
+	const float *const cend() const { return end(); }
 
-	uint32_t size() const { return 3u; }
-
-	float *const data() { return &x; }
-	const float *const data() const { return &x; }
+	float *const data() { return begin(); }
+	const float *const data() const { return begin(); }
+	const float *const cdata() const { return begin(); }
 
 private:
 };

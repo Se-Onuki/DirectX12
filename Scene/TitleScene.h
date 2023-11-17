@@ -24,6 +24,11 @@ private:
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 
+	Vector3 axis_{ Vector3{1.f,1.f,1.f}.Nomalize() };
+	float angle_ = 0.44f;
+	Matrix4x4 rotateMat_;
+
+
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 };
