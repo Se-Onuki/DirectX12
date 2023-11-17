@@ -4,6 +4,12 @@ void ParticleEmitterManager::Init()
 {
 	// エミッタリストのクリア
 	emitters_.clear();
+
+#ifdef _DEBUG
+	
+
+#endif // _DEBUG
+
 }
 
 void ParticleEmitterManager::Update(float deltaTime)

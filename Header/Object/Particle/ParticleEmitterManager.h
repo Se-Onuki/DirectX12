@@ -1,6 +1,6 @@
 #pragma once
 #include <list>
-#include <map>
+#include <string>
 #include <typeindex>
 #include "ParticleEmitter.h"
 
@@ -42,22 +42,40 @@ public: // メンバ関数
 	/// <summary>
 	/// 引数で指定したパーティクルエミッタを生成する関数
 	/// </summary>
-	/// <typeparam name="SelectParticleEmitter">生成するパーティクルの型</typeparam>
+	/// <typeparam name="SelectParticle">生成するパーティクルの型</typeparam>
 	/// <param name="model">パーティクルに使用するモデル</param>
 	/// <param name="aliveTime">パーティクルの継続時間</param>
-	template<IsIParticleEmitter SelectParticleEmitter>
+	template<IsIParticle SelectParticle>
 	inline void CreateEmitter(const Model* model, float aliveTime) {
 		// インスタンスの生成
-		std::unique_ptr<IParticleEmitter> emitter = std::make_unique<SelectParticleEmitter>();
+		std::unique_ptr<IParticleEmitter> emitter = std::make_unique<IParticleEmitter>();
 		// 生成したインスタンスの初期化
 		emitter->Init(model, aliveTime);
 		// 初期化したインスタンスを配列に追加
 		emitters_.push_back(emitter);
 	}
 
+#ifdef _DEBUG
+	/// <summary>
+	/// パーティクルの型リストに追加する関数
+	/// </summary>
+	/// <typeparam name="SelectParticleEmitter">追加する型</typeparam>
+	template<IsIParticle SelectParticle>
+	inline void AddParticleMold(const Vector3& position) {
+		moldMap_.insert(std::make_pair(typeid(SelectParticle), []() {return std::make_unique<SelectParticle>(position); }));
+	}
+#endif // _DEBUG
+
 private: // メンバ変数
 
 	// パーティクルエミッター達
 	std::list<std::unique_ptr<IParticleEmitter>> emitters_;
+
+#ifdef _DEBUG // ImGui用変数
+
+	// パーティクル型マップ
+	std::unordered_map <std::type_index, std::function<std::unique_ptr<IParticle>(const Vector3& )>> moldMap_;
+
+#endif // _DEBUG
 
 };
