@@ -71,8 +71,6 @@ public:
 
 	private:
 
-
-
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
 
@@ -113,7 +111,7 @@ public:
 	const auto &GetGroundModel() const { return groundModels_; }
 
 private:
-	std::array<Model *, 2u> groundModels_;
+	std::array<Model *, 2u> groundModels_ = {};
 	Transform lineStart_;
 	Transform lineEnd_;
 	LineBase stageLine_;
