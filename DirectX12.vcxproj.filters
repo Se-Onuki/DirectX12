@@ -333,6 +333,9 @@
     <ClCompile Include="Header\Entity\Component\CannonComp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerState\IdleState.cpp">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -610,6 +613,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\CannonComp.h">
       <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerState\IdleState.h">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

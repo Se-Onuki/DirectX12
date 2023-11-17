@@ -8,6 +8,8 @@
 #include "../../../Engine/DirectBase/Model/Model.h"
 #include "PlayerAnimations/AnimationManager.h"
 
+class PlayerAnimComp;
+
 class PlayerComp : public IComponent {
 public:
 	using IComponent::IComponent;
@@ -41,6 +43,8 @@ private:
 	AABB collider_;
 
 	Input *input_;
+
+	PlayerAnimComp *animationComp_ = nullptr;
 
 	Material backMaterial_;
 };

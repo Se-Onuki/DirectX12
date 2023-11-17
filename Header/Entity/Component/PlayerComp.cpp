@@ -3,6 +3,7 @@
 #include "../../Object/LevelElementManager.h"
 #include "../../../Engine/DirectBase/File/GlobalVariables.h"
 #include "ModelComp.h"
+#include "PlayerAnimComp.h"
 
 const std::string PlayerComp::groupName_ = "Player";
 
@@ -19,6 +20,8 @@ void PlayerComp::Init() {
 
 	//auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	//rigidbody->ApplyInstantForce(Vector3{ 0.f,1000000.f,0.f });
+
+	animationComp_ = object_->AddComponent<PlayerAnimComp>();
 
 	AddVariable(groupName_.c_str());
 }
