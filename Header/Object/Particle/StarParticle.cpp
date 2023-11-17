@@ -1,15 +1,6 @@
 #include "StarParticle.h"
 
-StarParticle::StarParticle(const Vector3& translate, const Vector3& direction)
-{
-	// 引数の値をメンバ変数に代入
-	transform_.translate = translate;
-	emissionDirection_ = &direction;
-
-}
-
-void StarParticle::Init()
-{
+void StarParticle::Init() {
 	
 }
 
