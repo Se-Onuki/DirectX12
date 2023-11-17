@@ -106,6 +106,21 @@ struct Matrix4x4 final {
 		const Vector3 &cameraTarget,   // 目標の位置
 		const Vector3 &cameraUpVector  // 上方を示すベクトル
 	);
+
+	static uint32_t size() { return 16u; }
+
+	float *const begin() { return *m; }
+	const float *const begin() const { return *m; }
+	const float *const cbegin() const { return *m; }
+
+	float *const end() { return begin() + size(); }
+	const float *const end() const { return end(); }
+	const float *const cend() const { return end(); }
+
+	float *const data() { return begin(); }
+	const float *const data() const { return begin(); }
+	const float *const cdata() const { return begin(); }
+
 };
 #pragma region 4x4Func
 
@@ -158,5 +173,24 @@ inline Matrix4x4 Matrix4x4::Crop() const {
 
 	return result;
 }
+//
+///// @brief 文字列変換
+///// @param matrix 
+///// @return 
+//std::string SoLib::to_string(const Matrix4x4 &matrix) {
+//	std::string result = "[\n";
+//	for (uint32_t y = 0u; y < 4u; ++y) {
+//		result += "  [ ";
+//		for (uint32_t x = 0u; x < 4u; ++x) {
+//			result += std::to_string(matrix.m[y][x]) + ",\t";
+//			if (x < 3u) {
+//				result += ", ";
+//			}
+//		}
+//		result += " ],\n";
+//	}
+//	result += "]";
+//	return result;
+//}
 
 #pragma endregion
