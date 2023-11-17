@@ -199,7 +199,7 @@ public: // アクセッサ等
 	/// <param name="time">秒数</param>
 	void SetAliveTime(float time) { timer_.Start(time); }
 
-protected: // 継承先メンバ変数
+public: // パブリックメンバ変数
 	// トランスフォーム
 	BaseTransform transform_;
 	// 色
@@ -209,6 +209,9 @@ protected: // 継承先メンバ変数
 	Vector3 velocity_ = Vector3::zero;
 	// 加速度
 	Vector3 acceleration_ = Vector3::zero;
+
+	// 乱数
+	float randomNumber_ = 0.0f;
 
 	// タイマー
 	SoLib::DeltaTimer timer_;

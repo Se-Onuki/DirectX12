@@ -149,6 +149,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\LevelElementManager.cpp" />
     <ClCompile Include="Header\Object\Particle.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="Header\Object\Particle\ParticleEmitterManager.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleManager.cpp" />
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp" />
@@ -237,6 +238,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\LevelManager.h" />
     <ClInclude Include="Header\Object\Particle.h" />
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h" />
+    <ClInclude Include="Header\Object\Particle\ParticleEmitterManager.h" />
     <ClInclude Include="Header\Object\Particle\ParticleManager.h" />
     <ClInclude Include="Header\Object\Particle\StarParticle.h" />
     <ClInclude Include="Header\Object\Particle\TestParticle.h" />

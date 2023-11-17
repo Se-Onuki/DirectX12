@@ -103,6 +103,9 @@
     <Filter Include="Header\Entity\Object\Particle">
       <UniqueIdentifier>{f27eee7f-b96d-41b7-8091-4390e104378f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\Particle\Particles">
+      <UniqueIdentifier>{bfcbf39d-7f11-45dd-aeb4-c96e91717d21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -315,14 +318,17 @@
     <ClCompile Include="Header\Object\Particle.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
-      <Filter>Header\Entity\Object\Particle</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
+    <ClCompile Include="Header\Object\Particle\ParticleEmitterManager.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
+      <Filter>Header\Entity\Object\Particle\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
+      <Filter>Header\Entity\Object\Particle\Particles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -587,14 +593,17 @@
     <ClInclude Include="Header\Object\Particle.h">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\Particle\TestParticle.h">
-      <Filter>Header\Entity\Object\Particle</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\Particle\StarParticle.h">
+    <ClInclude Include="Header\Object\Particle\ParticleEmitterManager.h">
       <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\StarParticle.h">
+      <Filter>Header\Entity\Object\Particle\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\TestParticle.h">
+      <Filter>Header\Entity\Object\Particle\Particles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

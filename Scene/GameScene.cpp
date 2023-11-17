@@ -15,9 +15,7 @@
 #include "../Header/Entity/Component/PlayerAnimComp.h"
 #include "../Header/Entity/Component/FollowCameraComp.h"
 
-#include "../Header/Object/Particle/ParticleManager.h"
-#include "../Header/Object/Particle/TestParticle.h"
-#include "../Header/Object/Particle/StarParticle.h"
+#include "../Header/Object/Particle/ParticleEmitterManager.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -34,9 +32,12 @@ void GameScene::OnEnter() {
 
 	static auto* const modelManager = ModelManager::GetInstance();
 	static auto* const particleManager = ParticleManager::GetInstance();
+	static auto* const particleEmitterManager = ParticleEmitterManager::GetInstance();
 
 	// パーティクルマネージャの初期化
 	particleManager->Init(256); // パーティクルの最大数は256
+	// パーティクルエミッタマネージャーの初期化
+	particleEmitterManager->Init(); 
 
 	// モデルの読み込み
 	modelManager->CreateDefaultModel(); // デフォルトモデルの読み込み
@@ -89,8 +90,6 @@ void GameScene::OnEnter() {
 
 	player_->AddComponent<PlayerComp>();
 
-	particleManager->AddParticle(modelManager->GetModel("PlayerLing"), std::make_unique<StarParticle>(player_->transform_.rotate));
-
 #pragma endregion
 
 #pragma region FollowCamera
@@ -114,12 +113,14 @@ void GameScene::Update() {
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	static auto* const colliderManager = CollisionManager::GetInstance();
 	static auto* const particleManager = ParticleManager::GetInstance();
+	static auto* const particleEmitterManager = ParticleEmitterManager::GetInstance();
 	static const auto* const keyBoard = input_->GetDirectInput();
 
 	colliderManager->clear();
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
+	particleEmitterManager->Update(deltaTime);
 	particleManager->Update(deltaTime);
 
 	levelManager->Update(deltaTime);
