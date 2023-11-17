@@ -105,7 +105,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->Init();
-	sceneManager->ChangeScene(new TitleScene);
+	sceneManager->ChangeScene(std::make_unique<TitleScene>());
 
 
 	// ウィンドウのxボタンが押されるまでループ
@@ -118,6 +118,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// ImGuiに新規フレームであると伝える
 		ImGuiManager::StartFlame();
 
+		const float deltaTime = ImGui::GetIO().DeltaTime;
 
 		///
 		/// ↓ゲーム処理↓
@@ -137,7 +138,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		gVariable->Update();
 		// ゲームの処理
-		sceneManager->Update();
+		sceneManager->Update(deltaTime);
 
 
 		///
