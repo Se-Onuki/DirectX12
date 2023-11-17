@@ -18,6 +18,7 @@
 #include "../Header/Object/Particle/ParticleManager.h"
 #include "../Header/Object/Particle/TestParticle.h"
 #include "../Header/Object/Particle/StarParticle.h"
+#include "../Header/Entity/Component/CannonComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -79,15 +80,16 @@ void GameScene::OnEnter() {
 
 #pragma region Player
 
-	Model *const boxModel = ModelManager::GetInstance()->GetModel("Box");
+	/*Model *const boxModel = */ModelManager::GetInstance()->GetModel("Box");
 	player_ = std::make_unique<Entity>();
 	//auto*const rigidbody =
 	player_->AddComponent<Rigidbody>();
-	auto *const modelComp =
-		player_->AddComponent<ModelComp>();
-	modelComp->AddBone("Body", boxModel);
+	//auto *const modelComp =
+	player_->AddComponent<ModelComp>();
+	//modelComp->AddBone("Body", boxModel);
 
 	player_->AddComponent<PlayerComp>();
+	player_->AddComponent<PlayerAnimComp>();
 
 	// particleManager->AddParticle(modelManager->GetModel("PlayerLing"), std::make_unique<StarParticle>(player_->transform_.rotate));
 
@@ -105,6 +107,12 @@ void GameScene::OnEnter() {
 
 	cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;
+
+
+
+	cannon_ = std::make_unique<Entity>();
+	cannon_->AddComponent<CannonComp>();
+
 }
 
 void GameScene::OnExit() {}

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 
 struct Matrix2x2 {
@@ -30,4 +31,18 @@ struct Matrix2x2 {
 
 	void operator*=(const float& Second);
 	void operator/=(const float& Second);
+
+	static uint32_t size() { return 4u; }
+
+	float *const begin() { return *m; }
+	const float *const begin() const { return *m; }
+	const float *const cbegin() const { return *m; }
+
+	float *const end() { return begin() + size(); }
+	const float *const end() const { return end(); }
+	const float *const cend() const { return end(); }
+
+	float *const data() { return begin(); }
+	const float *const data() const { return begin(); }
+	const float *const cdata() const { return begin(); }
 };

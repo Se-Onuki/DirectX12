@@ -4,6 +4,9 @@
 #include "AnimEasing.h"
 #include "../../../../Engine/DirectBase/File/GlobalVariables.h"
 #include "AnimationKeys.h"
+// #include "AnimationManager.h"
+
+enum PlayerBehavior :uint32_t;
 
 /// <summary>
 /// アニメーション基底クラス
@@ -16,7 +19,7 @@ public: // メンバ関数
 	BaseAnimation() = default;
 	// デストラクタ
 	~BaseAnimation() = default;
-	
+
 	/// <summary>
 	/// 初期化関数
 	/// </summary>
@@ -69,6 +72,17 @@ public: // アクセッサ等
 	int GetPlayKey() { return playKey_; }
 
 	/// <summary>
+	/// 現在のアニメーション状態のゲッター
+	/// </summary>
+	/// <returns>現在のアニメーション状態</returns>
+	const PlayerBehavior& GetBehavior() { return behavior_; }
+	/// <summary>
+	/// 現在のアニメーション状態セッター
+	/// </summary>
+	/// <param name="behavior">設定するアニメーション状態</param>
+	void SetBehavior(const PlayerBehavior& behavior) { behavior_ = behavior; }
+
+	/// <summary>
 	/// 引数で指定したボーンの値を取得するゲッター
 	/// </summary>
 	/// <param name="groupName">取得するボーンのグループ名</param>
@@ -80,7 +94,7 @@ public: // アクセッサ等
 	/// 引数で指定したボーンの値を取得するゲッター
 	/// </summary>
 	/// <returns>プレイヤーボーン</returns>
-	PlayerBone::Bone GetPlayerBone();
+	 PlayerBone::Bone GetPlayerBone();
 
 	/// <summary>
 	/// 全てのボーンをイージングにて動作させる線形補間関数
@@ -91,12 +105,15 @@ public: // アクセッサ等
 	/// <param name="end">終端値</param>
 	/// <param name="time">時間</param>
 	/// <returns>イージングされた値(float)</returns>
-	PlayerBone::Bone Ease(AnimEasing::EasingType type, float t, PlayerBone::Bone start, PlayerBone::Bone end, float time);
+	PlayerBone::Bone Ease(AnimEasing::EasingType type, float t, const PlayerBone::Bone& start, const PlayerBone::Bone& end, float time);
 
 protected: // 継承先メンバ変数
 
 	// グローバル変数クラス
 	GlobalVariables* globalVariables_ = nullptr;
+
+	// 再生されているアニメーション
+	PlayerBehavior behavior_;
 
 	// アニメーションさせるエンティティ
 	Entity* entity_ = nullptr;
