@@ -8,6 +8,7 @@
 #include "../../../Engine/DirectBase/Model/Model.h"
 #include "PlayerAnimations/AnimationManager.h"
 #include "PlayerState/IPlayerState.h"
+#include "../../../Utils/Math/Vector3.h"
 
 class PlayerAnimComp;
 
@@ -26,11 +27,15 @@ public:
 
 	void ApplyVariables(const char *const groupName) override;
 	void AddVariable(const char *const groupName) const override;
+	void SetFollowCamera(FollowCameraComp *const followCamera) { pFollowCamera_ = followCamera; }
 
 	VariantItem<float> vMoveSpeed{ "MoveSpeed", 1000.f };
 	VariantItem<float> vJumpPower{ "JumpPower", 5.f };
 
-	void SetFollowCamera(FollowCameraComp *const followCamera) { pFollowCamera_ = followCamera; }
+
+private:
+
+	Vector3 CalcMoveCollision();
 
 private:
 

@@ -82,6 +82,41 @@ void PlayerComp::Update() {
 	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
+	Vector3 endPos = CalcMoveCollision();
+
+	transform_->translate = endPos;
+	rigidbody->SetVelocity({ 0.f,rigidbody->GetVelocity().y,0.f });
+}
+
+void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {
+	const auto *const modelComp = object_->GetComponent<ModelComp>();
+	modelComp->Draw(camera, backMaterial_);
+}
+
+void PlayerComp::ImGuiWidget() {
+	ImGui::Text("KeyGroup : %i", registeredGroups_);
+}
+
+void PlayerComp::ApplyVariables(const char *const groupName) {
+	const GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+	const auto &cGroup = gVariable->GetGroup(groupName);
+
+	cGroup >> vMoveSpeed;
+	cGroup >> vJumpPower;
+}
+
+void PlayerComp::AddVariable(const char *const groupName) const {
+	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
+	auto &group = gVariable->GetGroup(groupName);
+	group << vMoveSpeed;
+	group << vJumpPower;
+}
+
+Vector3 PlayerComp::CalcMoveCollision() {
+
+	static auto *const levelManager = LevelElementManager::GetInstance();
+
+	auto *const rigidbody = object_->GetComponent<Rigidbody>();
 
 	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
@@ -153,31 +188,5 @@ void PlayerComp::Update() {
 
 	}
 
-
-	transform_->translate = moveLine.origin;
-	rigidbody->SetVelocity({ 0.f,rigidbody->GetVelocity().y,0.f });
-}
-
-void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {
-	const auto *const modelComp = object_->GetComponent<ModelComp>();
-	modelComp->Draw(camera, backMaterial_);
-}
-
-void PlayerComp::ImGuiWidget() {
-	ImGui::Text("KeyGroup : %i", registeredGroups_);
-}
-
-void PlayerComp::ApplyVariables(const char *const groupName) {
-	const GlobalVariables *const gVariable = GlobalVariables::GetInstance();
-	const auto &cGroup = gVariable->GetGroup(groupName);
-
-	cGroup >> vMoveSpeed;
-	cGroup >> vJumpPower;
-}
-
-void PlayerComp::AddVariable(const char *const groupName) const {
-	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
-	auto &group = gVariable->GetGroup(groupName);
-	group << vMoveSpeed;
-	group << vJumpPower;
+	return moveLine.origin;
 }
