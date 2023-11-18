@@ -1,5 +1,6 @@
 #pragma once
 #include "ParticleManager.h"
+#include "../../Engine/DirectBase/File/GlobalVariables.h"
 #include "../../Entity/Entity.h"
 
 /// <summary>
@@ -9,6 +10,7 @@ class StarParticle : public IParticle
 {
 public: // メンバ関数
 
+	// 基底クラスのコンストラクタを使用
 	using IParticle::IParticle;
 
 	/// <summary>
@@ -24,11 +26,6 @@ public: // メンバ関数
 
 
 private: // メンバ変数
-
-	// 粒子の放出方向
-	const Vector3* emissionDirection_;
-
-
 
 };
 

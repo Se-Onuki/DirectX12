@@ -44,14 +44,13 @@ public: // メンバ関数
 	/// 引数で指定したパーティクルエミッタを生成する関数
 	/// </summary>
 	/// <typeparam name="SelectParticle">生成するパーティクルの型</typeparam>
-	/// <param name="model">パーティクルに使用するモデル</param>
 	/// <param name="aliveTime">パーティクルの継続時間</param>
 	template<IsIParticle SelectParticle>
-	inline void CreateEmitter(const Model *model, float aliveTime) {
+	inline void CreateEmitter(float aliveTime) {
 		// インスタンスの生成
 		std::unique_ptr<ParticleEmitter> emitter = std::make_unique<ParticleEmitter>();
 		// 生成したインスタンスの初期化
-		emitter->Init(model, aliveTime);
+		emitter->Init(aliveTime);
 		// 型タイプを設定
 		emitter->SetParticleType<SelectParticle>();
 		// 初期化したインスタンスを配列に追加
@@ -85,8 +84,8 @@ private: // メンバ変数
 	// パーティクル型マップ
 	std::map <std::type_index, std::function<std::unique_ptr<IParticle>(const Vector3 &)>> moldMap_;
 
-	//　変数
-	const Vector3 position = { 0.0f, 0.0f, 0.0f };
+	// 再生時間
+	float imGuiAliveTime_ = 1.0f;
 
 #endif // _DEBUG
 

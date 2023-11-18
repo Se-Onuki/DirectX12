@@ -1,12 +1,14 @@
 #include "ParticleEmitter.h"
 #include "StarParticle.h"
 
-void ParticleEmitter::Init(const Model* model, float aliveTime)
+void ParticleEmitter::Init(float aliveTime)
 {
+
 	// インスタンス取得
-	particleManager_ = ParticleManager::GetInstance();
-	// モデルをセット
-	model_ = model;
+	particleManager_ = ParticleManager::GetInstance(); // パーティクルマネージャー
+	globalVariables_ = GlobalVariables::GetInstance(); // 調整項目クラス
+	// サンプルモデルをセット
+	model_ = ModelManager::GetInstance()->GetModel("Box");
 
 	// 粒子リストのクリア
 	particles_.clear();
@@ -15,7 +17,7 @@ void ParticleEmitter::Init(const Model* model, float aliveTime)
 	emitAliveTimer_.Start(aliveTime);
 
 	// 初期設定
-	emitIntervalTimer_.Start(1.0f); // 発生間隔タイマーの初期化
+	emitIntervalTimer_.Start(0.1f); // 発生間隔タイマーの初期化
 	SetParticleType<StarParticle>(); // 型の設定
 }
 
@@ -48,6 +50,7 @@ void ParticleEmitter::Update([[maybe_unused]]float deltaTime)
 	
 
 	// タイマー更新
+	emitAliveTimer_.Update(deltaTime);
 	emitIntervalTimer_.Update(deltaTime);
 }
 
@@ -67,6 +70,8 @@ IParticle* ParticleEmitter::CreateParticle(const Model& model)
 	particle->randomNumber_ = emitBlur_;			 // 乱数設定
 	particle->timer_.Start(particleAliveTme_);		 // 粒子タイマー
 	particle->Init();								 // 再度初期化
+	// 粒子配列に追加
+	particles_.push_back(particle);
 
 	// 生成したパーティクルを返す
 	return particle;

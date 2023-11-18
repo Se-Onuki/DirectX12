@@ -159,7 +159,6 @@ public: // コンストラクタ等
 	IParticle(const Vector3& translate) { transform_.translate = translate; };			// コンストラクタ
 	virtual ~IParticle() = default;	// デストラクタ
 
-
 public: // 純粋仮想関数
 
 	/// <summary>
