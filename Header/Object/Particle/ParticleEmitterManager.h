@@ -53,6 +53,14 @@ public: // メンバ関数
 		emitter->Init(aliveTime);
 		// 型タイプを設定
 		emitter->SetParticleType<SelectParticle>();
+		// 型名取得
+		emitter->typeName_ = typeid(SelectParticle).name();
+
+		// エミッタの値を追加
+		emitter->AddItem();
+		// エミッタの値を読み込む
+		emitter->ApplyItem();
+
 		// 初期化したインスタンスを配列に追加
 		emitters_.push_back(std::move(emitter));
 	}
@@ -76,6 +84,9 @@ public: // メンバ関数
 
 private: // メンバ変数
 
+	// 調整項目クラス
+	GlobalVariables* gv_ = nullptr;
+
 	// パーティクルエミッター達
 	std::list<std::unique_ptr<ParticleEmitter>> emitters_;
 
@@ -84,8 +95,14 @@ private: // メンバ変数
 	// パーティクル型マップ
 	std::map <std::type_index, std::function<std::unique_ptr<IParticle>(const Vector3 &)>> moldMap_;
 
+	// imGui表示用
+	std::vector<ParticleEmitter*> imGuiEmitters_;
+
 	// 再生時間
 	float imGuiAliveTime_ = 1.0f;
+
+	// 生成座標
+	BaseTransform imGuiEmitTransform_;
 
 #endif // _DEBUG
 

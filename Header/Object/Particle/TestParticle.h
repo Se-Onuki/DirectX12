@@ -8,6 +8,9 @@ class TestParticle : public IParticle
 {
 public: // メンバ関数
 
+	// 基底クラスのコンストラクタを使用
+	using IParticle::IParticle;
+
 	/// <summary>
 	/// 初期化
 	/// </summary>

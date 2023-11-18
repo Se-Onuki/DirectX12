@@ -54,7 +54,22 @@ public: // アクセッサ等
 		};
 	}
 
+	/// <summary>
+	/// 調整項目クラスにメンバ変数を追加する関数
+	/// </summary>
+	void AddItem();
+	/// <summary>
+	/// 調整項目クラスにメンバ変数をセットする関数
+	/// </summary>
+	void SetItem();
+	/// <summary>
+	/// メンバ変数に調整項目クラスの値をセットする関数
+	/// </summary>
+	void ApplyItem();
+
 public: // パブリックメンバ変数
+
+#pragma region 調整項目クラスに追加しない変数
 
 	// 発生中心座標
 	BaseTransform emitTransform_;
@@ -62,11 +77,13 @@ public: // パブリックメンバ変数
 	// 終了しているか
 	bool isEnd_ = false;
 
-	// 最大粒子数
-	int maxParticleCount_ = 10;
-
 	// エミッタのタイマー
 	SoLib::DeltaTimer emitAliveTimer_;
+
+#pragma endregion
+
+	// 最大粒子数
+	int maxParticleCount_ = 10;
 
 	// 粒子発生間隔のタイマー
 	SoLib::DeltaTimer emitIntervalTimer_;
@@ -90,7 +107,8 @@ public: // パブリックメンバ変数
 	// 生成する粒子の型
 	std::function<std::unique_ptr<IParticle>(const Vector3&)> type_;
 
-	// 生成する粒子
+	// 生成する粒子型名
+	std::string typeName_;
 
 #ifdef _DEBUG
 
@@ -103,10 +121,10 @@ public: // パブリックメンバ変数
 private: // メンバ変数
 
 	// 調整項目クラス
-	GlobalVariables* globalVariables_ = nullptr;
+	GlobalVariables* gv_ = nullptr;
 
 	// パーティクルマネージャ
-	ParticleManager* particleManager_;
+	ParticleManager* particleManager_ = nullptr;
 
 	// パーティクルリスト
 	std::list<IParticle*> particles_;

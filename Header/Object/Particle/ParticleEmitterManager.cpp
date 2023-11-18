@@ -2,13 +2,39 @@
 
 void ParticleEmitterManager::Init()
 {
+	// インスタンスを取得
+	gv_ = GlobalVariables::GetInstance();
+
 	// エミッタリストのクリア
 	emitters_.clear();
 
 #ifdef _DEBUG
 	
 	// デバッグ用の型を追加
+	AddParticleMold<TestParticle>(); // テストパーティクル
 	AddParticleMold<StarParticle>(); // 星パーティクル
+
+	// パーティクルの全数値の管理
+	// イテレータの取得
+	auto iter = moldMap_.begin();
+	// イテレータの終わりまでループ
+	while (iter != moldMap_.end()) {
+		// インスタンスの生成
+		ParticleEmitter* newEmitter = new ParticleEmitter();
+		// 生成したインスタンスの初期化
+		newEmitter->Init(imGuiAliveTime_);
+		// 型タイプを設定
+		newEmitter->type_ = iter->second;
+		// エミッタの座標設定
+		newEmitter->emitTransform_ = imGuiEmitTransform_;
+		// 名前を設定
+		newEmitter->typeName_ = iter->first.name(); // 生成するパーティクル型名の取得
+
+		newEmitter->AddItem();
+		newEmitter->ApplyItem();
+		imGuiEmitters_.push_back(newEmitter);
+		iter++;
+	}
 
 #endif // _DEBUG
 
@@ -48,7 +74,7 @@ void ParticleEmitterManager::Update(float deltaTime)
 
 	// イテレータの取得
 	auto iter = moldMap_.begin();
-	// パーティクルのモデルと集合を1つづつ取得
+	// イテレータの終わりまでループ
 	while (iter != moldMap_.end()) {
 		if (ImGui::Button(iter->first.name())) {
 			// インスタンスの生成
@@ -57,8 +83,11 @@ void ParticleEmitterManager::Update(float deltaTime)
 			newEmitter->Init(imGuiAliveTime_);
 			// 型タイプを設定
 			newEmitter->type_ = iter->second;
+			// エミッタの座標設定
+			newEmitter->emitTransform_ = imGuiEmitTransform_;
 			// 名前を設定
-			newEmitter->name_ = iter->first.name();
+			newEmitter->typeName_ = iter->first.name(); // 生成するパーティクル型名の取得
+			newEmitter->name_ = iter->first.name();		// エミッタ自体の名前
 			int sameNameCount = 0;
 			// 全てのエミッタの名前の取得
 			for (std::unique_ptr<ParticleEmitter>& emitter : emitters_) {
@@ -84,16 +113,40 @@ void ParticleEmitterManager::Update(float deltaTime)
 				newEmitter->name_ = newEmitter->name_ + count;
 			}
 
+			// エミッタの値を追加
+			newEmitter->AddItem();
+			// エミッタの値を読み込む
+			newEmitter->ApplyItem();
+
 			// 初期化したインスタンスを配列に追加
 			emitters_.push_back(std::move(newEmitter));
 		}
 		iter++;
 	}
-
+	// 生成座標の設定
+	imGuiEmitTransform_.ImGuiWidget();
 	// 再生時間の設定
 	ImGui::DragFloat("PlayTime", &imGuiAliveTime_, 0.01f, 15.0f);
-
 	ImGui::End();
+
+	// パーティクルの全数値の管理
+	// イテレータの取得
+	int count = 0;
+	auto iIter = moldMap_.begin();
+	// イテレータの終わりまでループ
+	while (iIter != moldMap_.end()) {
+		ImGui::Begin("ParticleParameters", nullptr, ImGuiWindowFlags_MenuBar);
+		if (ImGui::BeginMenuBar()) {
+			if (ImGui::BeginMenu(iIter->first.name())) {
+				imGuiEmitters_[count]->DisplayImGui();
+				ImGui::EndMenu();
+			}
+		}
+		ImGui::EndMenuBar();
+		iIter++;
+		count++;
+		ImGui::End();
+	}
 #endif // _DEBUG
 }
 
