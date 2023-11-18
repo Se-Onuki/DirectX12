@@ -99,7 +99,7 @@ public: // パブリックメンバ変数
 	float emitBlur_ = 0.0f;
 
 	// 粒子の継続時間
-	float particleAliveTme_ = 0.0f;
+	float particleAliveTme_ = 1.0f;
 
 	// 粒子モデル
 	const Model* model_;

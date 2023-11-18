@@ -3,8 +3,6 @@
 
 void TestParticle::Init()
 {
-	timer_.Start(3.0f);
-	color_ = Vector4{ 1.f,1.f,1.f,1.f };
 	transform_.translate.x = Random::GetRandom<float>(-10.0f, 10.0f);
 }
 

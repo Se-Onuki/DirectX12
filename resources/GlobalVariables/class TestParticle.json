@@ -1,13 +1,14 @@
 {
     "class TestParticle": {
         "EmitBlur": 0.0,
-        "EmitInterval": 0.5,
+        "EmitInterval": 0.10000000149011612,
         "MaxParticleCount": 10,
         "ParticleAcceleration": [
             0.0,
             0.0,
             0.0
         ],
+        "ParticleAliveTime": 1.0,
         "ParticleVelocity": [
             0.0,
             0.0,

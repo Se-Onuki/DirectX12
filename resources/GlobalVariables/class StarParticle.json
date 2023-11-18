@@ -8,10 +8,12 @@
             0.0,
             0.0
         ],
+        "ParticleAliveTime": 1.0,
         "ParticleVelocity": [
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "test": 52.060001373291016
     }
 }

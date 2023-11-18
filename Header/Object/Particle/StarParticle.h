@@ -8,6 +8,26 @@
 /// </summary>
 class StarParticle : public IParticle
 {
+public: // 静的なメンバ関数
+	
+	/// <summary>
+	/// 調整項目クラスに値を追加する関数
+	/// </summary>
+	static void AddItem();
+	/// <summary>
+	/// 調整項目クラスに値を追加する関数
+	/// </summary>
+	static void SetItem();
+	/// <summary>
+	/// 調整項目クラスに値を追加する関数
+	/// </summary>
+	static void ApplyItem();
+
+	/// <summary>
+	/// ImGui表示関数
+	/// </summary>
+	static void DisplayImGui();
+
 public: // メンバ関数
 
 	// 基底クラスのコンストラクタを使用
@@ -23,9 +43,15 @@ public: // メンバ関数
 	/// </summary>
 	void Update(float deltaTime) override;
 
+public: // 静的なメンバ変数
 
+	static float testParam_;
 
 private: // メンバ変数
+
+	Vector3 move_;
+
+	float test_;
 
 };
 

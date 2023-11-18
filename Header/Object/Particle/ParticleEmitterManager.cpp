@@ -8,6 +8,10 @@ void ParticleEmitterManager::Init()
 	// エミッタリストのクリア
 	emitters_.clear();
 
+	// 各種パーティクルの固有パラメーターを調整項目クラスから読み込み
+	StarParticle::AddItem();
+	StarParticle::ApplyItem();
+
 #ifdef _DEBUG
 	
 	// デバッグ用の型を追加
@@ -147,6 +151,9 @@ void ParticleEmitterManager::Update(float deltaTime)
 		count++;
 		ImGui::End();
 	}
+	
+	StarParticle::DisplayImGui();
+
 #endif // _DEBUG
 }
 
