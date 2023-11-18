@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <immintrin.h>
+#include "SimdCalc.h"
 
 struct Vector4 {
 
@@ -137,6 +138,13 @@ struct Vector4 {
 	float *const data() { return begin(); }
 	const float *const data() const { return begin(); }
 	const float *const cdata() const { return begin(); }
+
+
+	inline explicit operator __m128() const { return _mm_load_ps(&x); }
+	inline Vector4 &operator=(const __m128 &vec) { _mm_store_ps(reinterpret_cast<float *>(this), vec); return *this; }
+
+	inline explicit operator SoLib::Math::SIMD128() const { return SoLib::Math::SIMD128{ static_cast<__m128>(*this) }; }
+
 
 private:
 };
