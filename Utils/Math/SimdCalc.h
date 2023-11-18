@@ -22,7 +22,12 @@ namespace SoLib {
 			/// @param vecA ベクトルA
 			/// @param vecB ベクトルB
 			/// @return Vector3型のSIMD
-			static inline __m128 Cross(const __m128 &vecA, const __m128 &vecB);
+			static inline SIMD128 Cross(const __m128 &vecA, const __m128 &vecB);
+
+			inline SIMD128 operator+(const SIMD128 &other);
+			inline SIMD128 operator-(const SIMD128 &other);
+			inline SIMD128 operator*(const float other);
+			inline SIMD128 operator/(const float other);
 
 		private:
 
@@ -51,7 +56,7 @@ inline float SoLib::Math::SIMD128::Dot(const __m128 &vecA, const __m128 &vecB) {
 /// };
 ///
 
-__m128 SoLib::Math::SIMD128::Cross(const __m128 &vecA, const __m128 &vecB) {
+SoLib::Math::SIMD128 SoLib::Math::SIMD128::Cross(const __m128 &vecA, const __m128 &vecB) {
 
 	// vecAから、(y, z, x, w)を取得する (p0)
 	__m128 p0 = _mm_shuffle_ps(vecA, vecA, _MM_SHUFFLE(3, 0, 2, 1));
@@ -70,22 +75,38 @@ __m128 SoLib::Math::SIMD128::Cross(const __m128 &vecA, const __m128 &vecB) {
 	__m128 mul1 = _mm_shuffle_ps(buff, buff, _MM_SHUFFLE(3, 0, 2, 1));
 
 	// p0*p1 - p2*p3を計算する。
-	return _mm_sub_ps(mul0, mul1);
+	return SoLib::Math::SIMD128{ _mm_sub_ps(mul0, mul1) };
 }
 
-inline SoLib::Math::SIMD128 operator+ (const SoLib::Math::SIMD128 &a, const SoLib::Math::SIMD128 &b) {
-
-	return SoLib::Math::SIMD128{ _mm_add_ps(a,b) };
-
+inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator+(const SIMD128 &other) {
+	return SoLib::Math::SIMD128{ _mm_add_ps(*this,other) };
 }
 
-inline SoLib::Math::SIMD128 operator* (const SoLib::Math::SIMD128 &a, float b) {
-
-	return SoLib::Math::SIMD128{ _mm_mul_ps(a, _mm_load_ps1(&b)) };
-
+inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator-(const SIMD128 &other) {
+	return SoLib::Math::SIMD128{ _mm_sub_ps(*this,other) };
 }
-inline SoLib::Math::SIMD128 operator/ (const SoLib::Math::SIMD128 &a, float b) {
 
-	return SoLib::Math::SIMD128{ _mm_div_ps(a, _mm_load_ps1(&b)) };
-
+inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator*(const float other) {
+	return SoLib::Math::SIMD128{ _mm_mul_ps(*this, _mm_load_ps1(&other)) };
 }
+
+inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator/(const float other) {
+	return SoLib::Math::SIMD128{ _mm_div_ps(*this, _mm_load_ps1(&other)) };
+}
+
+//inline SoLib::Math::SIMD128 operator+ (const SoLib::Math::SIMD128 &a, const SoLib::Math::SIMD128 &b) {
+//
+//	return SoLib::Math::SIMD128{ _mm_add_ps(a,b) };
+//
+//}
+//
+//inline SoLib::Math::SIMD128 operator* (const SoLib::Math::SIMD128 &a, float b) {
+//
+//	return SoLib::Math::SIMD128{ _mm_mul_ps(a, _mm_load_ps1(&b)) };
+//
+////}
+//inline SoLib::Math::SIMD128 operator/ (const SoLib::Math::SIMD128 &a, float b) {
+//
+//	return SoLib::Math::SIMD128{ _mm_div_ps(a, _mm_load_ps1(&b)) };
+//
+//}
