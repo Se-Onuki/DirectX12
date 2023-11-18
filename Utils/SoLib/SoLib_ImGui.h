@@ -12,6 +12,7 @@
 #include "../Math/ValueRange.h"
 
 #include "../../Engine/DirectBase/File/VariantItem.h"
+#include <string>
 
 namespace SoLib {
 
@@ -34,6 +35,9 @@ namespace SoLib {
 	bool ImGuiWidget<Vector3>(const char *const label, Vector3 *const value);
 	template <>
 	bool ImGuiWidget<Vector4>(const char *const label, Vector4 *const value);
+
+	template <>
+	bool ImGuiWidget<std::string>(const char *const label, std::string *const value);
 
 	template <>
 	bool ImGuiWidget<Angle::Radian>(const char *const label, Angle::Radian *const value);
