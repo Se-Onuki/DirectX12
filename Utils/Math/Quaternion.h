@@ -44,12 +44,12 @@ struct Quaternion final {
 inline Quaternion operator*(const Quaternion &a, const Quaternion &b) {
 	Quaternion result;
 
-	// aとbのベクトル部を取得
+	// aとbのベクトル部を取得 ( 実数部は 双方切り捨てられる )
 	std::array<SoLib::Math::SIMD128, 2u> vec{ static_cast<__m128>(a),static_cast<__m128>(b) };
 
-	// ベクトル部の算出
-	result.vec() = SoLib::Math::SIMD128{ SoLib::Math::SIMD128::Cross(vec[0u], vec[1u]) } + vec[0u] * b.w + vec[1u] * a.w;
-	// 実数部の算出
+	// ベクトル部の算出 ( 実数部は Vector3への代入時に切り捨て )
+	result.vec() = SoLib::Math::SIMD128::Cross(vec[0u], vec[1u]) + vec[0u] * b.w + vec[1u] * a.w;
+	// 実数部の算出 ( ドット積で 実数部を切り捨て )
 	result.w = a.w * b.w - SoLib::Math::SIMD128::Dot<3u>(vec[0u], vec[1u]);
 
 	return result;
