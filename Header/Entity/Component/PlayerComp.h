@@ -7,6 +7,7 @@
 #include "FollowCameraComp.h"
 #include "../../../Engine/DirectBase/Model/Model.h"
 #include "PlayerAnimations/AnimationManager.h"
+#include "PlayerState/IPlayerState.h"
 
 class PlayerAnimComp;
 
@@ -45,6 +46,9 @@ private:
 	Input *input_;
 
 	PlayerAnimComp *animationComp_ = nullptr;
+
+	std::unique_ptr<IPlayerStateClass> nowState_ = nullptr;
+	std::unique_ptr<IPlayerStateClass> nextState_ = nullptr;
 
 	Material backMaterial_;
 };

@@ -18,9 +18,6 @@ void PlayerComp::Init() {
 	backMaterial_.blendMode_ = Model::BlendMode::kBacker;
 	backMaterial_.materialBuff_->color = Vector4{ 0.f,0.f,0.f,1.f };
 
-	//auto *const rigidbody = object_->GetComponent<Rigidbody>();
-	//rigidbody->ApplyInstantForce(Vector3{ 0.f,1000000.f,0.f });
-
 	animationComp_ = object_->AddComponent<PlayerAnimComp>();
 
 	AddVariable(groupName_.c_str());
