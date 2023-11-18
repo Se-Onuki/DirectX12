@@ -608,6 +608,9 @@
     <ClInclude Include="Header\Object\Particle\StarParticle.h">
       <Filter>Header\Entity\Object\Particle\Particles\StarParticle</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Object\Particle\ParticleList.h">
+      <Filter>Header\Entity\Object\Particle\Particles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

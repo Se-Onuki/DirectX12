@@ -1,7 +1,7 @@
 #include "ParticleEmitter.h"
 #include "StarParticle.h"
 
-void IParticleEmitter::Init(Model* model, float aliveTime)
+void ParticleEmitter::Init(const Model* model, float aliveTime)
 {
 	// インスタンス取得
 	particleManager_ = ParticleManager::GetInstance();
@@ -19,7 +19,7 @@ void IParticleEmitter::Init(Model* model, float aliveTime)
 	SetParticleType<StarParticle>(); // 型の設定
 }
 
-void IParticleEmitter::Update([[maybe_unused]]float deltaTime)
+void ParticleEmitter::Update([[maybe_unused]]float deltaTime)
 {
 	// 終了している粒子があった場合それをリストから追い出す
 	particles_.remove_if([](IParticle* particle) {
@@ -29,26 +29,37 @@ void IParticleEmitter::Update([[maybe_unused]]float deltaTime)
 		return false;
 	});
 
-	// 粒子の数が最大数に達していなかった場合
-	if (particles_.size() <= maxParticleCount_) {
-		if (emitIntervalTimer_.IsFinish()) {
-			CreateParticle(*model_);
-		}
-		else {
-			
+	// 生存時間中なら
+	if (!emitAliveTimer_.IsFinish()) {
+		// 粒子の数が最大数に達していなかった場合
+		if (particles_.size() <= maxParticleCount_) {
+			if (emitIntervalTimer_.IsFinish()) {
+				CreateParticle(*model_);				 // パーティクル生成
+				emitIntervalTimer_.Start(emitInterval_); // タイマーリセット
+			}
 		}
 	}
+	else {
+		// パーティクル粒子数が0になったら終了
+		if (particles_.size() == 0) {
+			isEnd_ = true;
+		}
+	}
+	
+
+	// タイマー更新
+	emitIntervalTimer_.Update(deltaTime);
 }
 
-void IParticleEmitter::DisplayImGui()
+void ParticleEmitter::DisplayImGui()
 {
 
 }
 
-IParticle* IParticleEmitter::CreateParticle(const Model& model)
+IParticle* ParticleEmitter::CreateParticle(const Model& model)
 {
 	// 選択されたパーティクルを生成する
-	IParticle* particle = particleManager_->AddParticle(&model, type_());
+	IParticle* particle = particleManager_->AddParticle(&model, type_({0.0f, 0.0f, 0.0f}));
 	// 生成したパーティクルにパラメーターを設定
 	particle->transform_ = emitTransform_;			 // 発生座標
 	particle->velocity_ = particleVelocity_;		 // 速度設定

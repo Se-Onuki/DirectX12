@@ -6,14 +6,14 @@
 /// <summary>
 /// パーティクル生成クラス
 /// </summary>
-class IParticleEmitter
+class ParticleEmitter
 {
 public: // コンストラクタ等
 
 	// コンストラクタ
-	IParticleEmitter() = default;
+	ParticleEmitter() = default;
 	// デストラクタ
-	virtual ~IParticleEmitter() = default;
+	virtual ~ParticleEmitter() = default;
 
 public: // メンバ関数
 
@@ -22,7 +22,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="model">粒子モデル</param>
 	/// <param name="aliveTime">パーティクル全体の継続時間</param>
-	virtual void Init(Model* model, float aliveTime);
+	virtual void Init(const Model* model, float aliveTime);
 
 	/// <summary>
 	/// 更新関数
@@ -40,7 +40,9 @@ public: // メンバ関数
 
 	template<IsIParticle SelectParticle>
 	void SetParticleType() {
-		type_ = [&]() {return std::make_unique<SelectParticle>(emitTransform_.translate); };
+		type_ = [](const Vector3& position) -> std::unique_ptr<IParticle> {
+			return std::make_unique<SelectParticle>(position);
+		};
 	}
 
 public: // パブリックメンバ変数
@@ -74,12 +76,12 @@ public: // パブリックメンバ変数
 	float particleAliveTme_ = 0.0f;
 
 	// 粒子モデル
-	Model* model_;
+	const Model* model_;
 
 	// 生成する粒子の型
-	std::function<std::unique_ptr<IParticle>()> type_;
+	std::function<std::unique_ptr<IParticle>(const Vector3&)> type_;
 
-protected: // 継承先メンバ変数メンバ変数
+private: // メンバ変数
 
 	// パーティクルマネージャ
 	ParticleManager* particleManager_;
@@ -90,4 +92,4 @@ protected: // 継承先メンバ変数メンバ変数
 };
 
 template<class SelectEmiiter>
-concept IsIParticleEmitter = std::is_base_of<IParticleEmitter, SelectEmiiter>::value;
+concept IsIParticleEmitter = std::is_base_of<ParticleEmitter, SelectEmiiter>::value;
