@@ -46,7 +46,7 @@ public: // メンバ関数
 	/// <typeparam name="SelectParticle">生成するパーティクルの型</typeparam>
 	/// <param name="aliveTime">パーティクルの継続時間</param>
 	template<IsIParticle SelectParticle>
-	inline void CreateEmitter(float aliveTime) {
+	inline ParticleEmitter* CreateEmitter(float aliveTime) {
 		// インスタンスの生成
 		std::unique_ptr<ParticleEmitter> emitter = std::make_unique<ParticleEmitter>();
 		// 生成したインスタンスの初期化
@@ -63,6 +63,8 @@ public: // メンバ関数
 
 		// 初期化したインスタンスを配列に追加
 		emitters_.push_back(std::move(emitter));
+
+		return emitter.get();
 	}
 
 #ifdef _DEBUG

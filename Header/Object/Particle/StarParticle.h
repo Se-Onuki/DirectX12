@@ -45,13 +45,24 @@ public: // メンバ関数
 
 public: // 静的なメンバ変数
 
-	// 
+	// １フレームごとの回転量
 	static float rotationAmount_;
+
+	// 粒子最小サイズ
+	static float minSize_;
+	// 粒子最大サイズ
+	static float maxSize_;
+
+	// 粒子が表示されるまでの秒数
+	static float dispalyParticleTime_;
 
 private: // メンバ変数
 
 	// 移動ベクトル格納用
 	Vector3 move_;
+
+	// パーティクル表示用タイマー
+	SoLib::DeltaTimer diplayParticleTimer_;
 
 	// 開始時サイズ格納用
 	Vector3 startScale_ = Vector3::zero;
