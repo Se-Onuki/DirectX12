@@ -270,6 +270,9 @@
     <ClCompile Include="Header\Object\Particle.cpp">
       <Filter>Header\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Math\Quaternion.cpp">
+      <Filter>Utils\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -498,6 +501,9 @@
       <Filter>Utils\Math</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Math\Matrix.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Math\SimdCalc.h">
       <Filter>Utils\Math</Filter>
     </ClInclude>
   </ItemGroup>

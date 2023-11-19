@@ -10,6 +10,7 @@
 #include "../Math/Matrix3x3.h"
 #include "../Math/Matrix4x4.h"
 #include <string>
+#include "../Math/Quaternion.h"
 
 namespace SoLib {
 
@@ -124,6 +125,19 @@ namespace SoLib {
 	};
 
 	template<>
+	struct Traits<Quaternion> {
+		using Type = Quaternion;
+		static constexpr auto Name = "Quaternion";
+		static constexpr uint32_t Rows = 1u;
+		static constexpr uint32_t Columns = 4u;
+		static constexpr uint32_t Size = Rows * Columns;
+		using ElementType = float;
+
+		static const ElementType *CBegin(const Type &data) { return &data.x; }
+		static const ElementType *End(const Type &data) { return CBegin(data) + Size; }
+	};
+
+	template<>
 	struct Traits<Matrix2x2> {
 		using Type = Matrix2x2;
 		static constexpr auto Name = "Matrix2x2";
@@ -211,6 +225,15 @@ namespace SoLib {
 
 			return result;
 		}
+	}
+
+	template<>
+	inline std::string to_string<Quaternion>(const Quaternion &data) {
+		return
+			"{\n"
+			"\tv : " + std::to_string(data.x) + ", " + std::to_string(data.y) + ", " + std::to_string(data.z) + ",\n"
+			"\tw : " + std::to_string(data.w) + "\n"
+			"}";
 	}
 
 }

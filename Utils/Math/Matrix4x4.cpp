@@ -178,11 +178,32 @@ Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float cos, const 
 	const float minusCosTheta = 1.f - cos;
 
 	return Matrix4x4{
-		Vector4{ std::powf(axis.x, 2) * minusCosTheta + cos,	axis.x * axis.y * minusCosTheta + axis.z * sin,		axis.x * axis.y * minusCosTheta - axis.y * sin,		0.f },
+		Vector4{ std::powf(axis.x, 2) * minusCosTheta + cos,	axis.x * axis.y * minusCosTheta + axis.z * sin,		axis.x * axis.z * minusCosTheta - axis.y * sin,		0.f },
 		Vector4{ axis.x * axis.y * minusCosTheta - axis.z * sin,	std::powf(axis.y, 2) * minusCosTheta + cos,	axis.y * axis.z * minusCosTheta + axis.x * sin,		0.f },
 		Vector4{ axis.x * axis.z * minusCosTheta + axis.y * sin,	axis.y * axis.z * minusCosTheta - axis.x * sin,		std::powf(axis.z,2) * minusCosTheta + cos,	0.f },
 		Vector4{ 0.f, 0.f, 0.f, 1.f },
 	};
+}
+
+Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3 &from, const Vector3 &to) {
+
+	const Vector3 u = from.Nomalize();
+	const Vector3 v = to.Nomalize();
+
+	const float dot = u * v;
+	const Vector3 cross = u.cross(v);
+	Vector3 axis = cross.Nomalize();
+
+	if (dot == -1.f) {
+		if (u.x != 0.f || u.y != 0.f) {
+			axis = Vector3{ u.y,-u.x,0.f };
+		}
+		else if (u.x != 0.f || u.z != 0.f) {
+			axis = Vector3{ u.z,0.f,-u.x };
+		}
+	}
+
+	return AnyAngleRotate(axis, dot, cross.Length());
 }
 
 
