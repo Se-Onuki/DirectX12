@@ -67,6 +67,13 @@ public: // アクセッサ等
 	/// </summary>
 	void ApplyItem();
 
+public: // その他関数
+
+	/// <summary>
+	/// 強制終了関数
+	/// </summary>
+	void Finish() { isEnd_ = true; }
+
 public: // パブリックメンバ変数
 
 #pragma region 調整項目クラスに追加しない変数
@@ -116,7 +123,6 @@ public: // パブリックメンバ変数
 	std::string name_;
 
 #endif // _DEBUG
-
 
 private: // メンバ変数
 

@@ -65,10 +65,23 @@ void ParticleEmitterManager::Update(float deltaTime)
 	ImGui::Begin("ParticleManager");
 	// 全パーティクルのImGuiを描画
 	ImGui::BeginChild(ImGui::GetID((void *)0), ImVec2(0, 100), ImGuiWindowFlags_NoTitleBar);
+	// カウント用
+	int emitterCount = 0;
 	// パーティクルが1つでもあった場合
 	if (emitters_.size() > 0) {
 		for (std::unique_ptr<ParticleEmitter> &emitter : emitters_) {
 			ImGui::Text(emitter->name_.c_str());
+			ImGui::SameLine();
+			if(!emitter->emitAliveTimer_.IsFinish())
+				ImGui::Text(" : Playing");
+			else
+				ImGui::Text(" : Ending");
+			ImGui::SameLine();
+			std::string name = "End : " + std::to_string((emitterCount));
+			if (ImGui::Button(name.c_str()))
+				emitter->Finish();
+
+			emitterCount++;
 		}
 	}
 	else { // 1つもパーティクルがない場合テキストで表示
@@ -125,6 +138,8 @@ void ParticleEmitterManager::Update(float deltaTime)
 			// 初期化したインスタンスを配列に追加
 			emitters_.push_back(std::move(newEmitter));
 		}
+
+		
 		iter++;
 	}
 	// 生成座標の設定
