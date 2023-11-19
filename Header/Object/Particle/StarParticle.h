@@ -45,13 +45,16 @@ public: // メンバ関数
 
 public: // 静的なメンバ変数
 
-	static float testParam_;
+	// 
+	static float rotationAmount_;
 
 private: // メンバ変数
 
+	// 移動ベクトル格納用
 	Vector3 move_;
 
-	float test_;
+	// 開始時サイズ格納用
+	Vector3 startScale_ = Vector3::zero;
 
 };
 

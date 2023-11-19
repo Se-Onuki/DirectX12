@@ -33,7 +33,7 @@ void ParticleEmitter::Update([[maybe_unused]]float deltaTime)
 	// 生存時間中なら
 	if (!emitAliveTimer_.IsFinish()) {
 		// 粒子の数が最大数に達していなかった場合
-		if (particles_.size() <= maxParticleCount_) {
+		if (particles_.size() < maxParticleCount_) {
 			if (emitIntervalTimer_.IsFinish()) {
 				CreateParticle(*model_);				 // パーティクル生成
 				emitIntervalTimer_.Start(emitInterval_); // タイマーリセット

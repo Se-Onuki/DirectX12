@@ -8,12 +8,13 @@
             0.0,
             0.0
         ],
-        "ParticleAliveTime": 1.0,
+        "ParticleAliveTime": 1.5,
         "ParticleVelocity": [
             0.0,
             0.0,
-            0.0
+            -0.10000000149011612
         ],
+        "RotationAmount": 0.02500000037252903,
         "test": 52.060001373291016
     }
 }
