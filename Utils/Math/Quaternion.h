@@ -4,8 +4,13 @@
 #include "Vector3.h"
 #include <array>
 #include <cmath>
+#include "Matrix4x4.h"
 
 struct Quaternion final {
+	Quaternion() = default;
+	Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {};
+	Quaternion(const Vector3 &vec, float w = 0.f) :w(w) { this->vec() = vec; };
+
 	float x, y, z;
 	float w;
 
@@ -17,6 +22,8 @@ struct Quaternion final {
 	/// @brief 単位クォータニオン
 	static const Quaternion Identity;
 
+	/// @brief 共役クォータニオン関数
+	/// @return 共役クォータニオン
 	inline Quaternion Conjugation() const;
 
 	/// @brief 逆クォータニオン関数
@@ -34,6 +41,12 @@ struct Quaternion final {
 	/// @brief 正規化関数
 	/// @return 単位クォータニオン
 	inline Quaternion Normalize() const;
+
+	Matrix4x4 RotateMatrix() const;
+
+	static inline Vector3 RotateVector(const Vector3 &a, const Quaternion &b);
+
+	static Quaternion AnyAxisRotation(const Vector3 &axis, float angle);
 
 	/// @brief 明示的な型変換
 	inline explicit operator __m128() const noexcept { return _mm_load_ps(&x); }
@@ -102,6 +115,20 @@ inline Quaternion Quaternion::Normalize() const {
 	return result;
 }
 
+inline Matrix4x4 Quaternion::RotateMatrix() const {
+	return Matrix4x4{
+		Vector4{w * w + x * x - y * y - z * z, 2.f * (x * y + w * z), 2.f * (x * z - w * y),0.f},
+		Vector4{2.f * (x * y - w * z), w * w - x * x + y * y - z * z,2.f * (y * z + w * x),0.f },
+		Vector4{2.f * (x * z + w * y),2.f * (y * z - w * x),w * w - x * x - y * y + z * z,0.f},
+		Vector4{.w = 1.f}
+	};
+}
+
+inline Quaternion Quaternion::AnyAxisRotation(const Vector3 &axis, float angle) {
+	float halfAngle = angle / 2.f;
+	return Quaternion{ axis * std::sin(halfAngle), std::cos(halfAngle) };
+}
+
 inline float Quaternion::LengthSQ() const {
 	__m128 value = static_cast<__m128>(*this);
 	return SoLib::Math::SIMD128::Dot<4u>(value, value);
@@ -110,4 +137,11 @@ inline float Quaternion::LengthSQ() const {
 inline float Quaternion::Length() const {
 	__m128 value = static_cast<__m128>(*this);
 	return std::sqrt(SoLib::Math::SIMD128::Dot<4u>(value, value));
+}
+
+inline Vector3 Quaternion::RotateVector(const Vector3 &a, const Quaternion &b) {
+
+	Quaternion result = b * Quaternion{ a } *b.Conjugation();
+
+	return result.vec();
 }

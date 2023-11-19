@@ -24,15 +24,11 @@ void TitleScene::OnExit() {
 
 void TitleScene::Update() {
 
-	ImGui::Text("Identity<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(Quaternion::Identity).c_str());
-	ImGui::Text("quaternion_[0u].Conjugation()<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(quaternion_[0u].Conjugation()).c_str());
-	ImGui::Text("quaternion_[0u].Inverse()<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(quaternion_[0u].Inverse()).c_str());
-	ImGui::Text("quaternion_[0u].Normalize()<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(quaternion_[0u].Normalize()).c_str());
+	ImGui::Text("rotation<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(rotation_).c_str());
+	ImGui::Text("rotateMatrix<%s> :\n%s", SoLib::Traits<Matrix4x4>::Name, SoLib::to_string(rotateMatrix_).c_str());
 
-	ImGui::Text("quaternion_[0u] * quaternion_[1u]<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(quaternion_[0u] * quaternion_[1u]).c_str());
-	ImGui::Text("quaternion_[1u] * quaternion_[0u]<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(quaternion_[1u] * quaternion_[0u]).c_str());
-
-	ImGui::Text("quaternion_[0u].Length()<%s> :%s", SoLib::Traits<float>::Name, SoLib::to_string(quaternion_[0u].Length()).c_str());
+	ImGui::Text("rotateByQuaternion<%s> :\n%s", SoLib::Traits<Vector3>::Name, SoLib::to_string(rotateByQuaternion_).c_str());
+	ImGui::Text("rotateByMatrix<%s> :\n%s", SoLib::Traits<Vector3>::Name, SoLib::to_string(rotateByMatrix_).c_str());
 
 }
 
