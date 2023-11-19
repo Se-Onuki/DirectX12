@@ -90,6 +90,10 @@ void GameScene::OnEnter() {
 
 	player_->AddComponent<PlayerComp>();
 
+	ParticleEmitter* emitter = nullptr;
+	emitter = particleEmitterManager->CreateEmitter<StarParticle>("PlayerLing");
+	emitter->targetTransform_ = &player_->transform_;
+
 #pragma endregion
 
 #pragma region FollowCamera

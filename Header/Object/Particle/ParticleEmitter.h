@@ -13,7 +13,7 @@ public: // コンストラクタ等
 	// コンストラクタ
 	ParticleEmitter() = default;
 	// デストラクタ
-	virtual ~ParticleEmitter() = default;
+	~ParticleEmitter() = default;
 
 public: // メンバ関数
 
@@ -21,13 +21,20 @@ public: // メンバ関数
 	/// 初期化関数
 	/// </summary>
 	/// <param name="aliveTime">パーティクル全体の継続時間</param>
-	virtual void Init(float aliveTime);
+	void Init(float aliveTime);
+
+	/// <summary>
+	/// 初期化関数
+	/// </summary>
+	/// <param name="modelName">粒子モデル名</param>
+	/// <param name="aliveTime"></param>
+	void Init(std::string modelName, float aliveTime);
 
 	/// <summary>
 	/// 更新関数
 	/// </summary>
 	/// <param name="deltaTime">経過秒数</param>
-	virtual void Update(float deltaTime);
+	void Update(float deltaTime);
 
 	/// <summary>
 	/// ImGui表示関数
@@ -81,11 +88,17 @@ public: // パブリックメンバ変数
 	// 発生中心座標
 	BaseTransform emitTransform_;
 
+	// 発生座標ターゲット
+	const BaseTransform* targetTransform_ = nullptr;
+
 	// 終了しているか
 	bool isEnd_ = false;
 
 	// エミッタのタイマー
 	SoLib::DeltaTimer emitAliveTimer_;
+
+	// ループトリガー
+	bool isLoop_ = false;
 
 #pragma endregion
 

@@ -18,6 +18,35 @@ void ParticleEmitter::Init(float aliveTime)
 	// 初期設定
 	emitIntervalTimer_.Start(0.0f); // 発生間隔タイマーの初期化
 	SetParticleType<StarParticle>(); // 型の設定
+
+	// エミッタの値を追加
+	AddItem();
+	// エミッタの値を読み込む
+	ApplyItem();
+}
+
+void ParticleEmitter::Init(std::string modelName, float aliveTime)
+{
+	// インスタンス取得
+	particleManager_ = ParticleManager::GetInstance(); // パーティクルマネージャー
+	gv_ = GlobalVariables::GetInstance(); // 調整項目クラス
+	// モデル読み込み
+	model_ = ModelManager::GetInstance()->GetModel(modelName);
+
+	// 粒子リストのクリア
+	particles_.clear();
+
+	// エミッタの継続時間をリセット
+	emitAliveTimer_.Start(aliveTime);
+
+	// 初期設定
+	emitIntervalTimer_.Start(0.0f); // 発生間隔タイマーの初期化
+	SetParticleType<StarParticle>(); // 型の設定
+
+	// エミッタの値を追加
+	AddItem();
+	// エミッタの値を読み込む
+	ApplyItem();
 }
 
 void ParticleEmitter::Update([[maybe_unused]]float deltaTime)
@@ -31,7 +60,7 @@ void ParticleEmitter::Update([[maybe_unused]]float deltaTime)
 	});
 
 	// 生存時間中なら
-	if (!emitAliveTimer_.IsFinish()) {
+	if (!emitAliveTimer_.IsFinish() || isLoop_) {
 		// 粒子の数が最大数に達していなかった場合
 		if (particles_.size() < maxParticleCount_) {
 			if (emitIntervalTimer_.IsFinish()) {
@@ -50,6 +79,14 @@ void ParticleEmitter::Update([[maybe_unused]]float deltaTime)
 	// タイマー更新
 	emitAliveTimer_.Update(deltaTime);
 	emitIntervalTimer_.Update(deltaTime);
+
+#ifdef _DEBUG // デバッグ時のみ調整項目クラスから値を読む
+
+	// エミッタの値を読み込む
+	ApplyItem();
+
+#endif // _DEBUG // デバッグ時のみ調整項目クラスから値を読む
+
 }
 
 void ParticleEmitter::DisplayImGui()
@@ -81,7 +118,12 @@ IParticle* ParticleEmitter::CreateParticle(const Model& model)
 	// 選択されたパーティクルを生成する
 	IParticle* particle = particleManager_->AddParticle(&model, type_({0.0f, 0.0f, 0.0f}));
 	// 生成したパーティクルにパラメーターを設定
-	particle->transform_ = emitTransform_;			 // 発生座標
+	if (targetTransform_ == nullptr) {
+		particle->transform_ = emitTransform_;		 // 発生座標
+	}
+	else {
+		particle->transform_ = *targetTransform_;	 // 発生座標
+	}
 	particle->velocity_ = particleVelocity_;		 // 速度設定
 	particle->acceleration_ = particleAcceleration_; // 加速度設定
 	particle->randomNumber_ = emitBlur_;			 // 乱数設定

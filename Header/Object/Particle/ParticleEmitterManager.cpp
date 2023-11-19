@@ -72,7 +72,7 @@ void ParticleEmitterManager::Update(float deltaTime)
 		for (std::unique_ptr<ParticleEmitter> &emitter : emitters_) {
 			ImGui::Text(emitter->name_.c_str());
 			ImGui::SameLine();
-			if(!emitter->emitAliveTimer_.IsFinish())
+			if(!emitter->emitAliveTimer_.IsFinish() || emitter->isLoop_)
 				ImGui::Text(" : Playing");
 			else
 				ImGui::Text(" : Ending");
@@ -91,6 +91,9 @@ void ParticleEmitterManager::Update(float deltaTime)
 
 	// イテレータの取得
 	auto iter = moldMap_.begin();
+
+	ImGui::Text("GenerateMenu");
+	ImGui::Checkbox("isLoop?", &imGuiIsLoop_);
 	// イテレータの終わりまでループ
 	while (iter != moldMap_.end()) {
 		if (ImGui::Button(iter->first.name())) {
@@ -100,6 +103,8 @@ void ParticleEmitterManager::Update(float deltaTime)
 			newEmitter->Init(imGuiAliveTime_);
 			// 型タイプを設定
 			newEmitter->type_ = iter->second;
+			// ループ設定
+			newEmitter->isLoop_ = imGuiIsLoop_;
 			// エミッタの座標設定
 			newEmitter->emitTransform_ = imGuiEmitTransform_;
 			// 名前を設定
