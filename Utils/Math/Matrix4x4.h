@@ -95,6 +95,8 @@ struct Matrix4x4 final {
 
 	static Matrix4x4 AnyAngleRotate(const Vector3 &axis, const float cos, const float sin);
 
+	static Matrix4x4 DirectionToDirection(const Vector3 &from, const Vector3 &to);
+
 	/// @brief 単位行列関数
 	/// @return 単位行列
 	static Matrix4x4 Identity() {

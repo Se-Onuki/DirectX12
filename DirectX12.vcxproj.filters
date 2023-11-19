@@ -327,6 +327,9 @@
     <ClCompile Include="Header\Entity\Component\CannonComp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Math\Quaternion.cpp">
+      <Filter>Utils\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -603,6 +606,9 @@
       <Filter>Header\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Math\Matrix.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Math\SimdCalc.h">
       <Filter>Utils\Math</Filter>
     </ClInclude>
   </ItemGroup>

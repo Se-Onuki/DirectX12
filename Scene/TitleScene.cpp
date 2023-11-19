@@ -24,9 +24,11 @@ void TitleScene::OnExit() {
 
 void TitleScene::Update() {
 
-	rotateMat_ = Matrix4x4::AnyAngleRotate(axis_, angle_);
+	ImGui::Text("rotation<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(rotation_).c_str());
+	ImGui::Text("rotateMatrix<%s> :\n%s", SoLib::Traits<Matrix4x4>::Name, SoLib::to_string(rotateMatrix_).c_str());
 
-	ImGui::Text("rotateMat<%s> :\n%s", SoLib::Traits<decltype(rotateMat_)>::Name, SoLib::to_string(rotateMat_).c_str());
+	ImGui::Text("rotateByQuaternion<%s> :\n%s", SoLib::Traits<Vector3>::Name, SoLib::to_string(rotateByQuaternion_).c_str());
+	ImGui::Text("rotateByMatrix<%s> :\n%s", SoLib::Traits<Vector3>::Name, SoLib::to_string(rotateByMatrix_).c_str());
 
 }
 
