@@ -166,6 +166,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\Math\Matrix3x3.cpp" />
     <ClCompile Include="Utils\Math\Matrix4x4.cpp" />
     <ClCompile Include="Utils\Math\Polar.cpp" />
+    <ClCompile Include="Utils\Math\Quaternion.cpp" />
     <ClCompile Include="Utils\Math\Random.cpp" />
     <ClCompile Include="Utils\Math\Transform.cpp" />
     <ClCompile Include="Utils\Math\ValueRange.cpp" />
@@ -259,6 +260,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\Math\Polar.h" />
     <ClInclude Include="Utils\Math\Quaternion.h" />
     <ClInclude Include="Utils\Math\Random.h" />
+    <ClInclude Include="Utils\Math\SimdCalc.h" />
     <ClInclude Include="Utils\Math\Transform.h" />
     <ClInclude Include="Utils\Math\ValueRange.h" />
     <ClInclude Include="Utils\Math\Vector2.h" />

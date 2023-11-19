@@ -9,8 +9,9 @@
 #include "PlayerAnimations/AnimationManager.h"
 #include "PlayerState/IPlayerState.h"
 #include "../../../Utils/Math/Vector3.h"
-
-class PlayerAnimComp;
+#include <memory>
+#include "PlayerState/IPlayerState.h"
+#include "PlayerAnimComp.h"
 
 class PlayerComp : public IComponent {
 public:
@@ -32,6 +33,15 @@ public:
 	VariantItem<float> vMoveSpeed{ "MoveSpeed", 1000.f };
 	VariantItem<float> vJumpPower{ "JumpPower", 5.f };
 
+	template<IsBasedIPlayerState State>
+	void ChangeState() {  // 状態を変更するメソッド
+		nextState_ = std::make_unique<State>(this);
+	}
+
+	template<IsBasedIPlayerState State>
+	void SetState() {  // 状態を変更するメソッド
+		nowState_ = std::make_unique<State>(this);
+	}
 
 private:
 

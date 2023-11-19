@@ -4,6 +4,8 @@
 #include "../../../Engine/DirectBase/File/GlobalVariables.h"
 #include "ModelComp.h"
 #include "PlayerAnimComp.h"
+#include "PlayerState/IPlayerState.h"
+#include "PlayerState/IdleState.h"
 
 const std::string PlayerComp::groupName_ = "Player";
 
@@ -20,6 +22,8 @@ void PlayerComp::Init() {
 
 	animationComp_ = object_->AddComponent<PlayerAnimComp>();
 
+	SetState<PlayerIdleState>();
+
 	AddVariable(groupName_.c_str());
 }
 
@@ -28,6 +32,12 @@ void PlayerComp::Update() {
 
 	static const auto *const keyBoard = input_->GetDirectInput();
 	static auto *const levelManager = LevelElementManager::GetInstance();
+
+	if (nextState_) {
+		nowState_ = std::move(nextState_);
+		nowState_->Init();
+	}
+	nowState_->Update(object_->GetDeltaTime());
 
 	Vector3 inputVec{};
 	auto *const rigidbody = object_->GetComponent<Rigidbody>();

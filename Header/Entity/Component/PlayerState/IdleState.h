@@ -2,12 +2,11 @@
 #include "IPlayerState.h"
 #include "../../../../Engine/DirectBase/Render/Camera.h"
 
-template<>
-class PlayerState<PlayerStateEnum::kIdle> :public IPlayerStateClass {
+class PlayerIdleState :public IPlayerStateClass {
 public:
 
-	PlayerState() = default;
-	~PlayerState() override = default;
+	using IPlayerStateClass::IPlayerStateClass;
+	~PlayerIdleState() override = default;
 
 	void Init() override;
 
