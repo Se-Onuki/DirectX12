@@ -6,7 +6,7 @@ void CameraList::ListClear()
 	cameraMap_.clear();
 }
 
-Camera3D* CameraList::AddCamera(std::string cameraName)
+Camera3D* CameraList::AddCamera(const std::string& cameraName)
 {
 	// インスタンスの生成
 	std::unique_ptr<Camera3D> newCamera = std::make_unique<Camera3D>();
@@ -21,8 +21,15 @@ Camera3D* CameraList::AddCamera(std::string cameraName)
 	return camera;
 }
 
-Camera3D* CameraList::GetCamera(std::string cameraName)
+Camera3D* CameraList::GetCamera(const std::string& cameraName) const
 {
+	// イテレータの取得
+	auto cameraItr = cameraMap_.find(cameraName);
+	// 存在するかチェック
+	if (cameraItr == cameraMap_.end()) {
+		return nullptr;
+	}
+
 	// マップから情報を取得し返す
-	return cameraMap_[cameraName].get();
+	return cameraItr->second.get();
 }

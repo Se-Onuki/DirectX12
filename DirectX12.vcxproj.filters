@@ -342,7 +342,10 @@
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp">
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp">
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.cpp">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.cpp">
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClCompile>
   </ItemGroup>
@@ -626,7 +629,10 @@
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h">
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h">
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.h">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.h">
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClInclude>
   </ItemGroup>
