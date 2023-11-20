@@ -4,7 +4,7 @@
 #include "../Rigidbody.h"
 
 void PlayerFallingState::Init() {
-	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), true, AnimEasing::kLinear, 0.1f);
+	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), true, AnimEasing::kLinear, 0.025f);
 }
 
 void PlayerFallingState::Update([[maybe_unused]] float deltaTime) {

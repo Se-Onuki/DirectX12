@@ -4,7 +4,7 @@
 #include "../Rigidbody.h"
 
 void PlayerLandState::Init() {
-	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false);
+	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.025f);
 }
 
 void PlayerLandState::Update([[maybe_unused]] float deltaTime) {

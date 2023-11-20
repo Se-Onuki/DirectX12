@@ -4,7 +4,7 @@
 #include "FallingState.h"
 
 void PlayerJumpState::Init() {
-	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.1f);
+	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.025f);
 	preAnimKey_ = 0;
 }
 
