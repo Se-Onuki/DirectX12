@@ -6,6 +6,7 @@
 #include "PlayerAnimComp.h"
 #include "PlayerState/IPlayerState.h"
 #include "PlayerState/IdleState.h"
+#include "PlayerState/JumpState.h"
 
 const std::string PlayerComp::groupName_ = "Player";
 
@@ -27,6 +28,15 @@ void PlayerComp::Init() {
 	AddVariable(groupName_.c_str());
 }
 
+void PlayerComp::Reset() {
+	this->ChangeState <PlayerIdleState>();
+	auto *const rigidbody = object_->GetComponent<Rigidbody>();
+	rigidbody->SetAcceleration(Vector3::zero);
+	rigidbody->SetVelocity(Vector3::zero);
+
+	transform_->translate = Vector3::zero;
+}
+
 void PlayerComp::Update() {
 	ApplyVariables(groupName_.c_str());
 
@@ -43,7 +53,7 @@ void PlayerComp::Update() {
 	auto *const rigidbody = object_->GetComponent<Rigidbody>();
 	//if (keyBoard) {
 	//	if (keyBoard->IsTrigger(DIK_SPACE)) {
-	//		rigidbody->ApplyInstantForce(Vector3{ 0.f,vJumpPower,0.f });
+	//		rigidbody->ApplyInstantForce(Vector3{ 0.f,vJumpPower_,0.f });
 	//	}
 
 	//	if (keyBoard->IsTrigger(DIK_E)) {
@@ -89,13 +99,13 @@ void PlayerComp::Update() {
 	//inputVec = inputVec.Nomalize() * movePower;
 
 
-	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
+	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed_);
 	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
 	Vector3 endPos = CalcMoveCollision();
 
 	transform_->translate = endPos;
-	rigidbody->SetVelocity({ 0.f,rigidbody->GetVelocity().y,0.f });
+
 }
 
 void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {
@@ -111,40 +121,62 @@ void PlayerComp::ApplyVariables(const char *const groupName) {
 	const GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 	const auto &cGroup = gVariable->GetGroup(groupName);
 
-	cGroup >> vMoveSpeed;
-	cGroup >> vJumpPower;
+	cGroup >> vMoveSpeed_;
+	cGroup >> vJumpPower_;
+	cGroup >> vJumpSpeed_;
+	cGroup >> vJumpDeceleration_;
 }
 
 void PlayerComp::AddVariable(const char *const groupName) const {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 	auto &group = gVariable->GetGroup(groupName);
-	group << vMoveSpeed;
-	group << vJumpPower;
+	group << vMoveSpeed_;
+	group << vJumpPower_;
+	group << vJumpSpeed_;
+	group << vJumpDeceleration_;
 }
 
 void PlayerComp::MoveInput(const Vector3 &vec) {
-	Vector3 inputVec = vec;
-	auto *const rigidbody = object_->GetComponent<Rigidbody>();
+	const float length = vec.Length();
+	if (length) {
+		Vector3 inputVec = vec;
+		auto *const rigidbody = object_->GetComponent<Rigidbody>();
 
-	// 入力強度を取得
-	float movePower = 1.f;
-	// もし入力が0でないなら強度に応じた値
-	if (inputVec.LengthSQ() != 0.f) {
-		movePower = inputVec.Length() / inputVec.Nomalize().Length();
+		// 入力強度を取得
+		float movePower = 1.f;
+		// もし入力が0でないなら強度に応じた値
+		if (length != 0.f) {
+			movePower = length / inputVec.Nomalize().Length();
+		}
+
+		// カメラの角度を元に計算
+		inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
+
+		// カメラの上下方向を破棄
+		inputVec.y = 0.f;
+		inputVec = inputVec.Nomalize() * movePower;
+
+		transform_->rotate = Angle::Lerp(transform_->rotate, (-inputVec).Direction2Euler(), 0.25f);
+
+		rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed_);
 	}
+}
 
-	// カメラの角度を元に計算
-	inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
+void PlayerComp::JumpInput() {
 
-	// カメラの上下方向を破棄
-	inputVec.y = 0.f;
-	inputVec = inputVec.Nomalize() * movePower;
+	static const auto *const keyBoard = input_->GetDirectInput();
+	//auto *const rigidbody = object_->GetComponent<Rigidbody>();
 
-	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed);
+	if (GetIsLanding()) {
+		if (keyBoard->IsTrigger(DIK_SPACE)) {
+			this->ChangeState<PlayerJumpState>();
+		}
+	}
 
 }
 
 Vector3 PlayerComp::CalcMoveCollision() {
+	isLanding_ = false;
 
 	static auto *const levelManager = LevelElementManager::GetInstance();
 
@@ -203,6 +235,10 @@ Vector3 PlayerComp::CalcMoveCollision() {
 		}
 		registeredGroups_ = hitGroup;
 		if (t < 1.f) {
+
+			if (hitSurfaceNormal * Vector3::up == 1.f) {
+				isLanding_ = true;
+			}
 
 			moveLine.origin = moveLine.GetProgress(t);
 			Vector3 wallShear = (moveLine.diff - (moveLine.diff * hitSurfaceNormal) * hitSurfaceNormal) * (1.f - t);

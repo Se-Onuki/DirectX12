@@ -2,11 +2,11 @@
 #include "IPlayerState.h"
 #include "../../../../Engine/DirectBase/Render/Camera.h"
 
-class PlayerIdleState : public IPlayerStateClass {
+class PlayerJumpState : public IPlayerStateClass {
 public:
 
 	using IPlayerStateClass::IPlayerStateClass;
-	~PlayerIdleState() override = default;
+	~PlayerJumpState() override = default;
 
 	void Init() override;
 
@@ -14,6 +14,9 @@ public:
 
 	void Draw(const Camera3D &camera) const override;
 
-	PlayerBehavior GetState() override { return PlayerBehavior::kIdle; }
+	PlayerBehavior GetState() override { return PlayerBehavior::kJumpStart; }
+
+	int32_t preAnimKey_{};
 
 };
+

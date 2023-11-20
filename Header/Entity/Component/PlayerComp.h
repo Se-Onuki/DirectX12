@@ -20,6 +20,8 @@ public:
 
 	void Init() override;
 
+	void Reset() override;
+
 	void Update() override;
 
 	void Draw(const Camera3D &camera) const override;
@@ -30,8 +32,10 @@ public:
 	void AddVariable(const char *const groupName) const override;
 	void SetFollowCamera(FollowCameraComp *const followCamera) { pFollowCamera_ = followCamera; }
 
-	VariantItem<float> vMoveSpeed{ "MoveSpeed", 1000.f };
-	VariantItem<float> vJumpPower{ "JumpPower", 5.f };
+	VariantItem<float> vMoveSpeed_{ "MoveSpeed", 1000.f };
+	VariantItem<float> vJumpPower_{ "JumpPower", 5.f };
+	VariantItem<float> vJumpSpeed_{ "JumpSpeed", 0.2f };
+	VariantItem<float> vJumpDeceleration_{ "JumpDeceleration", 0.95f };
 
 	template<IsBasedIPlayerState State>
 	void ChangeState() {  // 状態を変更するメソッド
@@ -47,7 +51,13 @@ public:
 	/// @param vec 移動ベクトル
 	void MoveInput(const Vector3 &vec);
 
+	/// @brief ジャンプコマンド
 	void JumpInput();
+
+	/// @brief 着地しているか
+	/// @return 着地したなら true
+	bool GetIsLanding() { return isLanding_; }
+
 private:
 
 	Vector3 CalcMoveCollision();
@@ -71,4 +81,6 @@ private:
 	std::unique_ptr<IPlayerStateClass> nextState_ = nullptr;
 
 	Material backMaterial_;
+
+	bool isLanding_ = false;
 };

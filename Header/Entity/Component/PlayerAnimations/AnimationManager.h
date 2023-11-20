@@ -43,7 +43,7 @@ public: // アクセッサ等
 	/// エンティティセッター
 	/// </summary>
 	/// <param name="entity">アニメーションさせるエンティティ</param>
-	void SetEntity(Entity* entity) { entity_ = entity; }
+	void SetEntity(Entity *entity) { entity_ = entity; }
 
 	/// <summary>
 	/// 次のアニメーションセッター
@@ -60,13 +60,17 @@ public: // アクセッサ等
 	/// <returns>現在再生中のアニメーション</returns>
 	PlayerBehavior GetNowState()const { return currentAnimation_->GetBehavior(); }
 
+	/// @brief 現在のアニメーションの追加
+	/// @return アニメーションクラス
+	BaseAnimation *const GetNowAnimation() const { return currentAnimation_.get(); }
+
 private: // メンバ変数
 
 	// アニメーション数値クラス
 	std::unique_ptr<AnimationParameters> animParameters_ = nullptr;
 
 	// アニメーションさせるエンティティ
-	Entity* entity_ = nullptr;
+	Entity *entity_ = nullptr;
 
 	// 現在のアニメーション
 	std::unique_ptr<BaseAnimation> currentAnimation_ = nullptr;

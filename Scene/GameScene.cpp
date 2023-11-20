@@ -142,6 +142,9 @@ void GameScene::Update() {
 	player_->Update(deltaTime);
 
 	ImGui::Begin("Player");
+	if (ImGui::Button("Reset")) {
+		player_->Reset();
+	}
 	player_->ImGuiWidget();
 	ImGui::End();
 
