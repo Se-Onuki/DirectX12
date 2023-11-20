@@ -24,36 +24,37 @@ class ArrayBuffer final {
 
 	uint32_t size_;
 
-	T* mapData_;
+	T *mapData_;
 
 public:
 
 	using map_matrix = T;
 
-	inline ID3D12Resource* const GetResources() noexcept { return resources_.Get(); }
-	inline const ID3D12Resource* const GetResources() const noexcept { return resources_.Get(); }
+	inline ID3D12Resource *const GetResources() noexcept { return resources_.Get(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return resources_.Get(); }
 
-	inline const D3D12_SHADER_RESOURCE_VIEW_DESC& GetDesc() const noexcept { return srvDesc_; }
+	inline const D3D12_SHADER_RESOURCE_VIEW_DESC &GetDesc() const noexcept { return srvDesc_; }
 
 	inline operator bool() const noexcept;		// 値が存在するか
 
-	inline operator T* () noexcept;				// 参照
-	inline operator const T* () const noexcept;	// const参照
+	inline operator T *() noexcept;				// 参照
+	inline operator const T *() const noexcept;	// const参照
 
-	inline T& operator[](uint32_t index) noexcept { return mapData_[index]; }
-	inline const T& operator[](uint32_t index) const noexcept { return mapData_[index]; }
+	inline T &operator[](uint32_t index) noexcept { return mapData_[index]; }
+	inline const T &operator[](uint32_t index) const noexcept { return mapData_[index]; }
 
-	inline T* const operator->() noexcept;					// dataのメンバへのアクセス
-	inline const T* const operator->() const noexcept;		// dataのメンバへのアクセス(const)
+	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
+	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
 
 	uint32_t size() const noexcept { return size_; }
-	T* const data() const noexcept { return mapData_; }
-	T* const begin() const noexcept { return &mapData_[0]; }
-	T* const end() const noexcept { return &mapData_[size_]; }
+	T *const data() const noexcept { return mapData_; }
+	T *const begin() const noexcept { return &mapData_[0]; }
+	T *const end() const noexcept { return &mapData_[size_]; }
 
 
 	template <SoLib::IsContainer U>
-	inline ArrayBuffer& operator=(const U& other);	// コピー演算子
+		requires SoLib::IsContainsType<U, T>
+	inline ArrayBuffer &operator=(const U &other);	// コピー演算子
 
 public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
@@ -65,8 +66,9 @@ public:
 
 	ArrayBuffer(const uint32_t width = 0u);	// デフォルトコンストラクタ
 
-	template <typename U>
-	ArrayBuffer(const U& source);		// コピーコンストラクタ
+	template <SoLib::IsContainer U>
+		requires SoLib::IsContainsType<U, T>
+	ArrayBuffer(const U &source);		// コピーコンストラクタ
 
 	~ArrayBuffer();
 
@@ -74,7 +76,7 @@ public:
 	void CreateBuffer(uint32_t size);
 
 
-	void Copy(T* const begin, T* const end) {
+	void Copy(T *const begin, T *const end) {
 		std::copy(begin, end, mapData_);
 	}
 
@@ -90,28 +92,29 @@ inline ArrayBuffer<T>::operator bool() const noexcept {
 }
 
 template<SoLib::IsNotPointer T>
-inline ArrayBuffer<T>::operator T* () noexcept {
+inline ArrayBuffer<T>::operator T *() noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline ArrayBuffer<T>::operator const T* () const noexcept {
+inline ArrayBuffer<T>::operator const T *() const noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline T* const ArrayBuffer<T>::operator->() noexcept {
+inline T *const ArrayBuffer<T>::operator->() noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
-inline const T* const ArrayBuffer<T>::operator->() const noexcept {
+inline const T *const ArrayBuffer<T>::operator->() const noexcept {
 	return *mapData_;
 }
 
 template<SoLib::IsNotPointer T>
 template<SoLib::IsContainer U>
-inline ArrayBuffer<T>& ArrayBuffer<T>::operator=(const U& source) {
+	requires SoLib::IsContainsType<U, T>
+inline ArrayBuffer<T> &ArrayBuffer<T>::operator=(const U &source) {
 	CreateBuffer(static_cast<uint32_t>(source.size()));
 	std::copy(source.begin(), source.end(), mapData_);
 	return *this;
@@ -123,8 +126,9 @@ inline ArrayBuffer<T>::ArrayBuffer(const uint32_t width) {
 }
 
 template<SoLib::IsNotPointer T>
-template <typename U>
-inline ArrayBuffer<T>::ArrayBuffer(const U& source) {
+template <SoLib::IsContainer U>
+	requires SoLib::IsContainsType<U, T>
+inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
@@ -154,7 +158,7 @@ inline void ArrayBuffer<T>::CreateBuffer(uint32_t size) {
 
 		srvDesc_ = CreateSrvDesc();
 
-		result = resources_->Map(0, nullptr, reinterpret_cast<void**>(&mapData_));
+		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 		assert(SUCCEEDED(result));
 	}
 }
@@ -187,40 +191,40 @@ template<SoLib::IsNotPointer T>
 class StructuredBuffer {
 public:
 	StructuredBuffer(uint32_t size = 0u);
-	StructuredBuffer& operator= (const StructuredBuffer&) = default;
+	StructuredBuffer &operator= (const StructuredBuffer &) = default;
 	~StructuredBuffer() = default;
 public:
 
 	using map_struct = T::map_struct;
 
-	inline const ArrayBuffer<map_struct>& GetBuffer() const { return arrayBuffer_; }
+	inline const ArrayBuffer<map_struct> &GetBuffer() const { return arrayBuffer_; }
 
-	inline ID3D12Resource* const GetResources() noexcept { return arrayBuffer_.GetResources(); }
-	inline const ID3D12Resource* const GetResources() const noexcept { return arrayBuffer_.GetResources(); }
+	inline ID3D12Resource *const GetResources() noexcept { return arrayBuffer_.GetResources(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return arrayBuffer_.GetResources(); }
 
-	inline const D3D12_SHADER_RESOURCE_VIEW_DESC& GetDesc() const noexcept { return arrayBuffer_.GetDesc(); }
+	inline const D3D12_SHADER_RESOURCE_VIEW_DESC &GetDesc() const noexcept { return arrayBuffer_.GetDesc(); }
 
 	inline operator bool() const noexcept { return static_cast<bool>(arrayBuffer_); }		// 値が存在するか
 
-	inline operator T* () noexcept { return data_.data(); }			// 参照
-	inline operator const T* () const noexcept { return data_.data(); }	// const参照
+	inline operator T *() noexcept { return data_.data(); }			// 参照
+	inline operator const T *() const noexcept { return data_.data(); }	// const参照
 
-	inline T& operator[](uint32_t index) noexcept { return data_[index]; }
-	inline const T& operator[](uint32_t index) const noexcept { return data_[index]; }
+	inline T &operator[](uint32_t index) noexcept { return data_[index]; }
+	inline const T &operator[](uint32_t index) const noexcept { return data_[index]; }
 
-	inline T* const operator->() noexcept { return data_.data(); }					// dataのメンバへのアクセス
-	inline const T* const operator->() const noexcept { return data_.data(); }	// dataのメンバへのアクセス(const)
+	inline T *const operator->() noexcept { return data_.data(); }					// dataのメンバへのアクセス
+	inline const T *const operator->() const noexcept { return data_.data(); }	// dataのメンバへのアクセス(const)
 
 	uint32_t size() const noexcept { return static_cast<uint32_t>(data_.size()); }
-	T* const data() const noexcept { return data_.data(); }
-	T* const begin() const noexcept { return &data_.begin(); }
-	T* const end() const noexcept { return &data_.end(); }
+	T *const data() const noexcept { return data_.data(); }
+	T *const begin() const noexcept { return &data_.begin(); }
+	T *const end() const noexcept { return &data_.end(); }
 
 
 	template <SoLib::IsContainer U>
-	inline StructuredBuffer& operator=(const U& other);	// コピー演算子
+	inline StructuredBuffer &operator=(const U &other);	// コピー演算子
 
-	const auto& GetHeapRange() const { return heapRange_; }
+	const auto &GetHeapRange() const { return heapRange_; }
 
 
 private:
@@ -239,8 +243,8 @@ inline StructuredBuffer<T>::StructuredBuffer(uint32_t size) {
 		data_[i] = &arrayBuffer_[i];
 	}
 
-	static auto* const device = DirectXCommon::GetInstance()->GetDevice();
-	static auto* const srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
+	static auto *const device = DirectXCommon::GetInstance()->GetDevice();
+	static auto *const srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
 	heapRange_ = srvHeap->RequestHeapAllocation(1u);
 	device->CreateShaderResourceView(GetResources(), &GetDesc(), heapRange_.GetHandle(0u).cpuHandle_);
@@ -248,6 +252,6 @@ inline StructuredBuffer<T>::StructuredBuffer(uint32_t size) {
 
 template<SoLib::IsNotPointer T>
 template<SoLib::IsContainer U>
-inline StructuredBuffer<T>& StructuredBuffer<T>::operator=(const U& other) {
+inline StructuredBuffer<T> &StructuredBuffer<T>::operator=(const U &other) {
 	arrayBuffer_ = other;
 }
