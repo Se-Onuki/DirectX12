@@ -43,6 +43,11 @@ public:
 		nowState_ = std::make_unique<State>(this);
 	}
 
+	/// @brief 移動方向を入力
+	/// @param vec 移動ベクトル
+	void MoveInput(const Vector3 &vec);
+
+	void JumpInput();
 private:
 
 	Vector3 CalcMoveCollision();

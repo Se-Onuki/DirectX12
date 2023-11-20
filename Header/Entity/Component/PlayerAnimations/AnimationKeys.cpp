@@ -8,8 +8,12 @@ void AnimationKeys::Initialize(std::string groupName)
 	keyCount_ = 0;
 	gv_ = GlobalVariables::GetInstance();
 
+#ifdef _DEBUG
+
 	// コピーキーの初期化
 	copiedKey_.Initialize();
+
+#endif // _DEBUG
 }
 
 void AnimationKeys::AddKey()
@@ -89,6 +93,9 @@ void AnimationKeys::ApplyKeyInfo()
 
 void AnimationKeys::ShowImGUi()
 {
+#ifdef _DEBUG
+
+
 	ImGui::Begin("AnimManager", nullptr, ImGuiWindowFlags_MenuBar);
 	if (ImGui::BeginMenuBar()) {
 		if (ImGui::BeginMenu(groupName_.c_str())) {
@@ -160,8 +167,9 @@ void AnimationKeys::ShowImGUi()
 			}
 			ImGui::EndMenu();
 		}
-		
+
 	}
 	ImGui::EndMenuBar();
 	ImGui::End();
+#endif // _DEBUG
 }

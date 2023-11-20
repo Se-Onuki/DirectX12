@@ -28,11 +28,9 @@ void AnimationManager::Update()
 
 	// 次のアニメーションがセットされている場合
 	if (nextAnimation_ != nullptr) {
-		// 現在アニメーションが終了している場合
-		if (currentAnimation_->GetIsEnd()) {
-			currentAnimation_ = std::move(nextAnimation_);  // 現在アニメーションに次のアニメーションをセット
-			nextAnimation_ = nullptr;			 // アニメーションを破棄
-		}
+
+		currentAnimation_ = std::move(nextAnimation_);  // 現在アニメーションに次のアニメーションをセット
+
 	}
 	// 現在アニメーションを更新
 	currentAnimation_->Update(deltaTime);

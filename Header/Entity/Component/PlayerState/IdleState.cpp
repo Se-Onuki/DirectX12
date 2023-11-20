@@ -3,20 +3,23 @@
 #include "../Rigidbody.h"
 #include "../PlayerComp.h"
 
-void PlayerIdleState::Init() {
+#include "MoveState.h"
 
+
+void PlayerIdleState::Init() {
+	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), true);
 }
 
 void PlayerIdleState::Update([[maybe_unused]] float deltaTime) {
-	static auto input = Input::GetInstance();
 
-	static const auto *const keyBoard = input->GetDirectInput();
-	auto *const rigidbody = pPlayer_->object_->GetComponent<Rigidbody>();
+	static const auto *const keyBoard = input_->GetDirectInput();
+	//auto *const rigidbody = pPlayer_->object_->GetComponent<Rigidbody>();
 
 
-	if (keyBoard->IsTrigger(DIK_P)) {
-		rigidbody->ApplyInstantForce(Vector3{ 0.f,100.f,0.f });
+	if (keyBoard->IsPress(DIK_W) || keyBoard->IsPress(DIK_S) || keyBoard->IsPress(DIK_A) || keyBoard->IsPress(DIK_D)) {
+		pPlayer_->ChangeState<PlayerMoveState>();
 	}
+
 }
 
 void PlayerIdleState::Draw([[maybe_unused]] const Camera3D &camera) const {

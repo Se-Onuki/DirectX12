@@ -144,6 +144,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Component\PlayerComp.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerState\IdleState.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerState\IPlayerState.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerState\MoveState.cpp" />
     <ClCompile Include="Header\Entity\Component\Projectile.cpp" />
     <ClCompile Include="Header\Entity\Component\Rigidbody.cpp" />
     <ClCompile Include="Header\Entity\Entity.cpp" />
@@ -234,6 +235,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Component\PlayerComp.h" />
     <ClInclude Include="Header\Entity\Component\PlayerState\IdleState.h" />
     <ClInclude Include="Header\Entity\Component\PlayerState\IPlayerState.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerState\MoveState.h" />
     <ClInclude Include="Header\Entity\Component\Projectile.h" />
     <ClInclude Include="Header\Entity\Component\Rigidbody.h" />
     <ClInclude Include="Header\Entity\Entity.h" />

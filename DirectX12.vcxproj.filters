@@ -333,6 +333,9 @@
     <ClCompile Include="Utils\Math\Quaternion.cpp">
       <Filter>Utils\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerState\MoveState.cpp">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -616,6 +619,9 @@
     </ClInclude>
     <ClInclude Include="Utils\Math\SimdCalc.h">
       <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerState\MoveState.h">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

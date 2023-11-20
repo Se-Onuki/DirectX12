@@ -1,4 +1,7 @@
 #include "IPlayerState.h"
+#include "../PlayerComp.h"
+
+IPlayerStateClass::IPlayerStateClass(PlayerComp *ptr) :pPlayer_(ptr), input_(Input::GetInstance()), pAnimation_(pPlayer_->object_->AddComponent<PlayerAnimComp>()) {}
 
 void IPlayerStateClass::Init() {
 }
