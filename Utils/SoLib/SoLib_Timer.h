@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <chrono>
+#include "SoLib_Traits.h"
 
 
 namespace SoLib {
@@ -8,17 +9,35 @@ namespace SoLib {
 
 	namespace Time {
 
+
+		template <SoLib::IsFloatPoint T>
 		class Second final {
 		public:
-			Second(float time = 0.f) { time_ = time; }
+			Second(T time = 0.f) { time_ = time; }
 			Second(const Second &) = default;
 			Second &operator=(const Second &) = default;
 
-			inline operator float() noexcept { return time_; }
+			template <SoLib::IsFloatPoint U>
+			Second(const Second<U> &other) { time_ = static_cast<T>(other.GetTime()); }
+			template <SoLib::IsFloatPoint U>
+			Second &operator=(const Second<U> &other) {
+				time_ = static_cast<T>(other.GetTime());
+				return *this;
+			}
+
+			using type = T;
+
+			const T GetTime() const noexcept { return time_; }
+
+			inline operator T () const noexcept { return time_; }
+
+			inline operator std::chrono::duration<T>() const noexcept { return static_cast<std::chrono::duration<T>>(time_); };
 
 		private:
-			float time_;
+			T time_;
 		};
+
+		using SecondF = Second<float>;
 
 		/// @brief タイマークラス
 		class FlameTimer {

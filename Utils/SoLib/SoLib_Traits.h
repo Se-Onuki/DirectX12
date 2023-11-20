@@ -37,6 +37,21 @@ namespace SoLib {
 	};
 
 
+
+	/// @brief 浮動小数点型である
+	template <typename T>
+	concept IsFloatPoint = std::is_floating_point_v<T>;
+
+	/// @brief 整数型である
+	template <typename T>
+	concept IsIntegral = std::is_integral_v<T>;
+
+	/// @brief 数値型である
+	template <typename T>
+	concept IsNumber = std::is_floating_point_v<T> || std::is_integral_v<T>;
+
+
+
 	template <typename T>
 	struct Traits {
 		using Type = void;
@@ -235,5 +250,6 @@ namespace SoLib {
 			"\tw : " + std::to_string(data.w) + "\n"
 			"}";
 	}
+
 
 }
