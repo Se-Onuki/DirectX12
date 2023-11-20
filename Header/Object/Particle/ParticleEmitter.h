@@ -130,12 +130,8 @@ public: // パブリックメンバ変数
 	// 生成する粒子型名
 	std::string typeName_;
 
-#ifdef _DEBUG
-
 	// エミッタの名前
 	std::string name_;
-
-#endif // _DEBUG
 
 private: // メンバ変数
 

@@ -17,9 +17,12 @@
 
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
 
+#include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	cameraManager_ = CameraManager::GetInstance();
 	// collisionManager_ = CollisionManager::GetInstance();
 }
 
@@ -33,6 +36,9 @@ void GameScene::OnEnter() {
 	static auto* const modelManager = ModelManager::GetInstance();
 	static auto* const particleManager = ParticleManager::GetInstance();
 	static auto* const particleEmitterManager = ParticleEmitterManager::GetInstance();
+
+	// カメラマネージャーの初期化
+	cameraManager_->Init();
 
 	// パーティクルマネージャの初期化
 	particleManager->Init(256); // パーティクルの最大数は256
@@ -166,6 +172,14 @@ void GameScene::Update() {
 			cameraTarget_ = cameraList_.begin();
 		}
 	}
+
+	// カメラマネージャーの更新
+	cameraManager_->Update();
+
+#ifdef _DEBUG // デバッグ時のみImGuiを描画
+	// カメラマネージャーのImGuiを表示
+	cameraManager_->DisplayImGui();
+#endif // _DEBUG // デバッグ時のみImGuiを描画
 
 
 	//playerAnim_->Update(deltaTime);

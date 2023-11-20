@@ -3,7 +3,7 @@
 
 #include "../Engine/DirectBase/3D/DirectionLight.h"
 #include "../Engine/DirectBase/2D/Sprite.h"
-#include "../Engine/DirectBase/Render/Camera.h"
+#include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
 #include "../Engine/DirectBase/Model/Model.h"
 #include "../Utils/Math/Transform.h"
@@ -28,6 +28,7 @@ private:
 
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
+	CameraManager *cameraManager_ = nullptr;
 
 	//	Model *model_ = nullptr;
 	std::unique_ptr<Sprite> sprite_ = nullptr;

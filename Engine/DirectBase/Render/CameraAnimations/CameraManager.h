@@ -25,12 +25,17 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化関数
 	/// </summary>
-	void Initialize();
+	void Init();
 
 	/// <summary>
 	/// 更新関数
 	/// </summary>
 	void Update();
+
+	/// <summary>
+	/// ImGui描画関数
+	/// </summary>
+	void DisplayImGui();
 
 public: // アクセッサ等
 
@@ -40,6 +45,10 @@ public: // アクセッサ等
 	/// <returns>使用中のカメラ</returns>
 	Camera3D* GetUseCamera() { return useCamera_; }
 
+	/// <summary>
+	/// 引数で指定した名前のカメラをメインカメラとして使用する
+	/// </summary>
+	/// <param name="cameraName">使用するカメラの名前</param>
 	void SetUseCamera(const std::string& cameraName);
 
 public: // パブリックなメンバ変数
