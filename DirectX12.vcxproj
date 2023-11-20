@@ -118,6 +118,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Model\Model.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Camera.cpp" />
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp" />
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Render.cpp" />
     <ClCompile Include="Engine\DirectBase\Texture\Texture.cpp" />
     <ClCompile Include="Engine\SolEngine.cpp" />
@@ -202,6 +204,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Model\Model.h" />
     <ClInclude Include="Engine\DirectBase\Model\ModelManager.h" />
     <ClInclude Include="Engine\DirectBase\Render\Camera.h" />
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h" />
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h" />
     <ClInclude Include="Engine\DirectBase\Render\Render.h" />
     <ClInclude Include="Engine\DirectBase\String\String.h" />
     <ClInclude Include="Engine\DirectBase\Texture\Texture.h" />

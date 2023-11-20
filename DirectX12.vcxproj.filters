@@ -112,6 +112,9 @@
     <Filter Include="Header\Entity\Object\Particle\Particles\TestParticle">
       <UniqueIdentifier>{f707e732-b8ea-4cf3-adc1-6cfc6dc57180}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Render\CameraAnimations">
+      <UniqueIdentifier>{1b09de97-f37d-47ef-a58e-986936e385cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -335,6 +338,12 @@
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
       <Filter>Header\Entity\Object\Particle\Particles\TestParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp">
+      <Filter>Engine\Render\CameraAnimations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -613,6 +622,12 @@
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\TestParticle.h">
       <Filter>Header\Entity\Object\Particle\Particles\TestParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h">
+      <Filter>Engine\Render\CameraAnimations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
