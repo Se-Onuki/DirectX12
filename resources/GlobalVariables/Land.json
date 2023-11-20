@@ -1,7 +1,7 @@
 {
     "Land": {
         "KeyCount": 3,
-        "key : 0AnimationTime": 0.25,
+        "key : 0AnimationTime": 0.10000000149011612,
         "key : 0Arm_L_Rotate": [
             0.0,
             0.0,
@@ -109,7 +109,7 @@
             0.0
         ],
         "key : 0RotateSpeed": 0.05000000074505806,
-        "key : 1AnimationTime": 0.30000001192092896,
+        "key : 1AnimationTime": 0.15000000596046448,
         "key : 1Arm_L_Rotate": [
             0.0,
             0.0,
@@ -217,7 +217,7 @@
             0.0
         ],
         "key : 1RotateSpeed": 0.05000000074505806,
-        "key : 2AnimationTime": 0.05000000074505806,
+        "key : 2AnimationTime": 0.10000000149011612,
         "key : 2Arm_L_Rotate": [
             0.0,
             0.0,
