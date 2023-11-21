@@ -176,7 +176,7 @@ void GameScene::Update() {
 	}*/
 
 	// カメラマネージャーの更新
-	cameraManager_->Update();
+	cameraManager_->Update(deltaTime);
 
 #ifdef _DEBUG // デバッグ時のみImGuiを描画
 	// カメラマネージャーのImGuiを表示

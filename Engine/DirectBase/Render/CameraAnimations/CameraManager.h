@@ -1,4 +1,5 @@
 #pragma once
+#include "CameraAnimManager.h"
 #include "CameraList.h"
 
 /// <summary>
@@ -30,7 +31,8 @@ public: // メンバ関数
 	/// <summary>
 	/// 更新関数
 	/// </summary>
-	void Update();
+	/// <param name="deltaTime">経過秒数</param>
+	void Update(float deltaTime);
 
 	/// <summary>
 	/// ImGui描画関数
@@ -71,8 +73,27 @@ public: // パブリックなメンバ変数
 
 private: // メンバ変数
 
+	// カメラアニメーションマネージャー
+	CameraAnimManager* cameraAnimManager_ = nullptr;
+
 	// 使用中のカメラ
 	Camera3D* useCamera_;
+
+#ifdef _DEBUG // ImGui用メンバ変数
+
+	// 終端値のパラメーターを取得するカメラ名格納用
+	char imGuiEndCameraName_[20];
+
+	// アニメーション再生秒数
+	float imGuiPlayAnimTime_ = 1.0f;
+
+	// 現在アニメーション終了まで待機するかトリガー
+	bool imGuiStandByIsEnd_ = false;
+	// 待機秒数
+	float imGuiStandByTime_ = 0.0f;
+
+#endif // _DEBUG // ImGui用メンバ変数
+
 
 };
 

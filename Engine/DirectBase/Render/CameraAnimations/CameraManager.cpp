@@ -19,10 +19,17 @@ void CameraManager::Init()
 	// 最初のカメラを追加
 	cameraList_->AddCamera("DebugCamera");
 	SetUseCamera("DebugCamera");
+
+	// カメラアニメーションマネージャーのインスタンス取得
+	cameraAnimManager_ = CameraAnimManager::GetInstance(); // インスタンス取得
+	cameraAnimManager_->Init();							   // 初期化
 }
 
-void CameraManager::Update()
+void CameraManager::Update(float deltaTime)
 {
+	// アニメーションマネージャーの更新
+	cameraAnimManager_->Update(deltaTime);
+
 	// リスト内の全てのカメラの計算を行う
 	for (auto& camera : cameraList_->cameraMap_) {
 		// 計算を行う
@@ -45,36 +52,60 @@ void CameraManager::DisplayImGui()
 	auto iter = cameraList_->cameraMap_.begin();
 	// イテレータの終わりまでループ
 	while (iter != cameraList_->cameraMap_.end()) {
+		// カメラ名でツリーを開始
 		if(ImGui::TreeNode(iter->first.c_str())) {
-			ImGui::SameLine();
+			ImGui::SameLine(); // 改行しない
+			// 現在使用中のカメラと一致する場合テキストで表示
 			if (useCamera_ == iter->second.get()) {
 				ImGui::Text("ThisCamera is used");
 			}
-			else {
+			else { // 使用中のカメラでない場合ボタンを表示
 				if (ImGui::Button("Use this")) {
+					// このカメラを使用カメラに
 					SetUseCamera(iter->first);
 				}
 			}
 
+			// カメラの回転、座標を表示
 			iter->second->ImGuiWidget("info");
 
+			// ツリーノード終了
 			ImGui::TreePop();
 		}
 		else {
-			ImGui::SameLine();
+			ImGui::SameLine(); // 改行しない
+
+			// 現在使用中のカメラと一致する場合テキストで表示
 			if (useCamera_ == iter->second.get()) {
 				ImGui::Text("ThisCamera is used");
 			}
-			else {
+			else { // 使用中のカメラでない場合ボタンを表示
 				if (ImGui::Button("Use this")) {
+					// このカメラを使用カメラに
 					SetUseCamera(iter->first);
 				}
 			}
 		}
 		iter++;
 	}
-	
 	ImGui::EndChild();
+
+	// アニメーション再生メニュー
+	ImGui::Text("AnimationMenu");
+	// テキストボックス
+	ImGui::InputText("SetEndCameraName", imGuiEndCameraName_, sizeof(imGuiEndCameraName_));
+	// アニメーション秒数
+	ImGui::DragFloat("AnimationTime", &imGuiPlayAnimTime_, 0.01f, 10.0f);
+	// 現在アニメーション終了まで待機するかトリガー
+	ImGui::Checkbox("StandByIsEnd", &imGuiStandByIsEnd_);
+	ImGui::DragFloat("StandByTime", &imGuiStandByTime_, 0.01f, 10.0f);
+
+	// アニメーション再生
+	if(ImGui::Button("PlayAnim")) {
+		std::string endCameraname = imGuiEndCameraName_;
+		cameraAnimManager_->Play(cameraList_->GetCamera(endCameraname), imGuiPlayAnimTime_, SoLib::easeLinear, imGuiStandByTime_, imGuiStandByIsEnd_);
+	}
+
 	ImGui::End();
 }
 
