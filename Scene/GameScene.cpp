@@ -47,22 +47,6 @@ void GameScene::OnEnter() {
 	// パーティクルエミッタマネージャーの初期化
 	particleEmitterManager->Init(); 
 
-	// モデルの読み込み
-	modelManager->CreateDefaultModel(); // デフォルトモデルの読み込み
-	modelManager->AddModel("Box", Model::LoadObjFile("", "box.obj"));
-	modelManager->AddModel("RedBox", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 1.f,0.f,0.f,1.f };
-	modelManager->AddModel("GrassModel", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 0.f,0.5f,0.f,1.f };
-	modelManager->AddModel("DirtModel", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 0.5f,0.5f,0.f,1.f };
-
-	modelManager->AddModel("PlayerBody", Model::LoadObjFile("Model/PlayerModel/Body/", "Body.obj")); // プレイヤーの体
-	modelManager->AddModel("PlayerEye", Model::LoadObjFile("Model/PlayerModel/Eye/", "Eye.obj")); // プレイヤーの瞳
-	modelManager->AddModel("PlayerHelmet", Model::LoadObjFile("Model/PlayerModel/Helmet/", "Helmet.obj")); // プレイヤーのヘルメット
-	modelManager->AddModel("PlayerLing", Model::LoadObjFile("Model/PlayerModel/Ling/", "Ling.obj")); // プレイヤーの輪っか
-	modelManager->AddModel("PlayerArm_L", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_L.obj")); // プレイヤーの左腕
-	modelManager->AddModel("PlayerArm_R", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_R.obj")); // プレイヤーの右腕
-	modelManager->AddModel("PlayerFoot_L", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_L.obj")); // プレイヤーの左足
-	modelManager->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_R.obj")); // プレイヤーの右足
-
 	//model_ = ModelManager::GetInstance()->GetModel("Plane");
 
 	//BaseTransform transform;

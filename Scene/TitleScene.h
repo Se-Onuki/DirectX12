@@ -12,6 +12,8 @@
 #include "../Engine/DirectBase/Base/Audio.h"
 #include "../Header/Object/LevelElementManager.h"
 #include "../Header/Object/Particle.h"
+#include "../Header/Object/Particle/ParticleManager.h"
+#include "../Header/Object/Particle/ParticleEmitterManager.h"
 
 class TitleScene : public IScene {
 public:
@@ -33,6 +35,11 @@ private:
 	Audio *audio_ = nullptr;
 	// カメラマネージャー
 	CameraManager* cameraManager_ = nullptr;
+
+	// パーティクルマネージャ
+	ParticleManager* particleManager_ = nullptr;
+	// パーティクル発生装置マネージャ
+	ParticleEmitterManager* emitterManager_ = nullptr;
 
 	// 平行光源
 	std::unique_ptr<DirectionLight> light_ = nullptr;
