@@ -3,7 +3,7 @@
 
 #include "../Engine/DirectBase/3D/DirectionLight.h"
 #include "../Engine/DirectBase/2D/Sprite.h"
-#include "../Engine/DirectBase/Render/Camera.h"
+#include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
 #include "../Engine/DirectBase/Model/Model.h"
 #include "../Utils/Math/Transform.h"
@@ -28,6 +28,7 @@ private:
 
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
+	CameraManager *cameraManager_ = nullptr;
 
 	//	Model *model_ = nullptr;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
@@ -40,8 +41,8 @@ private:
 	std::unique_ptr<Entity> followCamera_ = nullptr;
 	LevelElementManager *levelManager{};
 
-	std::array<const Camera3D *, 2u> cameraList_;
-	std::array<const Camera3D *, 2u>::iterator cameraTarget_ = cameraList_.begin();
+	//std::array<const Camera3D *, 2u> cameraList_;
+	//std::array<const Camera3D *, 2u>::iterator cameraTarget_ = cameraList_.begin();
 
 	std::unique_ptr<Entity> cannon_;
 
