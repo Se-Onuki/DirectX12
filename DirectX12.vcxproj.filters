@@ -115,6 +115,9 @@
     <Filter Include="Engine\Render\CameraAnimations">
       <UniqueIdentifier>{1b09de97-f37d-47ef-a58e-986936e385cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\Block">
+      <UniqueIdentifier>{0701f625-dfe0-4534-bda1-06815d39c16b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -371,6 +374,9 @@
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerState\LandState.cpp">
       <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Block\BlockManager.cpp">
+      <Filter>Header\Entity\Object\Block</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -685,6 +691,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerState\LandState.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Block\BlockManager.h">
+      <Filter>Header\Entity\Object\Block</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
