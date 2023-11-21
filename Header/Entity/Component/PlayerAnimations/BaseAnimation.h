@@ -72,6 +72,24 @@ public: // アクセッサ等
 	int32_t GetPlayKey() { return playKey_; }
 
 	/// <summary>
+	/// アニメーション全体の秒数の取得
+	/// </summary>
+	/// <returns>アニメーション全体の秒数</returns>
+	float GetAnimationTime();
+
+	/// <summary>
+	/// アニメーション進行度ゲッター
+	/// </summary>
+	/// <returns>アニメーション進行度</returns>
+	float GetAnimationProgress() { return timer_.GetProgress(); };
+
+	/// <summary>
+	/// アニメーションの各フレームの進行度ゲッター
+	/// </summary>
+	/// <returns>アニメーションの各フレームの進行度</returns>
+	float GetFrameProgress() { return frameTimer_.GetProgress(); }
+
+	/// <summary>
 	/// 現在のアニメーション状態のゲッター
 	/// </summary>
 	/// <returns>現在のアニメーション状態</returns>
@@ -129,6 +147,10 @@ protected: // 継承先メンバ変数
 
 	// 演出用t
 	float animT_;
+	// フレーム進行度用タイマー
+	SoLib::DeltaTimer frameTimer_;
+	// タイマー
+	SoLib::DeltaTimer timer_;
 
 	// 遷移開始直前のボーン情報を取得
 	PlayerBone::Bone prevBone_;

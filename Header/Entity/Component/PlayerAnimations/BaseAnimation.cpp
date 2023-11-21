@@ -33,6 +33,15 @@ void BaseAnimation::Initialize(std::string name, bool isLoop, AnimEasing::Easing
 	isPlaying_ = true;
 	isLoop_ = isLoop;
 	isEnd_ = false;
+
+	// タイマー開始
+	if (isTransitioning_) {
+		frameTimer_.Start(transitionTime_);
+	}
+	else {
+		frameTimer_.Start(animKeys_.keys_[0].animationTime);
+	}
+	timer_.Start(GetAnimationTime());
 }
 
 void BaseAnimation::Update(float deltaTime)
@@ -52,6 +61,7 @@ void BaseAnimation::Update(float deltaTime)
 				animT_ = 0.0f;
 				// 遷移トリガーfalse
 				isTransitioning_ = false;
+				frameTimer_.Start(animKeys_.keys_[0].animationTime);
 			}
 		}
 		else {
@@ -78,16 +88,21 @@ void BaseAnimation::Update(float deltaTime)
 						if (playKey_ < animKeys_.keyCount_ - 1) {
 							playKey_++;
 							animT_ = 0.0f;
+							frameTimer_.Start(animKeys_.keys_[playKey_].animationTime);
 						}
 						else {
 							animT_ = 0.0f;
 							playKey_ = 0;
+							frameTimer_.Start(animKeys_.keys_[0].animationTime);
+							// タイマー開始
+							timer_.Start(GetAnimationTime());
 						}
 					}
 					else {
 						if (playKey_ < animKeys_.keyCount_ - 2) {
 							playKey_++;
 							animT_ = 0.0f;
+							frameTimer_.Start(animKeys_.keys_[playKey_].animationTime);
 						}
 						else {
 							isEnd_ = true;
@@ -98,11 +113,23 @@ void BaseAnimation::Update(float deltaTime)
 			else {
 				bone_.bone_ = animKeys_.keys_[0].bone.bone_;
 			}
+			timer_.Update(deltaTime);
 		}
+		frameTimer_.Update(deltaTime);
 	}
 
 	// 
 	bone_.SetToEntity();
+}
+
+float BaseAnimation::GetAnimationTime()
+{
+	float animTime_ = 0.0f;
+	for (int i = 0; i < animKeys_.keyCount_; i++) {
+		animTime_ += animKeys_.keys_[i].animationTime;
+	}
+	
+	return animTime_;
 }
 
 PlayerBone::Bone BaseAnimation::GetTargetBone(std::string groupName, std::string boneName)
