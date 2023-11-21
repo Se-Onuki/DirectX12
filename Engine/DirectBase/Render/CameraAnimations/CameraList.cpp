@@ -24,13 +24,13 @@ Camera3D* CameraList::AddCamera(const std::string& cameraName)
 	std::unique_ptr<Camera3D> newCamera = std::make_unique<Camera3D>();
 
 	// return用のインスタンス生成
-	camera = newCamera.get();
+	//camera = newCamera.get();
 
 	// カメラリストに生成したカメラを追加
 	cameraMap_.insert({ cameraName, std::move(newCamera) });
 
 	// 生成したカメラを返す
-	return camera;
+	return cameraMap_[cameraName].get();
 }
 
 Camera3D* CameraList::GetCamera(const std::string& cameraName) const

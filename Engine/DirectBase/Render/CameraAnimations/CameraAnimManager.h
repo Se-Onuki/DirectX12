@@ -16,7 +16,7 @@ private: // サブクラス
 	/// 次のアニメーション構造体
 	/// </summary>
 	struct NextAnimation {
-		CameraAnimation* anim; // アニメーション本体
+		CameraAnimation anim; // アニメーション本体
 		float standByTime;					   // 次のアニメーションまでの待機秒数
 		bool standByIsEnd;					   // 現在アニメーションが終了するまで待機するか
 	};
@@ -66,9 +66,9 @@ private: // メンバ変数
 	CameraManager* cameraManager_ = nullptr;
 
 	// 現在再生中のアニメーション
-	std::unique_ptr<CameraAnimation> currentAnimation_;
+	CameraAnimation currentAnimation_;
 	// 再生待機中アニメーション
-	std::vector<NextAnimation> nextAnimations_;
+	std::list<NextAnimation> nextAnimations_;
 
 	// 何秒後に再生するかタイマー
 	SoLib::DeltaTimer timer_;

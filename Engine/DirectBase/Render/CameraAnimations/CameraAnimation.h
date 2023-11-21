@@ -8,6 +8,17 @@
 /// </summary>
 class CameraAnimation
 {
+private: // サブクラス
+
+	/// <summary>
+	/// カメラパラメータ補間用構造体
+	/// </summary>
+	struct CameraParameter {
+		Vector3 translation;
+		Vector3 rotation;
+		float FOV;
+	};
+
 public: // コンストラクタ等
 
 	// コンストラクタ
@@ -46,10 +57,10 @@ public: // アクセッサ等
 private: // メンバ変数
 
 	// パラメータ格納用カメラ
-	std::unique_ptr<Camera3D> camera_;
+	static std::unique_ptr<Camera3D> camera_;
 	
 	// 始端パラメーター保管用
-	Camera3D startCamera_;
+	CameraParameter startCamera_;
 	// 終端パラメータ保管用
 	Camera3D* endCamera_;
 
