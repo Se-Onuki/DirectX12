@@ -41,7 +41,7 @@ public: // アクセッサ等
 	///	アニメーション終了状態ゲッター
 	/// </summary>
 	/// <returns>アニメーションが終了しているか</returns>
-	bool GetIsEnd() { timer_.IsFinish(); }
+	bool GetIsEnd() { return timer_.IsFinish(); }
 
 private: // メンバ変数
 

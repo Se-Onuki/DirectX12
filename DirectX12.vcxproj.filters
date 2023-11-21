@@ -348,6 +348,9 @@
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.cpp">
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -633,6 +636,9 @@
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.h">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h">
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClInclude>
   </ItemGroup>

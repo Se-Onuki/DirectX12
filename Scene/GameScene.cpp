@@ -39,6 +39,8 @@ void GameScene::OnEnter() {
 
 	// カメラマネージャーの初期化
 	cameraManager_->Init();
+	// テスト用新規カメラを追加
+	cameraManager_->AddCamera("TestCamera");
 
 	// パーティクルマネージャの初期化
 	particleManager->Init(256); // パーティクルの最大数は256
@@ -112,8 +114,8 @@ void GameScene::OnEnter() {
 
 	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
 
-	cameraList_[0u] = &followComp->GetCamera();
-	cameraList_[1u] = &camera_;
+	/*cameraList_[0u] = &followComp->GetCamera();
+	cameraList_[1u] = &camera_;*/
 }
 
 void GameScene::OnExit() {}
@@ -167,11 +169,11 @@ void GameScene::Update() {
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 	camera_.UpdateMatrix();
 
-	if (keyBoard->IsTrigger(DIK_0)) {
+	/*if (keyBoard->IsTrigger(DIK_0)) {
 		if (++cameraTarget_ == cameraList_.end()) {
 			cameraTarget_ = cameraList_.begin();
 		}
-	}
+	}*/
 
 	// カメラマネージャーの更新
 	cameraManager_->Update();
@@ -217,7 +219,7 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	const auto& camera = **cameraTarget_;
+	const auto& camera = *cameraManager_->GetUseCamera();
 
 	//model_->Draw(transform_, camera_);
 	levelManager->Draw(camera);

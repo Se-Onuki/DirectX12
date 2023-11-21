@@ -40,21 +40,48 @@ void CameraManager::DisplayImGui()
 {
 	ImGui::Begin("CameraManager");
 	// 全カメラののImGuiを描画
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(0, 100), ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(0, 150), ImGuiWindowFlags_NoTitleBar);
 	// イテレータの取得
 	auto iter = cameraList_->cameraMap_.begin();
 	// イテレータの終わりまでループ
 	while (iter != cameraList_->cameraMap_.end()) {
-		ImGui::Text(iter->first.c_str());
-		if (useCamera_ == iter->second.get()) {
-			ImGui::Text("ThisCamera is used");
-			iter->second->ImGuiWidget();
+		if(ImGui::TreeNode(iter->first.c_str())) {
+			ImGui::SameLine();
+			if (useCamera_ == iter->second.get()) {
+				ImGui::Text("ThisCamera is used");
+			}
+			else {
+				if (ImGui::Button("Use this")) {
+					SetUseCamera(iter->first);
+				}
+			}
+
+			iter->second->ImGuiWidget("info");
+
+			ImGui::TreePop();
+		}
+		else {
+			ImGui::SameLine();
+			if (useCamera_ == iter->second.get()) {
+				ImGui::Text("ThisCamera is used");
+			}
+			else {
+				if (ImGui::Button("Use this")) {
+					SetUseCamera(iter->first);
+				}
+			}
 		}
 		iter++;
 	}
 	
 	ImGui::EndChild();
 	ImGui::End();
+}
+
+Camera3D* CameraManager::AddCamera(const std::string& cameraName)
+{
+	// カメラリストにカメラを追加しそれを返す
+	return cameraList_->AddCamera(cameraName);
 }
 
 void CameraManager::SetUseCamera(const std::string& cameraName)

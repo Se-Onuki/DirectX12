@@ -29,11 +29,14 @@ void CameraAnimation::Update(float deltaTime)
 		camera_->rotation_ = Angle::Lerp(startCamera_.rotation_, endCamera_->rotation_, Ease(timer_.GetProgress()));		   // 回転
 		camera_->fovAngleY = SoLib::Lerp(startCamera_.fovAngleY, endCamera_->fovAngleY, Ease(timer_.GetProgress()));		   // FOV
 	}
-	else {
+	else { // 終了したら
 		// カメラのパラメーターを終了時のパラメーターに合わせる
 		camera_ = std::unique_ptr<Camera3D>(endCamera_);
 	}
 	
 	// タイマーの更新
 	timer_.Update(deltaTime);
+
+	// 使用されているカメラにパラメーターをセット
+	CameraManager::GetInstance()->SetParameters(*camera_);
 }

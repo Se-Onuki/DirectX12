@@ -40,6 +40,13 @@ public: // メンバ関数
 public: // アクセッサ等
 
 	/// <summary>
+	/// カメラリストにカメラを追加する関数
+	/// </summary>
+	/// <param name="cameraName">追加するカメラ名</param>
+	/// <returns>追加したカメラ</returns>
+	Camera3D* AddCamera(const std::string& cameraName);
+
+	/// <summary>
 	/// 使用中のカメラゲッター
 	/// </summary>
 	/// <returns>使用中のカメラ</returns>
@@ -50,6 +57,12 @@ public: // アクセッサ等
 	/// </summary>
 	/// <param name="cameraName">使用するカメラの名前</param>
 	void SetUseCamera(const std::string& cameraName);
+
+	/// <summary>
+	/// カメラに引数のパラメーター数値を渡す関数
+	/// </summary>
+	/// <param name="parameter">セットするパラメーター</param>
+	void SetParameters(const Camera3D& parameter) { *useCamera_ = parameter; }
 
 public: // パブリックなメンバ変数
 
