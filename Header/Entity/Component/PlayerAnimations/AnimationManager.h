@@ -70,6 +70,12 @@ public: // アクセッサ等
 	/// <returns>現在アニメーションの進行度(0.0f ~ 1.0f)</returns>
 	float GetAnimationProgress() { return currentAnimation_->GetAnimationProgress(); }
 
+	/// <summary>
+	/// アニメーションの各フレームの進行度ゲッター
+	/// </summary>
+	/// <returns>アニメーションの各フレームの進行度</returns>
+	float GetFrameProgress() { return currentAnimation_->GetFrameProgress(); }
+
 private: // メンバ変数
 
 	// アニメーション数値クラス

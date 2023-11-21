@@ -63,6 +63,8 @@ void AnimationManager::Update()
 
 	float progress = currentAnimation_->GetAnimationProgress();
 	ImGui::DragFloat("AnimationProgress", &progress, 0.01f);
+	float frameProgress = currentAnimation_->GetFrameProgress();
+	ImGui::DragFloat("FrameProgress", &frameProgress, 0.01f);
 
 	// アニメーション再生
 	if (ImGui::Button("PlayAnim")) {
