@@ -1,7 +1,7 @@
 {
     "Land": {
         "KeyCount": 3,
-        "key : 0AnimationTime": 0.25,
+        "key : 0AnimationTime": 0.10000000149011612,
         "key : 0Arm_L_Rotate": [
             0.0,
             0.0,
@@ -105,10 +105,11 @@
         ],
         "key : 0Ling_Translate": [
             0.0,
-            0.0,
+            0.4749999940395355,
             0.0
         ],
-        "key : 1AnimationTime": 0.30000001192092896,
+        "key : 0RotateSpeed": 0.05000000074505806,
+        "key : 1AnimationTime": 0.15000000596046448,
         "key : 1Arm_L_Rotate": [
             0.0,
             0.0,
@@ -145,13 +146,13 @@
             0.0
         ],
         "key : 1Body_Scale": [
-            1.350000023841858,
-            0.30000001192092896,
+            1.25,
+            0.5,
             1.0
         ],
         "key : 1Body_Translate": [
             0.0,
-            -0.24500000476837158,
+            -0.33500000834465027,
             0.0
         ],
         "key : 1EasingType": 3,
@@ -212,10 +213,11 @@
         ],
         "key : 1Ling_Translate": [
             0.0,
-            0.0,
+            -0.33500000834465027,
             0.0
         ],
-        "key : 2AnimationTime": 0.05000000074505806,
+        "key : 1RotateSpeed": 0.05000000074505806,
+        "key : 2AnimationTime": 0.10000000149011612,
         "key : 2Arm_L_Rotate": [
             0.0,
             0.0,
@@ -321,6 +323,7 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "key : 2RotateSpeed": 0.05000000074505806
     }
 }

@@ -2,6 +2,7 @@
 #include <numbers>
 #include "../../../../Utils/Math/Vector3.h"
 #include "PlayerBone.h"
+#include "../../../../Utils/SoLib/SoLib.h"
 
 /// <summary>
 /// アニメーション用イージング関数群
@@ -17,7 +18,8 @@ public: // サブクラス
 		kLinear,
 		kEaseIn,
 		kEaseOut,
-		KEaseInOut
+		KEaseInOut,
+		kEaseInOutBack,
 	};
 
 public: // パブリックなメンバ関数
@@ -205,5 +207,33 @@ public: // パブリックなメンバ関数
 	/// <param name="end">終了値</param>
 	/// <returns>イージングされた値(float)</returns>
 	static int EaseInOut(float t, int start, int end);
+
+	/// <summary>
+	/// 線形補間関数(EaseInOutBack)(float)
+	/// </summary>
+	/// <param name="t">現在のt</param>
+	/// <param name="start">開始値</param>
+	/// <param name="end">終了値</param>
+	/// <returns>イージングされた値(float)</returns>
+	static float EaseInOutBack(float t, float start, float end, float time);
+
+	/// <summary>
+	/// 線形補間関数(EaseInOutBack)(Vector3)
+	/// </summary>
+	/// <param name="t">現在のt</param>
+	/// <param name="start">開始値</param>
+	/// <param name="end">終了値</param>
+	/// <returns>イージングされた値(float)</returns>
+	static Vector3 EaseInOutBack(float t, const Vector3& start, const Vector3& end, float time);
+
+	template <typename T>
+	static T FuncEase(float t, const T& start, const T& end, float time, float(*func)(float) = SoLib::easeLinear);
 };
 
+template<typename T>
+inline T AnimEasing::FuncEase(float t, const T& start, const T& end, float time, float(*func)(float)) {
+
+	float easeT = -(cosf((float)std::numbers::pi * t / time) - 1.0f) / 2.0f;
+	return SoLib::Lerp(start, end, func(easeT));
+
+}

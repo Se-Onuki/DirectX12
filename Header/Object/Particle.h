@@ -9,7 +9,7 @@ struct Particle {
 	};
 	BaseTransform transform_;
 	Vector4 color_;
-	
+
 	using map_struct = ParticleData;
 	Particle &operator=(map_struct *const target);
 };

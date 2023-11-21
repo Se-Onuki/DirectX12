@@ -2,7 +2,7 @@
 #include <algorithm>
 
 namespace SoLib {
-	bool Timer::Update() {
+	bool FlameTimer::Update() {
 		if (isFinish_) {
 			isActive_ = false;
 			return false;
@@ -14,29 +14,29 @@ namespace SoLib {
 		return true;
 	}
 
-	void Timer::AddFlame() {
+	void FlameTimer::AddFlame() {
 		nowFlame_++;
 	}
 
-	void Timer::Start() {
+	void FlameTimer::Start() {
 		nowFlame_ = 0u;
 		isFinish_ = false;
 		isActive_ = true;
 	}
 
-	void Timer::Start(uint32_t goal) {
+	void FlameTimer::Start(uint32_t goal) {
 		Start();
 		SetGoal(goal);
 	}
 
-	void Timer::Clear() {
+	void FlameTimer::Clear() {
 		nowFlame_ = 0u;
 		isFinish_ = true;
 		isActive_ = false;
 		goalFlame_ = 0u;
 	}
 
-	float Timer::GetProgress() const {
+	float FlameTimer::GetProgress() const {
 		return std::clamp((float)nowFlame_ / goalFlame_, 0.f, 1.f);
 	}
 
@@ -125,7 +125,7 @@ namespace SoLib {
 	}
 
 	bool FunctionTimer::Update() {
-		bool isActive = Timer::Update(); // 実行中であるか
+		bool isActive = FlameTimer::Update(); // 実行中であるか
 		if (isActive && IsFinish())	// 実行中である & ゴールに到達している => 実行
 			function_();
 		return isActive;

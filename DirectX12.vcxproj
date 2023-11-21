@@ -133,6 +133,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
+    <ClCompile Include="Header\Entity\Component\CannonComp.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
@@ -145,6 +146,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\PlayerBone.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerAnimComp.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerComp.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerState\FallingState.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerState\IdleState.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerState\IPlayerState.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerState\JumpState.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerState\LandState.cpp" />
+    <ClCompile Include="Header\Entity\Component\PlayerState\MoveState.cpp" />
     <ClCompile Include="Header\Entity\Component\Projectile.cpp" />
     <ClCompile Include="Header\Entity\Component\Rigidbody.cpp" />
     <ClCompile Include="Header\Entity\Entity.cpp" />
@@ -168,6 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\Math\Matrix3x3.cpp" />
     <ClCompile Include="Utils\Math\Matrix4x4.cpp" />
     <ClCompile Include="Utils\Math\Polar.cpp" />
+    <ClCompile Include="Utils\Math\Quaternion.cpp" />
     <ClCompile Include="Utils\Math\Random.cpp" />
     <ClCompile Include="Utils\Math\Transform.cpp" />
     <ClCompile Include="Utils\Math\ValueRange.cpp" />
@@ -177,7 +185,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\SoLib\SoLib_ImGui.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Lerp.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Timer.cpp" />
-    <ClCompile Include="Utils\Timer\TImer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\DirectBase\2D\Sprite.h" />
@@ -223,6 +230,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
+    <ClInclude Include="Header\Entity\Component\CannonComp.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
     <ClInclude Include="Header\Entity\Component\FollowCameraComp.h" />
@@ -237,6 +245,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\PlayerBone.h" />
     <ClInclude Include="Header\Entity\Component\PlayerAnimComp.h" />
     <ClInclude Include="Header\Entity\Component\PlayerComp.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerState\FallingState.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerState\IdleState.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerState\IPlayerState.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerState\JumpState.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerState\LandState.h" />
+    <ClInclude Include="Header\Entity\Component\PlayerState\MoveState.h" />
     <ClInclude Include="Header\Entity\Component\Projectile.h" />
     <ClInclude Include="Header\Entity\Component\Rigidbody.h" />
     <ClInclude Include="Header\Entity\Entity.h" />
@@ -258,12 +272,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\Math\Angle.h" />
     <ClInclude Include="Utils\Math\FloatArray.h" />
     <ClInclude Include="Utils\Math\Math.hpp" />
+    <ClInclude Include="Utils\Math\Matrix.h" />
     <ClInclude Include="Utils\Math\Matrix2x2.h" />
     <ClInclude Include="Utils\Math\Matrix3x3.h" />
     <ClInclude Include="Utils\Math\Matrix4x4.h" />
     <ClInclude Include="Utils\Math\Polar.h" />
     <ClInclude Include="Utils\Math\Quaternion.h" />
     <ClInclude Include="Utils\Math\Random.h" />
+    <ClInclude Include="Utils\Math\SimdCalc.h" />
     <ClInclude Include="Utils\Math\Transform.h" />
     <ClInclude Include="Utils\Math\ValueRange.h" />
     <ClInclude Include="Utils\Math\Vector2.h" />
@@ -275,7 +291,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\SoLib\SoLib_Lerp.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Timer.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Traits.h" />
-    <ClInclude Include="Utils\Timer\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

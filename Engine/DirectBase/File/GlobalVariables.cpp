@@ -104,6 +104,10 @@ void GlobalVariables::SaveFile(const std::string &groupName) const {
 			const Vector4 &value = std::get<Vector4>(item);
 			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y, value.z, value.w });
 		}
+		else if (std::holds_alternative<std::string>(item)) {
+			const std::string &value = std::get<std::string>(item);
+			root[groupName][itemName] = value;
+		}
 	}
 
 	// ディレクトリが無ければ作成する
@@ -203,6 +207,10 @@ void GlobalVariables::LoadFile(const std::string &groupName) {
 		else if (itItem->is_array() && itItem->size() == 4) {
 			// Vector4型の値
 			Vector4 value = Vector4{ itItem->at(0), itItem->at(1), itItem->at(2), itItem->at(3) };
+			AddValue(groupName, itemName, value);
+		}
+		else if (itItem->is_string()) {
+			const std::string& value = itItem->get<std::string>();
 			AddValue(groupName, itemName, value);
 		}
 	}

@@ -7,17 +7,17 @@ void PlayerAnimComp::Init()
 	// モデルコンポーネントの追加
 	object_->AddComponent<ModelComp>();
 	// モデルコンポーネントを取得しボーン追加
-	auto* bodyBone = object_->GetComponent<ModelComp>()->AddBone("Body", ModelManager::GetInstance()->GetModel("PlayerBody"), bodyTransform_); // 体
+	auto *bodyBone = object_->GetComponent<ModelComp>()->AddBone("Body", ModelManager::GetInstance()->GetModel("PlayerBody"), bodyTransform_); // 体
 	object_->GetComponent<ModelComp>()->AddBone("Eye", ModelManager::GetInstance()->GetModel("PlayerEye"), bodyBone, eyeTransform_); // 目
 	object_->GetComponent<ModelComp>()->AddBone("Helmet", ModelManager::GetInstance()->GetModel("PlayerHelmet"), bodyBone, bodyTransform_); // ヘルメット
-	object_->GetComponent<ModelComp>()->AddBone("Ling", ModelManager::GetInstance()->GetModel("PlayerLing"), bodyBone, LingTransform_); // 輪っか
+	object_->GetComponent<ModelComp>()->AddBone("Ling", ModelManager::GetInstance()->GetModel("PlayerLing"), LingTransform_); // 輪っか
 	object_->GetComponent<ModelComp>()->AddBone("Arm_L", ModelManager::GetInstance()->GetModel("PlayerArm_L"), bodyBone, ArmTransform_L_); // 左腕
 	object_->GetComponent<ModelComp>()->AddBone("Arm_R", ModelManager::GetInstance()->GetModel("PlayerArm_R"), bodyBone, ArmTransform_R_); // 右腕
 	object_->GetComponent<ModelComp>()->AddBone("Foot_L", ModelManager::GetInstance()->GetModel("PlayerFoot_L"), FootTransform_L_); // 左足
 	object_->GetComponent<ModelComp>()->AddBone("Foot_R", ModelManager::GetInstance()->GetModel("PlayerFoot_R"), FootTransform_R_); // 右足
 
 	// アニメーションマネージャーの生成
-	animManager_ = new AnimationManager(); // インスタンス生成
+	animManager_ = std::make_unique<AnimationManager>(); // インスタンス生成
 	animManager_->SetEntity(object_);	   // エンティティをセット
 	animManager_->Initialize();			   // 初期化
 }

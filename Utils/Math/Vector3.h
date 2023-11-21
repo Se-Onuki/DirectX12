@@ -4,7 +4,8 @@
 
 #include <cmath>
 #include <array>
-#include <tuple>
+#include <immintrin.h>
+#include "SimdCalc.h"
 
 struct Matrix4x4;
 
@@ -145,24 +146,34 @@ struct Vector3 {
 
 	Vector2 ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
 
-	inline operator std::array<float, 3u> &() {
-		return *reinterpret_cast<std::array<float, 3u>*>(this);
+	/// @brief 暗黙的な配列への変換
+	inline operator std::array<float, 3u> &() noexcept {
+		return *reinterpret_cast<std::array<float, 3u>*>(&x);
 	}
 
-	inline operator const std::array<float, 3u> &() const {
-		return *reinterpret_cast<const std::array<float, 3u>*>(this);
+	/// @brief 暗黙的な配列への変換
+	inline operator const std::array<float, 3u> &() const noexcept {
+		return *reinterpret_cast<const std::array<float, 3u>*>(&x);
 	}
+
+	static uint32_t size() { return 3u; }
 
 	float *const begin() { return &x; }
 	const float *const begin() const { return &x; }
+	const float *const cbegin() const { return &x; }
 
-	float *const end() { return &x + 3u; }
-	const float *const end() const { return &x + 3u; }
+	float *const end() { return begin() + size(); }
+	const float *const end() const { return end(); }
+	const float *const cend() const { return end(); }
 
-	uint32_t size() const { return 3u; }
+	float *const data() { return begin(); }
+	const float *const data() const { return begin(); }
+	const float *const cdata() const { return begin(); }
 
-	float *const data() { return &x; }
-	const float *const data() const { return &x; }
+	inline explicit operator __m128() const { return _mm_setr_ps(x, y, z, 1.f); }
+	inline Vector3 &operator=(const __m128 &vec) { std::memcpy(this, &vec, sizeof(*this)); return *this; }
+
+	inline explicit operator SoLib::Math::SIMD128() const { return SoLib::Math::SIMD128{ static_cast<__m128>(*this) }; }
 
 private:
 };

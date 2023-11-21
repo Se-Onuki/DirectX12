@@ -9,6 +9,7 @@
 #include "../../Engine/DirectBase/File/VariantItem.h"
 #include "../../Utils/SoLib/SoLib_Timer.h"
 #include <array>
+#include <map>
 
 class LevelElementManager {
 	LevelElementManager() = default;
@@ -24,14 +25,20 @@ public:
 		kSize
 	};
 
+	class Platform;
+
 	class Box {
 	public:
-		Box(const AABB &aabb);
+		Box(const AABB &aabb, Platform *parent);
 
 		GroundType groundType_ = GroundType::kGrass;
 
 		Transform transform_;
 		AABB referenceBox_;
+
+		Platform *parent_ = nullptr;
+
+		bool ImGuiWidget();
 	};
 
 	class Platform {
@@ -63,8 +70,6 @@ public:
 		void ImGuiWidget();
 
 	private:
-
-
 
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
@@ -100,13 +105,13 @@ public:
 
 	Platform *const GetPlatform(int32_t index);
 
-	using PlatformMap = std::unordered_map<uint32_t, Platform>;
+	using PlatformMap = std::map<uint32_t, Platform>;
 	PlatformMap blockCollider_;
 
 	const auto &GetGroundModel() const { return groundModels_; }
 
 private:
-	std::array<Model *, 2u> groundModels_;
+	std::array<Model *, 2u> groundModels_ = {};
 	Transform lineStart_;
 	Transform lineEnd_;
 	LineBase stageLine_;

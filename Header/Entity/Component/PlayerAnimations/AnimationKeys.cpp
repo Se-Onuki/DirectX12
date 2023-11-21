@@ -8,8 +8,12 @@ void AnimationKeys::Initialize(std::string groupName)
 	keyCount_ = 0;
 	gv_ = GlobalVariables::GetInstance();
 
+#ifdef _DEBUG
+
 	// コピーキーの初期化
 	copiedKey_.Initialize();
+
+#endif // _DEBUG
 }
 
 void AnimationKeys::AddKey()
@@ -23,6 +27,7 @@ void AnimationKeys::AddKey()
 	tempKey.bone.Initialize(groupName_, fullBoneName);
 	tempKey.type = AnimEasing::kLinear;
 	tempKey.animationTime = 1.0f;
+	tempKey.lingRotateSpeed = 0.05f;
 
 	// キーを追加する
 	keys_.push_back(tempKey);
@@ -41,6 +46,7 @@ void AnimationKeys::AddKeyInfo()
 		keys_[i].bone.AddItem(gv_);
 		gv_->AddValue(groupName_, keys_[i].bone.GetBoneName() + "EasingType", keys_[i].type);
 		gv_->AddValue(groupName_, keys_[i].bone.GetBoneName() + "AnimationTime", keys_[i].animationTime);
+		gv_->AddValue(groupName_, keys_[i].bone.GetBoneName() + "RotateSpeed", keys_[i].lingRotateSpeed);
 	}
 }
 
@@ -54,6 +60,7 @@ void AnimationKeys::SetKeyInfo()
 		keys_[i].bone.SetItem(gv_);
 		gv_->SetValue(groupName_, keys_[i].bone.GetBoneName() + "EasingType", keys_[i].type);
 		gv_->SetValue(groupName_, keys_[i].bone.GetBoneName() + "AnimationTime", keys_[i].animationTime);
+		gv_->SetValue(groupName_, keys_[i].bone.GetBoneName() + "RotateSpeed", keys_[i].lingRotateSpeed);
 	}
 }
 
@@ -75,6 +82,7 @@ void AnimationKeys::ApplyKeyInfo()
 		tempKey.bone.ApplyItem(gv_);
 		tempKey.type = gv_->Get<int>(groupName_, fullBoneName + "EasingType");
 		tempKey.animationTime = gv_->Get<float>(groupName_, fullBoneName + "AnimationTime");
+		tempKey.lingRotateSpeed = gv_->Get<float>(groupName_, fullBoneName + "RotateSpeed");
 
 		// キーを追加する
 		keys_.push_back(tempKey);
@@ -85,6 +93,9 @@ void AnimationKeys::ApplyKeyInfo()
 
 void AnimationKeys::ShowImGUi()
 {
+#ifdef _DEBUG
+
+
 	ImGui::Begin("AnimManager", nullptr, ImGuiWindowFlags_MenuBar);
 	if (ImGui::BeginMenuBar()) {
 		if (ImGui::BeginMenu(groupName_.c_str())) {
@@ -127,9 +138,11 @@ void AnimationKeys::ShowImGUi()
 			for (int i = 0; i < (int)keys_.size(); i++) {
 				keys_[i].bone.DisplayImGui();
 				std::string name = "EasingType" + std::to_string(i);
-				ImGui::SliderInt(name.c_str(), &keys_[i].type, 0, 3);
+				ImGui::SliderInt(name.c_str(), &keys_[i].type, 0, 4);
 				name = "AnimationTime" + std::to_string(i);
 				ImGui::DragFloat(name.c_str(), &keys_[i].animationTime, 0.05f, 0.05f, 10.0f);
+				name = "RotateSpeed" + std::to_string(i);
+				ImGui::DragFloat(name.c_str(), &keys_[i].lingRotateSpeed, 0.001f, 0.001f, 1.0f);
 				name = "Delete : " + std::to_string(i);
 				if (ImGui::Button(name.c_str())) {
 					keys_.erase(keys_.begin() + i);
@@ -154,8 +167,9 @@ void AnimationKeys::ShowImGUi()
 			}
 			ImGui::EndMenu();
 		}
-		
+
 	}
 	ImGui::EndMenuBar();
 	ImGui::End();
+#endif // _DEBUG
 }

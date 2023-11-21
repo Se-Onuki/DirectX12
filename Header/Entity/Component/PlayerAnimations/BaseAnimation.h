@@ -4,6 +4,9 @@
 #include "AnimEasing.h"
 #include "../../../../Engine/DirectBase/File/GlobalVariables.h"
 #include "AnimationKeys.h"
+// #include "AnimationManager.h"
+
+enum PlayerBehavior :uint32_t;
 
 /// <summary>
 /// アニメーション基底クラス
@@ -16,7 +19,7 @@ public: // メンバ関数
 	BaseAnimation() = default;
 	// デストラクタ
 	~BaseAnimation() = default;
-	
+
 	/// <summary>
 	/// 初期化関数
 	/// </summary>
@@ -38,7 +41,7 @@ public: // アクセッサ等
 	/// アニメーションさせるエンティティをセット
 	/// </summary>
 	/// <param name="entity">エンティティ</param>
-	void SetEntity(Entity* entity) { entity_ = entity; }
+	void SetEntity(Entity *entity) { entity_ = entity; }
 
 	/// <summary>
 	/// 終了状態ゲッター
@@ -69,6 +72,35 @@ public: // アクセッサ等
 	int GetPlayKey() { return playKey_; }
 
 	/// <summary>
+	/// アニメーション全体の秒数の取得
+	/// </summary>
+	/// <returns>アニメーション全体の秒数</returns>
+	float GetAnimationTime();
+
+	/// <summary>
+	/// アニメーション進行度ゲッター
+	/// </summary>
+	/// <returns>アニメーション進行度</returns>
+	float GetAnimationProgress() { return timer_.GetProgress(); };
+
+	/// <summary>
+	/// アニメーションの各フレームの進行度ゲッター
+	/// </summary>
+	/// <returns>アニメーションの各フレームの進行度</returns>
+	float GetFrameProgress() { return frameTimer_.GetProgress(); }
+
+	/// <summary>
+	/// 現在のアニメーション状態のゲッター
+	/// </summary>
+	/// <returns>現在のアニメーション状態</returns>
+	const PlayerBehavior &GetBehavior() { return behavior_; }
+	/// <summary>
+	/// 現在のアニメーション状態セッター
+	/// </summary>
+	/// <param name="behavior">設定するアニメーション状態</param>
+	void SetBehavior(const PlayerBehavior &behavior) { behavior_ = behavior; }
+
+	/// <summary>
 	/// 引数で指定したボーンの値を取得するゲッター
 	/// </summary>
 	/// <param name="groupName">取得するボーンのグループ名</param>
@@ -91,15 +123,22 @@ public: // アクセッサ等
 	/// <param name="end">終端値</param>
 	/// <param name="time">時間</param>
 	/// <returns>イージングされた値(float)</returns>
-	PlayerBone::Bone Ease(AnimEasing::EasingType type, float t, PlayerBone::Bone start, PlayerBone::Bone end, float time);
+	PlayerBone::Bone Ease(AnimEasing::EasingType type, float t, const PlayerBone::Bone &start, const PlayerBone::Bone &end, float time);
+
+	/// @brief 現在のキーのゲッター
+	/// @return 現在のキー
+	int32_t GetPlayKey() const { return playKey_; }
 
 protected: // 継承先メンバ変数
 
 	// グローバル変数クラス
-	GlobalVariables* globalVariables_ = nullptr;
+	GlobalVariables *globalVariables_ = nullptr;
+
+	// 再生されているアニメーション
+	PlayerBehavior behavior_;
 
 	// アニメーションさせるエンティティ
-	Entity* entity_ = nullptr;
+	Entity *entity_ = nullptr;
 
 	// 現在ボーン
 	PlayerBone bone_;
@@ -112,6 +151,10 @@ protected: // 継承先メンバ変数
 
 	// 演出用t
 	float animT_;
+	// フレーム進行度用タイマー
+	SoLib::DeltaTimer frameTimer_;
+	// タイマー
+	SoLib::DeltaTimer timer_;
 
 	// 遷移開始直前のボーン情報を取得
 	PlayerBone::Bone prevBone_;

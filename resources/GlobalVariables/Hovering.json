@@ -105,9 +105,10 @@
         ],
         "key : 0Ling_Translate": [
             0.0,
-            0.0,
+            0.4749999940395355,
             0.0
         ],
+        "key : 0RotateSpeed": 0.05000000074505806,
         "key : 1AnimationTime": 1.5,
         "key : 1Arm_L_Rotate": [
             0.0,
@@ -212,8 +213,9 @@
         ],
         "key : 1Ling_Translate": [
             0.0,
-            0.0,
+            0.42500001192092896,
             0.0
-        ]
+        ],
+        "key : 1RotateSpeed": 0.05000000074505806
     }
 }

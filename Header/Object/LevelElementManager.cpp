@@ -140,7 +140,7 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(int32_t in
 //}
 
 void LevelElementManager::Platform::AddBox(const AABB &aabb) {
-	boxList_.emplace_back(aabb);
+	boxList_.emplace_back(aabb, this);
 	auto &box = boxList_.back();
 	box.transform_->parent_ = &center_;
 }
@@ -193,6 +193,10 @@ void LevelElementManager::Platform::Draw(const Camera3D &camera) const {
 }
 
 void LevelElementManager::Platform::ImGuiWidget() {
+	ImGui::NewLine();
+
+	ImGui::BulletText("PlatformEditor");
+
 
 	bool isEdited = false;
 
@@ -213,7 +217,6 @@ void LevelElementManager::Platform::ImGuiWidget() {
 	isEdited |= ImGui::RadioButton("RotateZ", &e, 2);
 	rotateAxis_ = axisList[e];
 
-	ImGui::NewLine();
 	static bool isSeparate = false;
 	ImGui::Checkbox("Separate", &isSeparate);
 	ImGui::SameLine();
@@ -228,15 +231,53 @@ void LevelElementManager::Platform::ImGuiWidget() {
 		}
 	}
 
+	static std::list<Box>::iterator boxItr = boxList_.begin();
+	if (ImGui::BeginCombo("BoxList", std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*boxItr))).c_str())) {
+
+		for (decltype(boxList_)::iterator it = boxList_.begin(); it != boxList_.end(); it++) {
+			if (ImGui::Selectable(std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*it))).c_str())) {
+				boxItr = it;
+				break;
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	isEdited |= boxItr->ImGuiWidget();
+
 
 	if (isEdited) {
 		this->CalcCollision();
 	}
 }
 
-LevelElementManager::Box::Box(const AABB &aabb) {
+LevelElementManager::Box::Box(const AABB &aabb, Platform *parent) {
 	transform_->translate = aabb.GetCentor();
 	transform_->scale = aabb.GetRadius();
+	parent_ = parent;
 
 	referenceBox_ = aabb;
+}
+
+bool LevelElementManager::Box::ImGuiWidget() {
+	ImGui::NewLine();
+	ImGui::BulletText("BoxEditor");
+
+	bool isEdited = false;
+	int32_t e = static_cast<int32_t>(groundType_);
+	isEdited |= ImGui::RadioButton("Grass", &e, 0); ImGui::SameLine();
+	isEdited |= ImGui::RadioButton("Dirt", &e, 1);
+
+	groundType_ = static_cast<GroundType>(e);
+
+	const Vector3 beforeCentorPos = referenceBox_.GetCentor() * parent_->center_.matWorld_;
+	Vector3 boxCentor = beforeCentorPos;
+	if (ImGui::DragFloat3("BoxCentorPos", &boxCentor.x, 1.f)) {
+		Vector3 move = (boxCentor - beforeCentorPos) * parent_->center_.matWorld_.InverseRT();
+		referenceBox_ = referenceBox_.AddPos(move);
+		transform_->translate += move;
+		isEdited |= true;
+	}
+
+	return isEdited;
 }

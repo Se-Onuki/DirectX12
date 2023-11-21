@@ -36,13 +36,13 @@ void Entity::Update(float deltaTime) {
 void Entity::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
 	auto *const modelComp = GetComponent<ModelComp>();
 
-	if (modelComp) {
-		modelComp->Draw(vp);
-	}
 	for (auto &component : componentMap_) {
 		if (modelComp != component.second.get()) {
 			component.second->Draw(vp);
 		}
+	}
+	if (modelComp) {
+		modelComp->Draw(vp);
 	}
 }
 

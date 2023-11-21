@@ -105,9 +105,10 @@
         ],
         "key : 0Ling_Translate": [
             0.0,
-            0.0,
+            -0.05000000074505806,
             0.0
         ],
+        "key : 0RotateSpeed": 0.05000000074505806,
         "key : 1AnimationTime": 0.25,
         "key : 1Arm_L_Rotate": [
             0.0,
@@ -212,9 +213,10 @@
         ],
         "key : 1Ling_Translate": [
             0.0,
-            0.0,
+            0.44999998807907104,
             0.0
         ],
+        "key : 1RotateSpeed": 0.05000000074505806,
         "key : 2AnimationTime": 0.125,
         "key : 2Arm_L_Rotate": [
             0.0,
@@ -319,115 +321,9 @@
         ],
         "key : 2Ling_Translate": [
             0.0,
-            0.0,
-            0.0
-        ],
-        "key : 3AnimationTime": 0.25,
-        "key : 3Arm_L_Rotate": [
-            0.0,
-            0.0,
-            0.8999999761581421
-        ],
-        "key : 3Arm_L_Scale": [
-            1.0,
-            1.0,
-            1.0
-        ],
-        "key : 3Arm_L_Translate": [
-            0.44999998807907104,
-            0.0,
-            0.0
-        ],
-        "key : 3Arm_R_Rotate": [
-            0.0,
-            0.0,
-            -0.8999999761581421
-        ],
-        "key : 3Arm_R_Scale": [
-            1.0,
-            1.0,
-            1.0
-        ],
-        "key : 3Arm_R_Translate": [
-            -0.44999998807907104,
-            0.0,
-            0.0
-        ],
-        "key : 3Body_Rotate": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "key : 3Body_Scale": [
-            0.8999999761581421,
-            0.9750000238418579,
-            1.0
-        ],
-        "key : 3Body_Translate": [
-            0.0,
             0.4749999940395355,
             0.0
         ],
-        "key : 3EasingType": 2,
-        "key : 3Eye_Rotate": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "key : 3Eye_Scale": [
-            1.0,
-            1.0,
-            1.0
-        ],
-        "key : 3Eye_Translate": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "key : 3Foot_L_Rotate": [
-            1.5,
-            -0.800000011920929,
-            -0.6499999761581421
-        ],
-        "key : 3Foot_L_Scale": [
-            1.0,
-            1.0,
-            1.0
-        ],
-        "key : 3Foot_L_Translate": [
-            0.25,
-            0.45500001311302185,
-            0.0
-        ],
-        "key : 3Foot_R_Rotate": [
-            1.5,
-            0.800000011920929,
-            0.6499999761581421
-        ],
-        "key : 3Foot_R_Scale": [
-            1.0,
-            1.0,
-            1.0
-        ],
-        "key : 3Foot_R_Translate": [
-            -0.25,
-            0.44999998807907104,
-            0.0
-        ],
-        "key : 3Ling_Rotate": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "key : 3Ling_Scale": [
-            1.0,
-            1.0,
-            1.0
-        ],
-        "key : 3Ling_Translate": [
-            0.0,
-            0.0,
-            0.0
-        ]
+        "key : 2RotateSpeed": 0.05000000074505806
     }
 }

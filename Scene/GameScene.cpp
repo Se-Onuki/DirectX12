@@ -88,15 +88,16 @@ void GameScene::OnEnter() {
 
 #pragma region Player
 
-	Model* const boxModel = ModelManager::GetInstance()->GetModel("Box");
+	/*Model *const boxModel = */ModelManager::GetInstance()->GetModel("Box");
 	player_ = std::make_unique<Entity>();
 	//auto*const rigidbody =
 	player_->AddComponent<Rigidbody>();
-	auto* const modelComp =
-		player_->AddComponent<ModelComp>();
-	modelComp->AddBone("Body", boxModel);
+	//auto *const modelComp =
+	player_->AddComponent<ModelComp>();
+	//modelComp->AddBone("Body", boxModel);
 
 	player_->AddComponent<PlayerComp>();
+	player_->AddComponent<PlayerAnimComp>();
 
 	ParticleEmitter* emitter = nullptr;
 	emitter = particleEmitterManager->CreateEmitter<StarParticle>("PlayerLing");
@@ -107,7 +108,7 @@ void GameScene::OnEnter() {
 #pragma region FollowCamera
 
 	followCamera_ = std::make_unique<Entity>();
-	auto* const followComp = followCamera_->AddComponent<FollowCameraComp>();
+	auto *const followComp = followCamera_->AddComponent<FollowCameraComp>();
 	followComp->SetTarget(&player_->transform_);
 
 #pragma endregion
@@ -147,6 +148,9 @@ void GameScene::Update() {
 	player_->Update(deltaTime);
 
 	ImGui::Begin("Player");
+	if (ImGui::Button("Reset")) {
+		player_->Reset();
+	}
 	player_->ImGuiWidget();
 	ImGui::End();
 
@@ -195,8 +199,8 @@ void GameScene::Update() {
 
 void GameScene::Draw()
 {
-	DirectXCommon* const dxCommon = DirectXCommon::GetInstance();
-	ID3D12GraphicsCommandList* const commandList = dxCommon->GetCommandList();
+	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
 #pragma region 背面スプライト
 
@@ -229,7 +233,7 @@ void GameScene::Draw()
 	//playerAnim_->Draw(camera_);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
-	static auto* const particleManager = ParticleManager::GetInstance();
+	static auto *const particleManager = ParticleManager::GetInstance();
 
 	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
 	particleManager->Draw(camera);
