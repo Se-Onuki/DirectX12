@@ -65,6 +65,12 @@ public:
 
 	bool ImGuiWidget();
 
+	/// <summary>
+	/// 表示名を指定するImGui表示関数
+	/// </summary>
+	/// <param name="id">ウィンドウ名</param>
+	/// <returns></returns>
+	bool ImGuiWidget(std::string id);
 
 };
 

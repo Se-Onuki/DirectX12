@@ -103,6 +103,21 @@
     <Filter Include="Header\Entity\Component\PlayerState">
       <UniqueIdentifier>{6fd80726-859d-44d9-8609-ea70a82ea95a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\Particle\Particles">
+      <UniqueIdentifier>{bfcbf39d-7f11-45dd-aeb4-c96e91717d21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object\Particle\Particles\StarParticle">
+      <UniqueIdentifier>{3451eb81-cad9-40d5-91ef-7928b32133c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object\Particle\Particles\TestParticle">
+      <UniqueIdentifier>{f707e732-b8ea-4cf3-adc1-6cfc6dc57180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Render\CameraAnimations">
+      <UniqueIdentifier>{1b09de97-f37d-47ef-a58e-986936e385cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object\Block">
+      <UniqueIdentifier>{0701f625-dfe0-4534-bda1-06815d39c16b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -133,9 +148,6 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Scene\GameScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\Collider.cpp">
@@ -312,14 +324,29 @@
     <ClCompile Include="Header\Object\Particle.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
-      <Filter>Header\Entity\Object\Particle</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
+    <ClCompile Include="Header\Object\Particle\ParticleEmitterManager.cpp">
       <Filter>Header\Entity\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
+      <Filter>Header\Entity\Object\Particle\Particles\StarParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
+      <Filter>Header\Entity\Object\Particle\Particles\TestParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.cpp">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.cpp">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp">
+      <Filter>Engine\Render\CameraAnimations</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerState\IPlayerState.cpp">
       <Filter>Header\Entity\Component\PlayerState</Filter>
@@ -344,6 +371,21 @@
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerState\LandState.cpp">
       <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerState\BeginRotate.cpp">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerState\RotatingState.cpp">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerState\EndRotateState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Block\BlockManager.cpp">
+      <Filter>Header\Entity\Object\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -605,14 +647,32 @@
     <ClInclude Include="Header\Object\Particle.h">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\Particle\TestParticle.h">
-      <Filter>Header\Entity\Object\Particle</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h">
       <Filter>Header\Entity\Object\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\Particle\StarParticle.h">
+    <ClInclude Include="Header\Object\Particle\ParticleEmitterManager.h">
       <Filter>Header\Entity\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\StarParticle.h">
+      <Filter>Header\Entity\Object\Particle\Particles\StarParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\ParticleList.h">
+      <Filter>Header\Entity\Object\Particle\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\TestParticle.h">
+      <Filter>Header\Entity\Object\Particle\Particles\TestParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.h">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.h">
+      <Filter>Engine\Render\CameraAnimations</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h">
+      <Filter>Engine\Render\CameraAnimations</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerState\IPlayerState.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
@@ -639,6 +699,18 @@
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerState\LandState.h">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Block\BlockManager.h">
+      <Filter>Header\Entity\Object\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerState\BeginRotate.h">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerState\RotatingState.h">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerState\EndRotateState.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,14 +15,14 @@
 #include "../Header/Entity/Component/PlayerAnimComp.h"
 #include "../Header/Entity/Component/FollowCameraComp.h"
 
-#include "../Header/Object/Particle/ParticleManager.h"
-#include "../Header/Object/Particle/TestParticle.h"
-#include "../Header/Object/Particle/StarParticle.h"
-#include "../Header/Entity/Component/CannonComp.h"
+#include "../Header/Object/Particle/ParticleEmitterManager.h"
+
+#include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	cameraManager_ = CameraManager::GetInstance();
 	// collisionManager_ = CollisionManager::GetInstance();
 }
 
@@ -33,11 +33,19 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
-	static auto *const modelManager = ModelManager::GetInstance();
-	static auto *const particleManager = ParticleManager::GetInstance();
+	static auto* const modelManager = ModelManager::GetInstance();
+	static auto* const particleManager = ParticleManager::GetInstance();
+	static auto* const particleEmitterManager = ParticleEmitterManager::GetInstance();
+
+	// カメラマネージャーの初期化
+	cameraManager_->Init();
+	// テスト用新規カメラを追加
+	cameraManager_->AddCamera("TestCamera");
 
 	// パーティクルマネージャの初期化
 	particleManager->Init(256); // パーティクルの最大数は256
+	// パーティクルエミッタマネージャーの初期化
+	particleEmitterManager->Init(); 
 
 	// モデルの読み込み
 	modelManager->CreateDefaultModel(); // デフォルトモデルの読み込み
@@ -91,7 +99,10 @@ void GameScene::OnEnter() {
 	player_->AddComponent<PlayerComp>();
 	player_->AddComponent<PlayerAnimComp>();
 
-	// particleManager->AddParticle(modelManager->GetModel("PlayerLing"), std::make_unique<StarParticle>(player_->transform_.rotate));
+	ParticleEmitter* emitter = nullptr;
+	emitter = particleEmitterManager->CreateEmitter<StarParticle>("PlayerLing");
+	emitter->targetTransform_ = &player_->transform_;
+	emitter->offset_ = { 0.0f, 0.5f, 0.0f };
 
 #pragma endregion
 
@@ -105,14 +116,8 @@ void GameScene::OnEnter() {
 
 	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
 
-	cameraList_[0u] = &followComp->GetCamera();
-	cameraList_[1u] = &camera_;
-
-
-
-	cannon_ = std::make_unique<Entity>();
-	cannon_->AddComponent<CannonComp>();
-
+	/*cameraList_[0u] = &followComp->GetCamera();
+	cameraList_[1u] = &camera_;*/
 }
 
 void GameScene::OnExit() {}
@@ -120,14 +125,16 @@ void GameScene::OnExit() {}
 void GameScene::Update() {
 
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
-	static auto *const colliderManager = CollisionManager::GetInstance();
-	static auto *const particleManager = ParticleManager::GetInstance();
-	static const auto *const keyBoard = input_->GetDirectInput();
+	static auto* const colliderManager = CollisionManager::GetInstance();
+	static auto* const particleManager = ParticleManager::GetInstance();
+	static auto* const particleEmitterManager = ParticleEmitterManager::GetInstance();
+	static const auto* const keyBoard = input_->GetDirectInput();
 
 	colliderManager->clear();
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
+	particleEmitterManager->Update(deltaTime);
 	particleManager->Update(deltaTime);
 
 	levelManager->Update(deltaTime);
@@ -167,11 +174,19 @@ void GameScene::Update() {
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 	camera_.UpdateMatrix();
 
-	if (keyBoard->IsTrigger(DIK_RSHIFT)) {
+	/*if (keyBoard->IsTrigger(DIK_0)) {
 		if (++cameraTarget_ == cameraList_.end()) {
 			cameraTarget_ = cameraList_.begin();
 		}
-	}
+	}*/
+
+	// カメラマネージャーの更新
+	cameraManager_->Update(deltaTime);
+
+#ifdef _DEBUG // デバッグ時のみImGuiを描画
+	// カメラマネージャーのImGuiを表示
+	cameraManager_->DisplayImGui();
+#endif // _DEBUG // デバッグ時のみImGuiを描画
 
 
 	//playerAnim_->Update(deltaTime);
@@ -209,7 +224,7 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	const auto &camera = **cameraTarget_;
+	const auto& camera = *cameraManager_->GetUseCamera();
 
 	//model_->Draw(transform_, camera_);
 	levelManager->Draw(camera);

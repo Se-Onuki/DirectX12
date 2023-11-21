@@ -2,6 +2,13 @@
 #include <imgui.h>
 
 template<>
+void SoLib::ImGuiText([[maybe_unused]] const char *const label, [[maybe_unused]] const std::string &text) {
+#ifdef _DEBUG
+	ImGui::Text("%s : %s", label, text.c_str());
+#endif // _DEBUG
+}
+
+template<>
 bool SoLib::ImGuiWidget<bool>([[maybe_unused]] const char *const label, [[maybe_unused]] bool *const value) {
 #ifdef _DEBUG
 	return ImGui::Checkbox(label, value);

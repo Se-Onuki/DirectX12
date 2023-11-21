@@ -69,7 +69,7 @@ public: // アクセッサ等
 	/// 再生中キーのゲッター
 	/// </summary>
 	/// <returns>再生中キー</returns>
-	int GetPlayKey() { return playKey_; }
+	int32_t GetPlayKey() { return playKey_; }
 
 	/// <summary>
 	/// アニメーション全体の秒数の取得
@@ -124,10 +124,6 @@ public: // アクセッサ等
 	/// <param name="time">時間</param>
 	/// <returns>イージングされた値(float)</returns>
 	PlayerBone::Bone Ease(AnimEasing::EasingType type, float t, const PlayerBone::Bone &start, const PlayerBone::Bone &end, float time);
-
-	/// @brief 現在のキーのゲッター
-	/// @return 現在のキー
-	int32_t GetPlayKey() const { return playKey_; }
 
 protected: // 継承先メンバ変数
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "ParticleManager.h"
+#include "../../Engine/DirectBase/File/GlobalVariables.h"
 #include "../../Entity/Entity.h"
 
 /// <summary>
@@ -7,13 +8,30 @@
 /// </summary>
 class StarParticle : public IParticle
 {
-public: // メンバ関数
+public: // 静的なメンバ関数
+	
+	/// <summary>
+	/// 調整項目クラスに値を追加する関数
+	/// </summary>
+	static void AddItem();
+	/// <summary>
+	/// 調整項目クラスに値を追加する関数
+	/// </summary>
+	static void SetItem();
+	/// <summary>
+	/// 調整項目クラスに値を追加する関数
+	/// </summary>
+	static void ApplyItem();
 
 	/// <summary>
-	/// コンストラクタ
+	/// ImGui表示関数
 	/// </summary>
-	/// <param name="emmitionDirection">放出方向</param>
-	StarParticle(const Vector3& emissionDirection);
+	static void DisplayImGui();
+
+public: // メンバ関数
+
+	// 基底クラスのコンストラクタを使用
+	using IParticle::IParticle;
 
 	/// <summary>
 	/// 初期化関数
@@ -25,15 +43,29 @@ public: // メンバ関数
 	/// </summary>
 	void Update(float deltaTime) override;
 
+public: // 静的なメンバ変数
 
+	// １フレームごとの回転量
+	static float rotationAmount_;
+
+	// 粒子最小サイズ
+	static float minSize_;
+	// 粒子最大サイズ
+	static float maxSize_;
+
+	// 粒子が表示されるまでの秒数
+	static float dispalyParticleTime_;
 
 private: // メンバ変数
 
-	// 粒子の放出方向
-	const Vector3* emissionDirection_;
+	// 移動ベクトル格納用
+	Vector3 move_;
 
-	// 演出用t
-	float t_;
+	// パーティクル表示用タイマー
+	SoLib::DeltaTimer diplayParticleTimer_;
+
+	// 開始時サイズ格納用
+	Vector3 startScale_ = Vector3::zero;
 
 };
 

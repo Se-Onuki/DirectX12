@@ -4,6 +4,7 @@
 
 #include "IdleState.h"
 #include "FallingState.h"
+#include "BeginRotate.h"
 
 void PlayerMoveState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), true, AnimEasing::kLinear, 0.1f);
@@ -19,6 +20,9 @@ void PlayerMoveState::Update([[maybe_unused]] float deltaTime)
 
 	if (not pPlayer_->GetIsLanding()) {
 		pPlayer_->ChangeState<PlayerFallingState>();
+	}
+	else if (keyBoard->IsPress(DIK_Z)) {
+		pPlayer_->ChangeState<PlayerBeginRotateState>();
 	}
 	else if (keyBoard->IsPress(DIK_SPACE)) {
 		pPlayer_->JumpInput();
