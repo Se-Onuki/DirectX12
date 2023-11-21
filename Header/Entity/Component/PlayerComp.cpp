@@ -131,6 +131,7 @@ void PlayerComp::ApplyVariables(const char *const groupName) {
 	cGroup >> vJumpDeceleration_;
 	cGroup >> vRotateBeginTime_;
 	cGroup >> vRotateHeight_;
+	cGroup >> vRotateEndTime_;
 }
 
 void PlayerComp::AddVariable(const char *const groupName) const {
@@ -142,6 +143,7 @@ void PlayerComp::AddVariable(const char *const groupName) const {
 	group << vJumpDeceleration_;
 	group << vRotateBeginTime_;
 	group << vRotateHeight_;
+	group << vRotateEndTime_;
 }
 
 void PlayerComp::MoveInput(const Vector3 &vec) {
