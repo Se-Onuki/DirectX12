@@ -160,7 +160,7 @@ void PlayerComp::MoveInput(const Vector3 &vec) {
 		}
 
 		// カメラの角度を元に計算
-		inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
+		inputVec = inputVec * pFollowCamera_->GetCamera()->matView_.GetRotate().InverseRT();
 
 		// カメラの上下方向を破棄
 		inputVec.y = 0.f;
