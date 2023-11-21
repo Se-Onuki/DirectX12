@@ -3,6 +3,7 @@
 #include "../PlayerComp.h"
 
 #include "IdleState.h"
+#include "FallingState.h"
 
 void PlayerMoveState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), true, AnimEasing::kLinear, 0.1f);
@@ -16,7 +17,10 @@ void PlayerMoveState::Update([[maybe_unused]] float deltaTime)
 
 	rigidbody->SetVelocity({ 0.f,rigidbody->GetVelocity().y,0.f });
 
-	if (keyBoard->IsPress(DIK_SPACE)) {
+	if (not pPlayer_->GetIsLanding()) {
+		pPlayer_->ChangeState<PlayerFallingState>();
+	}
+	else if (keyBoard->IsPress(DIK_SPACE)) {
 		pPlayer_->JumpInput();
 	}
 	else {
