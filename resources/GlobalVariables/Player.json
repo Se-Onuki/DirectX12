@@ -5,6 +5,7 @@
         "JumpSpeed": 0.10000000149011612,
         "MoveSpeed": 500.0,
         "RotateBeginTime": 0.800000011920929,
+        "RotateEndTime": 0.6000000238418579,
         "RotateHeight": 15.0
     }
 }
