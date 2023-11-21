@@ -61,6 +61,8 @@ void AnimationManager::Update()
 		ImGui::TreePop();
 	}
 
+	float progress = currentAnimation_->GetAnimationProgress();
+	ImGui::DragFloat("AnimationProgress", &progress, 0.01f);
 
 	// アニメーション再生
 	if (ImGui::Button("PlayAnim")) {

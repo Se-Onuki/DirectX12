@@ -33,6 +33,9 @@ void BaseAnimation::Initialize(std::string name, bool isLoop, AnimEasing::Easing
 	isPlaying_ = true;
 	isLoop_ = isLoop;
 	isEnd_ = false;
+
+	// タイマー開始
+	timer_.Start(GetAnimationTime());
 }
 
 void BaseAnimation::Update(float deltaTime)
@@ -82,6 +85,9 @@ void BaseAnimation::Update(float deltaTime)
 						else {
 							animT_ = 0.0f;
 							playKey_ = 0;
+
+							// タイマー開始
+							timer_.Start(GetAnimationTime());
 						}
 					}
 					else {
@@ -98,11 +104,23 @@ void BaseAnimation::Update(float deltaTime)
 			else {
 				bone_.bone_ = animKeys_.keys_[0].bone.bone_;
 			}
+
+			timer_.Update(deltaTime);
 		}
 	}
 
 	// 
 	bone_.SetToEntity();
+}
+
+float BaseAnimation::GetAnimationTime()
+{
+	float animTime_ = 0.0f;
+	for (int i = 0; i < animKeys_.keyCount_; i++) {
+		animTime_ += animKeys_.keys_[i].animationTime;
+	}
+	
+	return animTime_;
 }
 
 PlayerBone::Bone BaseAnimation::GetTargetBone(std::string groupName, std::string boneName)

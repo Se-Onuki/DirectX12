@@ -64,6 +64,12 @@ public: // アクセッサ等
 	/// @return アニメーションクラス
 	BaseAnimation *const GetNowAnimation() const { return currentAnimation_.get(); }
 
+	/// <summary>
+	/// 現在アニメーションの進行度ゲッター
+	/// </summary>
+	/// <returns>現在アニメーションの進行度(0.0f ~ 1.0f)</returns>
+	float GetAnimationProgress() { return currentAnimation_->GetAnimationProgress(); }
+
 private: // メンバ変数
 
 	// アニメーション数値クラス
