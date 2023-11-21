@@ -38,6 +38,7 @@ public:
 	VariantItem<float> vJumpDeceleration_{ "JumpDeceleration", 0.95f };
 
 	VariantItem<float> vRotateBeginTime_{ "RotateBeginTime", 0.75f };
+	VariantItem<float> vRotateEndTime_{ "RotateEndTime", 0.75f };
 
 	VariantItem<float> vRotateHeight_{ "RotateHeight", 10.f };
 
