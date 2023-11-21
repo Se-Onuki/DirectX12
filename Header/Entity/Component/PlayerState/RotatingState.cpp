@@ -28,7 +28,7 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 		platform->AddRotate(rotateFacing * -90._deg);
 	}
 
-	else if (groundPosPtr) {
+	else if (groundPosPtr && platform->GetTimer().IsFinish()) {
 		if (keyBoard->IsPress(DIK_Z)) {
 			pPlayer_->ChangeState<PlayerEndRotateState>();
 		}
