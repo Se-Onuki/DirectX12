@@ -345,6 +345,9 @@
     <ClCompile Include="Header\Entity\Component\PlayerState\LandState.cpp">
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerState\BeginRotate.cpp">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -639,6 +642,9 @@
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerState\LandState.h">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerState\BeginRotate.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
   </ItemGroup>

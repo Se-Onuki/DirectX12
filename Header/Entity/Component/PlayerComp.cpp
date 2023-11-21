@@ -43,6 +43,9 @@ void PlayerComp::Update() {
 	static const auto *const keyBoard = input_->GetDirectInput();
 	static auto *const levelManager = LevelElementManager::GetInstance();
 
+	Vector3 endPos = CalcMoveCollision();
+
+	transform_->translate = endPos;
 	if (nextState_) {
 		nowState_ = std::move(nextState_);
 		nowState_->Init();
@@ -100,11 +103,11 @@ void PlayerComp::Update() {
 
 
 	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed_);
-	rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 
-	Vector3 endPos = CalcMoveCollision();
+	if (isActiveGravity_) {
+		rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
+	}
 
-	transform_->translate = endPos;
 
 }
 
@@ -125,6 +128,8 @@ void PlayerComp::ApplyVariables(const char *const groupName) {
 	cGroup >> vJumpPower_;
 	cGroup >> vJumpSpeed_;
 	cGroup >> vJumpDeceleration_;
+	cGroup >> vRotateBeginTime_;
+	cGroup >> vRotateHeight_;
 }
 
 void PlayerComp::AddVariable(const char *const groupName) const {
@@ -134,6 +139,8 @@ void PlayerComp::AddVariable(const char *const groupName) const {
 	group << vJumpPower_;
 	group << vJumpSpeed_;
 	group << vJumpDeceleration_;
+	group << vRotateBeginTime_;
+	group << vRotateHeight_;
 }
 
 void PlayerComp::MoveInput(const Vector3 &vec) {
@@ -255,6 +262,46 @@ Vector3 PlayerComp::CalcMoveCollision() {
 		}
 
 	}
+#pragma region 直下の地面の座標を取得
+
+	const AABB playerCollider = collider_.AddPos(moveLine.origin);
+	const AABB extendCollider = playerCollider.Extend(Vector3::up * -1000.f);
+
+	const auto &playerVertex = playerCollider.GetVertex();
+
+	std::array<LineBase, 4u> lines{};
+
+	float hitProgress = 1.f;
+	int32_t hitNumber = -1;
+
+	groundPos_ = Vector3::up * 10000.f;
+
+	for (uint32_t i = 0u; i < lines.size(); ++i) {
+		lines[i].origin = playerVertex[i];
+		lines[i].diff = Vector3::up * -1000.f;
+	}
+	for (const auto &[key, collider] : levelManager->blockCollider_) {
+		for (auto &box : collider.GetCollider()) {
+			// 拡張した箱が当たってたら詳細な判定
+			if (Collision::IsHit(extendCollider, box)) {
+
+				for (uint32_t i = 0u; i < lines.size(); ++i) {
+					float t = Collision::HitProgress(lines[i], box);
+					if (hitProgress > t) {
+						hitProgress = t;
+						hitNumber = i;
+					}
+				}
+			}
+		}
+	}
+
+	if (hitProgress != 1.f && hitNumber != -1) {
+		groundPos_ = lines[hitNumber].GetProgress(hitProgress);
+	}
+	// SoLib::ImGuiText("GroundPos", SoLib::to_string(groundPos_));
+
+#pragma endregion
 
 	return moveLine.origin;
 }

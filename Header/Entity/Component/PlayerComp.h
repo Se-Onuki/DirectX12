@@ -37,6 +37,11 @@ public:
 	VariantItem<float> vJumpSpeed_{ "JumpSpeed", 0.2f };
 	VariantItem<float> vJumpDeceleration_{ "JumpDeceleration", 0.95f };
 
+	VariantItem<float> vRotateBeginTime_{ "RotateBeginTime", 0.75f };
+
+	VariantItem<float> vRotateHeight_{ "RotateHeight", 10.f };
+
+
 	template<IsBasedIPlayerState State>
 	void ChangeState() {  // 状態を変更するメソッド
 		nextState_ = std::make_unique<State>(this);
@@ -58,11 +63,22 @@ public:
 	/// @return 着地したなら true
 	bool GetIsLanding() { return isLanding_; }
 
+	const Vector3 *const GetGroundPos()const {
+		if (groundPos_.y >= 10000.f) { return nullptr; }
+		return &groundPos_;
+	}
+
+	void SetIsActiveGravity(bool flag) { isActiveGravity_ = flag; }
+
 private:
 
 	Vector3 CalcMoveCollision();
 
 private:
+
+	bool isActiveGravity_ = true;
+
+	Vector3 groundPos_;
 
 	FollowCameraComp *pFollowCamera_ = nullptr;
 
