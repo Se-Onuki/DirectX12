@@ -53,7 +53,7 @@ void CameraManager::DisplayImGui()
 	// イテレータの終わりまでループ
 	while (iter != cameraList_->cameraMap_.end()) {
 		// カメラ名でツリーを開始
-		if(ImGui::TreeNode(iter->first.c_str())) {
+		if (ImGui::TreeNode(iter->first.c_str())) {
 			ImGui::SameLine(); // 改行しない
 			// 現在使用中のカメラと一致する場合テキストで表示
 			if (useCamera_ == iter->second.get()) {
@@ -101,7 +101,7 @@ void CameraManager::DisplayImGui()
 	ImGui::DragFloat("StandByTime", &imGuiStandByTime_, 0.01f, 10.0f);
 
 	// アニメーション再生
-	if(ImGui::Button("PlayAnim")) {
+	if (ImGui::Button("PlayAnim")) {
 		std::string endCameraname = imGuiEndCameraName_;
 		cameraAnimManager_->Play(cameraList_->GetCamera(endCameraname), imGuiPlayAnimTime_, SoLib::easeLinear, imGuiStandByTime_, imGuiStandByIsEnd_);
 	}
@@ -123,4 +123,9 @@ void CameraManager::SetUseCamera(const std::string& cameraName)
 	if (getCamera != nullptr) {
 		useCamera_ = getCamera;
 	}
+}
+
+void CameraManager::SetUseCamera(Camera3D* camera)
+{
+	useCamera_ = camera;
 }

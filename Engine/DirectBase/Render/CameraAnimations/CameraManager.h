@@ -61,6 +61,12 @@ public: // アクセッサ等
 	void SetUseCamera(const std::string& cameraName);
 
 	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="camera"></param>
+	void SetUseCamera( Camera3D* camera);
+
+	/// <summary>
 	/// カメラに引数のパラメーター数値を渡す関数
 	/// </summary>
 	/// <param name="parameter">セットするパラメーター</param>
