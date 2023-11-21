@@ -102,6 +102,7 @@ void GameScene::OnEnter() {
 	ParticleEmitter* emitter = nullptr;
 	emitter = particleEmitterManager->CreateEmitter<StarParticle>("PlayerLing");
 	emitter->targetTransform_ = &player_->transform_;
+	emitter->offset_ = { 0.0f, 0.5f, 0.0f };
 
 #pragma endregion
 

@@ -87,6 +87,8 @@ public: // パブリックメンバ変数
 
 	// 発生中心座標
 	BaseTransform emitTransform_;
+	// オフセット
+	Vector3 offset_ = { 0.0f, 0.0f, 0.0f };
 
 	// 発生座標ターゲット
 	const BaseTransform* targetTransform_ = nullptr;

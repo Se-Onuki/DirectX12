@@ -123,6 +123,7 @@ IParticle* ParticleEmitter::CreateParticle(const Model& model)
 	}
 	else {
 		particle->transform_ = *targetTransform_;	 // 発生座標
+		particle->transform_.translate += offset_;	 // 発生座標
 	}
 	particle->velocity_ = particleVelocity_;		 // 速度設定
 	particle->acceleration_ = particleAcceleration_; // 加速度設定
