@@ -23,12 +23,23 @@ void CameraAnimation::Init(Camera3D* endCamera, float time, float(*func)(float))
 	// タイマー設定
 	timer_.Start(time);
 
+	// 切り替え前に更新
+	camera_->translation_ = startCamera_.translation;
+	camera_->rotation_ = startCamera_.rotation;
+	camera_->fovAngleY = startCamera_.FOV;
+
+	camera_->UpdateMatrix();
+	CameraManager::GetInstance()->SetUseCamera(camera_.get());
+
 	// イージングのタイプを取得
 	Ease = func;
 }
 
 void CameraAnimation::Update(float deltaTime)
 {
+	// タイマーの更新
+	timer_.Update(deltaTime);
+
 	// タイマーが終了していなければ
 	if (not timer_.IsFinish()) {
 		// カメラのパラメーターを線形補間によって動かす
@@ -38,12 +49,9 @@ void CameraAnimation::Update(float deltaTime)
 	}
 	else { // 終了したら
 		// カメラのパラメーターを終了時のパラメーターに合わせる
-		*camera_ = *endCamera_;
+		CameraManager::GetInstance()->SetUseCamera(endCamera_);
 	}
 
-	// 使用されているカメラにパラメーターをセット
-	CameraManager::GetInstance()->SetParameters(*camera_);
-
-	// タイマーの更新
-	timer_.Update(deltaTime);
+	// カメラの更新
+	camera_->UpdateMatrix();
 }
