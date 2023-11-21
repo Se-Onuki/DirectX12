@@ -1,5 +1,6 @@
 #include "BeginRotate.h"
 #include "../PlayerComp.h"
+#include "RotatingState.h"
 
 void PlayerBeginRotateState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.1f);
@@ -15,6 +16,10 @@ void PlayerBeginRotateState::Update([[maybe_unused]] float deltaTime) {
 	}
 	float moveLength = pPlayer_->vRotateHeight_ - startPos_.y;
 	pPlayer_->transform_->translate = startPos_ + Vector3{ 0.f,moveLength * SoLib::easeInOutQuint(timer_.GetProgress()), 0.f };
+
+	if (pAnimation_->GetAnimManager()->GetNowAnimation()->GetIsEnd()) {
+		pPlayer_->ChangeState<PlayerRotatingState>();
+	}
 }
 
 void PlayerBeginRotateState::Draw([[maybe_unused]] const Camera3D &camera) const {

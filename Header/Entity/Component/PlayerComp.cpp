@@ -13,9 +13,8 @@ const std::string PlayerComp::groupName_ = "Player";
 void PlayerComp::Init() {
 	ApplyVariables(groupName_.c_str());
 	input_ = Input::GetInstance();
-	const Vector3 radius{ 0.75f,0.99f,0.75f };
-	collider_.min = -radius;
-	collider_.max = radius;
+	collider_.min = -radius_;
+	collider_.max = radius_;
 
 	backMaterial_.Create();
 	backMaterial_.blendMode_ = Model::BlendMode::kBacker;
@@ -24,6 +23,8 @@ void PlayerComp::Init() {
 	animationComp_ = object_->AddComponent<PlayerAnimComp>();
 
 	SetState<PlayerIdleState>();
+
+	object_->AddComponent<Rigidbody>()->SetMaxSpeed({ -1.f, 100.f,-1.f });
 
 	AddVariable(groupName_.c_str());
 }

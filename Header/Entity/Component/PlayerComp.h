@@ -42,6 +42,8 @@ public:
 	VariantItem<float> vRotateHeight_{ "RotateHeight", 10.f };
 
 
+	const Vector3 radius_{ 0.75f,0.99f,0.75f };
+
 	template<IsBasedIPlayerState State>
 	void ChangeState() {  // 状態を変更するメソッド
 		nextState_ = std::make_unique<State>(this);
