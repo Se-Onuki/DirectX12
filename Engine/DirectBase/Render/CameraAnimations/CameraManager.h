@@ -72,6 +72,8 @@ public: // アクセッサ等
 	/// <param name="parameter">セットするパラメーター</param>
 	void SetParameters(const Camera3D& parameter) { *useCamera_ = parameter; }
 
+	CameraAnimManager* GetCameraAnimManager(){return cameraAnimManager_;}
+
 public: // パブリックなメンバ変数
 
 	// カメラリスト

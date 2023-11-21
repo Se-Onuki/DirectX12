@@ -55,7 +55,7 @@ public:
 private: // メンバ変数
 
 	// 粒子配列
-	ArrayBuffer<Particle::ParticleData> particles_;
+	std::unique_ptr<ArrayBuffer<Particle::ParticleData>> particles_;
 	// ヒープレンジ
 	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
 

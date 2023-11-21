@@ -3,7 +3,8 @@
 
 void ParticleManager::Init(uint32_t maxCount)
 {
-	particles_.CreateBuffer(maxCount);
+	if (particles_ == nullptr) { particles_ = std::make_unique<ArrayBuffer<Particle::ParticleData>>(maxCount); }
+	//particles_.CreateBuffer(maxCount);
 
 	// デバイスの取得
 	auto *device = DirectXCommon::GetInstance()->GetDevice();
@@ -11,7 +12,7 @@ void ParticleManager::Init(uint32_t maxCount)
 	auto *srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
 	heapRange_ = srvHeap->RequestHeapAllocation(1);
-	device->CreateShaderResourceView(particles_.GetResources(), &particles_.GetDesc(), heapRange_.GetHandle(0).cpuHandle_);
+	device->CreateShaderResourceView(particles_->GetResources(), &particles_->GetDesc(), heapRange_.GetHandle(0).cpuHandle_);
 }
 
 void ParticleManager::Update(float deltaTime)
@@ -37,8 +38,8 @@ void ParticleManager::Draw(const Camera3D &camera) {
 		// パーティクルをひとつづつ取得
 		for (const auto &particle : particles) {
 			// 書き込み先にパーティクルのデータを渡す
-			particles_[targetIndex].transform.World = particle->GetTransform().matWorld_;
-			particles_[targetIndex].color = particle->GetColor();
+			(*particles_)[targetIndex].transform.World = particle->GetTransform().matWorld_;
+			(*particles_)[targetIndex].color = particle->GetColor();
 			targetIndex++;
 		}
 		// パーティクルの量と先頭位置を設定

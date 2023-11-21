@@ -45,6 +45,7 @@ void CameraManager::Update(float deltaTime)
 
 void CameraManager::DisplayImGui()
 {
+#ifdef _DEBUG
 	ImGui::Begin("CameraManager");
 	// 全カメラののImGuiを描画
 	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(0, 150), ImGuiWindowFlags_NoTitleBar);
@@ -107,6 +108,7 @@ void CameraManager::DisplayImGui()
 	}
 
 	ImGui::End();
+#endif // _DEBUG
 }
 
 Camera3D* CameraManager::AddCamera(const std::string& cameraName)
