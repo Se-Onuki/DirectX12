@@ -4,17 +4,6 @@
 #include "../../Engine/DirectBase/Model/Model.h"
 #include <list>
 
-class ParticleList {
-public:
-	ParticleList() = default;
-	~ParticleList() = default;
-
-	Model *model_ = nullptr;
-
-private:
-
-};
-
 class CollisionDrawer final {
 
 	CollisionDrawer() = default;

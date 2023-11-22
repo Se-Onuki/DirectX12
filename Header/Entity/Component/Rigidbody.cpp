@@ -1,4 +1,5 @@
 #include "Rigidbody.h"
+#include "Collider.h"
 
 void Rigidbody::Init() {
 	velocity_ = {};
@@ -7,8 +8,9 @@ void Rigidbody::Init() {
 
 void Rigidbody::Update() {
 
+	static auto *const collisionManager = CollisionManager::GetInstance();
+
 	beforePos_ = transform_->translate;
-	// const Vector3 &afterPos = object_->transform_.translate;
 
 	velocity_ += acceleration_;
 	Vector3 fixVelocity = velocity_ * object_->GetDeltaTime();
@@ -27,6 +29,10 @@ void Rigidbody::Update() {
 	}
 
 	transform_->translate += fixVelocity;
+
+	const auto& boxArray = collisionManager->GetBox();
+
+	boxArray;
 
 	isGround_ = false;
 

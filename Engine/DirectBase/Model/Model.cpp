@@ -16,9 +16,9 @@
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
 
-std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6u>, 2u> Model::graphicsPipelineState_ = { nullptr };
+std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 8u>, 2u> Model::graphicsPipelineState_ = { nullptr };
 std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
-std::array<std::array<PipelineState, 6u>, 2u> Model::graphicsPipelineStateClass_ = {};
+std::array<std::array<PipelineState, 8u>, 2u> Model::graphicsPipelineStateClass_ = {};
 std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
 Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 
@@ -36,7 +36,7 @@ void Model::CreatePipeLine() {
 #pragma region RootParameter
 
 	// RootParameter作成
-	std::array<D3D12_ROOT_PARAMETER, 5u> rootParameters = {};
+	std::array<D3D12_ROOT_PARAMETER, static_cast<uint32_t>(RootParameter::kSize)> rootParameters = {};
 
 #pragma region kWorldTransform
 
@@ -57,6 +57,11 @@ void Model::CreatePipeLine() {
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].Descriptor.ShaderRegister = 1;						// レジスタ番号1とバインド 
+
+
+	rootParameters[(uint32_t)Model::RootParameter::kInstanceLocation].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters[(uint32_t)Model::RootParameter::kInstanceLocation].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
+	rootParameters[(uint32_t)Model::RootParameter::kInstanceLocation].Descriptor.ShaderRegister = 2;						// レジスタ番号2とバインド 
 
 
 	rootParameters[(uint32_t)Model::RootParameter::kMaterial].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
@@ -90,7 +95,7 @@ void Model::CreatePipeLine() {
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
 
-	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Create(rootParameters.data(), rootParameters.size());
+	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Create(rootParameters.data(), rootParameters.size() - 1u);
 
 #pragma endregion
 
@@ -100,15 +105,15 @@ void Model::CreatePipeLine() {
 	const std::array<D3D12_INPUT_ELEMENT_DESC, 3u> inputElementDescs{
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "POSITION",
-			.SemanticIndex = 0,
-			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
-			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+				.SemanticIndex = 0,
+				.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
-		D3D12_INPUT_ELEMENT_DESC{
-			.SemanticName = "TEXCOORD",
-			.SemanticIndex = 0,
-			.Format = DXGI_FORMAT_R32G32_FLOAT,
-			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_ELEMENT_DESC{
+				.SemanticName = "TEXCOORD",
+				.SemanticIndex = 0,
+				.Format = DXGI_FORMAT_R32G32_FLOAT,
+				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "NORMAL",
@@ -330,6 +335,35 @@ void Model::BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC 
 
 
 #pragma endregion
+
+#pragma region 奥ならば表示
+
+	graphicsPipelineStateDesc.BlendState = D3D12_BLEND_DESC{};
+	graphicsPipelineStateDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	// 書き込みをしない
+	graphicsPipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	graphicsPipelineStateDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kBacker)]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+
+#pragma region 常に表示
+
+	graphicsPipelineStateDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
+	// 実際に生成
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_[static_cast<uint32_t>(type)][static_cast<uint32_t>(BlendMode::kAlways)]));
+	assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
 
 }
 
@@ -583,8 +617,8 @@ Model *Model::CreatePlane() {
 	auto &mesh = *newModel->meshList_.begin();
 
 	auto &vertexArray = mesh->vertexBuffer_;
-	vertexArray.SetVertexData(std::array{ Mesh::VertexData{},Mesh::VertexData{},Mesh::VertexData{},Mesh::VertexData{} });
-	vertexArray.SetIndexData(std::array{ 0u,1u,2u, 1u,3u,2u });
+	vertexArray.SetVertexData(std::array{ Mesh::VertexData{}, Mesh::VertexData{}, Mesh::VertexData{}, Mesh::VertexData{} });
+	vertexArray.SetIndexData(std::array{ 0u, 1u, 2u, 1u, 3u, 2u });
 
 	// 左下
 	vertexArray.GetVertexData()[0u].position = { -0.5f, -0.5f, 0.f, 1.f };
@@ -634,16 +668,17 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
-		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(material.blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_, 1u, &material);
 	}
 
 }
 
-void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const Camera<Render::CameraType::Projecction> &camera) const {
+void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera<Render::CameraType::Projecction> &camera) const {
 	assert(sPipelineType_ == PipelineType::kParticle && "設定されたシグネチャがkParticleではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 	for (auto &mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
@@ -725,7 +760,7 @@ void Material::ImGuiWidget()
 		ImGui::ColorEdit4("BaseColor", &materialBuff_->color.x);
 		ImGui::ColorEdit3("EmissiveColor", &materialBuff_->emissive.x);
 
-		const static std::array<std::string, 6u>blendStr{ "kNone", "kNormal","kAdd", "kSubtract", "kMultily", "kScreen" };
+		const static std::array<std::string, 6u>blendStr{ "kNone", "kNormal", "kAdd", "kSubtract", "kMultily", "kScreen" };
 
 		if (ImGui::BeginCombo("BlendMode", blendStr[static_cast<uint32_t>(blendMode_)].c_str())) {
 
@@ -808,15 +843,15 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 
 	const Vector3 centor = origin + size / 2.f;
 	std::array<Vector3, 8u> vertices{
-		centor + Vector3{-size.x,size.y,size.z},	// 左遠
-		centor + Vector3{size.x,size.y,size.z},		// 右遠
-		centor + Vector3{-size.x,size.y,-size.z},	// 左近
-		centor + Vector3{size.x,size.y,-size.z},	// 右近
+		centor + Vector3{-size.x, size.y, size.z},	// 左遠
+			centor + Vector3{size.x, size.y, size.z},		// 右遠
+			centor + Vector3{-size.x, size.y, -size.z},	// 左近
+			centor + Vector3{size.x, size.y, -size.z},	// 右近
 
-		centor + Vector3{-size.x,-size.y,size.z},	// 左遠
-		centor + Vector3{size.x,-size.y,size.z}, 	// 右遠
-		centor + Vector3{-size.x,-size.y,-size.z},	// 左近,
-		centor + Vector3{size.x,-size.y,-size.z},	// 右近
+			centor + Vector3{-size.x, -size.y, size.z},	// 左遠
+			centor + Vector3{size.x, -size.y, size.z}, 	// 右遠
+			centor + Vector3{-size.x, -size.y, -size.z},	// 左近,
+			centor + Vector3{size.x, -size.y, -size.z},	// 右近
 	};
 
 	faces_[(uint32_t)FaceDirection::UP].SetVertex(

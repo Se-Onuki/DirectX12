@@ -36,6 +36,21 @@ bool Camera<Render::CameraType::Projecction>::ImGuiWidget() {
 	return false;
 }
 
+bool Camera<Render::CameraType::Projecction>::ImGuiWidget(std::string id)
+{
+	if (ImGui::TreeNode(id.c_str())) {
+		bool isUsing = false;
+
+		isUsing |= ImGui::DragFloat3("Rotate", &rotation_.x, Angle::Dig2Rad);
+
+		isUsing |= ImGui::DragFloat3("Transform", &translation_.x, 0.01f);
+
+		ImGui::TreePop();
+		return isUsing;
+	}
+	return false;
+}
+
 void Camera<Render::CameraType::Projecction>::CalcMatrix() {
 	matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
 	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
@@ -72,7 +87,6 @@ bool Camera<Render::CameraType::Othographic>::ImGuiWidget() {
 	}
 	return false;
 }
-
 
 void Camera<Render::CameraType::Othographic>::CalcMatrix() {
 	matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();

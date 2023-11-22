@@ -20,6 +20,12 @@ namespace SoLib {
 	template<IsNotPointer T>
 	bool ImGuiWidget(const char *const label, T *const value);
 
+	template<IsNotPointer T>
+	void ImGuiText(const char *const label, const T &text);
+
+	template<>
+	void ImGuiText(const char *const label, const std::string &text);
+
 	template <>
 	bool ImGuiWidget<bool>(const char *const label, bool *const value);
 

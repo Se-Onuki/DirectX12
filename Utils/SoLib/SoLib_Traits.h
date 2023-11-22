@@ -28,13 +28,25 @@ namespace SoLib {
 
 	template <typename T, typename U>
 	concept IsContainsType = requires(T a) {
-		{ a.size() } -> std::convertible_to<std::size_t>;
-		{ a.begin() } -> std::input_or_output_iterator;
-		{ a.end() } -> std::input_or_output_iterator;
 
-			requires IsContainer<T>; // Tがコンテナであることを確認
-			requires std::same_as<typename T::value_type, U>; // Tの要素の型がUであることを確認
+		requires IsContainer<T>; // Tがコンテナであることを確認
+		requires std::same_as<typename T::value_type, U>; // Tの要素の型がUであることを確認
 	};
+
+
+
+	/// @brief 浮動小数点型である
+	template <typename T>
+	concept IsFloatPoint = std::is_floating_point_v<T>;
+
+	/// @brief 整数型である
+	template <typename T>
+	concept IsIntegral = std::is_integral_v<T>;
+
+	/// @brief 数値型である
+	template <typename T>
+	concept IsNumber = std::is_floating_point_v<T> || std::is_integral_v<T>;
+
 
 
 	template <typename T>
@@ -235,5 +247,6 @@ namespace SoLib {
 			"\tw : " + std::to_string(data.w) + "\n"
 			"}";
 	}
+
 
 }

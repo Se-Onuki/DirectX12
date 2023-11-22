@@ -1,0 +1,221 @@
+{
+    "Idle": {
+        "KeyCount": 2,
+        "key : 0AnimationTime": 1.0,
+        "key : 0Arm_L_Rotate": [
+            0.0,
+            0.0,
+            -0.25
+        ],
+        "key : 0Arm_L_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 0Arm_L_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Arm_R_Rotate": [
+            0.0,
+            0.0,
+            0.25
+        ],
+        "key : 0Arm_R_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 0Arm_R_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Body_Rotate": [
+            -0.05000000074505806,
+            0.0,
+            0.0
+        ],
+        "key : 0Body_Scale": [
+            1.024999976158142,
+            0.9750000238418579,
+            1.0
+        ],
+        "key : 0Body_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0EasingType": 3,
+        "key : 0Eye_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Eye_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 0Eye_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Foot_L_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Foot_L_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 0Foot_L_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Foot_R_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Foot_R_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 0Foot_R_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Ling_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0Ling_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 0Ling_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 0RotateSpeed": 0.05000000074505806,
+        "key : 1AnimationTime": 1.0,
+        "key : 1Arm_L_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Arm_L_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 1Arm_L_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Arm_R_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Arm_R_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 1Arm_R_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Body_Rotate": [
+            0.05000000074505806,
+            0.0,
+            0.0
+        ],
+        "key : 1Body_Scale": [
+            0.9750000238418579,
+            1.024999976158142,
+            1.0
+        ],
+        "key : 1Body_Translate": [
+            0.0,
+            0.05000000074505806,
+            0.0
+        ],
+        "key : 1EasingType": 3,
+        "key : 1Eye_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Eye_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 1Eye_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Foot_L_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Foot_L_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 1Foot_L_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Foot_R_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Foot_R_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 1Foot_R_Translate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Ling_Rotate": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "key : 1Ling_Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "key : 1Ling_Translate": [
+            0.0,
+            0.05000000074505806,
+            0.0
+        ],
+        "key : 1RotateSpeed": 0.05000000074505806
+    }
+}

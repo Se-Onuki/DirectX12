@@ -40,6 +40,7 @@
 #include "Engine/DirectBase/Base/Audio.h"
 
 #include "Engine/DirectBase/File/GlobalVariables.h"
+#include "Header/Object/Particle/ParticleManager.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -173,6 +174,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 
 #pragma region 各種解放
+
+	//ParticleManager::GetInstance()->
 
 	ImGuiManager::Finalize();
 

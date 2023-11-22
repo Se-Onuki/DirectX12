@@ -28,6 +28,8 @@ class ArrayBuffer final {
 
 public:
 
+	using map_matrix = T;
+
 	inline ID3D12Resource *const GetResources() noexcept { return resources_.Get(); }
 	inline const ID3D12Resource *const GetResources() const noexcept { return resources_.Get(); }
 
@@ -51,6 +53,7 @@ public:
 
 
 	template <SoLib::IsContainer U>
+		requires SoLib::IsContainsType<U, T>
 	inline ArrayBuffer &operator=(const U &other);	// コピー演算子
 
 public:
@@ -63,7 +66,8 @@ public:
 
 	ArrayBuffer(const uint32_t width = 0u);	// デフォルトコンストラクタ
 
-	template <typename U>
+	template <SoLib::IsContainer U>
+		requires SoLib::IsContainsType<U, T>
 	ArrayBuffer(const U &source);		// コピーコンストラクタ
 
 	~ArrayBuffer();
@@ -109,6 +113,7 @@ inline const T *const ArrayBuffer<T>::operator->() const noexcept {
 
 template<SoLib::IsNotPointer T>
 template<SoLib::IsContainer U>
+	requires SoLib::IsContainsType<U, T>
 inline ArrayBuffer<T> &ArrayBuffer<T>::operator=(const U &source) {
 	CreateBuffer(static_cast<uint32_t>(source.size()));
 	std::copy(source.begin(), source.end(), mapData_);
@@ -121,7 +126,8 @@ inline ArrayBuffer<T>::ArrayBuffer(const uint32_t width) {
 }
 
 template<SoLib::IsNotPointer T>
-template <typename U>
+template <SoLib::IsContainer U>
+	requires SoLib::IsContainsType<U, T>
 inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
@@ -175,7 +181,7 @@ inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T>::CreateSrvDesc() const
 
 template<SoLib::IsNotPointer T>
 inline ArrayBuffer<T>::~ArrayBuffer() {
-	resources_->Release();
+	//if (resources_ != nullptr) { resources_->Release(); }
 }
 
 
