@@ -119,16 +119,22 @@ void Player::BehaviorRootUpdate() {
 
 		move = move.Nomalize() * moveSpeed_; // 速度を正規化
 		Matrix4x4 inputRotateMatrix = Matrix4x4::Identity();
-		inputRotateMatrix *= Matrix4x4::Rotate(camera_->matView_.InverseSRT());
+		inputRotateMatrix *= Matrix4x4::Rotate(camera_->matView_.InverseRT());
 		//move = TransformNormal(move, camera_->matView_);
 		if (transformOrigin_->parent_) {
 
-			inputRotateMatrix *= Matrix4x4::Rotate(transformOrigin_->parent_->matWorld_.InverseSRT());
+			//inputRotateMatrix *= Matrix4x4::Rotate(transformOrigin_->parent_->matWorld_.InverseRT());
 			//move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
 		}
 
 		move *= inputRotateMatrix;
 		velocity_ += move * 5.f; // 移動量を追加
+
+		if (transformOrigin_->parent_) {
+
+			move *= Matrix4x4::Rotate(transformOrigin_->parent_->matWorld_.InverseRT());
+			//move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
+		}
 
 
 		//Vector3 moveCross = Vector3::front.cross(move.Nomalize());
@@ -316,7 +322,12 @@ void Player::Update([[maybe_unused]] const float deltaTime) {
 
 	velocity_ *= 0.95f;
 	velocity_.y += -5.f; // 移動量を追加
-	transformOrigin_->translate += velocity_ * deltaTime;
+	if (transformOrigin_->parent_) {
+		transformOrigin_->translate += TransformNormal(velocity_ * deltaTime, transformOrigin_->parent_->matWorld_.InverseRT());
+	}
+	else {
+		transformOrigin_->translate += velocity_ * deltaTime;
+	}
 	// もし、親コライダよりも
 	if (transformOrigin_->parent_ && transformOrigin_->translate.y < 0.f) {
 		transformOrigin_->translate.y = 0.f;
