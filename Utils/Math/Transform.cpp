@@ -71,17 +71,26 @@ bool BaseTransform::ImGuiWidget2D()
 
 
 void BaseTransform::MatToSRT(const Matrix4x4 &mat) {
+
+	std::array<__m128, 3u> vec = {
+		_mm_load_ps(mat.m[0]),
+		_mm_load_ps(mat.m[1]),
+		_mm_load_ps(mat.m[2]),
+	};
+
 	// スケールの取得
 	//scale.x = std::sqrt(mat.m[0][0] * mat.m[0][0] + mat.m[0][1] * mat.m[0][1] + mat.m[0][2] * mat.m[0][2]);
-	scale.x = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(mat.m[0]), _mm_load_ps(mat.m[0]), 0x71)));
-	scale.y = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(mat.m[1]), _mm_load_ps(mat.m[1]), 0x71)));
-	scale.z = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(mat.m[2]), _mm_load_ps(mat.m[2]), 0x71)));
+	scale.x = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[0u], vec[0u], 0x71)));
+	scale.y = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[1u], vec[1u], 0x71)));
+	scale.z = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[2u], vec[2u], 0x71)));
 
 	// 回転行列の取得
 	Matrix4x4 rotMat = Matrix4x4::Identity();
-	*(__m128 *)rotMat.m[0] = _mm_div_ps(_mm_load_ps(mat.m[0]), _mm_set1_ps(scale.x));
-	*(__m128 *)rotMat.m[1] = _mm_div_ps(_mm_load_ps(mat.m[1]), _mm_set1_ps(scale.y));
-	*(__m128 *)rotMat.m[2] = _mm_div_ps(_mm_load_ps(mat.m[2]), _mm_set1_ps(scale.z));
+	if (scale != Vector3::one) {
+		*(__m128 *)rotMat.m[0] = _mm_div_ps(vec[0u], _mm_set1_ps(scale.x));
+		*(__m128 *)rotMat.m[1] = _mm_div_ps(vec[1u], _mm_set1_ps(scale.y));
+		*(__m128 *)rotMat.m[2] = _mm_div_ps(vec[2u], _mm_set1_ps(scale.z));
+	}
 
 	rotateMat_ = rotMat;
 
@@ -93,6 +102,8 @@ void BaseTransform::MatToSRT(const Matrix4x4 &mat) {
 	// 移動量の取得
 	translate = *(Vector3 *)mat.m[3];
 }
+
+
 void BaseTransform::SetParent(const BaseTransform &parent) {
 	parent_ = &parent;
 }

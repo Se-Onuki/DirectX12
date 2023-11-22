@@ -21,7 +21,7 @@ class GlobalVariables {
 
 public:
 	/// @brief 保存できる型
-	using Item = std::variant<int32_t, float, Vector2, Vector3, Vector4, Angle::Radian>;
+	using Item = std::variant<int32_t, float, Vector2, Vector3, Vector4, Angle::Radian, std::string>;
 	/// @brief 1つのグループに保存する連想記憶コンテナ
 	using Group = std::unordered_map<std::string, Item>;
 

@@ -85,9 +85,6 @@
     <Filter Include="Utils\Math">
       <UniqueIdentifier>{01a70b64-c804-487f-8af2-9946a6128e21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Timer">
-      <UniqueIdentifier>{43438fc0-78de-49af-bbde-d1a188c2a132}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utils\SoLib">
       <UniqueIdentifier>{718943a2-fecd-4a48-a88c-ffda723192fa}</UniqueIdentifier>
     </Filter>
@@ -173,9 +170,6 @@
     </ClCompile>
     <ClCompile Include="Utils\Math\Vector3.cpp">
       <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Timer\TImer.cpp">
-      <Filter>Utils\Timer</Filter>
     </ClCompile>
     <ClCompile Include="Utils\SoLib\SoLib_Easing.cpp">
       <Filter>Utils\SoLib</Filter>
@@ -282,6 +276,9 @@
     <ClCompile Include="Header\Object\CollisionDrawer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Math\Quaternion.cpp">
+      <Filter>Utils\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -376,9 +373,6 @@
     </ClInclude>
     <ClInclude Include="Utils\Math\FloatArray.h">
       <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Timer\Timer.h">
-      <Filter>Utils\Timer</Filter>
     </ClInclude>
     <ClInclude Include="Utils\SoLib\SoLib.h">
       <Filter>Utils\SoLib</Filter>
@@ -514,6 +508,15 @@
     </ClInclude>
     <ClInclude Include="Header\Object\CollisionDrawer.h">
       <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Math\Quaternion.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Math\Matrix.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Math\SimdCalc.h">
+      <Filter>Utils\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

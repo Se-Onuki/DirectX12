@@ -27,11 +27,14 @@ public:
 	// std::list<std::unique_ptr<Object>> objectList_;
 };
 
+template<typename T>
+concept IsBasedIScene = std::is_base_of<IScene, T>::value;
+
 
 class SceneManager {
 private:
 
-	SoLib::Timer transitionTimer_{};
+	SoLib::DeltaTimer transitionTimer_{};
 	// 現在読み込んでいるシーン
 	std::unique_ptr<IScene> currentScene_ = nullptr;
 	// 次に遷移するシーン
@@ -60,17 +63,17 @@ public:
 
 	/// @brief シーン遷移
 	/// @param name 遷移先のシーン
-	void ChangeScene(IScene *const nextScene);
+	void ChangeScene(std::unique_ptr<IScene> nextScene);
 
 
 	/// @brief シーン遷移
 	/// @param name 遷移先の名前キー
 	/// @param transitionTime 必要とする時間
-	void ChangeScene(IScene *const nextScene, const int &transitionTime);
+	void ChangeScene(std::unique_ptr<IScene> nextScene, const float transitionTime);
 
 
 	/// @brief シーンの更新
-	void Update();
+	void Update(float deltaTime);
 
 
 	/// @brief シーンの描画

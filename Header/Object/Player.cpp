@@ -130,17 +130,18 @@ void Player::BehaviorRootUpdate() {
 		move *= inputRotateMatrix;
 		transformOrigin_->translate += move; // 移動量を追加
 
-		Vector3 moveCross = Vector3::front.cross(move.Nomalize());
-		float moveDot = Vector3::front * move.Nomalize();
-		// ベクトルから回転行列を算出
-		Matrix4x4 rotateMat = Matrix4x4::AnyAngleRotate(moveCross.Nomalize(), moveDot, moveCross.Length());
 
-		// もし、180度であった場合は調整
-		if (moveDot == -1.f) {
-			rotateMat = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, 180._deg);
-		}
+			//Vector3 moveCross = Vector3::front.cross(move.Nomalize());
+			float moveDot = Vector3::front * move.Nomalize();
+			// ベクトルから回転行列を算出
+			Matrix4x4 rotateMat = Matrix4x4::DirectionToDirection(Vector3::front, move);
 
-		transformOrigin_->rotateMat_ = rotateMat;
+			// もし、180度であった場合は調整
+			if (moveDot == -1.f) {
+				rotateMat = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, 180._deg);
+			}
+
+			transformOrigin_->rotateMat_ = rotateMat;
 	}
 
 	transformOrigin_->translate.y += -0.5f; // 移動量を追加

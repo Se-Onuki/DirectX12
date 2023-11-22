@@ -13,32 +13,31 @@ void SceneManager::Cancel() {
 	transitionTimer_.Clear();
 }
 
-void SceneManager::ChangeScene(IScene *const nextScene) {
+void SceneManager::ChangeScene(std::unique_ptr<IScene> nextScene) {
 	if (nextScene == nullptr) return;
 	if (currentScene_) {
 		// 遷移前のシーンの退室処理
 		currentScene_->OnExit();
 	}
 	// 保持するシーンのキーとポインタを更新
-	currentScene_.reset(nextScene);
+	currentScene_ = std::move(nextScene);
 	currentScene_->OnEnter();
 }
 
-void SceneManager::ChangeScene(IScene *const nextScene, const int &transitionTime) {
+void SceneManager::ChangeScene(std::unique_ptr<IScene> nextScene, const float transitionTime) {
 	// もし、次のシーンがあったらキャンセル
 	if (nextScene_ != nullptr) {
-		delete nextScene;
 		return;
 	}
 	// 次のシーンのポインタを保存
-	nextScene_.reset(nextScene);
+	nextScene_ = std::move(nextScene);
 	// 遷移タイマーを開始
 	transitionTimer_.Start(transitionTime);
 }
 
-void SceneManager::Update() {
-	if (transitionTimer_.Update() && transitionTimer_.IsFinish()) {
-		ChangeScene(nextScene_.release());
+void SceneManager::Update(float deltaTime) {
+	if (transitionTimer_.Update(deltaTime) && transitionTimer_.IsFinish()) {
+		ChangeScene(std::move(nextScene_));
 	}
 
 	if (currentScene_) {

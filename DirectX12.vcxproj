@@ -153,6 +153,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\Math\Matrix3x3.cpp" />
     <ClCompile Include="Utils\Math\Matrix4x4.cpp" />
     <ClCompile Include="Utils\Math\Polar.cpp" />
+    <ClCompile Include="Utils\Math\Quaternion.cpp" />
     <ClCompile Include="Utils\Math\Random.cpp" />
     <ClCompile Include="Utils\Math\Transform.cpp" />
     <ClCompile Include="Utils\Math\ValueRange.cpp" />
@@ -162,7 +163,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\SoLib\SoLib_ImGui.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Lerp.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Timer.cpp" />
-    <ClCompile Include="Utils\Timer\TImer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\DirectBase\2D\Sprite.h" />
@@ -225,11 +225,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\Math\Angle.h" />
     <ClInclude Include="Utils\Math\FloatArray.h" />
     <ClInclude Include="Utils\Math\Math.hpp" />
+    <ClInclude Include="Utils\Math\Matrix.h" />
     <ClInclude Include="Utils\Math\Matrix2x2.h" />
     <ClInclude Include="Utils\Math\Matrix3x3.h" />
     <ClInclude Include="Utils\Math\Matrix4x4.h" />
     <ClInclude Include="Utils\Math\Polar.h" />
+    <ClInclude Include="Utils\Math\Quaternion.h" />
     <ClInclude Include="Utils\Math\Random.h" />
+    <ClInclude Include="Utils\Math\SimdCalc.h" />
     <ClInclude Include="Utils\Math\Transform.h" />
     <ClInclude Include="Utils\Math\ValueRange.h" />
     <ClInclude Include="Utils\Math\Vector2.h" />
@@ -241,7 +244,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\SoLib\SoLib_Lerp.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Timer.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Traits.h" />
-    <ClInclude Include="Utils\Timer\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

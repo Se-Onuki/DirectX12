@@ -38,6 +38,8 @@ struct BaseTransform {
 
 public:
 
+	const Vector3 &GetGrobalPos() const { return *reinterpret_cast<const Vector3 *const>(matWorld_.m[3]); }
+
 	Matrix4x4 Affine() const;
 
 	void CalcMatrix();
@@ -47,14 +49,10 @@ public:
 	bool ImGuiWidget();
 	bool ImGuiWidget2D();
 
-	const Vector3 &GetGrobalPos() const { return *reinterpret_cast<const Vector3 *const>(matWorld_.m[3]); }
-
-	/// @brief 行列からSRTを算出する
-	/// @param mat SRT行列
 	void MatToSRT(const Matrix4x4 &mat);
 
 	/// @brief 純粋な親子関係の構築
-	/// @param parent 親のTransform
+/// @param parent 親のTransform
 	void SetParent(const BaseTransform &parent);
 
 	/// @brief グローバル座標を維持した親子関係の構築

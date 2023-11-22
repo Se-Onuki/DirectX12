@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
 #include "../Engine/DirectBase/Model/ModelManager.h"
+#include "../Utils/SoLib/SoLib.h"
 
 TitleScene::TitleScene() {
 	input_ = Input::GetInstance();
@@ -23,9 +24,12 @@ void TitleScene::OnExit() {
 
 void TitleScene::Update() {
 
-	if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
-		sceneManager_->ChangeScene(new GameScene, 60);
-	}
+	ImGui::Text("rotation<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(rotation_).c_str());
+	ImGui::Text("rotateMatrix<%s> :\n%s", SoLib::Traits<Matrix4x4>::Name, SoLib::to_string(rotateMatrix_).c_str());
+
+	ImGui::Text("rotateByQuaternion<%s> :\n%s", SoLib::Traits<Vector3>::Name, SoLib::to_string(rotateByQuaternion_).c_str());
+	ImGui::Text("rotateByMatrix<%s> :\n%s", SoLib::Traits<Vector3>::Name, SoLib::to_string(rotateByMatrix_).c_str());
+
 }
 
 void TitleScene::Draw() {
