@@ -47,11 +47,16 @@ public:
 		return resources_->GetGPUVirtualAddress();
 	}
 
-
+	inline T *const get() { return mapData_; }
+	inline const T *const get() const { return mapData_; }
 public:
 
 	CBuffer();					// デフォルトコンストラクタ
 	CBuffer(const CBuffer &);	// コピーコンストラクタ
+	CBuffer(CBuffer &&);		// ムーブコンストラクタ
+
+	CBuffer &operator=(const CBuffer &other) { return *this = static_cast<const T &>(other); }	// コピー演算子
+	CBuffer &operator=(CBuffer &&);			// ムーブ演算子
 
 	~CBuffer();
 
@@ -105,6 +110,13 @@ inline CBuffer<T, IsActive>::CBuffer(const CBuffer<T, IsActive> &other) {
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::CBuffer(CBuffer &&other) {
+	this->resources_ = std::move(other.resources_);
+	this->mapData_ = std::move(other.mapData_);
+	this->cbView_ = std::move(other.cbView_);
+}
+
+template<SoLib::IsNotPointer T, bool IsActive>
 inline void CBuffer<T, IsActive>::CreateBuffer() {
 	HRESULT result = S_FALSE;
 
@@ -123,7 +135,16 @@ inline void CBuffer<T, IsActive>::CreateBuffer() {
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive>::~CBuffer() {
-	resources_->Release();
+	//resources_->Release();
+}
+
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive> &CBuffer<T, IsActive>::operator=(CBuffer<T, IsActive> &&other) {
+	this->resources_ = std::move(other.resources_);
+	this->mapData_ = std::move(other.mapData_);
+	this->cbView_ = std::move(other.cbView_);
+
+	return *this;
 }
 
 #pragma endregion
@@ -189,7 +210,7 @@ inline T *const CBuffer<T, false>::operator->() const noexcept {
 template<SoLib::IsNotPointer T>
 inline CBuffer<T, false> &CBuffer<T, false>::operator=(const T &other) {
 	if (mapData_) {
-		*mapData_ = static_cast<T>(other);
+		*mapData_ = static_cast<const T &>(other);
 	}
 	return *this;
 }
@@ -206,23 +227,26 @@ inline CBuffer<T, false> &CBuffer<T, false>::operator=(const T &other) {
 
 template <SoLib::IsNotPointer T>
 class ConstantContainer/*<T, std::void_t<typename T::map_struct>> */ {
+public:
+	// リソースとして保持する構造体
+	using map_struct = typename T::map_struct;
+private:
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	ComPtr<ID3D12Resource> resources_ = nullptr;
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_{};
+	//ComPtr<ID3D12Resource> resources_ = nullptr;
+
+	CBuffer<map_struct> resource_;
 
 	T data_;
 
 public:
-	// リソースとして保持する構造体
-	using map_struct = typename T::map_struct;
 
-	inline ID3D12Resource *const GetResources() noexcept { return &resources_.Get(); }
-	inline const ID3D12Resource *const GetResources() const noexcept { return &resources_.Get(); }
+	inline ID3D12Resource *const GetResources() noexcept { return &resource_.GetResources(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return &resource_.GetResources(); }
 
-	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return cbView_; }
+	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return resource_.GetView(); }
 
 	inline operator T &() noexcept { return data_; }				// 参照
 	inline operator const T &() const noexcept { return data_; }	// const参照
@@ -235,7 +259,7 @@ public:
 
 
 	inline T &operator=(const T &other) {	// コピー演算子
-		data_ = static_cast<T>(other);
+		data_ = static_cast<const T &>(other);
 		if (data_.mapTarget_ && other.mapTarget_) {
 			*data_.mapTarget_ = *other.mapTarget_;
 		}
@@ -244,32 +268,21 @@ public:
 
 public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
-		return resources_->GetGPUVirtualAddress();
+		return resource_.GetGPUVirtualAddress();
 	}
 
 
 public:
 
-	ConstantContainer(const T &data = {}) : data_(data) { CreateBuffer(); };
-	T &operator=(const ConstantContainer &other) { return *this = static_cast<const T &>(other); }
+	ConstantContainer() { CreateBuffer(); };
+
+	ConstantContainer &operator=(const ConstantContainer &other);
 	~ConstantContainer() = default;
 
 private:
 
 	void CreateBuffer() {
-		HRESULT result = S_FALSE;
-
-		// 256バイト単位のアライメント
-		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(map_struct) + 0xff) & ~0xff);
-
-
-		cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
-		cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
-
-		//map_struct *const target = nullptr;
-		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&data_.mapTarget_));
-		assert(SUCCEEDED(result));
-
+		data_.mapTarget_ << resource_.get();
 	}
 };
 
@@ -307,3 +320,9 @@ private:
 };
 
 #pragma endregion
+
+template<SoLib::IsNotPointer T>
+inline ConstantContainer<T> &ConstantContainer<T>::operator=(const ConstantContainer<T> &other) {
+	*this = other.data_;
+	return *this;
+}
