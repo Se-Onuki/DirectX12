@@ -67,7 +67,6 @@ void GameScene::OnEnter() {
 
 	//BaseTransform transform;
 	//transform_ = transform;
-	camera_.Init();
 
 	//particleManager->AddParticle(modelManager->GetModel("Plane"), std::make_unique<TestParticle>());
 
@@ -171,12 +170,7 @@ void GameScene::Update() {
 	followCamera_->ImGuiWidget();
 	followCamera_->Update(deltaTime);
 
-	ImGui::Begin("Camera");
-	camera_.ImGuiWidget();
-	ImGui::End();
-
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
-	camera_.UpdateMatrix();
 
 	/*if (keyBoard->IsTrigger(DIK_0)) {
 		if (++cameraTarget_ == cameraList_.end()) {

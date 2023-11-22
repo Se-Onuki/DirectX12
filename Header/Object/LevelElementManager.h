@@ -69,6 +69,8 @@ public:
 
 		void ImGuiWidget();
 
+		const auto &GetTimer() const { return timer_; }
+
 	private:
 
 		SoLib::DeltaTimer timer_;

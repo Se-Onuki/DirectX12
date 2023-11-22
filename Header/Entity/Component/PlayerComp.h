@@ -71,6 +71,8 @@ public:
 		return &groundPos_;
 	}
 
+	int32_t GetGroup() const { return registeredGroups_; }
+
 	void SetIsActiveGravity(bool flag) { isActiveGravity_ = flag; }
 
 private:

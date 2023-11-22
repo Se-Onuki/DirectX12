@@ -1,18 +1,24 @@
 #include "FollowCameraComp.h"
 #include "../../../Utils/SoLib/SoLib_Lerp.h"
 #include "../../../Utils/SoLib/SoLib_ImGui.h"
+#include "../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+
+void FollowCameraComp::Init() {
+	camera_ = CameraManager::GetInstance()->AddCamera("FollowCamera");
+	camera_->CalcMatrix();
+}
 
 void FollowCameraComp::Update() {
 
 	Vector3 linePoint = line_.ClosestPoint(pTarget_->GetGrobalPos());
 
-	camera_.translation_ = offset_.GetItem() * Matrix4x4::EulerRotate(rotate_) + SoLib::Lerp(pTarget_->GetGrobalPos(), linePoint, vLerpValue) + addOffset_;
+	camera_->translation_ = offset_.GetItem() * Matrix4x4::EulerRotate(rotate_) + SoLib::Lerp(pTarget_->GetGrobalPos(), linePoint, vLerpValue) + addOffset_;
 
-	Vector3 facing = linePoint - camera_.translation_;
+	Vector3 facing = linePoint - camera_->translation_;
 
-	camera_.rotation_ = facing.Direction2Euler();
+	camera_->rotation_ = facing.Direction2Euler();
 
-	camera_.UpdateMatrix();
+	camera_->UpdateMatrix();
 }
 
 void FollowCameraComp::ImGuiWidget() {
@@ -24,8 +30,8 @@ void FollowCameraComp::ImGuiWidget() {
 void FollowCameraComp::AddRotate(const Vector3 &euler) {
 	if (euler.LengthSQ() != 0.f) {
 		rotate_ += euler;
-		camera_.rotation_ += euler;
-		camera_.UpdateMatrix();
+		camera_->rotation_ += euler;
+		camera_->UpdateMatrix();
 	}
 }
 
