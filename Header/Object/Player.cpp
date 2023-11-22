@@ -128,26 +128,20 @@ void Player::BehaviorRootUpdate() {
 		}
 
 		move *= inputRotateMatrix;
-		transformOrigin_->translate += move; // 移動量を追加
+		velocity_ += move * 5.f; // 移動量を追加
 
 
-			//Vector3 moveCross = Vector3::front.cross(move.Nomalize());
-			float moveDot = Vector3::front * move.Nomalize();
-			// ベクトルから回転行列を算出
-			Matrix4x4 rotateMat = Matrix4x4::DirectionToDirection(Vector3::front, move);
+		//Vector3 moveCross = Vector3::front.cross(move.Nomalize());
+		float moveDot = Vector3::front * move.Nomalize();
+		// ベクトルから回転行列を算出
+		Matrix4x4 rotateMat = Matrix4x4::DirectionToDirection(Vector3::front, move);
 
-			// もし、180度であった場合は調整
-			if (moveDot == -1.f) {
-				rotateMat = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, 180._deg);
-			}
+		// もし、180度であった場合は調整
+		if (moveDot == -1.f) {
+			rotateMat = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, 180._deg);
+		}
 
-			transformOrigin_->rotateMat_ = rotateMat;
-	}
-
-	transformOrigin_->translate.y += -0.5f; // 移動量を追加
-	// もし、親コライダよりも
-	if (transformOrigin_->parent_ && transformOrigin_->translate.y < 0.f) {
-		transformOrigin_->translate.y = 0.f;
+		transformOrigin_->rotateMat_ = rotateMat;
 	}
 
 	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER) || (vPad.button_ & static_cast<WORD>(KeyCode::RIGHT_SHOULDER))) {
@@ -156,7 +150,9 @@ void Player::BehaviorRootUpdate() {
 	if (input_->GetXInput()->IsPress(KeyCode::A) || (vPad.button_ & static_cast<WORD>(KeyCode::A))) {
 		behaviorRequest_ = Behavior::kDash;
 	}
-	//}
+	if (input_->GetXInput()->IsPress(KeyCode::B) || input_->GetDirectInput()->IsTrigger(DIK_SPACE)) {
+		behaviorRequest_ = Behavior::kJump;
+	}
 
 	UpdateFloatingGimmick();
 	UpdateWorldMatrix();
@@ -231,6 +227,20 @@ void Player::BehaviorAttackUpdate() {
 	weaponCollider_.radius = vWeaponCollisionRadius_;
 }
 
+void Player::BehaviorJumpInit() {
+	velocity_.y += 100.f;
+}
+
+void Player::BehaviorJumpUpdate([[maybe_unused]] float deltaTime) {
+
+	if (transformOrigin_->parent_ && transformOrigin_->translate.y <= 0.f) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
+
+	UpdateFloatingGimmick();
+	UpdateWorldMatrix();
+}
+
 void Player::UpdateWorldMatrix() {
 	transformOrigin_->UpdateMatrix();
 
@@ -297,8 +307,21 @@ void Player::Update([[maybe_unused]] const float deltaTime) {
 		case Player::Behavior::kAttack:
 			BehaviorAttackInit();
 			break;
+		case Player::Behavior::kJump:
+			BehaviorJumpInit();
+			break;
 		}
 		behaviorRequest_ = std::nullopt;
+	}
+
+	velocity_ *= 0.95f;
+	velocity_.y += -5.f; // 移動量を追加
+	transformOrigin_->translate += velocity_ * deltaTime;
+	// もし、親コライダよりも
+	if (transformOrigin_->parent_ && transformOrigin_->translate.y < 0.f) {
+		transformOrigin_->translate.y = 0.f;
+
+		velocity_.y = 0.f;
 	}
 
 	switch (behavior_) {
@@ -310,6 +333,9 @@ void Player::Update([[maybe_unused]] const float deltaTime) {
 		break;
 	case Player::Behavior::kAttack:
 		BehaviorAttackUpdate();
+		break;
+	case Player::Behavior::kJump:
+		BehaviorJumpUpdate(deltaTime);
 		break;
 	}
 }

@@ -15,6 +15,8 @@ public:
 	void SetOffset(const Vector3 &offset) { offset_ = offset; }
 	void SetRotSpeed(const Vector3 &speed) { rotSpeed_ = speed; }
 
+	void SetScale(const Vector3 &scale) { modelTransform_->scale = scale; collider_.size = scale; }
+
 	void CalcCollider();
 
 	const OBB &GetCollider() const { return collider_; }

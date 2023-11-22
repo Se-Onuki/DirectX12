@@ -30,6 +30,8 @@ class Player : public BaseCharacter {
 
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
+	Vector3 velocity_{};
+
 	Transform transformBody_;
 	Transform transformHead_;
 	Transform transformLeft_;
@@ -86,6 +88,9 @@ private:
 	void BehaviorAttackInit();
 	void BehaviorAttackUpdate();
 
+	void BehaviorJumpInit();
+	void BehaviorJumpUpdate(float deltaTime);
+
 	void UpdateWorldMatrix();
 
 
@@ -103,6 +108,9 @@ public:
 		}
 		return nullptr;
 	}
+
+	const Vector3 &GetVelocity()const { return velocity_; }
+	void SetVelocity(const Vector3 &vec) { velocity_ = vec; }
 
 	const Transform &GetWeaponCollisionTransform() const { return weaponColliderViewer_; }
 

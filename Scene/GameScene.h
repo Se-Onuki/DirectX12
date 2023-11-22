@@ -20,6 +20,7 @@
 #include "../Header/Object/Enemy.h"
 #include "../Engine/DirectBase/Base/StructBuffer.h"
 #include "../Header/Object/CollisionDrawer.h"
+#include "../Header/Object/Particle/ParticleManager.h"
 
 class GameScene : public IScene {
 public:
@@ -51,10 +52,12 @@ private:
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	std::unique_ptr<Skydome> skydome_ = nullptr;
 
-	std::array<std::unique_ptr<Platform>, 4u> platform_ = { nullptr };
+	std::array<std::unique_ptr<Platform>, 5u> platform_ = { nullptr };
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	CollisionDrawer *collisionDrawer_;
+
+	ParticleManager *particleManager_ = nullptr;
 
 };

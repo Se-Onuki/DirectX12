@@ -10,6 +10,7 @@
 #include "../Utils/SoLib/SoLib_ImGui.h"
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
 #include "../Header/Entity/Component/Rigidbody.h"
+#include "../Header/Object/Particle/StarParticle.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -17,6 +18,7 @@ GameScene::GameScene() {
 	// collisionManager_ = CollisionManager::GetInstance();
 
 	collisionDrawer_ = CollisionDrawer::GetInstance();
+	particleManager_ = ParticleManager::GetInstance();
 }
 
 GameScene::~GameScene() {
@@ -25,7 +27,7 @@ GameScene::~GameScene() {
 
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
-
+	particleManager_->Init(256);
 	// model_ = ModelManager::GetInstance()->AddModel("Fence", Model::LoadObjFile("Model/Fence/", "fence.obj"));
 	ModelManager::GetInstance()->AddModel("box", Model::LoadObjFile("", "box.obj"));
 	camera_.Init();
@@ -84,6 +86,9 @@ void GameScene::OnEnter() {
 
 	platform_[3u]->SetPos({ 0.f,0.f,60.f });
 
+	platform_[4u]->SetScale({ 50.f,0.1f,50.f });
+	platform_[4u]->SetPos({ 0.f,0.f,120.f });
+
 	Model *const goalBox =
 		ModelManager::GetInstance()->AddModel("Goal", Model::LoadObjFile("", "box.obj"));
 	goalBox->materialMap_["Material"]->materialBuff_->color = { 1.f,0.f,0.f,1.f };
@@ -105,6 +110,8 @@ void GameScene::OnEnter() {
 	enemy->SetPlatform(platform_[1u].get());
 
 	enemyList_.push_back(std::move(enemy));
+
+
 }
 
 void GameScene::OnExit() {}
@@ -206,6 +213,12 @@ void GameScene::Update() {
 	//player_->Update(deltaTime);
 	player_->GetWorldTransform()->ImGuiWidget();
 
+	auto *particlePtr = particleManager_->AddParticle(ModelManager::GetInstance()->GetModel("box"), std::make_unique<StarParticle>(player_->GetWorldTransform()->GetGrobalPos()));
+	particlePtr->velocity_ = TransformNormal(Vector3::front, player_->GetWorldTransform()->matWorld_);
+	particlePtr->SetAliveTime(1.f);
+
+	particleManager_->Update(deltaTime);
+
 	followCamera_->Update();
 	camera_ = *followCamera_->GetCamera();
 
@@ -260,6 +273,8 @@ void GameScene::Draw()
 	}
 
 	//ModelManager::GetInstance()->GetModel("box")->Draw(player_->GetWeaponCollisionTransform(), camera_);
+	Model::SetPipelineType(Model::PipelineType::kParticle);
+	particleManager_->Draw(camera_);
 
 	Model::EndDraw();
 

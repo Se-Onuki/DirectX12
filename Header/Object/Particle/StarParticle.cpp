@@ -4,7 +4,7 @@
 float StarParticle::rotationAmount_ = 0.025f;
 float StarParticle::minSize_ = 0.5f;
 float StarParticle::maxSize_ = 0.5f;
-float StarParticle::dispalyParticleTime_ = 0.05f;
+float StarParticle::dispalyParticleTime_ = 1.f;
 
 void StarParticle::AddItem()
 {
@@ -40,7 +40,7 @@ void StarParticle::DisplayImGui()
 		if (ImGui::BeginMenu(typeid(StarParticle).name())) {
 			ImGui::Text("UniqueParameter");
 
-			if(ImGui::Button("SetUniqueItem")) {
+			if (ImGui::Button("SetUniqueItem")) {
 				AddItem();
 				SetItem();
 			}
@@ -54,7 +54,7 @@ void StarParticle::DisplayImGui()
 			ImGui::DragFloat("DispalyParticleTime", &dispalyParticleTime_, 0.01f, 0.01f, 2.0f);
 			ImGui::EndMenu();
 		}
-		
+
 	}
 	ImGui::EndMenuBar();
 	ImGui::End();
@@ -81,7 +81,7 @@ void StarParticle::Init() {
 	color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	// エミッタの角度から放出方向を求める
-	const Matrix4x4& mat = Matrix4x4::EulerRotate(Matrix4x4::Yaw, transform_.rotate.y); // エミッタのy軸角度から回転行列を生成
+	const Matrix4x4 &mat = Matrix4x4::EulerRotate(Matrix4x4::Yaw, transform_.rotate.y); // エミッタのy軸角度から回転行列を生成
 	move_ = TransformNormal(velocity_, mat);											// ベクトルを求める
 }
 
