@@ -33,9 +33,9 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
-	static auto* const modelManager = ModelManager::GetInstance();
-	static auto* const particleManager = ParticleManager::GetInstance();
-	static auto* const particleEmitterManager = ParticleEmitterManager::GetInstance();
+	static auto *const modelManager = ModelManager::GetInstance();
+	static auto *const particleManager = ParticleManager::GetInstance();
+	static auto *const particleEmitterManager = ParticleEmitterManager::GetInstance();
 
 	// カメラマネージャーの初期化
 	cameraManager_->Init();
@@ -45,7 +45,7 @@ void GameScene::OnEnter() {
 	// パーティクルマネージャの初期化
 	particleManager->Init(256); // パーティクルの最大数は256
 	// パーティクルエミッタマネージャーの初期化
-	particleEmitterManager->Init(); 
+	particleEmitterManager->Init();
 
 	// モデルの読み込み
 	modelManager->CreateDefaultModel(); // デフォルトモデルの読み込み
@@ -99,7 +99,7 @@ void GameScene::OnEnter() {
 	player_->AddComponent<PlayerComp>();
 	player_->AddComponent<PlayerAnimComp>();
 
-	ParticleEmitter* emitter = nullptr;
+	ParticleEmitter *emitter = nullptr;
 	emitter = particleEmitterManager->CreateEmitter<StarParticle>("PlayerLing");
 	emitter->targetTransform_ = &player_->transform_;
 	emitter->offset_ = { 0.0f, 0.5f, 0.0f };
@@ -125,10 +125,10 @@ void GameScene::OnExit() {}
 void GameScene::Update() {
 
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
-	static auto* const colliderManager = CollisionManager::GetInstance();
-	static auto* const particleManager = ParticleManager::GetInstance();
-	static auto* const particleEmitterManager = ParticleEmitterManager::GetInstance();
-	static const auto* const keyBoard = input_->GetDirectInput();
+	static auto *const colliderManager = CollisionManager::GetInstance();
+	static auto *const particleManager = ParticleManager::GetInstance();
+	static auto *const particleEmitterManager = ParticleEmitterManager::GetInstance();
+	static const auto *const keyBoard = input_->GetDirectInput();
 
 	colliderManager->clear();
 
@@ -144,6 +144,10 @@ void GameScene::Update() {
 	levelManager->ImGuiWidget();
 
 	ImGui::End();
+
+	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_0)) {
+		sceneManager_->ChangeScene(std::unique_ptr<GameScene>(), 1.f);
+	}
 
 
 	player_->Update(deltaTime);
@@ -224,7 +228,7 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	const auto& camera = *cameraManager_->GetUseCamera();
+	const auto &camera = *cameraManager_->GetUseCamera();
 
 	//model_->Draw(transform_, camera_);
 	levelManager->Draw(camera);
