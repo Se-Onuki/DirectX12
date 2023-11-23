@@ -20,7 +20,7 @@ void PlayerBeginRotateState::Init() {
 	rotateCamera->translation_ = pPlayer_->transform_->translate + Vector3{ 0.f,pPlayer_->vRotateHeight_ + 5.f,0.f } + platform->rotateAxis_ * rotateFacing * -45.f;
 	rotateCamera->rotation_.x = 15._deg;
 	rotateCamera->rotation_.y = (platform->rotateAxis_ * rotateFacing).Direction2Euler().y;
-	CameraManager::GetInstance()->SetUseCamera(rotateCamera);
+	CameraManager::GetInstance()->GetCameraAnimManager()->Play(rotateCamera, 0.75f, SoLib::easeInOutSine);
 }
 
 void PlayerBeginRotateState::Update([[maybe_unused]] float deltaTime) {

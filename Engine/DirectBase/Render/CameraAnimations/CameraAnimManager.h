@@ -26,8 +26,8 @@ private: // コンストラクタ、デストラクタ等
 	// シングルトンパターンの設定
 	CameraAnimManager() = default;
 	~CameraAnimManager() = default;
-	CameraAnimManager(const CameraAnimManager&) = delete;
-	const CameraAnimManager& operator=(const CameraAnimManager&) = delete;
+	CameraAnimManager(const CameraAnimManager &) = delete;
+	const CameraAnimManager &operator=(const CameraAnimManager &) = delete;
 
 public: // メンバ関数
 
@@ -35,7 +35,7 @@ public: // メンバ関数
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>シングルトンインスタンス</returns>
-	static CameraAnimManager* GetInstance();
+	static CameraAnimManager *GetInstance();
 
 	/// <summary>
 	/// 初期化関数
@@ -58,12 +58,12 @@ public: // その他関数
 	/// <param name="func">イージングタイプ(Solib::linear 等)</param>
 	/// <param name="standByTime">待機秒数</param>
 	/// <param name="standByIsEnd">現在のアニメーションが終了するまで待機するか</param>
-	void Play(Camera3D* endCamera, float time, float(*func)(float), float standByTime, bool standByIsEnd = false);
+	void Play(Camera3D *endCamera, float time, float(*func)(float) = SoLib::easeLinear, float standByTime = 0.f, bool standByIsEnd = false);
 
 private: // メンバ変数
 
 	// カメラマネージャーのインスタンス
-	CameraManager* cameraManager_ = nullptr;
+	CameraManager *cameraManager_ = nullptr;
 
 	// 現在再生中のアニメーション
 	CameraAnimation currentAnimation_;

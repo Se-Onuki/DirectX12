@@ -9,7 +9,8 @@ void PlayerEndRotateState::Init() {
 
 	auto *const followCamera = CameraManager::GetInstance()->AddCamera("FollowCamera");
 
-	CameraManager::GetInstance()->SetUseCamera(followCamera);
+	CameraManager::GetInstance()->GetCameraAnimManager()->Play(followCamera, 0.75f, SoLib::easeInOutSine);
+
 }
 
 void PlayerEndRotateState::Update([[maybe_unused]] float deltaTime) {
