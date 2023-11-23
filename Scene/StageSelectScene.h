@@ -14,24 +14,35 @@
 #include "../Header/Object/Particle.h"
 #include "../Header/Object/Particle/ParticleManager.h"
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
+#include "../Header/Object/StageSelectManager/StageSelectManager.h"
 
-class TitleScene : public IScene {
-public:
-	TitleScene();
-	~TitleScene();
+/// <summary>
+/// ステージ選択シーン
+/// </summary>
+class StageSelectScene : public IScene {
+public: // コンストラクタ等
 
+	StageSelectScene();
+	~StageSelectScene();
+
+public: // メンバ関数
+
+	// シーン入場時に呼び出される関数
 	void OnEnter() override;
+	// シーン退出時
 	void OnExit() override;
 
+	// 更新関数
 	void Update() override;
+	// 描画関数
 	void Draw() override;
 
-private:
+private: // メンバ変数
 
 	// 入力インスタンス
-	Input *input_ = nullptr;
+	Input* input_ = nullptr;
 	// 音インスタンス
-	Audio *audio_ = nullptr;
+	Audio* audio_ = nullptr;
 	// カメラマネージャー
 	CameraManager* cameraManager_ = nullptr;
 
@@ -40,6 +51,11 @@ private:
 	// パーティクル発生装置マネージャ
 	ParticleEmitterManager* emitterManager_ = nullptr;
 
+	// ステージ選択マネージャ
+	StageSelectManager* stageSelectManager_ = nullptr;
+
 	// 平行光源
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
 };
+

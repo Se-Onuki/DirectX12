@@ -169,10 +169,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp" />
     <ClCompile Include="Header\Object\Player.cpp" />
+    <ClCompile Include="Header\Object\StageSelectManager\StageSelectManager.cpp" />
+    <ClCompile Include="Header\Object\StageSelectManager\StageSelectUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\LoadScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
+    <ClCompile Include="Scene\StageSelectScene.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="Utils\Math\Angle.cpp" />
     <ClCompile Include="Utils\Math\Math.cpp" />
@@ -275,9 +278,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Particle\StarParticle.h" />
     <ClInclude Include="Header\Object\Particle\TestParticle.h" />
     <ClInclude Include="Header\Object\Player.h" />
+    <ClInclude Include="Header\Object\StageSelectManager\StageSelectManager.h" />
+    <ClInclude Include="Header\Object\StageSelectManager\StageSelectUI.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\LoadScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
+    <ClInclude Include="Scene\StageSelectScene.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Utils\Math\Angle.h" />
     <ClInclude Include="Utils\Math\FloatArray.h" />
