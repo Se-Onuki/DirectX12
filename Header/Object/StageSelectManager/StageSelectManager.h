@@ -82,7 +82,7 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 
 	// 選択中のステージ番号
-	int selectedStageNumber_ = 1;
+	int selectedStageNumber_ = 0;
 	// ステージの最大数
 	int maxLevelCount_ = 10;
 

@@ -33,6 +33,9 @@ void StageSelectManager::Update([[maybe_unused]]float deltaTime)
 			selectedStageNumber_ = maxLevelCount_ - 1;
 	}
 
+	// UIの更新処理
+	ui_.Update(deltaTime);
+
 }
 
 void StageSelectManager::Draw([[maybe_unused]] const Camera3D& camera)

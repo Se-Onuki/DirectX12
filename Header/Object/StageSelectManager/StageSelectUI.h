@@ -1,6 +1,11 @@
 #pragma once
 #include <string>
+#include "../../../Engine/DirectBase/File/GlobalVariables.h"
+#include "../../../Utils/SoLib/SoLib.h"
 #include "../../../Engine/DirectBase/2D/Sprite.h"
+
+// クラスの前方宣言
+class StageSelectManager;
 
 /// <summary>
 /// ステージ選択画面のUIクラス
@@ -59,10 +64,20 @@ public: // メンバ関数
 
 private: // メンバ変数
 
+	// ステージ選択マネージャー
+	StageSelectManager* stageSelectManager_ = nullptr;
+
+	// 前フレーム選択したステージ番号
+	int prevSelectedStageNumber_;
+
 	/// スプライト関係
 	UISprite stageSelectUI_; // ステージ選択画面
+	UISprite stagePreviewUI_; // ステージプレビュー
 	UISprite leftArrowUI_;   // ステージ選択画面左矢印
-	UISprite rightArrowUI_;  // ステージ選択画面
+	UISprite rightArrowUI_;  // ステージ選択画面右矢印
+
+	// ステージプレビューのアニメーションタイマー
+	SoLib::DeltaTimer prevAnimTimer_;
 
 };
 
