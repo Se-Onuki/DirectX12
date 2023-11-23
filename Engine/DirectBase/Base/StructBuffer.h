@@ -181,7 +181,7 @@ inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T>::CreateSrvDesc() const
 
 template<SoLib::IsNotPointer T>
 inline ArrayBuffer<T>::~ArrayBuffer() {
-	resources_->Release();
+	//if (resources_ != nullptr) { resources_->Release(); }
 }
 
 

@@ -160,7 +160,7 @@ void PlayerComp::MoveInput(const Vector3 &vec) {
 		}
 
 		// カメラの角度を元に計算
-		inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
+		inputVec = inputVec * pFollowCamera_->GetCamera()->matView_.GetRotate().InverseRT();
 
 		// カメラの上下方向を破棄
 		inputVec.y = 0.f;
@@ -194,7 +194,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 
 	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
-	int32_t hitGroup = -1;
+	//int32_t hitGroup = -1;
 	while (true) {
 
 		float t = 1.f;
@@ -232,7 +232,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 										t = value;
 										hitSurfaceNormal = normal;
 										if (normal * Vector3::up == 1.f) {
-											hitGroup = static_cast<int32_t>(key);
+											registeredGroups_ = static_cast<int32_t>(key);
 										}
 									}
 								}
@@ -243,7 +243,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 			}
 
 		}
-		registeredGroups_ = hitGroup;
+
 		if (t < 1.f) {
 
 			if (hitSurfaceNormal * Vector3::up == 1.f) {

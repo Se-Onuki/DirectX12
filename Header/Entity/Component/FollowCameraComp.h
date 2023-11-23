@@ -11,6 +11,8 @@ public:
 	using IComponent::IComponent;
 	~FollowCameraComp() = default;
 
+	void Init() override;
+
 	void Update() override;
 
 	void ImGuiWidget() override;
@@ -35,5 +37,5 @@ private:
 
 	Vector3 rotate_;
 
-	Camera3D camera_;
+	Camera3D *camera_;
 };

@@ -33,7 +33,6 @@ private:
 	//	Model *model_ = nullptr;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 	//Transform transform_;
-	Camera3D camera_;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
@@ -43,8 +42,6 @@ private:
 
 	//std::array<const Camera3D *, 2u> cameraList_;
 	//std::array<const Camera3D *, 2u>::iterator cameraTarget_ = cameraList_.begin();
-
-	std::unique_ptr<Entity> cannon_;
 
 	//std::unique_ptr<Entity> playerAnim_;
 

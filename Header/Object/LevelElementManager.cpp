@@ -182,8 +182,10 @@ void LevelElementManager::Platform::Update(float deltaTime) {
 }
 
 void LevelElementManager::Platform::AddRotate(const float targetRot) {
-	targetRot_ = Angle::Mod(rotateAxis_ * targetRot + startRot_);
-	timer_.Start(vLerpTime_);
+	if (timer_.IsFinish()) {
+		targetRot_ = Angle::Mod(rotateAxis_ * targetRot + startRot_);
+		timer_.Start(vLerpTime_);
+	}
 }
 
 void LevelElementManager::Platform::Draw(const Camera3D &camera) const {
