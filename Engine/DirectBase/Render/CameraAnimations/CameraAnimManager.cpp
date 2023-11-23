@@ -1,7 +1,7 @@
 #include "CameraAnimManager.h"
 #include "CameraManager.h"
 
-CameraAnimManager* CameraAnimManager::GetInstance()
+CameraAnimManager *CameraAnimManager::GetInstance()
 {
 	static CameraAnimManager instance;
 	return &instance;
@@ -11,6 +11,14 @@ void CameraAnimManager::Init()
 {
 	// カメラマネージャーのインスタンス取得
 	cameraManager_ = CameraManager::GetInstance();
+
+	this->currentAnimation_ = {};
+
+	this->timer_.Clear();
+
+	this->nextAnimations_.clear();
+
+	transitionStandbyTrigger_ = false;
 
 	// 再生中アニメーションのインスタンスを作る
 	//currentAnimation_ = std::make_unique<CameraAnimation>(); // インスタンス生成
@@ -58,7 +66,7 @@ void CameraAnimManager::Update(float deltaTime)
 	timer_.Update(deltaTime);
 }
 
-void CameraAnimManager::Play(Camera3D* endCamera, float time, float(*func)(float), float standByTime, bool standByIsEnd)
+void CameraAnimManager::Play(Camera3D *endCamera, float time, float(*func)(float), float standByTime, bool standByIsEnd)
 {
 	// 次のアニメーションインスタンス生成
 	NextAnimation nextAnimation;

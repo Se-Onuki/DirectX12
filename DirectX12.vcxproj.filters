@@ -387,6 +387,9 @@
     <ClCompile Include="Header\Entity\Component\PlayerState\EndRotateState.cpp">
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClCompile>
+    <ClCompile Include="StarItemComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -712,6 +715,9 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerState\EndRotateState.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="StarItemComp.h">
+      <Filter>Header\Entity\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

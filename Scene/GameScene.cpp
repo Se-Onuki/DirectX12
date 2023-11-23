@@ -18,6 +18,7 @@
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
 
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../StarItemComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -62,6 +63,9 @@ void GameScene::OnEnter() {
 	modelManager->AddModel("PlayerArm_R", Model::LoadObjFile("Model/PlayerModel/CharaArm/", "Arm_R.obj")); // プレイヤーの右腕
 	modelManager->AddModel("PlayerFoot_L", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_L.obj")); // プレイヤーの左足
 	modelManager->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_R.obj")); // プレイヤーの右足
+
+
+	modelManager->AddModel("StarItem", Model::LoadObjFile("", "box.obj"));
 
 	//model_ = ModelManager::GetInstance()->GetModel("Plane");
 
@@ -114,6 +118,10 @@ void GameScene::OnEnter() {
 #pragma endregion
 
 	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
+
+	starItem_ = std::make_unique<Entity>();
+
+	starItem_->AddComponent<StarItemComp>();
 
 	/*cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;*/
@@ -169,6 +177,8 @@ void GameScene::Update() {
 	followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
 	followCamera_->ImGuiWidget();
 	followCamera_->Update(deltaTime);
+
+	starItem_->Update(deltaTime);
 
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 
@@ -228,6 +238,8 @@ void GameScene::Draw()
 	levelManager->Draw(camera);
 
 	player_->Draw(camera);
+
+	starItem_->Draw(camera);
 	// 描画
 	//playerAnim_->Draw(camera_);
 
