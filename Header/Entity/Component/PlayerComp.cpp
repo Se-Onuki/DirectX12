@@ -13,8 +13,8 @@ const std::string PlayerComp::groupName_ = "Player";
 void PlayerComp::Init() {
 	ApplyVariables(groupName_.c_str());
 	input_ = Input::GetInstance();
-	collider_.min = -radius_;
-	collider_.max = radius_;
+	referenceCollider_.min = -radius_;
+	referenceCollider_.max = radius_;
 
 	backMaterial_.Create();
 	backMaterial_.blendMode_ = Model::BlendMode::kBacker;
@@ -200,7 +200,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 		float t = 1.f;
 		Vector3 hitSurfaceNormal{};
 		if (moveLine.diff.LengthSQ() > 0.f) {
-			const AABB beforeCollider = collider_.AddPos(moveLine.origin);
+			const AABB beforeCollider = referenceCollider_.AddPos(moveLine.origin);
 			const AABB extendCollider = beforeCollider.Extend(moveLine.diff);
 
 			const auto &vertexPos = beforeCollider.GetVertex();
@@ -267,7 +267,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 	}
 #pragma region 直下の地面の座標を取得
 
-	const AABB playerCollider = collider_.AddPos(moveLine.origin);
+	const AABB playerCollider = referenceCollider_.AddPos(moveLine.origin);
 	const AABB extendCollider = playerCollider.Extend(Vector3::up * -1000.f);
 
 	const auto &playerVertex = playerCollider.GetVertex();

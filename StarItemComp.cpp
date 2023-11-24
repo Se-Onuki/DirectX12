@@ -7,7 +7,14 @@ void StarItemComp::Init() {
 
 	modelComp->AddBone("Body", ModelManager::GetInstance()->GetModel("StarItem"));
 
+	transform_->CalcMatrix();
+	collider_.centor = transform_->GetGrobalPos();
+
+	collider_.radius = 1.f;
 }
 
 void StarItemComp::Update() {
+
+	transform_->CalcMatrix();
+	collider_.centor = transform_->GetGrobalPos();
 }

@@ -75,6 +75,8 @@ public:
 
 	void SetIsActiveGravity(bool flag) { isActiveGravity_ = flag; }
 
+	AABB GetCollider() const { return referenceCollider_.AddPos(transform_->GetGrobalPos()); }
+
 private:
 
 	Vector3 CalcMoveCollision();
@@ -92,7 +94,7 @@ private:
 	// 所属するグループ
 	int32_t registeredGroups_ = -1;
 
-	AABB collider_;
+	AABB referenceCollider_;
 
 	Input *input_;
 

@@ -180,6 +180,10 @@ void GameScene::Update() {
 
 	starItem_->Update(deltaTime);
 
+	if (Collision::IsHit(player_->GetComponent<PlayerComp>()->GetCollider(), starItem_->GetComponent<StarItemComp>()->GetCollider())) {
+		particleManager->AddParticle(ModelManager::GetInstance()->GetModel("PlayerLing"), std::make_unique<StarParticle>(starItem_->GetWorldPos()));
+	}
+
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 
 	/*if (keyBoard->IsTrigger(DIK_0)) {
