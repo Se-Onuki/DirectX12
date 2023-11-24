@@ -160,6 +160,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Entity.cpp" />
     <ClCompile Include="Header\Object\BaseCharacter.cpp" />
     <ClCompile Include="Header\Object\Block\BlockManager.cpp" />
+    <ClCompile Include="Header\Object\Fade.cpp" />
     <ClCompile Include="Header\Object\FollowCamera.cpp" />
     <ClCompile Include="Header\Object\LevelElementManager.cpp" />
     <ClCompile Include="Header\Object\Particle.cpp" />
@@ -267,6 +268,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Entity.h" />
     <ClInclude Include="Header\Object\BaseCharacter.h" />
     <ClInclude Include="Header\Object\Block\BlockManager.h" />
+    <ClInclude Include="Header\Object\Fade.h" />
     <ClInclude Include="Header\Object\FollowCamera.h" />
     <ClInclude Include="Header\Object\LevelElementManager.h" />
     <ClInclude Include="Header\Object\LevelManager.h" />

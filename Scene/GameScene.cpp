@@ -19,6 +19,8 @@
 
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
+#include "../Header/Object/Fade.h"
+
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -101,6 +103,10 @@ void GameScene::OnEnter() {
 
 	/*cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;*/
+
+	// フェードイン開始
+	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
+
 }
 
 void GameScene::OnExit() {}
@@ -234,6 +240,9 @@ void GameScene::Draw()
 
 	// スプライトの描画
 	/*sprite_->Draw();*/
+
+	// フェード演出描画
+	Fade::GetInstance()->Draw();
 
 	Sprite::EndDraw();
 

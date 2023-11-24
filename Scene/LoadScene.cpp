@@ -1,5 +1,6 @@
 #include "LoadScene.h"
 #include "TitleScene.h"
+#include "../Header/Object/Fade.h"
 
 LoadScene::LoadScene()
 {
@@ -15,7 +16,6 @@ LoadScene::~LoadScene()
 void LoadScene::OnEnter()
 {
 	// インスタンス取得
-	textureManager_ = TextureManager::GetInstance(); // テクスチャ
 	modelManager_ = ModelManager::GetInstance();	 // モデル
 
 	// 3Dモデルの読み込み
@@ -42,6 +42,9 @@ void LoadScene::OnEnter()
 	// ゲーム画面
 	TextureManager::Load("UI/TD2_3week_2/InGame/ingameStopUI.png");		// 一時停止画面UI
 	TextureManager::Load("UI/TD2_3week_2/InGame/ingameStopCursor.png"); // 停止カーソル
+
+	// モデルロードが終わり次第シーンを離れる
+	sceneManager_->ChangeScene(std::make_unique<TitleScene>(), 0.1f);
 }
 
 void LoadScene::OnExit()
@@ -51,8 +54,7 @@ void LoadScene::OnExit()
 
 void LoadScene::Update()
 {
-	// モデルロードが終わり次第シーンを離れる
-	sceneManager_->ChangeScene(std::make_unique<TitleScene>(), 0.1f);
+	
 }
 
 void LoadScene::Draw()

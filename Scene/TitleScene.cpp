@@ -6,6 +6,8 @@
 #include "../Engine/DirectBase/Model/ModelManager.h"
 #include "../Utils/SoLib/SoLib.h"
 
+#include "../Header/Object/Fade.h"
+
 TitleScene::TitleScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -29,6 +31,9 @@ void TitleScene::OnEnter() {
 	// パーティクル関連の初期化
 	particleManager_->Init(256); // パーティクルの最大数は256
 	emitterManager_->Init();	 // 発生マネージャの初期化
+
+	// フェードイン開始
+	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 2.5f);
 }
 
 void TitleScene::OnExit() {
@@ -51,6 +56,8 @@ void TitleScene::Update() {
 
 	// スペースを押すと次のシーンへ
 	if (keyBoard->IsTrigger(DIK_SPACE)) {
+		// フェードアウト開始
+		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 		// モデルロードが終わり次第シーンを離れる
 		sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
 	}
@@ -97,7 +104,8 @@ void TitleScene::Draw() {
 
 	Sprite::StartDraw(commandList);
 
-
+	// フェード演出描画
+	Fade::GetInstance()->Draw();
 
 	Sprite::EndDraw();
 

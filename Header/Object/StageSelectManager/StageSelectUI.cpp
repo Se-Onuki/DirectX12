@@ -7,7 +7,7 @@ void StageSelectUI::Init()
 	stageSelectManager_ = StageSelectManager::GetInstance();
 
 	// ステージ選択画面
-	stageSelectUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/StageSelect/UI.png")));
+	stageSelectUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/StageSelect/StageSelectUI.png")));
 	stageSelectUI_.scale_ = { 1280.0f, 720.0f };
 	
 	// ステージプレビュー画像用UI

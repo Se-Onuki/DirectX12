@@ -1,6 +1,8 @@
 #include "StageSelectScene.h"
 #include "GameScene.h"
 
+#include "../Header/Object/Fade.h"
+
 StageSelectScene::StageSelectScene()
 {
 	input_ = Input::GetInstance();
@@ -29,6 +31,9 @@ void StageSelectScene::OnEnter()
 
 	// ステージ選択マネージャの初期化
 	stageSelectManager_->Init();
+
+	// フェードイン開始
+	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 }
 
 void StageSelectScene::OnExit()
@@ -58,6 +63,10 @@ void StageSelectScene::Update()
 
 	// スペースを押すと次のシーンへ
 	if (keyBoard->IsTrigger(DIK_SPACE)) {
+
+		// フェードアウト開始
+		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+
 		// モデルロードが終わり次第シーンを離れる
 		sceneManager_->ChangeScene(std::make_unique<GameScene>(), 1.0f);
 	}
@@ -109,6 +118,9 @@ void StageSelectScene::Draw()
 
 	// ステージ選択マネージャスプライト描画
 	stageSelectManager_->SpriteDraw();
+
+	// フェード演出描画
+	Fade::GetInstance()->Draw();
 
 	Sprite::EndDraw();
 

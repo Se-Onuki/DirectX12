@@ -46,8 +46,6 @@ private: // メンバ変数
 
 	// 音インスタンス
 	Audio* audio_ = nullptr;
-	// テクスチャマネージャ
-	TextureManager* textureManager_ = nullptr;
 	// モデルマネージャインスタンス
 	ModelManager* modelManager_ = nullptr;
 

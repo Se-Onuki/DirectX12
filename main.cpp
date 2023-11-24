@@ -43,6 +43,8 @@
 #include "Engine/DirectBase/File/GlobalVariables.h"
 #include "Header/Object/Particle/ParticleManager.h"
 
+#include "Header/Object/Fade.h"
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
@@ -100,6 +102,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//Audio *const audio = Audio::GetInstance();
 
 #pragma endregion
+
+	// フェード演出の初期化
+	Fade::StaticInit(); // 静的初期化
+	Fade::GetInstance()->SetState({ 0.f,0.f }, Vector4{ 0.f,0.f,0.f,1.f });
+	Fade::GetInstance()->SetEaseFunc(SoLib::easeInQuad);
 
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 	gVariable->LoadFile();
