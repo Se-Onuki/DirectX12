@@ -213,6 +213,9 @@ void GameScene::Draw()
 
 	dxCommon->CrearDepthBuffer();
 
+
+	const auto &camera = *cameraManager_->GetUseCamera();
+
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
@@ -220,8 +223,6 @@ void GameScene::Draw()
 	light_->SetLight(commandList);
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
-
-	const auto &camera = *cameraManager_->GetUseCamera();
 
 	//model_->Draw(transform_, camera_);
 	levelManager->Draw(camera);
@@ -232,18 +233,25 @@ void GameScene::Draw()
 	// 描画
 	//playerAnim_->Draw(camera_);
 
-	Model::SetPipelineType(Model::PipelineType::kParticle);
-	static auto *const particleManager = ParticleManager::GetInstance();
+	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
 
-	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
-	particleManager->Draw(camera);
-
+	light_->SetLight(commandList);
 	static auto *const blockManager = BlockManager::GetInstance();
 
 	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
 	blockManager->Draw(camera);
 
-	// モデルの描画
+	Model::SetPipelineType(Model::PipelineType::kModel);
+
+	light_->SetLight(commandList);
+
+	player_->Draw(camera);
+
+	Model::SetPipelineType(Model::PipelineType::kParticle);
+	static auto *const particleManager = ParticleManager::GetInstance();
+
+	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
+	particleManager->Draw(camera);
 
 
 	Model::EndDraw();

@@ -777,6 +777,9 @@
     <FxCompile Include="resources\shader\Particle.VS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shader\ShaderParticle.PS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shader\Object3d.hlsli">

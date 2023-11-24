@@ -16,9 +16,9 @@
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
 
-std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 8u>, 2u> Model::graphicsPipelineState_ = { nullptr };
-std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
-std::array<std::array<PipelineState, 8u>, 2u> Model::graphicsPipelineStateClass_ = {};
+std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 8u>, 3u> Model::graphicsPipelineState_ = { nullptr };
+//std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, 2u> Model::rootSignature_ = { nullptr };
+//std::array<std::array<PipelineState, 8u>, 2u> Model::graphicsPipelineStateClass_ = {};
 std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
 Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 
@@ -95,7 +95,7 @@ void Model::CreatePipeLine() {
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderで使う
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド (b0が設定されているので0)
 
-	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Create(rootParameters.data(), rootParameters.size() - 1u);
+	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Create(rootParameters.data(), rootParameters.size());
 
 #pragma endregion
 
@@ -194,28 +194,40 @@ void Model::CreatePipeLine() {
 
 #pragma endregion
 
-	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetInputElementDescs(inputElementDescs);
-	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetShader(particleShader);
-	graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].Create(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)], depthStencilDesc);
-	BuildPileLine(PipelineType::kParticle, graphicsPipelineStateDesc);
+	//graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetInputElementDescs(inputElementDescs);
+	//graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetShader(particleShader);
+	//graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].Create(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)], depthStencilDesc);
+	BuildPipeLine(PipelineType::kParticle, graphicsPipelineStateDesc);
 
+	auto shadowPipeline = graphicsPipelineStateDesc;
+
+	PipelineState::ShaderSet shadowParticleShader;
+	shadowParticleShader.vertex = Shader::Compile(L"Particle.VS.hlsl", L"vs_6_0");
+	shadowParticleShader.pixel = Shader::Compile(L"ShaderParticle.PS.hlsl", L"ps_6_0");
+
+	shadowPipeline.VS = shadowParticleShader.vertex->GetBytecode();
+	shadowPipeline.PS = shadowParticleShader.pixel->GetBytecode();
+
+	BuildPipeLine(PipelineType::kShadowParticle, shadowPipeline);
+
+	auto modelPipeline = graphicsPipelineStateDesc;
 
 	PipelineState::ShaderSet modelShader;
 	modelShader.vertex = Shader::Compile(L"Object3d.VS.hlsl", L"vs_6_0");
 	modelShader.pixel = Shader::Compile(L"Object3d.PS.hlsl", L"ps_6_0");
 
-	graphicsPipelineStateDesc.VS = modelShader.vertex->GetBytecode();
-	graphicsPipelineStateDesc.PS = modelShader.pixel->GetBytecode();
+	modelPipeline.VS = modelShader.vertex->GetBytecode();
+	modelPipeline.PS = modelShader.pixel->GetBytecode();
 
-	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get();	// RootSignature
-	graphicsPipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	modelPipeline.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get();	// RootSignature
+	modelPipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 
-	BuildPileLine(PipelineType::kModel, graphicsPipelineStateDesc);
+	BuildPipeLine(PipelineType::kModel, modelPipeline);
 #pragma endregion
 
 }
 
-void Model::BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc) {
+void Model::BuildPipeLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc) {
 
 	auto *const device = DirectXCommon::GetInstance()->GetDevice();
 	HRESULT hr = S_FALSE;
@@ -608,12 +620,20 @@ void Model::ImGuiWidget()
 void Model::SetPipelineType(const PipelineType pipelineType) {
 	// 設定されてるシグネチャとが一致していない場合
 	if (sPipelineType_ != pipelineType) {
-		sPipelineType_ = pipelineType;
+		if (pipelineType != PipelineType::kShadowParticle) {
 
-		commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(pipelineType)].Get());
-		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(pipelineType)][0].Get());
-		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
-		commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(pipelineType)].Get());
+			commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(pipelineType)][0].Get());
+			// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
+			commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		}
+		else {
+			commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get());
+			commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(pipelineType)][0].Get());
+			// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
+			commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		}
+		sPipelineType_ = pipelineType;
 	}
 }
 
@@ -682,13 +702,13 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 }
 
 void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera<Render::CameraType::Projecction> &camera) const {
-	assert(sPipelineType_ == PipelineType::kParticle && "設定されたシグネチャがkParticleではありません");
+	assert((sPipelineType_ == PipelineType::kParticle || sPipelineType_ == PipelineType::kShadowParticle) && "設定されたシグネチャがkParticleではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 	for (auto &mesh : meshList_) {
-		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
 		mesh->Draw(commandList_, drawCount);
 	}
 }
