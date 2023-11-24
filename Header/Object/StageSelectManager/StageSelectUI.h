@@ -137,6 +137,14 @@ private: // メンバ変数
 	Vector2 startPreviewPos2_; // 始端値(二つ目用)
 	Vector2 endPreviewPos2_;   // 終端値(二つ目用)
 
+	// 選択矢印アニメーション用の座標保存用変数
+	Vector2 startSelectArrowPos_L_; // 始端値（左）
+	Vector2 startSelectArrowPos_R_; // 始端値（右）
+	Vector2 endSelectArrowPos_L_; // 終端値（左）
+	Vector2 endSelectArrowPos_R_; // 終端値（右）
+	// 選択矢印トリガー
+	bool selectArrowAnim_;
+
 	// 通常アニメーション秒数
 	float rootAnimTime_ = 2.0f;
 	float stageChangeAnimTime = 1.0f;
@@ -146,6 +154,7 @@ private: // メンバ変数
 
 	// ステージプレビューのアニメーションタイマー
 	SoLib::DeltaTimer prevAnimTimer_;
+	// 選択矢印のアニメーションタイマー
+	SoLib::DeltaTimer selectArrowTimer_;
 
 };
-
