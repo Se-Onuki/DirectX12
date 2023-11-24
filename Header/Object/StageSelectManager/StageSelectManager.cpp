@@ -20,17 +20,23 @@ void StageSelectManager::Update([[maybe_unused]]float deltaTime)
 	static const auto* const keyBoard = input_->GetDirectInput();
 
 	// キー入力をすると選択番号を変更
-	if (keyBoard->IsTrigger(DIK_RIGHTARROW)) {
-		if(selectedStageNumber_ < maxLevelCount_ - 1)
-			selectedStageNumber_++;
-		else
-			selectedStageNumber_ = 0;
-	}
-	else if (keyBoard->IsTrigger(DIK_LEFTARROW)) {
-		if (selectedStageNumber_ > 0)
-			selectedStageNumber_--;
-		else
-			selectedStageNumber_ = maxLevelCount_ - 1;
+	if (not ui_.GetIsPlayingAnim()) {
+		if (keyBoard->IsTrigger(DIK_RIGHTARROW)) {
+			if (selectedStageNumber_ < maxLevelCount_ - 1)
+				selectedStageNumber_++;
+			else
+				selectedStageNumber_ = 0;
+
+			ui_.SetIsRight(true);
+		}
+		else if (keyBoard->IsTrigger(DIK_LEFTARROW)) {
+			if (selectedStageNumber_ > 0)
+				selectedStageNumber_--;
+			else
+				selectedStageNumber_ = maxLevelCount_ - 1;
+
+			ui_.SetIsRight(false);
+		}
 	}
 
 	// UIの更新処理

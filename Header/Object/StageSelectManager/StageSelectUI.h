@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <optional>
 #include "../../../Engine/DirectBase/File/GlobalVariables.h"
 #include "../../../Utils/SoLib/SoLib.h"
 #include "../../../Engine/DirectBase/2D/Sprite.h"
@@ -38,6 +39,14 @@ private:// サブクラス
 			}
 		}
 	};
+	
+	/// <summary>
+	/// UI行動列挙子
+	/// </summary>
+	enum Behavior {
+		kRoot,
+		KChangeStage,
+	};
 
 public: // メンバ関数
 
@@ -62,17 +71,42 @@ public: // メンバ関数
 	/// </summary>
 	void DisplayImGui();
 
+public: // アクセッサ等
+
+	/// <summary>
+	/// アニメーション再生中かのゲッター
+	/// </summary>
+	/// <returns>アニメーション再生中か</returns>
+	bool GetIsPlayingAnim() { return isPlayingAnim_; }
+
+	/// <summary>
+	/// 左右どちらのボタンを押したかのセッター
+	/// </summary>
+	/// <param name="isRight">右か左か</param>
+	void SetIsRight(bool isRight) { isRight_ = isRight; }
+
 public: // アニメーション関数
 
 	/// <summary>
-	/// UIの通常アニメーションの初期化
+	/// 通常アニメーション初期化
 	/// </summary>
-	void InitializeIdle();
+	void RootInitialize();
 
 	/// <summary>
 	/// 通常
 	/// </summary>
-	void IdleUpdate();
+	void RootUpdate();
+
+	/// <summary>
+	///	選択ステージ変更アニメーション初期化
+	/// </summary>
+	/// <param name="isRight">右</param>
+	void ChangeInitialize(bool isRight);
+
+	/// <summary>
+	/// 選択ステージ変更アニメーション初期化
+	/// </summary>
+	void ChangeUpdate();
 
 private: // メンバ変数
 
@@ -88,6 +122,27 @@ private: // メンバ変数
 	UISprite stagePreviewUI2_; // ステージプレビュー(アニメーション用)
 	UISprite leftArrowUI_;   // ステージ選択画面左矢印
 	UISprite rightArrowUI_;  // ステージ選択画面右矢印
+
+	// ふるまい
+	Behavior behavior_ = Behavior::kRoot;
+	// ふるまいリクエスト
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	// 選択ステージアニメーション切り替えトリガー
+	bool isRight_ = false;
+
+	// プレビュー画像アニメーション用の座標保存用変数
+	Vector2 startPreviewPos_; // 始端値
+	Vector2 endPreviewPos_;	  // 終端値
+	Vector2 startPreviewPos2_; // 始端値(二つ目用)
+	Vector2 endPreviewPos2_;   // 終端値(二つ目用)
+
+	// 通常アニメーション秒数
+	float rootAnimTime_ = 2.0f;
+	float stageChangeAnimTime = 1.0f;
+
+	// 演出トリガー
+	bool isPlayingAnim_ = false;
 
 	// ステージプレビューのアニメーションタイマー
 	SoLib::DeltaTimer prevAnimTimer_;
