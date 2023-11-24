@@ -119,9 +119,11 @@ void GameScene::OnEnter() {
 
 	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
 
-	starItem_ = std::make_unique<Entity>();
+	levelManager->AddItem(0u, BaseTransform{ .translate{0.f,0.5f,5.f} });
 
-	starItem_->AddComponent<StarItemComp>();
+	/*starItem_ = std::make_unique<Entity>();
+
+	starItem_->AddComponent<StarItemComp>();*/
 
 	/*cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;*/
@@ -178,11 +180,11 @@ void GameScene::Update() {
 	followCamera_->ImGuiWidget();
 	followCamera_->Update(deltaTime);
 
-	starItem_->Update(deltaTime);
+	//starItem_->Update(deltaTime);
 
-	if (Collision::IsHit(player_->GetComponent<PlayerComp>()->GetCollider(), starItem_->GetComponent<StarItemComp>()->GetCollider())) {
+	/*if (Collision::IsHit(player_->GetComponent<PlayerComp>()->GetCollider(), starItem_->GetComponent<StarItemComp>()->GetCollider())) {
 		particleManager->AddParticle(ModelManager::GetInstance()->GetModel("PlayerLing"), std::make_unique<StarParticle>(starItem_->GetWorldPos()));
-	}
+	}*/
 
 	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
 
@@ -243,7 +245,7 @@ void GameScene::Draw()
 
 	player_->Draw(camera);
 
-	starItem_->Draw(camera);
+	//starItem_->Draw(camera);
 	// 描画
 	//playerAnim_->Draw(camera_);
 

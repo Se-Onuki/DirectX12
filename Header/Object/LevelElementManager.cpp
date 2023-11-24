@@ -4,6 +4,7 @@
 #include "../../Utils/SoLib/SoLib_ImGui.h"
 
 #include "imgui.h"
+#include "../../StarItemComp.h"
 
 void LevelElementManager::ImGuiWidget() {
 
@@ -123,6 +124,10 @@ void LevelElementManager::AddBlock(const uint32_t key, const AABB &box) {
 	blockCollider_[key].AddBox(box);
 }
 
+void LevelElementManager::AddItem(const uint32_t key, const BaseTransform &srt) {
+	blockCollider_[key].AddItem(srt);
+}
+
 LevelElementManager::Platform *const LevelElementManager::GetPlatform(int32_t index) {
 	if (index < 0) {
 		return nullptr;
@@ -143,6 +148,18 @@ void LevelElementManager::Platform::AddBox(const AABB &aabb) {
 	boxList_.emplace_back(aabb, this);
 	auto &box = boxList_.back();
 	box.transform_->parent_ = &center_;
+}
+
+void LevelElementManager::Platform::AddItem(const BaseTransform &srt) {
+	starItem_.emplace_back(std::make_unique<Entity>());
+	auto *const entity = starItem_.back().get();
+
+	//auto *const itemComp = 
+	entity->AddComponent<StarItemComp>();
+
+	entity->transform_ = srt;
+	entity->transform_.parent_ = &this->center_;
+
 }
 
 void LevelElementManager::Platform::CalcCollision() {
@@ -179,6 +196,9 @@ void LevelElementManager::Platform::Update(float deltaTime) {
 		startRot_ = targetRot_;
 		this->CalcCollision();
 	}
+	for (auto &item : starItem_) {
+		item->Update(deltaTime);
+	}
 }
 
 void LevelElementManager::Platform::AddRotate(const float targetRot) {
@@ -191,6 +211,9 @@ void LevelElementManager::Platform::AddRotate(const float targetRot) {
 void LevelElementManager::Platform::Draw(const Camera3D &camera) const {
 	for (const auto &box : boxList_) {
 		LevelElementManager::GetInstance()->GetGroundModel()[static_cast<uint32_t>(box.groundType_)]->Draw(box.transform_, camera);
+	}
+	for (const auto &item : starItem_) {
+		item->Draw(camera);
 	}
 }
 

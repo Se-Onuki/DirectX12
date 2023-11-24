@@ -10,6 +10,7 @@
 #include "../../Utils/SoLib/SoLib_Timer.h"
 #include <array>
 #include <map>
+#include "../Entity/Entity.h"
 
 class LevelElementManager {
 	LevelElementManager() = default;
@@ -55,6 +56,9 @@ public:
 		VariantItem<float> vLerpTime_{ "LerpTime",1.f };
 
 		void AddBox(const AABB &box);
+
+		void AddItem(const BaseTransform &srt);
+
 		void CalcCollision();
 
 		void Update(float deltaTime);
@@ -76,7 +80,14 @@ public:
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
 
+		std::list<std::unique_ptr<Entity>> starItem_;
+
 		std::list<Box> boxList_;
+	};
+
+	struct StateLog {
+		Entity *item_ = nullptr;
+		std::list<std::pair<uint32_t, float>> angleList_;
 	};
 
 public:
@@ -103,6 +114,8 @@ public:
 	/// @param transform ブロックのSRT
 	void AddBlock(const uint32_t key, const AABB &box);
 
+	void AddItem(const uint32_t key, const BaseTransform &srt);
+
 	const LineBase &GetStageLine() const { return stageLine_; }
 
 	Platform *const GetPlatform(int32_t index);
@@ -117,6 +130,8 @@ private:
 	Transform lineStart_;
 	Transform lineEnd_;
 	LineBase stageLine_;
+
+	std::list<StateLog> stateLog_;
 
 	bool debugDrawer_ = false;
 };

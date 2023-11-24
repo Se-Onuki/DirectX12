@@ -8,11 +8,16 @@ public:
 	~StarItemComp() = default;
 
 	void Init() override;
+	void Reset() override;
 	void Update() override;
+
+	void CollectItem();
 
 	const Sphere &GetCollider() const { return collider_; }
 
 private:
+
+	bool isCollected_ = true;
 
 	Sphere collider_;
 
