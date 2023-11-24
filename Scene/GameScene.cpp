@@ -1,21 +1,22 @@
 #include "GameScene.h"
 
-#include <imgui.h>
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
 #include "../Engine/DirectBase/Model/ModelManager.h"
+#include <imgui.h>
 
 #include "TitleScene.h"
 
-#include "../Header/Entity/Component/ModelComp.h"
-#include "../Utils/SoLib/SoLib_ImGui.h"
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
-#include "../Header/Entity/Component/Rigidbody.h"
-#include "../Header/Entity/Component/PlayerComp.h"
 #include "../Header/Entity/Component/Collider.h"
-#include "../Header/Entity/Component/PlayerAnimComp.h"
 #include "../Header/Entity/Component/FollowCameraComp.h"
+#include "../Header/Entity/Component/ModelComp.h"
+#include "../Header/Entity/Component/PlayerAnimComp.h"
+#include "../Header/Entity/Component/PlayerComp.h"
+#include "../Header/Entity/Component/Rigidbody.h"
+#include "../Utils/SoLib/SoLib_ImGui.h"
 
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
+#include "../Header/Object/Block/BlockManager.h"
 
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../StarItemComp.h"
@@ -40,13 +41,17 @@ void GameScene::OnEnter() {
 	static auto *const particleManager = ParticleManager::GetInstance();
 	static auto *const particleEmitterManager = ParticleEmitterManager::GetInstance();
 
+	static auto *const blockManager = BlockManager::GetInstance();
+
+	blockManager->Init(8192u);
+
 	// カメラマネージャーの初期化
 	cameraManager_->Init();
 	// テスト用新規カメラを追加
 	cameraManager_->AddCamera("TestCamera");
 
 	// パーティクルマネージャの初期化
-	particleManager->Init(256); // パーティクルの最大数は256
+	particleManager->Init(256u); // パーティクルの最大数は256
 	// パーティクルエミッタマネージャーの初期化
 	particleEmitterManager->Init();
 
@@ -167,19 +172,10 @@ void GameScene::Update() {
 	followCamera_->ImGuiWidget();
 	followCamera_->Update(deltaTime);
 
-	//starItem_->Update(deltaTime);
+	static auto *const blockManager = BlockManager::GetInstance();
 
-	/*if (Collision::IsHit(player_->GetComponent<PlayerComp>()->GetCollider(), starItem_->GetComponent<StarItemComp>()->GetCollider())) {
-		particleManager->AddParticle(ModelManager::GetInstance()->GetModel("PlayerLing"), std::make_unique<StarParticle>(starItem_->GetWorldPos()));
-	}*/
-
-	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
-
-	/*if (keyBoard->IsTrigger(DIK_0)) {
-		if (++cameraTarget_ == cameraList_.end()) {
-			cameraTarget_ = cameraList_.begin();
-		}
-	}*/
+	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
+	blockManager->Update();
 
 	// カメラマネージャーの更新
 	cameraManager_->Update(deltaTime);
@@ -241,6 +237,11 @@ void GameScene::Draw()
 
 	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
 	particleManager->Draw(camera);
+
+	static auto *const blockManager = BlockManager::GetInstance();
+
+	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
+	blockManager->Draw(camera);
 
 	// モデルの描画
 

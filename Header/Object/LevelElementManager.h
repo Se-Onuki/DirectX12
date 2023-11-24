@@ -32,6 +32,8 @@ public:
 	public:
 		Box(const AABB &aabb, Platform *parent);
 
+		void CreateBox();
+
 		GroundType groundType_ = GroundType::kGrass;
 
 		Transform transform_;

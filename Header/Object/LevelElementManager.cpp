@@ -2,6 +2,7 @@
 #include "../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../Utils/SoLib/SoLib_Easing.h"
 #include "../../Utils/SoLib/SoLib_ImGui.h"
+#include "../Object/Block/BlockManager.h"
 
 #include "imgui.h"
 #include "../../StarItemComp.h"
@@ -148,6 +149,9 @@ void LevelElementManager::Platform::AddBox(const AABB &aabb) {
 	boxList_.emplace_back(aabb, this);
 	auto &box = boxList_.back();
 	box.transform_->parent_ = &center_;
+
+	box.CreateBox();
+
 }
 
 void LevelElementManager::Platform::AddItem(const BaseTransform &srt) {
@@ -166,6 +170,8 @@ void LevelElementManager::Platform::CalcCollision() {
 	center_.CalcMatrix();
 	const auto &affineMat = center_.matWorld_;
 	collisionBox_.clear();
+
+	static auto *const blockManager = BlockManager::GetInstance();
 
 	for (auto &box : boxList_) {
 		AABB newBox = box.referenceBox_;
@@ -209,8 +215,9 @@ void LevelElementManager::Platform::AddRotate(const float targetRot) {
 }
 
 void LevelElementManager::Platform::Draw(const Camera3D &camera) const {
+	static auto *const levelElement = LevelElementManager::GetInstance();
 	for (const auto &box : boxList_) {
-		LevelElementManager::GetInstance()->GetGroundModel()[static_cast<uint32_t>(box.groundType_)]->Draw(box.transform_, camera);
+		levelElement->GetGroundModel()[static_cast<uint32_t>(box.groundType_)]->Draw(box.transform_, camera);
 	}
 	for (const auto &item : starItem_) {
 		item->Draw(camera);
@@ -278,10 +285,37 @@ void LevelElementManager::Platform::ImGuiWidget() {
 
 LevelElementManager::Box::Box(const AABB &aabb, Platform *parent) {
 	transform_->translate = aabb.GetCentor();
-	transform_->scale = aabb.GetRadius();
+	//transform_->scale = aabb.GetRadius();
 	parent_ = parent;
 
 	referenceBox_ = aabb;
+}
+
+void LevelElementManager::Box::CreateBox() {
+
+	static auto *const blockManager = BlockManager::GetInstance();
+	static auto *const levelElement = LevelElementManager::GetInstance();
+
+	const Vector3 boxSize = referenceBox_.GetRadius();
+	const Vector3 boxMin = -referenceBox_.GetRadius() + Vector3::one;
+
+	Vector3 diff{};
+	for (diff.x = 0.f; diff.x < boxSize.x; diff.x++) {
+		for (diff.y = 0.f; diff.y < boxSize.y; diff.y++) {
+			for (diff.z = 0.f; diff.z < boxSize.z; diff.z++) {
+
+				IBlock block;
+				block.transform_.parent_ = &transform_;
+
+				block.transform_.translate = boxMin + diff * 2.f;
+				block.transform_.scale = Vector3::one;
+
+				blockManager->AddBox(levelElement->GetGroundModel()[static_cast<uint32_t>(this->groundType_)], std::move(block));
+
+			}
+
+		}
+	}
 }
 
 bool LevelElementManager::Box::ImGuiWidget() {
