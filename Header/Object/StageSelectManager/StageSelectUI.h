@@ -62,6 +62,18 @@ public: // メンバ関数
 	/// </summary>
 	void DisplayImGui();
 
+public: // アニメーション関数
+
+	/// <summary>
+	/// UIの通常アニメーションの初期化
+	/// </summary>
+	void InitializeIdle();
+
+	/// <summary>
+	/// 通常
+	/// </summary>
+	void IdleUpdate();
+
 private: // メンバ変数
 
 	// ステージ選択マネージャー
@@ -73,6 +85,7 @@ private: // メンバ変数
 	/// スプライト関係
 	UISprite stageSelectUI_; // ステージ選択画面
 	UISprite stagePreviewUI_; // ステージプレビュー
+	UISprite stagePreviewUI2_; // ステージプレビュー(アニメーション用)
 	UISprite leftArrowUI_;   // ステージ選択画面左矢印
 	UISprite rightArrowUI_;  // ステージ選択画面右矢印
 

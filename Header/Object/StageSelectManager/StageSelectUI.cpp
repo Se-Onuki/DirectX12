@@ -16,6 +16,11 @@ void StageSelectUI::Init()
 	stagePreviewUI_.scale_ = { 720.0f, 480.0f };
 	stagePreviewUI_.anchorPoint_ = { 0.5f, 0.5f };
 
+	stagePreviewUI2_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/StageSelect/Previews/Preview1.png")));
+	stagePreviewUI2_.position_ = {- 1280.0f / 2.0f, 380.0f };
+	stagePreviewUI2_.scale_ = { 720.0f, 480.0f };
+	stagePreviewUI2_.anchorPoint_ = { 0.5f, 0.5f };
+
 	// 左矢印UI
 	leftArrowUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/StageSelect/StageSelectCursorLeft.png")));
 	leftArrowUI_.position_ = { 35.0f, 400.0f };
@@ -46,6 +51,7 @@ void StageSelectUI::Draw()
 	// 各UIスプライトの描画
 	stageSelectUI_.Draw(); // ステージ選択画面
 	stagePreviewUI_.Draw(); // ステージプレビュー
+	stagePreviewUI2_.Draw(); // ステージプレビュー(アニメーション用)
 	leftArrowUI_.Draw();   // ステージ選択画面左矢印
 	rightArrowUI_.Draw();  // ステージ選択画面右矢印
 }
@@ -55,6 +61,7 @@ void StageSelectUI::DisplayImGui()
 	ImGui::Begin("StageSelectUI");
 	stageSelectUI_.DisplayImGui("StageSelectUI");
 	stagePreviewUI_.DisplayImGui("StagePreviewUI");
+	stagePreviewUI2_.DisplayImGui("StagePreviewUI2");
 	leftArrowUI_.DisplayImGui("LeftArrowUI");
 	rightArrowUI_.DisplayImGui("RightArrowUI");
 	ImGui::End();

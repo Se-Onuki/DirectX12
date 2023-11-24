@@ -58,7 +58,7 @@ void TitleScene::Update() {
 	if (keyBoard->IsTrigger(DIK_SPACE)) {
 		// フェードアウト開始
 		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
-		// モデルロードが終わり次第シーンを離れる
+		// 指定した秒数後シーンチェンジ
 		sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
 	}
 
