@@ -118,6 +118,9 @@
     <Filter Include="Header\Entity\Object\Block">
       <UniqueIdentifier>{0701f625-dfe0-4534-bda1-06815d39c16b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\StageSelectManager">
+      <UniqueIdentifier>{c6de19ec-3893-48d7-b60b-c4ec21f74ef3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -389,6 +392,21 @@
     </ClCompile>
     <ClCompile Include="StarItemComp.cpp">
       <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\LoadScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\StageSelectScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\StageSelectManager\StageSelectManager.cpp">
+      <Filter>Header\Entity\Object\StageSelectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\StageSelectManager\StageSelectUI.cpp">
+      <Filter>Header\Entity\Object\StageSelectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Fade.cpp">
+      <Filter>Header\Entity\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -715,6 +733,21 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerState\EndRotateState.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\LoadScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\StageSelectScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\StageSelectManager\StageSelectManager.h">
+      <Filter>Header\Entity\Object\StageSelectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\StageSelectManager\StageSelectUI.h">
+      <Filter>Header\Entity\Object\StageSelectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Fade.h">
+      <Filter>Header\Entity\Object</Filter>
     </ClInclude>
     <ClInclude Include="StarItemComp.h">
       <Filter>Header\Entity\Component</Filter>

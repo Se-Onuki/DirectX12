@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "../Header/Object/Fade.h"
 
 SceneManager *IScene::sceneManager_ = nullptr;
 
@@ -36,6 +37,10 @@ void SceneManager::ChangeScene(std::unique_ptr<IScene> nextScene, const float tr
 }
 
 void SceneManager::Update(float deltaTime) {
+	
+	// フェード演出の更新
+	Fade::GetInstance()->Update(deltaTime);
+
 	if (transitionTimer_.Update(deltaTime) && transitionTimer_.IsFinish()) {
 		ChangeScene(std::move(nextScene_));
 	}
