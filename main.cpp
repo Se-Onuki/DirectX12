@@ -34,6 +34,7 @@
 #include "Engine/DirectBase/Base/ImGuiManager.h"
 
 #include "Scene/SceneManager.h"
+#include "Scene/LoadScene.h"
 #include "Scene/TitleScene.h"
 #include "Scene/GameScene.h"
 #include "Engine/DirectBase/Input/Input.h"
@@ -41,6 +42,8 @@
 
 #include "Engine/DirectBase/File/GlobalVariables.h"
 #include "Header/Object/Particle/ParticleManager.h"
+
+#include "Header/Object/Fade.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -100,13 +103,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma endregion
 
+	// フェード演出の初期化
+	Fade::StaticInit(); // 静的初期化
+	Fade::GetInstance()->SetState({ 0.f,0.f }, Vector4{ 0.f,0.f,0.f,1.f });
+	Fade::GetInstance()->SetEaseFunc(SoLib::easeInQuad);
+
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 	gVariable->LoadFile();
 
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->Init();
-	sceneManager->ChangeScene(std::make_unique<GameScene>());
+	sceneManager->ChangeScene(std::make_unique<LoadScene>());
 
 
 	// ウィンドウのxボタンが押されるまでループ

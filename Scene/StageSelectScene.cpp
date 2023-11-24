@@ -1,29 +1,26 @@
-#include "TitleScene.h"
-
-#include <imgui.h>
 #include "StageSelectScene.h"
-#include "../Engine/DirectBase/Base/DirectXCommon.h"
-#include "../Engine/DirectBase/Model/ModelManager.h"
-#include "../Utils/SoLib/SoLib.h"
+#include "GameScene.h"
 
 #include "../Header/Object/Fade.h"
 
-TitleScene::TitleScene() {
+StageSelectScene::StageSelectScene()
+{
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	cameraManager_ = CameraManager::GetInstance();
 }
 
-TitleScene::~TitleScene() {
-}
+StageSelectScene::~StageSelectScene(){}
 
-void TitleScene::OnEnter() {
+void StageSelectScene::OnEnter()
+{
 	// ライトの生成
 	light_.reset(DirectionLight::Create());
 
 	// インスタンス取得
 	particleManager_ = ParticleManager::GetInstance();		 // パーティクルマネージャ
 	emitterManager_ = ParticleEmitterManager::GetInstance(); // 発生マネージャ
+	stageSelectManager_ = StageSelectManager::GetInstance(); // ステージ選択マネージャ
 
 	// カメラマネージャーの初期化
 	cameraManager_->Init();
@@ -32,14 +29,20 @@ void TitleScene::OnEnter() {
 	particleManager_->Init(256); // パーティクルの最大数は256
 	emitterManager_->Init();	 // 発生マネージャの初期化
 
+	// ステージ選択マネージャの初期化
+	stageSelectManager_->Init();
+
 	// フェードイン開始
-	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 2.5f);
+	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 }
 
-void TitleScene::OnExit() {
+void StageSelectScene::OnExit()
+{
+	
 }
 
-void TitleScene::Update() {
+void StageSelectScene::Update()
+{
 
 	// キーボードの入力取得
 	static const auto* const keyBoard = input_->GetDirectInput();
@@ -51,22 +54,28 @@ void TitleScene::Update() {
 	emitterManager_->Update(deltaTime);  // 発生マネージャ
 	particleManager_->Update(deltaTime); // パーティクル
 
+	// ステージ選択マネージャの更新
+	stageSelectManager_->Update(deltaTime);
+	stageSelectManager_->DisplayImGui();
+
 	// カメラマネージャーの更新
 	cameraManager_->Update(deltaTime);
 
 	// スペースを押すと次のシーンへ
 	if (keyBoard->IsTrigger(DIK_SPACE)) {
+
 		// フェードアウト開始
 		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
-		// 指定した秒数後シーンチェンジ
-		sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
-	}
 
+		// モデルロードが終わり次第シーンを離れる
+		sceneManager_->ChangeScene(std::make_unique<GameScene>(), 1.0f);
+	}
 }
 
-void TitleScene::Draw() {
-	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
-	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+void StageSelectScene::Draw()
+{
+	DirectXCommon* const dxCommon = DirectXCommon::GetInstance();
+	ID3D12GraphicsCommandList* const commandList = dxCommon->GetCommandList();
 
 #pragma region 背面スプライト
 
@@ -90,6 +99,9 @@ void TitleScene::Draw() {
 
 	// モデルの描画
 
+	// ステージ選択マネージャモデル描画
+	stageSelectManager_->Draw(*cameraManager_->GetUseCamera());
+
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 	static auto* const particleManager = ParticleManager::GetInstance();
 
@@ -104,11 +116,13 @@ void TitleScene::Draw() {
 
 	Sprite::StartDraw(commandList);
 
+	// ステージ選択マネージャスプライト描画
+	stageSelectManager_->SpriteDraw();
+
 	// フェード演出描画
 	Fade::GetInstance()->Draw();
 
 	Sprite::EndDraw();
 
 #pragma endregion
-
 }
