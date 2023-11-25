@@ -178,8 +178,8 @@ Vector3 PlayerComp::CalcMoveCollision() {
 								if (normal * line.diff < 0.f) {
 									Vector3 minDiff = box.min - line.origin;
 									Vector3 maxDiff = box.max - line.origin;
-									if (normal * line.diff == -1.f) {
-
+									if (isLanding_) {
+										rigidbody->ApplyInstantForce(Vector3::up * 0.5f);
 									}
 									if (value < t) {
 										t = value;
