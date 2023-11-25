@@ -139,6 +139,10 @@ public:
 
 	const LineBase &GetStageLine() const { return stageLine_; }
 
+	/// @brief 回転回数の変更
+	/// @param count 回転回数の加算値
+	void AddRotateCount(const int32_t count);
+
 	Platform *const GetPlatform(int32_t index);
 
 	using PlatformMap = std::map<uint32_t, Platform>;
@@ -147,7 +151,7 @@ public:
 	const auto &GetGroundModel() const { return groundModels_; }
 
 	VariantItem<float> vLerpTime_{ "LerpTime",1.f };
-
+	VariantItem<int32_t> vMaxRotateCount_{ "MaxRotateCount", 2 };
 private:
 	std::array<Model *, 2u> groundModels_ = {};
 	Transform lineStart_;
@@ -164,8 +168,7 @@ private:
 
 	void SetTransferData() const;
 
-	int32_t rotateCount_;
-	int32_t maxRotateCount_;
+	int32_t remainRotateCount_;
 
 	bool debugDrawer_ = false;
 };

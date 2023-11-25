@@ -152,6 +152,8 @@ void LevelElementManager::Init() {
 	undoLog_ = std::nullopt;
 	undoTimer_.Clear();
 
+	remainRotateCount_ = 0;
+
 }
 
 void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
@@ -225,6 +227,12 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(int32_t in
 		return nullptr;
 	}
 	return &itPlatform->second;
+}
+
+void LevelElementManager::AddRotateCount(const int32_t count) {
+
+	remainRotateCount_ = std::clamp(remainRotateCount_ + count, 0, vMaxRotateCount_.GetItem());
+
 }
 
 void LevelElementManager::SetTransferData() const {
@@ -318,6 +326,7 @@ void LevelElementManager::Platform::Update(float deltaTime) {
 
 void LevelElementManager::Platform::AddRotate(const float targetRot) {
 	if (timer_.IsFinish()) {
+
 		targetRot_ = Angle::Mod(rotateAxis_ * targetRot + startRot_);
 		timer_.Start(lerpTime_);
 	}
