@@ -1,5 +1,6 @@
 #include "StageSelectScene.h"
 #include "GameScene.h"
+#include "TitleScene.h"
 
 #include "../Header/Object/Fade.h"
 
@@ -32,6 +33,8 @@ void StageSelectScene::OnEnter()
 	// ステージ選択マネージャの初期化
 	stageSelectManager_->Init();
 
+	sceneChanging_ = false;
+
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 }
@@ -62,14 +65,27 @@ void StageSelectScene::Update()
 	cameraManager_->Update(deltaTime);
 
 	// スペースを押すと次のシーンへ
-	if (keyBoard->IsTrigger(DIK_SPACE)) {
-
-		// フェードアウト開始
-		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
-
-		// モデルロードが終わり次第シーンを離れる
-		sceneManager_->ChangeScene(std::make_unique<GameScene>(), 1.0f);
+	if (keyBoard->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
+		if (!sceneChanging_) {
+			// フェードアウト開始
+			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+			// 指定した秒数後シーンチェンジ
+			sceneManager_->ChangeScene(std::make_unique<GameScene>(), 1.0f);
+			sceneChanging_ = true;
+		}
 	}
+
+	// エスケープを押すとタイトルへ
+	if (keyBoard->IsTrigger(DIK_ESCAPE) || input_->GetXInput()->IsTrigger(KeyCode::B)) {
+		if (!sceneChanging_) {
+			// フェードアウト開始
+			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+			// 指定した秒数後シーンチェンジ
+			sceneManager_->ChangeScene(std::make_unique<TitleScene>(), 1.0f);
+			sceneChanging_ = true;
+		}
+	}
+
 }
 
 void StageSelectScene::Draw()

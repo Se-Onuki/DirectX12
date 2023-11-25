@@ -1,6 +1,7 @@
 #pragma once
 #include"../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../../Entity/Entity.h"
+#include "../../../Engine/DirectBase/Input/Input.h"
 #include "../../../Engine/DirectBase/2D/Sprite.h"
 
 /// <summary>
@@ -60,6 +61,9 @@ public: // メンバ関数
 
 private: // メンバ変数
 
+	// 入力検知用
+	Input* input_ = nullptr;
+
 	// カメラマネージャー
 	CameraManager* cameraManager_ = nullptr;
 
@@ -70,7 +74,7 @@ private: // メンバ変数
 	std::unique_ptr<Entity> playerModel_;
 	// ブロック
 	std::unique_ptr<Entity> blockModel_;
-	
+
 	UISprite titleUI_;
 	UISprite circleUI_;
 

@@ -38,6 +38,8 @@ void TitleScene::OnEnter() {
 	titleManager_ = std::make_unique<TitleManager>();
 	titleManager_->Initialize();
 
+	sceneChanging_ = false;
+
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 2.5f);
 }
@@ -69,12 +71,14 @@ void TitleScene::Update() {
 #endif // _DEBUG // デバッグ時のみImGuiを描画
 
 	// スペースを押すと次のシーンへ
-	if (keyBoard->IsTrigger(DIK_SPACE)) {
-		// フェードアウト開始
-		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
-		// 指定した秒数後シーンチェンジ
-		sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
-		
+	if (keyBoard->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
+		if (!sceneChanging_) {
+			// フェードアウト開始
+			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+			// 指定した秒数後シーンチェンジ
+			sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
+			sceneChanging_ = true;
+		}	
 	}
 
 }

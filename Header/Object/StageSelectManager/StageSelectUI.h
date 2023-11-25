@@ -122,6 +122,7 @@ private: // メンバ変数
 	UISprite stagePreviewUI2_; // ステージプレビュー(アニメーション用)
 	UISprite leftArrowUI_;   // ステージ選択画面左矢印
 	UISprite rightArrowUI_;  // ステージ選択画面右矢印
+	UISprite buttonUI_;
 
 	// ふるまい
 	Behavior behavior_ = Behavior::kRoot;

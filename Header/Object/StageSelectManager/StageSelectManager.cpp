@@ -21,7 +21,7 @@ void StageSelectManager::Update([[maybe_unused]]float deltaTime)
 
 	// キー入力をすると選択番号を変更
 	if (not ui_.GetIsPlayingAnim()) {
-		if (keyBoard->IsTrigger(DIK_RIGHTARROW)) {
+		if (keyBoard->IsTrigger(DIK_RIGHTARROW) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_RIGHT)) {
 			if (selectedStageNumber_ < maxLevelCount_ - 1)
 				selectedStageNumber_++;
 			else
@@ -29,7 +29,7 @@ void StageSelectManager::Update([[maybe_unused]]float deltaTime)
 
 			ui_.SetIsRight(true);
 		}
-		else if (keyBoard->IsTrigger(DIK_LEFTARROW)) {
+		else if (keyBoard->IsTrigger(DIK_LEFTARROW) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_LEFT)) {
 			if (selectedStageNumber_ > 0)
 				selectedStageNumber_--;
 			else

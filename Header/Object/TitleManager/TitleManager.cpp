@@ -7,6 +7,8 @@ void TitleManager::Initialize()
 {
 	// インスタンス取得
 	cameraManager_ = CameraManager::GetInstance();
+	input_ = Input::GetInstance();
+
 	cameraManager_->AddCamera("BlurCamera");
 	cameraManager_->cameraList_->GetCamera("BlurCamera")->translation_ = cameraManager_->GetUseCamera()->translation_;
 	cameraManager_->cameraList_->GetCamera("BlurCamera")->rotation_ = cameraManager_->GetUseCamera()->rotation_;
@@ -107,6 +109,13 @@ void TitleManager::Update([[maybe_unused]]float deltaTime)
 	}
 
 	timer_.Update(deltaTime);
+
+	if(input_->GetInputType() == Input::InputType::kPad){
+		buttonUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/Title/Start_CR.png"));
+	}
+	else {
+		buttonUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/Title/Start_Key.png"));
+	}
 
 }
 

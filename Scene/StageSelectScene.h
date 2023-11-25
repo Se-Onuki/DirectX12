@@ -57,5 +57,8 @@ private: // メンバ変数
 	// 平行光源
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
+	// シーン遷移中トリガー
+	bool sceneChanging_ = false;
+
 };
 

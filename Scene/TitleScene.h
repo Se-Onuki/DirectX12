@@ -47,4 +47,7 @@ private:
 
 	// タイトルマネージャー
 	std::unique_ptr<TitleManager> titleManager_ = nullptr;
+
+	// シーン遷移中トリガー
+	bool sceneChanging_ = false;
 };

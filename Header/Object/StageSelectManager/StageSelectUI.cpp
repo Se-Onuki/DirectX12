@@ -33,6 +33,11 @@ void StageSelectUI::Init()
 	rightArrowUI_.scale_ = { 159.0f, 145.0f };
 	rightArrowUI_.anchorPoint_ = { 0.0f, 0.5f };
 
+	buttonUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/StageSelect/Select_Key.png")));
+	buttonUI_.position_ = { 740.0f, 675.0f };
+	buttonUI_.scale_ = { 960.0f, 96.0f };
+	buttonUI_.anchorPoint_ = { 0.5f, 0.5f };
+
 	// 演出中ではない
 	isPlayingAnim_ = false;
 
@@ -81,6 +86,13 @@ void StageSelectUI::Update([[maybe_unused]] float deltaTime)
 		break;
 	}
 
+	if (Input::GetInstance()->GetInputType() == Input::InputType::kPad) {
+		buttonUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/StageSelect/Select_CR.png"));
+	}
+	else {
+		buttonUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/StageSelect/Select_Key.png"));
+	}
+
 	// 演出タイマーの更新
 	prevAnimTimer_.Update(deltaTime);
 	selectArrowTimer_.Update(deltaTime);
@@ -94,6 +106,7 @@ void StageSelectUI::Draw()
 	stagePreviewUI2_.Draw(); // ステージプレビュー(アニメーション用)
 	leftArrowUI_.Draw();   // ステージ選択画面左矢印
 	rightArrowUI_.Draw();  // ステージ選択画面右矢印
+	buttonUI_.Draw();
 }
 
 void StageSelectUI::DisplayImGui()
