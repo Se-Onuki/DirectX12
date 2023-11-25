@@ -15,6 +15,8 @@
 #include "../Header/Object/Particle/ParticleManager.h"
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
 
+#include "../Header/Object/TitleManager/TitleManager.h"
+
 class TitleScene : public IScene {
 public:
 	TitleScene();
@@ -42,4 +44,7 @@ private:
 
 	// 平行光源
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
+	// タイトルマネージャー
+	std::unique_ptr<TitleManager> titleManager_ = nullptr;
 };

@@ -24,8 +24,14 @@ void PlayerAnimComp::Init()
 
 void PlayerAnimComp::Update()
 {
+
+	// アニメーションマネージャー更新
+	animManager_->Update();
+
+#ifdef _DEBUG
+
 	// 自分自身のモデルコンポーネント
-	auto *const modelComp = object_->GetComponent<ModelComp>();
+	auto* const modelComp = object_->GetComponent<ModelComp>();
 
 	ImGui::Begin("playerAnim");
 	if (ImGui::TreeNode("Base")) {
@@ -78,6 +84,5 @@ void PlayerAnimComp::Update()
 	}
 	ImGui::End();
 
-	// アニメーションマネージャー更新
-	animManager_->Update();
+#endif // _DEBUG
 }

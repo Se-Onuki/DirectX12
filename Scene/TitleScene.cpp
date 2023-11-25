@@ -22,6 +22,7 @@ void TitleScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
 	// インスタンス取得
+	static auto* const modelManager = ModelManager::GetInstance();
 	particleManager_ = ParticleManager::GetInstance();		 // パーティクルマネージャ
 	emitterManager_ = ParticleEmitterManager::GetInstance(); // 発生マネージャ
 
@@ -31,6 +32,9 @@ void TitleScene::OnEnter() {
 	// パーティクル関連の初期化
 	particleManager_->Init(256); // パーティクルの最大数は256
 	emitterManager_->Init();	 // 発生マネージャの初期化
+
+	titleManager_ = std::make_unique<TitleManager>();
+	titleManager_->Initialize();
 
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 2.5f);
@@ -51,8 +55,16 @@ void TitleScene::Update() {
 	emitterManager_->Update(deltaTime);  // 発生マネージャ
 	particleManager_->Update(deltaTime); // パーティクル
 
+	// タイトル画面の更新
+	titleManager_->Update(deltaTime);
+
 	// カメラマネージャーの更新
 	cameraManager_->Update(deltaTime);
+
+#ifdef _DEBUG // デバッグ時のみImGuiを描画
+	// カメラマネージャーのImGuiを表示
+	cameraManager_->DisplayImGui();
+#endif // _DEBUG // デバッグ時のみImGuiを描画
 
 	// スペースを押すと次のシーンへ
 	if (keyBoard->IsTrigger(DIK_SPACE)) {
@@ -65,15 +77,14 @@ void TitleScene::Update() {
 }
 
 void TitleScene::Draw() {
-	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
-	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+	DirectXCommon* const dxCommon = DirectXCommon::GetInstance();
+	ID3D12GraphicsCommandList* const commandList = dxCommon->GetCommandList();
 
 #pragma region 背面スプライト
 
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
-
 
 	Sprite::EndDraw();
 
@@ -88,13 +99,20 @@ void TitleScene::Draw() {
 
 	light_->SetLight(commandList);
 
-	// モデルの描画
+	Model::SetPipelineType(Model::PipelineType::kModel);
+
+	const auto& camera = *cameraManager_->GetUseCamera();
+
+	titleManager_->Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 	static auto* const particleManager = ParticleManager::GetInstance();
 
 	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
-	particleManager->Draw(*cameraManager_->GetUseCamera());
+	particleManager->Draw(camera);
+
+	// モデルの描画
+
 
 	Model::EndDraw();
 
@@ -103,6 +121,9 @@ void TitleScene::Draw() {
 #pragma region 前面スプライト
 
 	Sprite::StartDraw(commandList);
+
+	// スプライトの描画
+	/*sprite_->Draw();*/
 
 	// フェード演出描画
 	Fade::GetInstance()->Draw();
