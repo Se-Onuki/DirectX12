@@ -32,7 +32,7 @@ public:
 	public:
 		Box(const AABB &aabb, Platform *parent);
 
-		void CreateBox();
+		void CreateBox() const;
 
 		GroundType groundType_ = GroundType::kGrass;
 
@@ -73,7 +73,9 @@ public:
 
 		const auto &GetCollider() const { return collisionBox_; }
 
-		void ImGuiWidget();
+		const auto &GetBoxList() const { return boxList_; }
+
+		bool ImGuiWidget();
 
 		const auto &GetTimer() const { return timer_; }
 
@@ -134,6 +136,8 @@ private:
 	LineBase stageLine_;
 
 	std::list<StateLog> stateLog_;
+
+	void SetTransferData() const;
 
 	bool debugDrawer_ = false;
 };

@@ -45,7 +45,9 @@ void LevelElementManager::ImGuiWidget() {
 		ImGui::EndCombo();
 	}
 
-	platformItr->second.ImGuiWidget();
+	if (platformItr->second.ImGuiWidget()) {
+		this->SetTransferData();
+	}
 
 }
 
@@ -67,6 +69,10 @@ void LevelElementManager::Init() {
 	stageLine_.origin = lineStart_->translate;
 	stageLine_.SetEnd(lineEnd_->translate);
 
+	BlockManager::GetInstance()->clear();
+
+	blockCollider_.clear();
+
 }
 
 void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
@@ -78,10 +84,10 @@ void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
 void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
 	//static const ModelManager *const modelManager = ModelManager::GetInstance();
 
-	for (const auto &[key, platform] : blockCollider_) {
-		// const Model *const model = groundModels_[platform.]
-		platform.Draw(camera);
-	}
+	//for (const auto &[key, platform] : blockCollider_) {
+	//	// const Model *const model = groundModels_[platform.]
+	//	platform.Draw(camera);
+	//}
 
 #ifdef _DEBUG
 
@@ -139,6 +145,17 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(int32_t in
 		return nullptr;
 	}
 	return &itPlatform->second;
+}
+
+void LevelElementManager::SetTransferData() const {
+
+	BlockManager::GetInstance()->clear();
+
+	for (const auto &platform : this->blockCollider_) {
+		for (const auto &box : platform.second.GetBoxList()) {
+			box.CreateBox();
+		}
+	}
 }
 
 //void LevelElementManager::AddBlock(const std::string &key, Entity *const entity) {
@@ -224,7 +241,7 @@ void LevelElementManager::Platform::Draw(const Camera3D &camera) const {
 	}
 }
 
-void LevelElementManager::Platform::ImGuiWidget() {
+bool LevelElementManager::Platform::ImGuiWidget() {
 	ImGui::NewLine();
 
 	ImGui::BulletText("PlatformEditor");
@@ -281,6 +298,8 @@ void LevelElementManager::Platform::ImGuiWidget() {
 	if (isEdited) {
 		this->CalcCollision();
 	}
+
+	return isEdited;
 }
 
 LevelElementManager::Box::Box(const AABB &aabb, Platform *parent) {
@@ -291,7 +310,7 @@ LevelElementManager::Box::Box(const AABB &aabb, Platform *parent) {
 	referenceBox_ = aabb;
 }
 
-void LevelElementManager::Box::CreateBox() {
+void LevelElementManager::Box::CreateBox() const {
 
 	static auto *const blockManager = BlockManager::GetInstance();
 	static auto *const levelElement = LevelElementManager::GetInstance();
