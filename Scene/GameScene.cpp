@@ -25,6 +25,7 @@
 #include "StageSelectScene.h"
 
 #include "../Header/Object/Pose/PoseManager.h"
+#include "../Header/Object/SkyDome/SkyDome.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -114,6 +115,9 @@ void GameScene::OnEnter() {
 
 	sceneChanging_ = false;
 
+	skyDome_ = std::make_unique<Entity>();
+	skyDome_->AddComponent<SkyDome>();
+
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 
@@ -157,6 +161,8 @@ void GameScene::Update() {
 	}
 
 	player_->Update(deltaTime);
+
+	skyDome_->Update(deltaTime);
 
 	ImGui::Begin("Player");
 	if (ImGui::Button("Reset")) {
@@ -249,6 +255,8 @@ void GameScene::Draw()
 	player_->Draw(camera);
 	// 描画
 	//playerAnim_->Draw(camera_);
+
+	skyDome_->Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 	static auto *const particleManager = ParticleManager::GetInstance();

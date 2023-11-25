@@ -40,6 +40,8 @@ private:
 	std::unique_ptr<Entity> followCamera_ = nullptr;
 	LevelElementManager *levelManager{};
 
+	std::unique_ptr<Entity> skyDome_;
+
 	// シーン遷移中トリガー
 	bool sceneChanging_ = false;
 
