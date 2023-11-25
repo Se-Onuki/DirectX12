@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <memory>
+#include <optional>
 
 #include "../../Engine/DirectBase/Render/Camera.h"
 #include "../Collision/Collision.h"
@@ -46,7 +47,7 @@ public:
 
 	class Platform {
 	public:
-		Platform() = default;
+		Platform();
 		~Platform() = default;
 
 		BaseTransform center_;
@@ -54,8 +55,6 @@ public:
 		Vector3 targetRot_;
 
 		Vector3 rotateAxis_ = Vector3::front;
-
-		VariantItem<float> vLerpTime_{ "LerpTime",1.f };
 
 		void AddBox(const AABB &box);
 
@@ -66,6 +65,8 @@ public:
 		void Update(float deltaTime);
 
 		void AddRotate(const float targetRot);
+
+		void SetRotate(const float targetRot);
 
 		void SetAxis(const Vector3 &axis) { rotateAxis_ = axis.Nomalize(); }
 
@@ -80,6 +81,8 @@ public:
 		const auto &GetTimer() const { return timer_; }
 
 	private:
+
+		const float &lerpTime_;
 
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
@@ -101,6 +104,15 @@ public:
 		return &instance;
 	}
 
+	bool AnyPlatformRotating() const;
+
+	void Undo();
+
+	void UndoUpdate(const float deltaTime);
+
+	/// @brief 履歴を追加する
+	void AddUndoLog(Entity *const starItem);
+
 	void ImGuiWidget();
 
 	void Init();
@@ -120,6 +132,11 @@ public:
 
 	void AddItem(const uint32_t key, const BaseTransform &srt);
 
+	/// @brief プレイヤのセッター
+	void SetPlayer(Entity *const player) { pPlayer_ = player; }
+	/// @brief プレイヤのゲッター
+	const auto *const GetPlayer() const { return pPlayer_; }
+
 	const LineBase &GetStageLine() const { return stageLine_; }
 
 	Platform *const GetPlatform(int32_t index);
@@ -129,15 +146,26 @@ public:
 
 	const auto &GetGroundModel() const { return groundModels_; }
 
+	VariantItem<float> vLerpTime_{ "LerpTime",1.f };
+
 private:
 	std::array<Model *, 2u> groundModels_ = {};
 	Transform lineStart_;
 	Transform lineEnd_;
 	LineBase stageLine_;
 
+	Entity *pPlayer_ = nullptr;
+
+	SoLib::DeltaTimer undoTimer_;
+
+	std::optional<StateLog> undoLog_;
+
 	std::list<StateLog> stateLog_;
 
 	void SetTransferData() const;
+
+	int32_t rotateCount_;
+	int32_t maxRotateCount_;
 
 	bool debugDrawer_ = false;
 };

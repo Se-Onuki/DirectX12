@@ -53,62 +53,15 @@ void PlayerComp::Update() {
 	}
 	nowState_->Update(object_->GetDeltaTime());
 
-	Vector3 inputVec{};
 	auto *const rigidbody = object_->GetComponent<Rigidbody>();
-	//if (keyBoard) {
-	//	if (keyBoard->IsTrigger(DIK_SPACE)) {
-	//		rigidbody->ApplyInstantForce(Vector3{ 0.f,vJumpPower_,0.f });
-	//	}
-
-	//	if (keyBoard->IsTrigger(DIK_E)) {
-	//		if (auto *const platform = levelManager->GetPlatform(registeredGroups_)) {
-	//			platform->AddRotate(-90._deg);
-	//		}
-	//	}
-	//	if (keyBoard->IsTrigger(DIK_Q)) {
-	//		if (auto *const platform = levelManager->GetPlatform(registeredGroups_)) {
-	//			platform->AddRotate(90._deg);
-	//		}
-	//	}
-
-
-	//	if (keyBoard->IsPress(DIK_W)) {
-	//		inputVec += Vector3::front;
-	//	}
-	//	if (keyBoard->IsPress(DIK_S)) {
-	//		inputVec -= Vector3::front;
-	//	}
-
-	//	if (keyBoard->IsPress(DIK_A)) {
-	//		inputVec -= Vector3::right;
-	//	}
-	//	if (keyBoard->IsPress(DIK_D)) {
-	//		inputVec += Vector3::right;
-	//	}
-
-	//	inputVec = inputVec.Nomalize();
-	//}
-	//// 入力強度を取得
-	//float movePower = 1.f;
-	//// もし入力が0でないなら強度に応じた値
-	//if (inputVec.LengthSQ() != 0.f) {
-	//	movePower = inputVec.Length() / inputVec.Nomalize().Length();
-	//}
-
-	//// カメラの角度を元に計算
-	//inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
-
-	//// カメラの上下方向を破棄
-	//inputVec.y = 0.f;
-	//inputVec = inputVec.Nomalize() * movePower;
-
-
-	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed_);
 
 	if (isActiveGravity_) {
 		rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 	}
 
+	if (keyBoard->IsTrigger(DIK_R)) {
+		LevelElementManager::GetInstance()->Undo();
+	}
 
 }
 

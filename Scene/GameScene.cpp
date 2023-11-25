@@ -68,12 +68,13 @@ void GameScene::OnEnter() {
 	levelManager = LevelElementManager::GetInstance();
 
 	levelManager->Init();
+
 	levelManager->AddBlock(1u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,20.f }));
 
 	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,0.f }));
 	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
-	//levelManager->blockCollider_[0u].AddRotate(180._deg);
-	// levelManager->blockCollider_[0u].center_.translate.z = 180._deg;
+
+	levelManager->AddItem(0u, BaseTransform{ .translate{0.f,0.5f,5.f} });
 
 	levelManager->CalcCollision();
 
@@ -95,6 +96,8 @@ void GameScene::OnEnter() {
 	emitter->targetTransform_ = &player_->transform_;
 	emitter->offset_ = { 0.0f, 0.5f, 0.0f };
 
+	levelManager->SetPlayer(player_.get());
+
 #pragma endregion
 
 #pragma region FollowCamera
@@ -106,8 +109,6 @@ void GameScene::OnEnter() {
 #pragma endregion
 
 	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
-
-	levelManager->AddItem(0u, BaseTransform{ .translate{0.f,0.5f,5.f} });
 
 	/*starItem_ = std::make_unique<Entity>();
 
@@ -225,9 +226,8 @@ void GameScene::Draw()
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
 	//model_->Draw(transform_, camera_);
-	levelManager->Draw(camera);
 
-	player_->Draw(camera);
+	//player_->Draw(camera);
 
 	//starItem_->Draw(camera);
 	// 描画
@@ -246,6 +246,8 @@ void GameScene::Draw()
 	light_->SetLight(commandList);
 
 	player_->Draw(camera);
+
+	levelManager->Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 	static auto *const particleManager = ParticleManager::GetInstance();

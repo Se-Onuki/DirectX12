@@ -163,8 +163,8 @@ struct Vector3 {
 	const float *const cbegin() const { return &x; }
 
 	float *const end() { return begin() + size(); }
-	const float *const end() const { return end(); }
-	const float *const cend() const { return end(); }
+	const float *const end() const { return begin() + size(); }
+	const float *const cend() const { return begin() + size(); }
 
 	float *const data() { return begin(); }
 	const float *const data() const { return begin(); }

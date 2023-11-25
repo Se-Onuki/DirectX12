@@ -6,6 +6,63 @@
 
 #include "imgui.h"
 #include "../../StarItemComp.h"
+#include <numeric>
+#include "../Entity/Component/PlayerComp.h"
+
+bool LevelElementManager::AnyPlatformRotating() const {
+	// どれか一つでも回転していないか
+	bool anyTrue = std::any_of(this->blockCollider_.begin(), this->blockCollider_.end(), [](const auto &pair)
+		{
+			return pair.second.GetTimer().IsActive() == true;
+		});
+	return anyTrue;
+}
+
+void LevelElementManager::Undo() {
+	// どれか一つでも回転していないか
+	bool anyTrue = AnyPlatformRotating();
+	// 回転していたら終了
+	if (anyTrue) {
+		return;
+	}
+
+	// もしログがあったら実行
+	if (stateLog_.size()) {
+		// 操作ログを末尾から1つ吐き出す
+		const StateLog log = stateLog_.back();
+		stateLog_.pop_back();
+
+		// 戻すデータを登録
+		undoLog_ = log;
+	}
+}
+
+void LevelElementManager::UndoUpdate(const float deltaTime) {
+
+	undoTimer_.Update(deltaTime);
+
+	// データが登録されていたら
+	if (undoLog_) {
+		// もしタイマーが動作していなかったら
+		if (not undoTimer_.IsActive() && AnyPlatformRotating() == false) {
+			undoTimer_.Start(vLerpTime_);
+
+			for (const auto &rotPair : undoLog_->angleList_) {
+				this->GetPlatform(rotPair.first)->SetRotate(rotPair.second);
+			}
+
+		}
+		// 終了したら
+		if (undoTimer_.IsFinish() && undoTimer_.IsActive()) {
+
+			pPlayer_->transform_.translate = undoLog_->item_->transform_.GetGrobalPos();
+			undoLog_->item_->GetComponent<StarItemComp>()->Reset();
+
+			undoLog_ = std::nullopt;
+		}
+
+	}
+}
 
 void LevelElementManager::ImGuiWidget() {
 
@@ -51,6 +108,22 @@ void LevelElementManager::ImGuiWidget() {
 
 }
 
+void LevelElementManager::AddUndoLog(Entity *const starItem) {
+
+	std::list<std::pair<uint32_t, float>> angleList;
+
+	for (const auto &platform : blockCollider_) {
+		std::pair<uint32_t, float> keyAngle;
+		keyAngle.first = platform.first;
+		keyAngle.second = std::accumulate(platform.second.center_.rotate.begin(), platform.second.center_.rotate.end(), 0.f);
+
+		angleList.push_back(keyAngle);
+	}
+
+	stateLog_.push_back(StateLog{ .item_ = starItem, .angleList_ = std::move(angleList) });
+
+}
+
 void LevelElementManager::Init() {
 	const auto *const modelManager = ModelManager::GetInstance();
 	groundModels_[static_cast<uint32_t>(GroundType::kDirt)] = modelManager->GetModel("DirtModel");
@@ -73,9 +146,16 @@ void LevelElementManager::Init() {
 
 	blockCollider_.clear();
 
+
+	// undo処理の破棄
+	stateLog_.clear();
+	undoLog_ = std::nullopt;
+	undoTimer_.Clear();
+
 }
 
 void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
+	UndoUpdate(deltaTime);
 	for (auto &[key, platform] : blockCollider_) {
 		platform.Update(deltaTime);
 	}
@@ -84,10 +164,10 @@ void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
 void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
 	//static const ModelManager *const modelManager = ModelManager::GetInstance();
 
-	//for (const auto &[key, platform] : blockCollider_) {
-	//	// const Model *const model = groundModels_[platform.]
-	//	platform.Draw(camera);
-	//}
+	for (const auto &[key, platform] : blockCollider_) {
+		// const Model *const model = groundModels_[platform.]
+		platform.Draw(camera);
+	}
 
 #ifdef _DEBUG
 
@@ -162,6 +242,11 @@ void LevelElementManager::SetTransferData() const {
 //	blockEntity_[key].emplace_back(entity);
 //}
 
+LevelElementManager::Platform::Platform() :lerpTime_(LevelElementManager::GetInstance()->vLerpTime_) {
+	startRot_ = {};
+	targetRot_ = {};
+}
+
 void LevelElementManager::Platform::AddBox(const AABB &aabb) {
 	boxList_.emplace_back(aabb, this);
 	auto &box = boxList_.back();
@@ -204,7 +289,8 @@ void LevelElementManager::Platform::CalcCollision() {
 
 void LevelElementManager::Platform::Update(float deltaTime) {
 	timer_.Update(deltaTime);
-
+	const Entity *const pPlayer = LevelElementManager::GetInstance()->GetPlayer();
+	const auto *const playerComp = pPlayer->GetComponent<PlayerComp>();
 
 	if (timer_.IsActive()) {
 		center_.rotate = Angle::Lerp(startRot_, targetRot_, SoLib::easeInOutQuad(timer_.GetProgress()));
@@ -221,21 +307,34 @@ void LevelElementManager::Platform::Update(float deltaTime) {
 	}
 	for (auto &item : starItem_) {
 		item->Update(deltaTime);
+		auto *const itemComp = item->GetComponent<StarItemComp>();
+		// 取得されていない && 接触時に取得判定を行う
+		if (not itemComp->GetIsCollected() && Collision::IsHit(playerComp->GetCollider(), itemComp->GetCollider())) {
+			// 取得判定を行う
+			itemComp->CollectItem();
+		}
 	}
 }
 
 void LevelElementManager::Platform::AddRotate(const float targetRot) {
 	if (timer_.IsFinish()) {
 		targetRot_ = Angle::Mod(rotateAxis_ * targetRot + startRot_);
-		timer_.Start(vLerpTime_);
+		timer_.Start(lerpTime_);
+	}
+}
+
+void LevelElementManager::Platform::SetRotate(const float targetRot) {
+	if (timer_.IsFinish()) {
+		targetRot_ = Angle::Mod(rotateAxis_ * targetRot);
+		timer_.Start(lerpTime_);
 	}
 }
 
 void LevelElementManager::Platform::Draw(const Camera3D &camera) const {
-	static auto *const levelElement = LevelElementManager::GetInstance();
+	/*static auto *const levelElement = LevelElementManager::GetInstance();
 	for (const auto &box : boxList_) {
 		levelElement->GetGroundModel()[static_cast<uint32_t>(box.groundType_)]->Draw(box.transform_, camera);
-	}
+	}*/
 	for (const auto &item : starItem_) {
 		item->Draw(camera);
 	}

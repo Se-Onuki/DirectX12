@@ -1,6 +1,7 @@
 #include "StarItemComp.h"
 #include "Header/Entity/Component/ModelComp.h"
 #include "Engine/DirectBase/Model/ModelManager.h"
+#include "Header/Object/LevelElementManager.h"
 
 void StarItemComp::Init() {
 	auto *const modelComp = object_->AddComponent<ModelComp>();
@@ -14,7 +15,10 @@ void StarItemComp::Init() {
 }
 
 void StarItemComp::Reset() {
+	isCollected_ = false;
 
+	auto *const modelComp = object_->AddComponent<ModelComp>();
+	modelComp->GetBone("Body")->transform_->scale = Vector3::one;
 }
 
 void StarItemComp::Update() {
@@ -27,10 +31,13 @@ void StarItemComp::Update() {
 }
 
 void StarItemComp::CollectItem() {
-	if (isCollected_) {
+	if (not isCollected_) {
 		auto *const modelComp = object_->AddComponent<ModelComp>();
 		modelComp->GetBone("Body")->transform_->scale = Vector3::zero;
 
-		isCollected_ = false;
+		// undoログにデータを追加
+		LevelElementManager::GetInstance()->AddUndoLog(object_);
+
+		isCollected_ = true;
 	}
 }
