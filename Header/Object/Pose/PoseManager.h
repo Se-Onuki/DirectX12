@@ -46,12 +46,15 @@ private: // サブクラス
 		}
 	};
 
+public: // パブリックなサブクラス
+
 	// ポーズ画面の状態列挙子
 	enum PoseState {
 		kResume,
 		kReturnCheckPoint,
 		kRetry,
 		kReturnStageSelect,
+		kNone = 999,
 	};
 
 public: // メンバ関数
@@ -90,9 +93,22 @@ public: // その他関数
 	void DeployPoseMenu();
 
 	/// <summary>
+	/// 現在実行中のカテゴリゲッター
+	/// </summary>
+	/// <returns>現在実行中のカテゴリ</returns>
+	PoseState GetPoseState() { return executioningCategory_; }
+
+private	: // プライベートなメンバ関数
+
+	/// <summary>
 	/// ポーズメニューを閉じる関数
 	/// </summary>
 	void CloseMenu();
+
+	/// <summary>
+	/// 決定ボタンを押したときの関数
+	/// </summary>
+	void PressAButton();
 
 private: // メンバ変数
 
@@ -110,12 +126,8 @@ private: // メンバ変数
 	// 選択中のカテゴリ
 	int selectedCategory_ = 0;
 
-	// チェックポイントに戻るトリガー
-	bool isReturnCheckPoint_ = false;
-	// リトライトリガー
-	bool isRetry_ = false;
-	// ステージ選択画面に戻るトリガー
-	bool isReturnStageSelect_ = false;
+	// 現在実行中のカテゴリ
+	PoseState executioningCategory_ = kNone;
 
 	// ポーズ状態か
 	bool isActive_ = false;

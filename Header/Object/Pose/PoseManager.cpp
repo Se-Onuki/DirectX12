@@ -14,16 +14,14 @@ void PoseManager::Init()
 	poseUI_.sprite_->SetTexDiff({ 500.0f, 500.0f });
 	poseUI_.sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
 
+	// 実行中カテゴリリセット
+	executioningCategory_ = kNone;
+
 	// 始端値と終端値の設定
 	poseUIStartPos_ = poseUI_.position_;
 	poseUIEndPos_ = { 1280.0f / 2.0f, 360.0f };
 	poseUIStartColor_ = { 1.0f, 1.0f, 1.0f, 0.0f };
 	poseUIEndColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	// 各トリガーをfalse
-	isReturnCheckPoint_ = false;
-	isRetry_ = false;
-	isReturnStageSelect_ = false;
 
 	// メニューを閉じていない
 	close_ = false;
@@ -41,18 +39,22 @@ void PoseManager::Update(float deltaTime)
 			if (selectedCategory_ < kReturnStageSelect)
 				selectedCategory_++;
 			else
-				selectedCategory_ = 0;
+				selectedCategory_ = kResume;
 		}
 		else if (input_->GetDirectInput()->IsTrigger(DIK_UP) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_UP)) {
 			if (selectedCategory_ > kResume)
 				selectedCategory_--;
 			else
-				selectedCategory_ = 3;
+				selectedCategory_ = kReturnStageSelect;
 		}
 
-		// Aボタン入力でメニューを閉じる
+		// Bボタン入力でメニューを閉じる
 		if (input_->GetDirectInput()->IsTrigger(DIK_ESCAPE) || input_->GetXInput()->IsTrigger(KeyCode::B)) {
 			CloseMenu();
+		}
+
+		if (input_->GetDirectInput()->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
+			PressAButton();
 		}
 	}
 
@@ -106,10 +108,12 @@ void PoseManager::Draw()
 
 void PoseManager::DeployPoseMenu()
 {
-	// 再度初期化
-	Init();
-	// 表示
-	isActive_ = true;
+	if (!isActive_) {
+		// 再度初期化
+		Init();
+		// 表示
+		isActive_ = true;
+	}
 }
 
 void PoseManager::CloseMenu()
@@ -120,4 +124,34 @@ void PoseManager::CloseMenu()
 	isDisplay_ = false;
 	// メニューを閉じる
 	close_ = true;
+}
+
+void PoseManager::PressAButton()
+{
+	// 選択カテゴリによって処理を分岐
+	switch (selectedCategory_)
+	{
+	case PoseManager::kResume:
+		// メニューを閉じる
+		CloseMenu();
+		break;
+	case PoseManager::kReturnCheckPoint:
+		// チェックポイントに戻るように指示
+		executioningCategory_ = kReturnCheckPoint;
+		// 操作不可能な状態に
+		CloseMenu();
+		break;
+	case PoseManager::kRetry:
+		// リトライを指示
+		executioningCategory_ = kRetry;
+		CloseMenu();
+		break;
+	case PoseManager::kReturnStageSelect:
+		// ステージ選択画面に戻るように指示
+		executioningCategory_ = kReturnStageSelect;
+		CloseMenu();
+		break;
+	default:
+		break;
+	}
 }

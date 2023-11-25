@@ -40,6 +40,9 @@ private:
 	std::unique_ptr<Entity> followCamera_ = nullptr;
 	LevelElementManager *levelManager{};
 
+	// シーン遷移中トリガー
+	bool sceneChanging_ = false;
+
 	//std::array<const Camera3D *, 2u> cameraList_;
 	//std::array<const Camera3D *, 2u>::iterator cameraTarget_ = cameraList_.begin();
 

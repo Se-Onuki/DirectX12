@@ -112,6 +112,8 @@ void GameScene::OnEnter() {
 	/*cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;*/
 
+	sceneChanging_ = false;
+
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 
@@ -149,8 +151,9 @@ void GameScene::Update() {
 	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Update(deltaTime);
 	// Startボタンをおしたらメニューを展開
-	if (Input::GetInstance()->GetXInput()->IsPress(KeyCode::START)) {
-		PoseManager::GetInstance()->DeployPoseMenu();
+	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START)) {
+		if(PoseManager::GetInstance()->GetPoseState() == PoseManager::kNone)
+			PoseManager::GetInstance()->DeployPoseMenu();
 	}
 
 	player_->Update(deltaTime);
@@ -185,25 +188,21 @@ void GameScene::Update() {
 	// カメラマネージャーの更新
 	cameraManager_->Update(deltaTime);
 
+	// ステージ選択に戻るよう指示されていたら戻る
+	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnStageSelect) {
+		if (!sceneChanging_) {
+			// フェードアウト開始
+			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+			// 指定した秒数後シーンチェンジ
+			sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
+			// シーン遷移中
+			sceneChanging_ = true;
+		}
+	}
+
 #ifdef _DEBUG // デバッグ時のみImGuiを描画
 	// カメラマネージャーのImGuiを表示
 	cameraManager_->DisplayImGui();
-
-	// スペースを押すと次のシーンへ
-	if (keyBoard->IsTrigger(DIK_RSHIFT)) {
-		// フェードアウト開始
-		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
-		// 指定した秒数後シーンチェンジ
-		sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
-	}
-
-	// スペースを押すと次のシーンへ
-	if (keyBoard->IsTrigger(DIK_M)) {
-		// フェードアウト開始
-		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
-		// 指定した秒数後シーンチェンジ
-		sceneManager_->ChangeScene(std::make_unique<TitleScene>(), 1.0f);
-	}
 #endif // _DEBUG // デバッグ時のみImGuiを描画
 
 
