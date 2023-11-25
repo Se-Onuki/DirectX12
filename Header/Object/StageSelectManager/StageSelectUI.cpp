@@ -38,6 +38,10 @@ void StageSelectUI::Init()
 	buttonUI_.scale_ = { 960.0f, 96.0f };
 	buttonUI_.anchorPoint_ = { 0.5f, 0.5f };
 
+	// テクスチャ名の取得
+	std::string textureName = "UI/TD2_3week_2/StageSelect/Previews/Preview" + std::to_string(stageSelectManager_->GetSelectedStageNumber() + 1) + ".png";
+	stagePreviewUI_.sprite_->SetTextureHaundle(TextureManager::Load(textureName));
+
 	// 演出中ではない
 	isPlayingAnim_ = false;
 

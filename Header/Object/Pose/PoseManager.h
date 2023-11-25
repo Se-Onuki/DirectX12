@@ -4,6 +4,7 @@
 #include "../../../Engine/DirectBase/File/GlobalVariables.h"
 #include "../../../Utils/SoLib/SoLib.h"
 #include "../../../Engine/DirectBase/2D/Sprite.h"
+#include "../../../Engine/DirectBase/Input/Input.h"
 
 /// <summary>
 /// ポーズ画面のマネージャー
@@ -45,6 +46,14 @@ private: // サブクラス
 		}
 	};
 
+	// ポーズ画面の状態列挙子
+	enum PoseState {
+		kResume,
+		kReturnCheckPoint,
+		kRetry,
+		kReturnStageSelect,
+	};
+
 public: // メンバ関数
 
 	/// <summary>
@@ -73,6 +82,49 @@ public: // メンバ関数
 	/// <param name="camera">使用するカメラ</param>
 	void Draw();
 
-private: // メンバ変数
-};
+public: // その他関数
 
+	/// <summary>
+	/// ポーズメニューを展開する関数
+	/// </summary>
+	void DeployPoseMenu();
+
+	/// <summary>
+	/// ポーズメニューを閉じる関数
+	/// </summary>
+	void CloseMenu();
+
+private: // メンバ変数
+
+	// 入力検知
+	Input* input_ = nullptr;
+
+	// ポーズ画面
+	UISprite poseUI_;
+
+	Vector2 poseUIStartPos_;
+	Vector2 poseUIEndPos_;
+	Vector4 poseUIStartColor_;
+	Vector4 poseUIEndColor_;
+
+	// 選択中のカテゴリ
+	int selectedCategory_ = 0;
+
+	// チェックポイントに戻るトリガー
+	bool isReturnCheckPoint_ = false;
+	// リトライトリガー
+	bool isRetry_ = false;
+	// ステージ選択画面に戻るトリガー
+	bool isReturnStageSelect_ = false;
+
+	// ポーズ状態か
+	bool isActive_ = false;
+	//表示中か
+	bool isDisplay_ = false;
+
+	// ポーズメニューを閉じるボタン
+	bool close_ = false;
+
+	// ポーズUIの展開アニメーションタイマー
+	SoLib::DeltaTimer timer_;
+};

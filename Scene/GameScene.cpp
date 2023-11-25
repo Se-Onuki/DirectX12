@@ -24,6 +24,8 @@
 #include "TitleScene.h"
 #include "StageSelectScene.h"
 
+#include "../Header/Object/Pose/PoseManager.h"
+
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -73,6 +75,9 @@ void GameScene::OnEnter() {
 	// levelManager->blockCollider_[0u].center_.translate.z = 180._deg;
 
 	levelManager->CalcCollision();
+
+	// ポーズ画面マネージャー初期化
+	PoseManager::GetInstance()->Init();
 
 #pragma region Player
 
@@ -141,6 +146,12 @@ void GameScene::Update() {
 		sceneManager_->ChangeScene(std::unique_ptr<GameScene>(), 1.f);
 	}
 
+	// ポーズ画面マネージャー初期化
+	PoseManager::GetInstance()->Update(deltaTime);
+	// Startボタンをおしたらメニューを展開
+	if (Input::GetInstance()->GetXInput()->IsPress(KeyCode::START)) {
+		PoseManager::GetInstance()->DeployPoseMenu();
+	}
 
 	player_->Update(deltaTime);
 
@@ -259,6 +270,9 @@ void GameScene::Draw()
 
 	// スプライトの描画
 	/*sprite_->Draw();*/
+
+	// ポーズ画面マネージャー初期化
+	PoseManager::GetInstance()->Draw();
 
 	// フェード演出描画
 	Fade::GetInstance()->Draw();
