@@ -1,12 +1,26 @@
 #include "BeginRotate.h"
 #include "../PlayerComp.h"
 #include "RotatingState.h"
+#include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../../Object/LevelElementManager.h"
 
 void PlayerBeginRotateState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.1f);
 	startPos_ = pPlayer_->transform_->translate;
 
 	timer_.Start(pPlayer_->vRotateBeginTime_);
+
+	auto *const platform = LevelElementManager::GetInstance()->GetPlatform(pPlayer_->GetGroup());
+	Vector3 cameraFacing = TransformNormal(Vector3::front, CameraManager::GetInstance()->GetUseCamera()->matView_);
+	cameraFacing.y = 0.f;
+	float rotateFacing = platform->rotateAxis_ * cameraFacing.Nomalize();
+	rotateFacing > 0 ? rotateFacing = 1.f : rotateFacing = -1.f;
+
+	auto *const rotateCamera = CameraManager::GetInstance()->AddCamera("RotateCamera");
+	rotateCamera->translation_ = pPlayer_->transform_->translate + Vector3{ 0.f,pPlayer_->vRotateHeight_ + 5.f,0.f } + platform->rotateAxis_ * rotateFacing * -45.f;
+	rotateCamera->rotation_.x = 15._deg;
+	rotateCamera->rotation_.y = (platform->rotateAxis_ * rotateFacing).Direction2Euler().y;
+	CameraManager::GetInstance()->SetUseCamera(rotateCamera);
 }
 
 void PlayerBeginRotateState::Update([[maybe_unused]] float deltaTime) {

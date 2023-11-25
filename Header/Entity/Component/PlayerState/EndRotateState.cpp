@@ -1,10 +1,15 @@
 #include "EndRotateState.h"
 #include "IdleState.h"
 #include "../PlayerComp.h"
+#include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
 void PlayerEndRotateState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.1f);
 	timer_.Start(pPlayer_->vRotateEndTime_);
+
+	auto *const followCamera = CameraManager::GetInstance()->AddCamera("FollowCamera");
+
+	CameraManager::GetInstance()->SetUseCamera(followCamera);
 }
 
 void PlayerEndRotateState::Update([[maybe_unused]] float deltaTime) {

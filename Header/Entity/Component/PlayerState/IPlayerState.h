@@ -14,6 +14,8 @@ public:
 
 	virtual void Init();
 
+	virtual void Exit() {}
+
 	virtual void Update(float deltaTime);
 
 	virtual void Draw(const Camera3D &camera) const;
