@@ -14,6 +14,7 @@
 
 #include <array>
 #include <stdint.h>
+#include <algorithm>
 #include "../../../Utils/Math/Vector2.h"
 
 enum class KeyCode {
@@ -68,6 +69,15 @@ private:
 	std::array<BYTE, 256u> key_[2u] = {};
 
 public:
+
+	/// @brief どれか一つでも押していたら有効
+	/// @return 押した場合 true
+	bool IsAnyPress() const {
+		return std::any_of(key_[inputTarget].begin(), key_[inputTarget].end(), [](const auto pair)
+			{
+				return pair;
+			});
+	}
 	bool IsPress(const uint8_t key) const {
 		return key_[inputTarget][key];
 	}
@@ -97,6 +107,17 @@ public:
 
 	void Update();
 
+	/// @brief どれか一つでも押していたら有効
+	/// @return 押した場合 true
+	bool IsAnyPress() const {
+		return
+			gamePad_[0].stickL_.Length() > 0.1f ||
+			gamePad_[0].stickR_.Length() > 0.1f ||
+			gamePad_[0].button_ != false ||
+			gamePad_[0].triggerL_ ||
+			gamePad_[0].triggerR_;
+	}
+
 	bool IsPress(const KeyCode keyCode) const {
 		return gamePad_[0].button_ & (WORD)keyCode;
 	}
@@ -122,6 +143,11 @@ class Input
 	Input operator=(const Input &) = delete;
 	~Input() = default;
 public:
+	enum class InputType : uint32_t {
+		kPad,		// ゲームパッド
+		kKeyBoard,	// キーボード
+	};
+
 	static Input *const GetInstance() {
 		static Input instance{};
 		return &instance;
@@ -130,6 +156,13 @@ public:
 	void Update() {
 		directInput_->Update();
 		xInput_->Update();
+
+		if (xInput_->IsAnyPress()) {
+			inputType_ = InputType::kPad;
+		}
+		else if (directInput_->IsAnyPress()) {
+			inputType_ = InputType::kKeyBoard;
+		}
 	}
 
 	const DirectInput *const GetDirectInput() const {
@@ -139,8 +172,14 @@ public:
 		return xInput_;
 	}
 
+	InputType GetInputType() const {
+		return inputType_;
+	}
+
 
 private:
+	InputType inputType_;
+
 	DirectInput *directInput_ = nullptr;
 	XInput *xInput_ = nullptr;
 };
