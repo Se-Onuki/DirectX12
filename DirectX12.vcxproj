@@ -170,6 +170,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp" />
     <ClCompile Include="Header\Object\Player.cpp" />
+    <ClCompile Include="Header\Object\Pose\PoseManager.cpp" />
     <ClCompile Include="Header\Object\SkyDome\SkyDome.cpp" />
     <ClCompile Include="Header\Object\StageSelectManager\StageSelectManager.cpp" />
     <ClCompile Include="Header\Object\StageSelectManager\StageSelectUI.cpp" />
@@ -283,6 +284,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Particle\StarParticle.h" />
     <ClInclude Include="Header\Object\Particle\TestParticle.h" />
     <ClInclude Include="Header\Object\Player.h" />
+    <ClInclude Include="Header\Object\Pose\PoseManager.h" />
     <ClInclude Include="Header\Object\SkyDome\SkyDome.h" />
     <ClInclude Include="Header\Object\StageSelectManager\StageSelectManager.h" />
     <ClInclude Include="Header\Object\StageSelectManager\StageSelectUI.h" />

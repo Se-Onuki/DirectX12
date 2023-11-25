@@ -21,6 +21,9 @@
 
 #include "../Header/Object/Fade.h"
 
+#include "TitleScene.h"
+#include "StageSelectScene.h"
+
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -174,6 +177,22 @@ void GameScene::Update() {
 #ifdef _DEBUG // デバッグ時のみImGuiを描画
 	// カメラマネージャーのImGuiを表示
 	cameraManager_->DisplayImGui();
+
+	// スペースを押すと次のシーンへ
+	if (keyBoard->IsTrigger(DIK_RSHIFT)) {
+		// フェードアウト開始
+		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+		// 指定した秒数後シーンチェンジ
+		sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
+	}
+
+	// スペースを押すと次のシーンへ
+	if (keyBoard->IsTrigger(DIK_M)) {
+		// フェードアウト開始
+		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+		// 指定した秒数後シーンチェンジ
+		sceneManager_->ChangeScene(std::make_unique<TitleScene>(), 1.0f);
+	}
 #endif // _DEBUG // デバッグ時のみImGuiを描画
 
 

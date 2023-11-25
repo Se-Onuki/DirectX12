@@ -127,6 +127,9 @@
     <Filter Include="Header\Entity\Object\SkyDome">
       <UniqueIdentifier>{e5ac1d12-cd78-4c1b-88be-cc904778dc1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\PoseManager">
+      <UniqueIdentifier>{bba82b33-0ea6-4703-b408-a33a2ff5d4a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -419,6 +422,9 @@
     </ClCompile>
     <ClCompile Include="Header\Object\TitleBlock\TitleBlock.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Pose\PoseManager.cpp">
+      <Filter>Header\Entity\Object\PoseManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -769,6 +775,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\TitleBlock\TitleBlock.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Pose\PoseManager.h">
+      <Filter>Header\Entity\Object\PoseManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

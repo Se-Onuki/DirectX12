@@ -46,6 +46,11 @@ void TitleManager::Initialize()
 	circleUI_.scale_ = { 64.0f, 64.0f };
 	circleUI_.anchorPoint_ = { 0.5f, 0.5f };
 
+	buttonUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/Title/Start_Key.png")));
+	buttonUI_.position_ = { 1280.0f / 2.0f, 600.0f };
+	buttonUI_.scale_ = { 512.0f, 128.0f };
+	buttonUI_.anchorPoint_ = { 0.5f, 0.5f };
+
 	rotateImage_ = 0.0f ;
 
 	startTitlePos_ = { 1280.0f / 2.0f, 300.0f };
@@ -117,4 +122,5 @@ void TitleManager::SpriteDraw()
 {
 	titleUI_.Draw();
 	circleUI_.Draw();
+	buttonUI_.Draw();
 }

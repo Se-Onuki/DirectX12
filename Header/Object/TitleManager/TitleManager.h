@@ -74,6 +74,8 @@ private: // メンバ変数
 	UISprite titleUI_;
 	UISprite circleUI_;
 
+	UISprite buttonUI_;
+
 	float rotateImage_;
 
 	// プレビュー画像アニメーション用の座標保存用変数
@@ -81,6 +83,8 @@ private: // メンバ変数
 	Vector2 endTitlePos_;	  // 終端値
 	Vector2 startCirclePos_; // 始端値(二つ目用)
 	Vector2 endCirclePos_;   // 終端値(二つ目用)
+	Vector2 startButtonPos_; // 始端値
+	Vector2 endButtonPos_;	  // 終端値
 
 	// アニメーション用タイマー
 	SoLib::DeltaTimer timer_;

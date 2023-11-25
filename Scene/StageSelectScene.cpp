@@ -105,8 +105,6 @@ void StageSelectScene::Draw()
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 	static auto* const particleManager = ParticleManager::GetInstance();
 
-	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
-	particleManager->Draw(*cameraManager_->GetUseCamera());
 
 	Model::EndDraw();
 
