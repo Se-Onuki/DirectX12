@@ -124,6 +124,9 @@
     <Filter Include="Header\Entity\Object\TitleManager">
       <UniqueIdentifier>{b771e0a8-fc0d-4e66-93a2-f3602eea290e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\SkyDome">
+      <UniqueIdentifier>{e5ac1d12-cd78-4c1b-88be-cc904778dc1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -412,6 +415,9 @@
       <Filter>Header\Entity\Object\TitleManager</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\SkyDome\SkyDome.cpp">
+      <Filter>Header\Entity\Object\SkyDome</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\TitleBlock\TitleBlock.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -759,6 +765,9 @@
       <Filter>Header\Entity\Object\TitleManager</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\SkyDome\SkyDome.h">
+      <Filter>Header\Entity\Object\SkyDome</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\TitleBlock\TitleBlock.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -48,6 +48,19 @@ public: // メンバ関数
 	/// <param name="deltaTime">経過秒数</param>
 	void Update(float deltaTime);
 
+public: // アクセッサ等
+
+	/// <summary>
+	/// アニメーション再生状態ゲッター
+	/// </summary>
+	/// <returns>アニメーションが再生中か</returns>
+	bool GetIsPlaying();
+
+	/// <summary>
+	/// シーン遷移の際にアニメーションを全て停止する
+	/// </summary>
+	void SceneChange();
+
 public: // その他関数
 
 	/// <summary>
@@ -74,6 +87,9 @@ private: // メンバ変数
 	SoLib::DeltaTimer timer_;
 	// 遷移待機中トリガー
 	bool transitionStandbyTrigger_ = false;
+
+	// 演出中トリガー
+	bool isPlaying_ = false;
 
 };
 

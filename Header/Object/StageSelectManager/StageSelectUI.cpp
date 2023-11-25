@@ -126,9 +126,9 @@ void StageSelectUI::RootUpdate()
 {
 	// 
 	if (not prevAnimTimer_.IsFinish()) {
-		stagePreviewUI_.position_ = SoLib::Lerp(startPreviewPos_, endPreviewPos_, SoLib::easeOutQuad(prevAnimTimer_.GetProgress()));
-		leftArrowUI_.position_ = SoLib::Lerp(startSelectArrowPos_L_, endSelectArrowPos_L_, SoLib::easeOutQuad(prevAnimTimer_.GetProgress()));
-		rightArrowUI_.position_ = SoLib::Lerp(startSelectArrowPos_R_, endSelectArrowPos_R_, SoLib::easeOutQuad(prevAnimTimer_.GetProgress()));
+		stagePreviewUI_.position_ = SoLib::Lerp(startPreviewPos_, endPreviewPos_, SoLib::easeInOutQuad(prevAnimTimer_.GetProgress()));
+		leftArrowUI_.position_ = SoLib::Lerp(startSelectArrowPos_L_, endSelectArrowPos_L_, SoLib::easeInOutQuad(prevAnimTimer_.GetProgress()));
+		rightArrowUI_.position_ = SoLib::Lerp(startSelectArrowPos_R_, endSelectArrowPos_R_, SoLib::easeInOutQuad(prevAnimTimer_.GetProgress()));
 	}
 	else {
 		stagePreviewUI_.position_ = endPreviewPos_;

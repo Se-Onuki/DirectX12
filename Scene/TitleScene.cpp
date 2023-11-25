@@ -28,6 +28,8 @@ void TitleScene::OnEnter() {
 
 	// カメラマネージャーの初期化
 	cameraManager_->Init();
+	cameraManager_->GetUseCamera()->translation_ = { .15f, -1.25f, -100.0f };
+	cameraManager_->GetUseCamera()->rotation_ = { -.25f, 0.0f, 0.0f };
 
 	// パーティクル関連の初期化
 	particleManager_->Init(256); // パーティクルの最大数は256
@@ -72,6 +74,7 @@ void TitleScene::Update() {
 		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 		// 指定した秒数後シーンチェンジ
 		sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
+		
 	}
 
 }
@@ -124,6 +127,8 @@ void TitleScene::Draw() {
 
 	// スプライトの描画
 	/*sprite_->Draw();*/
+
+	titleManager_->SpriteDraw();
 
 	// フェード演出描画
 	Fade::GetInstance()->Draw();

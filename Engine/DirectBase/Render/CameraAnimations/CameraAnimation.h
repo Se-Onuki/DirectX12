@@ -52,7 +52,12 @@ public: // アクセッサ等
 	///	アニメーション終了状態ゲッター
 	/// </summary>
 	/// <returns>アニメーションが終了しているか</returns>
-	bool GetIsEnd() { return timer_.IsFinish(); }
+	bool GetIsEnd() { return isEnd_; }
+
+	/// <summary>
+	/// アニメーション強制終了
+	/// </summary>
+	void End();
 
 private: // メンバ変数
 
@@ -66,6 +71,9 @@ private: // メンバ変数
 
 	// アニメーション時間
 	SoLib::DeltaTimer timer_;
+
+	// 終了トリガー
+	bool isEnd_ = true;
 
 	// イージングの関数ポインタ
 	float(*Ease)(float) = nullptr;
