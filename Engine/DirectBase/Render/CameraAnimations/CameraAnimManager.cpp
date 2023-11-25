@@ -1,7 +1,7 @@
 #include "CameraAnimManager.h"
 #include "CameraManager.h"
 
-CameraAnimManager* CameraAnimManager::GetInstance()
+CameraAnimManager *CameraAnimManager::GetInstance()
 {
 	static CameraAnimManager instance;
 	return &instance;

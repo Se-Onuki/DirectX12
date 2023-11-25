@@ -37,6 +37,7 @@ public:
 	enum class PipelineType : uint32_t {
 		kModel,		// モデル用
 		kParticle,	// パーティクル用
+		kShadowParticle,	// パーティクル用
 	};
 
 	enum class RootParameter : uint32_t {
@@ -66,15 +67,15 @@ public:
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// モデル用パイプライン
-	static std::array<std::array<ComPtr<ID3D12PipelineState>, 8u>, 2u> graphicsPipelineState_;
-	static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
+	static std::array<std::array<ComPtr<ID3D12PipelineState>, 8u>, 3u> graphicsPipelineState_;
+	//static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
 	static PipelineType sPipelineType_;
 
-	static std::array<std::array<PipelineState, 8u>, 2u> graphicsPipelineStateClass_;
+	//static std::array<std::array<PipelineState, 8u>, 2u> graphicsPipelineStateClass_;
 	static std::array<RootSignature, 2u> rootSignatureClass_;
 
 	static void CreatePipeLine();
-	static void BuildPileLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc);
+	static void BuildPipeLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc);
 
 public:
 	static void StaticInit();
@@ -88,7 +89,7 @@ public:
 
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera, const Material &material) const;
-	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t>& drawIndex, const Camera<Render::CameraType::Projecction> &camera) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera<Render::CameraType::Projecction> &camera) const;
 	template <typename T>
 	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const;
 

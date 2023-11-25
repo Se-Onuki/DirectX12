@@ -162,9 +162,6 @@
     <ClCompile Include="Scene\GameScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\TitleScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Entity\Component\Collider.cpp">
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
@@ -396,8 +393,14 @@
     <ClCompile Include="Header\Object\Block\BlockManager.cpp">
       <Filter>Header\Entity\Object\Block</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Header\Entity\Component\PlayerState\EndRotateState.cpp">
       <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="StarItemComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
     </ClCompile>
     <ClCompile Include="Scene\LoadScene.cpp">
       <Filter>Scene</Filter>
@@ -779,6 +782,9 @@
     <ClInclude Include="Header\Object\Pose\PoseManager.h">
       <Filter>Header\Entity\Object\PoseManager</Filter>
     </ClInclude>
+    <ClInclude Include="StarItemComp.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -802,6 +808,9 @@
       <Filter>Engine\Shader</Filter>
     </FxCompile>
     <FxCompile Include="resources\shader\Particle.VS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\ShaderParticle.PS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
   </ItemGroup>

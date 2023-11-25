@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <memory>
+#include <optional>
 
 #include "../../Engine/DirectBase/Render/Camera.h"
 #include "../Collision/Collision.h"
@@ -10,6 +11,7 @@
 #include "../../Utils/SoLib/SoLib_Timer.h"
 #include <array>
 #include <map>
+#include "../Entity/Entity.h"
 
 class LevelElementManager {
 	LevelElementManager() = default;
@@ -31,6 +33,8 @@ public:
 	public:
 		Box(const AABB &aabb, Platform *parent);
 
+		void CreateBox() const;
+
 		GroundType groundType_ = GroundType::kGrass;
 
 		Transform transform_;
@@ -43,7 +47,7 @@ public:
 
 	class Platform {
 	public:
-		Platform() = default;
+		Platform();
 		~Platform() = default;
 
 		BaseTransform center_;
@@ -52,14 +56,17 @@ public:
 
 		Vector3 rotateAxis_ = Vector3::front;
 
-		VariantItem<float> vLerpTime_{ "LerpTime",1.f };
-
 		void AddBox(const AABB &box);
+
+		void AddItem(const BaseTransform &srt);
+
 		void CalcCollision();
 
 		void Update(float deltaTime);
 
 		void AddRotate(const float targetRot);
+
+		void SetRotate(const float targetRot);
 
 		void SetAxis(const Vector3 &axis) { rotateAxis_ = axis.Nomalize(); }
 
@@ -67,16 +74,30 @@ public:
 
 		const auto &GetCollider() const { return collisionBox_; }
 
-		void ImGuiWidget();
+		const auto &GetBoxList() const { return boxList_; }
+
+		bool ImGuiWidget();
 
 		const auto &GetTimer() const { return timer_; }
 
 	private:
 
+		const float &lerpTime_;
+
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
 
+		std::list<std::unique_ptr<Entity>> starItem_;
+
 		std::list<Box> boxList_;
+
+		std::list<Box>::iterator boxItr_;
+	};
+
+	struct StateLog {
+		Entity *item_ = nullptr;
+		int32_t remainRotCount_;
+		std::list<std::pair<uint32_t, float>> angleList_;
 	};
 
 public:
@@ -85,6 +106,15 @@ public:
 		static LevelElementManager instance{};
 		return &instance;
 	}
+
+	bool AnyPlatformRotating() const;
+
+	void Undo();
+
+	void UndoUpdate(const float deltaTime);
+
+	/// @brief 履歴を追加する
+	void AddUndoLog(Entity *const starItem);
 
 	void ImGuiWidget();
 
@@ -103,7 +133,18 @@ public:
 	/// @param transform ブロックのSRT
 	void AddBlock(const uint32_t key, const AABB &box);
 
+	void AddItem(const uint32_t key, const BaseTransform &srt);
+
+	/// @brief プレイヤのセッター
+	void SetPlayer(Entity *const player) { pPlayer_ = player; }
+	/// @brief プレイヤのゲッター
+	const auto *const GetPlayer() const { return pPlayer_; }
+
 	const LineBase &GetStageLine() const { return stageLine_; }
+
+	/// @brief 回転回数の変更
+	/// @param count 回転回数の加算値
+	void AddRotateCount(const int32_t count);
 
 	Platform *const GetPlatform(int32_t index);
 
@@ -112,11 +153,27 @@ public:
 
 	const auto &GetGroundModel() const { return groundModels_; }
 
+	VariantItem<float> vLerpTime_{ "LerpTime",1.f };
+	VariantItem<int32_t> vMaxRotateCount_{ "MaxRotateCount", 2 };
 private:
 	std::array<Model *, 2u> groundModels_ = {};
 	Transform lineStart_;
 	Transform lineEnd_;
 	LineBase stageLine_;
+
+	Entity *pPlayer_ = nullptr;
+
+	SoLib::DeltaTimer undoTimer_;
+
+	StateLog undoLog_;
+
+	std::list<StateLog> stateLog_;
+
+	void SetTransferData() const;
+
+	int32_t remainRotateCount_;
+
+	PlatformMap::iterator platformItr_;
 
 	bool debugDrawer_ = false;
 };

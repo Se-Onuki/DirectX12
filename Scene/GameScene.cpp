@@ -1,23 +1,25 @@
 #include "GameScene.h"
 
-#include <imgui.h>
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
 #include "../Engine/DirectBase/Model/ModelManager.h"
+#include <imgui.h>
 
 #include "TitleScene.h"
 
-#include "../Header/Entity/Component/ModelComp.h"
-#include "../Utils/SoLib/SoLib_ImGui.h"
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
-#include "../Header/Entity/Component/Rigidbody.h"
-#include "../Header/Entity/Component/PlayerComp.h"
 #include "../Header/Entity/Component/Collider.h"
-#include "../Header/Entity/Component/PlayerAnimComp.h"
 #include "../Header/Entity/Component/FollowCameraComp.h"
+#include "../Header/Entity/Component/ModelComp.h"
+#include "../Header/Entity/Component/PlayerAnimComp.h"
+#include "../Header/Entity/Component/PlayerComp.h"
+#include "../Header/Entity/Component/Rigidbody.h"
+#include "../Utils/SoLib/SoLib_ImGui.h"
 
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
+#include "../Header/Object/Block/BlockManager.h"
 
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../StarItemComp.h"
 
 #include "../Header/Object/Fade.h"
 
@@ -45,13 +47,17 @@ void GameScene::OnEnter() {
 	static auto *const particleManager = ParticleManager::GetInstance();
 	static auto *const particleEmitterManager = ParticleEmitterManager::GetInstance();
 
+	static auto *const blockManager = BlockManager::GetInstance();
+
+	blockManager->Init(8192u);
+
 	// カメラマネージャーの初期化
 	cameraManager_->Init();
 	// テスト用新規カメラを追加
 	cameraManager_->AddCamera("TestCamera");
 
 	// パーティクルマネージャの初期化
-	particleManager->Init(256); // パーティクルの最大数は256
+	particleManager->Init(256u); // パーティクルの最大数は256
 	// パーティクルエミッタマネージャーの初期化
 	particleEmitterManager->Init();
 
@@ -68,12 +74,13 @@ void GameScene::OnEnter() {
 	levelManager = LevelElementManager::GetInstance();
 
 	levelManager->Init();
+
 	levelManager->AddBlock(1u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,20.f }));
 
 	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,0.f }));
 	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
-	//levelManager->blockCollider_[0u].AddRotate(180._deg);
-	// levelManager->blockCollider_[0u].center_.translate.z = 180._deg;
+
+	levelManager->AddItem(0u, BaseTransform{ .translate{0.f,-0.5f,5.f} });
 
 	levelManager->CalcCollision();
 
@@ -98,6 +105,8 @@ void GameScene::OnEnter() {
 	emitter->targetTransform_ = &player_->transform_;
 	emitter->offset_ = { 0.0f, 0.5f, 0.0f };
 
+	levelManager->SetPlayer(player_.get());
+
 #pragma endregion
 
 #pragma region FollowCamera
@@ -109,6 +118,10 @@ void GameScene::OnEnter() {
 #pragma endregion
 
 	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
+
+	/*starItem_ = std::make_unique<Entity>();
+
+	starItem_->AddComponent<StarItemComp>();*/
 
 	/*cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;*/
@@ -149,7 +162,7 @@ void GameScene::Update() {
 	ImGui::End();
 
 	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_0)) {
-		sceneManager_->ChangeScene(std::unique_ptr<GameScene>(), 1.f);
+		sceneManager_->ChangeScene(std::make_unique<TitleScene>(), 1.f);
 	}
 
 	// ポーズ画面マネージャー初期化
@@ -183,13 +196,10 @@ void GameScene::Update() {
 	followCamera_->ImGuiWidget();
 	followCamera_->Update(deltaTime);
 
-	//camera_.translation_ = player_->transform_.translate + Vector3{ 0.f,1.f,-15.f };
+	static auto *const blockManager = BlockManager::GetInstance();
 
-	/*if (keyBoard->IsTrigger(DIK_0)) {
-		if (++cameraTarget_ == cameraList_.end()) {
-			cameraTarget_ = cameraList_.begin();
-		}
-	}*/
+	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
+	blockManager->Update();
 
 	// カメラマネージャーの更新
 	cameraManager_->Update(deltaTime);
@@ -239,6 +249,9 @@ void GameScene::Draw()
 
 	dxCommon->CrearDepthBuffer();
 
+
+	const auto &camera = *cameraManager_->GetUseCamera();
+
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
@@ -247,14 +260,29 @@ void GameScene::Draw()
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	const auto &camera = *cameraManager_->GetUseCamera();
-
 	//model_->Draw(transform_, camera_);
-	levelManager->Draw(camera);
 
-	player_->Draw(camera);
+	//player_->Draw(camera);
+
+	//starItem_->Draw(camera);
 	// 描画
 	//playerAnim_->Draw(camera_);
+
+	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
+
+	light_->SetLight(commandList);
+	static auto *const blockManager = BlockManager::GetInstance();
+
+	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
+	blockManager->Draw(camera);
+
+	Model::SetPipelineType(Model::PipelineType::kModel);
+
+	light_->SetLight(commandList);
+
+	player_->Draw(camera);
+
+	levelManager->Draw(camera);
 
 	skyDome_->Draw(camera);
 
@@ -263,8 +291,6 @@ void GameScene::Draw()
 
 	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
 	particleManager->Draw(camera);
-
-	// モデルの描画
 
 
 	Model::EndDraw();

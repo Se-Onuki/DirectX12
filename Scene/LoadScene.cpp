@@ -34,6 +34,9 @@ void LoadScene::OnEnter()
 	modelManager_->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_R.obj")); // プレイヤーの右足
 	modelManager_->AddModel("SkyDome", Model::LoadObjFile("Model/SkyDome/", "SkyDome.obj"))->materialMap_.begin()->second->materialBuff_->emissive = { 1.0f, 1.0f, 1.0f,1.0f };
 
+
+	modelManager_->AddModel("StarItem", Model::LoadObjFile("Model/Star/", "Star.obj"));
+
 	/// UI関係読み込み
 
 	// ステージ選択画面
@@ -55,7 +58,7 @@ void LoadScene::OnExit()
 
 void LoadScene::Update()
 {
-	
+
 }
 
 void LoadScene::Draw()

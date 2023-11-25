@@ -13,8 +13,8 @@ const std::string PlayerComp::groupName_ = "Player";
 void PlayerComp::Init() {
 	ApplyVariables(groupName_.c_str());
 	input_ = Input::GetInstance();
-	collider_.min = -radius_;
-	collider_.max = radius_;
+	referenceCollider_.min = -radius_;
+	referenceCollider_.max = radius_;
 
 	backMaterial_.Create();
 	backMaterial_.blendMode_ = Model::BlendMode::kBacker;
@@ -53,62 +53,15 @@ void PlayerComp::Update() {
 	}
 	nowState_->Update(object_->GetDeltaTime());
 
-	Vector3 inputVec{};
 	auto *const rigidbody = object_->GetComponent<Rigidbody>();
-	//if (keyBoard) {
-	//	if (keyBoard->IsTrigger(DIK_SPACE)) {
-	//		rigidbody->ApplyInstantForce(Vector3{ 0.f,vJumpPower_,0.f });
-	//	}
-
-	//	if (keyBoard->IsTrigger(DIK_E)) {
-	//		if (auto *const platform = levelManager->GetPlatform(registeredGroups_)) {
-	//			platform->AddRotate(-90._deg);
-	//		}
-	//	}
-	//	if (keyBoard->IsTrigger(DIK_Q)) {
-	//		if (auto *const platform = levelManager->GetPlatform(registeredGroups_)) {
-	//			platform->AddRotate(90._deg);
-	//		}
-	//	}
-
-
-	//	if (keyBoard->IsPress(DIK_W)) {
-	//		inputVec += Vector3::front;
-	//	}
-	//	if (keyBoard->IsPress(DIK_S)) {
-	//		inputVec -= Vector3::front;
-	//	}
-
-	//	if (keyBoard->IsPress(DIK_A)) {
-	//		inputVec -= Vector3::right;
-	//	}
-	//	if (keyBoard->IsPress(DIK_D)) {
-	//		inputVec += Vector3::right;
-	//	}
-
-	//	inputVec = inputVec.Nomalize();
-	//}
-	//// 入力強度を取得
-	//float movePower = 1.f;
-	//// もし入力が0でないなら強度に応じた値
-	//if (inputVec.LengthSQ() != 0.f) {
-	//	movePower = inputVec.Length() / inputVec.Nomalize().Length();
-	//}
-
-	//// カメラの角度を元に計算
-	//inputVec = inputVec * pFollowCamera_->GetCamera().matView_.GetRotate().InverseRT();
-
-	//// カメラの上下方向を破棄
-	//inputVec.y = 0.f;
-	//inputVec = inputVec.Nomalize() * movePower;
-
-
-	rigidbody->ApplyContinuousForce(inputVec * vMoveSpeed_);
 
 	if (isActiveGravity_) {
 		rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 	}
 
+	if (keyBoard->IsTrigger(DIK_R)) {
+		LevelElementManager::GetInstance()->Undo();
+	}
 
 }
 
@@ -200,7 +153,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 		float t = 1.f;
 		Vector3 hitSurfaceNormal{};
 		if (moveLine.diff.LengthSQ() > 0.f) {
-			const AABB beforeCollider = collider_.AddPos(moveLine.origin);
+			const AABB beforeCollider = referenceCollider_.AddPos(moveLine.origin);
 			const AABB extendCollider = beforeCollider.Extend(moveLine.diff);
 
 			const auto &vertexPos = beforeCollider.GetVertex();
@@ -225,8 +178,8 @@ Vector3 PlayerComp::CalcMoveCollision() {
 								if (normal * line.diff < 0.f) {
 									Vector3 minDiff = box.min - line.origin;
 									Vector3 maxDiff = box.max - line.origin;
-									if (normal * line.diff == -1.f) {
-
+									if (isLanding_) {
+										rigidbody->ApplyInstantForce(Vector3::up * 0.5f);
 									}
 									if (value < t) {
 										t = value;
@@ -267,7 +220,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 	}
 #pragma region 直下の地面の座標を取得
 
-	const AABB playerCollider = collider_.AddPos(moveLine.origin);
+	const AABB playerCollider = referenceCollider_.AddPos(moveLine.origin);
 	const AABB extendCollider = playerCollider.Extend(Vector3::up * -1000.f);
 
 	const auto &playerVertex = playerCollider.GetVertex();

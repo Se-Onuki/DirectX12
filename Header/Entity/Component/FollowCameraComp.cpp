@@ -29,9 +29,11 @@ void FollowCameraComp::ImGuiWidget() {
 
 void FollowCameraComp::AddRotate(const Vector3 &euler) {
 	if (euler.LengthSQ() != 0.f) {
-		rotate_ += euler;
-		camera_->rotation_ += euler;
-		camera_->UpdateMatrix();
+		if (CameraManager::GetInstance()->GetUseCamera() == camera_) {
+			rotate_ += euler;
+			camera_->rotation_ += euler;
+			camera_->UpdateMatrix();
+		}
 	}
 }
 

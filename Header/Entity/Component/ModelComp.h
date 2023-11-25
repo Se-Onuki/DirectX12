@@ -17,7 +17,7 @@ public:
 		std::list<std::unique_ptr<ModelBone>> children_;
 
 		void Init(Model *const model = nullptr);
-		void SetTransform(const Transform &srt);
+		void SetTransform(const BaseTransform &srt);
 
 		ModelBone *const AddChild(Model *const model);
 		void AddChild(ModelBone *const child);
@@ -53,8 +53,8 @@ public:
 	void Draw(const Camera<Render::CameraType::Projecction> &vp)const override;
 	void Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const;
 
-	ModelBone *const AddBone(const std::string &key, Model *const model, const Transform &srt = {});
-	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const Transform &srt);
+	ModelBone *const AddBone(const std::string &key, Model *const model, const BaseTransform &srt = {});
+	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const BaseTransform &srt);
 
 	ModelBone *const GetBone(const std::string &key) { return modelKey_.at(key); }
 

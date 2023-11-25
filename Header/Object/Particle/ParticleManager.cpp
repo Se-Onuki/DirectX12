@@ -3,16 +3,20 @@
 
 void ParticleManager::Init(uint32_t maxCount)
 {
-	if (particles_ == nullptr) { particles_ = std::make_unique<ArrayBuffer<Particle::ParticleData>>(maxCount); }
-	//particles_.CreateBuffer(maxCount);
+	if (particles_ == nullptr) {
+		particles_ = std::make_unique<ArrayBuffer<Particle::ParticleData>>(maxCount);
+		//particles_.CreateBuffer(maxCount);
 
-	// デバイスの取得
-	auto *device = DirectXCommon::GetInstance()->GetDevice();
-	// SRVヒープの取得
-	auto *srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
+		// デバイスの取得
+		auto *device = DirectXCommon::GetInstance()->GetDevice();
+		// SRVヒープの取得
+		auto *srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
-	heapRange_ = srvHeap->RequestHeapAllocation(1);
-	device->CreateShaderResourceView(particles_->GetResources(), &particles_->GetDesc(), heapRange_.GetHandle(0).cpuHandle_);
+		heapRange_ = srvHeap->RequestHeapAllocation(1);
+		device->CreateShaderResourceView(particles_->GetResources(), &particles_->GetDesc(), heapRange_.GetHandle(0).cpuHandle_);
+	}
+
+	this->particleMap_.clear();
 }
 
 void ParticleManager::Update(float deltaTime)
