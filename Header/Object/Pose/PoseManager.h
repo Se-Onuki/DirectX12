@@ -98,6 +98,12 @@ public: // その他関数
 	/// <returns>現在実行中のカテゴリ</returns>
 	PoseState GetPoseState() { return executioningCategory_; }
 
+	/// <summary>
+	/// ポーズ有効状態のゲッター
+	/// </summary>
+	/// <returns>ポーズが有効かどうか</returns>
+	bool GetIsActive() { return isActive_; }
+
 private	: // プライベートなメンバ関数
 
 	/// <summary>
