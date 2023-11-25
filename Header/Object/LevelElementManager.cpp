@@ -34,6 +34,9 @@ void LevelElementManager::Undo() {
 
 		// 戻すデータを登録
 		undoLog_ = log;
+
+		// タイマーを開始
+		undoTimer_.Start(vLerpTime_);
 	}
 }
 
@@ -41,26 +44,21 @@ void LevelElementManager::UndoUpdate(const float deltaTime) {
 
 	undoTimer_.Update(deltaTime);
 
-	// データが登録されていたら
-	if (undoLog_) {
-		// もしタイマーが動作していなかったら
-		if (not undoTimer_.IsActive() && AnyPlatformRotating() == false) {
-			undoTimer_.Start(vLerpTime_);
+	// タイマーが動作していて、回転操作が発生していなかったら
+	if (undoTimer_.IsActive() && AnyPlatformRotating() == false) {
 
-			for (const auto &rotPair : undoLog_->angleList_) {
-				this->GetPlatform(rotPair.first)->SetRotate(rotPair.second);
-			}
-
-		}
-		// 終了したら
-		if (undoTimer_.IsFinish() && undoTimer_.IsActive()) {
-
-			pPlayer_->transform_.translate = undoLog_->item_->transform_.GetGrobalPos();
-			undoLog_->item_->GetComponent<StarItemComp>()->Reset();
-
-			undoLog_ = std::nullopt;
+		for (const auto &rotPair : undoLog_.angleList_) {
+			this->GetPlatform(rotPair.first)->SetRotate(rotPair.second);
 		}
 
+	}
+	// 終了したら
+	if (undoTimer_.IsFinish() && undoTimer_.IsActive()) {
+
+		pPlayer_->transform_.translate = undoLog_.item_->transform_.GetGrobalPos();
+		undoLog_.item_->GetComponent<StarItemComp>()->Reset();
+
+		//undoLog_ = StateLog{ .item_ = nullptr, .remainRotCount_ = remainRotateCount_, .angleList_ = std::move(angleList);
 	}
 }
 
@@ -85,25 +83,28 @@ void LevelElementManager::ImGuiWidget() {
 		stageLine_.SetEnd(lineEnd_->translate);
 	}
 
-	static PlatformMap::iterator platformItr = blockCollider_.begin();
 	std::vector<int32_t> items;
 	for (const auto &pair : blockCollider_) {
 		items.push_back(pair.first);
 	}
-
-	if (ImGui::BeginCombo("PlatformList", std::to_string(platformItr->first).c_str())) {
-
-		for (PlatformMap::iterator it = blockCollider_.begin(); it != blockCollider_.end(); it++) {
-			if (ImGui::Selectable(std::to_string(it->first).c_str())) {
-				platformItr = it;
-				break;
-			}
-		}
-		ImGui::EndCombo();
+	if (platformItr_ == blockCollider_.end()) {
+		platformItr_ = blockCollider_.begin();
 	}
+	if (platformItr_ != blockCollider_.end()) {
+		if (ImGui::BeginCombo("PlatformList", std::to_string(platformItr_->first).c_str())) {
 
-	if (platformItr->second.ImGuiWidget()) {
-		this->SetTransferData();
+			for (PlatformMap::iterator it = blockCollider_.begin(); it != blockCollider_.end(); it++) {
+				if (ImGui::Selectable(std::to_string(it->first).c_str())) {
+					platformItr_ = it;
+					break;
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		if (platformItr_->second.ImGuiWidget()) {
+			this->SetTransferData();
+		}
 	}
 
 }
@@ -120,7 +121,7 @@ void LevelElementManager::AddUndoLog(Entity *const starItem) {
 		angleList.push_back(keyAngle);
 	}
 
-	stateLog_.push_back(StateLog{ .item_ = starItem, .angleList_ = std::move(angleList) });
+	stateLog_.push_back(StateLog{ .item_ = starItem, .remainRotCount_ = remainRotateCount_, .angleList_ = std::move(angleList) });
 
 }
 
@@ -149,10 +150,12 @@ void LevelElementManager::Init() {
 
 	// undo処理の破棄
 	stateLog_.clear();
-	undoLog_ = std::nullopt;
+	undoLog_ = StateLog{ .item_ = nullptr, .remainRotCount_ = -1, };
 	undoTimer_.Clear();
 
 	remainRotateCount_ = 0;
+
+	platformItr_ = blockCollider_.begin();
 
 }
 
@@ -253,6 +256,8 @@ void LevelElementManager::SetTransferData() const {
 LevelElementManager::Platform::Platform() :lerpTime_(LevelElementManager::GetInstance()->vLerpTime_) {
 	startRot_ = {};
 	targetRot_ = {};
+
+	boxItr_ = boxList_.begin();
 }
 
 void LevelElementManager::Platform::AddBox(const AABB &aabb) {
@@ -387,21 +392,22 @@ bool LevelElementManager::Platform::ImGuiWidget() {
 			box.referenceBox_.min -= centorDeff;
 		}
 	}
+	if (boxItr_ == boxList_.end()) { boxItr_ = boxList_.begin(); }
 
-	static std::list<Box>::iterator boxItr = boxList_.begin();
-	if (ImGui::BeginCombo("BoxList", std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*boxItr))).c_str())) {
+	if (boxItr_ != boxList_.end()) {
+		if (ImGui::BeginCombo("BoxList", std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*boxItr_))).c_str())) {
 
-		for (decltype(boxList_)::iterator it = boxList_.begin(); it != boxList_.end(); it++) {
-			if (ImGui::Selectable(std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*it))).c_str())) {
-				boxItr = it;
-				break;
+			for (decltype(boxList_)::iterator it = boxList_.begin(); it != boxList_.end(); it++) {
+				if (ImGui::Selectable(std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*it))).c_str())) {
+					boxItr_ = it;
+					break;
+				}
 			}
+			ImGui::EndCombo();
 		}
-		ImGui::EndCombo();
+
+		isEdited |= boxItr_->ImGuiWidget();
 	}
-
-	isEdited |= boxItr->ImGuiWidget();
-
 
 	if (isEdited) {
 		this->CalcCollision();

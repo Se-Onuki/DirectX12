@@ -90,10 +90,13 @@ public:
 		std::list<std::unique_ptr<Entity>> starItem_;
 
 		std::list<Box> boxList_;
+
+		std::list<Box>::iterator boxItr_;
 	};
 
 	struct StateLog {
 		Entity *item_ = nullptr;
+		int32_t remainRotCount_;
 		std::list<std::pair<uint32_t, float>> angleList_;
 	};
 
@@ -162,13 +165,15 @@ private:
 
 	SoLib::DeltaTimer undoTimer_;
 
-	std::optional<StateLog> undoLog_;
+	StateLog undoLog_;
 
 	std::list<StateLog> stateLog_;
 
 	void SetTransferData() const;
 
 	int32_t remainRotateCount_;
+
+	PlatformMap::iterator platformItr_;
 
 	bool debugDrawer_ = false;
 };

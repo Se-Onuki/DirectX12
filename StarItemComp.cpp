@@ -37,6 +37,8 @@ void StarItemComp::CollectItem() {
 
 		// undoログにデータを追加
 		LevelElementManager::GetInstance()->AddUndoLog(object_);
+		LevelElementManager::GetInstance()->AddRotateCount(1);
+
 
 		isCollected_ = true;
 	}

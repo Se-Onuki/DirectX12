@@ -74,7 +74,7 @@ void GameScene::OnEnter() {
 	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,0.f }));
 	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
 
-	levelManager->AddItem(0u, BaseTransform{ .translate{0.f,0.5f,5.f} });
+	levelManager->AddItem(0u, BaseTransform{ .translate{0.f,-0.5f,5.f} });
 
 	levelManager->CalcCollision();
 
@@ -148,7 +148,7 @@ void GameScene::Update() {
 	ImGui::End();
 
 	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_0)) {
-		sceneManager_->ChangeScene(std::unique_ptr<GameScene>(), 1.f);
+		sceneManager_->ChangeScene(std::make_unique<TitleScene>(), 1.f);
 	}
 
 
