@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <json.hpp>
 
 template <typename T>
 class VariantItem final {
@@ -11,6 +12,8 @@ public:
 
 	inline operator const T &() const noexcept;
 	inline VariantItem &operator=(const T &item);
+
+	inline VariantItem &operator=(const nlohmann::json &item);
 
 	inline T *const operator->() { return &item_; }
 
@@ -28,6 +31,18 @@ template<typename T>
 inline VariantItem<T> &VariantItem<T>::operator=(const T &item) {
 	item_ = item;
 	return *this;
+}
+
+template<typename T>
+inline void operator>>(const nlohmann::json &json, VariantItem<T> &item) {
+	item = json[item.GetKey()].get<T>();
+}
+
+template<typename T>
+inline nlohmann::json &operator<<(nlohmann::json &json, const VariantItem<T> &item) {
+	json[item.GetKey()] = item.GetItem();
+
+	return json;
 }
 
 template<typename T>

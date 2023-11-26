@@ -116,6 +116,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	sceneManager->Init();
 	sceneManager->ChangeScene(std::make_unique<LoadScene>());
 
+	LevelElementManager::StaticInit();
+
 
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {

@@ -70,23 +70,19 @@ void GameScene::OnEnter() {
 
 	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });*/
+	/*
 
-	levelManager = LevelElementManager::GetInstance();
+		levelManager->AddBlock(1u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,20.f }));
 
-	levelManager->Init();
+		levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,0.f }));
+		levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
 
-	levelManager->AddBlock(1u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,20.f }));
+		levelManager->AddItem(0u, BaseTransform{ .translate{0.f,-1.f,5.f} });
 
-	levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,0.f }));
-	levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
+		levelManager->AddItem(1u, BaseTransform{ .translate{0.f,-1.f,15.f} });*/
 
-	levelManager->AddItem(0u, BaseTransform{ .translate{0.f,-1.f,5.f} });
 
-	levelManager->AddItem(1u, BaseTransform{ .translate{0.f,-1.f,15.f} });
-
-	levelManager->CalcCollision();
-
-	// ポーズ画面マネージャー初期化
+		// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Init();
 
 #pragma region Player
@@ -107,7 +103,18 @@ void GameScene::OnEnter() {
 	emitter->targetTransform_ = &player_->transform_;
 	emitter->offset_ = { 0.0f, 0.5f, 0.0f };
 
+#pragma endregion
+
+#pragma region LevelManager
+
+	levelManager = LevelElementManager::GetInstance();
+
+	levelManager->Init();
+
 	levelManager->SetPlayer(player_.get());
+	levelManager->LoadData(0u);
+
+	levelManager->CalcCollision();
 
 #pragma endregion
 

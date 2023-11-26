@@ -1,16 +1,17 @@
 #pragma once
+#include <array>
+#include <iostream>
+#include <json.hpp>
 #include <list>
+#include <map>
 #include <memory>
 #include <optional>
 
-#include "../../Engine/DirectBase/Render/Camera.h"
-#include "../Collision/Collision.h"
-#include "../../Engine/DirectBase/Model/Model.h"
-
 #include "../../Engine/DirectBase/File/VariantItem.h"
+#include "../../Engine/DirectBase/Model/Model.h"
+#include "../../Engine/DirectBase/Render/Camera.h"
 #include "../../Utils/SoLib/SoLib_Timer.h"
-#include <array>
-#include <map>
+#include "../Collision/Collision.h"
 #include "../Entity/Entity.h"
 
 class LevelElementManager {
@@ -18,8 +19,8 @@ class LevelElementManager {
 	LevelElementManager(const LevelElementManager &) = delete;
 	LevelElementManager &operator=(const LevelElementManager &) = delete;
 	~LevelElementManager() = default;
-public:
 
+public:
 	enum class GroundType {
 		kGrass,
 		kDirt,
@@ -81,7 +82,6 @@ public:
 		const auto &GetTimer() const { return timer_; }
 
 	private:
-
 		const float &lerpTime_;
 
 		SoLib::DeltaTimer timer_;
@@ -101,11 +101,16 @@ public:
 	};
 
 public:
-
 	static auto *const GetInstance() {
 		static LevelElementManager instance{};
 		return &instance;
 	}
+
+	static void StaticInit();
+
+	void LoadData(const uint32_t levelID);
+
+	void SetData();
 
 	bool AnyPlatformRotating() const;
 
@@ -153,9 +158,15 @@ public:
 
 	const auto &GetGroundModel() const { return groundModels_; }
 
-	VariantItem<float> vLerpTime_{ "LerpTime",1.f };
+	VariantItem<float> vLerpTime_{ "LerpTime", 1.f };
 	VariantItem<int32_t> vMaxRotateCount_{ "MaxRotateCount", 2 };
+
 private:
+	static nlohmann::json GetLevelParameters(const nlohmann::json &jsonData, int32_t levelIndex);
+
+private:
+	Vector3 startPos_;
+
 	std::array<Model *, 2u> groundModels_ = {};
 	Transform lineStart_;
 	Transform lineEnd_;
@@ -174,6 +185,10 @@ private:
 	int32_t remainRotateCount_;
 
 	PlatformMap::iterator platformItr_;
+
+	nlohmann::json monoLevelData_;
+
+	static nlohmann::json levelData_;
 
 	bool debugDrawer_ = false;
 };
