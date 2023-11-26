@@ -164,6 +164,13 @@ void LevelElementManager::Update([[maybe_unused]] float deltaTime) {
 	for (auto &[key, platform] : blockCollider_) {
 		platform.Update(deltaTime);
 	}
+
+#ifdef _DEBUG
+
+	ImGui::Text("RotateCount : %i / %i", remainRotateCount_, vMaxRotateCount_.GetItem());
+
+#endif // _DEBUG
+
 }
 
 void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const {
