@@ -117,6 +117,8 @@ void GameScene::OnEnter() {
 	auto *const followComp = followCamera_->AddComponent<FollowCameraComp>();
 	followComp->SetTarget(&player_->transform_);
 
+	cameraManager_->SetUseCamera(followComp->GetCamera());
+
 #pragma endregion
 
 	player_->GetComponent<PlayerComp>()->SetFollowCamera(followComp);
@@ -148,64 +150,74 @@ void GameScene::Update() {
 	static auto *const particleEmitterManager = ParticleEmitterManager::GetInstance();
 	static const auto *const keyBoard = input_->GetDirectInput();
 
-	colliderManager->clear();
-
-	TextureManager::GetInstance()->ImGuiWindow();
-
-	particleEmitterManager->Update(deltaTime);
-	particleManager->Update(deltaTime);
-
-	levelManager->Update(deltaTime);
-	followCamera_->AddComponent<FollowCameraComp>()->SetLine(levelManager->GetStageLine());
-
-	ImGui::Begin("LevelManager");
-	levelManager->ImGuiWidget();
-
-	ImGui::End();
-
-	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_0)) {
-		sceneManager_->ChangeScene(std::make_unique<TitleScene>(), 1.f);
-	}
-
 	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Update(deltaTime);
 	// Startボタンをおしたらメニューを展開
-	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START)) {
-		if(PoseManager::GetInstance()->GetPoseState() == PoseManager::kNone)
-			PoseManager::GetInstance()->DeployPoseMenu();
+	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START) && not PoseManager::GetInstance()->GetIsActive()) {
+
+		if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kNone) {
+			PoseManager::GetInstance()->DeplayPoseMenu();
+		}
+
 	}
+	if (not PoseManager::GetInstance()->GetIsActive()) {
+		colliderManager->clear();
 
-	player_->Update(deltaTime);
+		TextureManager::GetInstance()->ImGuiWindow();
 
-	skyDome_->Update(deltaTime);
+		particleEmitterManager->Update(deltaTime);
+		particleManager->Update(deltaTime);
 
-	ImGui::Begin("Player");
-	if (ImGui::Button("Reset")) {
-		player_->Reset();
+		levelManager->Update(deltaTime);
+		followCamera_->AddComponent<FollowCameraComp>()->SetLine(levelManager->GetStageLine());
+
+		ImGui::Begin("LevelManager");
+		levelManager->ImGuiWidget();
+
+		ImGui::End();
+
+		player_->Update(deltaTime);
+
+		skyDome_->Update(deltaTime);
+
+		ImGui::Begin("Player");
+		if (ImGui::Button("Reset")) {
+			player_->Reset();
+		}
+		player_->ImGuiWidget();
+		ImGui::End();
+
+		Vector3 euler{};
+		if (keyBoard->IsPress(DIK_RIGHT)) {
+			euler += Vector3::up * -5._deg;
+		}
+		if (keyBoard->IsPress(DIK_LEFT)) {
+			euler += Vector3::up * 5._deg;
+		}
+
+		followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
+		followCamera_->ImGuiWidget();
+		followCamera_->Update(deltaTime);
+
+		static auto *const blockManager = BlockManager::GetInstance();
+
+		// 複数モデルのパーティクルを、それぞれの集合ごとに描画
+		blockManager->Update();
+
+		// カメラマネージャーの更新
+		cameraManager_->Update(deltaTime);
 	}
-	player_->ImGuiWidget();
-	ImGui::End();
-
-	Vector3 euler{};
-	if (keyBoard->IsPress(DIK_RIGHT)) {
-		euler += Vector3::up * -5._deg;
+	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnCheckPoint) {
+		levelManager->Undo();
+		PoseManager::GetInstance()->SetPoseState(PoseManager::kNone);
 	}
-	if (keyBoard->IsPress(DIK_LEFT)) {
-		euler += Vector3::up * 5._deg;
+	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kRetry) {
+		if (!sceneChanging_) {
+			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+			sceneManager_->ChangeScene(std::make_unique<GameScene>(), 1.f);
+			sceneChanging_ = true;
+		}
 	}
-
-	followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
-	followCamera_->ImGuiWidget();
-	followCamera_->Update(deltaTime);
-
-	static auto *const blockManager = BlockManager::GetInstance();
-
-	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
-	blockManager->Update();
-
-	// カメラマネージャーの更新
-	cameraManager_->Update(deltaTime);
-
 	// ステージ選択に戻るよう指示されていたら戻る
 	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnStageSelect) {
 		if (!sceneChanging_) {

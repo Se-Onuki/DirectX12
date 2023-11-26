@@ -16,8 +16,8 @@ private: // コンストラクタ等
 	// シングルトンパターンの設定
 	PoseManager() = default;
 	~PoseManager() = default;
-	PoseManager(const PoseManager&) = delete;
-	const PoseManager& operator=(const PoseManager&) = delete;
+	PoseManager(const PoseManager &) = delete;
+	const PoseManager &operator=(const PoseManager &) = delete;
 
 private: // サブクラス
 
@@ -63,7 +63,7 @@ public: // メンバ関数
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>シングルトンインスタンス</returns>
-	static PoseManager* GetInstance() {
+	static PoseManager *GetInstance() {
 		static PoseManager instance;
 		return &instance;
 	};
@@ -90,7 +90,7 @@ public: // その他関数
 	/// <summary>
 	/// ポーズメニューを展開する関数
 	/// </summary>
-	void DeployPoseMenu();
+	void DeplayPoseMenu();
 
 	/// <summary>
 	/// 現在実行中のカテゴリゲッター
@@ -98,18 +98,22 @@ public: // その他関数
 	/// <returns>現在実行中のカテゴリ</returns>
 	PoseState GetPoseState() { return executioningCategory_; }
 
+	/// @brief カテゴリのセッタ
+	/// @param state 変更先のカテゴリ
+	void SetPoseState(const PoseState state) { executioningCategory_ = state; }
+
 	/// <summary>
 	/// ポーズ有効状態のゲッター
 	/// </summary>
 	/// <returns>ポーズが有効かどうか</returns>
 	bool GetIsActive() { return isActive_; }
 
-private	: // プライベートなメンバ関数
-
 	/// <summary>
 	/// ポーズメニューを閉じる関数
 	/// </summary>
 	void CloseMenu();
+
+private: // プライベートなメンバ関数
 
 	/// <summary>
 	/// 決定ボタンを押したときの関数
@@ -119,7 +123,7 @@ private	: // プライベートなメンバ関数
 private: // メンバ変数
 
 	// 入力検知
-	Input* input_ = nullptr;
+	Input *input_ = nullptr;
 
 	// ポーズ画面
 	UISprite poseUI_;

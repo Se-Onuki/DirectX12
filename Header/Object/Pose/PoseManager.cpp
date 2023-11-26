@@ -6,7 +6,9 @@ void PoseManager::Init()
 	input_ = Input::GetInstance();
 
 	// ポーズ画面用UI
+	//if (poseUI_.sprite_) {
 	poseUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/ingameStopUI.png")));
+	//}
 	poseUI_.position_ = { 1280.0f / 2.0f, 360.0f + (360.0f * 2.0f) };
 	poseUI_.scale_ = { 500.0f, 500.0f };
 	poseUI_.anchorPoint_ = { 0.5f, 0.5f };
@@ -106,7 +108,7 @@ void PoseManager::Draw()
 	}
 }
 
-void PoseManager::DeployPoseMenu()
+void PoseManager::DeplayPoseMenu()
 {
 	if (!isActive_) {
 		// 再度初期化
@@ -129,8 +131,7 @@ void PoseManager::CloseMenu()
 void PoseManager::PressAButton()
 {
 	// 選択カテゴリによって処理を分岐
-	switch (selectedCategory_)
-	{
+	switch (selectedCategory_) {
 	case PoseManager::kResume:
 		// メニューを閉じる
 		CloseMenu();
