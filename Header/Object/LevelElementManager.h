@@ -43,6 +43,8 @@ public:
 
 		Platform *parent_ = nullptr;
 
+		bool isDelete_ = false;
+
 		bool ImGuiWidget();
 	};
 
@@ -51,13 +53,15 @@ public:
 		Platform();
 		~Platform() = default;
 
+		Transform axisBar_;
+
 		BaseTransform center_;
 		Vector3 startRot_;
 		Vector3 targetRot_;
 
 		Vector3 rotateAxis_ = Vector3::front;
 
-		void AddBox(const AABB &box);
+		Box &AddBox(const AABB &box, GroundType groundType);
 
 		void AddItem(const BaseTransform &srt);
 
@@ -80,6 +84,8 @@ public:
 		bool ImGuiWidget();
 
 		const auto &GetTimer() const { return timer_; }
+
+		bool isDelete_ = false;
 
 	private:
 		const float &lerpTime_;
@@ -136,7 +142,7 @@ public:
 
 	/// @brief ブロックを追加
 	/// @param transform ブロックのSRT
-	void AddBlock(const uint32_t key, const AABB &box);
+	void AddBlock(const uint32_t key, const AABB &box, GroundType groundType);
 
 	void AddItem(const uint32_t key, const BaseTransform &srt);
 
