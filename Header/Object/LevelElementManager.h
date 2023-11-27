@@ -61,7 +61,7 @@ public:
 
 		Vector3 rotateAxis_ = Vector3::front;
 
-		void AddBox(const AABB &box);
+		Box &AddBox(const AABB &box, GroundType groundType);
 
 		void AddItem(const BaseTransform &srt);
 
@@ -142,7 +142,7 @@ public:
 
 	/// @brief ブロックを追加
 	/// @param transform ブロックのSRT
-	void AddBlock(const uint32_t key, const AABB &box);
+	void AddBlock(const uint32_t key, const AABB &box, GroundType groundType);
 
 	void AddItem(const uint32_t key, const BaseTransform &srt);
 

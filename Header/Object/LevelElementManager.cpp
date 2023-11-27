@@ -59,7 +59,7 @@ void LevelElementManager::SetData()
 			pos = box["Centor"];
 			Vector3 scale;
 			scale = box["Radius"];
-			platform.AddBox(AABB::Create(pos, scale));
+			platform.AddBox(AABB::Create(pos, scale), static_cast<GroundType>(box["GroundType"].get<int32_t>()));
 		}
 		// アイテムの追加
 		for (const auto &item : pratItr["StarItem"]) {
@@ -306,9 +306,9 @@ void LevelElementManager::CalcCollision()
 	}
 }
 
-void LevelElementManager::AddBlock(const uint32_t key, const AABB &box)
+void LevelElementManager::AddBlock(const uint32_t key, const AABB &box, GroundType groundType)
 {
-	blockCollider_[key].AddBox(box);
+	blockCollider_[key].AddBox(box, groundType);
 }
 
 void LevelElementManager::AddItem(const uint32_t key,
@@ -375,7 +375,7 @@ LevelElementManager::Platform::Platform() : lerpTime_(LevelElementManager::GetIn
 	boxItr_ = boxList_.begin();
 }
 
-void LevelElementManager::Platform::AddBox(const AABB &aabb)
+LevelElementManager::Box &LevelElementManager::Platform::AddBox(const AABB &aabb, GroundType groundType)
 {
 	boxList_.emplace_back(aabb, this);
 	auto &box = boxList_.back();
@@ -384,7 +384,10 @@ void LevelElementManager::Platform::AddBox(const AABB &aabb)
 	axisBar_->SetParent(center_);
 	axisBar_->scale.z = 10.f;
 
+	box.groundType_ = groundType;
+
 	box.CreateBox();
+	return box;
 }
 
 void LevelElementManager::Platform::AddItem(const BaseTransform &srt)
@@ -607,7 +610,7 @@ bool LevelElementManager::Box::ImGuiWidget()
 
 	const Vector3 beforeCentorPos = referenceBox_.GetCentor() * parent_->center_.matWorld_;
 	Vector3 boxCentor = beforeCentorPos;
-	if (ImGui::DragFloat3("BoxCentorPos", &boxCentor.x, 2.f)) {
+	if (ImGui::DragFloat3("BoxCentorPos", &boxCentor.x, 1.f)) {
 		Vector3 move = (boxCentor - beforeCentorPos) * parent_->center_.matWorld_.InverseRT();
 		referenceBox_ = referenceBox_.AddPos(move);
 		transform_->translate += move;
