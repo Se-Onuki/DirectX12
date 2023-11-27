@@ -607,12 +607,28 @@ bool LevelElementManager::Box::ImGuiWidget()
 
 	const Vector3 beforeCentorPos = referenceBox_.GetCentor() * parent_->center_.matWorld_;
 	Vector3 boxCentor = beforeCentorPos;
-	if (ImGui::DragFloat3("BoxCentorPos", &boxCentor.x, 1.f)) {
+	if (ImGui::DragFloat3("BoxCentorPos", &boxCentor.x, 2.f)) {
 		Vector3 move = (boxCentor - beforeCentorPos) * parent_->center_.matWorld_.InverseRT();
 		referenceBox_ = referenceBox_.AddPos(move);
 		transform_->translate += move;
+		for (auto &item : transform_->translate) {
+			item = std::round(item);
+		}
 		isEdited |= true;
 	}
+
+	const Vector3 beforeRadius = referenceBox_.GetRadius() * parent_->center_.matWorld_.GetRotate();
+	Vector3 boxRadius = beforeRadius;
+	if (ImGui::DragFloat3("BoxRadius", &boxRadius.x, 1.f)) {
+		Vector3 radius = boxRadius * parent_->center_.matWorld_.InverseRT().GetRotate();
+		for (auto &item : radius) {
+			item = std::round(item);
+		}
+		referenceBox_ = AABB::Create(referenceBox_.GetCentor(), radius);
+
+		isEdited |= true;
+	}
+
 
 	return isEdited;
 }
