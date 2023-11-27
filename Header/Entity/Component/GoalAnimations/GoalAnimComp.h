@@ -1,7 +1,12 @@
 #pragma once
 #include "../../../../Utils/SoLib/SoLib.h"
-#include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../../Object/Particle/ParticleEmitter.h"
 #include "../../Entity.h"
+
+// クラスの前方宣言
+class CameraManager;
+class GlobalVariables;
+class StageSelectManager;
 
 /// <summary>
 /// ゴール演出用コンポーネント
@@ -38,6 +43,24 @@ public: // アクセッサ等
 	/// <param name="entity">プレイヤーアニメーションを持つエンティティ</param>
 	void SetPlayerModel(Entity* entity) { playerModel_ = entity; }
 
+	/// <summary>
+	/// プレイヤーのパーティクルエミッタのセッター
+	/// </summary>
+	/// <param name="pEmitter">プレイヤーのパーティクルエミッタ</param>
+	void SetParticleEmitter(ParticleEmitter* pEmitter) { pEmitter_ = pEmitter; }
+
+	/// <summary>
+	/// 再生トリガー状態ゲッター
+	/// </summary>
+	/// <returns>再生トリガー状態</returns>
+	bool GetIsPlay() { return isPlay_; }
+
+	/// <summary>
+	/// 終了トリガーセッター
+	/// </summary>
+	/// <returns>終了トリガー</returns>
+	bool GetIsEnd() { return isEnd_; }
+
 public: // その他関数群
 
 	/// <summary>
@@ -45,24 +68,68 @@ public: // その他関数群
 	/// </summary>
 	void PlayGoalAnim();
 
+	/// <summary>
+	/// ベクトルを同時座標系に変換する関数
+	/// </summary>
+	/// <param name="v">ベクトル</param>
+	/// <param name="m">行列</param>
+	/// <returns>回転後ベクトル</returns>
+	const Vector3 MatrixToVector(const Vector3& v, const Matrix4x4& m);
+
+public: // 調整項目関係
+
+	/// <summary>
+	/// 調整項目クラスにメンバ変数のパラメータを追加する関数
+	/// </summary>
+	void AddItem(int num = 999);
+
+	/// <summary>
+	/// 調整項目クラスにメンバ変数のパラメータをセットする関数
+	/// </summary>
+	void SetItem(int num = 999);
+
+	/// <summary>
+	/// 調整項目クラスからメンバ変数のパラメータの値を読み込む関数
+	/// </summary>
+	void ApplyItem(int num = 999);
+
 private: // メンバ変数
 
-	// カメラマネージャーのインスタンス
+	// 調整項目クラス
+	GlobalVariables* gv_ = nullptr;
+	// カメラマネージャー
 	CameraManager* cameraManager_ = nullptr;
+	// ステージ選択マネージャー
+	StageSelectManager* stageSelectManager_ = nullptr;
 
 	// ゴール時のカメラ
 	Camera3D* goalCamera_ = nullptr;
 	// ゴール時のカメラのオフセット
-	Vector3 offsetTranslate_ = Vector3::zero; // 位置
-	Vector3 offsetRotate_ = Vector3::zero;	  // 回転
+	Vector3 offsetTranslate_ = {0.0f, 1.5f, -5.0f}; // 位置
+	Vector3 offsetRotate_ = { -0.1f, 0.0f, 0.2f };// 回転
 
 	// プレイヤーモデル
 	Entity* playerModel_ = nullptr;
+	// プレイヤーを強制的にこの角度に向かせる
+	float playerRotateY_ = 0.0f;
+
+	// パーティクルの発生位置がズレてしまうので強制的に停止させる
+	ParticleEmitter* pEmitter_;
 
 	//　再生
 	bool isPlay_ = false;
 	
 	// 終了トリガー
 	bool isEnd_ = false;
+
+#ifdef _DEBUG
+
+	// 情報を追加するステージ番号
+	int imGuiAddToStageNumber_ = 0;
+	// 情報を読み込むステージ番号
+	int ImGuiReadToStageNumber_ = 0;
+
+#endif // _DEBUG
+
 };
 

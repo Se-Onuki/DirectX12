@@ -1,0 +1,26 @@
+{
+    "GoalAnimParameters": {
+        "OffsetRotate0": [
+            -0.10000000149011612,
+            0.0,
+            0.20000000298023224
+        ],
+        "OffsetRotate1": [
+            0.10000000149011612,
+            0.0,
+            -0.3499999940395355
+        ],
+        "OffsetTranslate0": [
+            0.0,
+            1.5,
+            -5.0
+        ],
+        "OffsetTranslate1": [
+            0.0,
+            1.5,
+            -10.0
+        ],
+        "PlayerRotateY0": 0.0,
+        "PlayerRotateY1": 0.0
+    }
+}

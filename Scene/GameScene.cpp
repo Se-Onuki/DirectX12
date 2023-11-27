@@ -143,6 +143,7 @@ void GameScene::OnEnter() {
 	goal_ = std::make_unique<Entity>();
 	goal_->AddComponent<GoalAnimComp>();
 	goal_->GetComponent<GoalAnimComp>()->SetPlayerModel(player_.get());
+	goal_->GetComponent<GoalAnimComp>()->SetParticleEmitter(emitter);
 
 	sceneChanging_ = false;
 

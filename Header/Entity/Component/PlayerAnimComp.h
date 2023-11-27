@@ -35,6 +35,12 @@ public: // アクセッサ等
 	/// <returns>アニメーションマネージャー</returns>
 	AnimationManager *GetAnimManager() { return animManager_.get(); }
 
+	/// <summary>
+	/// プレイヤーの輪っか座標ゲッター
+	/// </summary>
+	/// <returns>プレイヤーの輪っか座標</returns>
+	const BaseTransform* GetLingTransform() { return &LingTransform_; }
+
 private: // メンバ変数
 	// モデルのトランスフォーム
 	BaseTransform bodyTransform_; // 体のトランスフォーム
