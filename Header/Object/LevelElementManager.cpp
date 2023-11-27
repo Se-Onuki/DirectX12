@@ -46,7 +46,6 @@ void LevelElementManager::SetData()
 	blockCollider_[platformID];
 	// 足場の追加
 	for (const auto &pratItr : platforms) {
-		platformID++;
 		// 足場データの参照を取得
 		Platform &platform = blockCollider_[platformID];
 		// 回転の中心の設定
@@ -69,6 +68,10 @@ void LevelElementManager::SetData()
 
 			platform.AddItem(srt);
 		}
+		platform.center_.CalcMatrix();
+		platform.axisBar_->UpdateMatrix();
+		platform.CalcCollision();
+		platformID++;
 	}
 }
 
@@ -132,6 +135,9 @@ void LevelElementManager::ImGuiWidget()
 {
 	ImGui::Checkbox("DebugViewer", &debugDrawer_);
 
+	ImGui::DragFloat3("PlayerStartPos", &startPos_.x, 1.f);
+
+
 	// カメラの位置は編集されたか
 	bool isCameraEditedBy = false;
 	isCameraEditedBy |=
@@ -154,6 +160,9 @@ void LevelElementManager::ImGuiWidget()
 	std::vector<int32_t> items;
 	for (const auto &pair : blockCollider_) {
 		items.push_back(pair.first);
+	}
+	if (ImGui::Button("AddPlatform")) {
+
 	}
 	if (platformItr_ == blockCollider_.end()) {
 		platformItr_ = blockCollider_.begin();

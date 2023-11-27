@@ -27,7 +27,7 @@
                     "AxisBarLength": 10.0,
                     "Centor": [
                         0.0,
-                        0.0,
+                        -5.0,
                         0.0
                     ],
                     "Axis": [
