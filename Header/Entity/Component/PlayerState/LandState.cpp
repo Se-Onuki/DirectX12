@@ -19,7 +19,11 @@ void PlayerLandState::Update([[maybe_unused]] float deltaTime) {
 	}
 	else if
 		(
-			pAnimation_->GetAnimManager()->GetNowAnimation()->GetPlayKey() >= 1
+			(
+				/*pAnimation_->GetAnimManager()->GetNowAnimation()->GetFrameProgress() > 0.5f
+				||*/
+				pAnimation_->GetAnimManager()->GetNowAnimation()->GetPlayKey() >= 1
+				)
 			&& (
 				input_->GetXInput()->GetState()->stickL_.Length() > 0.1f
 				|| (

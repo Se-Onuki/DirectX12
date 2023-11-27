@@ -291,9 +291,9 @@ void GameScene::Draw()
 
 	light_->SetLight(commandList);
 
-	player_->Draw(camera);
-
 	levelManager->Draw(camera);
+
+	player_->Draw(camera);
 
 	skyDome_->Draw(camera);
 

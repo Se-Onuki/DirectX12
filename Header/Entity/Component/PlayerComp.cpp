@@ -170,16 +170,22 @@ Vector3 PlayerComp::CalcMoveCollision() {
 				for (auto &box : collider.GetCollider()) {
 					// 拡張した箱が当たってたら詳細な判定
 					if (Collision::IsHit(extendCollider, box)) {
+						const Vector3 boxCentor = box.GetCentor();
+						uint32_t lineNum = 0u;
 						for (auto &line : vertexLine) {
 							if (Collision::IsHit(box, line)) {
 
 								float value = Collision::HitProgress(line, box);
-								const Vector3 normal = box.GetNormal(line.GetProgress(value));
+								const Vector3 hitPoint = line.GetProgress(value);
+								const Vector3 normal = box.GetNormal(hitPoint);
 								if (normal * line.diff < 0.f) {
-									Vector3 minDiff = box.min - line.origin;
-									Vector3 maxDiff = box.max - line.origin;
-									if (isLanding_) {
-										rigidbody->ApplyInstantForce(Vector3::up * 0.5f);
+									//Vector3 minDiff = box.min - line.origin;
+									//Vector3 maxDiff = box.max - line.origin;
+									if (isLanding_ && lineNum < 4 && (hitPoint.y - box.max.y) > -0.1f) {
+										if (normal * line.diff.Nomalize() < -0.3f) {
+											rigidbody->ApplyInstantForce(Vector3::up * 0.7f);
+											transform_->translate.y += 0.1f;
+										}
 									}
 									if (value < t) {
 										t = value;
@@ -190,6 +196,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 									}
 								}
 							}
+							lineNum++;
 						}
 					}
 				}
