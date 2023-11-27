@@ -31,7 +31,7 @@ void GoalAnimComp::Update()
 {	
 	if (isPlay_) {
 		/// ゴール時のカメラのオフセットを設定
-	// ゴール時カメラの回転角を設定
+		// ゴール時カメラの回転角を設定
 		goalCamera_->translation_ = playerModel_->transform_.translate;
 		// 角度合わせのために強制的に設定
 		playerModel_->transform_.rotate.y = playerRotateY_;
@@ -43,6 +43,10 @@ void GoalAnimComp::Update()
 		Vector3 offset = MatrixToVector(offsetTranslate_, rotateMat);
 		// 求めた値を代入する
 		goalCamera_->translation_ += offset;
+
+		if (playerModel_->GetComponent<PlayerAnimComp>()->GetAnimManager()->GetAnimationProgress() >= 1.0f) {
+			playerModel_->GetComponent<PlayerAnimComp>()->GetAnimManager()->SetNextAnimation(PlayerBehavior::kClearBleak, true);
+		}
 	}
 	
 #ifdef _DEBUG

@@ -217,7 +217,7 @@
             0.0
         ],
         "key : 1RotateSpeed": 0.05000000074505806,
-        "key : 2AnimationTime": 0.550000011920929,
+        "key : 2AnimationTime": 0.5,
         "key : 2Arm_L_Rotate": [
             0.0,
             -0.38999998569488525,
@@ -263,7 +263,7 @@
             1.5,
             0.0
         ],
-        "key : 2EasingType": 0,
+        "key : 2EasingType": 2,
         "key : 2Eye_Rotate": [
             0.0,
             0.0,
@@ -325,7 +325,7 @@
             0.0
         ],
         "key : 2RotateSpeed": 0.05000000074505806,
-        "key : 3AnimationTime": 1.0,
+        "key : 3AnimationTime": 0.0,
         "key : 3Arm_L_Rotate": [
             0.0,
             -0.38999998569488525,

@@ -16,6 +16,7 @@ enum PlayerBehavior : uint32_t {
 	kRotating,
 	kRotateEnd,
 	kClear,
+	kClearBleak,
 	kTitle
 };
 

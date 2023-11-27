@@ -16,6 +16,7 @@ void AnimationParameters::Initialize()
 	rotatingAnimKeys_.Initialize("Rotating");
 	rotateEndAnimationKeys_.Initialize("RotateEnd");
 	clearAnimationKeys_.Initialize("Clear");
+	clearBleakAnimationKeys_.Initialize("ClearBleak");
 	titleAnimationKeys_.Initialize("Title");
 }
 
@@ -31,6 +32,7 @@ void AnimationParameters::Update()
 	rotatingAnimKeys_.ShowImGUi();
 	rotateEndAnimationKeys_.ShowImGUi();
 	clearAnimationKeys_.ShowImGUi();
+	clearBleakAnimationKeys_.ShowImGUi();
 	titleAnimationKeys_.ShowImGUi();
 #endif // _DEBUG
 }
