@@ -45,6 +45,7 @@ void AnimationManager::Update()
 	ImGui::RadioButton("PlayRotateStart", &imGuiNextbehavior_, kRotateStart);
 	ImGui::RadioButton("PlayRotating", &imGuiNextbehavior_, kRotating);
 	ImGui::RadioButton("PlayRotateEnd", &imGuiNextbehavior_, kRotateEnd);
+	ImGui::RadioButton("Clear", &imGuiNextbehavior_, kClear);
 	ImGui::RadioButton("Title", &imGuiNextbehavior_, kTitle);
 
 	int key = currentAnimation_->GetPlayKey();
@@ -118,6 +119,9 @@ void AnimationManager::SetNextAnimation(PlayerBehavior next, bool isLoop, AnimEa
 		break;
 	case PlayerBehavior::kRotateEnd:
 		nextAnimation_->Initialize("RotateEnd", isLoop, type, transitionTime);
+		break;
+	case PlayerBehavior::kClear:
+		nextAnimation_->Initialize("Clear", isLoop, type, transitionTime);
 		break;
 	case PlayerBehavior::kTitle:
 		nextAnimation_->Initialize("Title", isLoop, type, transitionTime);

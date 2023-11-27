@@ -130,6 +130,9 @@
     <Filter Include="Header\Entity\Object\PoseManager">
       <UniqueIdentifier>{bba82b33-0ea6-4703-b408-a33a2ff5d4a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Component\GoalAnimComp">
+      <UniqueIdentifier>{8d8da5e3-3d75-45e3-aac7-9f2dce999091}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -428,6 +431,9 @@
     </ClCompile>
     <ClCompile Include="Header\Object\Pose\PoseManager.cpp">
       <Filter>Header\Entity\Object\PoseManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\GoalAnimations\GoalAnimComp.cpp">
+      <Filter>Header\Entity\Component\GoalAnimComp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -784,6 +790,9 @@
     </ClInclude>
     <ClInclude Include="StarItemComp.h">
       <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\GoalAnimations\GoalAnimComp.h">
+      <Filter>Header\Entity\Component\GoalAnimComp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

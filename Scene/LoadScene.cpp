@@ -33,7 +33,7 @@ void LoadScene::OnEnter()
 	modelManager_->AddModel("PlayerFoot_L", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_L.obj")); // プレイヤーの左足
 	modelManager_->AddModel("PlayerFoot_R", Model::LoadObjFile("Model/PlayerModel/Foot/", "Foot_R.obj")); // プレイヤーの右足
 	modelManager_->AddModel("SkyDome", Model::LoadObjFile("Model/SkyDome/", "SkyDome.obj"))->materialMap_.begin()->second->materialBuff_->emissive = { 1.0f, 1.0f, 1.0f,1.0f };
-
+	modelManager_->AddModel("Flag", Model::LoadObjFile("Model/Flag/", "Flag.obj")); // 旗
 
 	modelManager_->AddModel("StarItem", Model::LoadObjFile("Model/Star/", "Star.obj"));
 

@@ -15,6 +15,7 @@ enum PlayerBehavior : uint32_t {
 	kRotateStart,
 	kRotating,
 	kRotateEnd,
+	kClear,
 	kTitle
 };
 
@@ -109,4 +110,3 @@ private: // メンバ変数
 
 
 };
-

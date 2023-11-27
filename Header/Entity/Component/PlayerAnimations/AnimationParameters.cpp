@@ -15,6 +15,7 @@ void AnimationParameters::Initialize()
 	startRotateAnimKeys_.Initialize("RotateStart");
 	rotatingAnimKeys_.Initialize("Rotating");
 	rotateEndAnimationKeys_.Initialize("RotateEnd");
+	clearAnimationKeys_.Initialize("Clear");
 	titleAnimationKeys_.Initialize("Title");
 }
 
@@ -29,6 +30,7 @@ void AnimationParameters::Update()
 	startRotateAnimKeys_.ShowImGUi();
 	rotatingAnimKeys_.ShowImGUi();
 	rotateEndAnimationKeys_.ShowImGUi();
+	clearAnimationKeys_.ShowImGUi();
 	titleAnimationKeys_.ShowImGUi();
 #endif // _DEBUG
 }

@@ -136,6 +136,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Component\CannonComp.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
+    <ClCompile Include="Header\Entity\Component\GoalAnimations\GoalAnimComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.cpp" />
@@ -248,6 +249,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
     <ClInclude Include="Header\Entity\Component\FollowCameraComp.h" />
+    <ClInclude Include="Header\Entity\Component\GoalAnimations\GoalAnimComp.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.h" />

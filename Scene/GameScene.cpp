@@ -29,6 +29,8 @@
 #include "../Header/Object/Pose/PoseManager.h"
 #include "../Header/Object/SkyDome/SkyDome.h"
 
+#include "../Header/Entity/Component/GoalAnimations/GoalAnimComp.h"
+
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -137,6 +139,11 @@ void GameScene::OnEnter() {
 	/*cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;*/
 
+	// ゴールモデル取得
+	goal_ = std::make_unique<Entity>();
+	goal_->AddComponent<GoalAnimComp>();
+	goal_->GetComponent<GoalAnimComp>()->SetPlayerModel(player_.get());
+
 	sceneChanging_ = false;
 
 	skyDome_ = std::make_unique<Entity>();
@@ -186,6 +193,8 @@ void GameScene::Update() {
 		player_->Update(deltaTime);
 
 		skyDome_->Update(deltaTime);
+
+		goal_->Update(deltaTime);
 
 		ImGui::Begin("Player");
 		if (ImGui::Button("Reset")) {
@@ -304,6 +313,8 @@ void GameScene::Draw()
 	player_->Draw(camera);
 
 	levelManager->Draw(camera);
+
+	goal_->Draw(camera);
 
 	skyDome_->Draw(camera);
 
