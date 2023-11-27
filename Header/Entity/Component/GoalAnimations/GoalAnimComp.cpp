@@ -46,6 +46,8 @@ void GoalAnimComp::Update()
 
 		if (playerModel_->GetComponent<PlayerAnimComp>()->GetAnimManager()->GetAnimationProgress() >= 1.0f) {
 			playerModel_->GetComponent<PlayerAnimComp>()->GetAnimManager()->SetNextAnimation(PlayerBehavior::kClearBleak, true);
+			// ゴール演出が終了したことを告げる
+			isEnd_ = true;
 		}
 	}
 	
@@ -103,6 +105,7 @@ void GoalAnimComp::DisplayImGui()
 
 	// 再生状態取得、変更
 	ImGui::Checkbox("isPlay", &isPlay_);
+	ImGui::Checkbox("isEnd", &isEnd_);
 
 	ImGui::End();
 }

@@ -68,6 +68,8 @@ public: // その他関数群
 	/// </summary>
 	void PlayGoalAnim();
 
+private: // プライベートなメンバ関数
+
 	/// <summary>
 	/// ベクトルを同時座標系に変換する関数
 	/// </summary>
@@ -75,9 +77,7 @@ public: // その他関数群
 	/// <param name="m">行列</param>
 	/// <returns>回転後ベクトル</returns>
 	const Vector3 MatrixToVector(const Vector3& v, const Matrix4x4& m);
-
-public: // 調整項目関係
-
+	
 	/// <summary>
 	/// 調整項目クラスにメンバ変数のパラメータを追加する関数
 	/// </summary>

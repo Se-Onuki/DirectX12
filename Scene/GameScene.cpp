@@ -169,7 +169,6 @@ void GameScene::Update() {
 	PoseManager::GetInstance()->Update(deltaTime);
 	// Startボタンをおしたらメニューを展開
 	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START) && not PoseManager::GetInstance()->GetIsActive()) {
-
 		if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kNone) {
 			PoseManager::GetInstance()->DeplayPoseMenu();
 		}
@@ -238,6 +237,18 @@ void GameScene::Update() {
 	// ステージ選択に戻るよう指示されていたら戻る
 	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnStageSelect) {
 		if (!sceneChanging_) {
+			// フェードアウト開始
+			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+			// 指定した秒数後シーンチェンジ
+			sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
+			// シーン遷移中
+			sceneChanging_ = true;
+		}
+	}
+	
+	// ゴール演出が終了している場合
+	if (goal_->GetComponent<GoalAnimComp>()->GetIsEnd()) {
+		if (keyBoard->IsPress(DIK_TAB)) {
 			// フェードアウト開始
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 			// 指定した秒数後シーンチェンジ
