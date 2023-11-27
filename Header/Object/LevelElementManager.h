@@ -51,6 +51,8 @@ public:
 		Platform();
 		~Platform() = default;
 
+		Transform axisBar_;
+
 		BaseTransform center_;
 		Vector3 startRot_;
 		Vector3 targetRot_;

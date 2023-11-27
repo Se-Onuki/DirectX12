@@ -11,7 +11,7 @@ void PlayerBeginRotateState::Init() {
 	timer_.Start(pPlayer_->vRotateBeginTime_);
 
 	auto *const platform = LevelElementManager::GetInstance()->GetPlatform(pPlayer_->GetGroup());
-	Vector3 cameraFacing = TransformNormal(Vector3::front, CameraManager::GetInstance()->GetUseCamera()->matView_);
+	Vector3 cameraFacing = TransformNormal(Vector3::front, CameraManager::GetInstance()->GetUseCamera()->matView_.InverseRT());
 	cameraFacing.y = 0.f;
 	float rotateFacing = platform->rotateAxis_ * cameraFacing.Nomalize();
 	rotateFacing > 0 ? rotateFacing = 1.f : rotateFacing = -1.f;

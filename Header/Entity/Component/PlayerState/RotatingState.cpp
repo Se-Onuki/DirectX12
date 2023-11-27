@@ -15,7 +15,7 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	auto *const groundPosPtr = pPlayer_->GetGroundPos();
 
 	auto *const platform = LevelElementManager::GetInstance()->GetPlatform(pPlayer_->GetGroup());
-	Vector3 cameraFacing = TransformNormal(Vector3::front, CameraManager::GetInstance()->GetUseCamera()->matView_);
+	Vector3 cameraFacing = TransformNormal(Vector3::front, CameraManager::GetInstance()->GetUseCamera()->matView_.InverseRT());
 	cameraFacing.y = 0.f;
 	float rotateFacing = platform->rotateAxis_ * cameraFacing.Nomalize();
 
