@@ -43,6 +43,8 @@ public:
 
 		Platform *parent_ = nullptr;
 
+		bool isDelete_ = false;
+
 		bool ImGuiWidget();
 	};
 
@@ -82,6 +84,8 @@ public:
 		bool ImGuiWidget();
 
 		const auto &GetTimer() const { return timer_; }
+
+		bool isDelete_ = false;
 
 	private:
 		const float &lerpTime_;

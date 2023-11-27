@@ -172,6 +172,11 @@ void LevelElementManager::ImGuiWidget()
 		}
 
 		if (platformItr_->second.ImGuiWidget()) {
+
+			if (platformItr_->second.isDelete_) {
+				blockCollider_.erase(platformItr_);
+				platformItr_ = blockCollider_.begin();
+			}
 			this->SetTransferData();
 		}
 	}
@@ -470,11 +475,16 @@ void LevelElementManager::Platform::Draw(const Camera3D &camera) const
 
 bool LevelElementManager::Platform::ImGuiWidget()
 {
+	bool isEdited = false;
 	ImGui::NewLine();
 
 	ImGui::BulletText("PlatformEditor");
+	ImGui::SameLine();
+	if (ImGui::Button("Delete#Platform")) {
+		isDelete_ = true;
+		isEdited |= true;
+	}
 
-	bool isEdited = false;
 
 	int32_t e;
 	static std::array<Vector3, 2u> axisList = { Vector3::right, Vector3::front };
@@ -530,6 +540,10 @@ bool LevelElementManager::Platform::ImGuiWidget()
 		}
 
 		isEdited |= boxItr_->ImGuiWidget();
+		if (boxItr_->isDelete_) {
+			boxList_.erase(boxItr_);
+			boxItr_ = boxList_.begin();
+		}
 	}
 
 	if (isEdited) {
@@ -574,10 +588,16 @@ void LevelElementManager::Box::CreateBox() const
 
 bool LevelElementManager::Box::ImGuiWidget()
 {
+	bool isEdited = false;
+
 	ImGui::NewLine();
 	ImGui::BulletText("BoxEditor");
+	ImGui::SameLine();
+	if (ImGui::Button("Delete#Box")) {
+		isDelete_ = true;
+		isEdited |= true;
+	}
 
-	bool isEdited = false;
 	int32_t e = static_cast<int32_t>(groundType_);
 	isEdited |= ImGui::RadioButton("Grass", &e, 0);
 	ImGui::SameLine();
