@@ -39,7 +39,7 @@ void StageSelectScene::OnEnter()
 	sceneChanging_ = false;
 
 	if (stageSelectSceneBGM_ == 0u) {
-		stageSelectSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/titleStageSelectBGM.wav");
+		stageSelectSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/StageSelectBGM.wav");
 	}
 
 	// フェードイン開始
@@ -48,7 +48,7 @@ void StageSelectScene::OnEnter()
 
 void StageSelectScene::OnExit()
 {
-	audio_->StopWave(stageSelectSceneBGM_);
+	audio_->StopAllWave();
 }
 
 void StageSelectScene::Update()
@@ -62,7 +62,7 @@ void StageSelectScene::Update()
 
 	// BGM再生
 	if (audio_->IsPlaying(voiceStageSelectSceneBGMHandle_) == 0 || voiceStageSelectSceneBGMHandle_ == -1) {
-		voiceStageSelectSceneBGMHandle_ = audio_->PlayWave(stageSelectSceneBGM_, true, 0.05f);
+		voiceStageSelectSceneBGMHandle_ = audio_->PlayWave(stageSelectSceneBGM_, false, BGMVolume_);
 	}
 
 	// パーティクルの更新

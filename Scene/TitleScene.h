@@ -51,6 +51,7 @@ private:
 	bool sceneChanging_ = false;
 
 	// BGM関係
+	float BGMVolume_ = 0.35f;
 	static uint32_t titleSceneBGM_;
 	int voiceTitleSceneBGMHandle_ = 0u;
 

@@ -148,7 +148,7 @@ void GameScene::OnEnter() {
 }
 
 void GameScene::OnExit() {
-	audio_->StopWave(gameSceneBGM_);
+	audio_->StopAllWave();
 }
 
 void GameScene::Update() {
@@ -164,7 +164,7 @@ void GameScene::Update() {
 
 	// BGM再生
 	if (audio_->IsPlaying(voiceGameSceneBGMHandle_) == 0 || voiceGameSceneBGMHandle_ == -1) {
-		voiceGameSceneBGMHandle_ = audio_->PlayWave(gameSceneBGM_, true, 0.05f);
+		voiceGameSceneBGMHandle_ = audio_->PlayWave(gameSceneBGM_, false, BGMVolume_);
 	}
 
 	const auto &goalList = levelManager->GetGoalList();

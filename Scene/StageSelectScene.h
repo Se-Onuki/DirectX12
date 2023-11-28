@@ -61,6 +61,7 @@ private: // メンバ変数
 	bool sceneChanging_ = false;
 
 	// BGM関係
+	float BGMVolume_ = 0.35f;
 	static uint32_t stageSelectSceneBGM_;
 	int voiceStageSelectSceneBGMHandle_ = 0u;
 

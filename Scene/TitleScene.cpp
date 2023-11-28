@@ -10,6 +10,7 @@
 
 // 静的なメンバ変数の実体を宣言
 uint32_t TitleScene::titleSceneBGM_ = 0u;
+uint32_t TitleScene::selectSE_ = 0u;
 
 TitleScene::TitleScene() {
 	input_ = Input::GetInstance();
@@ -43,8 +44,12 @@ void TitleScene::OnEnter() {
 
 	sceneChanging_ = false;
 
+	// SE読み込み
 	if (titleSceneBGM_ == 0u) {
-		titleSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/titleStageSelectBGM.wav");
+		titleSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/TitleBGM.wav");
+	}
+	if (selectSE_ == 0u) {
+		selectSE_ = audio_->LoadWave("resources/Audio/SE/UI/select.wav");
 	}
 
 	// フェードイン開始
@@ -52,7 +57,7 @@ void TitleScene::OnEnter() {
 }
 
 void TitleScene::OnExit() {
-	audio_->StopWave(titleSceneBGM_);
+	audio_->StopAllWave();
 }
 
 void TitleScene::Update() {
@@ -65,7 +70,7 @@ void TitleScene::Update() {
 
 	// BGM再生
 	if (audio_->IsPlaying(voiceTitleSceneBGMHandle_) == 0 || voiceTitleSceneBGMHandle_ == -1) {
-		voiceTitleSceneBGMHandle_ = audio_->PlayWave(titleSceneBGM_, true, 0.05f);
+		voiceTitleSceneBGMHandle_ = audio_->PlayWave(titleSceneBGM_, false, BGMVolume_);
 	}
 
 	// パーティクルの更新
@@ -86,6 +91,9 @@ void TitleScene::Update() {
 	// スペースを押すと次のシーンへ
 	if (keyBoard->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
 		if (!sceneChanging_) {
+			// 決定SEを再生
+			audio_->PlayWave(selectSE_, false, BGMVolume_);
+
 			// フェードアウト開始
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 			// 指定した秒数後シーンチェンジ
