@@ -441,6 +441,9 @@
     <ClCompile Include="Header\Object\InGameUIManager\InGameUIManager.cpp">
       <Filter>Header\Entity\Object\InGameUIManager</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Object\InGameUIManager\StarUI.cpp">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -801,6 +804,9 @@
       <Filter>Header\Entity\Component\GoalAnimComp</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\InGameUIManager\InGameUIManager.h">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\InGameUIManager\StarUI.h">
       <Filter>Header\Entity\Object\InGameUIManager</Filter>
     </ClInclude>
   </ItemGroup>

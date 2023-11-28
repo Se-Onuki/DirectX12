@@ -144,6 +144,11 @@ void GameScene::OnEnter() {
 	skyDome_ = std::make_unique<Entity>();
 	skyDome_->AddComponent<SkyDome>();
 
+	// インゲームUI
+	inGameUI_ = std::make_unique<InGameUIManager>();
+	// 初期化
+	inGameUI_->Init(3);
+
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 
@@ -217,6 +222,8 @@ void GameScene::Update() {
 
 		// 複数モデルのパーティクルを、それぞれの集合ごとに描画
 		blockManager->Update();
+
+		inGameUI_->Update(deltaTime);
 
 		// カメラマネージャーの更新
 		cameraManager_->Update(deltaTime);
@@ -345,6 +352,8 @@ void GameScene::Draw()
 
 	// スプライトの描画
 	/*sprite_->Draw();*/
+
+	inGameUI_->Draw();
 
 	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Draw();

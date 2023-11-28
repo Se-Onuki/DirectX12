@@ -1,7 +1,8 @@
 #pragma once
-#include <vector>
+#include <list>
 #include "../../../Engine/DirectBase/Input/Input.h"
 #include "../../../Engine/DirectBase/2D/Sprite.h"
+#include "StarUI.h"
 
 /// <summary>
 /// ゲーム中のUIマネージャ
@@ -40,7 +41,8 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化関数
 	/// </summary>
-	void Init();
+	/// <param name="maxStarCount">最大星数</param>
+	void Init(int maxStarCount);
 
 	/// <summary>
 	/// 更新関数
@@ -53,10 +55,27 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+public: // アクセッサ等
+
+	/// <summary>
+	/// 星を追加する関数
+	/// </summary>
+	/// <param name="p0m">プラスかマイナスか</param>
+	void AddStar(int p0m);
+
 private: // メンバ変数
 
-	// 回転可能☆数のスプライト
-	std::vector<UISprite> starSprite_;
+	// 最大星数
+	int maxStarCount_;
+
+	// 星のUIスプライト
+	std::list<std::unique_ptr<StarUI>> stars_;
+	// 星のUIスプライトの始点
+	Vector2 starUIsStartingPoint_ = { 900.0f, 64.0f };
+	// 星UIの行間設定
+	float starUILineSpace_ = 150.0f;
+
+	int imGuiAddType_ = 0;
 
 };
 
