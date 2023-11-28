@@ -31,16 +31,6 @@ public:
 private:
 	std::list<std::pair<float, const Enemy *>> FindTarget(const std::list<std::unique_ptr<Enemy>> &enemyList, const Camera3D &camera, LockOnAngle lockType = LockOnAngle::kAll) const;
 
-	//static std::list<Vector3> SortVectorsBySize(const std::list<Vector3> &vectors, Vector3 referenceVector) {
-	//	std::list<Vector3> vectList = vectors;
-	//	// ベクトルを正規化し、サイズに基づいてソート
-	//	std::sort(vectList.begin(), vectList.end(), [&referenceVector](const Vector3 &v1, const Vector3 &v2)
-	//		{
-	//			return (v1 * referenceVector) < (v2 * referenceVector);
-	//		});
-	//	return vectList;
-	//}
-
 	bool IsCanLockOn(const Enemy *const target, const Camera3D &camera) const;
 
 	/// @brief 最小距離

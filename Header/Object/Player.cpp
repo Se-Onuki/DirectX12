@@ -9,6 +9,7 @@
 #include "../../Utils/SoLib/SoLib_Lerp.h"
 
 #include "LockOn.h"
+#include <numeric>
 
 void Player::ApplyGlobalVariables() {
 	const GlobalVariables *const gVariables = GlobalVariables::GetInstance();
@@ -117,45 +118,12 @@ void Player::BehaviorRootUpdate() {
 
 	// 左スティックのデータを受け取る
 	Vector3 move{ vPad.stickL_.x, 0.f, vPad.stickL_.y };
-	if (move.Length() >= 0.1f) {
+	InputRotate(move);
 
-		move = move.Nomalize() * moveSpeed_; // 速度を正規化
-		Matrix4x4 inputRotateMatrix = Matrix4x4::Identity();
-		inputRotateMatrix *= Matrix4x4::Rotate(camera_->matView_.InverseRT());
-		//move = TransformNormal(move, camera_->matView_);
-		if (transformOrigin_->parent_) {
-
-			//inputRotateMatrix *= Matrix4x4::Rotate(transformOrigin_->parent_->matWorld_.InverseRT());
-			//move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
-		}
-
-		move *= inputRotateMatrix;
-		velocity_ += move * 5.f; // 移動量を追加
-
-		if (transformOrigin_->parent_) {
-
-			move *= Matrix4x4::Rotate(transformOrigin_->parent_->matWorld_.InverseRT());
-			//move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
-		}
-
-
-		//Vector3 moveCross = Vector3::front.cross(move.Nomalize());
-		float moveDot = Vector3::front * move.Nomalize();
-		// ベクトルから回転行列を算出
-		Matrix4x4 rotateMat = Matrix4x4::DirectionToDirection(Vector3::front, move);
-
-		// もし、180度であった場合は調整
-		if (moveDot == -1.f) {
-			rotateMat = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, 180._deg);
-		}
-
-		transformOrigin_->rotateMat_ = rotateMat;
-	}
-
-	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER) || (vPad.button_ & static_cast<WORD>(KeyCode::RIGHT_SHOULDER))) {
+	if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
-	if (input_->GetXInput()->IsPress(KeyCode::A) || (vPad.button_ & static_cast<WORD>(KeyCode::A))) {
+	if (input_->GetXInput()->IsPress(KeyCode::A)) {
 		behaviorRequest_ = Behavior::kDash;
 	}
 	if (input_->GetXInput()->IsPress(KeyCode::B) || input_->GetDirectInput()->IsTrigger(DIK_SPACE)) {
@@ -196,11 +164,14 @@ void Player::BehaviorDashUpdate(float deltaTime) {
 	}
 }
 
-void Player::BehaviorAttackInit() { floatingParameter_ = 0.f; }
+void Player::BehaviorAttackInit() {
+	floatingParameter_ = 0.f;
+	workAttack_ = WorkAttack{};
+}
 
 void Player::BehaviorAttackUpdate() {
 
-	const float step = Angle::PI2 / attackCycle_;
+	//const float step = Angle::PI2 / attackCycle_;
 
 	ImGui::Begin("Player");
 	ImGui::SliderFloat3("Head Transform", &transformHead_->translate.x, -10.f, 10.f);
@@ -233,25 +204,81 @@ void Player::BehaviorAttackUpdate() {
 		transformOrigin_->rotateMat_ = rotateMat;
 	}
 
-	floatingParameter_ += step;
-	if (floatingParameter_ >= Angle::PI2) {
-		behaviorRequest_ = Behavior::kRoot;
+	const ConstAttack &nowAttack = comboArray_[workAttack_.comboIndex_];
+	const AttackTargetAngle &nowAttackAngle = angleArray_[workAttack_.comboIndex_];
+	// コンボ上限に達していない場合
+	if (workAttack_.comboIndex_ < kComboNum_ - 1u) {
+		if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
+			workAttack_.isComboContinue_ = true;
+		}
 	}
-	floatingParameter_ = std::fmod(floatingParameter_, Angle::PI2);
+	// 総時間を経過した場合
+	if (++workAttack_.atackParameter_ >= nowAttack.GetTotalTime()) {
+		if (workAttack_.isComboContinue_) {
+			workAttack_.isComboContinue_ = false;
 
-	transformWeapon_->rotate.x = -std::clamp<float>(
-		std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
-		attackClampAngle_);
-	transformLeft_->rotate.x =
-		-std::clamp<float>(
-			std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
-			attackClampAngle_) +
-		Angle::PI;
-	transformRight_->rotate.x =
-		-std::clamp<float>(
-			std::sin(floatingParameter_) * attackSwingAngle_ + attackStartAngle_, 0.f,
-			attackClampAngle_) +
-		Angle::PI;
+			auto vPad = *input_->GetXInput()->GetState();
+			// 左スティックのデータを受け取る
+			Vector3 move{ vPad.stickL_.x, 0.f, vPad.stickL_.y };
+			InputRotate(move);
+
+			workAttack_.comboIndex_++;
+			workAttack_.atackParameter_ = 0u;
+			workAttack_.inComboPhase_ = 0u;
+		}
+		else {
+			behaviorRequest_ = Behavior::kRoot;
+		}
+	}
+
+	// 現在の状態の進行度
+	float progress = (workAttack_.atackParameter_ - static_cast<float>(nowAttack.GetTotalTime(nowAttack.begin() + workAttack_.inComboPhase_))) / *(nowAttack.begin() + workAttack_.inComboPhase_);
+
+
+	float weaponAngle;
+	switch (workAttack_.inComboPhase_) {
+	case 0u:
+		weaponAngle = SoLib::Lerp(nowAttackAngle.endAngle_, nowAttackAngle.chargeAngle_, progress);
+
+		break;
+	case 1u:
+		weaponAngle = nowAttackAngle.chargeAngle_;
+		break;
+	case 2u:
+		weaponAngle = SoLib::Lerp(nowAttackAngle.chargeAngle_, nowAttackAngle.siwngAngle_, progress);
+
+		break;
+	case 3u:
+		weaponAngle = SoLib::Lerp(nowAttackAngle.siwngAngle_, nowAttackAngle.endAngle_, progress);
+
+		break;
+
+	default:
+		break;
+	}
+
+
+	// 特定の時間に到達したら更新
+	if (workAttack_.atackParameter_ >= nowAttack.GetTotalTime(nowAttack.begin() + workAttack_.inComboPhase_ + 1)) {
+		// 攻撃パラメータが示している状態を切り替え
+		workAttack_.inComboPhase_++;
+	}
+
+
+	//floatingParameter_ += step;
+	//if (floatingParameter_ >= Angle::PI2) {
+	//	behaviorRequest_ = Behavior::kRoot;
+	//}
+
+	//floatingParameter_ = std::fmod(floatingParameter_, Angle::PI2);
+
+
+
+	ImGui::SliderAngle("WeaponAngle", &weaponAngle);
+
+	transformWeapon_->rotate.x = weaponAngle;
+	transformLeft_->rotate.x = weaponAngle + Angle::PI;
+	transformRight_->rotate.x = weaponAngle + Angle::PI;
 
 	weaponColliderViewer_->translate = vWeaponCollisionOffset_;
 	weaponColliderViewer_->scale = Vector3::one * vWeaponCollisionRadius_;
@@ -288,6 +315,44 @@ void Player::UpdateWorldMatrix() {
 
 	transformWeapon_->UpdateMatrix();
 	weaponColliderViewer_->UpdateMatrix();
+}
+
+void Player::InputRotate(const Vector3 &vec) {
+	Vector3 move = vec;
+	if (move.Length() >= 0.1f) {
+
+		move = move.Nomalize() * moveSpeed_; // 速度を正規化
+		Matrix4x4 inputRotateMatrix = Matrix4x4::Identity();
+		inputRotateMatrix *= Matrix4x4::Rotate(camera_->matView_.InverseRT());
+		//move = TransformNormal(move, camera_->matView_);
+		if (transformOrigin_->parent_) {
+
+			//inputRotateMatrix *= Matrix4x4::Rotate(transformOrigin_->parent_->matWorld_.InverseRT());
+			//move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
+		}
+
+		move *= inputRotateMatrix;
+		velocity_ += move * 5.f; // 移動量を追加
+
+		if (transformOrigin_->parent_) {
+
+			move *= Matrix4x4::Rotate(transformOrigin_->parent_->matWorld_.InverseRT());
+			//move = TransformNormal(move, transformOrigin_->parent_->matWorld_.InverseSRT());
+		}
+
+
+		//Vector3 moveCross = Vector3::front.cross(move.Nomalize());
+		float moveDot = Vector3::front * move.Nomalize();
+		// ベクトルから回転行列を算出
+		Matrix4x4 rotateMat = Matrix4x4::DirectionToDirection(Vector3::front, move);
+
+		// もし、180度であった場合は調整
+		if (moveDot == -1.f) {
+			rotateMat = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, 180._deg);
+		}
+
+		transformOrigin_->rotateMat_ = rotateMat;
+	}
 }
 
 void Player::Init(const std::unordered_map<std::string, Model *> &model) {
@@ -398,3 +463,12 @@ void Player::SetLockOn(const LockOn *const lockOn) {
 Player::Player() { input_ = Input::GetInstance(); }
 
 Player::~Player() {}
+
+uint32_t Player::ConstAttack::GetTotalTime() const {
+	return std::reduce(this->begin(), this->end());
+}
+
+uint32_t Player::ConstAttack::GetTotalTime(const uint32_t *end) const
+{
+	return std::reduce(this->begin(), end);
+}

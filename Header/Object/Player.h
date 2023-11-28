@@ -27,6 +27,87 @@ class Player : public BaseCharacter {
 		kJump,		// ジャンプ状態
 	};
 
+	struct ConstAttack {
+		// 予備動作
+		uint32_t anticipationTime_;
+		// 溜め動作
+		uint32_t chargeTime_;
+		// 攻撃遷移時間
+		uint32_t siwngTime_;
+		// 硬直時間
+		uint32_t recoveryTime_;
+
+		uint32_t GetTotalTime() const;
+		uint32_t GetTotalTime(const uint32_t *end) const;
+
+
+		const uint32_t *begin() const { return &anticipationTime_; }
+		const uint32_t *end()const { return (&recoveryTime_) + 1; }
+	};
+
+	struct AttackTargetAngle {
+		// 溜め角度
+		float chargeAngle_;
+		// 攻撃角度
+		float siwngAngle_;
+		// 終了角度
+		float endAngle_{};
+	};
+
+	struct WorkAttack {
+		// コンボの経過時間
+		uint32_t atackParameter_ = 0u;
+		// コンボの段数
+		int32_t comboIndex_ = 0u;
+		// コンボの状態
+		int32_t inComboPhase_ = 0u;
+		// コンボを継続するか
+		bool isComboContinue_ = false;
+	};
+
+	static const uint32_t kComboNum_ = 3u;
+	std::array<ConstAttack, kComboNum_> comboArray_
+	{
+		ConstAttack{
+			.anticipationTime_ = 3u,
+			.chargeTime_ = 3u,
+			.siwngTime_ = 3u,
+			.recoveryTime_ = 20u,
+
+		},
+		ConstAttack{
+			.anticipationTime_ = 15u,
+			.chargeTime_ = 10u,
+			.siwngTime_ = 5u,
+			.recoveryTime_ = 30u,
+
+		},
+		ConstAttack{
+			.anticipationTime_ = 15u,
+			.chargeTime_ = 15u,
+			.siwngTime_ = 10u,
+			.recoveryTime_ = 30u,
+		}
+	};
+	std::array<AttackTargetAngle, kComboNum_> angleArray_
+	{
+		AttackTargetAngle{
+			.chargeAngle_ = 10._deg,
+			.siwngAngle_ = -110._deg,
+
+		},
+		AttackTargetAngle{
+			.chargeAngle_ = 20._deg,
+			.siwngAngle_ = -110._deg,
+
+		},
+		AttackTargetAngle{
+			.chargeAngle_ = 30._deg,
+			.siwngAngle_ = -120._deg,
+		}
+	};
+	WorkAttack workAttack_{};
+
 	Behavior behavior_ = Behavior::kRoot;
 
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
@@ -95,6 +176,8 @@ private:
 	void BehaviorJumpUpdate(float deltaTime);
 
 	void UpdateWorldMatrix();
+
+	void InputRotate(const Vector3 &vec);
 
 
 public:
