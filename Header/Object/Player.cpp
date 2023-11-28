@@ -173,19 +173,25 @@ void Player::BehaviorDashInit() {
 
 void Player::BehaviorDashUpdate(float deltaTime) {
 	dashTimer_.Update(deltaTime);
-
-	Vector3 moveVec = Vector3::front;
-	Matrix4x4 localMat = transformOrigin_->matWorld_;
-	if (transformOrigin_->parent_) {
-		localMat *= transformOrigin_->parent_->matWorld_.InverseSRT();
+	dashBrake_.Update(deltaTime);
+	if (dashTimer_.IsActive()) {
+		Vector3 moveVec = Vector3::front;
+		Matrix4x4 localMat = transformOrigin_->matWorld_;
+		if (transformOrigin_->parent_) {
+			localMat *= transformOrigin_->parent_->matWorld_.InverseSRT();
+		}
+		moveVec = TransformNormal(moveVec, localMat) * vDashSpeed_;
+		transformOrigin_->translate += moveVec;
 	}
-	moveVec = TransformNormal(moveVec, localMat) * vDashSpeed_;
-	transformOrigin_->translate += moveVec;
-
 	UpdateWorldMatrix();
 
 	// 時間が切れたら終了
-	if (dashTimer_.IsFinish()) {
+	if (dashTimer_.IsFinish() && dashTimer_.IsActive()) {
+		dashBrake_.Start(0.25f);
+	}
+
+	if (dashTimer_.IsFinish() && dashBrake_.IsFinish()) {
+
 		behaviorRequest_ = Behavior::kRoot;
 	}
 }

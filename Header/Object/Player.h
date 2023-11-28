@@ -60,12 +60,13 @@ class Player : public BaseCharacter {
 	VariantItem<float> attackClampAngle_{ "ClampAngle",110.f * Angle::Dig2Rad };
 
 	VariantItem<float> vDashSpeed_{ "DashSpeed",4.f };
-	VariantItem<float> vDashTime_{ "DashTime",0.075f };
+	VariantItem<float> vDashTime_{ "DashTime",0.75f };
 
 	VariantItem<Vector3> vWeaponCollisionOffset_{ "WeaponCollisionOffset",{} };
 	VariantItem<float> vWeaponCollisionRadius_{ "WeaponCollisonRadius",0.75f };
 
 	SoLib::DeltaTimer dashTimer_;
+	SoLib::DeltaTimer dashBrake_;
 
 	OBB collider_;
 
