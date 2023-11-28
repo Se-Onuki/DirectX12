@@ -6,6 +6,7 @@
 
 // 静的なメンバ変数の実体を宣言
 uint32_t StageSelectScene::stageSelectSceneBGM_ = 0u;
+uint32_t StageSelectScene::startStageSE_ = 0u;
 
 StageSelectScene::StageSelectScene()
 {
@@ -42,6 +43,10 @@ void StageSelectScene::OnEnter()
 		stageSelectSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/StageSelectBGM.wav");
 	}
 
+	if (startStageSE_ == 0u) {
+		startStageSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/select.wav");
+	}
+	
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 }
@@ -79,6 +84,7 @@ void StageSelectScene::Update()
 	// スペースを押すと次のシーンへ
 	if (keyBoard->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
 		if (!sceneChanging_) {
+			audio_->PlayWave(startStageSE_, false, 0.45f);
 			// フェードアウト開始
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 			// 指定した秒数後シーンチェンジ

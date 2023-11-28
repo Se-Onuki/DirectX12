@@ -92,7 +92,7 @@ void TitleScene::Update() {
 	if (keyBoard->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
 		if (!sceneChanging_) {
 			// 決定SEを再生
-			audio_->PlayWave(selectSE_, false, BGMVolume_);
+			audio_->PlayWave(selectSE_, false, 0.45f);
 
 			// フェードアウト開始
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);

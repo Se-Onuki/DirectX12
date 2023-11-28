@@ -65,5 +65,8 @@ private: // メンバ変数
 	static uint32_t stageSelectSceneBGM_;
 	int voiceStageSelectSceneBGMHandle_ = 0u;
 
+	// 効果音系
+	static uint32_t startStageSE_; // ステージ開始SE
+
 };
 

@@ -1,10 +1,18 @@
 #include "StageSelectManager.h"
+#include "../../../Engine/DirectBase/Base/Audio.h"
+
+// 静的なメンバ変数の実体を宣言
+uint32_t StageSelectManager::selectStageSE_ = 0u;
 
 void StageSelectManager::Init()
 {
 	// インスタンス取得
 	gv_ = GlobalVariables::GetInstance(); // 調整項目クラス
 	input_ = Input::GetInstance(); // 入力用
+
+	if (selectStageSE_ == 0u) {
+		selectStageSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/SelectStage.wav");
+	}
 
 	// 調整項目クラスから値を読む
 	ApplyItem();
@@ -22,6 +30,7 @@ void StageSelectManager::Update([[maybe_unused]]float deltaTime)
 	// キー入力をすると選択番号を変更
 	if (not ui_.GetIsPlayingAnim()) {
 		if (keyBoard->IsTrigger(DIK_RIGHTARROW) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_RIGHT)) {
+			Audio::GetInstance()->PlayWave(selectStageSE_, false, 0.65f);
 			if (selectedStageNumber_ < maxLevelCount_ - 1)
 				selectedStageNumber_++;
 			else
@@ -30,6 +39,7 @@ void StageSelectManager::Update([[maybe_unused]]float deltaTime)
 			ui_.SetIsRight(true);
 		}
 		else if (keyBoard->IsTrigger(DIK_LEFTARROW) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_LEFT)) {
+			Audio::GetInstance()->PlayWave(selectStageSE_, false, 0.65f);
 			if (selectedStageNumber_ > 0)
 				selectedStageNumber_--;
 			else
