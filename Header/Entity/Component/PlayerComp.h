@@ -56,6 +56,10 @@ public:
 		nowState_ = std::make_unique<State>(this);
 	}
 
+	/// @brief 現在の状態の取得
+	/// @return 現在の状態
+	const auto &GetState() const { return nowState_; }
+
 	/// @brief 移動方向を入力
 	/// @param vec 移動ベクトル
 	void MoveInput(const Vector3 &vec);
