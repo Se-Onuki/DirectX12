@@ -47,6 +47,16 @@ void InGameUIManager::Update(float deltaTime)
 		spinControllUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_Spin.png"));
 	}
 
+	// プレイヤーコンポーネントがセットされている場合
+	if (playerComp_ != nullptr) {
+		if (playerComp_->GetState()->GetState() == PlayerBehavior::kRotating) {
+			isSpining_ = true;
+		}
+		else {
+			isSpining_ = false;
+		}
+	}
+
 	controllUI_.sprite_->SetColor({ 1.0f, 1.0f, 1.0f, uiAlpha_ });
 
 #ifdef _DEBUG

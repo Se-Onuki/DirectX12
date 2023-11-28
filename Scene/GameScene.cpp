@@ -139,7 +139,8 @@ void GameScene::OnEnter() {
 	inGameUI_ = std::make_unique<InGameUIManager>();
 	// 初期化
 	inGameUI_->Init(3);
-
+	// プレイヤーコンポーネントのセット
+	inGameUI_->SetPlayerComp(*player_->GetComponent<PlayerComp>());
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 

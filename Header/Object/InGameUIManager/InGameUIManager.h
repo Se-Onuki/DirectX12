@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include "../../../Engine/DirectBase/Input/Input.h"
+#include "../../Entity/Component/PlayerComp.h"
 #include "../../../Engine/DirectBase/2D/Sprite.h"
 #include "StarUI.h"
 
@@ -56,6 +57,12 @@ public: // メンバ関数
 	void Draw();
 
 public: // アクセッサ等
+	
+	/// <summary>
+	/// プレイヤーコンポーネントのセッター
+	/// </summary>
+	/// <param name="pComp">プレイヤーコンポーネント実体</param>
+	void SetPlayerComp(const PlayerComp& pComp) { playerComp_ = &pComp; }
 
 	/// <summary>
 	/// 星を追加する関数
@@ -69,6 +76,9 @@ public: // パブリックなメンバ変数
 	float uiAlpha_ = 1.0f;
 
 private: // メンバ変数
+
+	// プレイヤーコンポーネント
+	const PlayerComp* playerComp_ = nullptr;
 
 	// 最大星数
 	int maxStarCount_;
