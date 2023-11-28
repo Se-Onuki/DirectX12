@@ -89,6 +89,8 @@ public:
 
 		void CreateGoal();
 
+		Entity *const GetGoal() const { return goal_.get(); }
+
 	private:
 		const float &lerpTime_;
 
@@ -170,6 +172,8 @@ public:
 
 	VariantItem<float> vLerpTime_{ "LerpTime", 1.f };
 	VariantItem<int32_t> vMaxRotateCount_{ "MaxRotateCount", 2 };
+
+	std::list<Entity *> GetGoalList();
 
 private:
 	static nlohmann::json GetLevelParameters(const nlohmann::json &jsonData, int32_t levelIndex);

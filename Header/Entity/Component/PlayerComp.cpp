@@ -44,7 +44,7 @@ void PlayerComp::Update() {
 	static const auto *const keyBoard = input_->GetDirectInput();
 	static auto *const levelManager = LevelElementManager::GetInstance();
 
-	if (not goalObject_->GetIsPlay()) {
+	if (not isGoaled_) {
 		Vector3 endPos = CalcMoveCollision();
 
 		transform_->translate = endPos;

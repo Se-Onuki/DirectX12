@@ -34,8 +34,8 @@ void BaseTransform::UpdateMatrix() {
 }
 
 
-bool BaseTransform::ImGuiWidget() {
-	if (ImGui::TreeNode("Transform")) {
+bool BaseTransform::ImGuiWidget(const std::string &name) {
+	if (ImGui::TreeNode((name + "Transform").c_str())) {
 		bool isUsing = false;
 
 		isUsing |= ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 100.f);

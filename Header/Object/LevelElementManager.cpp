@@ -55,6 +55,16 @@ void LevelElementManager::SetData()
 		platform.center_.translate = pratItr["Centor"];
 		// 回転方向
 		platform.rotateAxis_ = pratItr["Axis"];
+
+		// ゴールがあったら
+		if (pratItr.find("Goal") != pratItr.end()) {
+
+			platform.CreateGoal();
+			platform.GetGoal()->transform_.translate = pratItr["Goal"]["Pos"];
+			platform.GetGoal()->transform_.rotate = pratItr["Goal"]["Rotate"];
+
+		}
+
 		// ブロックの追加
 		for (const auto &box : pratItr["Box"]) {
 			Vector3 pos;
@@ -140,7 +150,6 @@ void LevelElementManager::ImGuiWidget()
 	ImGui::Checkbox("DebugViewer", &debugDrawer_);
 
 	ImGui::DragFloat3("PlayerStartPos", &startPos_.x, 1.f);
-
 
 	// カメラの位置は編集されたか
 	bool isCameraEditedBy = false;
@@ -345,6 +354,18 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(
 	return &itPlatform->second;
 }
 
+std::list<Entity *> LevelElementManager::GetGoalList()
+{
+	std::list<Entity *> goalList;
+	for (const auto &it : blockCollider_) {
+		Entity *const goal = it.second.GetGoal();
+		if (goal) {
+			goalList.push_back(goal);
+		}
+	}
+	return goalList;
+}
+
 nlohmann::json LevelElementManager::GetLevelParameters(
 	const nlohmann::json &jsonData, int32_t levelIndex)
 {
@@ -388,7 +409,7 @@ LevelElementManager::Platform::Platform() : lerpTime_(LevelElementManager::GetIn
 
 	boxItr_ = boxList_.begin();
 
-	axisBar_->scale = Vector3{ 0.5f,0.5f,10.f };
+	axisBar_->scale = Vector3{ 0.5f, 0.5f, 10.f };
 
 	axisBar_->SetParent(center_);
 }
@@ -444,6 +465,15 @@ void LevelElementManager::Platform::Update(float deltaTime)
 	axisBar_->rotate.z = Angle::Mod(axisBar_->rotate.z + 2.5f * deltaTime);
 	axisBar_->UpdateMatrix();
 
+	if (goal_) {
+
+		goal_->Update(deltaTime);
+
+		if ((goal_->transform_.GetGrobalPos() - pPlayer->transform_.GetGrobalPos()).Length() < 2.f) {
+			goal_->GetComponent<GoalAnimComp>()->PlayGoalAnim();
+		}
+	}
+
 	if (timer_.IsActive()) {
 		center_.rotate = Angle::Lerp(startRot_, targetRot_, SoLib::easeInOutQuad(timer_.GetProgress()));
 		center_.UpdateMatrix();
@@ -488,6 +518,10 @@ void LevelElementManager::Platform::Draw(const Camera3D &camera) const
 
 	box->Draw(axisBar_, camera);
 
+	if (goal_) {
+		goal_->Draw(camera);
+	}
+
 	for (const auto &item : starItem_) {
 		item->Draw(camera);
 	}
@@ -504,7 +538,6 @@ bool LevelElementManager::Platform::ImGuiWidget()
 		isDelete_ = true;
 		isEdited |= true;
 	}
-
 
 	int32_t e;
 	static std::array<Vector3, 2u> axisList = { Vector3::right, Vector3::front };
@@ -544,6 +577,17 @@ bool LevelElementManager::Platform::ImGuiWidget()
 		axisBar_->UpdateMatrix();
 	}
 
+	if (goal_) {
+		if (ImGui::Button("DeleteGoal")) {
+			goal_.reset();
+		}
+		goal_->transform_.ImGuiWidget("Goal");
+	}
+	else {
+		if (ImGui::Button("AddGoal")) {
+			CreateGoal();
+		}
+	}
 
 	if (ImGui::Button("AddBox")) {
 		AddBox(AABB{ -Vector3::one, Vector3::one }, GroundType::kGrass);
@@ -579,10 +623,12 @@ bool LevelElementManager::Platform::ImGuiWidget()
 	return isEdited;
 }
 
-void LevelElementManager::Platform::CreateGoal() {
+void LevelElementManager::Platform::CreateGoal()
+{
 	goal_ = std::make_unique<Entity>();
 
-	goal_->AddComponent<GoalAnimComp>();
+	goal_->AddComponent<GoalAnimComp>()->SetPlayerModel(LevelElementManager::GetInstance()->pPlayer_);
+	goal_->transform_.SetParent(this->center_);
 }
 
 LevelElementManager::Box::Box(const AABB &aabb, Platform *parent)
@@ -660,7 +706,6 @@ bool LevelElementManager::Box::ImGuiWidget()
 
 		isEdited |= true;
 	}
-
 
 	return isEdited;
 }

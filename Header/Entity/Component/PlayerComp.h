@@ -78,7 +78,7 @@ public:
 
 	AABB GetCollider() const { return referenceCollider_.AddPos(transform_->GetGrobalPos()); }
 
-	void SetGoalComp(GoalAnimComp *const object) { goalObject_ = object; }
+	void SetIsGoaled(bool isGoaled) { isGoaled_ = isGoaled; }
 
 private:
 
@@ -101,7 +101,7 @@ private:
 
 	Input *input_;
 
-	GoalAnimComp *goalObject_ = nullptr;
+	bool isGoaled_ = false;
 
 	PlayerAnimComp *animationComp_ = nullptr;
 
