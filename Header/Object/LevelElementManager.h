@@ -182,6 +182,8 @@ public:
 
 	std::list<Entity *> GetGoalList();
 
+	bool GetIsDebuging() const { return debugDrawer_; }
+
 private:
 	static nlohmann::json GetLevelParameters(const nlohmann::json &jsonData, int32_t levelIndex);
 
