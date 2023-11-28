@@ -164,6 +164,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\Enemy.cpp" />
     <ClCompile Include="Header\Object\FollowCamera.cpp" />
     <ClCompile Include="Header\Object\LevelElementManager.cpp" />
+    <ClCompile Include="Header\Object\LockOn.cpp" />
     <ClCompile Include="Header\Object\Platform.cpp" />
     <ClCompile Include="Header\Object\Skydome.cpp" />
     <ClCompile Include="Header\Object\Particle.cpp" />
@@ -262,6 +263,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Enemy.h" />
     <ClInclude Include="Header\Object\FollowCamera.h" />
     <ClInclude Include="Header\Object\LevelElementManager.h" />
+    <ClInclude Include="Header\Object\LockOn.h" />
     <ClInclude Include="Header\Object\Particle.h" />
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h" />
     <ClInclude Include="Header\Object\Particle\ParticleEmitterManager.h" />

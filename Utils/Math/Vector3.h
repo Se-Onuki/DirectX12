@@ -144,7 +144,7 @@ struct Vector3 {
 
 	Vector3 Scaling(const Vector3 &other) const;
 
-	Vector2 ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
+	const Vector2& ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
 
 	/// @brief 暗黙的な配列への変換
 	inline operator std::array<float, 3u> &() noexcept {

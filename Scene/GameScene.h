@@ -1,63 +1,63 @@
 #pragma once
 #include "SceneManager.h"
 
-#include "../Engine/DirectBase/3D/DirectionLight.h"
 #include "../Engine/DirectBase/2D/Sprite.h"
+#include "../Engine/DirectBase/3D/DirectionLight.h"
 #include "../Engine/DirectBase/Render/Camera.h"
 
 #include "../Engine/DirectBase/Model/Model.h"
 #include "../Utils/Math/Transform.h"
 
-#include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
+#include "../Engine/DirectBase/Input/Input.h"
 #include "../Header/Object/Particle.h"
 
-
-#include "../Header/Object/Player.h"
-#include "../Header/Object/FollowCamera.h"
-#include "../Header/Object/Skydome.h"
-#include "../Header/Object/Platform.h"
-#include "../Header/Object/Enemy.h"
 #include "../Engine/DirectBase/Base/StructBuffer.h"
 #include "../Header/Object/CollisionDrawer.h"
+#include "../Header/Object/Enemy.h"
+#include "../Header/Object/FollowCamera.h"
+#include "../Header/Object/LockOn.h"
 #include "../Header/Object/Particle/ParticleManager.h"
+#include "../Header/Object/Platform.h"
+#include "../Header/Object/Player.h"
+#include "../Header/Object/Skydome.h"
 
 class GameScene : public IScene {
 public:
-	GameScene();
-	~GameScene();
+    GameScene();
+    ~GameScene();
 
-	void OnEnter() override;
-	void OnExit() override;
+    void OnEnter() override;
+    void OnExit() override;
 
-	void Reset();
+    void Reset();
 
-	void Update() override;
-	void Draw() override;
+    void Update() override;
+    void Draw() override;
 
 private:
+    Input *input_ = nullptr;
+    Audio *audio_ = nullptr;
 
-	Input *input_ = nullptr;
-	Audio *audio_ = nullptr;
+    Camera<Render::CameraType::Projecction> camera_;
 
-	Camera<Render::CameraType::Projecction> camera_;
+    std::unique_ptr<Player> player_ = nullptr;
 
-	std::unique_ptr<Player> player_ = nullptr;
+    std::unique_ptr<LockOn> lockOn_ = nullptr;
 
-	std::unique_ptr<Entity> goal_ = nullptr;
-	std::unique_ptr<OBB> goalCollider_ = nullptr;
+    std::unique_ptr<Entity> goal_ = nullptr;
+    std::unique_ptr<OBB> goalCollider_ = nullptr;
 
-	std::list<std::unique_ptr<Enemy>> enemyList_;
+    std::list<std::unique_ptr<Enemy>> enemyList_;
 
-	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
-	std::unique_ptr<Skydome> skydome_ = nullptr;
+    std::unique_ptr<FollowCamera> followCamera_ = nullptr;
+    std::unique_ptr<Skydome> skydome_ = nullptr;
 
-	std::array<std::unique_ptr<Platform>, 5u> platform_ = { nullptr };
+    std::array<std::unique_ptr<Platform>, 5u> platform_ = {nullptr};
 
-	std::unique_ptr<DirectionLight> light_ = nullptr;
+    std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	CollisionDrawer *collisionDrawer_;
+    CollisionDrawer *collisionDrawer_;
 
-	ParticleManager *particleManager_ = nullptr;
-
+    ParticleManager *particleManager_ = nullptr;
 };

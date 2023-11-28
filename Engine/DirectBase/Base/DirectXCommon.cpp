@@ -5,6 +5,7 @@
 #include "../../externals/DirectXTex/d3dx12.h"
 #include "../Texture/Texture.h"
 #include "TextureManager.h"
+#include <thread>
 
 
 DirectResourceLeakChecker DirectXCommon::leakChecker{}; // リークチェッカー
