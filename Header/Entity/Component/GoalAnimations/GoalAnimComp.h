@@ -123,6 +123,12 @@ private: // メンバ変数
 	// 終了トリガー
 	bool isEnd_ = false;
 
+	// クリア音再生トリガー
+	bool clearSETrigger_ = false;
+	// 効果音系
+	static uint32_t clearEnterSE_; // ゴールに触れたときの音
+	static uint32_t clearSE_; // クリア音
+
 #ifdef _DEBUG
 
 	// 情報を追加するステージ番号

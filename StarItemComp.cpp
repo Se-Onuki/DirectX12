@@ -2,6 +2,10 @@
 #include "Header/Entity/Component/ModelComp.h"
 #include "Engine/DirectBase/Model/ModelManager.h"
 #include "Header/Object/LevelElementManager.h"
+#include "Engine/DirectBase/Base/Audio.h"
+
+// 静的なメンバ変数の実体を宣言
+uint32_t StarItemComp::collctSE_ = 0u;
 
 void StarItemComp::Init() {
 	auto *const modelComp = object_->AddComponent<ModelComp>();
@@ -12,6 +16,10 @@ void StarItemComp::Init() {
 	collider_.centor = transform_->GetGrobalPos();
 
 	collider_.radius = 1.5f;
+
+	if (collctSE_ == 0u) {
+		collctSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Item/collectStar.wav");
+	}
 }
 
 void StarItemComp::Reset() {
@@ -39,6 +47,7 @@ void StarItemComp::CollectItem() {
 		LevelElementManager::GetInstance()->AddUndoLog(object_);
 		LevelElementManager::GetInstance()->AddRotateCount(1);
 
+		Audio::GetInstance()->PlayWave(collctSE_, false, 0.5f);
 
 		isCollected_ = true;
 	}

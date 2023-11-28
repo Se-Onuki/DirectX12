@@ -149,4 +149,11 @@ private: // メンバ変数
 
 	// ポーズUIの展開アニメーションタイマー
 	SoLib::DeltaTimer timer_;
+
+	// 効果音系
+	static uint32_t deploySE_;
+	static uint32_t closeSE_;
+	static uint32_t nextSE_;
+	static uint32_t retrySE_;
+	static uint32_t returnSE_;
 };

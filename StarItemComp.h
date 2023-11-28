@@ -25,4 +25,7 @@ private:
 
 	Sphere collider_;
 
+	// 取得時効果音
+	static uint32_t collctSE_;
+
 };

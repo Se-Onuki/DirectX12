@@ -57,7 +57,7 @@ void PlayerJumpState::Update([[maybe_unused]] float deltaTime) {
 	preAnimKey_ = nowAnimation->GetIsPlay();
 
 	if (not jumpSETrigger_) {
-		Audio::GetInstance()->PlayWave(jumpSE_, false, 1.0f);
+		Audio::GetInstance()->PlayWave(jumpSE_, false, 0.5f);
 		jumpSETrigger_ = true;
 	}
 }
