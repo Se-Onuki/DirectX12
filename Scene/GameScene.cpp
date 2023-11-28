@@ -72,19 +72,9 @@ void GameScene::OnEnter() {
 
 	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });*/
-	/*
-
-		levelManager->AddBlock(1u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,20.f }));
-
-		levelManager->AddBlock(0u, AABB{ .min{-10.f,-1.f,-10.f}, .max{10.f,1.f,10.f} }.AddPos({ 0.f,-3.f,0.f }));
-		levelManager->AddBlock(0u, AABB{ .min{-1.f,-3.f,-1.f}, .max{1.f,3.f,1.f} }.AddPos({ 0.f,5.f,0.f }));
-
-		levelManager->AddItem(0u, BaseTransform{ .translate{0.f,-1.f,5.f} });
-
-		levelManager->AddItem(1u, BaseTransform{ .translate{0.f,-1.f,15.f} });*/
 
 
-		// ポーズ画面マネージャー初期化
+	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Init();
 
 #pragma region Player
@@ -144,6 +134,10 @@ void GameScene::OnEnter() {
 	goal_->AddComponent<GoalAnimComp>();
 	goal_->GetComponent<GoalAnimComp>()->SetPlayerModel(player_.get());
 	goal_->GetComponent<GoalAnimComp>()->SetParticleEmitter(emitter);
+
+	goal_->transform_.translate = Vector3{ 0.f,-4.f,18.f };
+
+	player_->GetComponent<PlayerComp>()->SetGoalComp(goal_->GetComponent<GoalAnimComp>());
 
 	sceneChanging_ = false;
 
@@ -211,6 +205,10 @@ void GameScene::Update() {
 			euler += Vector3::up * 5._deg;
 		}
 
+		if ((goal_->transform_.GetGrobalPos() - player_->transform_.GetGrobalPos()).Length() < 2.f) {
+			goal_->GetComponent<GoalAnimComp>()->PlayGoalAnim();
+		}
+
 		followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
 		followCamera_->ImGuiWidget();
 		followCamera_->Update(deltaTime);
@@ -245,10 +243,10 @@ void GameScene::Update() {
 			sceneChanging_ = true;
 		}
 	}
-	
+
 	// ゴール演出が終了している場合
 	if (goal_->GetComponent<GoalAnimComp>()->GetIsEnd()) {
-		if (keyBoard->IsPress(DIK_TAB)) {
+		if (not sceneChanging_) {
 			// フェードアウト開始
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 			// 指定した秒数後シーンチェンジ
@@ -271,7 +269,7 @@ void GameScene::Update() {
 	//transform_->ImGuiWidget();
 	//transform_->UpdateMatrix();
 
-}
+	}
 
 void GameScene::Draw()
 {
@@ -322,9 +320,9 @@ void GameScene::Draw()
 
 	light_->SetLight(commandList);
 
-	player_->Draw(camera);
-
 	levelManager->Draw(camera);
+
+	player_->Draw(camera);
 
 	goal_->Draw(camera);
 

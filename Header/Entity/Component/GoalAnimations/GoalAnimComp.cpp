@@ -59,6 +59,7 @@ void GoalAnimComp::Update()
 
 void GoalAnimComp::DisplayImGui()
 {
+#ifdef _DEBUG
 	ImGui::Begin("GoalAnim");
 	// 旗の位置座標を設定
 	if (ImGui::TreeNode("Flag Transform")) {
@@ -108,6 +109,9 @@ void GoalAnimComp::DisplayImGui()
 	ImGui::Checkbox("isEnd", &isEnd_);
 
 	ImGui::End();
+
+#endif // _DEBUG
+
 }
 
 void GoalAnimComp::PlayGoalAnim()
