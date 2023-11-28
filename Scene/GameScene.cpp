@@ -108,6 +108,7 @@ void GameScene::OnEnter()
 	lockOn_->Init();
 
 	followCamera_->SetLockOn(lockOn_.get());
+	player_->SetLockOn(lockOn_.get());
 }
 
 void GameScene::OnExit() {}

@@ -8,6 +8,8 @@
 #include "../../Engine/DirectBase/File/GlobalVariables.h"
 #include "../../Utils/SoLib/SoLib_Lerp.h"
 
+#include "LockOn.h"
+
 void Player::ApplyGlobalVariables() {
 	const GlobalVariables *const gVariables = GlobalVariables::GetInstance();
 	const char *groupName = "Player";
@@ -204,6 +206,27 @@ void Player::BehaviorAttackUpdate() {
 	ImGui::SliderAngle("ClampAngle", &attackClampAngle_.GetItem());
 	ImGui::End();
 
+	if (lockOn_ && lockOn_->IsLockOn()) {
+
+		Vector3 facing = lockOn_->GetTargetPosition() - transformOrigin_->GetGrobalPos();
+		facing.y = 0.f;
+
+		if (transformOrigin_->parent_) {
+			facing *= transformOrigin_->parent_->matWorld_.GetRotate().InverseRT();
+		}
+
+		// ベクトルから回転行列を算出
+		Matrix4x4 rotateMat = Matrix4x4::DirectionToDirection(Vector3::front, facing);
+		float moveDot = Vector3::front * facing.Nomalize();
+
+		// もし、180度であった場合は調整
+		if (moveDot == -1.f) {
+			rotateMat = Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, 180._deg);
+		}
+
+		transformOrigin_->rotateMat_ = rotateMat;
+	}
+
 	floatingParameter_ += step;
 	if (floatingParameter_ >= Angle::PI2) {
 		behaviorRequest_ = Behavior::kRoot;
@@ -360,6 +383,10 @@ void Player::Draw(const Camera<Render::CameraType::Projecction> &camera) const {
 	if (behavior_ == Player::Behavior::kAttack) {
 		modelMap_.at("weapon")->Draw(transformWeapon_, camera);
 	}
+}
+
+void Player::SetLockOn(const LockOn *const lockOn) {
+	lockOn_ = lockOn;
 }
 
 Player::Player() { input_ = Input::GetInstance(); }

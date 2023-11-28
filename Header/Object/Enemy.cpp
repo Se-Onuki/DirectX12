@@ -12,8 +12,8 @@ void Enemy::Init(const std::unordered_map<std::string, Model *> &model) {
 }
 
 void Enemy::Update(const float deltaTime) {
-	static float rotateAngle = 2.f * Angle::Dig2Rad;
-	static float moveSpeed = 0.3f;
+	static float rotateAngle = 0.2f * Angle::Dig2Rad;
+	static float moveSpeed = 0.03f;
 	ImGui::Begin("Enemy");
 	ImGui::SliderAngle("RotateY", &rotateAngle);
 	ImGui::SliderFloat("MoveSpeed", &moveSpeed, 0.f, 10.f);

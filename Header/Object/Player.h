@@ -12,6 +12,7 @@
 #include "../Collision/Collision.h"
 #include "../../Utils/SoLib/SoLib_Timer.h"
 
+class LockOn;
 
 class PlayerBullet;
 class Model;
@@ -70,6 +71,7 @@ class Player : public BaseCharacter {
 
 	Sphere weaponCollider_;
 
+	const LockOn *lockOn_ = nullptr;
 
 private:
 
@@ -100,6 +102,7 @@ public:
 	void Draw(const Camera<Render::CameraType::Projecction> &camera) const override;
 
 	void SetCamera(const Camera<Render::CameraType::Projecction> *const camera) { camera_ = camera; }
+	void SetLockOn(const LockOn *const lockOn);
 
 	const OBB *const GetCollider() const { return &collider_; }
 	const Sphere *const GetWeaponCollider()const {
