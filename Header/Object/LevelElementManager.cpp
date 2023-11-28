@@ -46,7 +46,6 @@ void LevelElementManager::SetData()
 	blockCollider_[platformID];
 	// 足場の追加
 	for (const auto &pratItr : platforms) {
-		platformID++;
 		// 足場データの参照を取得
 		Platform &platform = blockCollider_[platformID];
 		// 回転の中心の設定
@@ -69,6 +68,11 @@ void LevelElementManager::SetData()
 
 			platform.AddItem(srt);
 		}
+		platform.center_.CalcMatrix();
+		platform.axisBar_->UpdateMatrix();
+
+		platform.CalcCollision();
+		platformID++;
 	}
 }
 
@@ -132,6 +136,9 @@ void LevelElementManager::ImGuiWidget()
 {
 	ImGui::Checkbox("DebugViewer", &debugDrawer_);
 
+	ImGui::DragFloat3("PlayerStartPos", &startPos_.x, 1.f);
+
+
 	// カメラの位置は編集されたか
 	bool isCameraEditedBy = false;
 	isCameraEditedBy |=
@@ -154,6 +161,10 @@ void LevelElementManager::ImGuiWidget()
 	std::vector<int32_t> items;
 	for (const auto &pair : blockCollider_) {
 		items.push_back(pair.first);
+	}
+	if (ImGui::Button("AddPlatform")) {
+		blockCollider_[static_cast<uint32_t>(blockCollider_.size())];
+		platformItr_ = --blockCollider_.end();
 	}
 	if (platformItr_ == blockCollider_.end()) {
 		platformItr_ = blockCollider_.begin();
@@ -373,6 +384,9 @@ LevelElementManager::Platform::Platform() : lerpTime_(LevelElementManager::GetIn
 	targetRot_ = {};
 
 	boxItr_ = boxList_.begin();
+
+	axisBar_->SetParent(center_);
+	axisBar_->scale.z = 10.f;
 }
 
 LevelElementManager::Box &LevelElementManager::Platform::AddBox(const AABB &aabb, GroundType groundType)
@@ -380,9 +394,6 @@ LevelElementManager::Box &LevelElementManager::Platform::AddBox(const AABB &aabb
 	boxList_.emplace_back(aabb, this);
 	auto &box = boxList_.back();
 	box.transform_->parent_ = &center_;
-
-	axisBar_->SetParent(center_);
-	axisBar_->scale.z = 10.f;
 
 	box.groundType_ = groundType;
 
@@ -527,14 +538,20 @@ bool LevelElementManager::Platform::ImGuiWidget()
 		axisBar_->UpdateMatrix();
 	}
 
+
+	if (ImGui::Button("AddBox")) {
+		AddBox(AABB{ -Vector3::one, Vector3::one }, GroundType::kGrass);
+		boxItr_ = --boxList_.end();
+	}
+
 	if (boxItr_ == boxList_.end()) {
 		boxItr_ = boxList_.begin();
 	}
 
 	if (boxItr_ != boxList_.end()) {
-		if (ImGui::BeginCombo("BoxList", std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*boxItr_))).c_str())) {
+		if (ImGui::BeginCombo("BoxList", std::to_string(std::distance(boxList_.begin(), boxItr_)).c_str())) {
 			for (decltype(boxList_)::iterator it = boxList_.begin(); it != boxList_.end(); it++) {
-				if (ImGui::Selectable(std::to_string(reinterpret_cast<uint64_t>(static_cast<void *>(&*it))).c_str())) {
+				if (ImGui::Selectable(std::to_string(std::distance(boxList_.begin(), it)).c_str())) {
 					boxItr_ = it;
 					break;
 				}
@@ -608,10 +625,10 @@ bool LevelElementManager::Box::ImGuiWidget()
 
 	groundType_ = static_cast<GroundType>(e);
 
-	const Vector3 beforeCentorPos = referenceBox_.GetCentor() * parent_->center_.matWorld_;
+	const Vector3 beforeCentorPos = referenceBox_.GetCentor() * parent_->center_.matWorld_.GetRotate();
 	Vector3 boxCentor = beforeCentorPos;
 	if (ImGui::DragFloat3("BoxCentorPos", &boxCentor.x, 1.f)) {
-		Vector3 move = (boxCentor - beforeCentorPos) * parent_->center_.matWorld_.InverseRT();
+		Vector3 move = (boxCentor - beforeCentorPos) * parent_->center_.matWorld_.InverseRT().GetRotate();
 		referenceBox_ = referenceBox_.AddPos(move);
 		transform_->translate += move;
 		for (auto &item : transform_->translate) {

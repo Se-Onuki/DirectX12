@@ -12,6 +12,7 @@
 #include <memory>
 #include "PlayerState/IPlayerState.h"
 #include "PlayerAnimComp.h"
+#include "GoalAnimations/GoalAnimComp.h"
 
 class PlayerComp : public IComponent {
 public:
@@ -77,6 +78,8 @@ public:
 
 	AABB GetCollider() const { return referenceCollider_.AddPos(transform_->GetGrobalPos()); }
 
+	void SetGoalComp(GoalAnimComp *const object) { goalObject_ = object; }
+
 private:
 
 	Vector3 CalcMoveCollision();
@@ -97,6 +100,8 @@ private:
 	AABB referenceCollider_;
 
 	Input *input_;
+
+	GoalAnimComp *goalObject_ = nullptr;
 
 	PlayerAnimComp *animationComp_ = nullptr;
 

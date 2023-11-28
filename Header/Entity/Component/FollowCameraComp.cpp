@@ -13,6 +13,7 @@ void FollowCameraComp::Update() {
 	Vector3 linePoint = line_.ClosestPoint(pTarget_->GetGrobalPos());
 
 	camera_->translation_ = offset_.GetItem() * Matrix4x4::EulerRotate(rotate_) + SoLib::Lerp(pTarget_->GetGrobalPos(), linePoint, vLerpValue) + addOffset_;
+	camera_->translation_.y = offset_.GetItem().y + SoLib::Lerp(pTarget_->GetGrobalPos().y, linePoint.y, 0.25f) + addOffset_->y;
 
 	Vector3 facing = linePoint - camera_->translation_;
 
