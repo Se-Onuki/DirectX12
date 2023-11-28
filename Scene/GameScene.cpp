@@ -90,11 +90,6 @@ void GameScene::OnEnter() {
 	player_->AddComponent<PlayerComp>();
 	player_->AddComponent<PlayerAnimComp>();
 
-	ParticleEmitter *emitter = nullptr;
-	emitter = particleEmitterManager->CreateEmitter<StarParticle>("PlayerLing");
-	emitter->targetTransform_ = &player_->transform_;
-	emitter->offset_ = { 0.0f, 0.5f, 0.0f };
-
 #pragma endregion
 
 #pragma region LevelManager
@@ -139,7 +134,7 @@ void GameScene::OnEnter() {
 	inGameUI_ = std::make_unique<InGameUIManager>();
 	// 初期化
 	inGameUI_->Init(3);
-	// プレイヤーコンポーネントのセット
+	// プレイヤーコンポーネントのセットIn
 	inGameUI_->SetPlayerComp(*player_->GetComponent<PlayerComp>());
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);

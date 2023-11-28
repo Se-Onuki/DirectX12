@@ -1,12 +1,13 @@
 #pragma once
 #include "../../../../Utils/SoLib/SoLib.h"
-#include "../../../Object/Particle/ParticleEmitter.h"
 #include "../../Entity.h"
 
 // クラスの前方宣言
 class CameraManager;
 class GlobalVariables;
 class StageSelectManager;
+class ParticleEmitterManager;
+class ParticleEmitter;
 
 /// <summary>
 /// ゴール演出用コンポーネント
@@ -41,7 +42,7 @@ public: // アクセッサ等
 	/// プレイヤーモデルのセッター
 	/// </summary>
 	/// <param name="entity">プレイヤーアニメーションを持つエンティティ</param>
-	void SetPlayerModel(Entity* entity) { playerModel_ = entity; }
+	void SetPlayerModel(Entity* entity);
 
 	/// <summary>
 	/// プレイヤーのパーティクルエミッタのセッター
