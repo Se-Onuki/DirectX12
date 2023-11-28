@@ -78,7 +78,7 @@ private: // プライベートなメンバ関数
 	/// <returns>回転後ベクトル</returns>
 	const Vector3 MatrixToVector(const Vector3& v, const Matrix4x4& m);
 	
-	/// <summary>
+	// <summary>
 	/// 調整項目クラスにメンバ変数のパラメータを追加する関数
 	/// </summary>
 	void AddItem(int num = 999);
