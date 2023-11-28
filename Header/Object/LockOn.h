@@ -18,6 +18,8 @@ public:
 private:
     const Enemy *const FindTarget(const std::list<std::unique_ptr<Enemy>> &enemyList, const Camera3D &camera)const;
 
+    bool IsCanLockOn(const Enemy*const target, const Camera3D& camera) const;
+
     /// @brief 最小距離
     float minDistance_ = 10.f;
     /// @brief 最大距離
