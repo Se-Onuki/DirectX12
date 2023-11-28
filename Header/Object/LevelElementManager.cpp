@@ -679,10 +679,10 @@ bool LevelElementManager::Platform::ImGuiWidget()
     }
 
     if (goal_) {
+        goal_->transform_.ImGuiWidget("Goal");
         if (ImGui::Button("DeleteGoal")) {
             goal_.reset();
         }
-        goal_->transform_.ImGuiWidget("Goal");
     }
     else {
         if (ImGui::Button("AddGoal")) {

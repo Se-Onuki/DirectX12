@@ -77,7 +77,7 @@ ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *co
 	auto *const newBone = new ModelBone;
 	newBone->Init(model);
 
-	newBone->transform_->parent_ = static_cast<BaseTransform *>(&object_->transform_);
+	newBone->transform_->parent_ = static_cast<BaseTransform *>(transform_);
 
 	newBone->SetTransform(srt);
 
