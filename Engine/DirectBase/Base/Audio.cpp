@@ -3,7 +3,7 @@
 
 void Audio::Finalize() {
 	xAudio2_.Reset();
-	for (auto &sound : soundArray_) {
+	for (auto& sound : soundArray_) {
 		if (sound)
 			sound->Unload();
 	}
@@ -19,34 +19,87 @@ void Audio::StaticInit() {
 	hr = xAudio2_->CreateMasteringVoice(&masterVoice_);
 	assert(SUCCEEDED(hr));
 
+	indexVoice_ = 0u;
+
 }
 
-void Audio::PlayWave(const SoundData &soundData) {
+void Audio::PlayWave(const SoundData& soundData, bool loopFlag, float volume) {
 	HRESULT hr = S_FALSE;
 
+
+	uint32_t handle = indexVoice_;
+
 	// 波形フォーマットを基にSourceVoiceの生成
-	IXAudio2SourceVoice *pSourceVoice = nullptr;
-	hr = xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	IXAudio2SourceVoice* pSourceVoice = nullptr;
+	hr = xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex, 0, 2.0f, &voiceCallback_);
 	assert(SUCCEEDED(hr));
+
+	// 再生中データ
+	Voice* voice = new Voice();
+	voice->handle = handle;
+	voice->sourceVoice = pSourceVoice;
+	// 再生中データコンテナに登録
+	voices_.insert(voice);
 
 	// 再生する波形データの設定
 	XAUDIO2_BUFFER buf{};
 	buf.pAudioData = soundData.pBuffer;
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
+	if (loopFlag) {
+		// 無限ループ
+		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+	}
 
 	// 波形データの再生
 	hr = pSourceVoice->SubmitSourceBuffer(&buf);
+	pSourceVoice->SetVolume(volume);
 	hr = pSourceVoice->Start();
+
 }
 
-void Audio::PlayWave(uint32_t index) {
-	PlayWave(*GetWave(index));
+uint32_t Audio::PlayWave(uint32_t index, bool loopFlag, float volume) {
+	PlayWave(*GetWave(index), loopFlag, volume);
+	uint32_t handle = indexVoice_;
+	indexVoice_++;
+	return handle;
 }
 
-uint32_t Audio::LoadWave(const char *filename) {
+bool Audio::IsPlaying(uint32_t voiceHandle) {
+	// 再生中リストから検索
+	auto it = std::find_if(
+		voices_.begin(), voices_.end(), [&](Voice* voice) { return voice->handle == voiceHandle; });
+	// 発見。再生終わってるのかどうかを判断
+	if (it != voices_.end()) {
+		XAUDIO2_VOICE_STATE state{};
+		(*it)->sourceVoice->GetState(&state);
+		return state.SamplesPlayed != 0;
+	}
+	return false;
+}
+
+void Audio::StopWave(uint32_t voiceHandle) {
+	// 再生中リストから検索
+	auto it = std::find_if(
+		voices_.begin(), voices_.end(), [&](Voice* voice) { return voice->handle == voiceHandle; });
+	// 発見
+	if (it != voices_.end()) {
+		(*it)->sourceVoice->DestroyVoice();
+
+		voices_.erase(it);
+	}
+}
+
+void Audio::StopAllWave() {
+	for (Voice* voice : voices_) {
+		voice->sourceVoice->DestroyVoice();
+	}
+	voices_.clear();
+}
+
+uint32_t Audio::LoadWave(const char* filename) {
 	for (uint32_t i = 0u; i < soundArray_.size(); i++) {
-		auto &pSound = soundArray_[i];
+		auto& pSound = soundArray_[i];
 		if (!pSound) {
 			pSound.reset(new SoundData{ SoundLoadWave(filename) });
 			return i;
@@ -56,11 +109,11 @@ uint32_t Audio::LoadWave(const char *filename) {
 	return 0;
 }
 
-Audio::SoundData *const Audio::GetWave(uint32_t index) {
+Audio::SoundData* const Audio::GetWave(uint32_t index) {
 	return soundArray_[index].get();
 }
 
-Audio::SoundData SoundLoadWave(const char *filename) {
+Audio::SoundData SoundLoadWave(const char* filename) {
 
 	// HRESULT hr = S_FALSE;
 
@@ -79,7 +132,7 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 
 	// RIFFヘッダの読み込み
 	Audio::RiffHeader riff;
-	file.read((char *)&riff, sizeof(riff));
+	file.read((char*)&riff, sizeof(riff));
 
 	// ファイルがRIFFかどうかチェック
 	if (strncmp(riff.chunk.id, "RIFF", 4u) != 0) {
@@ -91,28 +144,33 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 		assert(0 && "ファイルがWAVEではありません");
 	}
 
-
 	// Formatチャンクの読み込み
 	Audio::FormatChunk format{};
 	// チャンクヘッダの確認
-	file.read((char *)&format, sizeof(Audio::ChunkHeader));
+	file.read((char*)&format, sizeof(Audio::ChunkHeader));
+	// Junkチャンクを検出した場合
+	if (strncmp(format.chunk.id, "JUNK", 4u) == 0) {
+		// 読み取り範囲をJunkチャンクの終わりまで進める
+		file.seekg(format.chunk.size, std::ios_base::cur);
+		file.read((char*)&format, sizeof(Audio::ChunkHeader));
+	}
 	if (strncmp(format.chunk.id, "fmt ", 4u) != 0) {
 		assert(0);
 	}
 
 	// チャンク本体の読み込み
 	assert(format.chunk.size <= sizeof(format.fmt));
-	file.read((char *)&format.fmt, format.chunk.size);
+	file.read((char*)&format.fmt, format.chunk.size);
 
-	// Dataチャンク読み込み
+	// Dataチャンク読み込み	
 	Audio::ChunkHeader data{};
-	file.read((char *)&data, sizeof(data));
+	file.read((char*)&data, sizeof(data));
 	// Junkチャンクを検出した場合
 	if (strncmp(data.id, "JUNK", 4u) == 0) {
 		// 読み取り範囲をJunkチャンクの終わりまで進める
 		file.seekg(data.size, std::ios_base::cur);
 		// 再読み込み
-		file.read((char *)&data, sizeof(data));
+		file.read((char*)&data, sizeof(data));
 	}
 
 	// 実際に読み込む
@@ -121,7 +179,7 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 	}
 
 	// Dataチャンクのデータ部(波形データ)の読み込み
-	char *const pBuffer = new char[data.size];
+	char* const pBuffer = new char[data.size];
 	file.read(pBuffer, data.size);
 
 	// waveファイルを閉じる
@@ -135,7 +193,7 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 	Audio::SoundData soundData{};
 
 	soundData.wfex = format.fmt;
-	soundData.pBuffer = reinterpret_cast<BYTE *const>(pBuffer);
+	soundData.pBuffer = reinterpret_cast<BYTE* const>(pBuffer);
 	soundData.bufferSize = data.size;
 
 #pragma endregion
@@ -151,4 +209,14 @@ void Audio::SoundData::Unload()
 	pBuffer = nullptr;
 	bufferSize = 0u;
 	wfex = {};
+}
+//
+//STDMETHODIMP_(void __stdcall) Audio::XAudio2VoiceCallback::OnBufferEnd(void* pBufferContext)
+//{
+//}
+void Audio::XAudio2VoiceCallback::OnBufferEnd(THIS_ void* pBufferContext) {
+
+	Voice* voice = reinterpret_cast<Voice*>(pBufferContext);
+	// 再生リストから除外
+	Audio::GetInstance()->voices_.erase(voice);
 }
