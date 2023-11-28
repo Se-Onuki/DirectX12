@@ -4,6 +4,10 @@
 #include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../../../Object/LevelElementManager.h"
 
+// 静的なメンバ変数の実体を宣言
+uint32_t PlayerBeginRotateState::startRotateSE1_ = 0u;
+uint32_t PlayerBeginRotateState::startRotateSE2_ = 0u;
+
 void PlayerBeginRotateState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.1f);
 	startPos_ = pPlayer_->transform_->translate;
@@ -21,6 +25,13 @@ void PlayerBeginRotateState::Init() {
 	rotateCamera->rotation_.x = 15._deg;
 	rotateCamera->rotation_.y = (platform->rotateAxis_ * rotateFacing).Direction2Euler().y;
 	CameraManager::GetInstance()->GetCameraAnimManager()->Play(rotateCamera, 0.75f, SoLib::easeInOutSine);
+
+	if (startRotateSE1_ == 0u) {
+		startRotateSE1_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/startRotate1.wav");
+	}
+	if (startRotateSE2_ == 0u) {
+		startRotateSE2_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/startRotate2.wav");
+	}
 }
 
 void PlayerBeginRotateState::Update([[maybe_unused]] float deltaTime) {
@@ -33,6 +44,19 @@ void PlayerBeginRotateState::Update([[maybe_unused]] float deltaTime) {
 
 	if (pAnimation_->GetAnimManager()->GetNowAnimation()->GetIsEnd()) {
 		pPlayer_->ChangeState<PlayerRotatingState>();
+	}
+
+	if (not start1Trigger_) {
+		Audio::GetInstance()->PlayWave(startRotateSE1_, false, 0.45f);
+		start1Trigger_ = true;
+	}
+
+	// 進捗が半分まで行ったらSEを再生
+	if (pAnimation_->GetAnimManager()->GetNowAnimation()->GetAnimationProgress() >= 0.2f) {
+		if (not start2Trigger_) {
+			Audio::GetInstance()->PlayWave(startRotateSE2_, false, 0.45f);
+			start2Trigger_ = true;
+		}
 	}
 }
 

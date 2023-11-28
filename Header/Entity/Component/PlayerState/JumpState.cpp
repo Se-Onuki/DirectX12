@@ -3,9 +3,15 @@
 #include "../PlayerComp.h"
 #include "FallingState.h"
 
+uint32_t PlayerJumpState::jumpSE_ = 0u;
+
 void PlayerJumpState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.025f);
 	preAnimKey_ = 0;
+
+	if (jumpSE_ == 0u) {
+		jumpSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/jump.wav");
+	}
 }
 
 void PlayerJumpState::Update([[maybe_unused]] float deltaTime) {
@@ -49,6 +55,11 @@ void PlayerJumpState::Update([[maybe_unused]] float deltaTime) {
 		pPlayer_->ChangeState<PlayerFallingState>();
 	}
 	preAnimKey_ = nowAnimation->GetIsPlay();
+
+	if (not jumpSETrigger_) {
+		Audio::GetInstance()->PlayWave(jumpSE_, false, 1.0f);
+		jumpSETrigger_ = true;
+	}
 }
 
 void PlayerJumpState::Draw([[maybe_unused]] const Camera3D &camera) const {
