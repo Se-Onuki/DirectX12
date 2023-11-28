@@ -106,6 +106,8 @@ void GameScene::OnEnter()
 
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Init();
+
+	followCamera_->SetLockOn(lockOn_.get());
 }
 
 void GameScene::OnExit() {}
@@ -210,9 +212,9 @@ void GameScene::Update()
 
 	TextureManager::GetInstance()->ImGuiWindow();
 
-	player_->Update(deltaTime);
 
 	lockOn_->Update(enemyList_, camera_);
+	player_->Update(deltaTime);
 
 	light_->ImGuiWidget();
 

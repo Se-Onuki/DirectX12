@@ -16,7 +16,7 @@ void FollowCameraComp::Update() {
 
 	Vector3 facing = linePoint - camera_->translation_;
 
-	camera_->rotation_ = facing.Direction2Euler();
+	//camera_->rotation_ = facing.Direction2Euler();
 
 	camera_->UpdateMatrix();
 }
@@ -30,7 +30,7 @@ void FollowCameraComp::ImGuiWidget() {
 void FollowCameraComp::AddRotate(const Vector3 &euler) {
 	if (euler.LengthSQ() != 0.f) {
 		rotate_ += euler;
-		camera_->rotation_ += euler;
+		//camera_->rotation_ += euler;
 		camera_->UpdateMatrix();
 	}
 }

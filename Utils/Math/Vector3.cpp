@@ -29,6 +29,10 @@ Vector3 Vector3::operator*(const Matrix4x4 &Second) const {
 		1.0f * Second.m[3][2];
 	const float w = this->x * Second.m[0][3] + this->y * Second.m[1][3] + this->z * Second.m[2][3] +
 		1.0f * Second.m[3][3];
+
+	if (w == 0.0f) {
+		return Vector3::zero;
+	}
 	assert(w != 0.0f);
 	return result / w; // 演算子のオーバーライド
 }
