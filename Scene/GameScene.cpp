@@ -162,7 +162,7 @@ void GameScene::Update() {
 	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Update(deltaTime);
 	// Startボタンをおしたらメニューを展開
-	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START) && not PoseManager::GetInstance()->GetIsActive()) {
+	if ((Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START)) && not PoseManager::GetInstance()->GetIsActive() && not goal_->GetComponent<GoalAnimComp>()->GetIsPlay()) {
 		if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kNone) {
 			PoseManager::GetInstance()->DeplayPoseMenu();
 		}
@@ -269,7 +269,7 @@ void GameScene::Update() {
 	//transform_->ImGuiWidget();
 	//transform_->UpdateMatrix();
 
-	}
+}
 
 void GameScene::Draw()
 {

@@ -190,10 +190,11 @@ Vector3 PlayerComp::CalcMoveCollision() {
 									if (isLanding_ && lineNum < 4 && (hitPoint.y - box.max.y) > -0.1f) {
 										if (normal * line.diff.Nomalize() < -0.3f) {
 											rigidbody->ApplyInstantForce(Vector3::up * 0.7f);
+											transform_->translate += (Vector3::front * 1.f * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, transform_->rotate.y));
 											transform_->translate.y += 0.1f;
 										}
 									}
-									if (value < t) {
+									else if (value < t) {
 										t = value;
 										hitSurfaceNormal = normal;
 										if (normal * Vector3::up == 1.f) {

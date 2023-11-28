@@ -87,11 +87,15 @@ public:
 
 		bool isDelete_ = false;
 
+		void CreateGoal();
+
 	private:
 		const float &lerpTime_;
 
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
+
+		std::unique_ptr<Entity> goal_;
 
 		std::list<std::unique_ptr<Entity>> starItem_;
 

@@ -37,6 +37,9 @@ void LevelElementManager::SetData()
 	lineStart_->translate = monoLevelData_["CameraStart"];
 	lineEnd_->translate = monoLevelData_["CameraEnd"];
 
+	lineStart_->CalcMatrix();
+	lineEnd_->CalcMatrix();
+
 	startPos_ = monoLevelData_["StartPos"];
 
 	// 足場のJsonの取得
@@ -385,8 +388,9 @@ LevelElementManager::Platform::Platform() : lerpTime_(LevelElementManager::GetIn
 
 	boxItr_ = boxList_.begin();
 
+	axisBar_->scale = Vector3{ 0.5f,0.5f,10.f };
+
 	axisBar_->SetParent(center_);
-	axisBar_->scale.z = 10.f;
 }
 
 LevelElementManager::Box &LevelElementManager::Platform::AddBox(const AABB &aabb, GroundType groundType)
@@ -437,10 +441,12 @@ void LevelElementManager::Platform::Update(float deltaTime)
 	const Entity *const pPlayer = LevelElementManager::GetInstance()->GetPlayer();
 	const auto *const playerComp = pPlayer->GetComponent<PlayerComp>();
 
+	axisBar_->rotate.z = Angle::Mod(axisBar_->rotate.z + 2.5f * deltaTime);
+	axisBar_->UpdateMatrix();
+
 	if (timer_.IsActive()) {
 		center_.rotate = Angle::Lerp(startRot_, targetRot_, SoLib::easeInOutQuad(timer_.GetProgress()));
 		center_.UpdateMatrix();
-		axisBar_->UpdateMatrix();
 		for (auto &box : boxList_) {
 			box.transform_->UpdateMatrix();
 		}
@@ -571,6 +577,12 @@ bool LevelElementManager::Platform::ImGuiWidget()
 	}
 
 	return isEdited;
+}
+
+void LevelElementManager::Platform::CreateGoal() {
+	goal_ = std::make_unique<Entity>();
+
+	goal_->AddComponent<GoalAnimComp>();
 }
 
 LevelElementManager::Box::Box(const AABB &aabb, Platform *parent)
