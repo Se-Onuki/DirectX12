@@ -10,6 +10,7 @@
 
 #include "LockOn.h"
 #include <numeric>
+#include "Particle/StarParticle.h"
 
 void Player::ApplyGlobalVariables() {
 	const GlobalVariables *const gVariables = GlobalVariables::GetInstance();
@@ -120,6 +121,7 @@ void Player::BehaviorRootUpdate() {
 	Vector3 move{ vPad.stickL_.x, 0.f, vPad.stickL_.y };
 	InputRotate(move);
 
+
 	if (input_->GetXInput()->IsTrigger(KeyCode::RIGHT_SHOULDER)) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
@@ -167,6 +169,8 @@ void Player::BehaviorDashUpdate(float deltaTime) {
 void Player::BehaviorAttackInit() {
 	floatingParameter_ = 0.f;
 	workAttack_ = WorkAttack{};
+
+	isAttackActive_ = false;
 }
 
 void Player::BehaviorAttackUpdate() {
@@ -247,9 +251,13 @@ void Player::BehaviorAttackUpdate() {
 	case 2u:
 		weaponAngle = SoLib::Lerp(nowAttackAngle.chargeAngle_, nowAttackAngle.siwngAngle_, progress);
 
+		isAttackActive_ = true;
+
 		break;
 	case 3u:
 		weaponAngle = SoLib::Lerp(nowAttackAngle.siwngAngle_, nowAttackAngle.endAngle_, progress);
+
+		isAttackActive_ = false;
 
 		break;
 
@@ -427,6 +435,12 @@ void Player::Update([[maybe_unused]] const float deltaTime) {
 		transformOrigin_->translate.y = 0.f;
 
 		velocity_.y = 0.f;
+	}
+
+	if (velocity_.Length() >= 0.5f) {
+
+		auto *particlePtr = ParticleManager::GetInstance()->AddParticle(ModelManager::GetInstance()->GetModel("box"), std::make_unique<StarParticle>(this->GetWorldTransform()->GetGrobalPos()));
+		particlePtr->SetAliveTime(1.f);
 	}
 
 	switch (behavior_) {

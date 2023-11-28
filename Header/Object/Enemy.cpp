@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include "../../Utils/Math/Angle.h"
 #include "../../Utils/Math/Math.hpp"
+#include "Particle/TestParticle.h"
 
 Enemy::~Enemy() {}
 
@@ -30,10 +31,37 @@ void Enemy::Update(const float deltaTime) {
 	}
 	BaseCharacter::Update(deltaTime);
 	collider_.SetMatrix(transformOrigin_->matWorld_);
+
 }
 
 void Enemy::Draw(const Camera<Render::CameraType::Projecction> &camera) const {
 	modelMap_.at("body")->Draw(transformOrigin_, camera);
+}
+void Enemy::StartDeadAnim(const Vector3 &playerPos) {
+	auto *particlePtr = ParticleManager::GetInstance()->AddParticle(ModelManager::GetInstance()->GetModel("enemyBody"), std::make_unique<TestParticle>(this->GetWorldTransform()->GetGrobalPos()));
+	particlePtr->velocity_ = (this->GetWorldTransform()->GetGrobalPos() - playerPos).Nomalize() * 30.f;
+	particlePtr->SetAliveTime(1.f);
+	particlePtr->Init();
+
+	this->SetIsAlive(false);
+}
+
+void Enemy::HitWeapon(const Vector3 &playerPos) {
+	AddHealth(-1);
+
+	for (uint32_t i = 0u; i < 10u; i++) {
+		TestParticle *particlePtr = dynamic_cast<TestParticle *>(ParticleManager::GetInstance()->AddParticle(ModelManager::GetInstance()->GetModel("box"), std::make_unique<TestParticle>(this->GetWorldTransform()->GetGrobalPos())));
+		// 乱数で角度を設定
+		Vector3 euler = Vector3{ Random::GetRandom<float>(-Angle::PI * 0.5f,Angle::PI * 0.5f),  Random::GetRandom<float>(-Angle::PI,Angle::PI), 0.f };
+		particlePtr->velocity_ = Vector3::front * Random::GetRandom<float>(15.f, 30.f) * Matrix4x4::EulerRotate(euler);
+		particlePtr->SetAliveTime(0.5f);
+		particlePtr->SetStartColor(Vector4{ 1.f,0.5f,0.5f,0.5f });
+		particlePtr->SetEndColor(Vector4{ 1.f,0.5f,0.5f,0.f });
+		particlePtr->Init();
+	}
+	if (health_ <= 0) {
+		StartDeadAnim(playerPos);
+	}
 }
 
 void Enemy::SetPlatform(const Platform *const platform) {

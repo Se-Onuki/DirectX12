@@ -102,7 +102,7 @@ class Player : public BaseCharacter {
 
 		},
 		AttackTargetAngle{
-			.chargeAngle_ = 30._deg,
+			.chargeAngle_ = 50._deg,
 			.siwngAngle_ = -120._deg,
 		}
 	};
@@ -150,6 +150,7 @@ class Player : public BaseCharacter {
 	SoLib::DeltaTimer dashBrake_;
 
 	OBB collider_;
+	bool isAttackActive_;
 
 	Sphere weaponCollider_;
 
@@ -190,11 +191,13 @@ public:
 
 	const OBB *const GetCollider() const { return &collider_; }
 	const Sphere *const GetWeaponCollider()const {
-		if (behavior_ == Behavior::kAttack) {
+		if (behavior_ == Behavior::kAttack && isAttackActive_) {
 			return &weaponCollider_;
 		}
 		return nullptr;
 	}
+
+	void SetWeaponActive(bool value) { isAttackActive_ = value; }
 
 	const Vector3 &GetVelocity()const { return velocity_; }
 	void SetVelocity(const Vector3 &vec) { velocity_ = vec; }

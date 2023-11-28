@@ -31,7 +31,7 @@ void GameScene::OnEnter()
 	light_.reset(DirectionLight::Create());
 	particleManager_->Init(256);
 	// model_ = ModelManager::GetInstance()->AddModel("Fence", Model::LoadObjFile("Model/Fence/", "fence.obj"));
-	ModelManager::GetInstance()->AddModel("box", Model::LoadObjFile("", "box.obj"));
+	ModelManager::GetInstance()->AddModel("box", Model::LoadObjFile("", "box.obj"))->materialMap_.begin()->second->blendMode_ = Model::BlendMode::kNormal;
 	camera_.Init();
 
 	ModelManager::GetInstance()->AddModel("skydome", Model::LoadObjFile("", "skyCylinder.obj"));
@@ -47,8 +47,12 @@ void GameScene::OnEnter()
 	Model *const playerWeapon =
 		ModelManager::GetInstance()->AddModel("playerWeapon", Model::LoadObjFile("Model/Player/", "hammer.obj"));
 
-	//Model *const enemyBody =
-	ModelManager::GetInstance()->AddModel("enemyBody", Model::LoadObjFile("Model/Boss/", "Boss.obj"));
+	Model *const enemyBody =
+		ModelManager::GetInstance()->AddModel("enemyBody", Model::LoadObjFile("Model/Boss/", "Boss.obj"));
+
+	for (auto &[key, material] : enemyBody->materialMap_) {
+		material->blendMode_ = Model::BlendMode::kNormal;
+	}
 
 	std::unordered_map<std::string, Model *> playerMap{
 		{"body", playerBody},
@@ -166,11 +170,14 @@ void GameScene::Update()
 			return false;
 		});
 
+
+	const Vector3 playerPos = player_->GetWorldTransform()->GetGrobalPos();
 	const auto *const weapon = player_->GetWeaponCollider();
 	if (weapon) {
 		for (auto &enemy : enemyList_) {
 			if (Collision::IsHit(enemy->GetCollider(), *weapon)) {
-				enemy->SetIsAlive(false);
+				enemy->HitWeapon(playerPos);
+				player_->SetWeaponActive(false);
 			}
 		}
 	}
@@ -222,9 +229,6 @@ void GameScene::Update()
 	// player_->Update(deltaTime);
 	player_->GetWorldTransform()->ImGuiWidget();
 
-	auto *particlePtr = particleManager_->AddParticle(ModelManager::GetInstance()->GetModel("box"), std::make_unique<StarParticle>(player_->GetWorldTransform()->GetGrobalPos()));
-	particlePtr->velocity_ = TransformNormal(Vector3::front, player_->GetWorldTransform()->matWorld_);
-	particlePtr->SetAliveTime(1.f);
 
 	particleManager_->Update(deltaTime);
 

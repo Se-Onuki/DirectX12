@@ -90,10 +90,11 @@ void StarParticle::Update([[maybe_unused]] float deltaTime)
 	if (!timer_.IsFinish()) {
 		transform_.rotate.y += rotationAmount_;
 		transform_.rotate.y = Angle::Mod(transform_.rotate.y);
-		transform_.translate += move_;
+		transform_.translate += move_ * deltaTime;
 
 		// 線形補間によってスケールを動かす
 		transform_.scale = SoLib::Lerp<Vector3>(startScale_, { 0.0f, 0.0f,0.0f }, SoLib::easeLinear(timer_.GetProgress()));
+		color_ = SoLib::Lerp(Vector4{ 1.f,1.f,1.f,1. }, Vector4{ 1.f,1.f,1.f,0.f }, timer_.GetProgress());
 	}
 	else {
 		isAlive_ = false;

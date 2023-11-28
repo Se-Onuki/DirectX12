@@ -26,9 +26,13 @@ public: // メンバ関数
 	/// <param name="deltaTime">経過秒数</param>
 	void Update(float deltaTime) override;
 
+	void SetStartColor(const Vector4 &color) { startColor_ = color; }
+	void SetEndColor(const Vector4 &color) { endColor_ = color; }
+
 private: // メンバ変数
 
-	
+	Vector4 startColor_{ 1.f,1.f,1.f,1.f };
+	Vector4 endColor_{ 1.f,1.f,1.f,0.f };
 
 };
 
