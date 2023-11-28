@@ -4,6 +4,9 @@
 
 #include "../Header/Object/Fade.h"
 
+// 静的なメンバ変数の実体を宣言
+uint32_t StageSelectScene::stageSelectSceneBGM_ = 0u;
+
 StageSelectScene::StageSelectScene()
 {
 	input_ = Input::GetInstance();
@@ -35,13 +38,17 @@ void StageSelectScene::OnEnter()
 
 	sceneChanging_ = false;
 
+	if (stageSelectSceneBGM_ == 0u) {
+		stageSelectSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/titleStageSelectBGM.wav");
+	}
+
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 }
 
 void StageSelectScene::OnExit()
 {
-	
+	audio_->StopWave(stageSelectSceneBGM_);
 }
 
 void StageSelectScene::Update()
@@ -52,6 +59,11 @@ void StageSelectScene::Update()
 
 	// デルタタイムの取得
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+
+	// BGM再生
+	if (audio_->IsPlaying(voiceStageSelectSceneBGMHandle_) == 0 || voiceStageSelectSceneBGMHandle_ == -1) {
+		voiceStageSelectSceneBGMHandle_ = audio_->PlayWave(stageSelectSceneBGM_, true, 0.05f);
+	}
 
 	// パーティクルの更新
 	emitterManager_->Update(deltaTime);  // 発生マネージャ
