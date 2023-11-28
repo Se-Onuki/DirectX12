@@ -62,7 +62,7 @@ void Camera<Render::CameraType::Projecction>::CalcMatrix()
 	// matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
 	matView_ = rotateMat_;
 	*reinterpret_cast<Vector3 *>(&matView_.m[3]) = translation_;
-	matView_ = matView_.InverseRT();
+	matView_ = matView_.InverseSRT();
 
 	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 }
