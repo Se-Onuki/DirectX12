@@ -68,6 +68,7 @@ void StarUI::Draw()
 	starBackGroundUI_->SetPosition(position_);
 	starBackGroundUI_->SetScale(scale_);
 	starBackGroundUI_->SetPivot(anchorPoint_);
+	starBackGroundUI_->SetColor({1.0f, 1.0f, 1.0f, overrapSpriteAlpha_ });
 	starBackGroundUI_->Draw();
 
 	// スプライトの描画
@@ -103,7 +104,6 @@ void StarUI::StayInit()
 {
 	// 設定された終端値に瞬時に合わせる
 	overrapSpriteScale_ = endScale_;
-	overrapSpriteAlpha_ = 1.0f;
 
 	// タイマーを強制停止
 	animTimer_.Clear();
@@ -119,7 +119,6 @@ void StarUI::AppearInit()
 	// 現段階のメンバ変数のパラメーターを取得
 	startScale_ = overrapSpriteScale_; // 大きさ始端値
 	endScale_ = scale_;				   // 大きさ終端値
-	overrapSpriteAlpha_ = 1.0f;
 
 	// この星は溜まっている
 	isFilled_ = true;
@@ -133,7 +132,6 @@ void StarUI::AppearUpdate()
 	if (not animTimer_.IsFinish()) {
 		// パラメーターを線形補間で変更する
 		overrapSpriteScale_ = SoLib::Lerp(startScale_, endScale_, SoLib::easeOutBack(SoLib::easeOutQuad(animTimer_.GetProgress())));
-		overrapSpriteAlpha_ = 1.0f;
 	}
 	else {
 		// 次の行動リクエストに待機アニメーションを設定

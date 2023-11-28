@@ -1,4 +1,5 @@
 #include "InGameUIManager.h"
+#include "../../../Engine/DirectBase/Input/Input.h"
 
 void InGameUIManager::Init(int maxStarCount)
 {
@@ -14,6 +15,15 @@ void InGameUIManager::Init(int maxStarCount)
 		newUI->Init(addName);
 		stars_.push_back(std::move(newUI));
 	}
+
+	// 操作方法UIのリセット
+	controllUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_NoSpin.png")));
+	controllUI_.position_ = { 0.0f, 425.0f };
+	controllUI_.scale_ = { 512.0f, 300.0f };
+	// スピン時の操作方法UIのリセット
+	spinControllUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_Spin.png")));
+	spinControllUI_.position_ = { 0.0f, 425.0f };
+	spinControllUI_.scale_ = { 512.0f, 220.0f };
 }
 
 void InGameUIManager::Update(float deltaTime)
@@ -24,22 +34,44 @@ void InGameUIManager::Update(float deltaTime)
 		star->Update(deltaTime);
 		star->position_ = starUIsStartingPoint_;
 		star->position_.x = starUIsStartingPoint_.x + (starUILineSpace_ * count);
+		star->overrapSpriteAlpha_ = uiAlpha_;
 		count++;
 	}
 
-#ifdef _DEBUG
-	ImGui::Begin("InGameUI");
-	ImGui::DragFloat2("StarUIStartingPoint", &starUIsStartingPoint_.x, 1.0f);
-	ImGui::DragFloat("StarUIsLineSpace", &starUILineSpace_, 1.0f);
-	// 最大星数分ループ
-	for (auto& star : stars_) {
-		star->DisplayImGui();
+	if (Input::GetInstance()->GetInputType() == Input::InputType::kKeyBoard) {
+		controllUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/keyboard_NoSpin.png"));
+		spinControllUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/keyboard_Spin.png"));
+	}
+	else {
+		controllUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_NoSpin.png"));
+		spinControllUI_.sprite_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_Spin.png"));
 	}
 
-	ImGui::InputInt("AddType", &imGuiAddType_);
-	if (ImGui::Button("AddStar")) {
-		AddStar(imGuiAddType_);
+	controllUI_.sprite_->SetColor({ 1.0f, 1.0f, 1.0f, uiAlpha_ });
+
+#ifdef _DEBUG
+	ImGui::Begin("InGameUI");
+	if (ImGui::TreeNode("StarUI")) {
+		ImGui::DragFloat2("StarUIStartingPoint", &starUIsStartingPoint_.x, 1.0f);
+		ImGui::DragFloat("StarUIsLineSpace", &starUILineSpace_, 1.0f);
+		// 最大星数分ループ
+		for (auto& star : stars_) {
+			star->DisplayImGui();
+		}
+
+		ImGui::InputInt("AddType", &imGuiAddType_);
+		if (ImGui::Button("AddStar")) {
+			AddStar(imGuiAddType_);
+		}
+		ImGui::TreePop();
 	}
+	
+	controllUI_.DisplayImGui("ControllUI");
+	spinControllUI_.DisplayImGui("spinControllUI");
+
+	ImGui::DragFloat("UI - Alpha", &uiAlpha_, 0.01f, 0.0f, 1.0f);
+
+	ImGui::Checkbox("isSpining", &isSpining_);
 
 	ImGui::End();
 #endif // _DEBUG
@@ -51,6 +83,13 @@ void InGameUIManager::Draw()
 	// 最大星数分ループ
 	for (auto& star : stars_) {
 		star->Draw();
+	}
+	// 操作方法UI描画
+	if (!isSpining_) {
+		controllUI_.Draw();
+	}
+	else {
+		spinControllUI_.Draw();
 	}
 }
 

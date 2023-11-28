@@ -63,6 +63,11 @@ public: // アクセッサ等
 	/// <param name="p0m">プラスかマイナスか</param>
 	void AddStar(int p0m);
 
+public: // パブリックなメンバ変数
+
+	// ゲーム画面全体の透明度
+	float uiAlpha_ = 1.0f;
+
 private: // メンバ変数
 
 	// 最大星数
@@ -75,6 +80,14 @@ private: // メンバ変数
 	// 星UIの行間設定
 	float starUILineSpace_ = 150.0f;
 
+	// 操作方法スプライト
+	UISprite controllUI_;
+	UISprite spinControllUI_;
+
+	// スピンモード中か
+	bool isSpining_ = false;
+
+	// 星UIの量を示すUIを加算するか減算するか
 	int imGuiAddType_ = 0;
 
 };

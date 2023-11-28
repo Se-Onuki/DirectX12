@@ -88,6 +88,9 @@ public: // パブリックなメンバ変数
 	// 中心点
 	Vector2 anchorPoint_ = { 0.5f, 0.5f };
 
+	// スプライトの透明度
+	float overrapSpriteAlpha_ = 1.0f;
+
 private: // メンバ変数
 
 	// それぞれの演出時間
@@ -107,8 +110,6 @@ private: // メンバ変数
 
 	// 重ねて表示するスプライトの大きさ
 	Vector2 overrapSpriteScale_ = { 0.0f, 0.0f };
-	// 重ねて表示するスプライトの透明度
-	float overrapSpriteAlpha_ = 0.0f;
 
 	// 線形補間用パラメーター保存用
 	Vector2 startScale_ = {0.0f, 0.0f}; // 大きさ始端値
