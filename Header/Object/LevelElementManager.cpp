@@ -408,6 +408,7 @@ LevelElementManager::Platform::Platform() : lerpTime_(LevelElementManager::GetIn
 	targetRot_ = {};
 
 	boxItr_ = boxList_.begin();
+	starItr_ = starItem_.begin();
 
 	axisBar_->scale = Vector3{ 0.5f, 0.5f, 10.f };
 
@@ -430,6 +431,7 @@ void LevelElementManager::Platform::AddItem(const BaseTransform &srt)
 {
 	starItem_.emplace_back(std::make_unique<Entity>());
 	auto *const entity = starItem_.back().get();
+	entity->Init();
 
 	// auto *const itemComp =
 	entity->AddComponent<StarItemComp>();
@@ -613,6 +615,34 @@ bool LevelElementManager::Platform::ImGuiWidget()
 		if (boxItr_->isDelete_) {
 			boxList_.erase(boxItr_);
 			boxItr_ = boxList_.begin();
+		}
+	}
+
+
+	if (ImGui::Button("AddStarItem")) {
+		AddItem({});
+		starItr_ = --starItem_.end();
+	}
+
+	if (starItr_ == starItem_.end()) {
+		starItr_ = starItem_.begin();
+	}
+
+	if (starItr_ != starItem_.end()) {
+		if (ImGui::BeginCombo("StarItemList", std::to_string(std::distance(starItem_.begin(), starItr_)).c_str())) {
+			for (decltype(starItem_)::iterator it = starItem_.begin(); it != starItem_.end(); it++) {
+				if (ImGui::Selectable(std::to_string(std::distance(starItem_.begin(), it)).c_str())) {
+					starItr_ = it;
+					break;
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		isEdited |= (*starItr_)->transform_.ImGuiWidget("StarItem");
+		if (not (*starItr_)->GetActive()) {
+			starItem_.erase(starItr_);
+			starItr_ = starItem_.begin();
 		}
 	}
 

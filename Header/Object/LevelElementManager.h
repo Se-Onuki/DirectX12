@@ -100,6 +100,7 @@ public:
 		std::unique_ptr<Entity> goal_;
 
 		std::list<std::unique_ptr<Entity>> starItem_;
+		std::list<std::unique_ptr<Entity>>::iterator starItr_;
 
 		std::list<Box> boxList_;
 
