@@ -16,5 +16,9 @@ public:
 
 	PlayerBehavior GetState() override { return PlayerBehavior::kRotating; }
 
+private:
+
+	// 回転SE
+	static uint32_t rotateSE_;
 };
 
