@@ -104,7 +104,8 @@ void GameScene::OnEnter() {
 	levelManager->Init();
 
 	levelManager->SetPlayer(player_.get());
-	levelManager->LoadData(0u);
+
+	levelManager->LoadData(StageSelectManager::GetInstance()->GetSelectedStageNumber());
 
 	levelManager->CalcCollision();
 
@@ -129,16 +130,6 @@ void GameScene::OnEnter() {
 	/*cameraList_[0u] = &followComp->GetCamera();
 	cameraList_[1u] = &camera_;*/
 
-	// ゴールモデル取得
-	goal_ = std::make_unique<Entity>();
-	goal_->AddComponent<GoalAnimComp>();
-	goal_->GetComponent<GoalAnimComp>()->SetPlayerModel(player_.get());
-	goal_->GetComponent<GoalAnimComp>()->SetParticleEmitter(emitter);
-
-	goal_->transform_.translate = Vector3{ 0.f,-4.f,18.f };
-
-	player_->GetComponent<PlayerComp>()->SetGoalComp(goal_->GetComponent<GoalAnimComp>());
-
 	sceneChanging_ = false;
 
 	skyDome_ = std::make_unique<Entity>();
@@ -161,8 +152,20 @@ void GameScene::Update() {
 
 	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Update(deltaTime);
+
+	const auto &goalList = levelManager->GetGoalList();
+
+	bool isGoaled = false;
+
+	for (Entity *const goal : goalList) {
+		isGoaled = goal->GetComponent<GoalAnimComp>()->GetIsPlay();
+		if (isGoaled) {
+			break;
+		}
+	}
+
 	// Startボタンをおしたらメニューを展開
-	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START) && not PoseManager::GetInstance()->GetIsActive()) {
+	if ((Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START)) && not PoseManager::GetInstance()->GetIsActive() && not isGoaled) {
 		if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kNone) {
 			PoseManager::GetInstance()->DeplayPoseMenu();
 		}
@@ -176,6 +179,8 @@ void GameScene::Update() {
 		particleEmitterManager->Update(deltaTime);
 		particleManager->Update(deltaTime);
 
+		player_->Update(deltaTime);
+
 		levelManager->Update(deltaTime);
 		followCamera_->AddComponent<FollowCameraComp>()->SetLine(levelManager->GetStageLine());
 
@@ -184,11 +189,16 @@ void GameScene::Update() {
 
 		ImGui::End();
 
-		player_->Update(deltaTime);
+		for (Entity *const goal : levelManager->GetGoalList()) {
+			if (goal->GetComponent<GoalAnimComp>()->GetIsPlay()) {
+				player_->GetComponent<PlayerComp>()->SetIsGoaled(true);
+				break;
+			}
+		}
 
 		skyDome_->Update(deltaTime);
 
-		goal_->Update(deltaTime);
+		//goal_->Update(deltaTime);
 
 		ImGui::Begin("Player");
 		if (ImGui::Button("Reset")) {
@@ -203,10 +213,6 @@ void GameScene::Update() {
 		}
 		if (keyBoard->IsPress(DIK_LEFT)) {
 			euler += Vector3::up * 5._deg;
-		}
-
-		if ((goal_->transform_.GetGrobalPos() - player_->transform_.GetGrobalPos()).Length() < 2.f) {
-			goal_->GetComponent<GoalAnimComp>()->PlayGoalAnim();
 		}
 
 		followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
@@ -244,15 +250,21 @@ void GameScene::Update() {
 		}
 	}
 
+
 	// ゴール演出が終了している場合
-	if (goal_->GetComponent<GoalAnimComp>()->GetIsEnd()) {
-		if (not sceneChanging_) {
-			// フェードアウト開始
-			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
-			// 指定した秒数後シーンチェンジ
-			sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
-			// シーン遷移中
-			sceneChanging_ = true;
+	if (not sceneChanging_) {
+		for (const auto goal : levelManager->GetGoalList()) {
+			if (goal->GetComponent<GoalAnimComp>()->GetIsEnd()) {
+
+				// フェードアウト開始
+				Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+				// 指定した秒数後シーンチェンジ
+				sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
+				// シーン遷移中
+				sceneChanging_ = true;
+
+				break;
+			}
 		}
 	}
 
@@ -269,7 +281,7 @@ void GameScene::Update() {
 	//transform_->ImGuiWidget();
 	//transform_->UpdateMatrix();
 
-	}
+}
 
 void GameScene::Draw()
 {
@@ -324,7 +336,7 @@ void GameScene::Draw()
 
 	player_->Draw(camera);
 
-	goal_->Draw(camera);
+	//goal_->Draw(camera);
 
 	skyDome_->Draw(camera);
 

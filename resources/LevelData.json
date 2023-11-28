@@ -1,13 +1,7 @@
 {
     "Level": [
         {
-            "MaxRotateCount": 2,
-            "StartPos": [
-                0.0,
-                -4.0,
-                -15.0
-            ],
-            "GoalPos": [
+            "CameraEnd": [
                 0.0,
                 -4.0,
                 15.0
@@ -17,32 +11,23 @@
                 -4.0,
                 -15.0
             ],
-            "CameraEnd": [
-                0.0,
-                -4.0,
-                15.0
-            ],
+            "MaxRotateCount": 2,
             "Platform": [
                 {
-                    "AxisBarLength": 10.0,
-                    "Centor": [
-                        0.0,
-                        -5.0,
-                        0.0
-                    ],
                     "Axis": [
                         0.0,
                         0.0,
                         1.0
                     ],
+                    "AxisBarLength": 10.0,
                     "Box": [
                         {
-                            "GroundType": 0,
                             "Centor": [
                                 0.0,
                                 -4.0,
                                 0.0
                             ],
+                            "GroundType": 0,
                             "Radius": [
                                 10.0,
                                 2.0,
@@ -50,12 +35,12 @@
                             ]
                         },
                         {
-                            "GroundType": 0,
                             "Centor": [
                                 0.0,
                                 -2.0,
                                 0.0
                             ],
+                            "GroundType": 0,
                             "Radius": [
                                 2.0,
                                 2.0,
@@ -63,6 +48,23 @@
                             ]
                         }
                     ],
+                    "Centor": [
+                        0.0,
+                        -5.0,
+                        0.0
+                    ],
+                    "Goal": {
+                        "Pos": [
+                            0.0,
+                            2.0,
+                            15.0
+                        ],
+                        "Rotate": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
                     "StarItem": [
                         {
                             "Pos": [
@@ -78,6 +80,269 @@
                         }
                     ]
                 }
+            ],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [
+                {
+                    "Axis": [
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "AxisBarLength": 12.0,
+                    "Box": [
+                        {
+                            "Centor": [
+                                0.0,
+                                -3.0,
+                                1.0
+                            ],
+                            "GroundType": 0,
+                            "Radius": [
+                                3.0,
+                                4.0,
+                                15.0
+                            ]
+                        },
+                        {
+                            "Centor": [
+                                -5.0,
+                                3.0,
+                                -7.0
+                            ],
+                            "GroundType": 0,
+                            "Radius": [
+                                4.0,
+                                3.0,
+                                5.0
+                            ]
+                        }
+                    ],
+                    "Centor": [
+                        5.0,
+                        -11.0,
+                        -10.0
+                    ],
+                    "Goal": {
+                        "Pos": [
+                            4.0,
+                            -3.0,
+                            11.0
+                        ],
+                        "Rotate": [
+                            0.0,
+                            0.0,
+                            -1.5529999732971191
+                        ]
+                    },
+                    "StarItem": [
+                        {
+                            "Pos": [
+                                0.0,
+                                2.0,
+                                0.0
+                            ],
+                            "Rotate": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
+            ]
+        },
+        {
+            "CameraEnd": [
+                0.0,
+                -4.0,
+                15.0
+            ],
+            "CameraStart": [
+                0.0,
+                -4.0,
+                -15.0
+            ],
+            "MaxRotateCount": 2,
+            "Platform": [],
+            "StartPos": [
+                0.0,
+                -4.0,
+                -15.0
             ]
         }
     ]

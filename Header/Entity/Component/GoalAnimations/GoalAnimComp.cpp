@@ -28,7 +28,7 @@ void GoalAnimComp::Init()
 }
 
 void GoalAnimComp::Update()
-{	
+{
 	if (isPlay_) {
 		/// ゴール時のカメラのオフセットを設定
 		// ゴール時カメラの回転角を設定
@@ -50,7 +50,7 @@ void GoalAnimComp::Update()
 			isEnd_ = true;
 		}
 	}
-	
+
 #ifdef _DEBUG
 	// ImGUiを表示する
 	DisplayImGui();
@@ -63,7 +63,7 @@ void GoalAnimComp::DisplayImGui()
 	ImGui::Begin("GoalAnim");
 	// 旗の位置座標を設定
 	if (ImGui::TreeNode("Flag Transform")) {
-		transform_->ImGuiWidget();
+		transform_->ImGuiWidget("");
 		ImGui::TreePop();
 	}
 
@@ -87,7 +87,7 @@ void GoalAnimComp::DisplayImGui()
 		ImGui::InputInt("Add To Stage Number", &imGuiAddToStageNumber_);
 		// 情報を読み込むステージ番号の指定
 		ImGui::InputInt("Read To Stage Number", &ImGuiReadToStageNumber_);
-		
+
 		// パラメーターを指定した値に追加
 		if (ImGui::Button("AddItem"))
 			AddItem(imGuiAddToStageNumber_);
@@ -122,7 +122,9 @@ void GoalAnimComp::PlayGoalAnim()
 			// クリアアニメーション再生
 			playerModel_->GetComponent<PlayerAnimComp>()->GetAnimManager()->SetNextAnimation(PlayerBehavior::kClear, false);
 			// パーティクルを強制終了
-			pEmitter_->Finish();
+			if (pEmitter_) {
+				pEmitter_->Finish();
+			}
 
 			/// ゴール時のカメラのオフセットを設定
 			// ゴール時カメラの回転角を設定
@@ -147,7 +149,7 @@ void GoalAnimComp::PlayGoalAnim()
 	}
 }
 
-const Vector3 GoalAnimComp::MatrixToVector(const Vector3& v, const Matrix4x4& m)
+const Vector3 GoalAnimComp::MatrixToVector(const Vector3 &v, const Matrix4x4 &m)
 {
 	// 結果格納用
 	Vector3 result;

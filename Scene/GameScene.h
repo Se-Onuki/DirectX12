@@ -40,7 +40,7 @@ private:
 	std::unique_ptr<Entity> followCamera_ = nullptr;
 	LevelElementManager *levelManager{};
 
-	std::unique_ptr<Entity> goal_ = nullptr;
+	//std::unique_ptr<Entity> goal_ = nullptr;
 
 	std::unique_ptr<Entity> skyDome_;
 

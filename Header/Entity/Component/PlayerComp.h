@@ -56,6 +56,10 @@ public:
 		nowState_ = std::make_unique<State>(this);
 	}
 
+	/// @brief 現在の状態の取得
+	/// @return 現在の状態
+	const auto &GetState() const { return nowState_; }
+
 	/// @brief 移動方向を入力
 	/// @param vec 移動ベクトル
 	void MoveInput(const Vector3 &vec);
@@ -78,7 +82,7 @@ public:
 
 	AABB GetCollider() const { return referenceCollider_.AddPos(transform_->GetGrobalPos()); }
 
-	void SetGoalComp(GoalAnimComp *const object) { goalObject_ = object; }
+	void SetIsGoaled(bool isGoaled) { isGoaled_ = isGoaled; }
 
 private:
 
@@ -101,7 +105,7 @@ private:
 
 	Input *input_;
 
-	GoalAnimComp *goalObject_ = nullptr;
+	bool isGoaled_ = false;
 
 	PlayerAnimComp *animationComp_ = nullptr;
 

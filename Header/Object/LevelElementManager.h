@@ -87,13 +87,24 @@ public:
 
 		bool isDelete_ = false;
 
+		void CreateGoal();
+
+		Entity *const GetGoal() const { return goal_.get(); }
+
+
+
+		const std::list<std::unique_ptr<Entity>> &GetStarItem()const { return starItem_; }
+
 	private:
 		const float &lerpTime_;
 
 		SoLib::DeltaTimer timer_;
 		std::list<AABB> collisionBox_;
 
+		std::unique_ptr<Entity> goal_;
+
 		std::list<std::unique_ptr<Entity>> starItem_;
+		std::list<std::unique_ptr<Entity>>::iterator starItr_;
 
 		std::list<Box> boxList_;
 
@@ -117,6 +128,8 @@ public:
 	void LoadData(const uint32_t levelID);
 
 	void SetData();
+
+	void SaveData();
 
 	bool AnyPlatformRotating() const;
 
@@ -167,11 +180,17 @@ public:
 	VariantItem<float> vLerpTime_{ "LerpTime", 1.f };
 	VariantItem<int32_t> vMaxRotateCount_{ "MaxRotateCount", 2 };
 
+	std::list<Entity *> GetGoalList();
+
+	bool GetIsDebuging() const { return debugDrawer_; }
+
 private:
 	static nlohmann::json GetLevelParameters(const nlohmann::json &jsonData, int32_t levelIndex);
 
 private:
-	Vector3 startPos_;
+	uint32_t nowLevel_;
+
+	Transform startPos_;
 
 	std::array<Model *, 2u> groundModels_ = {};
 	Transform lineStart_;
