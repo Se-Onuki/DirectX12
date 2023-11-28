@@ -91,6 +91,10 @@ public:
 
 		Entity *const GetGoal() const { return goal_.get(); }
 
+
+
+		const std::list<std::unique_ptr<Entity>> &GetStarItem()const { return starItem_; }
+
 	private:
 		const float &lerpTime_;
 
@@ -124,6 +128,8 @@ public:
 	void LoadData(const uint32_t levelID);
 
 	void SetData();
+
+	void SaveData();
 
 	bool AnyPlatformRotating() const;
 
@@ -180,7 +186,9 @@ private:
 	static nlohmann::json GetLevelParameters(const nlohmann::json &jsonData, int32_t levelIndex);
 
 private:
-	Vector3 startPos_;
+	uint32_t nowLevel_;
+
+	Transform startPos_;
 
 	std::array<Model *, 2u> groundModels_ = {};
 	Transform lineStart_;

@@ -104,7 +104,8 @@ void GameScene::OnEnter() {
 	levelManager->Init();
 
 	levelManager->SetPlayer(player_.get());
-	levelManager->LoadData(0u);
+
+	levelManager->LoadData(StageSelectManager::GetInstance()->GetSelectedStageNumber());
 
 	levelManager->CalcCollision();
 
