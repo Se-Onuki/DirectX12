@@ -7,6 +7,7 @@
 #include "../../../Object/StageSelectManager/StageSelectManager.h"
 #include "../../../Object/Particle/ParticleEmitterManager.h"
 #include "../../../../Engine/DirectBase/Base/Audio.h"
+#include "../../../Object/LevelElementManager.h"
 
 // 効果音系
 uint32_t GoalAnimComp::clearEnterSE_ = 0u; // ゴールに触れたときの音
@@ -49,7 +50,10 @@ void GoalAnimComp::Init()
 
 void GoalAnimComp::Update()
 {
+
+	static auto *const levelManager = LevelElementManager::GetInstance();
 	if (isPlay_) {
+
 		/// ゴール時のカメラのオフセットを設定
 		// ゴール時カメラの回転角を設定
 		goalCamera_->translation_ = playerModel_->transform_.translate;
@@ -77,6 +81,17 @@ void GoalAnimComp::Update()
 			isEnd_ = true;
 		}
 	}
+
+	//auto *const model = ModelManager::GetInstance()->GetModel("DownBox");
+
+
+	if (canClearEmitTimer_.IsFinish() && not this->GetIsPlay() && levelManager->GetStarProgress() >= 1.f) {
+		canClearEmitTimer_.Start();
+		auto pEmitPtr = ParticleEmitterManager::GetInstance()->CreateEmitter<GetParticle>("StarItem", 0.2f);
+		pEmitPtr->emitTransform_ = object_->GetComponent<ModelComp>()->GetBone("Base")->transform_;
+		pEmitPtr->emitTransform_.translate.y += 2.f;
+	}
+	canClearEmitTimer_.Update(object_->GetDeltaTime());
 
 #ifdef _DEBUG
 	// ImGUiを表示する

@@ -72,6 +72,7 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 			particlePtr->velocity_ = Vector3::front * Random::GetRandom<float>(0.5f, 2.f) * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, Random::GetRandom<float>(-Angle::PI, Angle::PI));
 			particlePtr->color_ = startColor_;
 			particlePtr->SetAliveTime(0.5f);
+			particlePtr->endScale_ = Vector3::one * 0.5f;
 
 		}
 	}

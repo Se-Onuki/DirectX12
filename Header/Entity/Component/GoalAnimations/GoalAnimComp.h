@@ -120,6 +120,10 @@ private: // メンバ変数
 	// パーティクルの発生位置がズレてしまうので強制的に停止させる
 	ParticleEmitter *pEmitter_;
 
+	SoLib::DeltaTimer canClearEmitTimer_{ 0.5f };
+
+	float preProgress_{};
+
 	//　再生
 	bool isPlay_ = false;
 

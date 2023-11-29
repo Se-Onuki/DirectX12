@@ -26,9 +26,12 @@ public: // メンバ関数
 	/// <param name="deltaTime">経過秒数</param>
 	void Update(float deltaTime) override;
 
+	Vector3 startScale_ = Vector3::one;
+	Vector3 endScale_{};
+
 private: // メンバ変数
 
-	
+
 
 };
 
