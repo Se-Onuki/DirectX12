@@ -7,6 +7,7 @@
 #include "PlayerState/IPlayerState.h"
 #include "PlayerState/IdleState.h"
 #include "PlayerState/JumpState.h"
+#include "../../Header/Object/Fade.h"
 
 const std::string PlayerComp::groupName_ = "Player";
 
@@ -44,7 +45,7 @@ void PlayerComp::Update() {
 	static const auto *const keyBoard = input_->GetDirectInput();
 	static auto *const levelManager = LevelElementManager::GetInstance();
 
-	if (not isGoaled_) {
+	if (not isGoaled_ && Fade::GetInstance()->GetSprite()->GetColor().w <= 0.05f) {
 		Vector3 endPos = CalcMoveCollision();
 
 		transform_->translate = endPos;
@@ -188,12 +189,16 @@ Vector3 PlayerComp::CalcMoveCollision() {
 								if (normal * line.diff < 0.f) {
 									//Vector3 minDiff = box.min - line.origin;
 									//Vector3 maxDiff = box.max - line.origin;
-									if (isLanding_ && lineNum < 4 && (hitPoint.y - box.max.y) > -0.1f) {
+									if (isLanding_ && lineNum < 4u && (hitPoint.y - box.max.y) > -0.1f) {
 										if (normal * line.diff.Nomalize() < -0.3f) {
-											rigidbody->ApplyInstantForce(Vector3::up * 0.7f);
-											transform_->translate += (Vector3::front * 1.f * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, transform_->rotate.y));
-											transform_->translate.y += 0.1f;
+											rigidbody->ApplyInstantForce(Vector3::up * 0.5f);
+											moveLine.diff.y += 0.025f;
+											/*transform_->translate += (Vector3::front * 1.f * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, transform_->rotate.y));
+											transform_->translate.y += 0.1f;*/
 										}
+									}
+									else if (lineNum >= 4u && (normal * Vector3::up) > 0.9f) {
+
 									}
 									else if (value < t) {
 										t = value;

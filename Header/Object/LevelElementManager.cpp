@@ -11,6 +11,8 @@
 #include "../Entity/Component/Rigidbody.h"
 #include "../Object/Block/BlockManager.h"
 #include "imgui.h"
+#include "../Entity/Component/PlayerState/IdleState.h"
+#include "Fade.h"
 
 nlohmann::json LevelElementManager::levelData_;
 
@@ -210,10 +212,20 @@ void LevelElementManager::UndoUpdate(const float deltaTime)
 	}
 	// 終了したら
 	if (undoTimer_.IsFinish() && undoTimer_.IsActive()) {
-		pPlayer_->transform_.translate =
-			undoLog_.item_->transform_.GetGrobalPos();
-		undoLog_.item_->GetComponent<StarItemComp>()->Reset();
+		pPlayer_->GetComponent<PlayerComp>()->ChangeState<PlayerIdleState>();
+		if (undoLog_.item_) {
+			pPlayer_->transform_.translate = undoLog_.item_->transform_.GetGrobalPos();
+			undoLog_.item_->GetComponent<StarItemComp>()->Reset();
+		}
+		else {
+			pPlayer_->transform_.translate = startPos_->translate;
+		}
+		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 0.25f);
 
+		// もしリストが空だったら戻す
+		if (stateLog_.size() == 0u) {
+			AddUndoLog(nullptr);
+		}
 		// undoLog_ = StateLog{ .item_ = nullptr, .remainRotCount_ =
 		// remainRotateCount_, .angleList_ = std::move(angleList);
 	}

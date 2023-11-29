@@ -145,6 +145,8 @@ void GameScene::OnEnter() {
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 
+	levelManager->AddUndoLog(nullptr);
+
 }
 
 void GameScene::OnExit() {
@@ -180,7 +182,7 @@ void GameScene::Update() {
 	}
 
 	// Startボタンをおしたらメニューを展開
-	if ((Input::GetInstance()->GetDirectInput()->IsPress(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsPress(KeyCode::START)) && not PoseManager::GetInstance()->GetIsActive() && not isGoaled) {
+	if ((Input::GetInstance()->GetDirectInput()->IsTrigger(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsTrigger(KeyCode::START)) && not PoseManager::GetInstance()->GetIsActive() && not isGoaled && Fade::GetInstance()->GetSprite()->GetColor().w <= 0.f) {
 		if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kNone) {
 			PoseManager::GetInstance()->DeplayPoseMenu();
 		}
@@ -248,6 +250,7 @@ void GameScene::Update() {
 		cameraManager_->Update(deltaTime);
 	}
 	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnCheckPoint) {
+		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 0.25f);
 		levelManager->Undo();
 		PoseManager::GetInstance()->SetPoseState(PoseManager::kNone);
 	}
