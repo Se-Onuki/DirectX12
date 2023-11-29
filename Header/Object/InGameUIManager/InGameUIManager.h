@@ -77,9 +77,16 @@ public: // アクセッサ等
 	void SetStar(int count);
 
 	/// <summary>
-	/// 星のスタックがない場合、その星を振動させる関数
+	/// 星のスタックがない場合、最初星を振動させる関数
 	/// </summary>
 	void ShakeStar();
+
+private: // プライベートなメンバ関数
+
+	/// <summary>
+	/// 振動中呼び出される関数
+	/// </summary>
+	void ShakingStar();
 
 public: // パブリックなメンバ変数
 
@@ -116,11 +123,23 @@ private: // メンバ変数
 	// チュートリアル進捗
 	int tutorialProgress_ = TutorialUI::TutorialProgress::kMove;
 
-	// 星UIの振動
+	// 振動範囲
+	const float kShakeRange = 10.0f;
+	const float kShakeTime = 0.5f;
+
+	// 星UIの振動トリガー
 	bool blurTrigger_ = false;
+	// 振動用方向ベクトル
+	Vector2 shakeVector_ = { 0.0f, 0.0f };
+	// 振動範囲設定
+	float shakeRange_ = kShakeRange;
+	// 振動演出用タイマー
+	SoLib::DeltaTimer shakeAnimTimer_;
 
 	// 星UIの量を示すUIを加算するか減算するか
 	int imGuiAddType_ = 0;
+
+	static uint32_t dontSpinSE_;
 
 };
 

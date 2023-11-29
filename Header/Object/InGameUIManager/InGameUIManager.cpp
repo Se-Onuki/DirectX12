@@ -3,6 +3,9 @@
 #include "../../../Header/Object/StageSelectManager/StageSelectManager.h"
 #include "../LevelElementManager.h"
 
+// 静的なメンバ変数の実体を宣言
+uint32_t InGameUIManager::dontSpinSE_ = 0u;
+
 void InGameUIManager::Init(int maxStarCount)
 {
 	// 最大星数を取得
@@ -38,6 +41,10 @@ void InGameUIManager::Init(int maxStarCount)
 	spinControllUI_.position_ = { 0.0f, 0.0f };
 	spinControllUI_.scale_ = { 512.0f, 720.0f };
 	spinControllUI_.anchorPoint_ = { 0.0f, 0.0f };
+
+	if (dontSpinSE_ == 0u) {
+		dontSpinSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/dontSpin.wav");
+	}
 }
 
 void InGameUIManager::Update(float deltaTime)
@@ -56,11 +63,22 @@ void InGameUIManager::Update(float deltaTime)
 	int count = 0;
 	for (auto& star : stars_) {
 		star->Update(deltaTime);
-		star->position_ = starUIsStartingPoint_;
-		star->position_.x = starUIsStartingPoint_.x + (starUILineSpace_ * count);
+		if (count == 0) {
+			star->position_ = starUIsStartingPoint_ + shakeVector_;
+		}
+		else {
+			star->position_ = starUIsStartingPoint_;
+			star->position_ = { starUIsStartingPoint_.x + (starUILineSpace_ * count) + shakeVector_.x, starUIsStartingPoint_.y + shakeVector_.y };
+		}
 		star->overrapSpriteAlpha_ = uiAlpha_;
 		count++;
 	}
+
+	// 星の振動を呼び出す
+	ShakingStar();
+
+	// 振動演出用タイマー更新
+	shakeAnimTimer_.Update(deltaTime);
 
 	// 選択されたステージ番号が0だった時
 	if (selectedStageNumber_ == 0) {
@@ -211,5 +229,36 @@ void InGameUIManager::SetStar(int count)
 
 void InGameUIManager::ShakeStar()
 {
+	// 振動を有効にする
 	blurTrigger_ = true;
+
+	// 効果音を鳴らす
+	Audio::GetInstance()->PlayWave(dontSpinSE_, false, 0.45f);
+
+	// 振動アニメーション開始
+	shakeAnimTimer_.Start(kShakeTime);
+}
+
+void InGameUIManager::ShakingStar()
+{
+	// 振動トリガーが有効なら
+	if (blurTrigger_) {
+		// 振動アニメーションタイマーが終了していなければ
+		if (!shakeAnimTimer_.IsFinish()) {
+			// ｘ、ｙそれぞれの振動ベクトルをランダムに求める
+			shakeVector_.x = Random::GetRandom<float>(-shakeRange_, shakeRange_);
+			shakeVector_.y = Random::GetRandom<float>(-shakeRange_, shakeRange_);
+
+			// 振動範囲を線形補間で徐々に狭めていく
+			shakeRange_ = SoLib::Lerp<float>(kShakeRange, 0.0f, shakeAnimTimer_.GetProgress());
+		}
+		else {
+			// 終了したらベクトル初期化、範囲初期化
+			shakeVector_ = { 0.0f, 0.0f };
+			shakeRange_ = kShakeRange;
+
+			// トリガー無効
+			blurTrigger_ = false;
+		}
+	}
 }
