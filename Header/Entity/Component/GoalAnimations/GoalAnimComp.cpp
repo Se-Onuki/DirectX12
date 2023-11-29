@@ -5,6 +5,7 @@
 #include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../../../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../../Object/StageSelectManager/StageSelectManager.h"
+#include "../../../Object/Particle/ParticleEmitterManager.h"
 
 void GoalAnimComp::Init()
 {
@@ -112,6 +113,14 @@ void GoalAnimComp::DisplayImGui()
 
 #endif // _DEBUG
 
+}
+
+void GoalAnimComp::SetPlayerModel(Entity* entity)
+{
+	playerModel_ = entity;
+	pEmitter_ = ParticleEmitterManager::GetInstance()->CreateEmitter<StarParticle>("PlayerLing");
+	pEmitter_->targetTransform_ = &playerModel_->transform_;
+	pEmitter_->offset_ = { 0.0f, 0.5f, 0.0f };
 }
 
 void GoalAnimComp::PlayGoalAnim()

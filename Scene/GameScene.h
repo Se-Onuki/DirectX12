@@ -12,6 +12,7 @@
 #include "../Engine/DirectBase/Base/Audio.h"
 #include "../Header/Object/LevelElementManager.h"
 #include "../Header/Object/Particle.h"
+#include "../Header/Object/InGameUIManager/InGameUIManager.h"
 
 class GameScene : public IScene {
 public:
@@ -43,6 +44,9 @@ private:
 	//std::unique_ptr<Entity> goal_ = nullptr;
 
 	std::unique_ptr<Entity> skyDome_;
+
+	// インゲーム内のUIマネージャ
+	std::unique_ptr<InGameUIManager> inGameUI_;
 
 	// シーン遷移中トリガー
 	bool sceneChanging_ = false;
