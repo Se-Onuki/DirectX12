@@ -80,6 +80,9 @@ private: // メンバ変数
 	// プレイヤーコンポーネント
 	const PlayerComp* playerComp_ = nullptr;
 
+	// ステージ選択マネージャ
+	int selectedStageNumber_ = 0;
+
 	// 最大星数
 	int maxStarCount_;
 

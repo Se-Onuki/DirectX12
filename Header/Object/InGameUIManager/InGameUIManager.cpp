@@ -1,10 +1,14 @@
 #include "InGameUIManager.h"
 #include "../../../Engine/DirectBase/Input/Input.h"
+#include "../../../Header/Object/StageSelectManager/StageSelectManager.h"
 
 void InGameUIManager::Init(int maxStarCount)
 {
 	// 最大星数を取得
 	maxStarCount_ = maxStarCount;
+
+	// 選択ステージ番号の取得
+	selectedStageNumber_ = StageSelectManager::GetInstance()->GetSelectedStageNumber();
 
 	// 最大星数分スプライトを追加
 	for (int i = 0; i < maxStarCount_; i++) {
