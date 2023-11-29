@@ -40,7 +40,7 @@ PixelShaderOutput main(VertexShaderOutput input)
  
     float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
     output.color.rgb = input.color.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity; // 
-    output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
+   // output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
     output.color.a = input.color.a * textureColor.a; // α値
     
     // 色が不透明の場合破棄

@@ -101,6 +101,8 @@ void LevelElementManager::SetData()
 		platform.CalcCollision();
 		platformID++;
 	}
+
+	this->SetTransferData();
 }
 
 void LevelElementManager::SaveData()
@@ -493,16 +495,19 @@ void LevelElementManager::AddRotateCount(const int32_t count)
 {
 	remainRotateCount_ =
 		std::clamp(remainRotateCount_ + count, 0, vMaxRotateCount_.GetItem());
+
 }
 
 void LevelElementManager::SetTransferData() const
 {
 	BlockManager::GetInstance()->clear();
-
+	uint32_t distance{};
 	for (const auto &platform : this->blockCollider_) {
+
 		for (const auto &box : platform.second.GetBoxList()) {
-			box.CreateBox();
+			box.CreateBox(LevelElementManager::GetInstance()->platformColor_[distance]);
 		}
+		distance++;
 	}
 }
 
@@ -534,7 +539,6 @@ LevelElementManager::Box &LevelElementManager::Platform::AddBox(const AABB &aabb
 
 	box.groundType_ = groundType;
 
-	box.CreateBox();
 	return box;
 }
 
@@ -785,7 +789,7 @@ LevelElementManager::Box::Box(const AABB &aabb, Platform *parent)
 	referenceBox_ = aabb;
 }
 
-void LevelElementManager::Box::CreateBox() const
+void LevelElementManager::Box::CreateBox(const Vector4 &color) const
 {
 	static auto *const blockManager = BlockManager::GetInstance();
 	static auto *const levelElement = LevelElementManager::GetInstance();
@@ -803,7 +807,7 @@ void LevelElementManager::Box::CreateBox() const
 				block.transform_.translate = boxMin + diff * 2.f;
 				block.transform_.scale = Vector3::one;
 
-				blockManager->AddBox(levelElement->GetGroundModel()[static_cast<uint32_t>(this->groundType_)], std::move(block));
+				blockManager->AddBox(levelElement->GetGroundModel()[static_cast<uint32_t>(this->groundType_)], std::move(block))->color_ = color;
 			}
 		}
 	}
