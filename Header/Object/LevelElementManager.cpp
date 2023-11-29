@@ -37,8 +37,6 @@ void LevelElementManager::SetData()
 {
 	// 足場データの破棄
 	blockCollider_.clear();
-	// 回転可能回数の指定
-	vMaxRotateCount_ = monoLevelData_["MaxRotateCount"].get<int32_t>();
 	// カメラの始点と終点の設定
 	lineStart_->translate = monoLevelData_["CameraStart"];
 	lineEnd_->translate = monoLevelData_["CameraEnd"];
@@ -105,11 +103,12 @@ void LevelElementManager::SetData()
 	}
 
 	this->SetTransferData();
+
+	this->vMaxRotateCount_ = static_cast<int32_t>(GetStarItemList().size());
 }
 
 void LevelElementManager::SaveData()
 {
-	monoLevelData_["MaxRotateCount"] = vMaxRotateCount_.GetItem();
 	monoLevelData_["CameraStart"] = lineStart_->translate;
 	monoLevelData_["CameraEnd"] = lineEnd_->translate;
 
@@ -465,6 +464,17 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(
 		return nullptr;
 	}
 	return &itPlatform->second;
+}
+
+std::list<Entity *> LevelElementManager::GetStarItemList() {
+	std::list<Entity *> starItemPtrList;
+	for (const auto &it : blockCollider_) {
+		const auto &starItemList = it.second.GetStarItem();
+		for (const auto &star : starItemList) {
+			starItemPtrList.push_back(star.get());
+		}
+	}
+	return starItemPtrList;
 }
 
 std::list<Entity *> LevelElementManager::GetGoalList()

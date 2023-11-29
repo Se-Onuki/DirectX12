@@ -12,7 +12,7 @@ uint32_t PlayerEndRotateState::endRotateSE1_ = 0u;
 uint32_t PlayerEndRotateState::endRotateSE2_ = 0u;
 
 void PlayerEndRotateState::Init() {
-	static auto *const tutorial = TutorialManager::GetInstance();	
+	static auto *const tutorial = TutorialManager::GetInstance();
 
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.1f);
 	timer_.Start(pPlayer_->vRotateEndTime_);
@@ -30,13 +30,11 @@ void PlayerEndRotateState::Init() {
 
 	// もし回転が行われていたら減少
 	if (pPlayer_->rotateCount_ % 4 != 0) {
-		LevelElementManager::GetInstance()->AddStarCount(-1);
 		tutorial->SetProgress(TutorialManager::TutorialProgress::kToGoal);
 	}
 	else {
 		tutorial->SetProgress(TutorialManager::TutorialProgress::kFloatZ);
 	}
-	pPlayer_->rotateCount_ = 0;
 }
 
 void PlayerEndRotateState::Update([[maybe_unused]] float deltaTime) {

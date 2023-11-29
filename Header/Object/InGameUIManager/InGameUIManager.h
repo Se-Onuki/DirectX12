@@ -37,7 +37,7 @@ private:// サブクラス
 			}
 		}
 	};
-		
+
 public: // メンバ関数
 
 	/// <summary>
@@ -58,12 +58,12 @@ public: // メンバ関数
 	void Draw();
 
 public: // アクセッサ等
-	
+
 	/// <summary>
 	/// プレイヤーコンポーネントのセッター
 	/// </summary>
 	/// <param name="pComp">プレイヤーコンポーネント実体</param>
-	void SetPlayerComp(const PlayerComp& pComp) { playerComp_ = &pComp; }
+	void SetPlayerComp(const PlayerComp &pComp) { playerComp_ = &pComp; }
 
 	/// <summary>
 	/// 星を追加する関数
@@ -89,7 +89,7 @@ public: // パブリックなメンバ変数
 private: // メンバ変数
 
 	// プレイヤーコンポーネント
-	const PlayerComp* playerComp_ = nullptr;
+	const PlayerComp *playerComp_ = nullptr;
 
 	// ステージ選択マネージャ
 	int selectedStageNumber_ = 0;
@@ -100,9 +100,9 @@ private: // メンバ変数
 	// 星のUIスプライト
 	std::list<std::unique_ptr<StarUI>> stars_;
 	// 星のUIスプライトの始点
-	Vector2 starUIsStartingPoint_ = { 900.0f, 64.0f };
+	Vector2 starUIsStartingPoint_ = { 1200.0f, 64.0f };
 	// 星UIの行間設定
-	float starUILineSpace_ = 150.0f;
+	float starUILineSpace_ = -150.0f;
 
 	// 操作方法スプライト
 	UISprite controllUI_;
