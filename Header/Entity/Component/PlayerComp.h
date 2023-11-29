@@ -91,6 +91,8 @@ public:
 
 	int32_t rotateCount_;
 
+	Vector3 rotateCameraOrigin_{};
+
 private:
 
 	Vector3 CalcMoveCollision();

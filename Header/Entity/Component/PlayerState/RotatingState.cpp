@@ -20,6 +20,17 @@ void PlayerRotatingState::Init() {
 	}
 
 	model_ = ModelManager::GetInstance()->GetModel("DownBox");
+
+	auto *const platform = LevelElementManager::GetInstance()->GetPlatform(pPlayer_->GetGroup());
+	Vector3 cameraFacing = TransformNormal(Vector3::front, CameraManager::GetInstance()->GetUseCamera()->matView_.InverseRT());
+	cameraFacing.y = 0.f;
+	rotateFacing_ = platform->rotateAxis_ * cameraFacing.Nomalize();
+	rotateFacing_ > 0 ? rotateFacing_ = 1.f : rotateFacing_ = -1.f;
+
+	rotateCamera_ = CameraManager::GetInstance()->AddCamera("RotateCamera");
+	// カメラの差分
+	neutralAngle_ = Vector3{ 15._deg, (platform->rotateAxis_ * rotateFacing_).Direction2Euler().y ,0.f };
+
 }
 
 void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
@@ -30,11 +41,11 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	auto *const groundPosPtr = pPlayer_->GetGroundPos();
 
 	auto *const platform = LevelElementManager::GetInstance()->GetPlatform(pPlayer_->GetGroup());
-	Vector3 cameraFacing = TransformNormal(Vector3::front, CameraManager::GetInstance()->GetUseCamera()->matView_.InverseRT());
-	cameraFacing.y = 0.f;
-	float rotateFacing = platform->rotateAxis_ * cameraFacing.Nomalize();
 
-	rotateFacing > 0 ? rotateFacing = 1.f : rotateFacing = -1.f;
+	addAngle_ = SoLib::Lerp(Vector3::zero, addAngle_, 0.9f);
+
+	rotateCamera_->translation_ = pPlayer_->rotateCameraOrigin_ + Vector3::front * -45.f * Matrix4x4::EulerRotate(neutralAngle_ + addAngle_);
+	rotateCamera_->rotation_ = neutralAngle_ + addAngle_;
 
 	const Vector3 *downPtr = pPlayer_->GetGroundPos();
 	Vector3 downPlayer;
@@ -53,7 +64,7 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	}
 
 
-	startColor_ = SoLib::Lerp(startColor_, endColor_, 0.1f);
+	startColor_ = SoLib::Lerp(startColor_, endColor_, 0.2f);
 	for (uint32_t i = 0u; i < 2.f; i++) {
 		TestParticle *particlePtr = dynamic_cast<TestParticle *>(ParticleManager::GetInstance()->AddParticle(model_, std::make_unique<TestParticle>(SoLib::Lerp(pPlayer_->transform_->GetGrobalPos(), downPlayer, Random::GetRandom<float>(0.f, 1.f)))));
 		if (particlePtr) {
@@ -68,11 +79,11 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	if (platform->GetTimer().IsFinish()) {
 		if (keyBoard->IsPress(DIK_Q) || gamePad->IsPress(KeyCode::LEFT_SHOULDER)) {
 			Audio::GetInstance()->PlayWave(rotateSE_, false, 0.45f);
-			platform->AddRotate(rotateFacing * 90._deg);
+			platform->AddRotate(rotateFacing_ * 90._deg);
 		}
 		else if (keyBoard->IsPress(DIK_E) || gamePad->IsPress(KeyCode::RIGHT_SHOULDER)) {
 			Audio::GetInstance()->PlayWave(rotateSE_, false, 0.45f);
-			platform->AddRotate(rotateFacing * -90._deg);
+			platform->AddRotate(rotateFacing_ * -90._deg);
 		}
 		else if (groundPosPtr && (keyBoard->IsPress(DIK_Z) || gamePad->IsPress(KeyCode::X))) {
 			pPlayer_->ChangeState<PlayerEndRotateState>();
@@ -83,4 +94,8 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 }
 
 void PlayerRotatingState::Draw([[maybe_unused]] const Camera3D &camera) const {
+}
+
+void PlayerRotatingState::AddRotate(const Vector3 &angle) {
+	addAngle_ += angle;
 }
