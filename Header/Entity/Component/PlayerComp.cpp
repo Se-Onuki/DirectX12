@@ -201,14 +201,17 @@ Vector3 PlayerComp::CalcMoveCollision() {
 								if (normal * line.diff < 0.f) {
 									//Vector3 minDiff = box.min - line.origin;
 									//Vector3 maxDiff = box.max - line.origin;
-									if (isLanding_ && lineNum < 4u && (hitPoint.y - box.max.y) > -0.1f) {
-										if (normal * line.diff.Nomalize() < -0.3f) {
-											rigidbody->ApplyInstantForce(Vector3::up * 0.5f);
-											moveLine.diff.y += 0.025f;
-											/*transform_->translate += (Vector3::front * 1.f * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, transform_->rotate.y));
-											transform_->translate.y += 0.1f;*/
-										}
+									if (isLanding_ && lineNum < 4u && (hitPoint.y - box.max.y) > -0.15f && normal.y == 0.f) {
+
 									}
+									//else if (isLanding_ && lineNum < 4u && (hitPoint.y - box.max.y) > -0.25f && normal.y == 0.f) {
+									//	if (normal * line.diff.Nomalize() < -0.3f) {
+									//		rigidbody->ApplyInstantForce(Vector3::up * 0.5f);
+									//		moveLine.diff.y += 0.25f;
+									//		/*transform_->translate += (Vector3::front * 1.f * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, transform_->rotate.y));
+									//		transform_->translate.y += 0.1f;*/
+									//	}
+									//}
 									else if (lineNum >= 4u && (normal * Vector3::up) > 0.9f) {
 
 									}
