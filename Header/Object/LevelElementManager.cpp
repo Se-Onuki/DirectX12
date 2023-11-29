@@ -399,12 +399,12 @@ void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const
 		platform.Draw(camera);
 	}
 
-	for (const auto &item : this->GetStarItemList()) {
-		item->Draw(camera);
-	}
-
 	for (const auto &goal : GetGoalList()) {
 		goal->Draw(camera);
+	}
+
+	for (const auto &item : this->GetStarItemList()) {
+		item->Draw(camera);
 	}
 
 
