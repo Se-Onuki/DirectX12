@@ -48,6 +48,7 @@ void LevelElementManager::SetData()
 	stageLine_.SetEnd(lineEnd_->translate);
 
 	startPos_->translate = monoLevelData_["StartPos"];
+	pPlayer_->GetComponent<PlayerComp>()->vRotateHeight_.GetItem() = monoLevelData_["SpinHight"];
 
 	// 足場のJsonの取得
 	const nlohmann::json &platforms = monoLevelData_["Platform"];
@@ -113,6 +114,8 @@ void LevelElementManager::SaveData()
 	monoLevelData_["CameraEnd"] = lineEnd_->translate;
 
 	monoLevelData_["StartPos"] = startPos_->translate;
+
+	monoLevelData_["SpinHight"] = pPlayer_->GetComponent<PlayerComp>()->vRotateHeight_.GetItem();
 
 	nlohmann::json platforms;
 
@@ -255,6 +258,7 @@ void LevelElementManager::ImGuiWidget()
 
 	ImGui::DragFloat3("PlayerStartPos", &startPos_->translate.x, 1.f);
 	startPos_->UpdateMatrix();
+	ImGui::DragFloat("SpinHight", &pPlayer_->GetComponent<PlayerComp>()->vRotateHeight_.GetItem());
 
 	// カメラの位置は編集されたか
 	bool isCameraEditedBy = false;
