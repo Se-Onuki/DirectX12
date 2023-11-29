@@ -17,5 +17,15 @@ public:
 	PlayerBehavior GetState() override { return PlayerBehavior::kRotateEnd; }
 
 	SoLib::DeltaTimer timer_;
+
+private:
+
+	// 再生トリガー
+	bool end1Trigger_ = false;
+	bool end2Trigger_ = false;
+
+	// 足音SE
+	static uint32_t endRotateSE1_;
+	static uint32_t endRotateSE2_;
 };
 

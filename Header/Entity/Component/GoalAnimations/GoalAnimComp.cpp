@@ -6,6 +6,11 @@
 #include "../../../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../../Object/StageSelectManager/StageSelectManager.h"
 #include "../../../Object/Particle/ParticleEmitterManager.h"
+#include "../../../../Engine/DirectBase/Base/Audio.h"
+
+// 効果音系
+uint32_t GoalAnimComp::clearEnterSE_ = 0u; // ゴールに触れたときの音
+uint32_t GoalAnimComp::clearSE_ = 0u; // クリア音
 
 void GoalAnimComp::Init()
 {
@@ -21,6 +26,13 @@ void GoalAnimComp::Init()
 
 	// ゴール時のカメラを生成
 	goalCamera_ = cameraManager_->AddCamera("goalCamera");
+
+	if (clearEnterSE_ == 0u) {
+		clearEnterSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/clearEnter.wav");
+	}
+	if (clearSE_ == 0u) {
+		clearSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/Clear.wav");
+	}
 
 	// アイテム追加
 	AddItem();
@@ -44,6 +56,13 @@ void GoalAnimComp::Update()
 		Vector3 offset = MatrixToVector(offsetTranslate_, rotateMat);
 		// 求めた値を代入する
 		goalCamera_->translation_ += offset;
+
+		if (playerModel_->GetComponent<PlayerAnimComp>()->GetAnimManager()->GetAnimationProgress() >= 0.65f) {
+			if (not clearSETrigger_) {
+				Audio::GetInstance()->PlayWave(clearSE_, false, 0.45f);
+				clearSETrigger_ = true;
+			}
+		}
 
 		if (playerModel_->GetComponent<PlayerAnimComp>()->GetAnimManager()->GetAnimationProgress() >= 1.0f) {
 			playerModel_->GetComponent<PlayerAnimComp>()->GetAnimManager()->SetNextAnimation(PlayerBehavior::kClearBleak, true);
@@ -134,7 +153,8 @@ void GoalAnimComp::PlayGoalAnim()
 			if (pEmitter_) {
 				pEmitter_->Finish();
 			}
-
+			// 音
+			Audio::GetInstance()->PlayWave(clearEnterSE_, false, 0.5f);
 			/// ゴール時のカメラのオフセットを設定
 			// ゴール時カメラの回転角を設定
 			goalCamera_->translation_ = playerModel_->transform_.translate;

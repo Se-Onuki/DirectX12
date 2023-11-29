@@ -29,7 +29,6 @@ public:
 	void Draw() override;
 
 private:
-
 	// 入力インスタンス
 	Input *input_ = nullptr;
 	// 音インスタンス
@@ -50,4 +49,12 @@ private:
 
 	// シーン遷移中トリガー
 	bool sceneChanging_ = false;
+
+	// BGM関係
+	float BGMVolume_ = 0.35f;
+	static uint32_t titleSceneBGM_;
+	int voiceTitleSceneBGMHandle_ = 0u;
+
+	// SE関係
+	static uint32_t selectSE_; // 開始SE
 };

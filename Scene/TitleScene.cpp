@@ -8,6 +8,10 @@
 
 #include "../Header/Object/Fade.h"
 
+// 静的なメンバ変数の実体を宣言
+uint32_t TitleScene::titleSceneBGM_ = 0u;
+uint32_t TitleScene::selectSE_ = 0u;
+
 TitleScene::TitleScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -40,11 +44,20 @@ void TitleScene::OnEnter() {
 
 	sceneChanging_ = false;
 
+	// SE読み込み
+	if (titleSceneBGM_ == 0u) {
+		titleSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/TitleBGM.wav");
+	}
+	if (selectSE_ == 0u) {
+		selectSE_ = audio_->LoadWave("resources/Audio/SE/UI/select.wav");
+	}
+
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 2.5f);
 }
 
 void TitleScene::OnExit() {
+	audio_->StopAllWave();
 }
 
 void TitleScene::Update() {
@@ -54,6 +67,11 @@ void TitleScene::Update() {
 
 	// デルタタイムの取得
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+
+	// BGM再生
+	if (audio_->IsPlaying(voiceTitleSceneBGMHandle_) == 0 || voiceTitleSceneBGMHandle_ == -1) {
+		voiceTitleSceneBGMHandle_ = audio_->PlayWave(titleSceneBGM_, false, BGMVolume_);
+	}
 
 	// パーティクルの更新
 	emitterManager_->Update(deltaTime);  // 発生マネージャ
@@ -73,6 +91,9 @@ void TitleScene::Update() {
 	// スペースを押すと次のシーンへ
 	if (keyBoard->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
 		if (!sceneChanging_) {
+			// 決定SEを再生
+			audio_->PlayWave(selectSE_, false, 0.45f);
+
 			// フェードアウト開始
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 			// 指定した秒数後シーンチェンジ

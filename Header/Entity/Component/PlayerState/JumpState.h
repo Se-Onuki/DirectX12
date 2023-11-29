@@ -18,5 +18,13 @@ public:
 
 	int32_t preAnimKey_{};
 
+private:
+
+	// 再生トリガー
+	bool jumpSETrigger_ = false;
+
+	// ジャンプSE
+	static uint32_t jumpSE_;
+
 };
 

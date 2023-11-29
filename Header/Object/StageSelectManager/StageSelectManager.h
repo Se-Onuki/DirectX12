@@ -89,5 +89,8 @@ private: // メンバ変数
 	// UI関係
 	StageSelectUI ui_;
 
+	// 効果音系
+	static uint32_t selectStageSE_; // ステージ選択SE
+
 };
 

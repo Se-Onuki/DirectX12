@@ -51,6 +51,11 @@ private:
 	// シーン遷移中トリガー
 	bool sceneChanging_ = false;
 
+	// BGM関係
+	float BGMVolume_ = 0.35f;
+	static uint32_t gameSceneBGM_;
+	int voiceGameSceneBGMHandle_ = 0u;
+
 	//std::array<const Camera3D *, 2u> cameraList_;
 	//std::array<const Camera3D *, 2u>::iterator cameraTarget_ = cameraList_.begin();
 	//std::unique_ptr<Entity> playerAnim_;

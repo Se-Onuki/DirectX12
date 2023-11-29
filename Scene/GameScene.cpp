@@ -31,6 +31,9 @@
 
 #include "../Header/Entity/Component/GoalAnimations/GoalAnimComp.h"
 
+// 静的なメンバ変数の実体を宣言
+uint32_t GameScene::gameSceneBGM_ = 0u;
+
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -73,6 +76,9 @@ void GameScene::OnEnter() {
 	/*sprite_.reset(Sprite::Create(TextureManager::Load("white2x2.png")));
 	sprite_->SetScale({ 100.f,100.f });*/
 
+	if (gameSceneBGM_ == 0u) {
+		gameSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/ingameBGM.wav");
+	}
 
 	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Init();
@@ -141,7 +147,9 @@ void GameScene::OnEnter() {
 
 }
 
-void GameScene::OnExit() {}
+void GameScene::OnExit() {
+	audio_->StopAllWave();
+}
 
 void GameScene::Update() {
 
@@ -153,6 +161,11 @@ void GameScene::Update() {
 
 	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Update(deltaTime);
+
+	// BGM再生
+	if (audio_->IsPlaying(voiceGameSceneBGMHandle_) == 0 || voiceGameSceneBGMHandle_ == -1) {
+		voiceGameSceneBGMHandle_ = audio_->PlayWave(gameSceneBGM_, false, BGMVolume_);
+	}
 
 	const auto &goalList = levelManager->GetGoalList();
 

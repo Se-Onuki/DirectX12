@@ -4,6 +4,10 @@
 
 #include "../Header/Object/Fade.h"
 
+// 静的なメンバ変数の実体を宣言
+uint32_t StageSelectScene::stageSelectSceneBGM_ = 0u;
+uint32_t StageSelectScene::startStageSE_ = 0u;
+
 StageSelectScene::StageSelectScene()
 {
 	input_ = Input::GetInstance();
@@ -35,13 +39,21 @@ void StageSelectScene::OnEnter()
 
 	sceneChanging_ = false;
 
+	if (stageSelectSceneBGM_ == 0u) {
+		stageSelectSceneBGM_ = audio_->LoadWave("resources/Audio/BGM/StageSelectBGM.wav");
+	}
+
+	if (startStageSE_ == 0u) {
+		startStageSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/select.wav");
+	}
+	
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 }
 
 void StageSelectScene::OnExit()
 {
-	
+	audio_->StopAllWave();
 }
 
 void StageSelectScene::Update()
@@ -52,6 +64,11 @@ void StageSelectScene::Update()
 
 	// デルタタイムの取得
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+
+	// BGM再生
+	if (audio_->IsPlaying(voiceStageSelectSceneBGMHandle_) == 0 || voiceStageSelectSceneBGMHandle_ == -1) {
+		voiceStageSelectSceneBGMHandle_ = audio_->PlayWave(stageSelectSceneBGM_, false, BGMVolume_);
+	}
 
 	// パーティクルの更新
 	emitterManager_->Update(deltaTime);  // 発生マネージャ
@@ -67,6 +84,7 @@ void StageSelectScene::Update()
 	// スペースを押すと次のシーンへ
 	if (keyBoard->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
 		if (!sceneChanging_) {
+			audio_->PlayWave(startStageSE_, false, 0.45f);
 			// フェードアウト開始
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 			// 指定した秒数後シーンチェンジ

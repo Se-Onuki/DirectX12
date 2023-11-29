@@ -60,5 +60,13 @@ private: // メンバ変数
 	// シーン遷移中トリガー
 	bool sceneChanging_ = false;
 
+	// BGM関係
+	float BGMVolume_ = 0.35f;
+	static uint32_t stageSelectSceneBGM_;
+	int voiceStageSelectSceneBGMHandle_ = 0u;
+
+	// 効果音系
+	static uint32_t startStageSE_; // ステージ開始SE
+
 };
 

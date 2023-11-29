@@ -3,6 +3,7 @@
 #include "../PlayerAnimations/AnimationManager.h"
 #include "../../../../Engine/DirectBase/Input/Input.h"
 #include "../PlayerAnimComp.h"
+#include "../../../../Engine/DirectBase/Base/Audio.h"
 
 class PlayerComp;
 

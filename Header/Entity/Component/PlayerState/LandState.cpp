@@ -4,8 +4,14 @@
 #include "../Rigidbody.h"
 #include "MoveState.h"
 
+uint32_t PlayerLandState::landSE_ = 0u;
+
 void PlayerLandState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.01f);
+
+	if (landSE_ == 0u) {
+		landSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/land.wav");
+	}
 }
 
 void PlayerLandState::Update([[maybe_unused]] float deltaTime) {
@@ -35,6 +41,11 @@ void PlayerLandState::Update([[maybe_unused]] float deltaTime) {
 				)
 			) {
 		pPlayer_->ChangeState<PlayerMoveState>();
+	}
+
+	if (not landSETrigger_) {
+		Audio::GetInstance()->PlayWave(landSE_, false, 0.45f);
+		landSETrigger_ = true;
 	}
 }
 

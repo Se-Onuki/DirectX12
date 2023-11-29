@@ -4,8 +4,14 @@
 #include "../../../Object/LevelElementManager.h"
 #include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
+uint32_t PlayerRotatingState::rotateSE_ = 0u;
+
 void PlayerRotatingState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), true, AnimEasing::kLinear, 0.1f);
+
+	if (rotateSE_ == 0u) {
+		rotateSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/rotate.wav");
+	}
 }
 
 void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
@@ -20,6 +26,16 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	float rotateFacing = platform->rotateAxis_ * cameraFacing.Nomalize();
 
 	rotateFacing > 0 ? rotateFacing = 1.f : rotateFacing = -1.f;
+
+	if (platform->GetTimer().IsFinish()) {
+		if (keyBoard->IsPress(DIK_Q)) {
+			Audio::GetInstance()->PlayWave(rotateSE_, false, 0.45f);
+
+		}
+		else if (keyBoard->IsPress(DIK_E)) {
+			Audio::GetInstance()->PlayWave(rotateSE_, false, 0.45f);
+		}
+	}
 
 	if (keyBoard->IsPress(DIK_Q)) {
 		platform->AddRotate(rotateFacing * 90._deg);

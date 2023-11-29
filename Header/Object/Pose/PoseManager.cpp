@@ -1,4 +1,11 @@
 #include "PoseManager.h"
+#include "../../../Engine/DirectBase/Base/Audio.h"
+
+uint32_t PoseManager::deploySE_ = 0u;
+uint32_t PoseManager::closeSE_ = 0u;
+uint32_t PoseManager::nextSE_ = 0u;
+uint32_t PoseManager::retrySE_ = 0u;
+uint32_t PoseManager::returnSE_ = 0u;
 
 void PoseManager::Init()
 {
@@ -25,6 +32,22 @@ void PoseManager::Init()
 	poseUIStartColor_ = { 1.0f, 1.0f, 1.0f, 0.0f };
 	poseUIEndColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+	if (deploySE_ == 0u) {
+		deploySE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/openPoseMenu.wav");
+	}
+	if (closeSE_ == 0u) {
+		closeSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/closePoseMenu.wav");
+	}
+	if (nextSE_ == 0u) {
+		nextSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/nextCategory.wav");
+	}
+	if (retrySE_ == 0u) {
+		retrySE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/returnCheckPoint.wav");
+	}
+	if (returnSE_ == 0u) {
+		returnSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/returnStageSelect.wav");
+	}
+
 	// メニューを閉じていない
 	close_ = false;
 
@@ -38,12 +61,14 @@ void PoseManager::Update(float deltaTime)
 	if (isDisplay_) {
 		// 入力によって選択されているカテゴリを変更
 		if (input_->GetDirectInput()->IsTrigger(DIK_DOWN) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_DOWN)) {
+			Audio::GetInstance()->PlayWave(nextSE_, false, 0.5f);
 			if (selectedCategory_ < kReturnStageSelect)
 				selectedCategory_++;
 			else
 				selectedCategory_ = kResume;
 		}
 		else if (input_->GetDirectInput()->IsTrigger(DIK_UP) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_UP)) {
+			Audio::GetInstance()->PlayWave(nextSE_, false, 0.5f);
 			if (selectedCategory_ > kResume)
 				selectedCategory_--;
 			else
@@ -52,6 +77,7 @@ void PoseManager::Update(float deltaTime)
 
 		// Bボタン入力でメニューを閉じる
 		if (input_->GetDirectInput()->IsTrigger(DIK_ESCAPE) || input_->GetXInput()->IsTrigger(KeyCode::B)) {
+			Audio::GetInstance()->PlayWave(closeSE_, false, 0.5f);
 			CloseMenu();
 		}
 
@@ -113,6 +139,7 @@ void PoseManager::DeplayPoseMenu()
 	if (!isActive_) {
 		// 再度初期化
 		Init();
+		Audio::GetInstance()->PlayWave(deploySE_, false, 0.5f);
 		// 表示
 		isActive_ = true;
 	}
@@ -133,23 +160,27 @@ void PoseManager::PressAButton()
 	// 選択カテゴリによって処理を分岐
 	switch (selectedCategory_) {
 	case PoseManager::kResume:
+		Audio::GetInstance()->PlayWave(closeSE_, false, 0.5f);
 		// メニューを閉じる
 		CloseMenu();
 		break;
 	case PoseManager::kReturnCheckPoint:
 		// チェックポイントに戻るように指示
 		executioningCategory_ = kReturnCheckPoint;
+		Audio::GetInstance()->PlayWave(retrySE_, false, 0.5f);
 		// 操作不可能な状態に
 		CloseMenu();
 		break;
 	case PoseManager::kRetry:
 		// リトライを指示
 		executioningCategory_ = kRetry;
+		Audio::GetInstance()->PlayWave(retrySE_, false, 0.5f);
 		CloseMenu();
 		break;
 	case PoseManager::kReturnStageSelect:
 		// ステージ選択画面に戻るように指示
 		executioningCategory_ = kReturnStageSelect;
+		Audio::GetInstance()->PlayWave(returnSE_, false, 0.5f);
 		CloseMenu();
 		break;
 	default:
