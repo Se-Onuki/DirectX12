@@ -31,6 +31,7 @@
 #include "../Header/Object/SkyDome/SkyDome.h"
 
 #include "../Header/Entity/Component/GoalAnimations/GoalAnimComp.h"
+#include "../Header/Entity/Component/PlayerState/RotatingState.h"
 
 // 静的なメンバ変数の実体を宣言
 uint32_t GameScene::gameSceneBGM_ = 0u;
@@ -255,6 +256,11 @@ void GameScene::Update() {
 		followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
 		followCamera_->ImGuiWidget();
 		followCamera_->Update(deltaTime);
+
+		auto *const rotateState = dynamic_cast<PlayerRotatingState *>(player_->GetComponent<PlayerComp>()->GetState().get());
+		if (rotateState) {
+			rotateState->AddRotate(euler);
+		}
 
 		static auto *const blockManager = BlockManager::GetInstance();
 

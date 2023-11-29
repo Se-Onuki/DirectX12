@@ -16,13 +16,21 @@ public:
 
 	PlayerBehavior GetState() override { return PlayerBehavior::kRotating; }
 
+	void AddRotate(const Vector3 &angle);
+
 private:
 
 	Vector4 startColor_{};
 	Vector4 endColor_{};
 	SoLib::DeltaTimer deltaTimer_{};
 
-	Model *model_;
+	Vector3 neutralAngle_{};
+
+	Vector3 addAngle_{};
+
+	float rotateFacing_{};
+
+	Model *model_ = nullptr;
 
 	Camera3D *rotateCamera_ = nullptr;
 
