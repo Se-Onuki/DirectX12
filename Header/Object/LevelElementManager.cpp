@@ -399,6 +399,15 @@ void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const
 		platform.Draw(camera);
 	}
 
+	for (const auto &goal : GetGoalList()) {
+		goal->Draw(camera);
+	}
+
+	for (const auto &item : this->GetStarItemList()) {
+		item->Draw(camera);
+	}
+
+
 #ifdef _DEBUG
 
 	if (debugDrawer_) {
@@ -466,7 +475,7 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(
 	return &itPlatform->second;
 }
 
-std::list<Entity *> LevelElementManager::GetStarItemList() {
+std::list<Entity *> LevelElementManager::GetStarItemList() const {
 	std::list<Entity *> starItemPtrList;
 	for (const auto &it : blockCollider_) {
 		const auto &starItemList = it.second.GetStarItem();
@@ -477,8 +486,7 @@ std::list<Entity *> LevelElementManager::GetStarItemList() {
 	return starItemPtrList;
 }
 
-std::list<Entity *> LevelElementManager::GetGoalList()
-{
+std::list<Entity *> LevelElementManager::GetGoalList() const {
 	std::list<Entity *> goalList;
 	for (const auto &it : blockCollider_) {
 		Entity *const goal = it.second.GetGoal();
@@ -603,7 +611,7 @@ void LevelElementManager::Platform::Update(float deltaTime)
 
 		goal_->Update(deltaTime);
 
-		if ((goal_->transform_.GetGrobalPos() - pPlayer->transform_.GetGrobalPos()).Length() < 2.f && (Vector3::up * goal_->transform_.matWorld_.GetRotate()) * Vector3::up > 0.3f) {
+		if ((goal_->transform_.GetGrobalPos() - pPlayer->transform_.GetGrobalPos()).Length() < 2.f && (Vector3::up * goal_->transform_.matWorld_.GetRotate()) * Vector3::up > 0.3f && LevelElementManager::GetInstance()->GetStarProgress() >= 1.f && pPlayer->GetComponent<PlayerComp>()->GetIsLanding()) {
 			goal_->GetComponent<GoalAnimComp>()->PlayGoalAnim();
 		}
 	}
@@ -661,14 +669,6 @@ void LevelElementManager::Platform::Draw(const Camera3D &camera) const
 	const auto *const box = ModelManager::GetInstance()->GetModel("Box");
 
 	box->Draw(axisBar_, camera);
-
-	if (goal_) {
-		goal_->Draw(camera);
-	}
-
-	for (const auto &item : starItem_) {
-		item->Draw(camera);
-	}
 }
 
 bool LevelElementManager::Platform::ImGuiWidget()

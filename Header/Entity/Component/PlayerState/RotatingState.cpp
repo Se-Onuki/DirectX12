@@ -58,7 +58,7 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 		TestParticle *particlePtr = dynamic_cast<TestParticle *>(ParticleManager::GetInstance()->AddParticle(model_, std::make_unique<TestParticle>(SoLib::Lerp(pPlayer_->transform_->GetGrobalPos(), downPlayer, Random::GetRandom<float>(0.f, 1.f)))));
 		if (particlePtr) {
 
-			particlePtr->velocity_ = Vector3::front * Random::GetRandom<float>(1.f, 3.f) * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, Random::GetRandom<float>(-Angle::PI, Angle::PI));
+			particlePtr->velocity_ = Vector3::front * Random::GetRandom<float>(0.5f, 2.f) * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, Random::GetRandom<float>(-Angle::PI, Angle::PI));
 			particlePtr->color_ = startColor_;
 			particlePtr->SetAliveTime(0.5f);
 

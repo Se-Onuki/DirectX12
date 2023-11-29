@@ -191,8 +191,8 @@ public:
 	VariantItem<float> vLerpTime_{ "LerpTime", 1.f };
 	VariantItem<int32_t> vMaxRotateCount_{ "MaxRotateCount", 2 };
 
-	std::list<Entity *> GetStarItemList();
-	std::list<Entity *> GetGoalList();
+	std::list<Entity *> GetStarItemList() const;
+	std::list<Entity *> GetGoalList() const;
 
 	bool GetIsDebuging() const { return debugDrawer_; }
 
