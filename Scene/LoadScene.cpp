@@ -35,6 +35,7 @@ void LoadScene::OnEnter()
 	modelManager_->AddModel("SkyDome", Model::LoadObjFile("Model/SkyDome/", "SkyDome.obj"))->materialMap_.begin()->second->materialBuff_->emissive = { 1.0f, 1.0f, 1.0f,1.0f };
 	modelManager_->AddModel("Flag", Model::LoadObjFile("Model/Flag/", "Flag.obj")); // 旗
 
+	modelManager_->AddModel("StarBase", Model::LoadObjFile("Model/Base/", "Base.obj"));
 	modelManager_->AddModel("StarItem", Model::LoadObjFile("Model/Star/", "Star.obj"));
 
 	/// UI関係読み込み
