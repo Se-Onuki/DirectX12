@@ -17,6 +17,7 @@ void ParticleEmitterManager::Init()
 	// デバッグ用の型を追加
 	AddParticleMold<TestParticle>(); // テストパーティクル
 	AddParticleMold<StarParticle>(); // 星パーティクル
+	AddParticleMold<GetParticle>(); // 星パーティクル
 
 	// パーティクルの全数値の管理
 	// イテレータの取得

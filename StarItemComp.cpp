@@ -4,6 +4,7 @@
 #include "Header/Object/LevelElementManager.h"
 #include "Engine/DirectBase/Base/Audio.h"
 #include "Header/Object/TutorialManager.h"
+#include "Header/Object/Particle/ParticleEmitterManager.h"
 
 // 静的なメンバ変数の実体を宣言
 uint32_t StarItemComp::collctSE_ = 0u;
@@ -44,6 +45,9 @@ void StarItemComp::CollectItem() {
 		TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kFloatZ);
 		auto *const modelComp = object_->AddComponent<ModelComp>();
 		modelComp->GetBone("Body")->transform_->scale = Vector3::zero;
+
+		ParticleEmitter* pEmitter_ = ParticleEmitterManager::GetInstance()->CreateEmitter<GetParticle>("StarItem", 0.2f);
+		pEmitter_->emitTransform_ = *transform_;
 
 		// undoログにデータを追加
 		LevelElementManager::GetInstance()->AddUndoLog(object_);

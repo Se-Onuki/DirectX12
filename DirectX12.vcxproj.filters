@@ -136,6 +136,9 @@
     <Filter Include="Header\Entity\Object\InGameUIManager">
       <UniqueIdentifier>{0a4914fd-a5ce-4775-a2dd-f101dc163a59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\Particle\Particles\GetParticle">
+      <UniqueIdentifier>{5335fb9d-4068-44ac-a8c9-e761918551f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -446,6 +449,9 @@
     </ClCompile>
     <ClCompile Include="Header\Object\InGameUIManager\TutorialUI.cpp">
       <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\GetParticle.cpp">
+      <Filter>Header\Entity\Object\Particle\Particles\GetParticle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -817,6 +823,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\InGameUIManager\TutorialUI.h">
       <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\GetParticle.h">
+      <Filter>Header\Entity\Object\Particle\Particles\GetParticle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
