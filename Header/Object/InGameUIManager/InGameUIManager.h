@@ -4,6 +4,7 @@
 #include "../../Entity/Component/PlayerComp.h"
 #include "../../../Engine/DirectBase/2D/Sprite.h"
 #include "StarUI.h"
+#include "TutorialUI.h"
 
 /// <summary>
 /// ゲーム中のUIマネージャ
@@ -70,6 +71,11 @@ public: // アクセッサ等
 	/// <param name="p0m">プラスかマイナスか</param>
 	void AddStar(int p0m);
 
+	/// <summary>
+	/// 星のスタックがない場合、その星を振動させる関数
+	/// </summary>
+	void ShakeStar();
+
 public: // パブリックなメンバ変数
 
 	// ゲーム画面全体の透明度
@@ -79,6 +85,9 @@ private: // メンバ変数
 
 	// プレイヤーコンポーネント
 	const PlayerComp* playerComp_ = nullptr;
+
+	// ステージ選択マネージャ
+	int selectedStageNumber_ = 0;
 
 	// 最大星数
 	int maxStarCount_;
@@ -96,6 +105,14 @@ private: // メンバ変数
 
 	// スピンモード中か
 	bool isSpining_ = false;
+
+	// チュートリアルＵＩ
+	std::unique_ptr<TutorialUI> tutorialUI_;
+	// チュートリアル進捗
+	int tutorialProgress_ = TutorialUI::TutorialProgress::kMove;
+
+	// 星UIの振動
+	bool blurTrigger_ = false;
 
 	// 星UIの量を示すUIを加算するか減算するか
 	int imGuiAddType_ = 0;

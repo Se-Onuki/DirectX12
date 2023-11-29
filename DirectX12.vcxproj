@@ -165,6 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\FollowCamera.cpp" />
     <ClCompile Include="Header\Object\InGameUIManager\InGameUIManager.cpp" />
     <ClCompile Include="Header\Object\InGameUIManager\StarUI.cpp" />
+    <ClCompile Include="Header\Object\InGameUIManager\TutorialUI.cpp" />
     <ClCompile Include="Header\Object\LevelElementManager.cpp" />
     <ClCompile Include="Header\Object\Particle.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp" />
@@ -281,6 +282,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\FollowCamera.h" />
     <ClInclude Include="Header\Object\InGameUIManager\InGameUIManager.h" />
     <ClInclude Include="Header\Object\InGameUIManager\StarUI.h" />
+    <ClInclude Include="Header\Object\InGameUIManager\TutorialUI.h" />
     <ClInclude Include="Header\Object\LevelElementManager.h" />
     <ClInclude Include="Header\Object\LevelManager.h" />
     <ClInclude Include="Header\Object\Particle.h" />

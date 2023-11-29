@@ -1,10 +1,22 @@
 #include "InGameUIManager.h"
 #include "../../../Engine/DirectBase/Input/Input.h"
+#include "../../../Header/Object/StageSelectManager/StageSelectManager.h"
+#include "../LevelElementManager.h"
 
 void InGameUIManager::Init(int maxStarCount)
 {
 	// 最大星数を取得
 	maxStarCount_ = maxStarCount;
+
+	// 選択ステージ番号の取得
+	selectedStageNumber_ = StageSelectManager::GetInstance()->GetSelectedStageNumber();
+
+	// 選択されたステージ番号が0だった時
+	if (selectedStageNumber_ == 0) {
+		// インスタンス生成
+		tutorialUI_ = std::make_unique<TutorialUI>();
+		tutorialUI_->Init("TutorialUI");
+	}
 
 	// 最大星数分スプライトを追加
 	for (int i = 0; i < maxStarCount_; i++) {
@@ -18,12 +30,14 @@ void InGameUIManager::Init(int maxStarCount)
 
 	// 操作方法UIのリセット
 	controllUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_NoSpin.png")));
-	controllUI_.position_ = { 0.0f, 425.0f };
-	controllUI_.scale_ = { 512.0f, 300.0f };
+	controllUI_.position_ = { 0.0f, 0.0f };
+	controllUI_.scale_ = { 512.0f, 720.0f };
+	controllUI_.anchorPoint_ = { 0.0f, 0.0f };
 	// スピン時の操作方法UIのリセット
 	spinControllUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_Spin.png")));
-	spinControllUI_.position_ = { 0.0f, 425.0f };
-	spinControllUI_.scale_ = { 512.0f, 220.0f };
+	spinControllUI_.position_ = { 0.0f, 0.0f };
+	spinControllUI_.scale_ = { 512.0f, 720.0f };
+	spinControllUI_.anchorPoint_ = { 0.0f, 0.0f };
 }
 
 void InGameUIManager::Update(float deltaTime)
@@ -36,6 +50,13 @@ void InGameUIManager::Update(float deltaTime)
 		star->position_.x = starUIsStartingPoint_.x + (starUILineSpace_ * count);
 		star->overrapSpriteAlpha_ = uiAlpha_;
 		count++;
+	}
+
+	// 選択されたステージ番号が0だった時
+	if (selectedStageNumber_ == 0) {
+		// インスタンス生成
+		tutorialUI_->Update(deltaTime);
+		tutorialUI_->alphaMagnification_ = uiAlpha_;
 	}
 
 	if (Input::GetInstance()->GetInputType() == Input::InputType::kKeyBoard) {
@@ -59,6 +80,22 @@ void InGameUIManager::Update(float deltaTime)
 
 	controllUI_.sprite_->SetColor({ 1.0f, 1.0f, 1.0f, uiAlpha_ });
 
+	Entity* goal = nullptr;
+	if (LevelElementManager::GetInstance()->GetGoalList().size()) {
+		goal = LevelElementManager::GetInstance()->GetGoalList().front();
+
+		// ゴール状態である場合
+		if (goal->GetComponent<GoalAnimComp>()->GetIsPlay()) {
+			if (uiAlpha_ > 0.0f) {
+				uiAlpha_ -= 0.025f;
+			}
+			else {
+				uiAlpha_ = 0.0f;
+			}
+			
+		}
+	}
+
 #ifdef _DEBUG
 	ImGui::Begin("InGameUI");
 	if (ImGui::TreeNode("StarUI")) {
@@ -75,9 +112,15 @@ void InGameUIManager::Update(float deltaTime)
 		}
 		ImGui::TreePop();
 	}
-	
+
 	controllUI_.DisplayImGui("ControllUI");
 	spinControllUI_.DisplayImGui("spinControllUI");
+
+	// 選択されたステージ番号が0だった時
+	if (selectedStageNumber_ == 0) {
+		// インスタンス生成
+		tutorialUI_->DisplayImGui();
+	}
 
 	ImGui::DragFloat("UI - Alpha", &uiAlpha_, 0.01f, 0.0f, 1.0f);
 
@@ -100,6 +143,12 @@ void InGameUIManager::Draw()
 	}
 	else {
 		spinControllUI_.Draw();
+	}
+
+	// 選択されたステージ番号が0だった時
+	if (selectedStageNumber_ == 0) {
+		// インスタンス生成
+		tutorialUI_->Draw();
 	}
 }
 
@@ -127,4 +176,9 @@ void InGameUIManager::AddStar(int p0m)
 			}
 		}
 	}
+}
+
+void InGameUIManager::ShakeStar()
+{
+	blurTrigger_ = true;
 }

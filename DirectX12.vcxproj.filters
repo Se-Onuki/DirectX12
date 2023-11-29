@@ -444,6 +444,9 @@
     <ClCompile Include="Header\Object\InGameUIManager\StarUI.cpp">
       <Filter>Header\Entity\Object\InGameUIManager</Filter>
     </ClCompile>
+    <ClCompile Include="Header\Object\InGameUIManager\TutorialUI.cpp">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -811,6 +814,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\TutorialManager.h">
       <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\InGameUIManager\TutorialUI.h">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
