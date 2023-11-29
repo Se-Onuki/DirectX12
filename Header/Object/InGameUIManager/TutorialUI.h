@@ -16,6 +16,8 @@ public: // サブクラス　
 		kDisappear
 	};
 
+private: // サブクラス
+
 	// チュートリアルの進行度列挙子
 	enum TutorialProgress {
 		kMove,
@@ -87,14 +89,14 @@ public: // アニメーション関数
 public: // パブリックなメンバ変数
 
 	// 位置座標
-	Vector2 position_ = { 0.0f, 0.0f };
+	Vector2 position_ = { 640.0f, -80.0f };
 	// 大きさ
-	Vector2 scale_ = { 512.0f, 256.0f };
+	Vector2 scale_ = { 320.0f, 160.0f };
 	// 中心点
 	Vector2 anchorPoint_ = { 0.5f, 0.5f };
 
 	// スプライトの透明度
-	float overrapSpriteAlpha_ = 1.0f;
+	float alpha_ = 0.0f;
 
 private: // メンバ変数
 
@@ -114,12 +116,22 @@ private: // メンバ変数
 	SoLib::DeltaTimer animTimer_;
 
 	// 線形補間用パラメーター保存用
-	Vector2 startTranslate_ = { 0.0f, 0.0f }; // 大きさ始端値
-	Vector2 endTranslate_ = { 0.0f, 0.0f };   // 大きさ終端値
+	Vector2 startTranslate_ = { 640.0f, -80.0f }; // 大きさ始端値
+	Vector2 endTranslate_ = { 640.0f, -80.0f };   // 大きさ終端値
+	float startAlpha_ = 1.0f; // 大きさ始端値
+	float endAlpha_ = 0.0f;   // 大きさ終端値
 
 	// スプライト本体
 	std::unique_ptr<Sprite>tutorialUI_; // コントローラー
 	std::unique_ptr<Sprite>tutorialKeyUI_; // キーボード用
+
+	// チュートリアル進捗
+	int progress_ = kMove;
+
+	// コントローラーか
+	bool isController_ = false;
+	// 表示中か
+	bool isDisplay_ = false;
 
 	// ImGuiでUI行動状態を選択するための変数
 	int imGuiSelectBehavior_;

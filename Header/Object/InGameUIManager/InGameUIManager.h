@@ -4,6 +4,7 @@
 #include "../../Entity/Component/PlayerComp.h"
 #include "../../../Engine/DirectBase/2D/Sprite.h"
 #include "StarUI.h"
+#include "TutorialUI.h"
 
 /// <summary>
 /// ゲーム中のUIマネージャ
@@ -99,6 +100,9 @@ private: // メンバ変数
 
 	// スピンモード中か
 	bool isSpining_ = false;
+
+	// チュートリアルＵＩ
+	std::unique_ptr<TutorialUI> tutorialUI_;
 
 	// 星UIの量を示すUIを加算するか減算するか
 	int imGuiAddType_ = 0;

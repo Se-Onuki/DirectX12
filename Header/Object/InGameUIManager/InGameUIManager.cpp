@@ -10,6 +10,13 @@ void InGameUIManager::Init(int maxStarCount)
 	// 選択ステージ番号の取得
 	selectedStageNumber_ = StageSelectManager::GetInstance()->GetSelectedStageNumber();
 
+	// 選択されたステージ番号が0だった時
+	if (selectedStageNumber_ == 0) {
+		// インスタンス生成
+		tutorialUI_ = std::make_unique<TutorialUI>();
+		tutorialUI_->Init("TutorialUI");
+	}
+
 	// 最大星数分スプライトを追加
 	for (int i = 0; i < maxStarCount_; i++) {
 		// 新しいUIを生成
@@ -40,6 +47,12 @@ void InGameUIManager::Update(float deltaTime)
 		star->position_.x = starUIsStartingPoint_.x + (starUILineSpace_ * count);
 		star->overrapSpriteAlpha_ = uiAlpha_;
 		count++;
+	}
+
+	// 選択されたステージ番号が0だった時
+	if (selectedStageNumber_ == 0) {
+		// インスタンス生成
+		tutorialUI_->Update(deltaTime);
 	}
 
 	if (Input::GetInstance()->GetInputType() == Input::InputType::kKeyBoard) {
@@ -83,6 +96,12 @@ void InGameUIManager::Update(float deltaTime)
 	controllUI_.DisplayImGui("ControllUI");
 	spinControllUI_.DisplayImGui("spinControllUI");
 
+	// 選択されたステージ番号が0だった時
+	if (selectedStageNumber_ == 0) {
+		// インスタンス生成
+		tutorialUI_->DisplayImGui();
+	}
+
 	ImGui::DragFloat("UI - Alpha", &uiAlpha_, 0.01f, 0.0f, 1.0f);
 
 	ImGui::Checkbox("isSpining", &isSpining_);
@@ -104,6 +123,12 @@ void InGameUIManager::Draw()
 	}
 	else {
 		spinControllUI_.Draw();
+	}
+
+	// 選択されたステージ番号が0だった時
+	if (selectedStageNumber_ == 0) {
+		// インスタンス生成
+		tutorialUI_->Draw();
 	}
 }
 
