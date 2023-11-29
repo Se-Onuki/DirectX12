@@ -231,14 +231,25 @@ void GameScene::Update() {
 		ImGui::End();
 
 		Vector3 euler{};
-		if (keyBoard->IsPress(DIK_RIGHT)) {
-			euler += Vector3::up * -3._deg;
-		}
-		if (keyBoard->IsPress(DIK_LEFT)) {
-			euler += Vector3::up * +3._deg;
-		}
 		if (std::abs(gamePad->GetState()->stickR_.x) > 0.1f) {
 			euler += Vector3::up * 3._deg * gamePad->GetState()->stickR_.x;
+		}
+		if (std::abs(gamePad->GetState()->stickR_.y) > 0.1f) {
+			euler -= Vector3::right * 3._deg * gamePad->GetState()->stickR_.y;
+		}
+		if (euler.LengthSQ() <= 0.f) {
+			if (keyBoard->IsPress(DIK_RIGHT)) {
+				euler += Vector3::up * -3._deg;
+			}
+			if (keyBoard->IsPress(DIK_LEFT)) {
+				euler += Vector3::up * +3._deg;
+			}
+			if (keyBoard->IsPress(DIK_UP)) {
+				euler += Vector3::right * +3._deg;
+			}
+			if (keyBoard->IsPress(DIK_DOWN)) {
+				euler += Vector3::right * -3._deg;
+			}
 		}
 
 		followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
