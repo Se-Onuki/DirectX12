@@ -150,6 +150,9 @@ void GameScene::OnEnter() {
 
 	TutorialManager::GetInstance()->Init();
 
+	player_->GetComponent<PlayerComp>()->SetInGameUIManager(inGameUI_.get());
+	levelManager->pInGameUI_ = inGameUI_.get();
+
 }
 
 void GameScene::OnExit() {

@@ -14,6 +14,8 @@
 #include "PlayerAnimComp.h"
 #include "GoalAnimations/GoalAnimComp.h"
 
+class InGameUIManager;
+
 class PlayerComp : public IComponent {
 public:
 	using IComponent::IComponent;
@@ -43,6 +45,7 @@ public:
 
 	VariantItem<float> vRotateHeight_{ "RotateHeight", 10.f };
 
+	InGameUIManager *pInGameUI_ = nullptr;
 
 	const Vector3 radius_{ 0.75f,0.99f,0.75f };
 
@@ -55,6 +58,8 @@ public:
 	void SetState() {  // 状態を変更するメソッド
 		nowState_ = std::make_unique<State>(this);
 	}
+
+	void SetInGameUIManager(InGameUIManager *const inGameUI);
 
 	/// @brief 現在の状態の取得
 	/// @return 現在の状態
@@ -83,6 +88,8 @@ public:
 	AABB GetCollider() const { return referenceCollider_.AddPos(transform_->GetGrobalPos()); }
 
 	void SetIsGoaled(bool isGoaled) { isGoaled_ = isGoaled; }
+
+	int32_t rotateCount_;
 
 private:
 

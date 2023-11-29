@@ -14,6 +14,7 @@
 #include "../Entity/Component/PlayerState/IdleState.h"
 #include "Fade.h"
 #include "TutorialManager.h"
+#include "InGameUIManager/InGameUIManager.h"
 
 nlohmann::json LevelElementManager::levelData_;
 
@@ -498,6 +499,8 @@ void LevelElementManager::AddRotateCount(const int32_t count)
 	remainRotateCount_ =
 		std::clamp(remainRotateCount_ + count, 0, vMaxRotateCount_.GetItem());
 
+	pInGameUI_->AddStar(count);
+
 }
 
 void LevelElementManager::SetTransferData() const
@@ -616,14 +619,22 @@ void LevelElementManager::Platform::Update(float deltaTime)
 	}
 }
 
-void LevelElementManager::Platform::AddRotate(const float targetRot)
+bool LevelElementManager::Platform::AddRotate(const float targetRot)
 {
 	if (timer_.IsFinish()) {
 		TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kDownZ);
+		int32_t rotatePow{};
+		if (targetRot) {
+			rotatePow = static_cast<int32_t>(targetRot / std::abs(targetRot));
+		}
+
+		LevelElementManager::GetInstance()->pPlayer_->GetComponent<PlayerComp>()->rotateCount_ += rotatePow;
 
 		targetRot_ = Angle::Mod(rotateAxis_ * targetRot + startRot_);
 		timer_.Start(lerpTime_);
+		return true;
 	}
+	return false;
 }
 
 void LevelElementManager::Platform::SetRotate(const float targetRot)

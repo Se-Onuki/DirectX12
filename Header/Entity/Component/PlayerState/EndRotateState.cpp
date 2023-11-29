@@ -3,6 +3,9 @@
 #include "../PlayerComp.h"
 #include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../../../Object/TutorialManager.h"
+#include "../../Header/Object/InGameUIManager/InGameUIManager.h"
+#include "../../Header/Object/LevelElementManager.h"
+
 
 // 静的なメンバ変数の実体を宣言
 uint32_t PlayerEndRotateState::endRotateSE1_ = 0u;
@@ -24,6 +27,12 @@ void PlayerEndRotateState::Init() {
 	if (endRotateSE2_ == 0u) {
 		endRotateSE2_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/land.wav");
 	}
+
+	// もし回転が行われていたら減少
+	if (pPlayer_->rotateCount_ % 4 != 0) {
+		LevelElementManager::GetInstance()->AddRotateCount(-1);
+	}
+	pPlayer_->rotateCount_ = 0;
 }
 
 void PlayerEndRotateState::Update([[maybe_unused]] float deltaTime) {

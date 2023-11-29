@@ -14,6 +14,8 @@
 #include "../Collision/Collision.h"
 #include "../Entity/Entity.h"
 
+class InGameUIManager;
+
 class LevelElementManager {
 	LevelElementManager() = default;
 	LevelElementManager(const LevelElementManager &) = delete;
@@ -69,7 +71,7 @@ public:
 
 		void Update(float deltaTime);
 
-		void AddRotate(const float targetRot);
+		bool AddRotate(const float targetRot);
 
 		void SetRotate(const float targetRot);
 
@@ -122,6 +124,8 @@ public:
 		static LevelElementManager instance{};
 		return &instance;
 	}
+
+	InGameUIManager *pInGameUI_ = nullptr;
 
 	static void StaticInit();
 

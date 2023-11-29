@@ -10,6 +10,7 @@
 #include "../../Header/Object/Fade.h"
 #include <bitset>
 
+
 const std::string PlayerComp::groupName_ = "Player";
 
 void PlayerComp::Init() {
@@ -105,6 +106,10 @@ void PlayerComp::AddVariable(const char *const groupName) const {
 	group << vRotateBeginTime_;
 	group << vRotateHeight_;
 	group << vRotateEndTime_;
+}
+
+void PlayerComp::SetInGameUIManager(InGameUIManager *const inGameUI) {
+	pInGameUI_ = inGameUI;
 }
 
 void PlayerComp::MoveInput(const Vector3 &vec) {
