@@ -127,22 +127,27 @@ void TutorialUI::ChangeTexture()
 	case TutorialUI::kMove:
 		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_1.png"));
 		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_1.png"));
+		scale_.y = 170.6f;
 		break;
 	case TutorialUI::kEnableSpin:
 		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_2.png"));
 		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_2.png"));
+		scale_.y = 170.6f;
 		break;
 	case TutorialUI::kSpin:
 		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_3.png"));
 		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_3.png"));
+		scale_.y = 170.6f;
 		break;
 	case TutorialUI::kDisableSpin:
 		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_4.png"));
 		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_4.png"));
+		scale_.y = 170.6f;
 		break;
 	case TutorialUI::kGoal:
 		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_5.png"));
 		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_5.png"));
+		scale_.y = 213.3f;
 		break;
 	}
 }
