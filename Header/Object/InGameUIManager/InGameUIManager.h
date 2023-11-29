@@ -134,6 +134,16 @@ private: // メンバ変数
 	// リプレイ方法を示すスプライトの回数変数
 	int replayAnimCount_ = 0;
 
+	// 星取得をした際にチェックポイント更新を知らせるスプライト
+	UISprite updateCheckPointUI_;
+	// 上スプライトのアニメーション用タイマー
+	SoLib::DeltaTimer checkPointAnimTimer_;
+	float alpha_ = 0.0f;
+	// リプレイ方法を示すスプライトの回数変数
+	int checkPointAnimCount_ = 0;
+	// アニメーション再生中か
+	bool playCheckPointAnim_ = false;
+
 	// 星UIの振動トリガー
 	bool blurTrigger_ = false;
 	// 振動用方向ベクトル

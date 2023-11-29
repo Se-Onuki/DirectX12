@@ -51,6 +51,12 @@ void InGameUIManager::Init(int maxStarCount)
 	spinControllUI_.scale_ = { 512.0f, 720.0f };
 	spinControllUI_.anchorPoint_ = { 0.0f, 0.0f };
 
+	// チェックポイント更新UIのリセット
+	updateCheckPointUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/UpdateCheckPoint.png")));
+	updateCheckPointUI_.position_ = { 1050.0f, 350.0f };
+	updateCheckPointUI_.scale_ = { 256.0f, 64.0f };
+	updateCheckPointUI_.anchorPoint_ = { 0.5f, 0.5f };
+
 	if (dontSpinSE_ == 0u) {
 		dontSpinSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/dontSpin.wav");
 	}
@@ -153,7 +159,51 @@ void InGameUIManager::Update(float deltaTime)
 		}
 	}
 
+	// 
+	if (playCheckPointAnim_) {
+		switch (checkPointAnimCount_)
+		{
+		case 0:
+			if (not checkPointAnimTimer_.IsFinish()) {
+				updateCheckPointUI_.position_.y = SoLib::Lerp<float>(350.0f, 300.0f, SoLib::easeOutQuad(checkPointAnimTimer_.GetProgress()));
+				alpha_ = SoLib::Lerp<float>(0.0f, 1.0f, SoLib::easeOutQuad(checkPointAnimTimer_.GetProgress()));
+			}
+			else {
+				updateCheckPointUI_.position_.y = 300.0f;
+				alpha_ = 1.0f;
+				checkPointAnimTimer_.Start(2.0f);
+				checkPointAnimCount_++;
+			}
+			break;
+		case 1:
+			if (not checkPointAnimTimer_.IsFinish()) {
+				updateCheckPointUI_.position_.y = SoLib::Lerp<float>(300.0f, 285.0f, SoLib::easeOutQuad(checkPointAnimTimer_.GetProgress()));
+			}
+			else {
+
+				updateCheckPointUI_.position_.y = 285.0f;
+				alpha_ = 1.0f;
+				checkPointAnimTimer_.Start(1.0f);
+				checkPointAnimCount_++;
+			}
+			break;
+		case 2:
+			if (not checkPointAnimTimer_.IsFinish()) {
+				alpha_ = SoLib::Lerp<float>(1.0f, 0.0f, SoLib::easeOutQuad(checkPointAnimTimer_.GetProgress()));
+			}
+			else {
+				alpha_ = 0.0f;
+				playCheckPointAnim_ = false;
+			}
+			break;
+		}
+
+		// 
+		checkPointAnimTimer_.Update(deltaTime);
+	}
+
 	controllUI_.sprite_->SetColor({ 1.0f, 1.0f, 1.0f, uiAlpha_ });
+	updateCheckPointUI_.sprite_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ * uiAlpha_ });
 
 	Entity* goal = nullptr;
 	if (LevelElementManager::GetInstance()->GetGoalList().size()) {
@@ -193,7 +243,7 @@ void InGameUIManager::Update(float deltaTime)
 
 	controllUI_.DisplayImGui("ControllUI");
 	spinControllUI_.DisplayImGui("spinControllUI");
-
+	updateCheckPointUI_.DisplayImGui("updateCheckPointUI");
 	// 選択されたステージ番号が0だった時
 	if (selectedStageNumber_ == 0) {
 		// インスタンス生成
@@ -226,6 +276,8 @@ void InGameUIManager::Draw()
 		spinControllUI_.Draw();
 	}
 
+	updateCheckPointUI_.Draw();
+
 	// 選択されたステージ番号が0だった時
 	if (selectedStageNumber_ == 0) {
 		// インスタンス生成
@@ -240,6 +292,11 @@ void InGameUIManager::Draw()
 
 void InGameUIManager::AddStar(int p0m)
 {
+	updateCheckPointUI_.position_ = { 1050.0f, 350.0f };
+	checkPointAnimCount_ = 0;
+	checkPointAnimTimer_.Start(1.0f);
+	playCheckPointAnim_ = true;
+
 	if (p0m >= 0) {
 		// 最大星数分ループ
 		std::list<std::unique_ptr<StarUI>>::iterator itr = stars_.begin();
