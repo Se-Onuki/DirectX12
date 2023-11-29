@@ -377,6 +377,8 @@ void LevelElementManager::Init()
 	remainRotateCount_ = 0;
 
 	platformItr_ = blockCollider_.begin();
+
+	isCleared_ = false;
 }
 
 void LevelElementManager::Update([[maybe_unused]] float deltaTime)
@@ -618,6 +620,7 @@ void LevelElementManager::Platform::Update(float deltaTime)
 
 		if ((goal_->transform_.GetGrobalPos() - pPlayer->transform_.GetGrobalPos()).Length() < 2.f && (Vector3::up * goal_->transform_.matWorld_.GetRotate()) * Vector3::up > 0.3f && LevelElementManager::GetInstance()->GetStarProgress() >= 1.f && pPlayer->GetComponent<PlayerComp>()->GetIsLanding()) {
 			goal_->GetComponent<GoalAnimComp>()->PlayGoalAnim();
+			LevelElementManager::GetInstance()->isCleared_ = true;
 		}
 	}
 

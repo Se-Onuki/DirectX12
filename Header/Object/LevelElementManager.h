@@ -93,8 +93,6 @@ public:
 
 		Entity *const GetGoal() const { return goal_.get(); }
 
-
-
 		const std::list<std::unique_ptr<Entity>> &GetStarItem()const { return starItem_; }
 
 	private:
@@ -128,6 +126,8 @@ public:
 	InGameUIManager *pInGameUI_ = nullptr;
 
 	static void StaticInit();
+
+	bool isCleared_ = false;
 
 	void LoadData(const uint32_t levelID);
 

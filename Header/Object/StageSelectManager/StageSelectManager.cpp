@@ -1,5 +1,6 @@
 #include "StageSelectManager.h"
 #include "../../../Engine/DirectBase/Base/Audio.h"
+#include "../../../Header/Object/LevelElementManager.h"
 
 // 静的なメンバ変数の実体を宣言
 uint32_t StageSelectManager::selectStageSE_ = 0u;
@@ -16,16 +17,23 @@ void StageSelectManager::Init()
 
 	// 調整項目クラスから値を読む
 	ApplyItem();
-	
+
 	// UI関係初期化
 	ui_.Init();
 
+	if (LevelElementManager::GetInstance()->isCleared_) {
+		selectedStageNumber_++;
+		LevelElementManager::GetInstance()->isCleared_ = false;
+		selectedStageNumber_ = std::clamp(selectedStageNumber_, 0, maxLevelCount_ - 1);
+		ui_.SetIsRight(true);
+	}
+
 }
 
-void StageSelectManager::Update([[maybe_unused]]float deltaTime)
+void StageSelectManager::Update([[maybe_unused]] float deltaTime)
 {
 	// キーボードの入力取得
-	static const auto* const keyBoard = input_->GetDirectInput();
+	static const auto *const keyBoard = input_->GetDirectInput();
 
 	// キー入力をすると選択番号を変更
 	if (not ui_.GetIsPlayingAnim()) {
@@ -54,9 +62,9 @@ void StageSelectManager::Update([[maybe_unused]]float deltaTime)
 
 }
 
-void StageSelectManager::Draw([[maybe_unused]] const Camera3D& camera)
+void StageSelectManager::Draw([[maybe_unused]] const Camera3D &camera)
 {
-	
+
 }
 
 void StageSelectManager::SpriteDraw()
@@ -79,7 +87,7 @@ void StageSelectManager::DisplayImGui()
 
 void StageSelectManager::AddItem()
 {
-	
+
 }
 
 void StageSelectManager::ApplyItem()
