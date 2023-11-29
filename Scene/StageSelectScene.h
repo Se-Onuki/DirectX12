@@ -40,19 +40,19 @@ public: // メンバ関数
 private: // メンバ変数
 
 	// 入力インスタンス
-	Input* input_ = nullptr;
+	Input *input_ = nullptr;
 	// 音インスタンス
-	Audio* audio_ = nullptr;
+	Audio *audio_ = nullptr;
 	// カメラマネージャー
-	CameraManager* cameraManager_ = nullptr;
+	CameraManager *cameraManager_ = nullptr;
 
 	// パーティクルマネージャ
-	ParticleManager* particleManager_ = nullptr;
+	ParticleManager *particleManager_ = nullptr;
 	// パーティクル発生装置マネージャ
-	ParticleEmitterManager* emitterManager_ = nullptr;
+	ParticleEmitterManager *emitterManager_ = nullptr;
 
 	// ステージ選択マネージャ
-	StageSelectManager* stageSelectManager_ = nullptr;
+	StageSelectManager *stageSelectManager_ = nullptr;
 
 	// 平行光源
 	std::unique_ptr<DirectionLight> light_ = nullptr;
@@ -67,6 +67,8 @@ private: // メンバ変数
 
 	// 効果音系
 	static uint32_t startStageSE_; // ステージ開始SE
+
+	SoLib::DeltaTimer bgmTimingManager_;
 
 };
 
