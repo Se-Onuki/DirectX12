@@ -90,7 +90,7 @@ void TutorialUI::Draw()
 		tutorialUI_->SetPosition(position_);
 		tutorialUI_->SetScale(scale_);
 		tutorialUI_->SetPivot(anchorPoint_);
-		tutorialUI_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
+		tutorialUI_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ * alphaMagnification_ });
 		tutorialUI_->Draw();
 	}
 	else {
@@ -98,7 +98,7 @@ void TutorialUI::Draw()
 		tutorialKeyUI_->SetPosition(position_);
 		tutorialKeyUI_->SetScale(scale_);
 		tutorialKeyUI_->SetPivot(anchorPoint_);
-		tutorialKeyUI_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
+		tutorialKeyUI_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ * alphaMagnification_ });
 		tutorialKeyUI_->Draw();
 	}
 }
@@ -126,6 +126,17 @@ void TutorialUI::DisplayImGui()
 
 		ImGui::TreePop();
 	}
+}
+
+void TutorialUI::DisplayNextTutorial(int progress)
+{
+	// 次の進捗と一致しない場合はそれを代入する
+	if (nextProgress_ != progress_) {
+		progress_ = nextProgress_;
+	}
+	nextProgress_ = progress;
+	behaviorRequest_ = kDisappear;
+	changeTutorial_ = true;
 }
 
 void TutorialUI::StayInit()
@@ -161,8 +172,10 @@ void TutorialUI::AppearUpdate()
 		// パラメーターを線形補間で変更する
 		position_ = SoLib::Lerp(startTranslate_, endTranslate_, SoLib::easeInOutQuad(animTimer_.GetProgress()));
 		alpha_ = SoLib::Lerp(startAlpha_, endAlpha_, SoLib::easeOutQuad(animTimer_.GetProgress()));
+		isChanging_ = true;
 	}
 	else {
+		isChanging_ = false;
 		// 次の行動リクエストに待機アニメーションを設定
 		behaviorRequest_ = kStay;
 		// 表示中
@@ -188,11 +201,18 @@ void TutorialUI::DisappearUpdate()
 		// パラメーターを線形補間で変更する
 		position_ = SoLib::Lerp(startTranslate_, endTranslate_, SoLib::easeInOutQuad(animTimer_.GetProgress()));
 		alpha_ = SoLib::Lerp(startAlpha_, endAlpha_, SoLib::easeInQuad(animTimer_.GetProgress()));
+		isChanging_ = true;
 	}
 	else {
+		isChanging_ = false;
 		// 次の行動リクエストに待機アニメーションを設定
 		behaviorRequest_ = kStay;
 		// 非表示中
 		isDisplay_ = false;
+
+		// 次の進捗と一致しない場合はそれを代入する
+		if (nextProgress_ != progress_) {
+			progress_ = nextProgress_;
+		}
 	}
 }

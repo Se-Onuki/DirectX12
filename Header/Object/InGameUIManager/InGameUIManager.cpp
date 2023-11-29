@@ -53,6 +53,7 @@ void InGameUIManager::Update(float deltaTime)
 	if (selectedStageNumber_ == 0) {
 		// インスタンス生成
 		tutorialUI_->Update(deltaTime);
+		tutorialUI_->alphaMagnification_ = uiAlpha_;
 	}
 
 	if (Input::GetInstance()->GetInputType() == Input::InputType::kKeyBoard) {

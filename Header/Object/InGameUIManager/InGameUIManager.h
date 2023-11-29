@@ -103,6 +103,8 @@ private: // メンバ変数
 
 	// チュートリアルＵＩ
 	std::unique_ptr<TutorialUI> tutorialUI_;
+	// チュートリアル進捗
+	int tutorialProgress_ = TutorialUI::TutorialProgress::kMove;
 
 	// 星UIの量を示すUIを加算するか減算するか
 	int imGuiAddType_ = 0;

@@ -16,8 +16,6 @@ public: // サブクラス　
 		kDisappear
 	};
 
-private: // サブクラス
-
 	// チュートリアルの進行度列挙子
 	enum TutorialProgress {
 		kMove,
@@ -48,14 +46,44 @@ public: // メンバ関数
 
 	// ImGuiの描画
 	void DisplayImGui();
-
+	
 public: // アクセッサ等
+
+	/// <summary>
+	/// 引数で指定したチュートリアル画像を表示する関数
+	/// </summary>
+	/// <param name="progress"></param>
+	void DisplayNextTutorial(int progress);
 
 	/// <summary>
 	/// 次のUIアニメーションセッター
 	/// </summary>
 	/// <param name="b">次のUIアニメーションで何を行うか</param>
 	void SetBehavior(TutorialUIBehavior b) { behaviorRequest_ = b; }
+
+	/// <summary>
+	/// 次のチュートリアルテクスチャセッター
+	/// </summary>
+	/// <param name="progress">チュートリアル段階</param>
+	void SetTutorialTexture(TutorialProgress progress) { progress_ = progress; }
+
+	/// <summary>
+	/// 入力にコントローラーが使用されているかセッター
+	/// </summary>
+	/// <param name="is">コントローラーかどうか</param>
+	void SetIsController(bool is) { isController_ = is; }
+
+	/// <summary>
+	/// アニメーションが行われているかゲッター
+	/// </summary>
+	/// <returns>アニメーションが行われているか</returns>
+	bool GetIsChanging() { return isChanging_; }
+
+	/// <summary>
+	/// 表示状態ゲッター
+	/// </summary>
+	/// <returns>表示状態</returns>
+	bool GetIsDisplay() { return isDisplay_; }
 
 public: // アニメーション関数
 
@@ -97,12 +125,13 @@ public: // パブリックなメンバ変数
 
 	// スプライトの透明度
 	float alpha_ = 0.0f;
+	float alphaMagnification_ = 1.0f;
 
 private: // メンバ変数
 
 	// それぞれの演出時間
-	const float kAppearTime_ = 1.0f; // 表示
-	const float kDisappearTime_ = 0.8f; // 非表示
+	const float kAppearTime_ = 0.8f; // 表示
+	const float kDisappearTime_ = 0.6f; // 非表示
 
 	// ImGui表示名
 	std::string id_;
@@ -126,12 +155,19 @@ private: // メンバ変数
 	std::unique_ptr<Sprite>tutorialKeyUI_; // キーボード用
 
 	// チュートリアル進捗
-	int progress_ = kMove;
+	int progress_ = kMove;			 // 現在の
+	int nextProgress_ = kMove; // 次の
 
 	// コントローラーか
 	bool isController_ = false;
 	// 表示中か
 	bool isDisplay_ = false;
+
+	// アニメーション中か
+	bool isChanging_ = false;
+
+	// チュートリアル変更中か
+	bool changeTutorial_ = false;
 
 	// ImGuiでUI行動状態を選択するための変数
 	int imGuiSelectBehavior_;
