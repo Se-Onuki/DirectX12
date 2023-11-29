@@ -494,13 +494,10 @@ nlohmann::json LevelElementManager::GetLevelParameters(
 	return levelData;
 }
 
-void LevelElementManager::AddRotateCount(const int32_t count)
-{
-	remainRotateCount_ =
-		std::clamp(remainRotateCount_ + count, 0, vMaxRotateCount_.GetItem());
+void LevelElementManager::AddStarCount(const int32_t count) {
+	remainRotateCount_ = std::clamp(remainRotateCount_ + count, 0, vMaxRotateCount_.GetItem());
 
 	pInGameUI_->AddStar(count);
-
 }
 
 void LevelElementManager::SetTransferData() const

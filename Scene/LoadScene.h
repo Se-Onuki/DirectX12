@@ -41,9 +41,6 @@ public: // メンバ関数
 
 private: // メンバ変数
 
-	// シーンマネージャー
-	SceneManager* sceneManager_ = nullptr;
-
 	// 音インスタンス
 	Audio* audio_ = nullptr;
 	// モデルマネージャインスタンス

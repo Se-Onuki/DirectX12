@@ -172,7 +172,10 @@ public:
 
 	/// @brief 回転回数の変更
 	/// @param count 回転回数の加算値
-	void AddRotateCount(const int32_t count);
+	void AddStarCount(const int32_t count);
+
+	int32_t GetStarCount() { return remainRotateCount_; }
+	int32_t GetMaxStarCount() { return vMaxRotateCount_; }
 
 	Platform *const GetPlatform(int32_t index);
 

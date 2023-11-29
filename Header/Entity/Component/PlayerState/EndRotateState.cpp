@@ -30,7 +30,7 @@ void PlayerEndRotateState::Init() {
 
 	// もし回転が行われていたら減少
 	if (pPlayer_->rotateCount_ % 4 != 0) {
-		LevelElementManager::GetInstance()->AddRotateCount(-1);
+		LevelElementManager::GetInstance()->AddStarCount(-1);
 	}
 	pPlayer_->rotateCount_ = 0;
 }

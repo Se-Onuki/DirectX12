@@ -6,7 +6,6 @@ LoadScene::LoadScene()
 {
 	// インスタンス取得
 	audio_ = Audio::GetInstance(); // 音
-	sceneManager_ = SceneManager::GetInstance(); // シーンマネージャー
 }
 
 LoadScene::~LoadScene()
@@ -21,6 +20,7 @@ void LoadScene::OnEnter()
 	// 3Dモデルの読み込み
 	modelManager_->CreateDefaultModel(); // デフォルトモデルの読み込み
 	modelManager_->AddModel("Box", Model::LoadObjFile("", "box.obj"));
+	modelManager_->AddModel("DownBox", Model::LoadObjFile("", "box.obj"))->materialMap_.begin()->second->blendMode_ = Model::BlendMode::kAdd;
 	modelManager_->AddModel("RedBox", Model::LoadObjFile("", "box.obj"))->materialMap_["Material"]->materialBuff_->color = Vector4{ 1.f,0.f,0.f,1.f };
 	modelManager_->AddModel("GrassModel", Model::LoadObjFile("Model/Ground/", "Ground.obj")); // 草ブロック
 	modelManager_->AddModel("DirtModel", Model::LoadObjFile("Model/Ground/", "Ground.obj"))->materialMap_.begin()->second->texHandle_ = TextureManager::Load("Model/Ground/DustTex.png"); // 土ブロック
