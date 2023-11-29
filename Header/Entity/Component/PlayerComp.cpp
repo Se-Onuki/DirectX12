@@ -155,6 +155,8 @@ Vector3 PlayerComp::CalcMoveCollision() {
 
 	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
+	Vector3 prePos;
+
 	//int32_t hitGroup = -1;
 	while (true) {
 
@@ -233,6 +235,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 			rigidbody->SetVelocity(velocity);
 		}
 		else {
+			prePos = moveLine.origin;
 			moveLine.origin = moveLine.GetEnd();
 			break;
 		}
@@ -274,10 +277,16 @@ Vector3 PlayerComp::CalcMoveCollision() {
 
 	if (hitProgress != 1.f && hitNumber != -1) {
 		groundPos_ = lines[hitNumber].GetProgress(hitProgress);
+		groundPos_.x = moveLine.origin.x;
+		groundPos_.z = moveLine.origin.z;
 	}
 	// SoLib::ImGuiText("GroundPos", SoLib::to_string(groundPos_));
 
 #pragma endregion
+
+	if (this->GetGroundPos() == nullptr) {
+		return prePos;
+	}
 
 	return moveLine.origin;
 }
