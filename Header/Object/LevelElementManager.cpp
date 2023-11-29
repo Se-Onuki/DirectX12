@@ -603,7 +603,7 @@ void LevelElementManager::Platform::Update(float deltaTime)
 
 		goal_->Update(deltaTime);
 
-		if ((goal_->transform_.GetGrobalPos() - pPlayer->transform_.GetGrobalPos()).Length() < 2.f && (Vector3::up * goal_->transform_.matWorld_.GetRotate()) * Vector3::up > 0.3f) {
+		if ((goal_->transform_.GetGrobalPos() - pPlayer->transform_.GetGrobalPos()).Length() < 2.f && (Vector3::up * goal_->transform_.matWorld_.GetRotate()) * Vector3::up > 0.3f && LevelElementManager::GetInstance()->GetStarProgress() >= 1.f && pPlayer->GetComponent<PlayerComp>()->GetIsLanding()) {
 			goal_->GetComponent<GoalAnimComp>()->PlayGoalAnim();
 		}
 	}
