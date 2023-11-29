@@ -12,6 +12,7 @@ uint32_t StarItemComp::collctSE_ = 0u;
 void StarItemComp::Init() {
 	auto *const modelComp = object_->AddComponent<ModelComp>();
 
+	modelComp->AddBone("StarBase", ModelManager::GetInstance()->GetModel("StarBase"));
 	modelComp->AddBone("Body", ModelManager::GetInstance()->GetModel("StarItem"));
 
 	transform_->CalcMatrix();

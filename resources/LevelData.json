@@ -97,6 +97,7 @@
                     "StarItem": null
                 }
             ],
+               "SpinHight": 6.0,
             "StartPos": [
                 0.0,
                 -10.0,
@@ -268,6 +269,7 @@
                     "StarItem": null
                 }
             ],
+            "SpinHight": 9.0,
             "StartPos": [
                 0.0,
                 -6.0,
@@ -491,6 +493,7 @@
                     ]
                 }
             ],
+            "SpinHight": 10.0,
             "StartPos": [
                 -4.0,
                 -5.0,
@@ -808,6 +811,7 @@
                     ]
                 }
             ],
+            "SpinHight": 11.0,
             "StartPos": [
                 0.0,
                 -2.0,
@@ -991,6 +995,7 @@
                     ]
                 }
             ],
+            "SpinHight": 15.0,
             "StartPos": [
                 0.0,
                 -6.0,
@@ -1292,6 +1297,7 @@
                     ]
                 }
             ],
+            "SpinHight": 10.0,
             "StartPos": [
                 0.0,
                 -6.0,
@@ -1475,6 +1481,7 @@
                     ]
                 }
             ],
+            "SpinHight": 15.0,
             "StartPos": [
                 0.0,
                 -4.0,
@@ -1494,6 +1501,7 @@
             ],
             "MaxRotateCount": 2,
             "Platform": [],
+            "SpinHight": 15.0,
             "StartPos": [
                 0.0,
                 -4.0,
@@ -1513,6 +1521,7 @@
             ],
             "MaxRotateCount": 2,
             "Platform": [],
+            "SpinHight": 15.0,
             "StartPos": [
                 0.0,
                 -4.0,
@@ -1532,6 +1541,7 @@
             ],
             "MaxRotateCount": 2,
             "Platform": [],
+            "SpinHight": 15.0,
             "StartPos": [
                 0.0,
                 -4.0,
@@ -1551,6 +1561,7 @@
             ],
             "MaxRotateCount": 2,
             "Platform": [],
+            "SpinHight": 15.0,
             "StartPos": [
                 0.0,
                 -4.0,

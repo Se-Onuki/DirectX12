@@ -24,7 +24,7 @@ void PlayerBeginRotateState::Init() {
 	rotateFacing > 0 ? rotateFacing = 1.f : rotateFacing = -1.f;
 
 	auto *const rotateCamera = CameraManager::GetInstance()->AddCamera("RotateCamera");
-	pPlayer_->rotateCameraOrigin_ = SoLib::Lerp(platform->center_.translate, pPlayer_->transform_->translate, 0.1f) + Vector3{ 0.f,pPlayer_->vRotateHeight_ - 5.f,0.f };
+	pPlayer_->rotateCameraOrigin_ = SoLib::Lerp(platform->center_.translate, pPlayer_->transform_->translate, 0.1f) + Vector3{ 0.f,pPlayer_->vRotateHeight_ - 3.f,0.f };
 	// カメラの差分
 	Vector3 offsetAngle{ 15._deg, (platform->rotateAxis_ * rotateFacing).Direction2Euler().y ,0.f };
 
