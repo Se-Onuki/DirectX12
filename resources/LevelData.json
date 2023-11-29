@@ -107,13 +107,13 @@
         {
             "CameraEnd": [
                 0.0,
-                -4.0,
-                15.0
+                -2.0,
+                8.0
             ],
             "CameraStart": [
                 0.0,
                 -4.0,
-                -19.0
+                -20.0
             ],
             "MaxRotateCount": 2,
             "Platform": [
@@ -278,9 +278,9 @@
         },
         {
             "CameraEnd": [
-                27.0,
+                29.0,
                 -4.0,
-                4.0
+                0.0
             ],
             "CameraStart": [
                 -5.0,
@@ -502,14 +502,14 @@
         },
         {
             "CameraEnd": [
-                0.0,
+                10.0,
                 -4.0,
-                15.0
+                20.0
             ],
             "CameraStart": [
                 0.0,
                 -4.0,
-                -40.0
+                -32.0
             ],
             "MaxRotateCount": 2,
             "Platform": [
@@ -807,14 +807,14 @@
         },
         {
             "CameraEnd": [
-                0.0,
+                -8.0,
                 -4.0,
-                -6.0
+                -11.0
             ],
             "CameraStart": [
-                0.0,
-                -6.0,
-                -26.0
+                6.0,
+                -10.0,
+                -34.0
             ],
             "MaxRotateCount": 2,
             "Platform": [
@@ -991,14 +991,14 @@
         },
         {
             "CameraEnd": [
-                0.0,
+                -10.0,
                 -15.0,
-                -3.0
+                -14.0
             ],
             "CameraStart": [
-                6.0,
+                9.0,
                 -4.0,
-                -17.0
+                -21.0
             ],
             "MaxRotateCount": 2,
             "Platform": [
