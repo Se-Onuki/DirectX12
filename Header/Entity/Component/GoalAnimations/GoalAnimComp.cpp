@@ -38,6 +38,10 @@ void GoalAnimComp::Init()
 	AddItem();
 	// アイテムを読み込む
 	ApplyItem();
+
+	backMaterial_.Create();
+	backMaterial_.blendMode_ = Model::BlendMode::kBacker;
+	backMaterial_.materialBuff_->color = Vector4{ 0.f,0.f,0.f,0.5f };
 }
 
 void GoalAnimComp::Update()
@@ -75,6 +79,11 @@ void GoalAnimComp::Update()
 	// ImGUiを表示する
 	DisplayImGui();
 #endif // _DEBUG
+}
+
+void GoalAnimComp::Draw(const Camera3D &camera) const {
+	object_->GetComponent<ModelComp>()->Draw(camera, backMaterial_);
+
 }
 
 void GoalAnimComp::DisplayImGui()
@@ -134,7 +143,7 @@ void GoalAnimComp::DisplayImGui()
 
 }
 
-void GoalAnimComp::SetPlayerModel(Entity* entity)
+void GoalAnimComp::SetPlayerModel(Entity *entity)
 {
 	playerModel_ = entity;
 	pEmitter_ = ParticleEmitterManager::GetInstance()->CreateEmitter<StarParticle>("PlayerLing");

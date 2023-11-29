@@ -399,6 +399,15 @@ void LevelElementManager::Draw([[maybe_unused]] const Camera3D &camera) const
 		platform.Draw(camera);
 	}
 
+	for (const auto &item : this->GetStarItemList()) {
+		item->Draw(camera);
+	}
+
+	for (const auto &goal : GetGoalList()) {
+		goal->Draw(camera);
+	}
+
+
 #ifdef _DEBUG
 
 	if (debugDrawer_) {
@@ -466,7 +475,7 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(
 	return &itPlatform->second;
 }
 
-std::list<Entity *> LevelElementManager::GetStarItemList() {
+std::list<Entity *> LevelElementManager::GetStarItemList() const {
 	std::list<Entity *> starItemPtrList;
 	for (const auto &it : blockCollider_) {
 		const auto &starItemList = it.second.GetStarItem();
@@ -477,8 +486,7 @@ std::list<Entity *> LevelElementManager::GetStarItemList() {
 	return starItemPtrList;
 }
 
-std::list<Entity *> LevelElementManager::GetGoalList()
-{
+std::list<Entity *> LevelElementManager::GetGoalList() const {
 	std::list<Entity *> goalList;
 	for (const auto &it : blockCollider_) {
 		Entity *const goal = it.second.GetGoal();
@@ -661,14 +669,6 @@ void LevelElementManager::Platform::Draw(const Camera3D &camera) const
 	const auto *const box = ModelManager::GetInstance()->GetModel("Box");
 
 	box->Draw(axisBar_, camera);
-
-	if (goal_) {
-		goal_->Draw(camera);
-	}
-
-	for (const auto &item : starItem_) {
-		item->Draw(camera);
-	}
 }
 
 bool LevelElementManager::Platform::ImGuiWidget()
