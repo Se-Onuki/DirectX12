@@ -72,6 +72,11 @@ public: // アクセッサ等
 	void AddStar(int p0m);
 
 	/// <summary>
+	/// 引数で指定した数の星を追加
+	/// </summary>
+	void SetStar(int count);
+
+	/// <summary>
 	/// 星のスタックがない場合、その星を振動させる関数
 	/// </summary>
 	void ShakeStar();

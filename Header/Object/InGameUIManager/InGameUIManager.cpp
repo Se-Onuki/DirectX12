@@ -110,6 +110,9 @@ void InGameUIManager::Update(float deltaTime)
 		if (ImGui::Button("AddStar")) {
 			AddStar(imGuiAddType_);
 		}
+		if (ImGui::Button("SetStar")) {
+			SetStar(imGuiAddType_);
+		}
 		ImGui::TreePop();
 	}
 
@@ -175,6 +178,24 @@ void InGameUIManager::AddStar(int p0m)
 				break;
 			}
 		}
+	}
+}
+
+void InGameUIManager::SetStar(int count)
+{
+	// 最大星数分ループ
+	std::list<std::unique_ptr<StarUI>>::iterator itr = stars_.begin();
+	for (; itr != stars_.end(); itr++) {
+		auto& star = *itr;
+		star->Reset();
+	}
+
+	int c = 0;
+	for (auto& star : stars_) {
+		if (c < count) {
+			star->SetBehavior(StarUI::kAppear);
+		}
+		c++;
 	}
 }
 

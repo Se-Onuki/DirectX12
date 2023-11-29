@@ -79,6 +79,11 @@ public: // アニメーション関数
 	/// </summary>
 	void DisappearUpdate();
 
+	/// <summary>
+	/// リセット関数
+	/// </summary>
+	void Reset();
+
 public: // パブリックなメンバ変数
 
 	// 位置座標

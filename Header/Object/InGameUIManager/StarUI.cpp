@@ -163,3 +163,12 @@ void StarUI::DisappearUpdate()
 		behaviorRequest_ = kStay;
 	}
 }
+
+void StarUI::Reset()
+{
+	// ビヘイビアの設定
+	behavior_ = kStay;
+	endScale_ = { 0.0f, 0.0f };
+	overrapSpriteScale_ = { 0.0f, 0.0f };
+	isFilled_ = false;
+}
