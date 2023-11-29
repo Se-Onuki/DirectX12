@@ -42,6 +42,16 @@ void InGameUIManager::Init(int maxStarCount)
 
 void InGameUIManager::Update(float deltaTime)
 {
+	if (Input::GetInstance()->GetDirectInput()->IsPress(DIK_X)&& 
+		Input::GetInstance()->GetDirectInput()->IsTrigger(DIK_P)) {
+		if (uiAlpha_ != 0.0f) {
+			uiAlpha_ = 0.0f;
+		}
+		else {
+			uiAlpha_ = 1.0f;
+		}
+	}
+
 	// 最大星数分ループ
 	int count = 0;
 	for (auto& star : stars_) {
