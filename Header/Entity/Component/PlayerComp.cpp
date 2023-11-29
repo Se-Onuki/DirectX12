@@ -157,7 +157,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
 	Vector3 prePos;
-	char isHitFlag = 0b0000;
+	char isHitFlag{};
 
 	//int32_t hitGroup = -1;
 	while (true) {
@@ -258,9 +258,17 @@ Vector3 PlayerComp::CalcMoveCollision() {
 
 	groundPos_ = Vector3::up * 10000.f;
 
+	Vector3 signVector{};
+	for (uint32_t i = 0u; i < 3u; i++) {
+		float data = moveLine.diff.data()[i];
+		if (data) {
+			signVector.data()[i] = data / std::abs(data);
+		}
+	}
+
 	for (uint32_t i = 0u; i < lines.size(); ++i) {
 		lines[i].origin = playerVertex[i];
-		lines[i].diff = Vector3::up * -1000.f;
+		lines[i].diff = Vector3::up * -1000.f + (Vector3::right + Vector3::front) * 0.1f;
 	}
 	for (const auto &[key, collider] : levelManager->blockCollider_) {
 		for (auto &box : collider.GetCollider()) {
@@ -272,8 +280,10 @@ Vector3 PlayerComp::CalcMoveCollision() {
 					// もし接触していたら
 					if (t < 1.f) {
 						const char buff = 0b1;
+						char hitFlag{};
 						// フラグを立てる
-						isHitFlag += buff << i;
+						hitFlag += buff << i;
+						isHitFlag |= (hitFlag);
 					}
 					if (hitProgress > t) {
 						hitProgress = t;
@@ -285,21 +295,21 @@ Vector3 PlayerComp::CalcMoveCollision() {
 	}
 
 	Vector3 result = moveLine.origin;
-	Vector3 signVector{};
-	for (uint32_t i = 0u; i < 3u; i++) {
-		float data = moveLine.diff.data()[i];
-		if (data) {
-			signVector.data()[i] = data / std::abs(data);
-		}
-	}
 
 	// すべてのフラグが立っていた(全部地面の上)
-	if (isHitFlag == 0b1111) {
+	if ((isHitFlag & 0b1111) == 0b1111) {
 		// そのまま通す
 		result = moveLine.origin;
 	}
 	else if ((isHitFlag & 0b1100) == 0b1100 || (isHitFlag & 0b0011) == 0b0011) {
-		result.x = std::round(result.x) + (1.f - radius_.x) * signVector.x;
+		result.x = std::round(result.x) + (0.99f - radius_.x) * signVector.x;
+	}
+	else if ((isHitFlag & 0b0110) == 0b0110 || (isHitFlag & 0b1001) == 0b1001) {
+		result.z = std::round(result.z) + (0.99f - radius_.z) * signVector.z;
+	}
+	else {
+		result.x = std::round(result.x) + (0.99f - radius_.x) * signVector.x;
+		result.z = std::round(result.z) + (0.99f - radius_.z) * signVector.z;
 	}
 
 	if (hitProgress != 1.f && hitNumber != -1) {
