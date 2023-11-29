@@ -8,6 +8,7 @@
 #include "PlayerState/IdleState.h"
 #include "PlayerState/JumpState.h"
 #include "../../Header/Object/Fade.h"
+#include <bitset>
 
 const std::string PlayerComp::groupName_ = "Player";
 
@@ -156,6 +157,7 @@ Vector3 PlayerComp::CalcMoveCollision() {
 	LineBase moveLine{ .origin = rigidbody->GetBeforePos(), .diff = transform_->translate - rigidbody->GetBeforePos() };
 
 	Vector3 prePos;
+	char isHitFlag{};
 
 	//int32_t hitGroup = -1;
 	while (true) {
@@ -253,11 +255,20 @@ Vector3 PlayerComp::CalcMoveCollision() {
 	float hitProgress = 1.f;
 	int32_t hitNumber = -1;
 
+
 	groundPos_ = Vector3::up * 10000.f;
+
+	Vector3 signVector{};
+	for (uint32_t i = 0u; i < 3u; i++) {
+		float data = moveLine.diff.data()[i];
+		if (data) {
+			signVector.data()[i] = data / std::abs(data);
+		}
+	}
 
 	for (uint32_t i = 0u; i < lines.size(); ++i) {
 		lines[i].origin = playerVertex[i];
-		lines[i].diff = Vector3::up * -1000.f;
+		lines[i].diff = Vector3::up * -1000.f + (Vector3::right + Vector3::front) * 0.1f;
 	}
 	for (const auto &[key, collider] : levelManager->blockCollider_) {
 		for (auto &box : collider.GetCollider()) {
@@ -266,6 +277,14 @@ Vector3 PlayerComp::CalcMoveCollision() {
 
 				for (uint32_t i = 0u; i < lines.size(); ++i) {
 					float t = Collision::HitProgress(lines[i], box);
+					// もし接触していたら
+					if (t < 1.f) {
+						const char buff = 0b1;
+						char hitFlag{};
+						// フラグを立てる
+						hitFlag += buff << i;
+						isHitFlag |= (hitFlag);
+					}
 					if (hitProgress > t) {
 						hitProgress = t;
 						hitNumber = i;
@@ -273,6 +292,24 @@ Vector3 PlayerComp::CalcMoveCollision() {
 				}
 			}
 		}
+	}
+
+	Vector3 result = moveLine.origin;
+
+	// すべてのフラグが立っていた(全部地面の上)
+	if ((isHitFlag & 0b1111) == 0b1111) {
+		// そのまま通す
+		result = moveLine.origin;
+	}
+	else if ((isHitFlag & 0b1100) == 0b1100 || (isHitFlag & 0b0011) == 0b0011) {
+		result.x = std::round(result.x) + (0.99f - radius_.x) * signVector.x;
+	}
+	else if ((isHitFlag & 0b0110) == 0b0110 || (isHitFlag & 0b1001) == 0b1001) {
+		result.z = std::round(result.z) + (0.99f - radius_.z) * signVector.z;
+	}
+	else {
+		result.x = std::round(result.x) + (0.99f - radius_.x) * signVector.x;
+		result.z = std::round(result.z) + (0.99f - radius_.z) * signVector.z;
 	}
 
 	if (hitProgress != 1.f && hitNumber != -1) {
@@ -283,10 +320,11 @@ Vector3 PlayerComp::CalcMoveCollision() {
 	// SoLib::ImGuiText("GroundPos", SoLib::to_string(groundPos_));
 
 #pragma endregion
+	//if()
 
 	if (this->GetGroundPos() == nullptr) {
 		return prePos;
 	}
 
-	return moveLine.origin;
+	return result;
 }
