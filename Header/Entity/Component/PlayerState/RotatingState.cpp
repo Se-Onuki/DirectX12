@@ -39,23 +39,28 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	const Vector3 *downPtr = pPlayer_->GetGroundPos();
 	Vector3 downPlayer;
 	if (downPtr) {
-		endColor_ = { 0.3f,0.3f,1.f,1.f };
+		endColor_ = { 0.1f,0.1f,1.f,1.f };
 		downPlayer = *downPtr;
 	}
 	else {
-		endColor_ = { 1.f,0.3f,0.3f,1.f };
+		endColor_ = { 1.f,0.1f,0.1f,1.f };
 
 		downPlayer = pPlayer_->transform_->GetGrobalPos();
-		downPlayer.y -= 15.f;
+		downPlayer.y -= 45.f;
 	}
+	if (platform->GetTimer().IsActive()) {
+		downPlayer.y -= 45.f;
+	}
+
+
 	startColor_ = SoLib::Lerp(startColor_, endColor_, 0.1f);
 	for (uint32_t i = 0u; i < 2.f; i++) {
 		TestParticle *particlePtr = dynamic_cast<TestParticle *>(ParticleManager::GetInstance()->AddParticle(model_, std::make_unique<TestParticle>(SoLib::Lerp(pPlayer_->transform_->GetGrobalPos(), downPlayer, Random::GetRandom<float>(0.f, 1.f)))));
 		if (particlePtr) {
 
-			particlePtr->velocity_ = Vector3::front * Random::GetRandom<float>(2.f, 5.f) * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, Random::GetRandom<float>(-Angle::PI, Angle::PI));
+			particlePtr->velocity_ = Vector3::front * Random::GetRandom<float>(1.f, 3.f) * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, Random::GetRandom<float>(-Angle::PI, Angle::PI));
 			particlePtr->color_ = startColor_;
-			particlePtr->SetAliveTime(0.25f);
+			particlePtr->SetAliveTime(0.5f);
 
 		}
 	}
