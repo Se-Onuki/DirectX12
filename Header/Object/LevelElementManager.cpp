@@ -13,6 +13,7 @@
 #include "imgui.h"
 #include "../Entity/Component/PlayerState/IdleState.h"
 #include "Fade.h"
+#include "TutorialManager.h"
 
 nlohmann::json LevelElementManager::levelData_;
 
@@ -617,6 +618,8 @@ void LevelElementManager::Platform::Update(float deltaTime)
 void LevelElementManager::Platform::AddRotate(const float targetRot)
 {
 	if (timer_.IsFinish()) {
+		TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kDownZ);
+
 		targetRot_ = Angle::Mod(rotateAxis_ * targetRot + startRot_);
 		timer_.Start(lerpTime_);
 	}

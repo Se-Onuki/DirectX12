@@ -3,6 +3,7 @@
 #include "Engine/DirectBase/Model/ModelManager.h"
 #include "Header/Object/LevelElementManager.h"
 #include "Engine/DirectBase/Base/Audio.h"
+#include "Header/Object/TutorialManager.h"
 
 // 静的なメンバ変数の実体を宣言
 uint32_t StarItemComp::collctSE_ = 0u;
@@ -40,6 +41,7 @@ void StarItemComp::Update() {
 
 void StarItemComp::CollectItem() {
 	if (not isCollected_) {
+		TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kFloatZ);
 		auto *const modelComp = object_->AddComponent<ModelComp>();
 		modelComp->GetBone("Body")->transform_->scale = Vector3::zero;
 
