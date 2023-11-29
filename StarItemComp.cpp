@@ -30,24 +30,34 @@ void StarItemComp::Reset() {
 
 	auto *const modelComp = object_->AddComponent<ModelComp>();
 	modelComp->GetBone("Body")->transform_->scale = Vector3::one;
+
+	modelComp->GetBone("StarBase")->model_ = ModelManager::GetInstance()->GetModel("StarBase");
+	clearTimer_.Clear();
 }
 
 void StarItemComp::Update() {
 	auto *const modelComp = object_->AddComponent<ModelComp>();
 
+	clearTimer_.Update(object_->GetDeltaTime());
 	transform_->CalcMatrix();
 	collider_.centor = transform_->GetGrobalPos();
 	modelComp->GetBone("Body")->transform_->rotate.y = Angle::Mod(modelComp->GetBone("Body")->transform_->rotate.y + 45._deg * object_->GetDeltaTime());
 
+	if (clearTimer_.IsActive()) {
+		modelComp->GetBone("Body")->transform_->rotate.y += 30._deg * clearTimer_.GetProgress();
+		modelComp->GetBone("Body")->transform_->scale = SoLib::Lerp(Vector3::one, Vector3::zero, SoLib::easeInBack(clearTimer_.GetProgress()));
+	}
 }
 
 void StarItemComp::CollectItem() {
 	if (not isCollected_) {
 		TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kFloatZ);
 		auto *const modelComp = object_->AddComponent<ModelComp>();
-		modelComp->GetBone("Body")->transform_->scale = Vector3::zero;
+		modelComp->GetBone("StarBase")->model_ = ModelManager::GetInstance()->GetModel("StarBaseShine");
 
-		ParticleEmitter* pEmitter_ = ParticleEmitterManager::GetInstance()->CreateEmitter<GetParticle>("StarItem", 0.2f);
+		clearTimer_.Start(1.f);
+
+		ParticleEmitter *pEmitter_ = ParticleEmitterManager::GetInstance()->CreateEmitter<GetParticle>("StarItem", 0.2f);
 		pEmitter_->emitTransform_ = *transform_;
 
 		// undoログにデータを追加

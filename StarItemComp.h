@@ -1,6 +1,7 @@
 #pragma once
 #include "Header/Entity/Entity.h"
 #include "Header/Collision/Collision.h"
+#include "Utils/SoLib/SoLib.h"
 
 class StarItemComp : public IComponent {
 public:
@@ -20,6 +21,8 @@ public:
 	bool GetIsCollected() const { return isCollected_; }
 
 private:
+
+	SoLib::DeltaTimer clearTimer_{ };
 
 	bool isCollected_ = false;
 
