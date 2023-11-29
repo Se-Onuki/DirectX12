@@ -122,7 +122,7 @@ public: // パブリックなメンバ変数
 	// 位置座標
 	Vector2 position_ = { 640.0f, -80.0f };
 	// 大きさ
-	Vector2 scale_ = { 320.0f, 160.0f };
+	Vector2 scale_ = { 341.3f, 170.6f };
 	// 中心点
 	Vector2 anchorPoint_ = { 0.5f, 0.5f };
 
@@ -159,7 +159,7 @@ private: // メンバ変数
 
 	// チュートリアル進捗
 	int progress_ = kMove; // 現在の
-	int prevProgress_ = 999; // 前の
+	int prevProgress_ = kDisableSpin; // 前の
 
 	// コントローラーか
 	bool isController_ = false;
