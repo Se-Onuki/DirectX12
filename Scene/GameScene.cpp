@@ -140,7 +140,7 @@ void GameScene::OnEnter() {
 	// インゲームUI
 	inGameUI_ = std::make_unique<InGameUIManager>();
 	// 初期化
-	inGameUI_->Init(3);
+	inGameUI_->Init(levelManager->GetMaxStarCount());
 	// プレイヤーコンポーネントのセットIn
 	inGameUI_->SetPlayerComp(*player_->GetComponent<PlayerComp>());
 	// フェードイン開始

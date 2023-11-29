@@ -174,8 +174,12 @@ public:
 	/// @param count 回転回数の加算値
 	void AddStarCount(const int32_t count);
 
-	int32_t GetStarCount() { return remainRotateCount_; }
-	int32_t GetMaxStarCount() { return vMaxRotateCount_; }
+	int32_t GetStarCount() const { return remainRotateCount_; }
+	int32_t GetMaxStarCount() const { return vMaxRotateCount_; }
+
+	/// @brief 星の取得の進行度
+	/// @return 0~1の進行度
+	float GetStarProgress() const { return std::clamp(static_cast<float>(remainRotateCount_) / vMaxRotateCount_, 0.f, 1.f); }
 
 	Platform *const GetPlatform(int32_t index);
 
@@ -187,6 +191,7 @@ public:
 	VariantItem<float> vLerpTime_{ "LerpTime", 1.f };
 	VariantItem<int32_t> vMaxRotateCount_{ "MaxRotateCount", 2 };
 
+	std::list<Entity *> GetStarItemList();
 	std::list<Entity *> GetGoalList();
 
 	bool GetIsDebuging() const { return debugDrawer_; }

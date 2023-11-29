@@ -103,6 +103,8 @@ void LevelElementManager::SetData()
 	}
 
 	this->SetTransferData();
+
+	this->vMaxRotateCount_ = static_cast<int32_t>(GetStarItemList().size());
 }
 
 void LevelElementManager::SaveData()
@@ -462,6 +464,17 @@ LevelElementManager::Platform *const LevelElementManager::GetPlatform(
 		return nullptr;
 	}
 	return &itPlatform->second;
+}
+
+std::list<Entity *> LevelElementManager::GetStarItemList() {
+	std::list<Entity *> starItemPtrList;
+	for (const auto &it : blockCollider_) {
+		const auto &starItemList = it.second.GetStarItem();
+		for (const auto &star : starItemList) {
+			starItemPtrList.push_back(star.get());
+		}
+	}
+	return starItemPtrList;
 }
 
 std::list<Entity *> LevelElementManager::GetGoalList()
