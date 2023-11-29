@@ -35,9 +35,26 @@ void StageSelectManager::Update([[maybe_unused]] float deltaTime)
 	// キーボードの入力取得
 	static const auto *const keyBoard = input_->GetDirectInput();
 
+#pragma region スティック入力
+
+	static SoLib::DeltaTimer inputTimer{ 0.2f };
+	inputTimer.Update(deltaTime);
+	Vector2 stick = input_->GetXInput()->GetState()->stickL_;
+
+	bool isFinish = inputTimer.IsFinish();
+
+	if (stick.Length() < 0.1f) {
+		stick = {};
+	}
+	else if (isFinish) {
+		inputTimer.Start();
+	}
+
+#pragma endregion
+
 	// キー入力をすると選択番号を変更
 	if (not ui_.GetIsPlayingAnim()) {
-		if (keyBoard->IsTrigger(DIK_RIGHTARROW) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_RIGHT)) {
+		if (keyBoard->IsTrigger(DIK_RIGHTARROW) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_RIGHT) || (stick.x > 0.f && isFinish)) {
 			Audio::GetInstance()->PlayWave(selectStageSE_, false, 0.65f);
 			if (selectedStageNumber_ < maxLevelCount_ - 1)
 				selectedStageNumber_++;
@@ -46,7 +63,7 @@ void StageSelectManager::Update([[maybe_unused]] float deltaTime)
 
 			ui_.SetIsRight(true);
 		}
-		else if (keyBoard->IsTrigger(DIK_LEFTARROW) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_LEFT)) {
+		else if (keyBoard->IsTrigger(DIK_LEFTARROW) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_LEFT) || (stick.x < 0.f && isFinish)) {
 			Audio::GetInstance()->PlayWave(selectStageSE_, false, 0.65f);
 			if (selectedStageNumber_ > 0)
 				selectedStageNumber_--;
