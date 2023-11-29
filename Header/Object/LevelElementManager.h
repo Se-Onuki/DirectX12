@@ -14,6 +14,8 @@
 #include "../Collision/Collision.h"
 #include "../Entity/Entity.h"
 
+class InGameUIManager;
+
 class LevelElementManager {
 	LevelElementManager() = default;
 	LevelElementManager(const LevelElementManager &) = delete;
@@ -69,7 +71,7 @@ public:
 
 		void Update(float deltaTime);
 
-		void AddRotate(const float targetRot);
+		bool AddRotate(const float targetRot);
 
 		void SetRotate(const float targetRot);
 
@@ -123,6 +125,8 @@ public:
 		return &instance;
 	}
 
+	InGameUIManager *pInGameUI_ = nullptr;
+
 	static void StaticInit();
 
 	void LoadData(const uint32_t levelID);
@@ -168,7 +172,10 @@ public:
 
 	/// @brief 回転回数の変更
 	/// @param count 回転回数の加算値
-	void AddRotateCount(const int32_t count);
+	void AddStarCount(const int32_t count);
+
+	int32_t GetStarCount() { return remainRotateCount_; }
+	int32_t GetMaxStarCount() { return vMaxRotateCount_; }
 
 	Platform *const GetPlatform(int32_t index);
 

@@ -47,7 +47,7 @@ void StarItemComp::CollectItem() {
 
 		// undoログにデータを追加
 		LevelElementManager::GetInstance()->AddUndoLog(object_);
-		LevelElementManager::GetInstance()->AddRotateCount(1);
+		LevelElementManager::GetInstance()->AddStarCount(1);
 
 		Audio::GetInstance()->PlayWave(collctSE_, false, 0.5f);
 
