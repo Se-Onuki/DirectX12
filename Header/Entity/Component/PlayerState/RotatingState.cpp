@@ -40,7 +40,7 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 			Audio::GetInstance()->PlayWave(rotateSE_, false, 0.45f);
 			platform->AddRotate(rotateFacing * -90._deg);
 		}
-		else if (groundPosPtr && (keyBoard->IsPress(DIK_Z) || gamePad->IsPress(KeyCode::Y))) {
+		else if (groundPosPtr && (keyBoard->IsPress(DIK_Z) || gamePad->IsPress(KeyCode::X))) {
 			pPlayer_->ChangeState<PlayerEndRotateState>();
 		}
 	}

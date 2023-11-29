@@ -10,7 +10,7 @@ void FollowCameraComp::Init() {
 
 void FollowCameraComp::Update() {
 
-	Vector3 linePoint = line_.ClosestPoint(pTarget_->GetGrobalPos());
+	Vector3 linePoint = SoLib::Lerp(line_.ClosestPoint(pTarget_->GetGrobalPos()), prePos_, vLerpValue);
 
 	camera_->translation_ = offset_.GetItem() * Matrix4x4::EulerRotate(rotate_) + SoLib::Lerp(pTarget_->GetGrobalPos(), linePoint, vLerpValue) + addOffset_;
 	camera_->translation_.y = offset_.GetItem().y + SoLib::Lerp(pTarget_->GetGrobalPos().y, linePoint.y, 0.25f) + addOffset_->y;
@@ -20,6 +20,8 @@ void FollowCameraComp::Update() {
 	camera_->rotation_ = facing.Direction2Euler();
 
 	camera_->UpdateMatrix();
+
+	prePos_ = linePoint;
 }
 
 void FollowCameraComp::ImGuiWidget() {
