@@ -809,6 +809,9 @@
     <ClInclude Include="Header\Object\InGameUIManager\StarUI.h">
       <Filter>Header\Entity\Object\InGameUIManager</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Object\TutorialManager.h">
+      <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

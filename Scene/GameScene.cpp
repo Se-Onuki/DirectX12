@@ -17,6 +17,7 @@
 
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
 #include "../Header/Object/Block/BlockManager.h"
+#include "../Header/Object/TutorialManager.h"
 
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../StarItemComp.h"
@@ -147,6 +148,8 @@ void GameScene::OnEnter() {
 
 	levelManager->AddUndoLog(nullptr);
 
+	TutorialManager::GetInstance()->Init();
+
 }
 
 void GameScene::OnExit() {
@@ -218,6 +221,7 @@ void GameScene::Update() {
 		//goal_->Update(deltaTime);
 
 		ImGui::Begin("Player");
+		ImGui::Text("%d", TutorialManager::GetInstance()->GetProgress());
 		if (ImGui::Button("Reset")) {
 			player_->Reset();
 		}

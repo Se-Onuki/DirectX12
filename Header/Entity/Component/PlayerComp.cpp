@@ -245,6 +245,8 @@ Vector3 PlayerComp::CalcMoveCollision() {
 	}
 #pragma region 直下の地面の座標を取得
 
+	bool isHitCentor{};
+
 	const AABB playerCollider = referenceCollider_.AddPos(moveLine.origin);
 	const AABB extendCollider = playerCollider.Extend(Vector3::up * -1000.f);
 
@@ -254,7 +256,6 @@ Vector3 PlayerComp::CalcMoveCollision() {
 
 	float hitProgress = 1.f;
 	int32_t hitNumber = -1;
-
 
 	groundPos_ = Vector3::up * 10000.f;
 
@@ -270,20 +271,28 @@ Vector3 PlayerComp::CalcMoveCollision() {
 		lines[i].origin = playerVertex[i];
 		lines[i].diff = Vector3::up * -1000.f + (Vector3::right + Vector3::front) * 0.1f;
 	}
+	LineBase centorLine{ .origin = moveLine.origin, .diff = Vector3::up * -1000.f + (Vector3::right + Vector3::front) * 0.1f };
+
+
 	for (const auto &[key, collider] : levelManager->blockCollider_) {
 		for (auto &box : collider.GetCollider()) {
 			// 拡張した箱が当たってたら詳細な判定
 			if (Collision::IsHit(extendCollider, box)) {
 
+				if (not isHitCentor) {
+					isHitCentor |= Collision::IsHit(box, centorLine);
+				}
 				for (uint32_t i = 0u; i < lines.size(); ++i) {
 					float t = Collision::HitProgress(lines[i], box);
 					// もし接触していたら
 					if (t < 1.f) {
-						const char buff = 0b1;
-						char hitFlag{};
-						// フラグを立てる
-						hitFlag += buff << i;
-						isHitFlag |= (hitFlag);
+						if (isHitFlag != 0b1111) {
+							const char buff = 0b1;
+							char hitFlag{};
+							// フラグを立てる
+							hitFlag += buff << i;
+							isHitFlag |= (hitFlag);
+						}
 					}
 					if (hitProgress > t) {
 						hitProgress = t;
@@ -301,15 +310,31 @@ Vector3 PlayerComp::CalcMoveCollision() {
 		// そのまま通す
 		result = moveLine.origin;
 	}
-	else if ((isHitFlag & 0b1100) == 0b1100 || (isHitFlag & 0b0011) == 0b0011) {
-		result.x = std::round(result.x) + (0.99f - radius_.x) * signVector.x;
+	// 左に行くとき
+	else if ((isHitFlag & 0b1100) == 0b1100) {
+		result.x = std::round(result.x + 1.f - isHitCentor) - (0.99f - radius_.x);
 	}
-	else if ((isHitFlag & 0b0110) == 0b0110 || (isHitFlag & 0b1001) == 0b1001) {
-		result.z = std::round(result.z) + (0.99f - radius_.z) * signVector.z;
+	// 右に行くとき
+	else if ((isHitFlag & 0b0011) == 0b0011) {
+		result.x = std::round(result.x - 1.f + isHitCentor) + (0.99f - radius_.x);
+
+	}
+	// 下に行くとき
+	else if ((isHitFlag & 0b0110) == 0b0110) {
+
+		result.z = std::round(result.z + 1.f - isHitCentor) - (0.99f - radius_.z);
+	}
+	// 上に行くとき
+	else if ((isHitFlag & 0b1001) == 0b1001) {
+		result.z = std::round(result.z - 1.f + isHitCentor) + (0.99f - radius_.z);
 	}
 	else {
 		result.x = std::round(result.x) + (0.99f - radius_.x) * signVector.x;
 		result.z = std::round(result.z) + (0.99f - radius_.z) * signVector.z;
+	}
+	uint32_t i = 0u;
+	for (const auto &vertex : playerVertex) {
+		ImGui::Text("%d: %s", i, SoLib::to_string(vertex).c_str());
 	}
 
 	if (hitProgress != 1.f && hitNumber != -1) {

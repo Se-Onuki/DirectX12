@@ -34,7 +34,7 @@ void PlayerMoveState::Update([[maybe_unused]] float deltaTime)
 	if (not pPlayer_->GetIsLanding()) {
 		pPlayer_->ChangeState<PlayerFallingState>();
 	}
-	else if (keyBoard->IsPress(DIK_Z) || gamePad->IsPress(KeyCode::Y)) {
+	else if (keyBoard->IsPress(DIK_Z) || gamePad->IsPress(KeyCode::X)) {
 		pPlayer_->ChangeState<PlayerBeginRotateState>();
 	}
 	else if (keyBoard->IsPress(DIK_SPACE) || gamePad->IsPress(KeyCode::A)) {

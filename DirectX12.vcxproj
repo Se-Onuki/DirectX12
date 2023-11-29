@@ -297,6 +297,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\StageSelectManager\StageSelectUI.h" />
     <ClInclude Include="Header\Object\TitleBlock\TitleBlock.h" />
     <ClInclude Include="Header\Object\TitleManager\TitleManager.h" />
+    <ClInclude Include="Header\Object\TutorialManager.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\LoadScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
