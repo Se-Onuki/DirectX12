@@ -216,6 +216,7 @@ void LevelElementManager::UndoUpdate(const float deltaTime)
 	}
 	// 終了したら
 	if (undoTimer_.IsFinish() && undoTimer_.IsActive()) {
+
 		pPlayer_->GetComponent<PlayerComp>()->ChangeState<PlayerIdleState>();
 		pPlayer_->GetComponent<PlayerAnimComp>()->GetAnimManager()->SetNextAnimation(PlayerBehavior::kIdle, true);
 		if (undoLog_.item_) {
@@ -225,6 +226,9 @@ void LevelElementManager::UndoUpdate(const float deltaTime)
 		else {
 			pPlayer_->transform_.translate = startPos_->translate;
 		}
+		remainRotateCount_ = undoLog_.remainRotCount_;
+		pInGameUI_->SetStar(remainRotateCount_);
+
 		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 0.25f);
 
 		// もしリストが空だったら戻す
