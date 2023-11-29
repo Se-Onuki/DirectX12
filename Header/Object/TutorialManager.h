@@ -8,7 +8,7 @@ class TutorialManager
 	~TutorialManager() = default;
 public:
 
-	enum class TutorialProgress : uint32_t {
+	enum class TutorialProgress : int32_t {
 		kWalk,
 		kFloatZ,
 		kRotate,
@@ -28,9 +28,7 @@ public:
 	int32_t GetProgress() const { return progress_; }
 
 	void SetProgress(const TutorialProgress value) {
-		if (static_cast<int32_t>(value) > progress_) {
-			progress_ = static_cast<int32_t>(value);
-		}
+		progress_ = static_cast<int32_t>(value);
 	}
 	void AddProgress() { progress_++; }
 

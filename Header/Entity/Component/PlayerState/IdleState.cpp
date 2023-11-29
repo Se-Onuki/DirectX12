@@ -6,6 +6,8 @@
 #include "MoveState.h"
 #include "FallingState.h"
 #include "BeginRotate.h"
+#include "../../../Object/LevelElementManager.h"
+#include "../../../Object/InGameUIManager/InGameUIManager.h"
 
 
 void PlayerIdleState::Init() {
@@ -22,8 +24,13 @@ void PlayerIdleState::Update([[maybe_unused]] float deltaTime) {
 	if (not pPlayer_->GetIsLanding()) {
 		pPlayer_->ChangeState<PlayerFallingState>();
 	}
-	else if (keyBoard->IsPress(DIK_Z) || gamePad->IsPress(KeyCode::X)) {
-		pPlayer_->ChangeState<PlayerBeginRotateState>();
+	else if (keyBoard->IsTrigger(DIK_Z) || gamePad->IsTrigger(KeyCode::X)) {
+		if (LevelElementManager::GetInstance()->GetStarCount()) {
+			pPlayer_->ChangeState<PlayerBeginRotateState>();
+		}
+		else {
+			pPlayer_->pInGameUI_->ShakeStar();
+		}
 	}
 	else if (keyBoard->IsPress(DIK_SPACE) || gamePad->IsPress(KeyCode::A)) {
 		pPlayer_->JumpInput();

@@ -233,10 +233,10 @@ void GameScene::Update() {
 
 		Vector3 euler{};
 		if (keyBoard->IsPress(DIK_RIGHT)) {
-			euler += Vector3::up * -5._deg;
+			euler += Vector3::up * -3._deg;
 		}
 		if (keyBoard->IsPress(DIK_LEFT)) {
-			euler += Vector3::up * 5._deg;
+			euler += Vector3::up * +3._deg;
 		}
 		if (std::abs(gamePad->GetState()->stickR_.x) > 0.1f) {
 			euler += Vector3::up * 3._deg * gamePad->GetState()->stickR_.x;

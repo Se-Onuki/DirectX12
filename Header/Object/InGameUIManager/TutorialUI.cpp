@@ -2,14 +2,14 @@
 #include "../../../Engine/DirectBase/Input/Input.h"
 #include "../TutorialManager.h"
 
-void TutorialUI::Init(const std::string& id)
+void TutorialUI::Init(const std::string &id)
 {
 	// ID取得
 	id_ = id;
 	// スプライトのインスタンスを生成
 	tutorialUI_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_1.png")));
 	tutorialKeyUI_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_1.png")));
-	
+
 	// 表示
 	behaviorRequest_ = kAppear;
 }
@@ -123,8 +123,7 @@ void TutorialUI::DisplayImGui()
 
 void TutorialUI::ChangeTexture()
 {
-	switch (progress_)
-	{
+	switch (progress_) {
 	case TutorialUI::kMove:
 		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_1.png"));
 		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_1.png"));
