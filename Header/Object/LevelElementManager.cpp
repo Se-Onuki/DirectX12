@@ -37,8 +37,6 @@ void LevelElementManager::SetData()
 {
 	// 足場データの破棄
 	blockCollider_.clear();
-	// 回転可能回数の指定
-	vMaxRotateCount_ = monoLevelData_["MaxRotateCount"].get<int32_t>();
 	// カメラの始点と終点の設定
 	lineStart_->translate = monoLevelData_["CameraStart"];
 	lineEnd_->translate = monoLevelData_["CameraEnd"];
@@ -109,7 +107,6 @@ void LevelElementManager::SetData()
 
 void LevelElementManager::SaveData()
 {
-	monoLevelData_["MaxRotateCount"] = vMaxRotateCount_.GetItem();
 	monoLevelData_["CameraStart"] = lineStart_->translate;
 	monoLevelData_["CameraEnd"] = lineEnd_->translate;
 

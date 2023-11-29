@@ -254,6 +254,9 @@ void GameScene::Update() {
 
 		// カメラマネージャーの更新
 		cameraManager_->Update(deltaTime);
+
+		particleManager->Update(deltaTime);
+
 	}
 	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnCheckPoint) {
 		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 0.25f);
@@ -307,8 +310,6 @@ void GameScene::Update() {
 	//playerAnim_->Update(deltaTime);
 
 	light_->ImGuiWidget();
-
-	particleManager->Update(deltaTime);
 
 	//transform_->ImGuiWidget();
 	//transform_->UpdateMatrix();
