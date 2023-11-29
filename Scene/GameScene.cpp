@@ -158,6 +158,7 @@ void GameScene::Update() {
 	static auto *const particleManager = ParticleManager::GetInstance();
 	static auto *const particleEmitterManager = ParticleEmitterManager::GetInstance();
 	static const auto *const keyBoard = input_->GetDirectInput();
+	static const auto *const gamePad = input_->GetXInput();
 
 	// ポーズ画面マネージャー初期化
 	PoseManager::GetInstance()->Update(deltaTime);
@@ -227,6 +228,9 @@ void GameScene::Update() {
 		}
 		if (keyBoard->IsPress(DIK_LEFT)) {
 			euler += Vector3::up * 5._deg;
+		}
+		if (std::abs(gamePad->GetState()->stickR_.x) > 0.1f) {
+			euler += Vector3::up * 3._deg * gamePad->GetState()->stickR_.x;
 		}
 
 		followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);

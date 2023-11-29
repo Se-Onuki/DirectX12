@@ -15,16 +15,17 @@ void PlayerIdleState::Init() {
 void PlayerIdleState::Update([[maybe_unused]] float deltaTime) {
 
 	static const auto *const keyBoard = input_->GetDirectInput();
+	static const auto *const gamePad = input_->GetXInput();
 	auto *const rigidbody = pPlayer_->object_->GetComponent<Rigidbody>();
 	rigidbody->SetVelocity({ 0.f,rigidbody->GetVelocity().y,0.f });
 
 	if (not pPlayer_->GetIsLanding()) {
 		pPlayer_->ChangeState<PlayerFallingState>();
 	}
-	else if (keyBoard->IsPress(DIK_Z)) {
+	else if (keyBoard->IsPress(DIK_Z) || gamePad->IsPress(KeyCode::Y)) {
 		pPlayer_->ChangeState<PlayerBeginRotateState>();
 	}
-	else if (keyBoard->IsPress(DIK_SPACE)) {
+	else if (keyBoard->IsPress(DIK_SPACE) || gamePad->IsPress(KeyCode::A)) {
 		pPlayer_->JumpInput();
 	}
 	else {
@@ -42,6 +43,14 @@ void PlayerIdleState::Update([[maybe_unused]] float deltaTime) {
 		if (keyBoard->IsPress(DIK_D)) {
 			inputVec += Vector3::right;
 		}
+
+		Vector3 padInput{};
+		padInput.x = gamePad->GetState()->stickL_.x;
+		padInput.z = gamePad->GetState()->stickL_.y;
+		if (padInput.Length() >= 0.1f) {
+			inputVec = padInput;
+		}
+
 		if (inputVec.LengthSQ() != 0.f) {
 			pPlayer_->ChangeState<PlayerMoveState>();
 		}

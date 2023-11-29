@@ -134,10 +134,11 @@ void PlayerComp::MoveInput(const Vector3 &vec) {
 void PlayerComp::JumpInput() {
 
 	static const auto *const keyBoard = input_->GetDirectInput();
+	static const auto *const gamePad = input_->GetXInput();
 	//auto *const rigidbody = object_->GetComponent<Rigidbody>();
 
 	if (GetIsLanding()) {
-		if (keyBoard->IsTrigger(DIK_SPACE)) {
+		if (keyBoard->IsTrigger(DIK_SPACE) || gamePad->IsPress(KeyCode::A)) {
 			this->ChangeState<PlayerJumpState>();
 		}
 	}

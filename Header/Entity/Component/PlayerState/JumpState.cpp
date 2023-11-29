@@ -17,6 +17,7 @@ void PlayerJumpState::Init() {
 void PlayerJumpState::Update([[maybe_unused]] float deltaTime) {
 
 	static const auto *const keyBoard = input_->GetDirectInput();
+	static const auto *const gamePad = input_->GetXInput();
 	auto *nowAnimation = pAnimation_->GetAnimManager()->GetNowAnimation();
 	auto *const rigidbody = pPlayer_->object_->GetComponent<Rigidbody>();
 
@@ -46,6 +47,13 @@ void PlayerJumpState::Update([[maybe_unused]] float deltaTime) {
 	}
 
 	inputVec = inputVec.Nomalize();
+
+	Vector3 padInput{};
+	padInput.x = gamePad->GetState()->stickL_.x;
+	padInput.z = gamePad->GetState()->stickL_.y;
+	if (padInput.Length() >= 0.1f) {
+		inputVec = padInput;
+	}
 	inputVec *= jumpSpeed;
 
 	// 入力方向に応じた移動
