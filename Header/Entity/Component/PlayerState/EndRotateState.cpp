@@ -2,12 +2,15 @@
 #include "IdleState.h"
 #include "../PlayerComp.h"
 #include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../../Object/TutorialManager.h"
 
 // 静的なメンバ変数の実体を宣言
 uint32_t PlayerEndRotateState::endRotateSE1_ = 0u;
 uint32_t PlayerEndRotateState::endRotateSE2_ = 0u;
 
 void PlayerEndRotateState::Init() {
+	TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kToGoal);
+
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.1f);
 	timer_.Start(pPlayer_->vRotateEndTime_);
 

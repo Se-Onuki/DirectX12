@@ -15,7 +15,7 @@ StageSelectScene::StageSelectScene()
 	cameraManager_ = CameraManager::GetInstance();
 }
 
-StageSelectScene::~StageSelectScene(){}
+StageSelectScene::~StageSelectScene() {}
 
 void StageSelectScene::OnEnter()
 {
@@ -46,7 +46,7 @@ void StageSelectScene::OnEnter()
 	if (startStageSE_ == 0u) {
 		startStageSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/UI/select.wav");
 	}
-	
+
 	// フェードイン開始
 	Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 0.0f }, 1.0f);
 }
@@ -60,14 +60,16 @@ void StageSelectScene::Update()
 {
 
 	// キーボードの入力取得
-	static const auto* const keyBoard = input_->GetDirectInput();
+	static const auto *const keyBoard = input_->GetDirectInput();
 
 	// デルタタイムの取得
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
+	bgmTimingManager_.Update(deltaTime);
 	// BGM再生
-	if (audio_->IsPlaying(voiceStageSelectSceneBGMHandle_) == 0 || voiceStageSelectSceneBGMHandle_ == -1) {
+	if ((audio_->IsPlaying(voiceStageSelectSceneBGMHandle_) == 0 || voiceStageSelectSceneBGMHandle_ == -1) && bgmTimingManager_.IsFinish()) {
 		voiceStageSelectSceneBGMHandle_ = audio_->PlayWave(stageSelectSceneBGM_, false, BGMVolume_);
+		bgmTimingManager_.Start(1.f);
 	}
 
 	// パーティクルの更新
@@ -108,8 +110,8 @@ void StageSelectScene::Update()
 
 void StageSelectScene::Draw()
 {
-	DirectXCommon* const dxCommon = DirectXCommon::GetInstance();
-	ID3D12GraphicsCommandList* const commandList = dxCommon->GetCommandList();
+	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
 #pragma region 背面スプライト
 
@@ -137,7 +139,7 @@ void StageSelectScene::Draw()
 	stageSelectManager_->Draw(*cameraManager_->GetUseCamera());
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
-	static auto* const particleManager = ParticleManager::GetInstance();
+	static auto *const particleManager = ParticleManager::GetInstance();
 
 
 	Model::EndDraw();

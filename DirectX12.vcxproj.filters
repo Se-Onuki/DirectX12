@@ -812,6 +812,9 @@
     <ClInclude Include="Header\Object\InGameUIManager\StarUI.h">
       <Filter>Header\Entity\Object\InGameUIManager</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Object\TutorialManager.h">
+      <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
     <ClInclude Include="Header\Object\InGameUIManager\TutorialUI.h">
       <Filter>Header\Entity\Object\InGameUIManager</Filter>
     </ClInclude>

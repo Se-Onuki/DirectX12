@@ -3,12 +3,15 @@
 #include "RotatingState.h"
 #include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../../../Object/LevelElementManager.h"
+#include "../../../Object/TutorialManager.h"
 
 // 静的なメンバ変数の実体を宣言
 uint32_t PlayerBeginRotateState::startRotateSE1_ = 0u;
 uint32_t PlayerBeginRotateState::startRotateSE2_ = 0u;
 
 void PlayerBeginRotateState::Init() {
+	TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kRotate);
+
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.1f);
 	startPos_ = pPlayer_->transform_->translate;
 

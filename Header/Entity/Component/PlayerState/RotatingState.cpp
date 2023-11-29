@@ -9,6 +9,9 @@ uint32_t PlayerRotatingState::rotateSE_ = 0u;
 void PlayerRotatingState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), true, AnimEasing::kLinear, 0.1f);
 
+	rotateCamera_ = CameraManager::GetInstance()->AddCamera("RotateCamera");
+
+
 	if (rotateSE_ == 0u) {
 		rotateSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/rotate.wav");
 	}
@@ -16,6 +19,7 @@ void PlayerRotatingState::Init() {
 
 void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	static const auto *const keyBoard = input_->GetDirectInput();
+	static const auto *const gamePad = input_->GetXInput();
 	pPlayer_->transform_->translate.y = pPlayer_->vRotateHeight_;
 
 	auto *const groundPosPtr = pPlayer_->GetGroundPos();
@@ -28,27 +32,20 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	rotateFacing > 0 ? rotateFacing = 1.f : rotateFacing = -1.f;
 
 	if (platform->GetTimer().IsFinish()) {
-		if (keyBoard->IsPress(DIK_Q)) {
+		if (keyBoard->IsPress(DIK_Q) || gamePad->IsPress(KeyCode::LEFT_SHOULDER)) {
 			Audio::GetInstance()->PlayWave(rotateSE_, false, 0.45f);
-
+			platform->AddRotate(rotateFacing * 90._deg);
 		}
-		else if (keyBoard->IsPress(DIK_E)) {
+		else if (keyBoard->IsPress(DIK_E) || gamePad->IsPress(KeyCode::RIGHT_SHOULDER)) {
 			Audio::GetInstance()->PlayWave(rotateSE_, false, 0.45f);
+			platform->AddRotate(rotateFacing * -90._deg);
 		}
-	}
-
-	if (keyBoard->IsPress(DIK_Q)) {
-		platform->AddRotate(rotateFacing * 90._deg);
-	}
-	else if (keyBoard->IsPress(DIK_E)) {
-		platform->AddRotate(rotateFacing * -90._deg);
-	}
-
-	else if (groundPosPtr && platform->GetTimer().IsFinish()) {
-		if (keyBoard->IsPress(DIK_Z)) {
+		else if (groundPosPtr && (keyBoard->IsPress(DIK_Z) || gamePad->IsPress(KeyCode::Y))) {
 			pPlayer_->ChangeState<PlayerEndRotateState>();
 		}
 	}
+
+
 }
 
 void PlayerRotatingState::Draw([[maybe_unused]] const Camera3D &camera) const {
