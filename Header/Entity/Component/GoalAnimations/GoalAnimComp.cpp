@@ -39,6 +39,9 @@ void GoalAnimComp::Init()
 	// アイテムを読み込む
 	ApplyItem();
 
+	AddItem(stageSelectManager_->GetSelectedStageNumber());
+	ApplyItem(stageSelectManager_->GetSelectedStageNumber());
+
 	backMaterial_.Create();
 	backMaterial_.blendMode_ = Model::BlendMode::kBacker;
 	backMaterial_.materialBuff_->color = Vector4{ 0.f,0.f,0.f,0.5f };
