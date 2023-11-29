@@ -1,6 +1,7 @@
 #include "InGameUIManager.h"
 #include "../../../Engine/DirectBase/Input/Input.h"
 #include "../../../Header/Object/StageSelectManager/StageSelectManager.h"
+#include "../LevelElementManager.h"
 
 void InGameUIManager::Init(int maxStarCount)
 {
@@ -29,12 +30,14 @@ void InGameUIManager::Init(int maxStarCount)
 
 	// 操作方法UIのリセット
 	controllUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_NoSpin.png")));
-	controllUI_.position_ = { 0.0f, 425.0f };
-	controllUI_.scale_ = { 512.0f, 300.0f };
+	controllUI_.position_ = { 0.0f, 0.0f };
+	controllUI_.scale_ = { 512.0f, 720.0f };
+	controllUI_.anchorPoint_ = { 0.0f, 0.0f };
 	// スピン時の操作方法UIのリセット
 	spinControllUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Controll/Controller_Spin.png")));
-	spinControllUI_.position_ = { 0.0f, 425.0f };
-	spinControllUI_.scale_ = { 512.0f, 220.0f };
+	spinControllUI_.position_ = { 0.0f, 0.0f };
+	spinControllUI_.scale_ = { 512.0f, 720.0f };
+	spinControllUI_.anchorPoint_ = { 0.0f, 0.0f };
 }
 
 void InGameUIManager::Update(float deltaTime)
@@ -77,6 +80,22 @@ void InGameUIManager::Update(float deltaTime)
 
 	controllUI_.sprite_->SetColor({ 1.0f, 1.0f, 1.0f, uiAlpha_ });
 
+	Entity* goal = nullptr;
+	if (LevelElementManager::GetInstance()->GetGoalList().size()) {
+		goal = LevelElementManager::GetInstance()->GetGoalList().front();
+
+		// ゴール状態である場合
+		if (goal->GetComponent<GoalAnimComp>()->GetIsPlay()) {
+			if (uiAlpha_ > 0.0f) {
+				uiAlpha_ -= 0.025f;
+			}
+			else {
+				uiAlpha_ = 0.0f;
+			}
+			
+		}
+	}
+
 #ifdef _DEBUG
 	ImGui::Begin("InGameUI");
 	if (ImGui::TreeNode("StarUI")) {
@@ -93,7 +112,7 @@ void InGameUIManager::Update(float deltaTime)
 		}
 		ImGui::TreePop();
 	}
-	
+
 	controllUI_.DisplayImGui("ControllUI");
 	spinControllUI_.DisplayImGui("spinControllUI");
 
@@ -157,4 +176,9 @@ void InGameUIManager::AddStar(int p0m)
 			}
 		}
 	}
+}
+
+void InGameUIManager::ShakeStar()
+{
+	blurTrigger_ = true;
 }

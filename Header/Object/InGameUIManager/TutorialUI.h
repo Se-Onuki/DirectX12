@@ -49,6 +49,9 @@ public: // メンバ関数
 	
 public: // アクセッサ等
 
+	
+	void ChangeTexture();
+
 	/// <summary>
 	/// 引数で指定したチュートリアル画像を表示する関数
 	/// </summary>
@@ -155,8 +158,8 @@ private: // メンバ変数
 	std::unique_ptr<Sprite>tutorialKeyUI_; // キーボード用
 
 	// チュートリアル進捗
-	int progress_ = kMove;			 // 現在の
-	int nextProgress_ = kMove; // 次の
+	int progress_ = kMove; // 現在の
+	int prevProgress_ = 999; // 前の
 
 	// コントローラーか
 	bool isController_ = false;

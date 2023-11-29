@@ -1,4 +1,6 @@
 #include "TutorialUI.h"
+#include "../../../Engine/DirectBase/Input/Input.h"
+#include "../TutorialManager.h"
 
 void TutorialUI::Init(const std::string& id)
 {
@@ -7,32 +9,23 @@ void TutorialUI::Init(const std::string& id)
 	// スプライトのインスタンスを生成
 	tutorialUI_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_1.png")));
 	tutorialKeyUI_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_1.png")));
+	
+	// 表示
+	behaviorRequest_ = kAppear;
 }
 
 void TutorialUI::Update(float deltaTime)
 {
-	switch (progress_)
-	{
-	case TutorialUI::kMove:
-		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_1.png"));
-		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_1.png"));
-		break;
-	case TutorialUI::kEnableSpin:
-		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_2.png"));
-		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_2.png"));
-		break;
-	case TutorialUI::kSpin:
-		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_3.png"));
-		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_3.png"));
-		break;
-	case TutorialUI::kDisableSpin:
-		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_4.png"));
-		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_4.png"));
-		break;
-	case TutorialUI::kGoal:
-		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_5.png"));
-		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_5.png"));
-		break;
+	if (progress_ != prevProgress_) {
+		if (!isChanging_) {
+			behaviorRequest_ = kDisappear;
+		}
+	}
+	else {
+		// 前フレームのやつを取得
+		prevProgress_ = progress_;
+		// チュートリアル進捗を取得
+		progress_ = TutorialManager::GetInstance()->GetProgress();
 	}
 
 	// ふるまいを変更するリクエストがあればTrue
@@ -85,7 +78,7 @@ void TutorialUI::Update(float deltaTime)
 
 void TutorialUI::Draw()
 {
-	if (isController_) {
+	if (Input::GetInstance()->GetInputType() == Input::InputType::kPad) {
 		// 背景の描画
 		tutorialUI_->SetPosition(position_);
 		tutorialUI_->SetScale(scale_);
@@ -128,15 +121,31 @@ void TutorialUI::DisplayImGui()
 	}
 }
 
-void TutorialUI::DisplayNextTutorial(int progress)
+void TutorialUI::ChangeTexture()
 {
-	// 次の進捗と一致しない場合はそれを代入する
-	if (nextProgress_ != progress_) {
-		progress_ = nextProgress_;
+	switch (progress_)
+	{
+	case TutorialUI::kMove:
+		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_1.png"));
+		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_1.png"));
+		break;
+	case TutorialUI::kEnableSpin:
+		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_2.png"));
+		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_2.png"));
+		break;
+	case TutorialUI::kSpin:
+		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_3.png"));
+		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_3.png"));
+		break;
+	case TutorialUI::kDisableSpin:
+		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_4.png"));
+		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_4.png"));
+		break;
+	case TutorialUI::kGoal:
+		tutorialUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/Tutorial_5.png"));
+		tutorialKeyUI_->SetTextureHaundle(TextureManager::Load("UI/TD2_3week_2/InGame/Tutorial/TutorialKey_5.png"));
+		break;
 	}
-	nextProgress_ = progress;
-	behaviorRequest_ = kDisappear;
-	changeTutorial_ = true;
 }
 
 void TutorialUI::StayInit()
@@ -206,13 +215,14 @@ void TutorialUI::DisappearUpdate()
 	else {
 		isChanging_ = false;
 		// 次の行動リクエストに待機アニメーションを設定
-		behaviorRequest_ = kStay;
+		behaviorRequest_ = kAppear;
 		// 非表示中
 		isDisplay_ = false;
 
-		// 次の進捗と一致しない場合はそれを代入する
-		if (nextProgress_ != progress_) {
-			progress_ = nextProgress_;
-		}
+		// テクスチャ変更
+		ChangeTexture();
+
+		// 前フレームのやつを取得
+		prevProgress_ = progress_;
 	}
 }
