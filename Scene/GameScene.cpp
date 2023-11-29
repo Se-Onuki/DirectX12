@@ -276,10 +276,13 @@ void GameScene::Update() {
 
 	}
 	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnCheckPoint) {
-		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 0.25f);
-		cameraManager_->SetUseCamera("FollowCamera");
-		levelManager->Undo();
-		PoseManager::GetInstance()->SetPoseState(PoseManager::kNone);
+		if (not Fade::GetInstance()->GetTimer()->IsActive()) {
+			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 0.25f);
+		}
+		if (levelManager->Undo()) {
+			cameraManager_->SetUseCamera("FollowCamera");
+			PoseManager::GetInstance()->SetPoseState(PoseManager::kNone);
+		}
 	}
 	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kRetry) {
 		if (!sceneChanging_) {

@@ -63,10 +63,6 @@ void PlayerComp::Update() {
 		if (isActiveGravity_) {
 			rigidbody->ApplyContinuousForce(Vector3{ 0.f,-9.8f,0.f });
 		}
-
-		if (keyBoard->IsTrigger(DIK_R)) {
-			LevelElementManager::GetInstance()->Undo();
-		}
 	}
 	else {
 

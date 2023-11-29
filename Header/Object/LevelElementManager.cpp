@@ -183,13 +183,12 @@ bool LevelElementManager::AnyPlatformRotating() const
 	return anyTrue;
 }
 
-void LevelElementManager::Undo()
-{
+bool LevelElementManager::Undo() {
 	// どれか一つでも回転していないか
 	bool anyTrue = AnyPlatformRotating();
 	// 回転していたら終了
 	if (anyTrue) {
-		return;
+		return false;
 	}
 
 	// もしログがあったら実行
@@ -203,7 +202,9 @@ void LevelElementManager::Undo()
 
 		// タイマーを開始
 		undoTimer_.Start(vLerpTime_);
+		return true;
 	}
+	return false;
 }
 
 void LevelElementManager::UndoUpdate(const float deltaTime)

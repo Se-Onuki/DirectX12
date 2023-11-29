@@ -137,7 +137,7 @@ public:
 
 	bool AnyPlatformRotating() const;
 
-	void Undo();
+	bool Undo();
 
 	void UndoUpdate(const float deltaTime);
 
