@@ -7,7 +7,7 @@
 
 class Enemy : public BaseCharacter {
 public:
-	Enemy() = default;
+	Enemy();
 	~Enemy() override;
 
 	void Init(const std::unordered_map<std::string, Model *> &model) override;
@@ -26,7 +26,10 @@ public:
 
 private:
 	int32_t health_ = 3;
+	const uint32_t entityNumber_;
 
 	OBB collider_;
 	const Platform *pPlatform_ = nullptr;
+
+	static uint32_t sNextNumber_;
 };

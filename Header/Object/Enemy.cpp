@@ -5,6 +5,11 @@
 #include "../../Utils/Math/Math.hpp"
 #include "Particle/TestParticle.h"
 
+uint32_t Enemy::sNextNumber_ = 0u;
+
+Enemy::Enemy() : entityNumber_(sNextNumber_++) {
+}
+
 Enemy::~Enemy() {}
 
 void Enemy::Init(const std::unordered_map<std::string, Model *> &model) {

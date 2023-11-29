@@ -260,6 +260,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\BaseCharacter.h" />
     <ClInclude Include="Header\Object\Block\BlockManager.h" />
     <ClInclude Include="Header\Object\CollisionDrawer.h" />
+    <ClInclude Include="Header\Object\Contactrecord.h" />
     <ClInclude Include="Header\Object\Enemy.h" />
     <ClInclude Include="Header\Object\FollowCamera.h" />
     <ClInclude Include="Header\Object\LevelElementManager.h" />

@@ -719,6 +719,9 @@
     <ClInclude Include="Header\Object\LockOn.h">
       <Filter>Header\Entity\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Object\Contactrecord.h">
+      <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
