@@ -20,6 +20,15 @@ void InGameUIManager::Init(int maxStarCount)
 		tutorialUI_ = std::make_unique<TutorialUI>();
 		tutorialUI_->Init("TutorialUI");
 	}
+	else if (selectedStageNumber_ == 2) {
+		// 操作方法UIのリセット
+		replayTutorialUI_.sprite_.reset(Sprite::Create(TextureManager::Load("UI/TD2_3week_2/InGame/ReturnTutorial.png")));
+		replayTutorialUI_.position_ = { 335.0f, 55.0f };
+		replayTutorialUI_.scale_ = { 0.0f, 85.0f };
+		replayTutorialUI_.anchorPoint_ = { 0.0f, 0.5f };
+		replayTutorialUI_.sprite_->SetTexDiff({ 0.0f, 170.0f });
+		replaySpriteAnimTimer_.Start(1.0f);
+	}
 
 	// 最大星数分スプライトを追加
 	for (int i = 0; i < maxStarCount_; i++) {
@@ -85,6 +94,44 @@ void InGameUIManager::Update(float deltaTime)
 		// インスタンス生成
 		tutorialUI_->Update(deltaTime);
 		tutorialUI_->alphaMagnification_ = uiAlpha_;
+	}
+	else if (selectedStageNumber_ == 2) {
+		replayTutorialUI_.sprite_->SetColor({ 1.0f, 1.0f, 1.0f,uiAlpha_ });
+
+		switch (replayAnimCount_)
+		{
+			case 0:
+				if (not replaySpriteAnimTimer_.IsFinish()) {
+					replayTutorialUI_.scale_.x = SoLib::Lerp<float>(0.0f, 426.0f, SoLib::easeOutQuad(replaySpriteAnimTimer_.GetProgress()));
+					replayTutorialUI_.sprite_->SetTexDiff({SoLib::Lerp<float>(0.0f, 853.0f, SoLib::easeOutQuad(replaySpriteAnimTimer_.GetProgress())), 170.0f });
+
+				}
+				else {
+					replayTutorialUI_.scale_.x = 426.0f;
+					replaySpriteAnimTimer_.Start(5.0f);
+					replayAnimCount_++;
+				}
+				break;
+			case 1:
+				if (replaySpriteAnimTimer_.IsFinish()) {
+					replayTutorialUI_.scale_.x = 426.0f;
+					replaySpriteAnimTimer_.Start(1.0f);
+					replayAnimCount_++;
+				}
+				break;
+			case 2:
+				if (not replaySpriteAnimTimer_.IsFinish()) {
+					replayTutorialUI_.scale_.x = SoLib::Lerp<float>(426.0f, 0.0f, SoLib::easeOutQuad(replaySpriteAnimTimer_.GetProgress()));
+					replayTutorialUI_.sprite_->SetTexDiff({ SoLib::Lerp<float>(853.0f, 0.0f, SoLib::easeOutQuad(replaySpriteAnimTimer_.GetProgress())), 170.0f });
+				}
+				else {
+					replayTutorialUI_.scale_.x = 0.0f;
+				}
+				break;
+
+		}
+		// タイマー更新
+		replaySpriteAnimTimer_.Update(deltaTime);
 	}
 
 	if (Input::GetInstance()->GetInputType() == Input::InputType::kKeyBoard) {
@@ -152,6 +199,9 @@ void InGameUIManager::Update(float deltaTime)
 		// インスタンス生成
 		tutorialUI_->DisplayImGui();
 	}
+	else if (selectedStageNumber_ == 2) {
+		replayTutorialUI_.DisplayImGui("replayTutorialUI");
+	}
 
 	ImGui::DragFloat("UI - Alpha", &uiAlpha_, 0.01f, 0.0f, 1.0f);
 
@@ -181,6 +231,11 @@ void InGameUIManager::Draw()
 		// インスタンス生成
 		tutorialUI_->Draw();
 	}
+	else if (selectedStageNumber_ == 2) {
+		replayTutorialUI_.Draw();
+	}
+
+	
 }
 
 void InGameUIManager::AddStar(int p0m)

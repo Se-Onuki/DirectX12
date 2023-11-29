@@ -127,6 +127,13 @@ private: // メンバ変数
 	const float kShakeRange = 10.0f;
 	const float kShakeTime = 0.5f;
 
+	// 3ステージ目で出現するリプレイ方法を示すスプライト
+	UISprite replayTutorialUI_;
+	// 上スプライトのアニメーション用タイマー
+	SoLib::DeltaTimer replaySpriteAnimTimer_;
+	// リプレイ方法を示すスプライトの回数変数
+	int replayAnimCount_ = 0;
+
 	// 星UIの振動トリガー
 	bool blurTrigger_ = false;
 	// 振動用方向ベクトル
