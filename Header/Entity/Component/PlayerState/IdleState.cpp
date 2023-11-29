@@ -25,12 +25,7 @@ void PlayerIdleState::Update([[maybe_unused]] float deltaTime) {
 		pPlayer_->ChangeState<PlayerFallingState>();
 	}
 	else if (keyBoard->IsTrigger(DIK_Z) || gamePad->IsTrigger(KeyCode::X)) {
-		if (LevelElementManager::GetInstance()->GetStarCount()) {
 			pPlayer_->ChangeState<PlayerBeginRotateState>();
-		}
-		else {
-			pPlayer_->pInGameUI_->ShakeStar();
-		}
 	}
 	else if (keyBoard->IsPress(DIK_SPACE) || gamePad->IsPress(KeyCode::A)) {
 		pPlayer_->JumpInput();

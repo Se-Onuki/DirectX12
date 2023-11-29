@@ -9,6 +9,7 @@
 #include "PlayerState/JumpState.h"
 #include "../../Header/Object/Fade.h"
 #include <bitset>
+#include "../../Object/TutorialManager.h"
 
 
 const std::string PlayerComp::groupName_ = "Player";
@@ -72,6 +73,8 @@ void PlayerComp::Update() {
 		object_->GetComponent<Rigidbody>()->SetAcceleration(Vector3::zero);
 		object_->GetComponent<Rigidbody>()->SetVelocity(Vector3::zero);
 	}
+	//TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kWalk);
+
 }
 
 void PlayerComp::Draw([[maybe_unused]] const Camera3D &camera) const {

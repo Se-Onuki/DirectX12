@@ -28,6 +28,9 @@ public:
 	int32_t GetProgress() const { return progress_; }
 
 	void SetProgress(const TutorialProgress value) {
+		if (progress_ == static_cast<int32_t>(TutorialProgress::kWalk) && value != TutorialProgress::kFloatZ) {
+			return;
+		}
 		progress_ = static_cast<int32_t>(value);
 	}
 	void AddProgress() { progress_++; }
