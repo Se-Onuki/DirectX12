@@ -34,7 +34,7 @@ public:
 	public:
 		Box(const AABB &aabb, Platform *parent);
 
-		void CreateBox() const;
+		void CreateBox(const Vector4 &color) const;
 
 		GroundType groundType_ = GroundType::kGrass;
 
@@ -183,6 +183,26 @@ public:
 	std::list<Entity *> GetGoalList();
 
 	bool GetIsDebuging() const { return debugDrawer_; }
+
+	const float cColor = 0.3f;
+
+	const std::array<Vector4, 8u> platformColor_{
+		Vector4{1.f,1.f,cColor,1.f},
+
+		Vector4{1.f,cColor,1.f,1.f},
+
+		Vector4{cColor,1.f,1.f,1.f},
+
+		Vector4{cColor,cColor,1.f,1.f},
+
+		Vector4{1.f,cColor,cColor,1.f},
+
+		Vector4{cColor,1.f,cColor,1.f},
+
+		Vector4{cColor,cColor,cColor,1.f},
+
+		Vector4{1.f,1.f,1.f,1.f},
+	};
 
 private:
 	static nlohmann::json GetLevelParameters(const nlohmann::json &jsonData, int32_t levelIndex);

@@ -18,6 +18,8 @@ public:
 
 private:
 
+	Camera3D *rotateCamera_ = nullptr;
+
 	// 回転SE
 	static uint32_t rotateSE_;
 };
