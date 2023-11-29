@@ -13,7 +13,7 @@ void ParticleEmitterManager::Init()
 	StarParticle::ApplyItem();
 
 #ifdef _DEBUG
-	
+
 	// デバッグ用の型を追加
 	AddParticleMold<TestParticle>(); // テストパーティクル
 	AddParticleMold<StarParticle>(); // 星パーティクル
@@ -24,7 +24,7 @@ void ParticleEmitterManager::Init()
 	// イテレータの終わりまでループ
 	while (iter != moldMap_.end()) {
 		// インスタンスの生成
-		ParticleEmitter* newEmitter = new ParticleEmitter();
+		auto newEmitter = std::make_unique<ParticleEmitter>();
 		// 生成したインスタンスの初期化
 		newEmitter->Init(imGuiAliveTime_);
 		// 型タイプを設定
@@ -36,7 +36,7 @@ void ParticleEmitterManager::Init()
 
 		newEmitter->AddItem();
 		newEmitter->ApplyItem();
-		imGuiEmitters_.push_back(newEmitter);
+		imGuiEmitters_.push_back(std::move(newEmitter));
 		iter++;
 	}
 
@@ -53,7 +53,7 @@ void ParticleEmitterManager::Update(float deltaTime)
 				return true;
 			}
 			return false;
-	});
+		});
 
 	// 全てのエミッタの更新
 	for (std::unique_ptr<ParticleEmitter> &emitter : emitters_) {
@@ -72,7 +72,7 @@ void ParticleEmitterManager::Update(float deltaTime)
 		for (std::unique_ptr<ParticleEmitter> &emitter : emitters_) {
 			ImGui::Text(emitter->name_.c_str());
 			ImGui::SameLine();
-			if(!emitter->emitAliveTimer_.IsFinish() || emitter->isLoop_)
+			if (!emitter->emitAliveTimer_.IsFinish() || emitter->isLoop_)
 				ImGui::Text(" : Playing");
 			else
 				ImGui::Text(" : Ending");
@@ -112,13 +112,12 @@ void ParticleEmitterManager::Update(float deltaTime)
 			newEmitter->name_ = iter->first.name();		// エミッタ自体の名前
 			int sameNameCount = 0;
 			// 全てのエミッタの名前の取得
-			for (std::unique_ptr<ParticleEmitter>& emitter : emitters_) {
+			for (std::unique_ptr<ParticleEmitter> &emitter : emitters_) {
 				// エミッタの名前取得
 				std::string GetEmitterName = emitter->name_;
-				
+
 				// オブジェクト名の末尾に数字が含まれている場合は末尾の文字を削除
-				while (isdigit(GetEmitterName.at(GetEmitterName.size() - 1)))
-				{
+				while (isdigit(GetEmitterName.at(GetEmitterName.size() - 1))) {
 					// 末尾の文字を削除
 					GetEmitterName.pop_back();
 				}
@@ -144,7 +143,7 @@ void ParticleEmitterManager::Update(float deltaTime)
 			emitters_.push_back(std::move(newEmitter));
 		}
 
-		
+
 		iter++;
 	}
 	// 生成座標の設定
@@ -171,7 +170,7 @@ void ParticleEmitterManager::Update(float deltaTime)
 		count++;
 		ImGui::End();
 	}
-	
+
 	StarParticle::DisplayImGui();
 
 #endif // _DEBUG

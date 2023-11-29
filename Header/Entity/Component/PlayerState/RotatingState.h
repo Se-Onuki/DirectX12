@@ -18,6 +18,12 @@ public:
 
 private:
 
+	Vector4 startColor_{};
+	Vector4 endColor_{};
+	SoLib::DeltaTimer deltaTimer_{};
+
+	Model *model_;
+
 	Camera3D *rotateCamera_ = nullptr;
 
 	// 回転SE

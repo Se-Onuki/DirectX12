@@ -63,7 +63,7 @@ void GameScene::OnEnter() {
 	cameraManager_->AddCamera("TestCamera");
 
 	// パーティクルマネージャの初期化
-	particleManager->Init(256u); // パーティクルの最大数は256
+	particleManager->Init(512u); // パーティクルの最大数は256
 	// パーティクルエミッタマネージャーの初期化
 	particleEmitterManager->Init();
 
@@ -200,7 +200,6 @@ void GameScene::Update() {
 		TextureManager::GetInstance()->ImGuiWindow();
 
 		particleEmitterManager->Update(deltaTime);
-		particleManager->Update(deltaTime);
 
 		player_->Update(deltaTime);
 
@@ -308,6 +307,8 @@ void GameScene::Update() {
 	//playerAnim_->Update(deltaTime);
 
 	light_->ImGuiWidget();
+
+	particleManager->Update(deltaTime);
 
 	//transform_->ImGuiWidget();
 	//transform_->UpdateMatrix();

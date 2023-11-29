@@ -3,6 +3,9 @@
 #include "EndRotateState.h"
 #include "../../../Object/LevelElementManager.h"
 #include "../../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../../../Engine/DirectBase/Model/ModelManager.h"
+#include "../../../Object/Particle/ParticleManager.h"
+#include "../../../Object/Particle/TestParticle.h"
 
 uint32_t PlayerRotatingState::rotateSE_ = 0u;
 
@@ -15,6 +18,8 @@ void PlayerRotatingState::Init() {
 	if (rotateSE_ == 0u) {
 		rotateSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/rotate.wav");
 	}
+
+	model_ = ModelManager::GetInstance()->GetModel("DownBox");
 }
 
 void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
@@ -30,6 +35,35 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 	float rotateFacing = platform->rotateAxis_ * cameraFacing.Nomalize();
 
 	rotateFacing > 0 ? rotateFacing = 1.f : rotateFacing = -1.f;
+
+	const Vector3 *downPtr = pPlayer_->GetGroundPos();
+	Vector3 downPlayer;
+	if (downPtr) {
+		endColor_ = { 0.1f,0.1f,1.f,1.f };
+		downPlayer = *downPtr;
+	}
+	else {
+		endColor_ = { 1.f,0.1f,0.1f,1.f };
+
+		downPlayer = pPlayer_->transform_->GetGrobalPos();
+		downPlayer.y -= 45.f;
+	}
+	if (platform->GetTimer().IsActive()) {
+		downPlayer.y -= 45.f;
+	}
+
+
+	startColor_ = SoLib::Lerp(startColor_, endColor_, 0.1f);
+	for (uint32_t i = 0u; i < 2.f; i++) {
+		TestParticle *particlePtr = dynamic_cast<TestParticle *>(ParticleManager::GetInstance()->AddParticle(model_, std::make_unique<TestParticle>(SoLib::Lerp(pPlayer_->transform_->GetGrobalPos(), downPlayer, Random::GetRandom<float>(0.f, 1.f)))));
+		if (particlePtr) {
+
+			particlePtr->velocity_ = Vector3::front * Random::GetRandom<float>(1.f, 3.f) * Matrix4x4::EulerRotate(Matrix4x4::EulerAngle::Yaw, Random::GetRandom<float>(-Angle::PI, Angle::PI));
+			particlePtr->color_ = startColor_;
+			particlePtr->SetAliveTime(0.5f);
+
+		}
+	}
 
 	if (platform->GetTimer().IsFinish()) {
 		if (keyBoard->IsPress(DIK_Q) || gamePad->IsPress(KeyCode::LEFT_SHOULDER)) {
