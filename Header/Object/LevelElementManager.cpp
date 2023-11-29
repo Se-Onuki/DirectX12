@@ -216,6 +216,7 @@ void LevelElementManager::UndoUpdate(const float deltaTime)
 	// 終了したら
 	if (undoTimer_.IsFinish() && undoTimer_.IsActive()) {
 		pPlayer_->GetComponent<PlayerComp>()->ChangeState<PlayerIdleState>();
+		pPlayer_->GetComponent<PlayerAnimComp>()->GetAnimManager()->SetNextAnimation(PlayerBehavior::kIdle, true);
 		if (undoLog_.item_) {
 			pPlayer_->transform_.translate = undoLog_.item_->transform_.GetGrobalPos();
 			undoLog_.item_->GetComponent<StarItemComp>()->Reset();

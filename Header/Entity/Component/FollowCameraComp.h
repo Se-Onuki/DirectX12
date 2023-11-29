@@ -24,7 +24,7 @@ public:
 
 	const auto &GetCamera() const { return camera_; }
 
-	VariantItem<float> vLerpValue{ "LerpValue", 0.75f };
+	VariantItem<float> vLerpValue{ "LerpValue", 0.85f };
 
 private:
 
@@ -36,6 +36,7 @@ private:
 	VariantItem<Vector3> addOffset_{ "AddOffset",{ 0.f,6.f,0.f } };
 
 	Vector3 rotate_;
+	Vector3 prePos_;
 
 	Camera3D *camera_;
 };

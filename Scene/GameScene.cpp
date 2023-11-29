@@ -255,6 +255,7 @@ void GameScene::Update() {
 	}
 	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnCheckPoint) {
 		Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 0.25f);
+		cameraManager_->SetUseCamera("FollowCamera");
 		levelManager->Undo();
 		PoseManager::GetInstance()->SetPoseState(PoseManager::kNone);
 	}
