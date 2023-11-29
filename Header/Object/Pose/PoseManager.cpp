@@ -59,15 +59,30 @@ void PoseManager::Update(float deltaTime)
 {
 	deltaTime;
 	if (isDisplay_) {
+		static SoLib::DeltaTimer inputTimer{ 0.2f };
+		inputTimer.Update(deltaTime);
+		Vector2 stick = input_->GetXInput()->GetState()->stickL_;
+
+		bool isFinish = inputTimer.IsFinish();
+
+		if (stick.Length() < 0.1f) {
+			stick = {};
+		}
+		else if (isFinish) {
+			inputTimer.Start();
+		}
+
+
+
 		// 入力によって選択されているカテゴリを変更
-		if (input_->GetDirectInput()->IsTrigger(DIK_DOWN) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_DOWN)) {
+		if (input_->GetDirectInput()->IsTrigger(DIK_DOWN) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_DOWN) || (stick.y < 0.f && isFinish)) {
 			Audio::GetInstance()->PlayWave(nextSE_, false, 0.5f);
 			if (selectedCategory_ < kReturnStageSelect)
 				selectedCategory_++;
 			else
 				selectedCategory_ = kResume;
 		}
-		else if (input_->GetDirectInput()->IsTrigger(DIK_UP) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_UP)) {
+		else if (input_->GetDirectInput()->IsTrigger(DIK_UP) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_UP) || (stick.y > 0.f && isFinish)) {
 			Audio::GetInstance()->PlayWave(nextSE_, false, 0.5f);
 			if (selectedCategory_ > kResume)
 				selectedCategory_--;
@@ -76,7 +91,7 @@ void PoseManager::Update(float deltaTime)
 		}
 
 		// Bボタン入力でメニューを閉じる
-		if (input_->GetDirectInput()->IsTrigger(DIK_ESCAPE) || input_->GetXInput()->IsTrigger(KeyCode::B)) {
+		if (input_->GetDirectInput()->IsTrigger(DIK_ESCAPE) || input_->GetXInput()->IsTrigger(KeyCode::B) || input_->GetXInput()->IsTrigger(KeyCode::START)) {
 			Audio::GetInstance()->PlayWave(closeSE_, false, 0.5f);
 			CloseMenu();
 		}
@@ -85,6 +100,7 @@ void PoseManager::Update(float deltaTime)
 			PressAButton();
 		}
 	}
+
 
 	if (isActive_) {
 		if (!timer_.IsFinish()) {
