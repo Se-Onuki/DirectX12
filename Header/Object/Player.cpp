@@ -11,6 +11,7 @@
 #include "LockOn.h"
 #include <numeric>
 #include "Particle/StarParticle.h"
+#include "Enemy.h"
 
 void Player::ApplyGlobalVariables() {
 	const GlobalVariables *const gVariables = GlobalVariables::GetInstance();
@@ -229,6 +230,8 @@ void Player::BehaviorAttackUpdate() {
 			workAttack_.comboIndex_++;
 			workAttack_.atackParameter_ = 0u;
 			workAttack_.inComboPhase_ = 0u;
+
+			contactRecord_->clear();
 		}
 		else {
 			behaviorRequest_ = Behavior::kRoot;
@@ -396,6 +399,10 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 	input_ = Input::GetInstance();
 	InitFloatingGimmick();
 	collider_.size.y = 5.f;
+
+	if (not contactRecord_) {
+		contactRecord_ = std::make_unique<ContactRecord>();
+	}
 }
 
 void Player::Update([[maybe_unused]] const float deltaTime) {
@@ -472,6 +479,17 @@ void Player::Draw(const Camera<Render::CameraType::Projecction> &camera) const {
 
 void Player::SetLockOn(const LockOn *const lockOn) {
 	lockOn_ = lockOn;
+}
+
+void Player::OnCollision(Enemy *enemy) {
+	uint32_t serialNumber = enemy->GetEntityNumber();
+
+	if (contactRecord_->IsContact(serialNumber)) {
+		return;
+	}
+
+	contactRecord_->push_back(serialNumber);
+	enemy->HitWeapon(this->GetWorldTransform()->GetGrobalPos());
 }
 
 Player::Player() { input_ = Input::GetInstance(); }

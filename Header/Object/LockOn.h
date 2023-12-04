@@ -16,10 +16,14 @@ public:
 	~LockOn() = default;
 	/// @brief 初期化
 	void Init();
+	/// @brief ターゲットの破棄
+	void Reset();
 	/// @brief 更新
 	void Update(const std::list<std::unique_ptr<Enemy>> &enemyList, const Camera3D &camera);
 	/// @brief 描画
 	void Draw2D() const;
+
+	const auto *GetTarget() const { return target_; }
 
 	/// @brief ロックオン中か
 	bool IsLockOn() const { return target_ != nullptr; }

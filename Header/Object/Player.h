@@ -1,21 +1,23 @@
 #pragma once
 
-#include "../../Utils/Math/Math.hpp"
+#include "../../Engine/DirectBase/File/VariantItem.h"
 #include "../../Engine/DirectBase/Input/Input.h"
-#include "../../Utils/Math/Transform.h"
 #include "../../Engine/DirectBase/Render/Camera.h"
-#include <optional>
-#include <stdint.h>
+#include "../../Utils/Math/Math.hpp"
+#include "../../Utils/Math/Transform.h"
+#include "../../Utils/SoLib/SoLib_Timer.h"
+#include "../Collision/Collision.h"
 
 #include "BaseCharacter.h"
-#include "../../Engine/DirectBase/File/VariantItem.h"
-#include "../Collision/Collision.h"
-#include "../../Utils/SoLib/SoLib_Timer.h"
+#include "Contactrecord.h"
+#include <optional>
+#include <stdint.h>
 
 class LockOn;
 
 class PlayerBullet;
 class Model;
+class Enemy;
 
 class Player : public BaseCharacter {
 
@@ -156,6 +158,8 @@ class Player : public BaseCharacter {
 
 	const LockOn *lockOn_ = nullptr;
 
+	std::unique_ptr<ContactRecord> contactRecord_ = nullptr;
+
 private:
 
 	void ApplyGlobalVariables();
@@ -198,6 +202,8 @@ public:
 	}
 
 	void SetWeaponActive(bool value) { isAttackActive_ = value; }
+
+	void OnCollision(Enemy *enemy);
 
 	const Vector3 &GetVelocity()const { return velocity_; }
 	void SetVelocity(const Vector3 &vec) { velocity_ = vec; }

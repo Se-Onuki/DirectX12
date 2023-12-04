@@ -8,6 +8,10 @@ void LockOn::Init()
 	sprite_->SetScale(Vector2{ 128.f, 128.f });
 }
 
+void LockOn::Reset() {
+	target_ = nullptr;
+}
+
 void LockOn::Update([[maybe_unused]] const std::list<std::unique_ptr<Enemy>> &enemyList, [[maybe_unused]] const Camera3D &camera)
 {
 	static auto *const input = Input::GetInstance();

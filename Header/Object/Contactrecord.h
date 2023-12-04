@@ -2,6 +2,7 @@
 #include <list>
 #include <cstdint>
 #include <algorithm>
+#include <unordered_set>
 
 class ContactRecord
 {
@@ -9,24 +10,21 @@ public:
 	ContactRecord() = default;
 	~ContactRecord() = default;
 
-	void push_back(const uint32_t newLog) { log_.push_back(newLog); }
+	void push_back(const uint32_t newLog) { log_.insert(newLog); }
 	void clear() { log_.clear(); }
 
 	bool IsContact(const uint32_t newLog) const {
-		return std::any_of(log_.cbegin(), log_.cend(), [newLog](const uint32_t element)
-			{
-				return element == newLog;
-			}
-		);
+		return log_.contains(newLog);
+
 	}
 
 	size_t size() const { return log_.size(); }
 
-	std::list<uint32_t>::const_iterator begin() const { return log_.cbegin(); }
-	std::list<uint32_t>::const_iterator end() const { return log_.cend(); }
+	std::unordered_set<uint32_t>::const_iterator begin() const { return log_.cbegin(); }
+	std::unordered_set<uint32_t>::const_iterator end() const { return log_.cend(); }
 
 private:
 
-	std::list<uint32_t> log_;
+	std::unordered_set<uint32_t> log_;
 
 };

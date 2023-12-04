@@ -24,6 +24,8 @@ public:
 
 	void SetPlatform(const Platform *const platform = nullptr);
 
+	uint32_t GetEntityNumber() const { return entityNumber_; }
+
 private:
 	int32_t health_ = 3;
 	const uint32_t entityNumber_;

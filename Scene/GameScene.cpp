@@ -119,6 +119,9 @@ void GameScene::OnExit() {}
 
 void GameScene::Reset()
 {
+	if (lockOn_) {
+		lockOn_->Reset();
+	}
 
 	enemyList_.clear();
 
@@ -157,10 +160,15 @@ void GameScene::Update()
 
 	// オブジェクトを全て走査して、死亡していたら破棄して除外する
 	enemyList_.remove_if(
-		[](std::unique_ptr<Enemy> &object)
+		[this](std::unique_ptr<Enemy> &object)
 		{
 			// もし死んでいたら
 			if (not object->GetIsAlive()) {
+				// ターゲットと死ぬ敵が一致していた場合はロックオン解除
+				if (object.get() == lockOn_->GetTarget()) {
+					lockOn_->Reset();
+				}
+
 				// 破棄して除外
 				object.reset();
 				return true;
@@ -171,13 +179,11 @@ void GameScene::Update()
 		});
 
 
-	const Vector3 playerPos = player_->GetWorldTransform()->GetGrobalPos();
 	const auto *const weapon = player_->GetWeaponCollider();
 	if (weapon) {
 		for (auto &enemy : enemyList_) {
 			if (Collision::IsHit(enemy->GetCollider(), *weapon)) {
-				enemy->HitWeapon(playerPos);
-				player_->SetWeaponActive(false);
+				player_->OnCollision(enemy.get());
 			}
 		}
 	}
@@ -221,6 +227,10 @@ void GameScene::Update()
 	TextureManager::GetInstance()->ImGuiWindow();
 
 
+	for (auto &enemy : enemyList_) {
+		enemy->Update(deltaTime);
+	}
+
 	lockOn_->Update(enemyList_, camera_);
 	player_->Update(deltaTime);
 
@@ -241,9 +251,6 @@ void GameScene::Update()
 	goal_->Update(deltaTime);
 	goalCollider_->SetMatrix(goal_->transform_.matWorld_);
 
-	for (auto &enemy : enemyList_) {
-		enemy->Update(deltaTime);
-	}
 }
 
 void GameScene::Draw()
