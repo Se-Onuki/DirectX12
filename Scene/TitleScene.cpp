@@ -26,8 +26,10 @@ void TitleScene::Update() {
 
 	std::array<Quaternion, 2u> rotation{
 		Quaternion::AnyAxisRotation({0.71f,0.71f,0.f},0.3f),
-		Quaternion::AnyAxisRotation({0.71f,0.f,0.71f},Angle::PI),
+		//Quaternion::AnyAxisRotation({0.71f,0.f,0.71f},Angle::PI),
 	};
+
+	rotation[1] = static_cast<SoLib::Math::SIMD128>(static_cast<__m128>(rotation[0])) * -1.f;
 
 	ImGui::Text("Slerp0<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(Quaternion::Slerp(rotation[0], rotation[1], 0.f)).c_str());
 	ImGui::Text("Slerp1<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(Quaternion::Slerp(rotation[0], rotation[1], 0.3f)).c_str());
