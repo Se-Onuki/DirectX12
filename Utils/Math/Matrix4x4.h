@@ -5,7 +5,7 @@
 
 struct Vector3;
 
-struct Matrix4x4 final {
+struct Matrix4x4 {
 	enum EulerAngle {
 		Pitch, // x軸
 		Yaw,   // y軸
@@ -124,6 +124,28 @@ struct Matrix4x4 final {
 	const float *const cdata() const { return begin(); }
 
 };
+
+struct alignas(16) AlignMatrix4x4 : public Matrix4x4 {
+	using Matrix4x4::Matrix4x4;
+
+	AlignMatrix4x4(const Matrix4x4 &other) {
+		std::memcpy(m, &other, sizeof(Matrix4x4));
+	};
+	AlignMatrix4x4(Matrix4x4 &&other) {
+		std::memcpy(m, &other, sizeof(Matrix4x4));
+	};
+
+	AlignMatrix4x4(const std::array<__m128, 4u> &vec) {
+		std::memcpy(m, &vec, sizeof(Matrix4x4));
+	}
+
+	inline __m128 &Get(const uint32_t &index) { return *reinterpret_cast<__m128 *>(m[index]); }
+	inline const __m128 &Get(const uint32_t &index) const { return *reinterpret_cast<const __m128 *>(m[index]); }
+
+	inline explicit operator std::array<__m128, 4u> &() { return *reinterpret_cast<std::array<__m128, 4u>*>(m); }
+	inline explicit operator const std::array<__m128, 4u> &() const { return *reinterpret_cast<const std::array<__m128, 4u>*>(m); }
+};
+
 #pragma region 4x4Func
 
 Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &sec) const {

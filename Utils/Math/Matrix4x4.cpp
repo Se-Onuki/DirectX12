@@ -176,11 +176,24 @@ Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float angle) {
 Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float cos, const float sin) {
 
 	const float minusCosTheta = 1.f - cos;
+	const __m128 vecMinusCosTata = _mm_set_ps1(minusCosTheta);
 
-	return Matrix4x4{
-		Vector4{ std::powf(axis.x, 2) * minusCosTheta + cos,	axis.x * axis.y * minusCosTheta + axis.z * sin,		axis.x * axis.z * minusCosTheta - axis.y * sin,		0.f },
-		Vector4{ axis.x * axis.y * minusCosTheta - axis.z * sin,	std::powf(axis.y, 2) * minusCosTheta + cos,	axis.y * axis.z * minusCosTheta + axis.x * sin,		0.f },
-		Vector4{ axis.x * axis.z * minusCosTheta + axis.y * sin,	axis.y * axis.z * minusCosTheta - axis.x * sin,		std::powf(axis.z,2) * minusCosTheta + cos,	0.f },
+	AlignMatrix4x4 alignMat;
+	for (uint32_t i = 0u; i < 3u; i++) {
+		alignMat.Get(i) = _mm_mul_ps(_mm_set_ps1(axis.begin()[i]), vecMinusCosTata);
+	}
+
+	alignMat = alignMat * AlignMatrix4x4{
+		Vector4{.x = axis.x},
+		Vector4{.y = axis.y},
+		Vector4{.z = axis.z},
+		Vector4{.w = 0.f},
+	};
+
+	return alignMat + Matrix4x4{
+		Vector4{ +cos,			+axis.z * sin,	-axis.y * sin,	0.f },
+		Vector4{ -axis.z * sin,	+cos,			+axis.x * sin,	0.f },
+		Vector4{ +axis.y * sin,	-axis.x * sin,	+cos,			0.f },
 		Vector4{ 0.f, 0.f, 0.f, 1.f },
 	};
 }
@@ -192,7 +205,7 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3 &from, const Vector3 &to
 
 	const float dot = u * v;
 	const Vector3 cross = u.cross(v);
-	Vector3 axis = cross.Nomalize();
+	Vector3 axis = cross;
 
 	if (dot == -1.f) {
 		if (u.x != 0.f || u.y != 0.f) {
@@ -203,7 +216,7 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3 &from, const Vector3 &to
 		}
 	}
 
-	return AnyAngleRotate(axis, dot, cross.Length());
+	return AnyAngleRotate(axis.Nomalize(), dot, cross.Length());
 }
 
 
