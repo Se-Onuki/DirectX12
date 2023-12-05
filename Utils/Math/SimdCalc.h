@@ -24,10 +24,12 @@ namespace SoLib {
 			/// @return Vector3型のSIMD
 			static inline SIMD128 Cross(const __m128 &vecA, const __m128 &vecB);
 
-			inline SIMD128 operator+(const SIMD128 &other);
-			inline SIMD128 operator-(const SIMD128 &other);
-			inline SIMD128 operator*(const float other);
-			inline SIMD128 operator/(const float other);
+			inline SIMD128 operator+(const SIMD128 &other) const;
+			inline SIMD128 operator-(const SIMD128 &other) const;
+			inline SIMD128 operator*(const float other) const;
+			inline SIMD128 operator/(const float other) const;
+
+			inline SIMD128 operator-()const { return *this * -1.f; }
 
 		private:
 
@@ -78,19 +80,19 @@ SoLib::Math::SIMD128 SoLib::Math::SIMD128::Cross(const __m128 &vecA, const __m12
 	return SoLib::Math::SIMD128{ _mm_sub_ps(mul0, mul1) };
 }
 
-inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator+(const SIMD128 &other) {
+inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator+(const SIMD128 &other) const {
 	return SoLib::Math::SIMD128{ _mm_add_ps(*this,other) };
 }
 
-inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator-(const SIMD128 &other) {
+inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator-(const SIMD128 &other) const {
 	return SoLib::Math::SIMD128{ _mm_sub_ps(*this,other) };
 }
 
-inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator*(const float other) {
+inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator*(const float other) const {
 	return SoLib::Math::SIMD128{ _mm_mul_ps(*this, _mm_load_ps1(&other)) };
 }
 
-inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator/(const float other) {
+inline SoLib::Math::SIMD128 SoLib::Math::SIMD128::operator/(const float other) const {
 	return SoLib::Math::SIMD128{ _mm_div_ps(*this, _mm_load_ps1(&other)) };
 }
 

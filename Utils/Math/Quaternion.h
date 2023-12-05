@@ -48,6 +48,8 @@ struct Quaternion final {
 
 	static Quaternion AnyAxisRotation(const Vector3 &axis, float angle);
 
+	static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
+
 	/// @brief 明示的な型変換
 	inline explicit operator __m128() const noexcept { return _mm_load_ps(&x); }
 	inline Quaternion &operator=(const __m128 &vec) noexcept { _mm_store_ps(&x, vec); return *this; }
@@ -117,16 +119,35 @@ inline Quaternion Quaternion::Normalize() const {
 
 inline Matrix4x4 Quaternion::RotateMatrix() const {
 	return Matrix4x4{
-		Vector4{w * w + x * x - y * y - z * z, 2.f * (x * y + w * z), 2.f * (x * z - w * y),0.f},
-		Vector4{2.f * (x * y - w * z), w * w - x * x + y * y - z * z,2.f * (y * z + w * x),0.f },
-		Vector4{2.f * (x * z + w * y),2.f * (y * z - w * x),w * w - x * x - y * y + z * z,0.f},
-		Vector4{.w = 1.f}
+		{w * w + x * x - y * y - z * z, 2.f * (x * y + w * z), 2.f * (x * z - w * y),0.f},
+		{2.f * (x * y - w * z), w * w - x * x + y * y - z * z,2.f * (y * z + w * x),0.f },
+		{2.f * (x * z + w * y),2.f * (y * z - w * x),w * w - x * x - y * y + z * z,0.f},
+		{.w = 1.f}
 	};
 }
 
 inline Quaternion Quaternion::AnyAxisRotation(const Vector3 &axis, float angle) {
 	float halfAngle = angle / 2.f;
 	return Quaternion{ axis * std::sin(halfAngle), std::cos(halfAngle) };
+}
+
+inline Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &end, float t) {
+
+	std::array<SoLib::Math::SIMD128, 2u> vec{ static_cast<__m128>(start),static_cast<__m128>(end) };
+
+	float dot = SoLib::Math::SIMD128::Dot<4u>(vec[0], vec[1]);
+
+	if (dot < 0) {
+		vec[0] = -vec[0];
+		dot = -dot;
+	}
+
+	const float theta = std::acos(dot);
+	const float sin = std::sin(theta);
+
+	Quaternion result;
+	_mm_store_ps(&result.x, vec[0] * (std::sin((1 - t) * theta) / sin) + vec[1] * std::sin(t * theta) / sin);
+	return result;
 }
 
 inline float Quaternion::LengthSQ() const {

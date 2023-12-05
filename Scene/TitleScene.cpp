@@ -24,11 +24,16 @@ void TitleScene::OnExit() {
 
 void TitleScene::Update() {
 
-	ImGui::Text("rotation<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(rotation_).c_str());
-	ImGui::Text("rotateMatrix<%s> :\n%s", SoLib::Traits<Matrix4x4>::Name, SoLib::to_string(rotateMatrix_).c_str());
+	std::array<Quaternion, 2u> rotation{
+		Quaternion::AnyAxisRotation({0.71f,0.71f,0.f},0.3f),
+		Quaternion::AnyAxisRotation({0.71f,0.f,0.71f},Angle::PI),
+	};
 
-	ImGui::Text("rotateByQuaternion<%s> :\n%s", SoLib::Traits<Vector3>::Name, SoLib::to_string(rotateByQuaternion_).c_str());
-	ImGui::Text("rotateByMatrix<%s> :\n%s", SoLib::Traits<Vector3>::Name, SoLib::to_string(rotateByMatrix_).c_str());
+	ImGui::Text("Slerp0<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(Quaternion::Slerp(rotation[0], rotation[1], 0.f)).c_str());
+	ImGui::Text("Slerp1<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(Quaternion::Slerp(rotation[0], rotation[1], 0.3f)).c_str());
+	ImGui::Text("Slerp2<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(Quaternion::Slerp(rotation[0], rotation[1], 0.5f)).c_str());
+	ImGui::Text("Slerp3<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(Quaternion::Slerp(rotation[0], rotation[1], 0.7f)).c_str());
+	ImGui::Text("Slerp4<%s> :\n%s", SoLib::Traits<Quaternion>::Name, SoLib::to_string(Quaternion::Slerp(rotation[0], rotation[1], 1.f)).c_str());
 
 }
 
