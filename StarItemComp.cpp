@@ -18,7 +18,7 @@ void StarItemComp::Init() {
 	transform_->CalcMatrix();
 	collider_.centor = transform_->GetGrobalPos();
 
-	collider_.radius = 1.5f;
+	collider_.radius = 0.99f;
 
 	if (collctSE_ == 0u) {
 		collctSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Item/collectStar.wav");

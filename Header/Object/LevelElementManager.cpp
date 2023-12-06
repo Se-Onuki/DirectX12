@@ -15,6 +15,8 @@
 #include "Fade.h"
 #include "TutorialManager.h"
 #include "InGameUIManager/InGameUIManager.h"
+#include "../Entity/Component/PlayerState/BeginRotate.h"
+#include "../Entity/Component/PlayerState/EndRotateState.h"
 
 nlohmann::json LevelElementManager::levelData_;
 
@@ -635,13 +637,16 @@ void LevelElementManager::Platform::Update(float deltaTime)
 		startRot_ = targetRot_;
 		this->CalcCollision();
 	}
-	for (auto &item : starItem_) {
-		item->Update(deltaTime);
-		auto *const itemComp = item->GetComponent<StarItemComp>();
-		// 取得されていない && 接触時に取得判定を行う
-		if (not itemComp->GetIsCollected() && Collision::IsHit(playerComp->GetCollider(), itemComp->GetCollider())) {
-			// 取得判定を行う
-			itemComp->CollectItem();
+
+	if (not dynamic_cast<PlayerBeginRotateState *>(playerComp->GetState().get()) && not dynamic_cast<PlayerEndRotateState *>(playerComp->GetState().get())) {
+		for (auto &item : starItem_) {
+			item->Update(deltaTime);
+			auto *const itemComp = item->GetComponent<StarItemComp>();
+			// 取得されていない && 接触時に取得判定を行う
+			if (not itemComp->GetIsCollected() && Collision::IsHit(playerComp->GetCollider(), itemComp->GetCollider())) {
+				// 取得判定を行う
+				itemComp->CollectItem();
+			}
 		}
 	}
 }

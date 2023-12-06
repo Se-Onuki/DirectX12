@@ -29,7 +29,10 @@ void PlayerEndRotateState::Init() {
 	}
 
 	// もし回転が行われていたら減少
-	if (pPlayer_->rotateCount_ % 4 != 0) {
+	if (LevelElementManager::GetInstance()->GetStarItemList().size()) {
+		tutorial->SetProgress(TutorialManager::TutorialProgress::kWalk);
+	}
+	else if (pPlayer_->rotateCount_ % 4 != 0) {
 		tutorial->SetProgress(TutorialManager::TutorialProgress::kToGoal);
 	}
 	else {

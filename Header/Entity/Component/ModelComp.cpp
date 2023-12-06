@@ -74,18 +74,19 @@ void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &v
 
 ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, const BaseTransform &srt) {
 	if (modelKey_.count(key) != 0u) return nullptr;
-	auto *const newBone = new ModelBone;
+	auto  newBone = std::make_unique<ModelBone>();
 	newBone->Init(model);
 
 	newBone->transform_->parent_ = static_cast<BaseTransform *>(transform_);
 
 	newBone->SetTransform(srt);
 
-	modelTree_.emplace_back(newBone);
+	modelKey_.insert({ key,newBone.get() });
 
-	modelKey_.insert({ key,newBone });
+	modelTree_.push_back(std::move(newBone));
 
-	return newBone;
+
+	return modelKey_.at(key);
 }
 
 ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, ModelBone *const parent, const BaseTransform &srt) {
