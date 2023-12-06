@@ -1,8 +1,8 @@
 #pragma once
-
+#include "../../Utils/SoLib/SoLib_Traits.h"
 #include <string>
 
-template <typename T>
+template <SoLib::IsNotPointer T>
 class VariantItem final {
 	VariantItem() = delete;
 public:
@@ -24,13 +24,13 @@ private:
 	T item_;
 };
 
-template<typename T>
+template<SoLib::IsNotPointer T>
 inline VariantItem<T> &VariantItem<T>::operator=(const T &item) {
 	item_ = item;
 	return *this;
 }
 
-template<typename T>
+template<SoLib::IsNotPointer T>
 inline VariantItem<T>::operator const T &() const noexcept {
 	return item_;
 }
