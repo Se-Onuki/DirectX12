@@ -26,7 +26,7 @@ void TitleScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
 
 	// インスタンス取得
-	static auto* const modelManager = ModelManager::GetInstance();
+	static auto *const modelManager = ModelManager::GetInstance();
 	particleManager_ = ParticleManager::GetInstance();		 // パーティクルマネージャ
 	emitterManager_ = ParticleEmitterManager::GetInstance(); // 発生マネージャ
 
@@ -57,13 +57,15 @@ void TitleScene::OnEnter() {
 }
 
 void TitleScene::OnExit() {
+
+	StageSelectManager::GetInstance()->Reset();
 	audio_->StopAllWave();
 }
 
 void TitleScene::Update() {
 
 	// キーボードの入力取得
-	static const auto* const keyBoard = input_->GetDirectInput();
+	static const auto *const keyBoard = input_->GetDirectInput();
 
 	// デルタタイムの取得
 	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
@@ -99,14 +101,14 @@ void TitleScene::Update() {
 			// 指定した秒数後シーンチェンジ
 			sceneManager_->ChangeScene(std::make_unique<StageSelectScene>(), 1.0f);
 			sceneChanging_ = true;
-		}	
+		}
 	}
 
 }
 
 void TitleScene::Draw() {
-	DirectXCommon* const dxCommon = DirectXCommon::GetInstance();
-	ID3D12GraphicsCommandList* const commandList = dxCommon->GetCommandList();
+	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
 #pragma region 背面スプライト
 
@@ -129,12 +131,12 @@ void TitleScene::Draw() {
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
-	const auto& camera = *cameraManager_->GetUseCamera();
+	const auto &camera = *cameraManager_->GetUseCamera();
 
 	titleManager_->Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
-	static auto* const particleManager = ParticleManager::GetInstance();
+	static auto *const particleManager = ParticleManager::GetInstance();
 
 	// 複数モデルのパーティクルを、それぞれの集合ごとに描画
 	particleManager->Draw(camera);

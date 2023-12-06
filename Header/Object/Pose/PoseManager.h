@@ -73,6 +73,8 @@ public: // メンバ関数
 	/// </summary>
 	void Init();
 
+	void Reset();
+
 	/// <summary>
 	/// 更新関数
 	/// </summary>

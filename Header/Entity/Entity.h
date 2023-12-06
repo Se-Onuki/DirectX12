@@ -94,6 +94,7 @@ class Entity {
 
 	float deltaTime_{};
 
+	float timeScale_ = 1.f;
 public:
 	// オブジェクトのSRT
 	BaseTransform transform_;
@@ -149,7 +150,9 @@ public:
 
 	void ImGuiWidget();
 
-	float GetDeltaTime() const { return deltaTime_; }
+	void SetTimeScale(const float timeScale) { timeScale_ = timeScale; }
+
+	float GetDeltaTime() const { return deltaTime_ * timeScale_; }
 
 private:
 

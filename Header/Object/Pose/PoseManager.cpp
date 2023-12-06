@@ -55,6 +55,10 @@ void PoseManager::Init()
 	timer_.Start(0.5f);
 }
 
+void PoseManager::Reset() {
+	selectedCategory_ = 0;
+}
+
 void PoseManager::Update(float deltaTime)
 {
 	deltaTime;
@@ -65,7 +69,7 @@ void PoseManager::Update(float deltaTime)
 
 		bool isFinish = inputTimer.IsFinish();
 
-		if (stick.Length() < 0.1f) {
+		if (stick.Length() < 0.21f) {
 			stick = {};
 		}
 		else if (isFinish) {

@@ -26,12 +26,12 @@ void PlayerAnimComp::Update()
 {
 
 	// アニメーションマネージャー更新
-	animManager_->Update();
+	animManager_->Update(object_->GetDeltaTime());
 
 #ifdef _DEBUG
 
 	// 自分自身のモデルコンポーネント
-	auto* const modelComp = object_->GetComponent<ModelComp>();
+	auto *const modelComp = object_->GetComponent<ModelComp>();
 
 	ImGui::Begin("playerAnim");
 	if (ImGui::TreeNode("Base")) {

@@ -32,6 +32,7 @@
 
 #include "../Header/Entity/Component/GoalAnimations/GoalAnimComp.h"
 #include "../Header/Entity/Component/PlayerState/RotatingState.h"
+#include "../Header/Entity/Component/PlayerState/IdleState.h"
 
 // 静的なメンバ変数の実体を宣言
 uint32_t GameScene::gameSceneBGM_ = 0u;
@@ -154,6 +155,8 @@ void GameScene::OnEnter() {
 	player_->GetComponent<PlayerComp>()->SetInGameUIManager(inGameUI_.get());
 	levelManager->pInGameUI_ = inGameUI_.get();
 
+	PoseManager::GetInstance()->Reset();
+
 }
 
 void GameScene::OnExit() {
@@ -231,28 +234,32 @@ void GameScene::Update() {
 		player_->ImGuiWidget();
 		ImGui::End();
 
-		Vector3 euler{};
-		if (std::abs(gamePad->GetState()->stickR_.x) > 0.1f) {
-			euler += Vector3::up * 3._deg * gamePad->GetState()->stickR_.x;
-		}
-		if (std::abs(gamePad->GetState()->stickR_.y) > 0.1f) {
-			euler -= Vector3::right * 3._deg * gamePad->GetState()->stickR_.y;
-		}
-		if (euler.LengthSQ() <= 0.f) {
-			if (keyBoard->IsPress(DIK_RIGHT)) {
-				euler += Vector3::up * -3._deg;
-			}
-			if (keyBoard->IsPress(DIK_LEFT)) {
-				euler += Vector3::up * +3._deg;
-			}
-			if (keyBoard->IsPress(DIK_UP)) {
-				euler += Vector3::right * +3._deg;
-			}
-			if (keyBoard->IsPress(DIK_DOWN)) {
-				euler += Vector3::right * -3._deg;
-			}
-		}
 
+
+		Vector3 euler{};
+
+		if (Fade::GetInstance()->GetSprite()->GetColor().w <= 0.f) {
+			if (std::abs(gamePad->GetState()->stickR_.x) > 0.21f) {
+				euler += Vector3::up * 3._deg * gamePad->GetState()->stickR_.x;
+			}
+			if (std::abs(gamePad->GetState()->stickR_.y) > 0.21f) {
+				euler -= Vector3::right * 3._deg * gamePad->GetState()->stickR_.y;
+			}
+			if (euler.LengthSQ() <= 0.f) {
+				if (keyBoard->IsPress(DIK_RIGHT)) {
+					euler += Vector3::up * -3._deg;
+				}
+				if (keyBoard->IsPress(DIK_LEFT)) {
+					euler += Vector3::up * +3._deg;
+				}
+				if (keyBoard->IsPress(DIK_UP)) {
+					euler += Vector3::right * +3._deg;
+				}
+				if (keyBoard->IsPress(DIK_DOWN)) {
+					euler += Vector3::right * -3._deg;
+				}
+			}
+		}
 		followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
 		followCamera_->ImGuiWidget();
 		followCamera_->Update(deltaTime);
@@ -294,6 +301,8 @@ void GameScene::Update() {
 	// ステージ選択に戻るよう指示されていたら戻る
 	if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kReturnStageSelect) {
 		if (!sceneChanging_) {
+
+			player_->SetTimeScale(0.f);
 			// フェードアウト開始
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
 			// 指定した秒数後シーンチェンジ

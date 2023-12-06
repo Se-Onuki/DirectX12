@@ -14,17 +14,13 @@ void AnimationManager::Initialize()
 	currentAnimation_->Initialize("Idle", true); // 初期化
 }
 
-void AnimationManager::Update()
+void AnimationManager::Update(const float deltaTime)
 {
-	// FPSカウンターの表示
-	ImGui::Begin("Control panel");
-	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
-	ImGui::End();
 
 	// 更新
 	animParameters_->Update();
 
-	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+	//const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
 	// 次のアニメーションがセットされている場合
 	if (nextAnimation_ != nullptr) {

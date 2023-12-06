@@ -14,8 +14,8 @@ private: // コンストラクタ等
 	// シングルトンパターンの設定
 	StageSelectManager() = default;
 	~StageSelectManager() = default;
-	StageSelectManager(const StageSelectManager&) = delete;
-	const StageSelectManager& operator=(const StageSelectManager&) = delete;
+	StageSelectManager(const StageSelectManager &) = delete;
+	const StageSelectManager &operator=(const StageSelectManager &) = delete;
 
 public: // メンバ関数
 
@@ -23,7 +23,7 @@ public: // メンバ関数
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>シングルトンインスタンス</returns>
-	static StageSelectManager* GetInstance() {
+	static StageSelectManager *GetInstance() {
 		static StageSelectManager instance;
 		return &instance;
 	};
@@ -32,6 +32,8 @@ public: // メンバ関数
 	/// 初期化関数
 	/// </summary>
 	void Init();
+
+	void Reset();
 
 	/// <summary>
 	/// 更新関数
@@ -43,7 +45,7 @@ public: // メンバ関数
 	/// 3Dモデル描画関数
 	/// </summary>
 	/// <param name="camera">使用するカメラ</param>
-	void Draw(const Camera3D& camera);
+	void Draw(const Camera3D &camera);
 
 	/// <summary>
 	/// スプライト用描画関数
@@ -73,13 +75,15 @@ public: // アクセッサ等
 	/// </summary>
 	void ApplyItem();
 
+	const auto &GetImageTimer() const { return ui_.GetImageTimer(); }
+
 private: // メンバ変数
 
 	// 調整項目クラス
-	GlobalVariables* gv_ = nullptr;
+	GlobalVariables *gv_ = nullptr;
 
 	// 入力検知用
-	Input* input_ = nullptr;
+	Input *input_ = nullptr;
 
 	// 選択中のステージ番号
 	int selectedStageNumber_ = 0;

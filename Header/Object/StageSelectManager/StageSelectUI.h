@@ -30,7 +30,7 @@ private:// サブクラス
 		}
 
 		// ImGuiの描画
-		void DisplayImGui(std::string id){
+		void DisplayImGui(std::string id) {
 			if (ImGui::TreeNode(id.c_str())) {
 				ImGui::DragFloat2("Position", &position_.x, 1.0f);
 				ImGui::DragFloat2("Scale", &scale_.x, 1.0f);
@@ -39,7 +39,7 @@ private:// サブクラス
 			}
 		}
 	};
-	
+
 	/// <summary>
 	/// UI行動列挙子
 	/// </summary>
@@ -70,6 +70,8 @@ public: // メンバ関数
 	/// ImGui表示関数
 	/// </summary>
 	void DisplayImGui();
+
+	void SetPrevSelectedStageNumber(int32_t number) { prevSelectedStageNumber_ = number; }
 
 public: // アクセッサ等
 
@@ -108,10 +110,12 @@ public: // アニメーション関数
 	/// </summary>
 	void ChangeUpdate();
 
+	const auto &GetImageTimer() const { return prevAnimTimer_; }
+
 private: // メンバ変数
 
 	// ステージ選択マネージャー
-	StageSelectManager* stageSelectManager_ = nullptr;
+	StageSelectManager *stageSelectManager_ = nullptr;
 
 	// 前フレーム選択したステージ番号
 	int prevSelectedStageNumber_;

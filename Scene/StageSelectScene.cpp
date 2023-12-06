@@ -84,14 +84,16 @@ void StageSelectScene::Update()
 	cameraManager_->Update(deltaTime);
 
 	// スペースを押すと次のシーンへ
-	if (keyBoard->IsTrigger(DIK_SPACE) || input_->GetXInput()->IsTrigger(KeyCode::A)) {
-		if (!sceneChanging_) {
-			audio_->PlayWave(startStageSE_, false, 0.45f);
-			// フェードアウト開始
-			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
-			// 指定した秒数後シーンチェンジ
-			sceneManager_->ChangeScene(std::make_unique<GameScene>(), 1.0f);
-			sceneChanging_ = true;
+	if (stageSelectManager_->GetImageTimer().IsFinish() || stageSelectManager_->GetImageTimer().GetProgress() > 0.5f) {
+		if ((keyBoard->IsPress(DIK_SPACE) || input_->GetXInput()->IsPress(KeyCode::A)) && Fade::GetInstance()->GetSprite()->GetColor().w <= 0.f) {
+			if (!sceneChanging_) {
+				audio_->PlayWave(startStageSE_, false, 0.45f);
+				// フェードアウト開始
+				Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 1.0f);
+				// 指定した秒数後シーンチェンジ
+				sceneManager_->ChangeScene(std::make_unique<GameScene>(), 1.0f);
+				sceneChanging_ = true;
+			}
 		}
 	}
 
