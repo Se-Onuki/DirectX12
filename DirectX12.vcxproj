@@ -100,6 +100,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ECS\Chunk\Chunk.cpp" />
+    <ClCompile Include="ECS\Component\Component.cpp" />
+    <ClCompile Include="ECS\Entity\Entity.cpp" />
+    <ClCompile Include="ECS\Entity\EntityManager.cpp" />
+    <ClCompile Include="ECS\World\World.cpp" />
     <ClCompile Include="Engine\DirectBase\2D\Sprite.cpp" />
     <ClCompile Include="Engine\DirectBase\3D\DirectionLight.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\Audio.cpp" />
@@ -191,6 +196,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\SoLib\SoLib_Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ECS\Chunk\Chunk.hpp" />
+    <ClInclude Include="ECS\Component\Component.hpp" />
+    <ClInclude Include="ECS\Entity\Entity.hpp" />
+    <ClInclude Include="ECS\Entity\EntityManager.hpp" />
+    <ClInclude Include="ECS\World\World.hpp" />
     <ClInclude Include="Engine\DirectBase\2D\Sprite.h" />
     <ClInclude Include="Engine\DirectBase\3D\DirectionLight.h" />
     <ClInclude Include="Engine\DirectBase\Base\Audio.h" />
