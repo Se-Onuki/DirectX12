@@ -337,7 +337,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 14.0,
                     "Box": [
                         {
                             "Centor": [
@@ -864,6 +864,19 @@
                                 1.0,
                                 3.0
                             ]
+                        },
+                        {
+                            "Centor": [
+                                -4.0,
+                                0.0,
+                                0.0
+                            ],
+                            "GroundType": 0,
+                            "Radius": [
+                                1.0,
+                                1.0,
+                                3.0
+                            ]
                         }
                     ],
                     "Centor": [
@@ -1021,7 +1034,7 @@
                         0.0,
                         0.0
                     ],
-                    "AxisBarLength": 6.0,
+                    "AxisBarLength": 11.0,
                     "Box": [
                         {
                             "Centor": [
@@ -1234,7 +1247,7 @@
                         0.0,
                         0.0
                     ],
-                    "AxisBarLength": 5.0,
+                    "AxisBarLength": 7.0,
                     "Box": [
                         {
                             "Centor": [
