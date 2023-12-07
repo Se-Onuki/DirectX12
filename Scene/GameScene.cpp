@@ -287,7 +287,7 @@ void GameScene::Update() {
 			Fade::GetInstance()->Start({ 0.0f, 0.0f }, { 0.0f,0.0f, 0.0f, 1.0f }, 0.25f);
 		}
 		if (levelManager->Undo()) {
-			cameraManager_->SetUseCamera("FollowCamera");
+			cameraManager_->GetCameraAnimManager()->Play(cameraManager_->GetCamera("FollowCamera"), 0.25f);
 			PoseManager::GetInstance()->SetPoseState(PoseManager::kNone);
 		}
 	}
