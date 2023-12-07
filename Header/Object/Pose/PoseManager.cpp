@@ -63,30 +63,38 @@ void PoseManager::Update(float deltaTime)
 {
 	deltaTime;
 	if (isDisplay_) {
-		static SoLib::DeltaTimer inputTimer{ 0.2f };
-		inputTimer.Update(deltaTime);
+		static SoLib::DeltaTimer inputTimer{ 0.35f,true };
+		static SoLib::DeltaTimer inputIntervalTimer{ 0.15f };
+		bool isFirstTime = inputTimer.GetNowFlame() == 0.f;
+		if (inputTimer.IsFinish()) {
+			inputIntervalTimer.Update(deltaTime);
+		}
 		Vector2 stick = input_->GetXInput()->GetState()->stickL_;
 
-		bool isFinish = inputTimer.IsFinish();
+		bool isFinish = inputIntervalTimer.IsFinish();
 
 		if (stick.Length() < 0.21f) {
 			stick = {};
-		}
-		else if (isFinish) {
 			inputTimer.Start();
+		}
+		else {
+			inputTimer.Update(deltaTime);
+			if (isFinish) {
+				inputIntervalTimer.Start();
+			}
 		}
 
 
 
 		// 入力によって選択されているカテゴリを変更
-		if (input_->GetDirectInput()->IsTrigger(DIK_DOWN) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_DOWN) || (stick.y < 0.f && isFinish)) {
+		if (input_->GetDirectInput()->IsTrigger(DIK_DOWN) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_DOWN) || (stick.y < 0.f && isFirstTime) || (stick.y < 0.f && isFinish)) {
 			Audio::GetInstance()->PlayWave(nextSE_, false, 0.5f);
 			if (selectedCategory_ < kReturnStageSelect)
 				selectedCategory_++;
 			else
 				selectedCategory_ = kResume;
 		}
-		else if (input_->GetDirectInput()->IsTrigger(DIK_UP) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_UP) || (stick.y > 0.f && isFinish)) {
+		else if (input_->GetDirectInput()->IsTrigger(DIK_UP) || input_->GetXInput()->IsTrigger(KeyCode::DPAD_UP) || (stick.y > 0.f && isFirstTime) || (stick.y > 0.f && isFinish)) {
 			Audio::GetInstance()->PlayWave(nextSE_, false, 0.5f);
 			if (selectedCategory_ > kResume)
 				selectedCategory_--;
