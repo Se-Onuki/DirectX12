@@ -117,8 +117,7 @@ Camera3D *CameraManager::AddCamera(const std::string &cameraName)
 	return cameraList_->AddCamera(cameraName);
 }
 
-Camera3D *CameraManager::GetCamera(const std::string &cameraName)
-{
+Camera3D *CameraManager::GetCamera(const std::string &cameraName) const {
 	return cameraList_->GetCamera(cameraName);
 }
 

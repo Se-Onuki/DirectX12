@@ -19,7 +19,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 7.0,
                     "Box": [
                         {
                             "Centor": [
@@ -61,7 +61,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 14.0,
+                    "AxisBarLength": 10.0,
                     "Box": [
                         {
                             "Centor": [
@@ -123,7 +123,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 12.0,
+                    "AxisBarLength": 7.0,
                     "Box": [
                         {
                             "Centor": [
@@ -165,7 +165,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 17.0,
+                    "AxisBarLength": 10.0,
                     "Box": [
                         {
                             "Centor": [
@@ -207,7 +207,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 5.0,
                     "Box": [
                         {
                             "Centor": [
@@ -295,7 +295,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 5.0,
                     "Box": [
                         {
                             "Centor": [
@@ -324,7 +324,7 @@
                                 0.0
                             ],
                             "Rotate": [
-                                3.1241393089294434,
+                                3.1415927410125732,
                                 0.0,
                                 0.0
                             ]
@@ -337,32 +337,19 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 14.0,
+                    "AxisBarLength": 11.0,
                     "Box": [
                         {
                             "Centor": [
                                 0.0,
-                                1.0,
+                                0.0,
                                 0.0
                             ],
                             "GroundType": 0,
                             "Radius": [
                                 3.0,
-                                2.0,
-                                9.0
-                            ]
-                        },
-                        {
-                            "Centor": [
-                                0.0,
-                                2.0,
-                                4.0
-                            ],
-                            "GroundType": 0,
-                            "Radius": [
                                 3.0,
-                                1.0,
-                                1.0
+                                9.0
                             ]
                         },
                         {
@@ -401,11 +388,11 @@
                         {
                             "Pos": [
                                 0.0,
-                                -2.0,
+                                -4.0,
                                 -8.0
                             ],
                             "Rotate": [
-                                3.1241393089294434,
+                                3.1415927410125732,
                                 0.0,
                                 0.0
                             ]
@@ -418,7 +405,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 6.0,
                     "Box": [
                         {
                             "Centor": [
@@ -519,7 +506,7 @@
                         0.0,
                         0.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 6.0,
                     "Box": [
                         {
                             "Centor": [
@@ -642,7 +629,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 12.0,
+                    "AxisBarLength": 6.0,
                     "Box": [
                         {
                             "Centor": [
@@ -697,7 +684,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 7.0,
                     "Box": [
                         {
                             "Centor": [
@@ -837,7 +824,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 5.0,
                     "Box": [
                         {
                             "Centor": [
@@ -854,13 +841,13 @@
                         },
                         {
                             "Centor": [
-                                -9.0,
+                                -8.0,
                                 2.0,
                                 0.0
                             ],
                             "GroundType": 0,
                             "Radius": [
-                                4.0,
+                                5.0,
                                 1.0,
                                 3.0
                             ]
@@ -904,7 +891,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 6.0,
                     "Box": [
                         {
                             "Centor": [
@@ -971,7 +958,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 5.0,
                     "Box": [
                         {
                             "Centor": [
@@ -1034,7 +1021,7 @@
                         0.0,
                         0.0
                     ],
-                    "AxisBarLength": 11.0,
+                    "AxisBarLength": 7.0,
                     "Box": [
                         {
                             "Centor": [
@@ -1205,13 +1192,13 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 6.0,
                     "Box": [
                         {
                             "Centor": [
                                 0.0,
                                 0.0,
-                                -5.0
+                                0.0
                             ],
                             "GroundType": 0,
                             "Radius": [
@@ -1224,14 +1211,14 @@
                     "Centor": [
                         0.0,
                         -5.0,
-                        0.0
+                        -5.0
                     ],
                     "StarItem": [
                         {
                             "Pos": [
                                 -4.0,
                                 -3.0,
-                                -6.0
+                                -1.0
                             ],
                             "Rotate": [
                                 3.1415927410125732,
@@ -1247,7 +1234,7 @@
                         0.0,
                         0.0
                     ],
-                    "AxisBarLength": 7.0,
+                    "AxisBarLength": 5.0,
                     "Box": [
                         {
                             "Centor": [

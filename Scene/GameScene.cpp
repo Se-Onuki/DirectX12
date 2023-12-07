@@ -195,6 +195,7 @@ void GameScene::Update() {
 	if ((Input::GetInstance()->GetDirectInput()->IsTrigger(DIK_ESCAPE) || Input::GetInstance()->GetXInput()->IsTrigger(KeyCode::START)) && not PoseManager::GetInstance()->GetIsActive() && not isGoaled && Fade::GetInstance()->GetSprite()->GetColor().w <= 0.f) {
 		if (PoseManager::GetInstance()->GetPoseState() == PoseManager::kNone) {
 			PoseManager::GetInstance()->DeplayPoseMenu();
+			PoseManager::GetInstance()->Reset();
 		}
 
 	}

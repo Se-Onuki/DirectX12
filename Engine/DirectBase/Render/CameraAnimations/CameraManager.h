@@ -48,7 +48,7 @@ public: // アクセッサ等
 	/// <returns>追加したカメラ</returns>
 	Camera3D* AddCamera(const std::string& cameraName);
 
-	Camera3D* GetCamera(const std::string& cameraName);
+	Camera3D* GetCamera(const std::string& cameraName) const;
 
 	/// <summary>
 	/// 使用中のカメラゲッター
