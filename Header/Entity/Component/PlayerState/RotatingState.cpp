@@ -42,7 +42,7 @@ void PlayerRotatingState::Update([[maybe_unused]] float deltaTime) {
 
 	auto *const platform = LevelElementManager::GetInstance()->GetPlatform(pPlayer_->GetGroup());
 
-	addAngle_ = SoLib::Lerp(Vector3::zero, addAngle_, 0.9f);
+	addAngle_ = SoLib::Lerp(Vector3::zero, addAngle_, 0.96f);
 
 	rotateCamera_->translation_ = pPlayer_->rotateCameraOrigin_ + Vector3::front * -45.f * Matrix4x4::EulerRotate(neutralAngle_ + addAngle_);
 	rotateCamera_->rotation_ = neutralAngle_ + addAngle_;
