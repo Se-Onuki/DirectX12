@@ -638,9 +638,10 @@ void LevelElementManager::Platform::Update(float deltaTime)
 		this->CalcCollision();
 	}
 
-	if (not dynamic_cast<PlayerBeginRotateState *>(playerComp->GetState().get()) && not dynamic_cast<PlayerEndRotateState *>(playerComp->GetState().get())) {
-		for (auto &item : starItem_) {
-			item->Update(deltaTime);
+
+	for (auto &item : starItem_) {
+		item->Update(deltaTime);
+		if (not dynamic_cast<PlayerBeginRotateState *>(playerComp->GetState().get()) && not dynamic_cast<PlayerEndRotateState *>(playerComp->GetState().get())) {
 			auto *const itemComp = item->GetComponent<StarItemComp>();
 			// 取得されていない && 接触時に取得判定を行う
 			if (not itemComp->GetIsCollected() && Collision::IsHit(playerComp->GetCollider(), itemComp->GetCollider())) {

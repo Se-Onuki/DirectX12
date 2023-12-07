@@ -5,6 +5,7 @@
 #include "../../../Object/TutorialManager.h"
 #include "../../Header/Object/InGameUIManager/InGameUIManager.h"
 #include "../../Header/Object/LevelElementManager.h"
+#include "../../../../StarItemComp.h"
 
 
 // 静的なメンバ変数の実体を宣言
@@ -28,8 +29,17 @@ void PlayerEndRotateState::Init() {
 		endRotateSE2_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/land.wav");
 	}
 
+	bool isNotClear = false;
+
+	for (const auto &item : LevelElementManager::GetInstance()->GetStarItemList()) {
+		isNotClear |= not item->GetComponent<StarItemComp>()->GetIsCollected();
+		if (isNotClear) {
+			break;
+		}
+	}
+
 	// もし回転が行われていたら減少
-	if (LevelElementManager::GetInstance()->GetStarItemList().size()) {
+	if (isNotClear) {
 		tutorial->SetProgress(TutorialManager::TutorialProgress::kWalk);
 	}
 	else if (pPlayer_->rotateCount_ % 4 != 0) {

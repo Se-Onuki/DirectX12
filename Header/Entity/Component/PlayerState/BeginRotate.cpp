@@ -43,7 +43,7 @@ void PlayerBeginRotateState::Init() {
 void PlayerBeginRotateState::Update([[maybe_unused]] float deltaTime) {
 	int32_t playkey = pAnimation_->GetAnimManager()->GetNowAnimation()->GetPlayKey();
 	if (playkey == 5 || playkey == 6 || playkey == 7) {
-		timer_.Update(deltaTime);
+		timer_.Update(deltaTime * 1.5f);
 	}
 	float moveLength = pPlayer_->vRotateHeight_ - startPos_.y;
 	pPlayer_->transform_->translate = startPos_ + Vector3{ 0.f,moveLength * SoLib::easeInOutQuint(timer_.GetProgress()), 0.f };

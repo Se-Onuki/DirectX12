@@ -91,7 +91,7 @@ void GameScene::OnEnter() {
 	/*Model *const boxModel = */ModelManager::GetInstance()->GetModel("Box");
 	player_ = std::make_unique<Entity>();
 	//auto*const rigidbody =
-	player_->AddComponent<Rigidbody>();
+	player_->AddComponent<Rigidbody>()->monoTimeScale_ = 1.75f;
 	//auto *const modelComp =
 	player_->AddComponent<ModelComp>();
 	//modelComp->AddBone("Body", boxModel);

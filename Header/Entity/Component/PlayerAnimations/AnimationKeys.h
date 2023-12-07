@@ -31,7 +31,7 @@ public: // パブリックなサブクラス
 
 public: // メンバ関数
 
-	void Initialize(std::string groupName);
+	void Initialize(const std::string &groupName);
 
 	void AddKey();
 

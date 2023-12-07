@@ -29,8 +29,18 @@ void AnimationManager::Update(const float deltaTime)
 
 	}
 	// 現在アニメーションを更新
-	currentAnimation_->Update(deltaTime);
+	const auto playerBehavior = currentAnimation_->GetBehavior();
 
+	if (playerBehavior == PlayerBehavior::kRotateStart) {
+		currentAnimation_->Update(deltaTime * 1.5f);
+
+	}
+	else if (playerBehavior == PlayerBehavior::kRotateEnd) {
+		currentAnimation_->Update(deltaTime * 1.25f);
+	}
+	else {
+		currentAnimation_->Update(deltaTime);
+	}
 #ifdef _DEBUG
 	ImGui::Begin("AnimManager");
 	ImGui::RadioButton("PlayIdle", &imGuiNextbehavior_, kIdle);

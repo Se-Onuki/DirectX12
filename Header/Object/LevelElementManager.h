@@ -188,7 +188,7 @@ public:
 
 	const auto &GetGroundModel() const { return groundModels_; }
 
-	VariantItem<float> vLerpTime_{ "LerpTime", 1.f };
+	VariantItem<float> vLerpTime_{ "LerpTime", 0.5f };
 	VariantItem<int32_t> vMaxRotateCount_{ "MaxRotateCount", 2 };
 
 	std::list<Entity *> GetStarItemList() const;

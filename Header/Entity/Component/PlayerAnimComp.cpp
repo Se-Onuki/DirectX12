@@ -26,7 +26,7 @@ void PlayerAnimComp::Update()
 {
 
 	// アニメーションマネージャー更新
-	animManager_->Update(object_->GetDeltaTime());
+	animManager_->Update(GetDeltaTime());
 
 #ifdef _DEBUG
 

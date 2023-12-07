@@ -1,7 +1,7 @@
 #include "AnimationKeys.h"
 #include "../../../../Engine/DirectBase/File/GlobalVariables.h"
 
-void AnimationKeys::Initialize(std::string groupName)
+void AnimationKeys::Initialize(const std::string &groupName)
 {
 	// グループ名の取得
 	groupName_ = groupName;

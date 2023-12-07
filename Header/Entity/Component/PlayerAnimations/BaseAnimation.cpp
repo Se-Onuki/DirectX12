@@ -1,6 +1,6 @@
 #include "BaseAnimation.h"
 
-void BaseAnimation::Initialize(std::string name, bool isLoop, AnimEasing::EasingType type, float transitionTime)
+void BaseAnimation::Initialize(const std::string& name, bool isLoop, AnimEasing::EasingType type, float transitionTime)
 {
 	// グローバル変数クラスのインスタンス取得
 	globalVariables_ = GlobalVariables::GetInstance();
