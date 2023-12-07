@@ -548,7 +548,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 4.0,
                     "Box": [
                         {
                             "Centor": [
@@ -642,7 +642,7 @@
                         0.0,
                         1.0
                     ],
-                    "AxisBarLength": 10.0,
+                    "AxisBarLength": 12.0,
                     "Box": [
                         {
                             "Centor": [
