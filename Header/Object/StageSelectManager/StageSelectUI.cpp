@@ -180,8 +180,8 @@ void StageSelectUI::ChangeInitialize(bool isRight)
 
 	// 右か左か
 	if (isRight) {
-		startPreviewPos2_ = { (1280.0f * 2.0f) - (1280.0f / 2.0f), 380.0f };
-		endPreviewPos_ = { (-1280.0f * 2.0f) + (1280.0f / 2.0f), 380.0f };	
+		startPreviewPos2_ = { -((-1280.0f * 2.0f) + (1280.0f / 2.0f)), 380.0f };
+		endPreviewPos_ = { (-1280.0f * 2.0f) + (1280.0f / 2.0f) - (1280.0f / 4.0f), 380.0f };
 		endSelectArrowPos_R_ = { 1105.0f, 400.0f };
 	}
 	else {
@@ -202,6 +202,7 @@ void StageSelectUI::ChangeUpdate()
 {
 	// 
 	if (not prevAnimTimer_.IsFinish()) {
+		
 		stagePreviewUI_.position_ = SoLib::Lerp(startPreviewPos_, endPreviewPos_, SoLib::easeInQuad(prevAnimTimer_.GetProgress()));
 		stagePreviewUI2_.position_ = SoLib::Lerp(startPreviewPos2_, endPreviewPos2_, SoLib::easeOutQuad(prevAnimTimer_.GetProgress()));
 
