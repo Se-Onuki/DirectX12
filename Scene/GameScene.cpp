@@ -261,6 +261,7 @@ void GameScene::Update() {
 				}
 			}
 		}
+
 		followCamera_->GetComponent<FollowCameraComp>()->AddRotate(euler);
 		followCamera_->ImGuiWidget();
 		followCamera_->Update(deltaTime);

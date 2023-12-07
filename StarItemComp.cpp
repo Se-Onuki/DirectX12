@@ -51,7 +51,9 @@ void StarItemComp::Update() {
 
 void StarItemComp::CollectItem() {
 	if (not isCollected_) {
-		TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kFloatZ);
+		if (TutorialManager::GetInstance()->GetProgress() != static_cast<int32_t>(TutorialManager::TutorialProgress::kToGoal)) {
+			TutorialManager::GetInstance()->SetProgress(TutorialManager::TutorialProgress::kFloatZ);
+		}
 		auto *const modelComp = object_->AddComponent<ModelComp>();
 		modelComp->GetBone("StarBase")->model_ = ModelManager::GetInstance()->GetModel("StarBaseShine");
 

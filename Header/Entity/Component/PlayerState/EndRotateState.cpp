@@ -39,7 +39,7 @@ void PlayerEndRotateState::Init() {
 	}
 
 	// もし回転が行われていたら減少
-	if (isNotClear) {
+	if (LevelElementManager::GetInstance()->GetStarCount() == 0) {
 		tutorial->SetProgress(TutorialManager::TutorialProgress::kWalk);
 	}
 	else if (pPlayer_->rotateCount_ % 4 != 0) {
