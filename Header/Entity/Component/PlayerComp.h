@@ -12,6 +12,9 @@
 #include <memory>
 #include "PlayerState/IPlayerState.h"
 #include "PlayerAnimComp.h"
+#include "GoalAnimations/GoalAnimComp.h"
+
+class InGameUIManager;
 
 class PlayerComp : public IComponent {
 public:
@@ -42,6 +45,7 @@ public:
 
 	VariantItem<float> vRotateHeight_{ "RotateHeight", 10.f };
 
+	InGameUIManager *pInGameUI_ = nullptr;
 
 	const Vector3 radius_{ 0.75f,0.99f,0.75f };
 
@@ -54,6 +58,12 @@ public:
 	void SetState() {  // 状態を変更するメソッド
 		nowState_ = std::make_unique<State>(this);
 	}
+
+	void SetInGameUIManager(InGameUIManager *const inGameUI);
+
+	/// @brief 現在の状態の取得
+	/// @return 現在の状態
+	const auto &GetState() const { return nowState_; }
 
 	/// @brief 移動方向を入力
 	/// @param vec 移動ベクトル
@@ -75,6 +85,14 @@ public:
 
 	void SetIsActiveGravity(bool flag) { isActiveGravity_ = flag; }
 
+	AABB GetCollider() const { return referenceCollider_.AddPos(transform_->GetGrobalPos()); }
+
+	void SetIsGoaled(bool isGoaled) { isGoaled_ = isGoaled; }
+
+	int32_t rotateCount_;
+
+	Vector3 rotateCameraOrigin_{};
+
 private:
 
 	Vector3 CalcMoveCollision();
@@ -92,9 +110,11 @@ private:
 	// 所属するグループ
 	int32_t registeredGroups_ = -1;
 
-	AABB collider_;
+	AABB referenceCollider_;
 
 	Input *input_;
+
+	bool isGoaled_ = false;
 
 	PlayerAnimComp *animationComp_ = nullptr;
 

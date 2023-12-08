@@ -1,9 +1,9 @@
 {
     "Player": {
         "JumpDeceleration": 0.8999999761581421,
-        "JumpPower": 7.5,
-        "JumpSpeed": 0.10000000149011612,
-        "MoveSpeed": 500.0,
+        "JumpPower": 6.800000190734863,
+        "JumpSpeed": 0.07999999821186066,
+        "MoveSpeed": 185.0,
         "RotateBeginTime": 0.800000011920929,
         "RotateEndTime": 0.6000000238418579,
         "RotateHeight": 15.0

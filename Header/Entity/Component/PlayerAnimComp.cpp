@@ -24,6 +24,12 @@ void PlayerAnimComp::Init()
 
 void PlayerAnimComp::Update()
 {
+
+	// アニメーションマネージャー更新
+	animManager_->Update(GetDeltaTime());
+
+#ifdef _DEBUG
+
 	// 自分自身のモデルコンポーネント
 	auto *const modelComp = object_->GetComponent<ModelComp>();
 
@@ -78,6 +84,5 @@ void PlayerAnimComp::Update()
 	}
 	ImGui::End();
 
-	// アニメーションマネージャー更新
-	animManager_->Update();
+#endif // _DEBUG
 }

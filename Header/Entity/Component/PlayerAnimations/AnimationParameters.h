@@ -48,5 +48,13 @@ private: // メンバ変数
 	// 回転終了アニメーションキー
 	AnimationKeys rotateEndAnimationKeys_;
 
+	// クリアアニメーションキー
+	AnimationKeys clearAnimationKeys_;
+	// クリアアニメーション後の待機キー
+	AnimationKeys clearBleakAnimationKeys_;
+
+	// タイトルアニメーションキー
+	AnimationKeys titleAnimationKeys_;
+
 };
 

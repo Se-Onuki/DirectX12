@@ -39,7 +39,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="deltaTime">経過秒数</param>
 	void Update(float deltaTime);
-	
+
 	/// <summary>
 	/// 引数で指定したパーティクルエミッタを生成する関数
 	/// </summary>
@@ -48,7 +48,7 @@ public: // メンバ関数
 	/// <param name="aliveTime">パーティクルの継続時間(何も入力しなかった場合はループ)</param>
 	/// <returns>そのパーティクルのエミッタ</returns>
 	template<IsIParticle SelectParticle>
-	inline ParticleEmitter* CreateEmitter(std::string modelName, float aliveTime = 0.0f) {
+	inline ParticleEmitter *CreateEmitter(std::string modelName, float aliveTime = 0.0f) {
 		// インスタンスの生成
 		std::unique_ptr<ParticleEmitter> emitter = std::make_unique<ParticleEmitter>();
 		// 生成したインスタンスの初期化
@@ -62,13 +62,12 @@ public: // メンバ関数
 		emitter->name_ = emitter->typeName_;
 		int sameNameCount = 0;
 		// 全てのエミッタの名前の取得
-		for (std::unique_ptr<ParticleEmitter>& emitters : emitters_) {
+		for (std::unique_ptr<ParticleEmitter> &emitters : emitters_) {
 			// エミッタの名前取得
 			std::string GetEmitterName = emitters->name_;
 
 			// オブジェクト名の末尾に数字が含まれている場合は末尾の文字を削除
-			while (isdigit(GetEmitterName.at(GetEmitterName.size() - 1)))
-			{
+			while (isdigit(GetEmitterName.at(GetEmitterName.size() - 1))) {
 				// 末尾の文字を削除
 				GetEmitterName.pop_back();
 			}
@@ -89,13 +88,13 @@ public: // メンバ関数
 		if (aliveTime == 0.0f) {
 			emitter->isLoop_ = true;
 		}
-			
+
 		// エミッタの値を追加
 		emitter->AddItem();
 		// エミッタの値を読み込む
 		emitter->ApplyItem();
 
-		ParticleEmitter* retrurnEmitter = emitter.get();
+		ParticleEmitter *retrurnEmitter = emitter.get();
 		// 初期化したインスタンスを配列に追加
 		emitters_.push_back(std::move(emitter));
 
@@ -122,7 +121,7 @@ public: // メンバ関数
 private: // メンバ変数
 
 	// 調整項目クラス
-	GlobalVariables* gv_ = nullptr;
+	GlobalVariables *gv_ = nullptr;
 
 	// パーティクルエミッター達
 	std::list<std::unique_ptr<ParticleEmitter>> emitters_;
@@ -133,7 +132,7 @@ private: // メンバ変数
 	std::map <std::type_index, std::function<std::unique_ptr<IParticle>(const Vector3 &)>> moldMap_;
 
 	// imGui表示用
-	std::vector<ParticleEmitter*> imGuiEmitters_;
+	std::vector<std::unique_ptr<ParticleEmitter>> imGuiEmitters_;
 
 	// 再生時間
 	float imGuiAliveTime_ = 1.0f;

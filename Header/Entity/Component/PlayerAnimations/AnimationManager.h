@@ -14,7 +14,10 @@ enum PlayerBehavior : uint32_t {
 	kLand,
 	kRotateStart,
 	kRotating,
-	kRotateEnd
+	kRotateEnd,
+	kClear,
+	kClearBleak,
+	kTitle
 };
 
 /// <summary>
@@ -35,7 +38,7 @@ public: // メンバ関数
 	/// <summary>
 	/// 更新関数
 	/// </summary>
-	void Update();
+	void Update(const float deltaTime);
 
 public: // アクセッサ等
 
@@ -108,4 +111,3 @@ private: // メンバ変数
 
 
 };
-

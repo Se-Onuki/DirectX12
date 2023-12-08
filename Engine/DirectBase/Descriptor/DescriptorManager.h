@@ -33,7 +33,7 @@ public:
 		/// @return デスクリプタハンドル
 		Handle GetHandle(const uint32_t index) const;
 	private:
-		DescHeap *descHeap_;// 使用しているデスクリプタヒープのアドレス
+		DescHeap *descHeap_ = nullptr;// 使用しているデスクリプタヒープのアドレス
 	};
 
 	DescHeap(ID3D12Device *const device, uint32_t size);

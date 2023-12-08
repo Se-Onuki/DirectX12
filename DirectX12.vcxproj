@@ -58,12 +58,10 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
@@ -83,14 +81,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
@@ -136,6 +132,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Component\CannonComp.cpp" />
     <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
+    <ClCompile Include="Header\Entity\Component\GoalAnimations\GoalAnimComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
     <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.cpp" />
@@ -160,19 +157,33 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Entity\Entity.cpp" />
     <ClCompile Include="Header\Object\BaseCharacter.cpp" />
     <ClCompile Include="Header\Object\Block\BlockManager.cpp" />
+    <ClCompile Include="Header\Object\Fade.cpp" />
     <ClCompile Include="Header\Object\FollowCamera.cpp" />
+    <ClCompile Include="Header\Object\InGameUIManager\InGameUIManager.cpp" />
+    <ClCompile Include="Header\Object\InGameUIManager\StarUI.cpp" />
+    <ClCompile Include="Header\Object\InGameUIManager\TutorialUI.cpp" />
     <ClCompile Include="Header\Object\LevelElementManager.cpp" />
     <ClCompile Include="Header\Object\Particle.cpp" />
+    <ClCompile Include="Header\Object\Particle\GetParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleEmitterManager.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleManager.cpp" />
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp" />
     <ClCompile Include="Header\Object\Player.cpp" />
+    <ClCompile Include="Header\Object\Pose\PoseManager.cpp" />
+    <ClCompile Include="Header\Object\SkyDome\SkyDome.cpp" />
+    <ClCompile Include="Header\Object\StageSelectManager\StageSelectManager.cpp" />
+    <ClCompile Include="Header\Object\StageSelectManager\StageSelectUI.cpp" />
+    <ClCompile Include="Header\Object\TitleBlock\TitleBlock.cpp" />
+    <ClCompile Include="Header\Object\TitleManager\TitleManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
+    <ClCompile Include="Scene\LoadScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
+    <ClCompile Include="Scene\StageSelectScene.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="StarItemComp.cpp" />
     <ClCompile Include="Utils\Math\Angle.cpp" />
     <ClCompile Include="Utils\Math\Math.cpp" />
     <ClCompile Include="Utils\Math\Matrix2x2.cpp" />
@@ -238,6 +249,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
     <ClInclude Include="Header\Entity\Component\FollowCameraComp.h" />
+    <ClInclude Include="Header\Entity\Component\GoalAnimations\GoalAnimComp.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
     <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.h" />
@@ -263,10 +275,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Entity\Entity.h" />
     <ClInclude Include="Header\Object\BaseCharacter.h" />
     <ClInclude Include="Header\Object\Block\BlockManager.h" />
+    <ClInclude Include="Header\Object\Fade.h" />
     <ClInclude Include="Header\Object\FollowCamera.h" />
+    <ClInclude Include="Header\Object\InGameUIManager\InGameUIManager.h" />
+    <ClInclude Include="Header\Object\InGameUIManager\StarUI.h" />
+    <ClInclude Include="Header\Object\InGameUIManager\TutorialUI.h" />
     <ClInclude Include="Header\Object\LevelElementManager.h" />
     <ClInclude Include="Header\Object\LevelManager.h" />
     <ClInclude Include="Header\Object\Particle.h" />
+    <ClInclude Include="Header\Object\Particle\GetParticle.h" />
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h" />
     <ClInclude Include="Header\Object\Particle\ParticleEmitterManager.h" />
     <ClInclude Include="Header\Object\Particle\ParticleList.h" />
@@ -274,9 +291,19 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Particle\StarParticle.h" />
     <ClInclude Include="Header\Object\Particle\TestParticle.h" />
     <ClInclude Include="Header\Object\Player.h" />
+    <ClInclude Include="Header\Object\Pose\PoseManager.h" />
+    <ClInclude Include="Header\Object\SkyDome\SkyDome.h" />
+    <ClInclude Include="Header\Object\StageSelectManager\StageSelectManager.h" />
+    <ClInclude Include="Header\Object\StageSelectManager\StageSelectUI.h" />
+    <ClInclude Include="Header\Object\TitleBlock\TitleBlock.h" />
+    <ClInclude Include="Header\Object\TitleManager\TitleManager.h" />
+    <ClInclude Include="Header\Object\TutorialManager.h" />
     <ClInclude Include="Scene\GameScene.h" />
+    <ClInclude Include="Scene\LoadScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
+    <ClInclude Include="Scene\StageSelectScene.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="StarItemComp.h" />
     <ClInclude Include="Utils\Math\Angle.h" />
     <ClInclude Include="Utils\Math\FloatArray.h" />
     <ClInclude Include="Utils\Math\Math.hpp" />
@@ -328,7 +355,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <FxCompile Include="resources\shader\Particle.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
@@ -340,6 +367,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="resources\shader\ShaderParticle.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

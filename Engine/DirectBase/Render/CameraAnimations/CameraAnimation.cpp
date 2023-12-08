@@ -33,13 +33,13 @@ void CameraAnimation::Init(Camera3D* endCamera, float time, float(*func)(float))
 
 	// イージングのタイプを取得
 	Ease = func;
+
+	// アニメーション終了
+	isEnd_ = false;
 }
 
 void CameraAnimation::Update(float deltaTime)
 {
-	// タイマーの更新
-	timer_.Update(deltaTime);
-
 	// タイマーが終了していなければ
 	if (not timer_.IsFinish()) {
 		// カメラのパラメーターを線形補間によって動かす
@@ -50,8 +50,18 @@ void CameraAnimation::Update(float deltaTime)
 	else { // 終了したら
 		// カメラのパラメーターを終了時のパラメーターに合わせる
 		CameraManager::GetInstance()->SetUseCamera(endCamera_);
+		// アニメーション終了
+		isEnd_ = true;
 	}
+	// タイマーの更新
+	timer_.Update(deltaTime);
 
 	// カメラの更新
 	camera_->UpdateMatrix();
+}
+
+void CameraAnimation::End()
+{
+	// アニメーション終了
+	isEnd_ = true;
 }

@@ -1,6 +1,6 @@
 #include "CameraManager.h"
 
-CameraManager* CameraManager::GetInstance()
+CameraManager *CameraManager::GetInstance()
 {
 	static CameraManager instance;
 	return &instance;
@@ -31,7 +31,7 @@ void CameraManager::Update(float deltaTime)
 	cameraAnimManager_->Update(deltaTime);
 
 	// リスト内の全てのカメラの計算を行う
-	for (auto& camera : cameraList_->cameraMap_) {
+	for (auto &camera : cameraList_->cameraMap_) {
 		// 計算を行う
 		camera.second->CalcMatrix();
 	}
@@ -48,7 +48,7 @@ void CameraManager::DisplayImGui()
 #ifdef _DEBUG
 	ImGui::Begin("CameraManager");
 	// 全カメラののImGuiを描画
-	ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(0, 150), ImGuiWindowFlags_NoTitleBar);
+	ImGui::BeginChild(ImGui::GetID((void *)0), ImVec2(0, 150), ImGuiWindowFlags_NoTitleBar);
 	// イテレータの取得
 	auto iter = cameraList_->cameraMap_.begin();
 	// イテレータの終わりまでループ
@@ -111,23 +111,27 @@ void CameraManager::DisplayImGui()
 #endif // _DEBUG
 }
 
-Camera3D* CameraManager::AddCamera(const std::string& cameraName)
+Camera3D *CameraManager::AddCamera(const std::string &cameraName)
 {
 	// カメラリストにカメラを追加しそれを返す
 	return cameraList_->AddCamera(cameraName);
 }
 
-void CameraManager::SetUseCamera(const std::string& cameraName)
+Camera3D *CameraManager::GetCamera(const std::string &cameraName) const {
+	return cameraList_->GetCamera(cameraName);
+}
+
+void CameraManager::SetUseCamera(const std::string &cameraName)
 {
 	// カメラ配列からカメラを取得
-	Camera3D* getCamera = cameraList_->GetCamera(cameraName);
+	Camera3D *getCamera = cameraList_->GetCamera(cameraName);
 	// 取得できた場合はそのカメラを使用する
 	if (getCamera != nullptr) {
 		useCamera_ = getCamera;
 	}
 }
 
-void CameraManager::SetUseCamera(Camera3D* camera)
+void CameraManager::SetUseCamera(Camera3D *camera)
 {
 	useCamera_ = camera;
 }

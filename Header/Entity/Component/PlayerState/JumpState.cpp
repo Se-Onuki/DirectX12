@@ -3,14 +3,21 @@
 #include "../PlayerComp.h"
 #include "FallingState.h"
 
+uint32_t PlayerJumpState::jumpSE_ = 0u;
+
 void PlayerJumpState::Init() {
 	pAnimation_->GetAnimManager()->SetNextAnimation(GetState(), false, AnimEasing::kLinear, 0.025f);
 	preAnimKey_ = 0;
+
+	if (jumpSE_ == 0u) {
+		jumpSE_ = Audio::GetInstance()->LoadWave("resources/Audio/SE/Player/jump.wav");
+	}
 }
 
 void PlayerJumpState::Update([[maybe_unused]] float deltaTime) {
 
 	static const auto *const keyBoard = input_->GetDirectInput();
+	static const auto *const gamePad = input_->GetXInput();
 	auto *nowAnimation = pAnimation_->GetAnimManager()->GetNowAnimation();
 	auto *const rigidbody = pPlayer_->object_->GetComponent<Rigidbody>();
 
@@ -40,6 +47,13 @@ void PlayerJumpState::Update([[maybe_unused]] float deltaTime) {
 	}
 
 	inputVec = inputVec.Nomalize();
+
+	Vector3 padInput{};
+	padInput.x = gamePad->GetState()->stickL_.x;
+	padInput.z = gamePad->GetState()->stickL_.y;
+	if (padInput.Length() >= 0.1f) {
+		inputVec = padInput;
+	}
 	inputVec *= jumpSpeed;
 
 	// 入力方向に応じた移動
@@ -49,6 +63,11 @@ void PlayerJumpState::Update([[maybe_unused]] float deltaTime) {
 		pPlayer_->ChangeState<PlayerFallingState>();
 	}
 	preAnimKey_ = nowAnimation->GetIsPlay();
+
+	if (not jumpSETrigger_) {
+		Audio::GetInstance()->PlayWave(jumpSE_, false, 0.5f);
+		jumpSETrigger_ = true;
+	}
 }
 
 void PlayerJumpState::Draw([[maybe_unused]] const Camera3D &camera) const {

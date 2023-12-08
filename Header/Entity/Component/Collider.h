@@ -114,13 +114,6 @@ public:
 	void ChackAllCollision();
 	void CheckCollisionPair(ColliderComp *const A, ColliderComp *const B);
 };
-//
-//template<SoLib::IsContainer T, typename>
-//inline void CollisionManager::push_back(const T &container) {
-//	for (auto &item : container) {
-//		push_back(&item);
-//	}
-//}
 
 template<SoLib::IsContainer T>
 inline void CollisionManager::push_back(const T &container) {

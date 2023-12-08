@@ -118,6 +118,27 @@
     <Filter Include="Header\Entity\Object\Block">
       <UniqueIdentifier>{0701f625-dfe0-4534-bda1-06815d39c16b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Entity\Object\StageSelectManager">
+      <UniqueIdentifier>{c6de19ec-3893-48d7-b60b-c4ec21f74ef3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object\TitleManager">
+      <UniqueIdentifier>{b771e0a8-fc0d-4e66-93a2-f3602eea290e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object\SkyDome">
+      <UniqueIdentifier>{e5ac1d12-cd78-4c1b-88be-cc904778dc1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object\PoseManager">
+      <UniqueIdentifier>{bba82b33-0ea6-4703-b408-a33a2ff5d4a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Component\GoalAnimComp">
+      <UniqueIdentifier>{8d8da5e3-3d75-45e3-aac7-9f2dce999091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object\InGameUIManager">
+      <UniqueIdentifier>{0a4914fd-a5ce-4775-a2dd-f101dc163a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Entity\Object\Particle\Particles\GetParticle">
+      <UniqueIdentifier>{5335fb9d-4068-44ac-a8c9-e761918551f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -378,14 +399,59 @@
     <ClCompile Include="Header\Entity\Component\PlayerState\RotatingState.cpp">
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Entity\Component\PlayerState\EndRotateState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Object\Block\BlockManager.cpp">
       <Filter>Header\Entity\Object\Block</Filter>
     </ClCompile>
     <ClCompile Include="Scene\TitleScene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\PlayerState\EndRotateState.cpp">
+      <Filter>Header\Entity\Component\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="StarItemComp.cpp">
+      <Filter>Header\Entity\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\LoadScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\StageSelectScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\StageSelectManager\StageSelectManager.cpp">
+      <Filter>Header\Entity\Object\StageSelectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\StageSelectManager\StageSelectUI.cpp">
+      <Filter>Header\Entity\Object\StageSelectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Fade.cpp">
+      <Filter>Header\Entity\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\TitleManager\TitleManager.cpp">
+      <Filter>Header\Entity\Object\TitleManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\SkyDome\SkyDome.cpp">
+      <Filter>Header\Entity\Object\SkyDome</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\TitleBlock\TitleBlock.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Pose\PoseManager.cpp">
+      <Filter>Header\Entity\Object\PoseManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Entity\Component\GoalAnimations\GoalAnimComp.cpp">
+      <Filter>Header\Entity\Component\GoalAnimComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\InGameUIManager\InGameUIManager.cpp">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\InGameUIManager\StarUI.cpp">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\InGameUIManager\TutorialUI.cpp">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\GetParticle.cpp">
+      <Filter>Header\Entity\Object\Particle\Particles\GetParticle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -713,6 +779,54 @@
     <ClInclude Include="Header\Entity\Component\PlayerState\EndRotateState.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\LoadScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\StageSelectScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\StageSelectManager\StageSelectManager.h">
+      <Filter>Header\Entity\Object\StageSelectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\StageSelectManager\StageSelectUI.h">
+      <Filter>Header\Entity\Object\StageSelectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Fade.h">
+      <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\TitleManager\TitleManager.h">
+      <Filter>Header\Entity\Object\TitleManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\SkyDome\SkyDome.h">
+      <Filter>Header\Entity\Object\SkyDome</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\TitleBlock\TitleBlock.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Pose\PoseManager.h">
+      <Filter>Header\Entity\Object\PoseManager</Filter>
+    </ClInclude>
+    <ClInclude Include="StarItemComp.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\GoalAnimations\GoalAnimComp.h">
+      <Filter>Header\Entity\Component\GoalAnimComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\InGameUIManager\InGameUIManager.h">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\InGameUIManager\StarUI.h">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\TutorialManager.h">
+      <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\InGameUIManager\TutorialUI.h">
+      <Filter>Header\Entity\Object\InGameUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\GetParticle.h">
+      <Filter>Header\Entity\Object\Particle\Particles\GetParticle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -736,6 +850,9 @@
       <Filter>Engine\Shader</Filter>
     </FxCompile>
     <FxCompile Include="resources\shader\Particle.VS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\ShaderParticle.PS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
   </ItemGroup>

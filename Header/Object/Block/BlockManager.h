@@ -5,64 +5,23 @@
 #include "../../../Engine/DirectBase/Model/ModelManager.h"
 #include "../Particle.h"
 
-class BlockList;
-class IBlock;
-
-/// <summary>
-/// ステージ上のブロックをインスタンシングで描画するマネージャ
-/// </summary>
-class BlockManager
-{
-private: // コンストラクタ等
-
-	// シングルトンパターンの設定
-	BlockManager() = default;
-	~BlockManager() = default;
-	BlockManager(const BlockManager&) = delete;
-	const BlockManager& operator=(const BlockManager&) = delete;
-
-public: // メンバ関数
-
-	/// <summary>
-	/// シングルトンインスタンスの取得
-	/// </summary>
-	/// <returns>シングルトンインスタンス</returns>
-	static BlockManager* GetInstance() {
-		static BlockManager instance;
-		return &instance;
-	};
-
-	/// <summary>
-	/// 初期化関数
-	/// </summary>
-	/// <param name="maxCount">最大数</param>
-	void Init(uint32_t maxCount);
+class IBlock {
+public: // コンストラクタ
 
 	/// <summary>
 	/// 更新関数
 	/// </summary>
-	/// <param name="deltaTime"></param>
 	void Update();
 
-	/// <summary>
-	/// 描画関数
-	/// </summary>
-	/// <param name="camera"></param>
-	void Draw(const Camera3D& camera);
+public: // パブリックなメンバ変数
 
-private: // メンバ変数
+	// トランスフォーム
+	BaseTransform transform_;
 
-	// ブロック配列
-	ArrayBuffer<Particle::ParticleData> blocks_;
-
-	// ヒープレンジ
-	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
-
-	// ブロックリスト配列
-	std::unordered_map<const Model*, std::unique_ptr<BlockList>> blockMap_;
+	//　色
+	Vector4 color_ = { 1.f, 1.f, 1.f, 1.f };
 
 };
-
 /// <summary>
 /// ブロックリスト
 /// </summary>
@@ -77,18 +36,19 @@ public: // メンバ関数
 
 public: // アクセッサ等
 
+	void clear() { blocks_.clear(); }
 	/// <summary>
 	/// 粒子配列に粒子を追加する関数
 	/// </summary>
 	/// <param name="particle">粒子</param>
 	/// <returns>配列に追加された粒子</returns>
-	IBlock* const push_back(std::unique_ptr<IBlock> particle);
+	IBlock *const push_back(IBlock &&particle);
 
 	/// <summary>
 	/// 粒子配列のリストゲッター
 	/// </summary>
 	/// <returns>粒子配列</returns>
-	const auto& GetBlockList() { return blocks_; }
+	const auto &GetBlockList() { return blocks_; }
 
 	/// <summary>
 	/// 粒子配列サイズゲッター
@@ -122,7 +82,7 @@ public: // アクセッサ等
 	/// パーティクルに使用するモデルセッター
 	/// </summary>
 	/// <param name="model">パーティクルに使用するモデル</param>
-	void SetModel(const Model* const model) { model_ = model; }
+	void SetModel(const Model *const model) { model_ = model; }
 
 	/// <summary>
 	/// 描画インデックス位置セッター
@@ -133,7 +93,7 @@ public: // アクセッサ等
 	/// 描画インデックス位置ゲッター
 	/// </summary>
 	/// <returns>描画インデックス位置</returns>
-	const auto& GetLoaction() const { return indexLocation_; }
+	const auto &GetLoaction() const { return indexLocation_; }
 
 private: // メンバ変数
 
@@ -144,25 +104,78 @@ private: // メンバ変数
 	CBuffer<uint32_t> indexLocation_;
 
 	// ブロックモデル
-	const Model* model_;
+	const Model *model_;
 	// ブロック配列
-	std::list<std::unique_ptr<IBlock>> blocks_;
+	std::list<IBlock> blocks_;
 };
 
-class IBlock {
-public: // コンストラクタ
-	
+/// <summary>
+/// ステージ上のブロックをインスタンシングで描画するマネージャ
+/// </summary>
+class BlockManager
+{
+private: // コンストラクタ等
+
+	// シングルトンパターンの設定
+	BlockManager() = default;
+	~BlockManager() = default;
+	BlockManager(const BlockManager &) = delete;
+	const BlockManager &operator=(const BlockManager &) = delete;
+
+public: // メンバ関数
+
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns>シングルトンインスタンス</returns>
+	static BlockManager *GetInstance() {
+		static BlockManager instance;
+		return &instance;
+	};
+
+	/// <summary>
+	/// 初期化関数
+	/// </summary>
+	/// <param name="maxCount">最大数</param>
+	void Init(uint32_t maxCount);
+
 	/// <summary>
 	/// 更新関数
 	/// </summary>
+	/// <param name="deltaTime"></param>
 	void Update();
 
-public: // パブリックなメンバ変数
+	/// <summary>
+	/// 描画関数
+	/// </summary>
+	/// <param name="camera"></param>
+	void Draw(const Camera3D &camera);
 
-	// トランスフォーム
-	BaseTransform transform_;
+	IBlock *const AddBox(const Model *const model, IBlock &&block) {
+		decltype(blockMap_)::iterator blockListItr = blockMap_.find(model);
+		if (blockListItr == blockMap_.end()) {
+			blockMap_[model] = std::make_unique<BlockList>();
+			blockMap_[model]->SetModel(model);
+		}
+		return blockMap_[model]->push_back(std::move(block));
+	}
 
-	//　色
-	Vector4 color_ = { 1.f, 1.f, 1.f, 1.f };
+	/// @brief 破棄関数
+	void clear() {
+		for (auto &blockList : blockMap_) {
+			blockList.second->clear();
+		}
+	}
+
+private: // メンバ変数
+
+	// ブロック配列
+	ArrayBuffer<Particle::ParticleData> blocks_;
+
+	// ヒープレンジ
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
+
+	// ブロックリスト配列
+	std::unordered_map<const Model *, std::unique_ptr<BlockList>> blockMap_;
 
 };

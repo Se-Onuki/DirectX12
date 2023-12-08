@@ -76,6 +76,8 @@ private:
 
 	// SRVデスクリプタヒープ
 	std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>> srvHeap_;
+
+	std::unique_ptr<FPSManager> fpsManager_ = nullptr;
 public:
 
 	void Init(WinApp *winApp, int32_t backBufferWidth = WinApp::kWindowWidth,

@@ -1,0 +1,34 @@
+#pragma once
+#include "Header/Entity/Entity.h"
+#include "Header/Collision/Collision.h"
+#include "Utils/SoLib/SoLib.h"
+
+class StarItemComp : public IComponent {
+public:
+	using IComponent::IComponent;
+	~StarItemComp() = default;
+
+	void Init() override;
+	void Reset() override;
+	void Update() override;
+
+	void CollectItem();
+
+	const Sphere &GetCollider() const { return collider_; }
+
+	/// @brief 取得されたか
+	/// @return 取得されたなら true
+	bool GetIsCollected() const { return isCollected_; }
+
+private:
+
+	SoLib::DeltaTimer clearTimer_{ };
+
+	bool isCollected_ = false;
+
+	Sphere collider_;
+
+	// 取得時効果音
+	static uint32_t collctSE_;
+
+};

@@ -14,17 +14,13 @@ void AnimationManager::Initialize()
 	currentAnimation_->Initialize("Idle", true); // 初期化
 }
 
-void AnimationManager::Update()
+void AnimationManager::Update(const float deltaTime)
 {
-	// FPSカウンターの表示
-	ImGui::Begin("Control panel");
-	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
-	ImGui::End();
 
 	// 更新
 	animParameters_->Update();
 
-	const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+	//const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
 	// 次のアニメーションがセットされている場合
 	if (nextAnimation_ != nullptr) {
@@ -33,8 +29,18 @@ void AnimationManager::Update()
 
 	}
 	// 現在アニメーションを更新
-	currentAnimation_->Update(deltaTime);
+	const auto playerBehavior = currentAnimation_->GetBehavior();
 
+	if (playerBehavior == PlayerBehavior::kRotateStart) {
+		currentAnimation_->Update(deltaTime * 1.5f);
+
+	}
+	else if (playerBehavior == PlayerBehavior::kRotateEnd) {
+		currentAnimation_->Update(deltaTime * 1.25f);
+	}
+	else {
+		currentAnimation_->Update(deltaTime);
+	}
 #ifdef _DEBUG
 	ImGui::Begin("AnimManager");
 	ImGui::RadioButton("PlayIdle", &imGuiNextbehavior_, kIdle);
@@ -45,6 +51,9 @@ void AnimationManager::Update()
 	ImGui::RadioButton("PlayRotateStart", &imGuiNextbehavior_, kRotateStart);
 	ImGui::RadioButton("PlayRotating", &imGuiNextbehavior_, kRotating);
 	ImGui::RadioButton("PlayRotateEnd", &imGuiNextbehavior_, kRotateEnd);
+	ImGui::RadioButton("Clear", &imGuiNextbehavior_, kClear);
+	ImGui::RadioButton("ClearBleak", &imGuiNextbehavior_, kClearBleak);
+	ImGui::RadioButton("Title", &imGuiNextbehavior_, kTitle);
 
 	int key = currentAnimation_->GetPlayKey();
 	ImGui::DragInt("NowPlayKey", &key, 0.05f);
@@ -117,6 +126,15 @@ void AnimationManager::SetNextAnimation(PlayerBehavior next, bool isLoop, AnimEa
 		break;
 	case PlayerBehavior::kRotateEnd:
 		nextAnimation_->Initialize("RotateEnd", isLoop, type, transitionTime);
+		break;
+	case PlayerBehavior::kClear:
+		nextAnimation_->Initialize("Clear", isLoop, type, transitionTime);
+		break;
+	case PlayerBehavior::kClearBleak:
+		nextAnimation_->Initialize("ClearBleak", isLoop, type, transitionTime);
+		break;
+	case PlayerBehavior::kTitle:
+		nextAnimation_->Initialize("Title", isLoop, type, transitionTime);
 		break;
 	}
 

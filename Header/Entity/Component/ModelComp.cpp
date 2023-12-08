@@ -22,10 +22,10 @@ void ModelComp::ModelBone::Init(Model *const model) {
 	if (model) { model_ = model; }
 }
 
-void ModelComp::ModelBone::SetTransform(const Transform &srt) {
-	transform_->scale = srt->scale;
-	transform_->rotate = srt->rotate;
-	transform_->translate = srt->translate;
+void ModelComp::ModelBone::SetTransform(const BaseTransform &srt) {
+	transform_->scale = srt.scale;
+	transform_->rotate = srt.rotate;
+	transform_->translate = srt.translate;
 }
 
 ModelComp::ModelBone *const ModelComp::ModelBone::AddChild(Model *const model) {
@@ -72,23 +72,24 @@ void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &v
 	}
 }
 
-ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, const Transform &srt) {
+ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, const BaseTransform &srt) {
 	if (modelKey_.count(key) != 0u) return nullptr;
-	auto *const newBone = new ModelBone;
+	auto  newBone = std::make_unique<ModelBone>();
 	newBone->Init(model);
 
-	newBone->transform_->parent_ = static_cast<BaseTransform *>(&object_->transform_);
+	newBone->transform_->parent_ = static_cast<BaseTransform *>(transform_);
 
 	newBone->SetTransform(srt);
 
-	modelTree_.emplace_back(newBone);
+	modelKey_.insert({ key,newBone.get() });
 
-	modelKey_.insert({ key,newBone });
+	modelTree_.push_back(std::move(newBone));
 
-	return newBone;
+
+	return modelKey_.at(key);
 }
 
-ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, ModelBone *const parent, const Transform &srt) {
+ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, ModelBone *const parent, const BaseTransform &srt) {
 	if (modelKey_.count(key) != 0u) return nullptr;
 
 	auto *const newBone = parent->AddChild(model);

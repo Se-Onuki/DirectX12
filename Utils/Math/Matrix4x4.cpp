@@ -304,43 +304,7 @@ Matrix4x4 Matrix4x4::operator-=(const Matrix4x4 &Second) {
 
 Matrix4x4 Matrix4x4::operator*=(const Matrix4x4 &Second) {
 
-	return *this = Matrix4x4{
-			   this->m[0][0] * Second.m[0][0] + this->m[0][1] * Second.m[1][0] +
-				   this->m[0][2] * Second.m[2][0] + this->m[0][3] * Second.m[3][0],
-			   this->m[0][0] * Second.m[0][1] + this->m[0][1] * Second.m[1][1] +
-				   this->m[0][2] * Second.m[2][1] + this->m[0][3] * Second.m[3][1],
-			   this->m[0][0] * Second.m[0][2] + this->m[0][1] * Second.m[1][2] +
-				   this->m[0][2] * Second.m[2][2] + this->m[0][3] * Second.m[3][2],
-			   this->m[0][0] * Second.m[0][3] + this->m[0][1] * Second.m[1][3] +
-				   this->m[0][2] * Second.m[2][3] + this->m[0][3] * Second.m[3][3],
-
-			   this->m[1][0] * Second.m[0][0] + this->m[1][1] * Second.m[1][0] +
-				   this->m[1][2] * Second.m[2][0] + this->m[1][3] * Second.m[3][0],
-			   this->m[1][0] * Second.m[0][1] + this->m[1][1] * Second.m[1][1] +
-				   this->m[1][2] * Second.m[2][1] + this->m[1][3] * Second.m[3][1],
-			   this->m[1][0] * Second.m[0][2] + this->m[1][1] * Second.m[1][2] +
-				   this->m[1][2] * Second.m[2][2] + this->m[1][3] * Second.m[3][2],
-			   this->m[1][0] * Second.m[0][3] + this->m[1][1] * Second.m[1][3] +
-				   this->m[1][2] * Second.m[2][3] + this->m[1][3] * Second.m[3][3],
-
-			   this->m[2][0] * Second.m[0][0] + this->m[2][1] * Second.m[1][0] +
-				   this->m[2][2] * Second.m[2][0] + this->m[2][3] * Second.m[3][0],
-			   this->m[2][0] * Second.m[0][1] + this->m[2][1] * Second.m[1][1] +
-				   this->m[2][2] * Second.m[2][1] + this->m[2][3] * Second.m[3][1],
-			   this->m[2][0] * Second.m[0][2] + this->m[2][1] * Second.m[1][2] +
-				   this->m[2][2] * Second.m[2][2] + this->m[2][3] * Second.m[3][2],
-			   this->m[2][0] * Second.m[0][3] + this->m[2][1] * Second.m[1][3] +
-				   this->m[2][2] * Second.m[2][3] + this->m[2][3] * Second.m[3][3],
-
-			   this->m[3][0] * Second.m[0][0] + this->m[3][1] * Second.m[1][0] +
-				   this->m[3][2] * Second.m[2][0] + this->m[3][3] * Second.m[3][0],
-			   this->m[3][0] * Second.m[0][1] + this->m[3][1] * Second.m[1][1] +
-				   this->m[3][2] * Second.m[2][1] + this->m[3][3] * Second.m[3][1],
-			   this->m[3][0] * Second.m[0][2] + this->m[3][1] * Second.m[1][2] +
-				   this->m[3][2] * Second.m[2][2] + this->m[3][3] * Second.m[3][2],
-			   this->m[3][0] * Second.m[0][3] + this->m[3][1] * Second.m[1][3] +
-				   this->m[3][2] * Second.m[2][3] + this->m[3][3] * Second.m[3][3],
-	};
+	return *this = *this * Second;
 }
 Matrix4x4 Matrix4x4::operator*=(const float &Second) {
 

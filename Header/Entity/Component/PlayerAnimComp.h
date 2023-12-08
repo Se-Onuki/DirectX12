@@ -33,17 +33,23 @@ public: // アクセッサ等
 	/// アニメーションマネージャーゲッター
 	/// </summary>
 	/// <returns>アニメーションマネージャー</returns>
-	AnimationManager* GetAnimManager() { return animManager_.get(); }
+	AnimationManager *GetAnimManager() { return animManager_.get(); }
+
+	/// <summary>
+	/// プレイヤーの輪っか座標ゲッター
+	/// </summary>
+	/// <returns>プレイヤーの輪っか座標</returns>
+	const BaseTransform* GetLingTransform() { return &LingTransform_; }
 
 private: // メンバ変数
 	// モデルのトランスフォーム
-	Transform bodyTransform_; // 体のトランスフォーム
-	Transform eyeTransform_; // 瞳のトランスフォーム
-	Transform LingTransform_; // 輪っかトランスフォーム
-	Transform ArmTransform_L_; // 左腕トランスフォーム
-	Transform ArmTransform_R_; // 右腕トランスフォーム
-	Transform FootTransform_L_; // 左足トランスフォーム
-	Transform FootTransform_R_; // 右足トランスフォーム
+	BaseTransform bodyTransform_; // 体のトランスフォーム
+	BaseTransform eyeTransform_; // 瞳のトランスフォーム
+	BaseTransform LingTransform_; // 輪っかトランスフォーム
+	BaseTransform ArmTransform_L_; // 左腕トランスフォーム
+	BaseTransform ArmTransform_R_; // 右腕トランスフォーム
+	BaseTransform FootTransform_L_; // 左足トランスフォーム
+	BaseTransform FootTransform_R_; // 右足トランスフォーム
 
 	// アニメーションマネージャー
 	std::unique_ptr<AnimationManager> animManager_ = nullptr;

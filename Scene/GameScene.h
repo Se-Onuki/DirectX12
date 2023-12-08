@@ -12,6 +12,7 @@
 #include "../Engine/DirectBase/Base/Audio.h"
 #include "../Header/Object/LevelElementManager.h"
 #include "../Header/Object/Particle.h"
+#include "../Header/Object/InGameUIManager/InGameUIManager.h"
 
 class GameScene : public IScene {
 public:
@@ -40,9 +41,23 @@ private:
 	std::unique_ptr<Entity> followCamera_ = nullptr;
 	LevelElementManager *levelManager{};
 
+	//std::unique_ptr<Entity> goal_ = nullptr;
+
+	std::unique_ptr<Entity> skyDome_;
+
+	// インゲーム内のUIマネージャ
+	std::unique_ptr<InGameUIManager> inGameUI_;
+
+	// シーン遷移中トリガー
+	bool sceneChanging_ = false;
+
+	// BGM関係
+	float BGMVolume_ = 0.35f;
+	static uint32_t gameSceneBGM_;
+	int voiceGameSceneBGMHandle_ = 0u;
+
 	//std::array<const Camera3D *, 2u> cameraList_;
 	//std::array<const Camera3D *, 2u>::iterator cameraTarget_ = cameraList_.begin();
-
 	//std::unique_ptr<Entity> playerAnim_;
 
 	//std::array<BaseTransform<false>, 5u> transformArray_;

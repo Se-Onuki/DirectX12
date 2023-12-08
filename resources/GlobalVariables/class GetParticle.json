@@ -1,0 +1,18 @@
+{
+    "class GetParticle": {
+        "EmitBlur": 0.05000000074505806,
+        "EmitInterval": 0.009999999776482582,
+        "MaxParticleCount": 30,
+        "ParticleAcceleration": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "ParticleAliveTime": 0.550000011920929,
+        "ParticleVelocity": [
+            0.0,
+            0.0,
+            -0.17499999701976776
+        ]
+    }
+}

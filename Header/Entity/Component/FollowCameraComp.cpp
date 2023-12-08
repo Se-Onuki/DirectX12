@@ -10,15 +10,30 @@ void FollowCameraComp::Init() {
 
 void FollowCameraComp::Update() {
 
-	Vector3 linePoint = line_.ClosestPoint(pTarget_->GetGrobalPos());
+	Vector3 linePoint = SoLib::Lerp(line_.ClosestPoint(pTarget_->GetGrobalPos()), prePos_, vLerpValue);
 
-	camera_->translation_ = offset_.GetItem() * Matrix4x4::EulerRotate(rotate_) + SoLib::Lerp(pTarget_->GetGrobalPos(), linePoint, vLerpValue) + addOffset_;
+
+	if (rotate_.x > 15._deg) {
+		rotate_.x = SoLib::Lerp(rotate_.x, 15._deg, 0.2f);
+	}
+	else if (rotate_.x < -40._deg) {
+		rotate_.x = SoLib::Lerp(rotate_.x, -40._deg, 0.2f);
+	}
+
+	SoLib::ImGuiText("FollowCameraAngle", SoLib::to_string(rotate_));
+
+	const Vector3 cameraOffset = offset_.GetItem() * Matrix4x4::EulerRotate(rotate_);
+
+	camera_->translation_ = cameraOffset + SoLib::Lerp(pTarget_->GetGrobalPos(), linePoint, vLerpValue);
+	camera_->translation_.y = cameraOffset.y + SoLib::Lerp(pTarget_->GetGrobalPos().y, linePoint.y, 0.25f) + addOffset_->y;
 
 	Vector3 facing = linePoint - camera_->translation_;
 
 	camera_->rotation_ = facing.Direction2Euler();
 
 	camera_->UpdateMatrix();
+
+	prePos_ = linePoint;
 }
 
 void FollowCameraComp::ImGuiWidget() {
@@ -29,9 +44,12 @@ void FollowCameraComp::ImGuiWidget() {
 
 void FollowCameraComp::AddRotate(const Vector3 &euler) {
 	if (euler.LengthSQ() != 0.f) {
-		rotate_ += euler;
-		camera_->rotation_ += euler;
-		camera_->UpdateMatrix();
+		if (CameraManager::GetInstance()->GetUseCamera() == camera_) {
+			rotate_ += euler;
+
+			camera_->rotation_ += euler;
+			camera_->CalcMatrix();
+		}
 	}
 }
 

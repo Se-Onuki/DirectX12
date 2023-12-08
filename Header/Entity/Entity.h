@@ -70,9 +70,15 @@ public:
 	/// @param Object* other : 接触相手のアドレスが代入される
 	virtual void OnCollision(Entity *const) {};
 
+	/// @brief デルタタイムを取得する
+	/// @return 前フレームからの時間差分
+	float GetDeltaTime() const;
+
 	// 紐づけられた実体
 	Entity *const object_ = nullptr;
 	BaseTransform *const transform_;
+
+	float monoTimeScale_ = 1.f;
 };
 
 class Entity {
@@ -94,6 +100,7 @@ class Entity {
 
 	float deltaTime_{};
 
+	float timeScale_ = 1.f;
 public:
 	// オブジェクトのSRT
 	BaseTransform transform_;
@@ -149,7 +156,9 @@ public:
 
 	void ImGuiWidget();
 
-	float GetDeltaTime() const { return deltaTime_; }
+	void SetTimeScale(const float timeScale) { timeScale_ = timeScale; }
+
+	float GetDeltaTime() const { return deltaTime_ * timeScale_; }
 
 private:
 

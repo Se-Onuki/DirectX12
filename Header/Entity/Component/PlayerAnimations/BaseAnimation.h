@@ -27,7 +27,7 @@ public: // メンバ関数
 	/// <param name="isLoop">ループするか</param>
 	/// <param name="type"></param>
 	/// <param name="transitionTime">遷移秒数</param>
-	void Initialize(std::string name, bool isLoop, AnimEasing::EasingType type = AnimEasing::kLinear, float transitionTime = 0.0f);
+	void Initialize(const std::string &name, bool isLoop, AnimEasing::EasingType type = AnimEasing::kLinear, float transitionTime = 0.0f);
 
 	/// <summary>
 	/// 更新関数
@@ -93,7 +93,7 @@ public: // アクセッサ等
 	/// 現在のアニメーション状態のゲッター
 	/// </summary>
 	/// <returns>現在のアニメーション状態</returns>
-	const PlayerBehavior &GetBehavior() { return behavior_; }
+	const PlayerBehavior GetBehavior() const { return behavior_; }
 	/// <summary>
 	/// 現在のアニメーション状態セッター
 	/// </summary>

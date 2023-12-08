@@ -3,6 +3,7 @@
 #include "../PlayerAnimations/AnimationManager.h"
 #include "../../../../Engine/DirectBase/Input/Input.h"
 #include "../PlayerAnimComp.h"
+#include "../../../../Engine/DirectBase/Base/Audio.h"
 
 class PlayerComp;
 
@@ -13,6 +14,8 @@ public:
 	virtual ~IPlayerStateClass() = default;
 
 	virtual void Init();
+
+	virtual void Exit() {}
 
 	virtual void Update(float deltaTime);
 

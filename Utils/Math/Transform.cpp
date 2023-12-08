@@ -34,13 +34,15 @@ void BaseTransform::UpdateMatrix() {
 }
 
 
-bool BaseTransform::ImGuiWidget() {
-	if (ImGui::TreeNode("Transform")) {
+bool BaseTransform::ImGuiWidget(const std::string &name) {
+	if (ImGui::TreeNode((name + "Transform").c_str())) {
 		bool isUsing = false;
 
 		isUsing |= ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 100.f);
 
-		isUsing |= ImGui::DragFloat3("Rotate", &rotate.x, Angle::Dig2Rad);
+		isUsing |= ImGui::SliderAngle("RotateX", &rotate.x, Angle::Dig2Rad);
+		isUsing |= ImGui::SliderAngle("RotateY", &rotate.y, Angle::Dig2Rad);
+		isUsing |= ImGui::SliderAngle("RotateZ", &rotate.z, Angle::Dig2Rad);
 
 		isUsing |= ImGui::DragFloat3("Transform", &translate.x, 0.01f);
 

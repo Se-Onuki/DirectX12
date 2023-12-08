@@ -1,7 +1,7 @@
 #include "CameraAnimManager.h"
 #include "CameraManager.h"
 
-CameraAnimManager* CameraAnimManager::GetInstance()
+CameraAnimManager *CameraAnimManager::GetInstance()
 {
 	static CameraAnimManager instance;
 	return &instance;
@@ -12,6 +12,9 @@ void CameraAnimManager::Init()
 	// カメラマネージャーのインスタンス取得
 	cameraManager_ = CameraManager::GetInstance();
 
+	// シーンチェンジ
+	SceneChange();
+
 	// 再生中アニメーションのインスタンスを作る
 	//currentAnimation_ = std::make_unique<CameraAnimation>(); // インスタンス生成
 }
@@ -20,7 +23,11 @@ void CameraAnimManager::Update(float deltaTime)
 {
 	// 現在再生中アニメーションが終了していなければ
 	if (!currentAnimation_.GetIsEnd()) {
+		isPlaying_ = true;
 		currentAnimation_.Update(deltaTime); // 更新処理を呼び出す
+	}
+	else {
+		isPlaying_ = false;
 	}
 
 	// 再生待機アニメーションが１つでもあれば
@@ -56,6 +63,22 @@ void CameraAnimManager::Update(float deltaTime)
 
 	// 遷移待機タイマー更新
 	timer_.Update(deltaTime);
+}
+
+bool CameraAnimManager::GetIsPlaying()
+{
+	if (isPlaying_ && !currentAnimation_.GetIsEnd()) {
+		return true;
+	}
+	return false;
+}
+
+void CameraAnimManager::SceneChange()
+{
+	// 再生待機中アニメーションリストをクリア
+	nextAnimations_.clear();
+	// 現在アニメーションを強制終了
+	currentAnimation_.End();
 }
 
 void CameraAnimManager::Play(Camera3D* endCamera, float time, float(*func)(float), float standByTime, bool standByIsEnd)
