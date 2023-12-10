@@ -10,18 +10,10 @@
 #include "../Math/Vector3.h"
 #include "../Math/Vector4.h"
 
-namespace SoLib {
+void from_json(const nlohmann::json &json, Vector2 &data);
+void from_json(const nlohmann::json &json, Vector3 &data);
+void from_json(const nlohmann::json &json, Vector4 &data);
 
-	template<SoLib::IsNotPointer T>
-	T cast(const nlohmann::json &json) { return T{}; }
 
-	template<>
-	Vector2 cast(const nlohmann::json &json);
-
-	template<>
-	Vector3 cast(const nlohmann::json &json);
-
-	template<>
-	Vector4 cast(const nlohmann::json &json);
-
-}
+void to_json(nlohmann::json &json, const  Quaternion &data);
+void from_json(const nlohmann::json &json, Quaternion &data);

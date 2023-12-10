@@ -7,6 +7,7 @@
 #include "../Header/Object/Fade.h"
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
 #include "../Utils/SoLib/SoLib_ImGui.h"
+#include "../Utils/SoLib/SoLib.h"
 #include <imgui.h>
 
 GameScene::GameScene() {
@@ -22,6 +23,16 @@ GameScene::~GameScene() {
 
 void GameScene::OnEnter() {
 	light_.reset(DirectionLight::Create());
+	nlohmann::json json = {
+		{"vec",Vector3{ 1.f, 2.f, 3.f}},
+		{"w", 4.f}
+	};
+
+	//std::string string = SoLib::cast<std::string>(json);
+	auto data = json.get<Quaternion>();
+
+	json = data;
+
 }
 
 void GameScene::OnExit() {
