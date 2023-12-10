@@ -1,4 +1,5 @@
 #include "SoLib_Json.h"
+#include <variant>
 
 void from_json(const nlohmann::json &json, Vector2 &data) {
 	if (json.is_array() && json.size() == SoLib::Traits<Vector2>::Size) {
@@ -27,6 +28,8 @@ void from_json(const nlohmann::json &json, Vector4 &data) {
 	}
 }
 
+template<SoLib::IsNotPointer T>
+using JsonItemPtr = std::variant<int32_t T:: *, float T:: *, std::string T:: *, Vector2 T:: *, Vector3 T:: *, Vector4 T:: *, Quaternion T:: *>;
 
 template<SoLib::IsNotPointer T>
 struct JsonPairStruct {
@@ -37,7 +40,7 @@ struct JsonPairStruct {
 	};
 
 	std::string key;
-	std::list<float T:: *> ptrList;
+	std::list<JsonItemPtr<T>> ptrList;
 	TypeName typeName = TypeName::kFloat;
 };
 
@@ -49,11 +52,11 @@ JsonPair<T> GetJsonPair();
 
 template<>
 JsonPair<Quaternion> GetJsonPair<Quaternion>() {
-	JsonPair<Quaternion> result;
-
-	result.push_back(JsonPairStruct<Quaternion>{ "vec", { &Quaternion::x, &Quaternion::y, &Quaternion::z } });
-	result.push_back(JsonPairStruct<Quaternion>{ "w", { &Quaternion::w } });
-
+	static JsonPair<Quaternion> result;
+	if (not result.size()) {
+		result.push_back(JsonPairStruct<Quaternion>{ "vec", { reinterpret_cast<Vector3 Quaternion:: *>(&Quaternion::x) }});
+		result.push_back(JsonPairStruct<Quaternion>{ "w", { &Quaternion::w } });
+	}
 	return result;
 }
 
@@ -64,11 +67,22 @@ void to_json(nlohmann::json &json, const Quaternion &data) {
 		const auto &key = pairData.key;
 		const auto &ptrList = pairData.ptrList;
 		if (ptrList.size() == 1u) {
-			json[key] = data.*ptrList.front();
+
+			auto &jsonItem = json[key];
+			std::visit([&jsonItem, &data](auto Quaternion:: *const ptrv)
+				{
+					jsonItem = data.*ptrv;
+				}, ptrList.front());
 		}
 		else {
 			for (const auto &member : ptrList) {
-				json[key].push_back(data.*member);
+
+				auto &jsonItem = json[key];
+				std::visit([&jsonItem, &data](auto Quaternion:: *const ptrv)
+					{
+						jsonItem.push_back(data.*ptrv);
+					}, member);
+
 			}
 		}
 
@@ -82,12 +96,22 @@ void from_json(const nlohmann::json &json, Quaternion &data) {
 		const auto &key = pairData.key;
 		const auto &ptrList = pairData.ptrList;
 		if (ptrList.size() == 1u) {
-			data.*ptrList.front() = json.at(key);
+
+			const auto &jsonItem = json.at(key);
+			std::visit([&jsonItem, &data](auto Quaternion:: *const ptrv)
+				{
+					data.*ptrv = jsonItem;
+				}, ptrList.front());
+
 		}
 		else {
 			uint32_t index = 0u;
 			for (const auto &member : ptrList) {
-				data.*member = json.at(key).at(index);
+				const auto &jsonItem = json.at(key).at(index);
+				std::visit([&jsonItem, &data](auto Quaternion:: *const ptrv)
+					{
+						data.*ptrv = jsonItem;
+					}, member);
 				index++;
 			}
 		}
