@@ -34,7 +34,6 @@
 #include "Engine/DirectBase/Base/ImGuiManager.h"
 
 #include "Scene/SceneManager.h"
-#include "Scene/LoadScene.h"
 #include "Scene/TitleScene.h"
 #include "Scene/GameScene.h"
 #include "Engine/DirectBase/Input/Input.h"
@@ -53,7 +52,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	WinApp::StaticInit();
 
 	WinApp *const winApp = WinApp::GetInstance();
-	winApp->CreateGameWindow("2202_コスモスピナー");
+	winApp->CreateGameWindow("SolEngine");
 
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
@@ -114,7 +113,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->Init();
-	sceneManager->ChangeScene(std::make_unique<LoadScene>());
+	sceneManager->ChangeScene(std::make_unique<GameScene>());
 
 	LevelElementManager::StaticInit();
 

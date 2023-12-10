@@ -411,9 +411,6 @@
     <ClCompile Include="StarItemComp.cpp">
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\LoadScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\StageSelectScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -778,9 +775,6 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\PlayerState\EndRotateState.h">
       <Filter>Header\Entity\Component\PlayerState</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\LoadScene.h">
-      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene\StageSelectScene.h">
       <Filter>Scene</Filter>
