@@ -199,8 +199,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\Math\ValueRange.cpp" />
     <ClCompile Include="Utils\Math\Vector2.cpp" />
     <ClCompile Include="Utils\Math\Vector3.cpp" />
+    <ClCompile Include="Utils\Math\Vector4.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Easing.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_ImGui.cpp" />
+    <ClCompile Include="Utils\SoLib\SoLib_Json.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Lerp.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Timer.cpp" />
   </ItemGroup>
@@ -325,6 +327,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\SoLib\SoLib.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Easing.h" />
     <ClInclude Include="Utils\SoLib\SoLib_ImGui.h" />
+    <ClInclude Include="Utils\SoLib\SoLib_Json.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Lerp.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Timer.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Traits.h" />

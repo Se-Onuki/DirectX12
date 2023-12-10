@@ -22,7 +22,7 @@ struct Vector4 {
 	/// ベクトル長関数
 	/// </summary>
 	/// <returns>ベクトルの長さ</returns>
-	_NODISCARD float Length() const {
+	float Length() const {
 		return std::sqrt((*this) * (*this));
 	}
 
@@ -30,7 +30,7 @@ struct Vector4 {
 	/// ベクトル長関数
 	/// </summary>
 	/// <returns>ベクトルの長さ</returns>
-	_NODISCARD float LengthSQ() const {
+	float LengthSQ() const {
 		return (*this) * (*this);
 	}
 
@@ -38,14 +38,14 @@ struct Vector4 {
 	/// 正規化
 	/// </summary>
 	/// <returns>ベクトル長が1のベクトル</returns>
-	_NODISCARD Vector4 Nomalize() const {
+	Vector4 Nomalize() const {
 
 		float Length = this->Length();
 		if (Length != 0) {
 			return *this / Length;
 		}
 		else {
-			return zero();
+			return zero;
 		}
 	}
 
@@ -126,9 +126,8 @@ struct Vector4 {
 	// 外積
 	// inline float operator^(const Vector3& v) const { return x * v.y - y * v.x; }
 
-	 inline static Vector4 zero() {
-		return Vector4{ 0, 0, 0, 0 };
-	}
+	static const Vector4 zero;
+	static const Vector4 one;
 
 	// inline Vector4 Reflect(Vector4 normal) const {
 	//	return (*this) - normal * 2 * ((*this) * normal);
@@ -136,7 +135,7 @@ struct Vector4 {
 	//	// return {this->x- 2}
 	//}
 
-	 inline bool operator==(const Vector4 &vec) const {
+	inline bool operator==(const Vector4 &vec) const {
 		return (this->x == vec.x) && (this->y == vec.y) && (this->z == vec.z) && (this->w == vec.w);
 	}
 

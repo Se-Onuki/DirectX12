@@ -115,9 +115,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	sceneManager->Init();
 	sceneManager->ChangeScene(std::make_unique<GameScene>());
 
-	LevelElementManager::StaticInit();
-
-
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
 		if (winApp->ProcessMessage() /*|| directInput->IsPress(DIK_ESCAPE)*/) break;

@@ -450,6 +450,12 @@
     <ClCompile Include="Header\Object\Particle\GetParticle.cpp">
       <Filter>Header\Entity\Object\Particle\Particles\GetParticle</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\SoLib\SoLib_Json.cpp">
+      <Filter>Utils\SoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Math\Vector4.cpp">
+      <Filter>Utils\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -820,6 +826,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\GetParticle.h">
       <Filter>Header\Entity\Object\Particle\Particles\GetParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\SoLib\SoLib_Json.h">
+      <Filter>Utils\SoLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
