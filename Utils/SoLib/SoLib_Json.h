@@ -18,18 +18,29 @@ namespace SoLib {
 	using JsonItemPtr = std::variant<bool T:: *, int32_t T:: *, float T:: *, std::string T:: *, Vector2 T:: *, Vector3 T:: *, Vector4 T:: *, Quaternion T:: * >;
 
 	template<SoLib::IsNotPointer T>
-	using JsonPair = std::list<std::pair<std::string, std::list<JsonItemPtr<T>>>>;
+	using JsonPair = std::pair<std::string, std::list<JsonItemPtr<T>>>;
 
 	template<SoLib::IsNotPointer T>
-	inline JsonPair<T> GetJsonPair();
+	using JsonPairList = std::list<JsonPair<T>>;
+
+	template<SoLib::IsNotPointer T>
+	inline JsonPairList<T> GetJsonPairList();
 
 	template<>
-	inline JsonPair<Quaternion> GetJsonPair<Quaternion>() {
-		JsonPair<Quaternion> result;
+	inline JsonPairList<Quaternion> GetJsonPairList<Quaternion>() {
+		JsonPairList<Quaternion> result;
 		result.push_back({ "vec", { reinterpret_cast<Vector3 Quaternion:: *>(&Quaternion::x) } });
 		result.push_back({ "w", { &Quaternion::w } });
 		return result;
 	}
+
+	//template<>
+	//inline JsonPairList<Quaternion> GetJsonPairList<Quaternion>() {
+	//	JsonPairList<Quaternion> result;
+	//	result.push_back({ "vec", { reinterpret_cast<Vector3 Quaternion:: *>(&Quaternion::x) } });
+	//	result.push_back({ "w", { &Quaternion::w } });
+	//	return result;
+	//}
 
 
 	template<SoLib::IsNotPointer T>
@@ -53,7 +64,7 @@ namespace SoLib {
 
 	template<SoLib::IsNotPointer T>
 	inline void ToJson(nlohmann::json &json, const T &data) {
-		static const auto &jsonPair = GetJsonPair<T>();
+		static const auto &jsonPair = GetJsonPairList<T>();
 
 		for (const auto &[key, ptrList] : jsonPair) {
 			if (ptrList.size() == 1u) {
@@ -81,7 +92,7 @@ namespace SoLib {
 
 	template<SoLib::IsNotPointer T>
 	inline void FromJson(const nlohmann::json &json, T &data) {
-		const auto &jsonPair = GetJsonPair<T>();
+		const auto &jsonPair = GetJsonPairList<T>();
 
 		for (const auto &[key, ptrList] : jsonPair) {
 			if (ptrList.size() == 1u) {
