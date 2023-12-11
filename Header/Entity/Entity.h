@@ -45,34 +45,40 @@ public:
 
 
 	/// @brief Objectに追加した時に走る処理
-	virtual void Init() {};
+	inline virtual void Init() {};
 	/// @brief 任意で実行する初期化
-	virtual void Reset() {};
+	inline virtual void Reset() {};
 	/// @brief 毎フレーム実行される処理
-	virtual void Update() {};
+	inline virtual void Update() {};
 	/// @brief 描画処理
 	/// @param vp Cameraクラス
-	virtual void Draw(const Camera<Render::CameraType::Projecction> &) const {};
+	inline virtual void Draw(const Camera<Render::CameraType::Projecction> &) const {};
 
 	/// @brief jsonからの読み込み
 	/// @param groupName グループ名
-	virtual void ApplyVariables(const char *const groupName) { groupName; }
+	inline virtual void ApplyVariables(const char *const groupName) { groupName; }
 
 	/// @brief jsonへの紐づけ
 	/// @param groupName グループ名
-	virtual void AddVariable(const char *const groupName) const { groupName; }
+	inline virtual void AddVariable(const char *const groupName) const { groupName; }
 
 
 	/// @brief ImGuiで表示する内容
-	virtual void ImGuiWidget() {};
+	inline virtual void ImGuiWidget() {};
 
 	/// @brief 接触時に実行される関数
 	/// @param Object* other : 接触相手のアドレスが代入される
-	virtual void OnCollision(Entity *const) {};
+	inline virtual void OnCollision(Entity *const) {};
+
+	/// @brief デルタタイムを取得する
+	/// @return 前フレームからの時間差分
+	float GetDeltaTime() const;
 
 	// 紐づけられた実体
 	Entity *const object_ = nullptr;
 	BaseTransform *const transform_;
+
+	float monoTimeScale_ = 1.f;
 };
 
 class Entity {
@@ -94,6 +100,7 @@ class Entity {
 
 	float deltaTime_{};
 
+	float timeScale_ = 1.f;
 public:
 	// オブジェクトのSRT
 	BaseTransform transform_;
@@ -114,7 +121,7 @@ public:
 	/// @tparam T コンポーネントの型
 	/// @return コンポーネントのポインタ
 	template <typename T>
-	T *const AddComponent();
+	inline T *const AddComponent();
 
 	/// @brief コンポーネントの取得
 	/// @tparam T コンポーネント型
@@ -124,24 +131,24 @@ public:
 
 	/// @brief 生存しているかを設定する
 	/// @param newState 生きている場合 [ true ]
-	void SetActive(const bool newState) { isActive_ = newState; }
+	inline void SetActive(const bool newState) { isActive_ = newState; }
 
 	/// @brief 生存しているかを取得する
 	/// @return 生きている場合 [ true ]
-	bool GetActive() const { return isActive_; }
+	inline bool GetActive() const { return isActive_; }
 
 	/// @brief タグの追加
 	/// @param tag 追加するタグの文字列
-	void AddTag(const std::string &tag) { tag_.insert(tag); }
+	inline void AddTag(const std::string &tag) { tag_.insert(tag); }
 
 	/// @brief タグを持っているか
 	/// @param tag 検索するタグ
 	/// @return タグを持っている場合 [ true ]
-	bool HasTag(const std::string &tag) const { return tag_.contains(tag); }
+	inline bool HasTag(const std::string &tag) const { return tag_.contains(tag); }
 
 	/// @brief タグの削除
 	/// @param tag 削除するタグ
-	void RemoveTag(const std::string &tag) { tag_.erase(tag); }
+	inline 	void RemoveTag(const std::string &tag) { tag_.erase(tag); }
 
 	const Vector3 &GetWorldPos();
 
@@ -149,7 +156,9 @@ public:
 
 	void ImGuiWidget();
 
-	float GetDeltaTime() const { return deltaTime_; }
+	inline void SetTimeScale(const float timeScale) { timeScale_ = timeScale; }
+
+	inline float GetDeltaTime() const { return deltaTime_ * timeScale_; }
 
 private:
 

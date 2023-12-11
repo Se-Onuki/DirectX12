@@ -45,9 +45,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\nlohmann;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir)\externals\imgui;$(ProjectDir)\externals\nlohmann;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -58,12 +62,10 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
@@ -83,14 +85,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PostBuildEvent>
@@ -102,7 +102,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="ECS\Chunk\Chunk.cpp" />
     <ClCompile Include="ECS\Component\Component.cpp" />
-    <ClCompile Include="ECS\Entity\Entity.cpp" />
     <ClCompile Include="ECS\Entity\EntityManager.cpp" />
     <ClCompile Include="ECS\World\World.cpp" />
     <ClCompile Include="Engine\DirectBase\2D\Sprite.cpp" />
@@ -138,42 +137,25 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
-    <ClCompile Include="Header\Entity\Component\CannonComp.cpp" />
-    <ClCompile Include="Header\Entity\Component\Collider.cpp" />
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationManager.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimationParameters.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerAnimations\AnimEasing.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerAnimations\BaseAnimation.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerAnimations\PlayerBone.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerAnimComp.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerComp.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\BeginRotate.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\EndRotateState.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\FallingState.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\IdleState.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\IPlayerState.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\JumpState.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\LandState.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\MoveState.cpp" />
-    <ClCompile Include="Header\Entity\Component\PlayerState\RotatingState.cpp" />
     <ClCompile Include="Header\Entity\Component\Projectile.cpp" />
     <ClCompile Include="Header\Entity\Component\Rigidbody.cpp" />
     <ClCompile Include="Header\Entity\Entity.cpp" />
     <ClCompile Include="Header\Object\BaseCharacter.cpp" />
     <ClCompile Include="Header\Object\Block\BlockManager.cpp" />
+    <ClCompile Include="Header\Object\Fade.cpp" />
     <ClCompile Include="Header\Object\FollowCamera.cpp" />
-    <ClCompile Include="Header\Object\LevelElementManager.cpp" />
     <ClCompile Include="Header\Object\Particle.cpp" />
+    <ClCompile Include="Header\Object\Particle\GetParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleEmitterManager.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleManager.cpp" />
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp" />
     <ClCompile Include="Header\Object\Player.cpp" />
+    <ClCompile Include="Header\Object\SkyDome\SkyDome.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -190,8 +172,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\Math\ValueRange.cpp" />
     <ClCompile Include="Utils\Math\Vector2.cpp" />
     <ClCompile Include="Utils\Math\Vector3.cpp" />
+    <ClCompile Include="Utils\Math\Vector4.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Easing.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_ImGui.cpp" />
+    <ClCompile Include="Utils\SoLib\SoLib_Json.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Lerp.cpp" />
     <ClCompile Include="Utils\SoLib\SoLib_Timer.cpp" />
   </ItemGroup>
@@ -244,39 +228,20 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
-    <ClInclude Include="Header\Entity\Component\CannonComp.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
     <ClInclude Include="Header\Entity\Component\FollowCameraComp.h" />
     <ClInclude Include="Header\Entity\Component\HealthComp.h" />
     <ClInclude Include="Header\Entity\Component\ModelComp.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationKeys.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationList.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationManager.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimationParameters.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\AnimEasing.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\BaseAnimation.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerAnimations\PlayerBone.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerAnimComp.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerComp.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\FallingState.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\IdleState.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\IPlayerState.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\JumpState.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\LandState.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\MoveState.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\BeginRotate.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\EndRotateState.h" />
-    <ClInclude Include="Header\Entity\Component\PlayerState\RotatingState.h" />
     <ClInclude Include="Header\Entity\Component\Projectile.h" />
     <ClInclude Include="Header\Entity\Component\Rigidbody.h" />
     <ClInclude Include="Header\Entity\Entity.h" />
     <ClInclude Include="Header\Object\BaseCharacter.h" />
     <ClInclude Include="Header\Object\Block\BlockManager.h" />
+    <ClInclude Include="Header\Object\Fade.h" />
     <ClInclude Include="Header\Object\FollowCamera.h" />
-    <ClInclude Include="Header\Object\LevelElementManager.h" />
-    <ClInclude Include="Header\Object\LevelManager.h" />
     <ClInclude Include="Header\Object\Particle.h" />
+    <ClInclude Include="Header\Object\Particle\GetParticle.h" />
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h" />
     <ClInclude Include="Header\Object\Particle\ParticleEmitterManager.h" />
     <ClInclude Include="Header\Object\Particle\ParticleList.h" />
@@ -284,6 +249,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Particle\StarParticle.h" />
     <ClInclude Include="Header\Object\Particle\TestParticle.h" />
     <ClInclude Include="Header\Object\Player.h" />
+    <ClInclude Include="Header\Object\SkyDome\SkyDome.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />
@@ -306,6 +272,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\SoLib\SoLib.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Easing.h" />
     <ClInclude Include="Utils\SoLib\SoLib_ImGui.h" />
+    <ClInclude Include="Utils\SoLib\SoLib_Json.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Lerp.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Timer.h" />
     <ClInclude Include="Utils\SoLib\SoLib_Traits.h" />
@@ -338,7 +305,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <FxCompile Include="resources\shader\Particle.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
@@ -350,6 +317,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="resources\shader\ShaderParticle.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

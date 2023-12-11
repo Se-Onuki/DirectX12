@@ -18,7 +18,7 @@ public:
 	/// @brief 継続的な加速
 	/// @param vec 加速度
 	/// @param deltaTime 時間差分
-	void ApplyContinuousForce(const Vector3 &vec) { acceleration_ += vec * object_->GetDeltaTime(); }
+	void ApplyContinuousForce(const Vector3 &vec) { acceleration_ += vec * GetDeltaTime(); }
 
 	void SetAcceleration(const Vector3 &vec) { acceleration_ = vec; }
 	const Vector3 &GetAcceleration() const { return acceleration_; }

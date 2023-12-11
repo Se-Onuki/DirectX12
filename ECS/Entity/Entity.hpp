@@ -1,10 +1,12 @@
 #pragma once
 #include <cstdint>
+namespace ECS {
 
-class Entity {
-public:
-	uint32_t chunkId_; // 所属チャンク
-	uint32_t chunkIndex_; // チャンク内番号
+	class Entity {
+	public:
+		uint32_t chunkId_; // 所属チャンク
+		uint32_t chunkIndex_; // チャンク内番号
 
-	//template<typename T> T& GetComp();
-};
+		//template<typename T> T& GetComp();
+	};
+}

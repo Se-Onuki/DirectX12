@@ -39,7 +39,7 @@ public:
 	void TransferMatrix();
 	void UpdateMatrix();
 
-	bool ImGuiWidget();
+	bool ImGuiWidget(const std::string &name = "");
 	bool ImGuiWidget2D();
 
 	void MatToSRT(const Matrix4x4 &mat);

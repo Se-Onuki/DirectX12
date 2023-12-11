@@ -10,8 +10,11 @@
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
-#include "../Header/Object/LevelElementManager.h"
 #include "../Header/Object/Particle.h"
+#include "../Header/Object/Particle/ParticleManager.h"
+#include "../Header/Object/Particle/ParticleEmitterManager.h"
+
+#include "../Header/Object/TitleManager/TitleManager.h"
 
 class TitleScene : public IScene {
 public:
@@ -23,10 +26,8 @@ public:
 
 	void Update() override;
 	void Draw() override;
-public:
 
 private:
-
 	// 入力インスタンス
 	Input *input_ = nullptr;
 	// 音インスタンス
@@ -36,4 +37,5 @@ private:
 
 	// 平行光源
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
 };

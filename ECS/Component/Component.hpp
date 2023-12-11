@@ -37,24 +37,27 @@
 //	std::unordered_map<std::string, Sprite*> sprites;
 // };
 
-struct ComponentData {};
+namespace ECS {
 
-struct Identifier : ComponentData {
-	char name_;
-	void Init(const char &value) {
-		name_ = value;
-	}
-};
+	struct IComponent {};
 
-struct TransformComp : ComponentData {
-	BaseTransform wTransform_;
-};
+	struct Identifier : IComponent {
+		char name_;
+		void Init(const char &value) {
+			name_ = value;
+		}
+	};
 
-struct ModelComp : ComponentData {
-	void Init(const std::string &key) {
-		model_ =ModelManager::GetInstance()->GetModel(key);
-	}
-	Model* model_;
-};
+	struct TransformComp : IComponent {
+		BaseTransform wTransform_;
+	};
 
-struct InputFlagComp : ComponentData {};
+	struct ModelComp : IComponent {
+		void Init(const std::string &key) {
+			model_ = ModelManager::GetInstance()->GetModel(key);
+		}
+		Model *model_;
+	};
+
+	struct InputFlagComp : IComponent {};
+}

@@ -16,5 +16,13 @@ public:
 
 	PlayerBehavior GetState() override { return PlayerBehavior::kLand; }
 
+private:
+
+	// 再生トリガー
+	bool landSETrigger_ = false;
+
+	// 着地SE
+	static uint32_t landSE_;
+
 };
 

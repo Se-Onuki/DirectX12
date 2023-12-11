@@ -1,11 +1,10 @@
 #include "World.hpp"
-#include "Header/Entity/EntityManager.hpp"
+#include "../Entity/EntityManager.hpp"
 
-World::World() { entityManager_ = new EntityManager(this); }
+World::World() { entityManager_ = std::make_unique<ECS::EntityManager>(this); }
 
-World::~World() { 
-	delete entityManager_;
-	for (auto& element : chunkList_) {
+World::~World() {
+	for (auto &element : chunkList_) {
 		element.ChankDelete();
 	}
 }

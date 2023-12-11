@@ -46,6 +46,9 @@ void VirtualPad::operator<<(const _XINPUT_GAMEPAD &xInput) {
 
 	stickL_ = Vector2{ std::clamp(xInput.sThumbLX / 32767.f, -1.f,1.f),std::clamp(xInput.sThumbLY / 32767.f, -1.f,1.f) };
 	stickR_ = Vector2{ std::clamp(xInput.sThumbRX / 32767.f, -1.f,1.f),std::clamp(xInput.sThumbRY / 32767.f, -1.f,1.f) };
+
+	if (stickL_.Length() < 0.21f) { stickL_ = Vector2::zero; }
+	if (stickR_.Length() < 0.21f) { stickR_ = Vector2::zero; }
 }
 
 void XInput::Update() {

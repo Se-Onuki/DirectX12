@@ -83,9 +83,10 @@ struct Vector2 {
 		return x * v.y - y * v.x;
 	}
 
-	inline static Vector2 zero() {
-		return { 0, 0 };
-	}
+	static const Vector2 zero;
+	static const Vector2 right;
+	static const Vector2 up;
+	static const Vector2 one;
 
 	inline Vector2 Reflect(Vector2 normal) const {
 		return (*this) - normal * 2 * ((*this) * normal);
@@ -104,8 +105,8 @@ struct Vector2 {
 	const float *const cbegin() const { return &x; }
 
 	float *const end() { return begin() + size(); }
-	const float *const end() const { return end(); }
-	const float *const cend() const { return end(); }
+	const float *const end() const { return begin() + size(); }
+	const float *const cend() const { return begin() + size(); }
 
 	float *const data() { return begin(); }
 	const float *const data() const { return begin(); }

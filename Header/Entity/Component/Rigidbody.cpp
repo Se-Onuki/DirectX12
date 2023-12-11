@@ -13,9 +13,9 @@ void Rigidbody::Update() {
 	beforePos_ = transform_->translate;
 
 	velocity_ += acceleration_;
-	Vector3 fixVelocity = velocity_ * object_->GetDeltaTime();
+	Vector3 fixVelocity = velocity_ * GetDeltaTime();
 
-	const Vector3 maxSpeed = maxSpeed_ * object_->GetDeltaTime();
+	const Vector3 maxSpeed = maxSpeed_ * GetDeltaTime();
 
 	// 最大速度のポインタ(配列として扱う)
 	const float *const maxSpeedPtr = maxSpeed.data();
@@ -30,7 +30,7 @@ void Rigidbody::Update() {
 
 	transform_->translate += fixVelocity;
 
-	const auto& boxArray = collisionManager->GetBox();
+	const auto &boxArray = collisionManager->GetBox();
 
 	boxArray;
 

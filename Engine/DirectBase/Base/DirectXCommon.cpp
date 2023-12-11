@@ -37,6 +37,9 @@ void DirectXCommon::Init(WinApp *winApp, int32_t backBufferWidth, int32_t backBu
 	descriptorSizeDSV = device_.Get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 	srvHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>>(device_.Get(), srvCount_);
+
+	fpsManager_ = std::make_unique<FPSManager>();
+	fpsManager_->Init();
 }
 
 void DirectXCommon::Finalize()
@@ -171,6 +174,7 @@ void DirectXCommon::EndDraw() {
 
 	TextureManager::GetInstance()->EndFlame();
 
+	fpsManager_->Update();
 }
 
 void DirectXCommon::CrearDepthBuffer() {
@@ -426,7 +430,7 @@ void DirectXCommon::FPSManager::Update() {
 	if (elapsed < kMinCheckTime) {
 		// 経過するまで微小なスリープを行う
 		while (std::chrono::steady_clock::now() - reference_ < kMinTime) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
 		}
 	}
 

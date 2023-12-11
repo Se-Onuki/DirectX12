@@ -217,7 +217,7 @@
             0.0
         ],
         "key : 1RotateSpeed": 0.05000000074505806,
-        "key : 2AnimationTime": 0.10000000149011612,
+        "key : 2AnimationTime": 0.07500000298023224,
         "key : 2Arm_L_Rotate": [
             -0.11999999731779099,
             0.0,
@@ -433,7 +433,7 @@
             0.0
         ],
         "key : 3RotateSpeed": 0.05000000074505806,
-        "key : 4AnimationTime": 0.3499999940395355,
+        "key : 4AnimationTime": 0.20000000298023224,
         "key : 4Arm_L_Rotate": [
             -0.11999999731779099,
             0.0,
@@ -757,7 +757,7 @@
             0.0
         ],
         "key : 6RotateSpeed": 0.10000000149011612,
-        "key : 7AnimationTime": 0.8999999761581421,
+        "key : 7AnimationTime": 0.5,
         "key : 7Arm_L_Rotate": [
             0.0,
             0.0,

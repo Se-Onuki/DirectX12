@@ -1,31 +1,37 @@
 #include "TitleScene.h"
 
 #include <imgui.h>
-#include "GameScene.h"
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
 #include "../Engine/DirectBase/Model/ModelManager.h"
 #include "../Utils/SoLib/SoLib.h"
 
+#include "../Header/Object/Fade.h"
+
 TitleScene::TitleScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	cameraManager_ = CameraManager::GetInstance();
 }
 
 TitleScene::~TitleScene() {
 }
 
 void TitleScene::OnEnter() {
-
+	// ライトの生成
 	light_.reset(DirectionLight::Create());
 }
 
 void TitleScene::OnExit() {
+	audio_->StopAllWave();
 }
 
 void TitleScene::Update() {
 
-	
+	// キーボードの入力取得
+	static const auto *const keyBoard = input_->GetDirectInput();
 
+	// デルタタイムの取得
+	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 }
 
 void TitleScene::Draw() {
@@ -37,7 +43,6 @@ void TitleScene::Draw() {
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
-
 
 	Sprite::EndDraw();
 
@@ -52,8 +57,6 @@ void TitleScene::Draw() {
 
 	light_->SetLight(commandList);
 
-	// モデルの描画
-
 	Model::EndDraw();
 
 #pragma endregion
@@ -62,7 +65,7 @@ void TitleScene::Draw() {
 
 	Sprite::StartDraw(commandList);
 
-
+	// スプライトの描画
 
 	Sprite::EndDraw();
 

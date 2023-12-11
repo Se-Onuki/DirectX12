@@ -6,6 +6,7 @@
 #include <array>
 #include <immintrin.h>
 #include "SimdCalc.h"
+#include <json.hpp>
 
 struct Matrix4x4;
 
@@ -163,8 +164,8 @@ struct Vector3 {
 	const float *const cbegin() const { return &x; }
 
 	float *const end() { return begin() + size(); }
-	const float *const end() const { return end(); }
-	const float *const cend() const { return end(); }
+	const float *const end() const { return begin() + size(); }
+	const float *const cend() const { return begin() + size(); }
 
 	float *const data() { return begin(); }
 	const float *const data() const { return begin(); }
@@ -174,6 +175,18 @@ struct Vector3 {
 	inline Vector3 &operator=(const __m128 &vec) { std::memcpy(this, &vec, sizeof(*this)); return *this; }
 
 	inline explicit operator SoLib::Math::SIMD128() const { return SoLib::Math::SIMD128{ static_cast<__m128>(*this) }; }
+
+	Vector3 &operator=(const nlohmann::json &jsonArray) {
+		if (jsonArray.is_array() && jsonArray.size() == 3u) {
+			x = jsonArray[0];
+			y = jsonArray[1];
+			z = jsonArray[2];
+		}
+		else {
+			*this = Vector3::zero;
+		}
+		return *this;
+	}
 
 private:
 };

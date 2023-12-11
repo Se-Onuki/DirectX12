@@ -67,3 +67,7 @@ void Entity::ImGuiWidget() {
 
 IComponent::IComponent(Entity *const object) : object_(object), transform_(&static_cast<BaseTransform &>(object->transform_)) {
 }
+
+float IComponent::GetDeltaTime() const {
+	return monoTimeScale_ * object_->GetDeltaTime();
+}

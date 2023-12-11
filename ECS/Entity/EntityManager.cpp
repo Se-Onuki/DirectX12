@@ -1,9 +1,9 @@
-#include "Header/Entity/EntityManager.hpp"
+#include "../Entity/EntityManager.hpp"
 
-#include "Header/World/World.hpp"
+#include "../World/World.hpp"
 #include <limits>
 
-EntityManager::EntityManager(World* world) : world_(world) {}
+ECS::EntityManager::EntityManager(World* world) : world_(world) {}
 
 //
 //std::vector<Chunk&> EntityManager::FindHitChunk(const Archetype& archetype) {

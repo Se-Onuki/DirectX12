@@ -3,14 +3,14 @@
 #include <stdint.h>
 #include <utility>
 
-#include "../Math/Vector2.h"
-#include "../Math/Vector3.h"
-#include "../Math/Vector4.h"
 #include "../Math/Matrix2x2.h"
 #include "../Math/Matrix3x3.h"
 #include "../Math/Matrix4x4.h"
-#include <string>
 #include "../Math/Quaternion.h"
+#include "../Math/Vector2.h"
+#include "../Math/Vector3.h"
+#include "../Math/Vector4.h"
+#include <string>
 
 namespace SoLib {
 

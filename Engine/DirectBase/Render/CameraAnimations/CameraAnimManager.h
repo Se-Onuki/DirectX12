@@ -26,8 +26,8 @@ private: // コンストラクタ、デストラクタ等
 	// シングルトンパターンの設定
 	CameraAnimManager() = default;
 	~CameraAnimManager() = default;
-	CameraAnimManager(const CameraAnimManager&) = delete;
-	const CameraAnimManager& operator=(const CameraAnimManager&) = delete;
+	CameraAnimManager(const CameraAnimManager &) = delete;
+	const CameraAnimManager &operator=(const CameraAnimManager &) = delete;
 
 public: // メンバ関数
 
@@ -35,7 +35,7 @@ public: // メンバ関数
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>シングルトンインスタンス</returns>
-	static CameraAnimManager* GetInstance();
+	static CameraAnimManager *GetInstance();
 
 	/// <summary>
 	/// 初期化関数
@@ -48,6 +48,19 @@ public: // メンバ関数
 	/// <param name="deltaTime">経過秒数</param>
 	void Update(float deltaTime);
 
+public: // アクセッサ等
+
+	/// <summary>
+	/// アニメーション再生状態ゲッター
+	/// </summary>
+	/// <returns>アニメーションが再生中か</returns>
+	bool GetIsPlaying();
+
+	/// <summary>
+	/// シーン遷移の際にアニメーションを全て停止する
+	/// </summary>
+	void SceneChange();
+
 public: // その他関数
 
 	/// <summary>
@@ -58,12 +71,12 @@ public: // その他関数
 	/// <param name="func">イージングタイプ(Solib::linear 等)</param>
 	/// <param name="standByTime">待機秒数</param>
 	/// <param name="standByIsEnd">現在のアニメーションが終了するまで待機するか</param>
-	void Play(Camera3D* endCamera, float time, float(*func)(float), float standByTime, bool standByIsEnd = false);
+	void Play(Camera3D *endCamera, float time, float(*func)(float) = SoLib::easeLinear, float standByTime = 0.f, bool standByIsEnd = false);
 
 private: // メンバ変数
 
 	// カメラマネージャーのインスタンス
-	CameraManager* cameraManager_ = nullptr;
+	CameraManager *cameraManager_ = nullptr;
 
 	// 現在再生中のアニメーション
 	CameraAnimation currentAnimation_;
@@ -74,6 +87,9 @@ private: // メンバ変数
 	SoLib::DeltaTimer timer_;
 	// 遷移待機中トリガー
 	bool transitionStandbyTrigger_ = false;
+
+	// 演出中トリガー
+	bool isPlaying_ = false;
 
 };
 
