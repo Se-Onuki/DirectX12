@@ -29,10 +29,10 @@ namespace SoLib {
 
 	template<>
 	inline JsonPairList<Quaternion> GetJsonPairList<Quaternion>() {
-		JsonPairList<Quaternion> result;
-		result.push_back(JsonPair<Quaternion>{ "vec", { reinterpret_cast<Vector3 Quaternion:: *>(&Quaternion::x) } });
-		result.push_back(JsonPair<Quaternion>{ "w", { &Quaternion::w } });
-		return result;
+		return {
+			JsonPair<Quaternion>{ "vec", { reinterpret_cast<Vector3 Quaternion:: *>(&Quaternion::x) }},
+			JsonPair<Quaternion>{ "w", { &Quaternion::w } }
+		};
 	}
 
 	template<SoLib::IsNotPointer T>
