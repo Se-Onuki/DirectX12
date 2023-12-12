@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <vector>
 #include "../../Utils/SoLib/SoLib.h"
+#include "../Archetype.h"
 
 #include <assert.h>
 
@@ -14,24 +15,9 @@
 
 #include <stdlib.h>
 #include <unordered_map>
-
-class Entity;
-
-using classHash = size_t;
-
-class ClassData {
-public:
-	std::type_index typeInfo_ = typeid(void);
-	size_t size_;
-
-	template<typename T> static ClassData Create() {
-		return { typeid(T), sizeof(T) };
-	}
-
-	bool operator==(const ClassData &other) const {
-		return (typeInfo_ == other.typeInfo_ && size_ == other.size_);
-	}
-};
+namespace ECS {
+	class Entity;
+}
 
 class CustomArray {
 public:
@@ -220,39 +206,11 @@ private:
 	uint32_t nowSize_;
 };
 
-class Archetype {
-public:
-	std::list<ClassData> data_;
-
-	Archetype() {}
-
-	template<typename T, typename... Ts> void AddClassData() {
-		data_.push_back(ClassData::Create<T>());
-		if constexpr (sizeof...(Ts) > 0) {
-			AddClassData<Ts...>();
-		}
-	}
-
-	bool operator==(const Archetype &other) const { return other.data_ == data_; }
-
-	bool operator<=(const Archetype &other) const {
-		if (data_.size() > other.data_.size()) {
-			return false;
-		}
-		for (const auto &element : data_) {
-			if (std::find(other.data_.begin(), other.data_.end(), element) == other.data_.end()) {
-				return false;
-			}
-		}
-		return true;
-	}
-};
-
 class Chunk {
 public:
 	Chunk(const Archetype &archetype, const uint32_t &maxSize = 16) { CreateArray(archetype, maxSize); }
 	Chunk(const Chunk &otherChunk, const uint32_t &maxSize) : archetype_(otherChunk.archetype_), maxCount_(maxSize) {
-		//std::unordered_map<std::type_index, CustomArray> componentList_;
+		//std::unordered_map<std::type_index, CustomArray> componentArray_;
 	}
 
 	Chunk() {}

@@ -351,6 +351,9 @@
     <ClCompile Include="ECS\Chunk\Chunk.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
+    <ClCompile Include="ECS\MultiArray.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -639,6 +642,12 @@
       <Filter>ECS</Filter>
     </ClInclude>
     <ClInclude Include="ECS\Chunk\Chunk.hpp">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\MultiArray.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Archetype.h">
       <Filter>ECS</Filter>
     </ClInclude>
   </ItemGroup>

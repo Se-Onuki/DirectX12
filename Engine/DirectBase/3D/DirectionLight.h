@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <wrl.h>
 #include <d3d12.h>
+#include <memory>
 
 namespace Light {
 	struct Direction {
@@ -19,9 +20,11 @@ class DirectionLight {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	DirectionLight() = default;
-
 public:
+
+	DirectionLight() = default;
+	~DirectionLight() = default;
+
 	struct Direction {
 		Vector4 color;		// 色(RGBA)
 		Vector3 direction;	// ライトの向き
@@ -40,7 +43,7 @@ public:
 
 	void ImGuiWidget();
 
-	[[nodiscard]] static DirectionLight *const Create();
+	[[nodiscard]] static std::unique_ptr<DirectionLight> Create();
 
 private:
 

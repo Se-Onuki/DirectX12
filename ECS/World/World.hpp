@@ -8,12 +8,12 @@ namespace ECS {
 	class EntityManager;
 }
 class World {
+
 public:
 	static World *GetInstance() {
 		static World instance;
 		return &instance;
 	}
-	~World();
 
 	ECS::EntityManager *GetEntityManager() { return entityManager_.get(); }
 
@@ -27,7 +27,7 @@ public:
 				return i;
 			}
 		}
-		return UINT32_MAX;
+		return (std::numeric_limits<size_t>::max)();
 	}
 
 	Chunk *GetChunk(const uint32_t &index) { return &chunkList_[index]; }
@@ -42,6 +42,7 @@ private:
 	World();
 	World(const World &) = delete;
 	World &operator==(const World &) = delete;
+	~World();
 	std::unique_ptr<ECS::EntityManager> entityManager_;
 };
 

@@ -1,6 +1,9 @@
 #pragma once
 #include <memory>
 
+#include <typeinfo>
+#include <concepts>
+
 #include <string>
 #include <unordered_map>
 #include "../../Utils/Math/Transform.h"
@@ -52,12 +55,23 @@ namespace ECS {
 		BaseTransform wTransform_;
 	};
 
+	struct PositionComp : IComponent {
+		Vector3 position_;
+		inline Vector3 &operator=(const Vector3 &other) { position_ = other; }
+		inline operator Vector3 &() { return position_; }
+		inline operator const Vector3 &() const { return position_; }
+	};
+
 	struct ModelComp : IComponent {
 		void Init(const std::string &key) {
 			model_ = ModelManager::GetInstance()->GetModel(key);
 		}
 		Model *model_;
+
 	};
 
 	struct InputFlagComp : IComponent {};
+
+	template<class T>
+	constexpr bool cIsComponentData = std::is_base_of_v<IComponent, T> &&std::is_trivial_v<T> &&std::is_trivially_destructible_v<T>;
 }

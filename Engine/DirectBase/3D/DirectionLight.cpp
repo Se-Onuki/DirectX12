@@ -20,11 +20,11 @@ void DirectionLight::SetLight(ID3D12GraphicsCommandList *const commandList)
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource_->GetGPUVirtualAddress());
 }
 
-DirectionLight *const DirectionLight::Create()
+std::unique_ptr<DirectionLight> DirectionLight::Create()
 {
-	DirectionLight *const light = new DirectionLight();
+	auto light = std::make_unique<DirectionLight>();
 	light->Init();
-	return light;
+	return std::move(light);
 }
 
 void DirectionLight::ImGuiWidget()

@@ -35,10 +35,10 @@ namespace ECS {
 			Archetype archetype;
 			archetype.AddClassData<Ts...>();
 
-			entity.chunkId_ = world_->FindMatchChunk(archetype);
+			entity.chunkId_ = static_cast<uint32_t>(world_->FindMatchChunk(archetype));
 
 			if (entity.chunkId_ == UINT32_MAX) {
-				entity.chunkId_ = world_->CreateChunk(archetype);
+				entity.chunkId_ = static_cast<uint32_t>(world_->CreateChunk(archetype));
 			}
 			Chunk *chunk = world_->GetChunk(entity.chunkId_);
 			entity.chunkIndex_ = chunk->entityCount_++;
@@ -75,8 +75,8 @@ namespace ECS {
 
 	private:
 		template<typename T, typename... Ts> void Process(Chunk *chunk) {
-			size_t hash = std::hash<std::string>{}(typeid(T).name());
-			size_t size = sizeof(T);
+			/*size_t hash =std::hash<std::string>{}(typeid(T).name()); */
+			//size_t size = sizeof(T);
 			chunk->GetCustomArray<T>().push_back<T>();
 			if constexpr (sizeof...(Ts) > 0) {
 				Process<Ts...>(chunk);

@@ -18,7 +18,7 @@ TitleScene::~TitleScene() {
 
 void TitleScene::OnEnter() {
 	// ライトの生成
-	light_.reset(DirectionLight::Create());
+	light_ = DirectionLight::Create();
 }
 
 void TitleScene::OnExit() {

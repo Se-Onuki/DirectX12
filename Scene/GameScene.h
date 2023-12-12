@@ -10,6 +10,9 @@
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
+#include "../ECS/World/World.hpp"
+#include "../ECS/Entity/EntityManager.hpp"
+#include "../ECS/MultiArray.h"
 
 class GameScene : public IScene {
 public:
@@ -29,4 +32,6 @@ private:
 	CameraManager *cameraManager_ = nullptr;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
+	World *world_ = nullptr;
 };

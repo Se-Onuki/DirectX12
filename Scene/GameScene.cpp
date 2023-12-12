@@ -22,16 +22,17 @@ GameScene::~GameScene() {
 }
 
 void GameScene::OnEnter() {
-	light_.reset(DirectionLight::Create());
-	nlohmann::json json = {
-		{"vec",Vector3{ 1.f, 2.f, 3.f}},
-		{"w", 4.f}
-	};
+	light_ = DirectionLight::Create();
 
-	//std::string string = SoLib::cast<std::string>(json);
-	auto data = json.get<Quaternion>();
+	world_ = World::GetInstance();
+	world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
 
-	json = data;
+	Archetype archetype;
+	archetype.AddClassData<ECS::TransformComp, ECS::ModelComp>();
+
+	ECS::MultiArray mArray{ archetype };
+
+	mArray.GetItem<ECS::TransformComp>(0).wTransform_.Affine();
 
 }
 
