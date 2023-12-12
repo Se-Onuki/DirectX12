@@ -28,11 +28,11 @@ void GameScene::OnEnter() {
 	world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
 
 	Archetype archetype;
-	archetype.AddClassData<ECS::TransformComp, ECS::ModelComp>();
+	archetype.AddClassData<ECS::Identifier, ECS::ModelComp>();
 
 	ECS::MultiArray mArray{ archetype };
 
-	mArray.GetItem<ECS::TransformComp>(0).wTransform_.Affine();
+	mArray.GetItem<ECS::Identifier>(0).name_ = "hello";
 
 }
 

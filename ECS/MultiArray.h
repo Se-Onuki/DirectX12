@@ -16,8 +16,8 @@ namespace ECS {
 		MultiChunk(MultiArray *const parent);
 
 		template<SoLib::IsNotPointer T>
-		T *const push_back(const T &item) {
-
+		T *const back() {
+			return reinterpret_cast<T *>(componentAddress_[typeid(T)])[size_ - 1u];
 		}
 
 		/*void Delete(const int32_t index) {
@@ -27,6 +27,10 @@ namespace ECS {
 		template<SoLib::IsNotPointer T>
 		SubMultiArray<T> GetSubArray();
 
+		uint32_t size() const { return size_; }
+
+		bool IsMax() const { return size_ >= archetype_->GetChunkCapacity(); }
+		bool empty() const { return not size_; }
 
 	private:
 		uint32_t size_{};
@@ -70,12 +74,6 @@ namespace ECS {
 		void AddChunk();
 
 		template<SoLib::IsNotPointer T>
-		T &push_back(const T &item);
-
-		template<SoLib::IsNotPointer T>
-		T &push_back(T &&item);
-
-		template<SoLib::IsNotPointer T>
 		T &GetItem(uint32_t totalIndex);
 
 
@@ -92,15 +90,6 @@ namespace ECS {
 		return SubMultiArray{ reinterpret_cast<T *>(componentAddress_.at(typeid(T))), size_ };
 	}
 
-	template<SoLib::IsNotPointer T>
-	inline T &MultiArray::push_back(const T &item) {
-
-	}
-
-	template<SoLib::IsNotPointer T>
-	inline T &MultiArray::push_back(T &&item) {
-		// TODO: return ステートメントをここに挿入します
-	}
 
 	template<SoLib::IsNotPointer T>
 	T &MultiArray::GetItem(uint32_t totalIndex) {

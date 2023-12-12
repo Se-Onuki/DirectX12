@@ -11,6 +11,7 @@
 #include "../../Utils/Math/Vector3.h"
 #include "../../Engine/DirectBase/Model/Model.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
+#include "../../Utils/ConstString.h"
 
 // class SpriteManager {
 // public:
@@ -45,10 +46,7 @@ namespace ECS {
 	struct IComponent {};
 
 	struct Identifier : IComponent {
-		char name_;
-		void Init(const char &value) {
-			name_ = value;
-		}
+		ConstString<8u> name_;
 	};
 
 	struct TransformComp : IComponent {

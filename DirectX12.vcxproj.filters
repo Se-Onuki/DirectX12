@@ -650,6 +650,9 @@
     <ClInclude Include="ECS\Archetype.h">
       <Filter>ECS</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\ConstString.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

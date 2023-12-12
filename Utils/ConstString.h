@@ -1,0 +1,54 @@
+#pragma once
+#include <cstdint>
+#include <array>
+#include <string>
+
+template<uint32_t size>
+class ConstString {
+public:
+	using StringType = std::array<char, size>;
+	ConstString(const char *const name = "") {
+		*this = name;
+	}
+
+	/// @brief 文字列の代入
+	/// @param str 文字列
+	/// @return 文字列クラス
+	inline ConstString &operator=(const char *const str) {
+		std::memcpy(string_.data(), str, (std::min<uint32_t>)(size, static_cast<uint32_t>(std::strlen(str) + 1u)));
+
+		return *this;
+	}
+
+	/// @brief 文字列の代入
+	/// @param str 文字列
+	/// @return 文字列クラス
+	inline ConstString &operator=(const std::string &str) {
+		std::memcpy(string_.data(), str.data(), (std::min<uint32_t>)(size, static_cast<uint32_t>(str.size())));
+
+		return *this;
+	}
+
+	inline bool operator==(const ConstString &str) const {
+		return not(std::strcmp(this->data(), str.data()));
+	}
+
+	inline bool operator==(const char *const str) const {
+		return not(std::strcmp(this->data(), str));
+	}
+
+	operator const char *const ()const { return string_; }
+
+	char *const data() { return string_.data(); }
+	const char *const data()const { return string_.data(); }
+
+	StringType::iterator begin() { return string_.begin(); }
+	StringType::const_iterator begin() const { return string_.begin(); }
+
+	StringType::iterator end() { return string_.end(); }
+	StringType::const_iterator end() const { return string_.end(); }
+
+private:
+	// 文字列
+	std::array<char, size> string_;
+};
