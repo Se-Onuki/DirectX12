@@ -115,6 +115,9 @@
     <Filter Include="ECS">
       <UniqueIdentifier>{44ca97f6-34d4-44d8-be16-15451311710c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Externals">
+      <UniqueIdentifier>{039838bb-6ed7-4d95-89bc-168124e7893e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -652,6 +655,9 @@
     </ClInclude>
     <ClInclude Include="Utils\ConstString.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\Entt\entt.hpp">
+      <Filter>Externals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

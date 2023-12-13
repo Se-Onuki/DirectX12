@@ -460,13 +460,7 @@ void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 	assert(!commandList_ && "EndDrawが呼び出されていません");
 	commandList_ = commandList;
 
-	// RootSignatureを設定。
-	commandList_->SetGraphicsRootSignature(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get());
-	commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][0].Get());		// PSOを設定
-
-
-	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	Model::SetPipelineType(Model::PipelineType::kModel);
 }
 
 void Model::EndDraw() {

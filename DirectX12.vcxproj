@@ -222,6 +222,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\String\String.h" />
     <ClInclude Include="Engine\DirectBase\Texture\Texture.h" />
     <ClInclude Include="Engine\SolEngine.h" />
+    <ClInclude Include="externals\Entt\entt.hpp" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
