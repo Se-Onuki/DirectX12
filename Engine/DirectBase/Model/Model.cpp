@@ -467,6 +467,8 @@ void Model::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 
 	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	sPipelineType_ = Model::PipelineType::kModel;
 }
 
 void Model::EndDraw() {
