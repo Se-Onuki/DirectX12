@@ -34,4 +34,6 @@ private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	World *world_ = nullptr;
+
+	std::unique_ptr<ECS::MultiArray> mArray_;
 };

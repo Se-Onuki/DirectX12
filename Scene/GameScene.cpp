@@ -30,9 +30,10 @@ void GameScene::OnEnter() {
 	Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp>();
 
-	ECS::MultiArray mArray{ archetype };
+	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
 
-	mArray.GetItem<ECS::Identifier>(0).name_ = "hello";
+	size_t entityID = mArray_->push_back();
+	mArray_->GetItem<ECS::Identifier>(entityID).name_ = "hello";
 
 }
 
@@ -44,6 +45,8 @@ void GameScene::Update() {
 
 	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	light_->ImGuiWidget();
+
+	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(0).name_.data());
 
 }
 

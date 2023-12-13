@@ -10,6 +10,14 @@ namespace ECS {
 	template<SoLib::IsNotPointer T>
 	class SubMultiArray;
 
+
+	struct ChunkDeleter {
+		void operator()(void *p) const {
+			// メモリを解放
+			operator delete(p);
+		}
+	};
+
 	class MultiChunk {
 		using memoryType = uint8_t;
 	public:
@@ -24,6 +32,8 @@ namespace ECS {
 
 		}*/
 
+		uint32_t push_back();
+
 		template<SoLib::IsNotPointer T>
 		SubMultiArray<T> GetSubArray();
 
@@ -37,7 +47,8 @@ namespace ECS {
 
 		MultiArray *const parent_ = nullptr;
 		const Archetype *const archetype_;
-		std::unique_ptr<memoryType[]> componentArray_ = nullptr;
+
+		std::unique_ptr<void, ChunkDeleter> memoryPtr_;
 
 		std::unordered_map<std::type_index, void *> componentAddress_;
 	};
@@ -47,8 +58,14 @@ namespace ECS {
 	public:
 		SubMultiArray(T *begin, uint32_t size) : begin_(begin), size_(size) {}
 
-		T &operator[](uint32_t index) { return begin_[index]; }
-		const T &operator[](uint32_t index) const { return begin_[index]; }
+		T &operator[](uint32_t index) {
+			assert(size_ <= index);
+			return begin_[index];
+		}
+		const T &operator[](uint32_t index) const {
+			assert(size_ <= index);
+			return begin_[index];
+		}
 
 
 		T *begin() { return begin_; }
@@ -58,6 +75,8 @@ namespace ECS {
 		T *end() { return begin_ + size_; }
 		const T *end() const { return begin_ + size_; }
 		const T *cend() const { return begin_ + size_; }
+
+		uint32_t size() const { return size_; }
 	private:
 		T *begin_ = nullptr;
 		uint32_t size_;
@@ -66,15 +85,17 @@ namespace ECS {
 
 	class MultiArray {
 	public:
-		MultiArray(const Archetype &archetype) : archetype_(archetype) { AddChunk(); }
+		MultiArray(const Archetype &archetype) : archetype_(archetype) { }
 		~MultiArray() = default;
 
 		const Archetype &GetArchetype() const { return archetype_; }
 
-		void AddChunk();
+		std::unique_ptr<MultiChunk> &AddChunk();
+
+		size_t push_back();
 
 		template<SoLib::IsNotPointer T>
-		T &GetItem(uint32_t totalIndex);
+		T &GetItem(size_t totalIndex);
 
 
 	private:
@@ -92,10 +113,10 @@ namespace ECS {
 
 
 	template<SoLib::IsNotPointer T>
-	T &MultiArray::GetItem(uint32_t totalIndex) {
+	T &MultiArray::GetItem(size_t totalIndex) {
 		const auto capacity = archetype_.GetChunkCapacity();
 
-		return multiChunk_[totalIndex / capacity]->GetSubArray<T>()[totalIndex % capacity];
+		return multiChunk_[totalIndex / capacity]->GetSubArray<T>()[static_cast<uint32_t>(totalIndex % capacity)];
 
 	}
 

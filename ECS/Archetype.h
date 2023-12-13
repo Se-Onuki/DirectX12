@@ -4,15 +4,18 @@
 #include <list>
 #include "Entity/Entity.hpp"
 #include "../Utils/SoLib/SoLib.h"
+#include <unordered_set>
 
 class ClassData {
 public:
 	std::type_index typeInfo_ = typeid(void);
 	size_t size_;
+	std::function<void(void *)> constructor_;
+	std::function<void(void *)> destructor_;
 
 	template<SoLib::IsNotPointer T>
 	static ClassData Create() {
-		return { typeid(T), sizeof(T) };
+		return { typeid(T), sizeof(T), [](void *ptr) { new(ptr) T{}; },[](void *ptr) { reinterpret_cast<T *>(ptr)->~T(); } };
 	}
 
 	bool operator==(const ClassData &other) const {
@@ -20,16 +23,27 @@ public:
 	}
 };
 
+
+namespace std {
+	template<>
+	struct hash<ClassData> {
+		std::size_t operator()(const ClassData &obj) const {
+			// std::type_index のハッシュ値をそのまま返す
+			return obj.typeInfo_.hash_code();
+		}
+	};
+}
+
 class Archetype {
 public:
-	std::list<ClassData> data_;
+	std::unordered_set<ClassData> data_;
 
 	static const size_t OneChunkCapacity = 16u * 1024u;
 
 	Archetype() = default;
 
 	template<typename T, typename... Ts> void AddClassData() {
-		data_.push_back(ClassData::Create<T>());
+		data_.insert(ClassData::Create<T>());
 		if constexpr (sizeof...(Ts) > 0) {
 			AddClassData<Ts...>();
 		}
