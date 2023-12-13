@@ -50,7 +50,7 @@ namespace ECS {
 
 		std::unique_ptr<void, ChunkDeleter> memoryPtr_;
 
-		std::unordered_map<std::type_index, void *> componentAddress_;
+		std::unordered_map<ClassData, void *> componentAddress_;
 	};
 
 	template<SoLib::IsNotPointer T>
@@ -108,7 +108,7 @@ namespace ECS {
 
 	template<SoLib::IsNotPointer T>
 	inline SubMultiArray<T> MultiChunk::GetSubArray() {
-		return SubMultiArray{ reinterpret_cast<T *>(componentAddress_.at(typeid(T))), size_ };
+		return SubMultiArray{ reinterpret_cast<T *>(componentAddress_.at(ClassData{typeid(T),sizeof(T)})), size_ };
 	}
 
 

@@ -11,16 +11,16 @@ public:
 	std::type_index typeInfo_ = typeid(void);
 	size_t size_;
 	std::function<void(void *)> constructor_;
-	std::function<void(void *)> destructor_;
 
 	template<SoLib::IsNotPointer T>
 	static ClassData Create() {
-		return { typeid(T), sizeof(T), [](void *ptr) { new(ptr) T{}; },[](void *ptr) { reinterpret_cast<T *>(ptr)->~T(); } };
+		return { typeid(T), sizeof(T), [](void *ptr) { new(ptr) T{}; } };
 	}
 
 	bool operator==(const ClassData &other) const {
 		return (typeInfo_ == other.typeInfo_ && size_ == other.size_);
 	}
+
 };
 
 

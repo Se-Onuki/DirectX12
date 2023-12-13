@@ -8,13 +8,19 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 
 	memoryType *address = reinterpret_cast<memoryType *>(memoryPtr_.get()) + sizeof(ECS::Entity) * capacity / sizeof(memoryType);
 	for (const auto &classData : archetype_->data_) {
-		componentAddress_[classData.typeInfo_] = address;
+		componentAddress_[classData] = address;
 		address += (classData.size_ * capacity / sizeof(memoryType));
 	}
 
 }
 
 uint32_t ECS::MultiChunk::push_back() {
+
+	for (const auto &classData : archetype_->data_) {
+		auto ptr = reinterpret_cast<memoryType *>(componentAddress_[classData]) + classData.size_ / sizeof(memoryType) * size_;
+		classData.constructor_(ptr);
+	}
+
 	return size_++;
 }
 
