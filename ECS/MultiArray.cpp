@@ -15,7 +15,7 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 }
 
 uint32_t ECS::MultiChunk::push_back() {
-	return uint32_t();
+	return size_++;
 }
 
 std::unique_ptr<ECS::MultiChunk> &ECS::MultiArray::AddChunk() {
@@ -27,13 +27,17 @@ size_t ECS::MultiArray::push_back() {
 
 	auto backChunk = multiChunk_.rbegin();
 
+	size_t index{};
+
 	// 最後尾が最大であるか
 	if (multiChunk_.empty() || (*backChunk)->IsMax()) {
 		// 最大ならチャンクを追加して、エンティティを追加
-		return this->AddChunk()->push_back();
+		index = this->AddChunk()->push_back();
 	}
 	else {
 		// 余裕があるなら、そのままエンティティを追加。
-		return (*backChunk)->push_back();
+		index = (*backChunk)->push_back();
 	}
+
+	return index + (multiChunk_.size() - 1u) * archetype_.GetChunkCapacity();
 }

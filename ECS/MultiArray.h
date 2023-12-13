@@ -59,11 +59,11 @@ namespace ECS {
 		SubMultiArray(T *begin, uint32_t size) : begin_(begin), size_(size) {}
 
 		T &operator[](uint32_t index) {
-			assert(size_ <= index);
+			assert(size_ > index);
 			return begin_[index];
 		}
 		const T &operator[](uint32_t index) const {
-			assert(size_ <= index);
+			assert(size_ > index);
 			return begin_[index];
 		}
 

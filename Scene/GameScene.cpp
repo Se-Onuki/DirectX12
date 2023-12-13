@@ -34,6 +34,7 @@ void GameScene::OnEnter() {
 
 	size_t entityID = mArray_->push_back();
 	mArray_->GetItem<ECS::Identifier>(entityID).name_ = "hello";
+	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
 
 }
 
@@ -47,6 +48,7 @@ void GameScene::Update() {
 	light_->ImGuiWidget();
 
 	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(0).name_.data());
+	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(1).name_.data());
 
 }
 

@@ -16,7 +16,7 @@ public:
 	/// @return 文字列クラス
 	inline ConstString &operator=(const char *const str) {
 		std::memcpy(string_.data(), str, (std::min<uint32_t>)(size - 1u, static_cast<uint32_t>(std::strlen(str) + 1u)));
-
+		string_[size - 1u] = '\0';
 		return *this;
 	}
 
