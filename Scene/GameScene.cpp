@@ -25,7 +25,7 @@ void GameScene::OnEnter() {
 	light_ = DirectionLight::Create();
 
 	world_ = World::GetInstance();
-	world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
+	// world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
 
 	Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp>();
@@ -35,6 +35,9 @@ void GameScene::OnEnter() {
 	size_t entityID = mArray_->push_back();
 	mArray_->GetItem<ECS::Identifier>(entityID).name_ = "hello";
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
+	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
+
+	mArray_->erese(1);
 
 }
 

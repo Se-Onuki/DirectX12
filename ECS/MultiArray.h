@@ -32,6 +32,12 @@ namespace ECS {
 
 		}*/
 
+		/// @brief データの置き換えによるデータの破棄
+		/// @param index 破棄するデータの内部index
+		void erese(uint32_t index);
+
+		/// @brief 末尾へのデータの追加
+		/// @return 追加されたデータの内部index
 		uint32_t push_back();
 
 		template<SoLib::IsNotPointer T>
@@ -39,8 +45,14 @@ namespace ECS {
 
 		uint32_t size() const { return size_; }
 
+		void Normalize();
+
 		bool IsMax() const { return size_ >= archetype_->GetChunkCapacity(); }
 		bool empty() const { return not size_; }
+
+	private:
+
+		void *GetItemPtr(const ClassData &classData, const uint32_t index);
 
 	private:
 		uint32_t size_{};
@@ -92,11 +104,19 @@ namespace ECS {
 
 		std::unique_ptr<MultiChunk> &AddChunk();
 
+		/// @brief 末尾に要素を追加
+		/// @return 追加された要素のindex
 		size_t push_back();
 
 		template<SoLib::IsNotPointer T>
 		T &GetItem(size_t totalIndex);
 
+		/// @brief 穴抜けの部分を埋める
+		void Normalize();
+
+		/// @brief データの破棄
+		/// @param totalIndex 破棄する全体index
+		void erese(const uint32_t totalIndex);
 
 	private:
 		Archetype archetype_;

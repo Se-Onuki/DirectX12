@@ -38,7 +38,7 @@ class Archetype {
 public:
 	std::unordered_set<ClassData> data_;
 
-	static const size_t OneChunkCapacity = 16u * 1024u;
+	static constexpr size_t OneChunkCapacity = 16u * 1024u;
 
 	Archetype() = default;
 
