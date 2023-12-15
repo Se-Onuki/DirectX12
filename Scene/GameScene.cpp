@@ -52,7 +52,7 @@ void GameScene::Update() {
 	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	light_->ImGuiWidget();
 
-	for (const auto &[id, model] : mArray_->GetChunk()[0]->get<ECS::Identifier, ECS::ModelComp>()) {
+	for (const auto &[id, model] : mArray_->get<ECS::Identifier, ECS::ModelComp>()) {
 		ImGui::Text("%s,%x", id->name_.data(), model->model_);
 	}
 

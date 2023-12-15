@@ -26,10 +26,14 @@ namespace ECS {
 	struct ComponetArray {
 
 		struct iterator {
-
+		public:
+			iterator() = default;
 			iterator(ComponetArray *const, uint32_t);
-			//operator std::tuple<Ts*...>();
-			const std::tuple<Ts *const...> operator *();
+
+			iterator &operator =(const iterator &) = default;
+			iterator &operator =(iterator &&) = default;
+
+			std::tuple<Ts *const...> operator *();
 
 			iterator &operator++() {
 
@@ -38,20 +42,38 @@ namespace ECS {
 				return *this;
 			}
 
-			bool operator==(const iterator &other) {
+			iterator operator+(uint32_t index) {
+				iterator result = *this;
+				result.index_ + index;
+
+				return result;
+			}
+
+			iterator &operator+=(uint32_t index) {
+				this->index_ += index;
+
+				return *this;
+			}
+
+			bool operator==(const iterator &other) const {
 				return this->compArray_ == other.compArray_ && this->index_ == other.index_;
 			}
 
-			bool operator!=(const iterator &other) {
+			bool operator!=(const iterator &other) const {
 				return this->compArray_ != other.compArray_ || this->index_ != other.index_;
 			}
 
 		private:
-			ComponetArray *const compArray_;
+			ComponetArray *compArray_;
 			uint32_t index_{};
 
 		};
 
+
+
+		bool operator!=(const ComponetArray<Ts...> &other) const {
+			return this->componentAddress_ != other.componentAddress_ || this->size_ != other.size_;
+		}
 
 		iterator begin() { return iterator{ this, 0u }; }
 		iterator end() { return iterator{ this, size_ }; }
@@ -140,6 +162,62 @@ namespace ECS {
 	public:
 		MultiArray(const Archetype &archetype) : archetype_(archetype) { }
 		~MultiArray() = default;
+		using MultiChunkClass = std::vector<std::unique_ptr<MultiChunk>>;
+
+		template<typename... Ts>
+		class MultiCompArray {
+		public:
+
+			MultiCompArray(MultiChunkClass *const multiChunk) :pMultiChunk_(multiChunk) {}
+			~MultiCompArray() = default;
+
+			class iterator {
+			public:
+				iterator() = default;
+				iterator(MultiChunkClass *const multiChunk, MultiChunkClass::iterator chunkItr, uint32_t index) :pMultiChunk_(multiChunk), chunkItr_(chunkItr) {
+					if (chunkItr_ != pMultiChunk_->end()) {
+						compArray_ = (*chunkItr_)->get<Ts...>();
+						compArrayItr_ = compArray_.begin();
+						compArrayItr_ += index;
+					}
+				}
+				~iterator() = default;
+
+				iterator &operator++();
+
+				std::tuple<Ts *const...> operator *() {
+					return *(this->compArrayItr_);
+				}
+
+				bool operator==(const iterator &other) const {
+					return this->pMultiChunk_ == other.pMultiChunk_ &&
+						this->chunkItr_ == other.chunkItr_ &&
+						this->compArray_ == other.compArray_ &&
+						this->compArrayItr_ == other.compArrayItr_;
+				}
+
+				bool operator!=(const iterator &other) const {
+					return this->pMultiChunk_ != other.pMultiChunk_ ||
+						this->chunkItr_ != other.chunkItr_ ||
+						this->compArray_ != other.compArray_ ||
+						this->compArrayItr_ != other.compArrayItr_;
+				}
+
+
+			private:
+				MultiChunkClass *pMultiChunk_;
+				MultiChunkClass::iterator chunkItr_;
+				ComponetArray<Ts...> compArray_;
+				ComponetArray<Ts...>::iterator compArrayItr_;
+			};
+
+			iterator begin();
+			iterator end();
+
+		private:
+			MultiChunkClass *const pMultiChunk_;
+		};
+
 
 		const Archetype &GetArchetype() const { return archetype_; }
 
@@ -163,9 +241,12 @@ namespace ECS {
 
 		void swap(const uint32_t totalIndexF, const uint32_t totalIndexS);
 
+		template<typename... Ts>
+		MultiCompArray<Ts...> get();
+
 	private:
 		Archetype archetype_;
-		std::vector<std::unique_ptr<MultiChunk>> multiChunk_;
+		MultiChunkClass multiChunk_;
 	};
 
 
@@ -214,8 +295,48 @@ namespace ECS {
 	}
 
 	template<typename ...Ts>
-	inline const std::tuple<Ts *const...> ComponetArray<Ts...>::iterator::operator*() {
+	inline  std::tuple<Ts *const...> ComponetArray<Ts...>::iterator::operator*() {
 		return std::make_tuple(&(static_cast<Ts *const>(compArray_->componentAddress_.at(typeid(Ts)))[index_])...);
+	}
+
+	template<typename ...Ts>
+	inline MultiArray::MultiCompArray<Ts...>::iterator MultiArray::MultiCompArray<Ts...>::begin() {
+		return iterator(this->pMultiChunk_, this->pMultiChunk_->begin(), 0u);
+	}
+
+	template<typename ...Ts>
+	inline MultiArray::MultiCompArray<Ts...>::iterator MultiArray::MultiCompArray<Ts...>::end() {
+
+		return iterator(this->pMultiChunk_, this->pMultiChunk_->end(), 0u);
+	}
+	template<typename ...Ts>
+	inline MultiArray::MultiCompArray<Ts...>::iterator &MultiArray::MultiCompArray<Ts...>::iterator::operator++() {
+
+		// 内部イテレータを加算
+		++compArrayItr_;
+		// もし、末尾に到達していたらチャンクを加算
+		if (compArrayItr_ == compArray_.end()) {
+			++this->chunkItr_;
+
+			// チャンクが終端以外は内部データを更新
+			if (chunkItr_ != pMultiChunk_->end()) {
+				compArray_ = (*chunkItr_)->get<Ts...>();
+				compArrayItr_ = compArray_.begin();
+			}
+
+		}
+
+
+		return *this;
+	}
+
+
+
+	template<typename ...T>
+	inline MultiArray::MultiCompArray<T...> MultiArray::get() {
+		MultiArray::MultiCompArray<T...> result{ &this->multiChunk_ };
+
+		return result;
 	}
 
 }
