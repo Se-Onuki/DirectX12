@@ -1,4 +1,6 @@
 #include "MultiArray.h"
+#include <cassert>
+#include <algorithm>
 
 ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archetype_(&parent_->GetArchetype()) {
 	// メモリの確保
@@ -15,17 +17,50 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 }
 
 void ECS::MultiChunk::erese(uint32_t index) {
+	if (size_ > index) {
+		for (const auto &classData : archetype_->data_) {
+			// 破棄するデータのアドレスを取得
+			auto ptr = GetItemPtr(classData, index);
+			// 末尾のデータのアドレスをを取得
+			auto backPtr = GetItemPtr(classData, size_ - 1u);
+			// 破棄するデータを末尾のデータで上書き
+			std::memcpy(ptr, backPtr, classData.size_);
+
+		}
+		// 配列のサイズを短縮
+		size_--;
+	}
+}
+
+void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
+#ifdef _DEBUG
+
+	assert(size_ > indexF && "添え字がアクセス範囲を超えています");
+	assert(size_ > indexS && "添え字がアクセス範囲を超えています");
+
+#endif // _DEBUG
+
+	size_t maxMemSize{};
 	for (const auto &classData : archetype_->data_) {
-		// 破棄するデータのアドレスを取得
-		auto ptr = GetItemPtr(classData, index);
-		// 末尾のデータのアドレスをを取得
-		auto backPtr = GetItemPtr(classData, size_ - 1u);
-		// 破棄するデータを末尾のデータで上書き
-		std::memcpy(ptr, backPtr, classData.size_);
+		maxMemSize = (std::max)(maxMemSize, classData.size_);
 
 	}
-	// 配列のサイズを短縮
-	size_--;
+	// 一時的なメモリを最大値で確保
+	std::unique_ptr<char[]> temp(std::make_unique<char[]>(maxMemSize));
+
+	for (const auto &classData : archetype_->data_) {
+
+		// 破棄するデータのアドレスを取得
+		auto fPtr = GetItemPtr(classData, indexF);
+		// 末尾のデータのアドレスをを取得
+		auto sPtr = GetItemPtr(classData, size_ - 1u);
+
+		std::memcpy(temp.get(), fPtr, classData.size_);
+		std::memcpy(fPtr, sPtr, classData.size_);
+		std::memcpy(sPtr, temp.get(), classData.size_);
+
+	}
+
 }
 
 uint32_t ECS::MultiChunk::push_back() {
@@ -78,4 +113,33 @@ void ECS::MultiArray::erese(const uint32_t totalIndex) {
 	const auto capacity = archetype_.GetChunkCapacity();
 
 	multiChunk_[totalIndex / capacity]->erese(static_cast<uint32_t>(totalIndex % capacity));
+}
+
+void ECS::MultiArray::swap(const uint32_t totalIndexF, const uint32_t totalIndexS) {
+	const auto capacity = archetype_.GetChunkCapacity();
+
+	auto &firstItem = multiChunk_[totalIndexF / capacity];
+	auto &secondItem = multiChunk_[totalIndexS / capacity];
+
+	size_t maxMemSize{};
+	for (const auto &classData : archetype_.data_) {
+		maxMemSize = (std::max)(maxMemSize, classData.size_);
+
+	}
+	// 一時的なメモリを最大値で確保
+	std::unique_ptr<char[]> temp(std::make_unique<char[]>(maxMemSize));
+
+	for (const auto &classData : archetype_.data_) {
+
+		// 破棄するデータのアドレスを取得
+		auto fPtr = firstItem-> GetItemPtr(classData, static_cast<uint32_t>(totalIndexF % capacity));
+		// 末尾のデータのアドレスをを取得
+		auto sPtr = secondItem->GetItemPtr(classData, static_cast<uint32_t>(totalIndexS % capacity));
+
+		std::memcpy(temp.get(), fPtr, classData.size_);
+		std::memcpy(fPtr, sPtr, classData.size_);
+		std::memcpy(sPtr, temp.get(), classData.size_);
+
+	}
+
 }

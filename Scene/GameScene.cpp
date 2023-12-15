@@ -37,7 +37,7 @@ void GameScene::OnEnter() {
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
 
-	mArray_->erese(1);
+	mArray_->swap(0, 2);
 
 }
 
@@ -52,6 +52,7 @@ void GameScene::Update() {
 
 	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(0).name_.data());
 	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(1).name_.data());
+	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(2).name_.data());
 
 }
 

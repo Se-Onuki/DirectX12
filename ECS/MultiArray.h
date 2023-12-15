@@ -2,6 +2,7 @@
 #include "Archetype.h"
 #include <vector>
 #include <memory>
+#include <cstdint>
 #include "../Utils/SoLib/SoLib_Traits.h"
 
 namespace ECS {
@@ -28,13 +29,11 @@ namespace ECS {
 			return reinterpret_cast<T *>(componentAddress_[typeid(T)])[size_ - 1u];
 		}
 
-		/*void Delete(const int32_t index) {
-
-		}*/
-
 		/// @brief データの置き換えによるデータの破棄
 		/// @param index 破棄するデータの内部index
 		void erese(uint32_t index);
+
+		void swap(const uint32_t indexF, const uint32_t indexS);
 
 		/// @brief 末尾へのデータの追加
 		/// @return 追加されたデータの内部index
@@ -49,8 +48,6 @@ namespace ECS {
 
 		bool IsMax() const { return size_ >= archetype_->GetChunkCapacity(); }
 		bool empty() const { return not size_; }
-
-	private:
 
 		void *GetItemPtr(const ClassData &classData, const uint32_t index);
 
@@ -115,8 +112,10 @@ namespace ECS {
 		void Normalize();
 
 		/// @brief データの破棄
-		/// @param totalIndex 破棄する全体index
+		/// @param totalIndex 破棄するindex
 		void erese(const uint32_t totalIndex);
+
+		void swap(const uint32_t totalIndexF, const uint32_t totalIndexS);
 
 	private:
 		Archetype archetype_;
