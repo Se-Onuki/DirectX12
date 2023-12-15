@@ -37,6 +37,9 @@ void GameScene::OnEnter() {
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
 
+	uint32_t id = mArray_->AddChunk()->push_back();
+	mArray_->GetChunk()[1]->GetSubArray<ECS::Identifier>()[id].name_ = "unko";
+
 	mArray_->swap(0, 2);
 	// mArray_->erese(0);
 
