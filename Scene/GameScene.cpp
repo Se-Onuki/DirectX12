@@ -50,18 +50,10 @@ void GameScene::Update() {
 
 	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	light_->ImGuiWidget();
-	//ECS::Viewer<ECS::Identifier> view{  mArray_->GetItem<ECS::Identifier>(0u)  };
 
-	//auto [item] = static_cast<std::tuple<ECS::Identifier *>>(++mArray_->GetChunk()[0]->get<ECS::Identifier>().begin());
-
-	for (auto [id] : mArray_->GetChunk()[0]->get<ECS::Identifier>()) {
-		ImGui::Text("%s", id->name_.data());
+	for (auto [id, model] : mArray_->GetChunk()[0]->get<ECS::Identifier, ECS::ModelComp>()) {
+		ImGui::Text("%s,%x", id->name_.data(), model->model_);
 	}
-
-	//ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(0).name_.data());
-	//ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(1).name_.data());
-	//ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(2).name_.data());
-
 
 }
 
