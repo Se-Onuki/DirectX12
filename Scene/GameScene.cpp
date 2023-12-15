@@ -52,13 +52,16 @@ void GameScene::Update() {
 	light_->ImGuiWidget();
 	//ECS::Viewer<ECS::Identifier> view{  mArray_->GetItem<ECS::Identifier>(0u)  };
 
-	auto [item] = static_cast<std::tuple<ECS::Identifier *>>(mArray_->GetChunk()[0]->get<ECS::Identifier>().begin());
+	//auto [item] = static_cast<std::tuple<ECS::Identifier *>>(++mArray_->GetChunk()[0]->get<ECS::Identifier>().begin());
 
-	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(0).name_.data());
-	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(1).name_.data());
-	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(2).name_.data());
+	for (auto [id] : mArray_->GetChunk()[0]->get<ECS::Identifier>()) {
+		ImGui::Text("%s", id->name_.data());
+	}
 
-	ImGui::Text("viewTest %s", item->name_.data());
+	//ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(0).name_.data());
+	//ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(1).name_.data());
+	//ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(2).name_.data());
+
 
 }
 

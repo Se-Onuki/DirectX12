@@ -28,8 +28,23 @@ namespace ECS {
 		struct iterator {
 
 			iterator(ComponetArray *const, uint32_t);
-			operator std::tuple<Ts*...>();
+			//operator std::tuple<Ts*...>();
+			std::tuple<Ts*...> operator *();
 
+			iterator &operator++() {
+
+				this->index_++;
+
+				return *this;
+			}
+
+			bool operator==(const iterator &other) {
+				return this->compArray_ == other.compArray_ && this->index_ == other.index_;
+			}
+
+			bool operator!=(const iterator &other) {
+				return this->compArray_ != other.compArray_ || this->index_ != other.index_;
+			}
 
 		private:
 			ComponetArray *const compArray_;
@@ -167,6 +182,7 @@ namespace ECS {
 		for (auto &[comp, ptr] : this->componentAddress_) {
 			result.componentAddress_.insert(std::make_pair(comp.typeInfo_, ptr));
 		}
+		result.size_ = size_;
 
 		return result;
 	}
@@ -183,18 +199,25 @@ namespace ECS {
 
 #pragma endregion
 
-	template<typename ...Ts>
+	/*template<typename ...Ts>
 	inline ComponetArray<Ts...>::iterator::operator std::tuple<Ts*...>() {
 		std::tuple<Ts*...> result = std::make_tuple(&(static_cast<Ts *>(compArray_->componentAddress_.at(typeid(Ts)))[index_])...);
 
 		return result;
-	}
+	}*/
 
 
 
 	template<typename ...Ts>
 	inline ComponetArray<Ts...>::iterator::iterator(ComponetArray *const compArray, uint32_t index) :compArray_(compArray) {
 		index_ = index;
+	}
+
+	template<typename ...Ts>
+	inline std::tuple<Ts*...> ComponetArray<Ts...>::iterator::operator*() {
+		std::tuple<Ts*...> result = std::make_tuple(&(static_cast<Ts *>(compArray_->componentAddress_.at(typeid(Ts)))[index_])...);
+
+		return result;
 	}
 
 }
