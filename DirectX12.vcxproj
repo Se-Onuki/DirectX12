@@ -187,6 +187,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ECS\Entity\Entity.hpp" />
     <ClInclude Include="ECS\Entity\EntityManager.hpp" />
     <ClInclude Include="ECS\MultiArray.h" />
+    <ClInclude Include="ECS\Viewer.h" />
     <ClInclude Include="ECS\World\World.hpp" />
     <ClInclude Include="Engine\DirectBase\2D\Sprite.h" />
     <ClInclude Include="Engine\DirectBase\3D\DirectionLight.h" />

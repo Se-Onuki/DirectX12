@@ -13,6 +13,7 @@
 #include "../ECS/World/World.hpp"
 #include "../ECS/Entity/EntityManager.hpp"
 #include "../ECS/MultiArray.h"
+#include "../ECS/Viewer.h"
 
 class GameScene : public IScene {
 public:
@@ -36,4 +37,8 @@ private:
 	World *world_ = nullptr;
 
 	std::unique_ptr<ECS::MultiArray> mArray_;
+
+	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
+
+
 };

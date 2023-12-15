@@ -39,6 +39,7 @@ void GameScene::OnEnter() {
 
 	mArray_->swap(0, 2);
 
+
 }
 
 void GameScene::OnExit() {
@@ -49,10 +50,14 @@ void GameScene::Update() {
 
 	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	light_->ImGuiWidget();
+	ECS::Viewer<ECS::Identifier> view{  mArray_->GetItem<ECS::Identifier>(0u)  };
+
+	auto& [item] = view.item_;
 
 	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(0).name_.data());
 	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(1).name_.data());
 	ImGui::Text("%s", mArray_->GetItem<ECS::Identifier>(2).name_.data());
+	ImGui::Text("viewTest %s", item.name_.data());
 
 }
 
