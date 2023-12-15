@@ -11,6 +11,8 @@ namespace ECS {
 	template<SoLib::IsNotPointer T>
 	class SubMultiArray;
 
+	class MultiChunk;
+
 
 	struct ChunkDeleter {
 		void operator()(void *p) const {
@@ -25,18 +27,19 @@ namespace ECS {
 
 		struct iterator {
 
+			iterator(ComponetArray *const, uint32_t);
 			operator std::tuple<Ts*...>();
 
 
-
+		private:
 			ComponetArray *const compArray_;
 			uint32_t index_{};
 
 		};
 
 
-		iterator begin() { return { this, 0u }; }
-		iterator end() { return { this, size_ }; }
+		iterator begin() { return iterator{ this, 0u }; }
+		iterator end() { return iterator{ this, size_ }; }
 
 		std::unordered_map<std::type_index, void *> componentAddress_;
 		uint32_t size_;
@@ -182,9 +185,16 @@ namespace ECS {
 
 	template<typename ...Ts>
 	inline ComponetArray<Ts...>::iterator::operator std::tuple<Ts*...>() {
-		std::tuple<Ts*...> result = std::make_tuple(static_cast<Ts *>(compArray_->componentAddress_.at(typeid(Ts)))...);
+		std::tuple<Ts*...> result = std::make_tuple(&(static_cast<Ts *>(compArray_->componentAddress_.at(typeid(Ts)))[index_])...);
 
 		return result;
+	}
+
+
+
+	template<typename ...Ts>
+	inline ComponetArray<Ts...>::iterator::iterator(ComponetArray *const compArray, uint32_t index) :compArray_(compArray) {
+		index_ = index;
 	}
 
 }
