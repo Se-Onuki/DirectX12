@@ -19,6 +19,29 @@ namespace ECS {
 		}
 	};
 
+
+	template<typename... Ts>
+	struct ComponetArray {
+
+		struct iterator {
+
+			operator std::tuple<Ts*...>();
+
+
+
+			ComponetArray *const compArray_;
+			uint32_t index_{};
+
+		};
+
+
+		iterator begin() { return { this, 0u }; }
+		iterator end() { return { this, size_ }; }
+
+		std::unordered_map<std::type_index, void *> componentAddress_;
+		uint32_t size_;
+	};
+
 	class MultiChunk {
 		using memoryType = uint8_t;
 	public:
@@ -50,6 +73,9 @@ namespace ECS {
 		bool empty() const { return not size_; }
 
 		void *GetItemPtr(const ClassData &classData, const uint32_t index);
+
+		template<typename... Ts>
+		ComponetArray<Ts...> get();
 
 	private:
 		uint32_t size_{};
@@ -101,6 +127,8 @@ namespace ECS {
 
 		std::unique_ptr<MultiChunk> &AddChunk();
 
+		auto &GetChunk() { return multiChunk_; }
+
 		/// @brief 末尾に要素を追加
 		/// @return 追加された要素のindex
 		size_t push_back();
@@ -130,6 +158,16 @@ namespace ECS {
 		return SubMultiArray{ reinterpret_cast<T *>(componentAddress_.at(ClassData{typeid(T),sizeof(T)})), size_ };
 	}
 
+	template<typename ...T>
+	inline ComponetArray<T...> MultiChunk::get() {
+		ComponetArray<T...> result;
+		for (auto &[comp, ptr] : this->componentAddress_) {
+			result.componentAddress_.insert(std::make_pair(comp.typeInfo_, ptr));
+		}
+
+		return result;
+	}
+
 
 	template<SoLib::IsNotPointer T>
 	T &MultiArray::GetItem(size_t totalIndex) {
@@ -141,5 +179,12 @@ namespace ECS {
 
 
 #pragma endregion
+
+	template<typename ...Ts>
+	inline ComponetArray<Ts...>::iterator::operator std::tuple<Ts*...>() {
+		std::tuple<Ts*...> result = std::make_tuple(static_cast<Ts *>(compArray_->componentAddress_.at(typeid(Ts)))...);
+
+		return result;
+	}
 
 }
