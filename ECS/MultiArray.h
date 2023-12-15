@@ -56,11 +56,13 @@ namespace ECS {
 			}
 
 			bool operator==(const iterator &other) const {
-				return this->compArray_ == other.compArray_ && this->index_ == other.index_;
+				return this->compArray_->componentAddress_ == other.compArray_->componentAddress_ && this->index_ == other.index_;
 			}
 
 			bool operator!=(const iterator &other) const {
-				return this->compArray_ != other.compArray_ || this->index_ != other.index_;
+				// どちらもnullptrである場合はendである場合のみ
+				if (this->compArray_ == nullptr && other.compArray_ == nullptr) { return false; }
+				return  this->compArray_->componentAddress_ != other.compArray_->componentAddress_ || this->index_ != other.index_;
 			}
 
 		private:
@@ -86,11 +88,6 @@ namespace ECS {
 		using memoryType = uint8_t;
 	public:
 		MultiChunk(MultiArray *const parent);
-
-		template<SoLib::IsNotPointer T>
-		T *const back() {
-			return reinterpret_cast<T *>(componentAddress_[typeid(T)])[size_ - 1u];
-		}
 
 		/// @brief データの置き換えによるデータの破棄
 		/// @param index 破棄するデータの内部index
@@ -316,12 +313,17 @@ namespace ECS {
 		++compArrayItr_;
 		// もし、末尾に到達していたらチャンクを加算
 		if (compArrayItr_ == compArray_.end()) {
-			++this->chunkItr_;
+			++chunkItr_;
 
+			auto a = pMultiChunk_->end();
 			// チャンクが終端以外は内部データを更新
-			if (chunkItr_ != pMultiChunk_->end()) {
+			if (chunkItr_ != a) {
 				compArray_ = (*chunkItr_)->get<Ts...>();
 				compArrayItr_ = compArray_.begin();
+			}
+			else {
+				compArray_ = {};
+				compArrayItr_ = {};
 			}
 
 		}

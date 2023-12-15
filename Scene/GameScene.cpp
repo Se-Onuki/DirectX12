@@ -38,7 +38,7 @@ void GameScene::OnEnter() {
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
 
 	mArray_->swap(0, 2);
-	mArray_->erese(0);
+	// mArray_->erese(0);
 
 
 }
