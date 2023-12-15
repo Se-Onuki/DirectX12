@@ -38,6 +38,7 @@ void GameScene::OnEnter() {
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
 
 	mArray_->swap(0, 2);
+	mArray_->erese(0);
 
 
 }
@@ -51,7 +52,7 @@ void GameScene::Update() {
 	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	light_->ImGuiWidget();
 
-	for (auto [id, model] : mArray_->GetChunk()[0]->get<ECS::Identifier, ECS::ModelComp>()) {
+	for (const auto &[id, model] : mArray_->GetChunk()[0]->get<ECS::Identifier, ECS::ModelComp>()) {
 		ImGui::Text("%s,%x", id->name_.data(), model->model_);
 	}
 

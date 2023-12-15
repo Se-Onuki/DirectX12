@@ -29,7 +29,7 @@ namespace ECS {
 
 			iterator(ComponetArray *const, uint32_t);
 			//operator std::tuple<Ts*...>();
-			std::tuple<Ts*...> operator *();
+			const std::tuple<Ts *const...> operator *();
 
 			iterator &operator++() {
 
@@ -214,10 +214,8 @@ namespace ECS {
 	}
 
 	template<typename ...Ts>
-	inline std::tuple<Ts*...> ComponetArray<Ts...>::iterator::operator*() {
-		std::tuple<Ts*...> result = std::make_tuple(&(static_cast<Ts *>(compArray_->componentAddress_.at(typeid(Ts)))[index_])...);
-
-		return result;
+	inline const std::tuple<Ts *const...> ComponetArray<Ts...>::iterator::operator*() {
+		return std::make_tuple(&(static_cast<Ts *const>(compArray_->componentAddress_.at(typeid(Ts)))[index_])...);
 	}
 
 }
