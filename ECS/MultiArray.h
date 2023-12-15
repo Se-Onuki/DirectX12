@@ -56,12 +56,16 @@ namespace ECS {
 			}
 
 			bool operator==(const iterator &other) const {
+				// どちらかが偽なら不一致
+				if (this->compArray_ == nullptr || other.compArray_ == nullptr) { return false; }
 				return this->compArray_->componentAddress_ == other.compArray_->componentAddress_ && this->index_ == other.index_;
 			}
 
 			bool operator!=(const iterator &other) const {
 				// どちらもnullptrである場合はendである場合のみ
 				if (this->compArray_ == nullptr && other.compArray_ == nullptr) { return false; }
+				// どちらかが偽なら不一致
+				if (this->compArray_ == nullptr || other.compArray_ == nullptr) { return true; }
 				return  this->compArray_->componentAddress_ != other.compArray_->componentAddress_ || this->index_ != other.index_;
 			}
 
@@ -312,12 +316,11 @@ namespace ECS {
 		// 内部イテレータを加算
 		++compArrayItr_;
 		// もし、末尾に到達していたらチャンクを加算
-		if (compArrayItr_ == compArray_.end()) {
+		while (compArrayItr_ == compArray_.end()) {
 			++chunkItr_;
 
-			auto a = pMultiChunk_->end();
 			// チャンクが終端以外は内部データを更新
-			if (chunkItr_ != a) {
+			if (chunkItr_ != pMultiChunk_->end()) {
 				compArray_ = (*chunkItr_)->get<Ts...>();
 				compArrayItr_ = compArray_.begin();
 			}
@@ -327,7 +330,6 @@ namespace ECS {
 			}
 
 		}
-
 
 		return *this;
 	}
