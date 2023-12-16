@@ -244,8 +244,8 @@ namespace ECS {
 
 		void swap(const size_t totalIndexF, const size_t totalIndexS);
 
-		template<typename... Ts>
-		MultiCompArray<Ts...> get();
+		template<typename T, typename... Ts>
+		MultiCompArray<T, Ts...> get();
 
 	private:
 		Archetype archetype_;
@@ -338,9 +338,9 @@ namespace ECS {
 
 
 
-	template<typename ...T>
-	inline MultiArray::MultiCompArray<T...> MultiArray::get() {
-		MultiArray::MultiCompArray<T...> result{ &this->multiChunk_ };
+	template<typename T, typename... Ts>
+	inline MultiArray::MultiCompArray<T, Ts...> MultiArray::get() {
+		MultiArray::MultiCompArray<T, Ts...> result{ &this->multiChunk_ };
 
 		return result;
 	}
