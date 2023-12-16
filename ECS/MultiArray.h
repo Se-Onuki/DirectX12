@@ -103,6 +103,8 @@ namespace ECS {
 		/// @return 追加されたデータの内部index
 		uint32_t push_back();
 
+		uint32_t pop_back();
+
 		template<SoLib::IsNotPointer T>
 		SubMultiArray<T> GetSubArray();
 
@@ -238,9 +240,9 @@ namespace ECS {
 
 		/// @brief データの破棄
 		/// @param totalIndex 破棄するindex
-		void erese(const uint32_t totalIndex);
+		void erese(const size_t totalIndex);
 
-		void swap(const uint32_t totalIndexF, const uint32_t totalIndexS);
+		void swap(const size_t totalIndexF, const size_t totalIndexS);
 
 		template<typename... Ts>
 		MultiCompArray<Ts...> get();

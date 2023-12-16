@@ -73,12 +73,19 @@ uint32_t ECS::MultiChunk::push_back() {
 	return size_++;
 }
 
+uint32_t ECS::MultiChunk::pop_back() {
+	if (size_ > 0u) {
+		return --size_;
+	}
+	return 0u;
+}
+
 void ECS::MultiChunk::Normalize() {
 
 }
 
 void *ECS::MultiChunk::GetItemPtr(const ClassData &classData, const uint32_t index) {
-	return reinterpret_cast<memoryType *>(componentAddress_[classData]) + classData.size_ / sizeof(memoryType) * index;
+	return reinterpret_cast<memoryType *>(componentAddress_.at(classData)) + classData.size_ / sizeof(memoryType) * index;
 }
 
 std::unique_ptr<ECS::MultiChunk> &ECS::MultiArray::AddChunk() {
@@ -107,15 +114,66 @@ size_t ECS::MultiArray::push_back() {
 
 void ECS::MultiArray::Normalize() {
 
+	// チャンクが1つ以上なら実行
+	if (multiChunk_.size()) {
+		// チャンクデータが空なら破棄
+		while (multiChunk_.back()->empty()) {
+			multiChunk_.pop_back();
+		}
+		// チャンクの最大値
+		const size_t capacity = archetype_.GetChunkCapacity();
+		// 現在のチャンクID
+		uint32_t chunkID = 0u;
+		// 各チャンクを回す
+
+		auto chunkItr = multiChunk_.begin();
+		while (chunkItr != multiChunk_.end()) {
+
+			if (not (*chunkItr)->IsMax()) {
+
+				for (uint32_t i = (*chunkItr)->size(); i < capacity; i++) {
+					auto &back = multiChunk_.back();
+					// もし末尾と現在のチャンクが一致したら終了
+					if (back == (*chunkItr)) { break; }
+
+					this->swap(chunkID * capacity + (*chunkItr)->push_back(), (multiChunk_.size() - 1u) * capacity + back->pop_back());
+					while (multiChunk_.back()->empty()) {
+						multiChunk_.erase(--multiChunk_.end());
+					}
+				}
+			}
+
+			++chunkID;
+			++chunkItr;
+		}
+
+		//for (auto &chunk : multiChunk_) {
+		//	// チャンクが最大値じゃないならば
+		//	if (not chunk->IsMax()) {
+		//
+		//		for (uint32_t i = chunk->size(); i < capacity; i++) {
+		//			auto &back = multiChunk_.back();
+		//			// もし末尾と現在のチャンクが一致したら終了
+		//			if (back == chunk) { break; }
+		//
+		//			this->swap(chunkID * capacity + chunk->push_back(), multiChunk_.size() * capacity + back->pop_back());
+		//			while (multiChunk_.back()->empty()) {
+		//				multiChunk_.erase(--multiChunk_.end());
+		//			}
+		//		}
+		//	}
+		//	chunkID++;
+		//}
+	}
 }
 
-void ECS::MultiArray::erese(const uint32_t totalIndex) {
+void ECS::MultiArray::erese(const size_t totalIndex) {
 	const auto capacity = archetype_.GetChunkCapacity();
 
 	multiChunk_[totalIndex / capacity]->erese(static_cast<uint32_t>(totalIndex % capacity));
 }
 
-void ECS::MultiArray::swap(const uint32_t totalIndexF, const uint32_t totalIndexS) {
+void ECS::MultiArray::swap(const size_t totalIndexF, const size_t totalIndexS) {
 	const auto capacity = archetype_.GetChunkCapacity();
 
 	auto &firstItem = multiChunk_[totalIndexF / capacity];
@@ -132,7 +190,7 @@ void ECS::MultiArray::swap(const uint32_t totalIndexF, const uint32_t totalIndex
 	for (const auto &classData : archetype_.data_) {
 
 		// 破棄するデータのアドレスを取得
-		auto fPtr = firstItem-> GetItemPtr(classData, static_cast<uint32_t>(totalIndexF % capacity));
+		auto fPtr = firstItem->GetItemPtr(classData, static_cast<uint32_t>(totalIndexF % capacity));
 		// 末尾のデータのアドレスをを取得
 		auto sPtr = secondItem->GetItemPtr(classData, static_cast<uint32_t>(totalIndexS % capacity));
 

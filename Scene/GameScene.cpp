@@ -41,6 +41,8 @@ void GameScene::OnEnter() {
 	mArray_->GetChunk()[1]->GetSubArray<ECS::Identifier>()[id].name_ = "unko";
 
 	mArray_->swap(0, 2);
+
+	mArray_->Normalize();
 	// mArray_->erese(0);
 
 
