@@ -199,7 +199,7 @@ namespace ECS {
 
 				iterator &operator++();
 
-				iterator operator[](const size_t index);
+				iterator operator[](const size_t index) const;
 
 				std::tuple<Ts *const...> operator *() {
 					return *(this->compArrayItr_);
@@ -356,7 +356,7 @@ namespace ECS {
 	}
 
 	template<typename ...Ts>
-	inline MultiArray::MultiCompArray<Ts...>::iterator MultiArray::MultiCompArray<Ts...>::iterator::operator[](const size_t index) {
+	inline MultiArray::MultiCompArray<Ts...>::iterator MultiArray::MultiCompArray<Ts...>::iterator::operator[](const size_t index) const {
 
 		MultiArray::MultiCompArray<Ts...>::iterator result = *this;
 

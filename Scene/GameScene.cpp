@@ -32,26 +32,28 @@ void GameScene::OnEnter() {
 
 	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
 
+	// エンティティの追加(idは先頭からのindex)
 	size_t entityID = mArray_->push_back();
+	// 添え字を使って要素にアクセス。
 	mArray_->GetItem<ECS::Identifier>(entityID).name_ = "hello";
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
 
-
+	// チャンクの追加(本来はpush_backの時に不足分が自動で呼び出される。)
 	mArray_->AddChunk();
-	for (uint32_t i = 0u; i < 2u; i++) {
 
-		size_t id = mArray_->push_back();
-		const auto &[nameID] = (*mArray_->get<ECS::Identifier>().begin()[id]);
-		nameID->name_ = std::string("test") + std::to_string(i);
+	// 配列の先頭からのイテレータ
+	const auto &multiItr = mArray_->get<ECS::Identifier, ECS::ModelComp>().begin();
+
+	for (uint32_t i = 0u; i < 10u; i++) {
+		// 要素を追加し、その要素のデータをイテレータから取得してstd::tupleで展開する
+		const auto &[name, model] = (*multiItr[mArray_->push_back()]);
+		// データを代入
+		name->name_ = std::string("test") + std::to_string(i);
 	}
 
-	mArray_->get<ECS::Identifier>().begin();
-
-	//mArray_->swap(0, 2);
-
+	// 隙間が空いた分を埋める。
 	mArray_->Normalize();
-	// mArray_->erese(0);
 
 
 }
