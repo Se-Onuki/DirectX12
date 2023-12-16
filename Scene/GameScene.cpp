@@ -37,10 +37,18 @@ void GameScene::OnEnter() {
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
 	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
 
-	uint32_t id = mArray_->AddChunk()->push_back();
-	mArray_->GetChunk()[1]->GetSubArray<ECS::Identifier>()[id].name_ = "unko";
 
-	mArray_->swap(0, 2);
+	mArray_->AddChunk();
+	for (uint32_t i = 0u; i < 2u; i++) {
+
+		size_t id = mArray_->push_back();
+		const auto &[nameID] = (*mArray_->get<ECS::Identifier>().begin()[id]);
+		nameID->name_ = std::string("test") + std::to_string(i);
+	}
+
+	mArray_->get<ECS::Identifier>().begin();
+
+	//mArray_->swap(0, 2);
 
 	mArray_->Normalize();
 	// mArray_->erese(0);
