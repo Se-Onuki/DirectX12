@@ -15,6 +15,8 @@
 #include "../ECS/MultiArray.h"
 #include "../ECS/Viewer.h"
 
+#include "../Utils/Graphics/Color.h"
+
 class GameScene : public IScene {
 public:
 	GameScene();
@@ -37,6 +39,8 @@ private:
 	World *world_ = nullptr;
 
 	std::unique_ptr<ECS::MultiArray> mArray_;
+
+	SoLib::Color::RGB4 rgb_ = 0xFFFFFFF;
 
 	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
 

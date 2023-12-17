@@ -115,6 +115,9 @@
     <Filter Include="ECS">
       <UniqueIdentifier>{44ca97f6-34d4-44d8-be16-15451311710c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Graphics">
+      <UniqueIdentifier>{34273b47-9ebb-47d3-b275-7eee60fc69bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -353,6 +356,9 @@
     </ClCompile>
     <ClCompile Include="ECS\MultiArray.cpp">
       <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Graphics\Color.cpp">
+      <Filter>Utils\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -655,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="ECS\Viewer.h">
       <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Graphics\Color.h">
+      <Filter>Utils\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

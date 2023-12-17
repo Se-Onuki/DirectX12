@@ -56,7 +56,6 @@ void GameScene::OnEnter() {
 			alive->isAlive_ = false;
 		}
 	}
-
 }
 
 void GameScene::OnExit() {
@@ -66,7 +65,7 @@ void GameScene::OnExit() {
 void GameScene::Update() {
 
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
-	light_->ImGuiWidget();
+	//light_->ImGuiWidget();
 
 	// もし生存フラグが折れていたら、配列から削除
 	mArray_->erase_if(std::function<bool(ECS::IsAlive *)>(
@@ -75,6 +74,8 @@ void GameScene::Update() {
 			return not a->isAlive_;
 		}
 	));
+
+	SoLib::ImGuiWidget("Color", &rgb_);
 
 	for (const auto &[id, model, pos] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp>()) {
 		ImGui::Text("%s,%x\n%s", id->name_.data(), model->model_, SoLib::to_string(pos->position_).c_str());
