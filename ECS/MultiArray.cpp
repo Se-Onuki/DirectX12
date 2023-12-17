@@ -16,7 +16,7 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 
 }
 
-void ECS::MultiChunk::erese(uint32_t index) {
+void ECS::MultiChunk::erase(uint32_t index) {
 	if (size_ > index) {
 		for (const auto &classData : archetype_->data_) {
 			// 破棄するデータのアドレスを取得
@@ -169,10 +169,10 @@ void ECS::MultiArray::Normalize() {
 	}
 }
 
-void ECS::MultiArray::erese(const size_t totalIndex) {
+void ECS::MultiArray::erase(const size_t totalIndex) {
 	const auto capacity = archetype_.GetChunkCapacity();
 
-	multiChunk_[totalIndex / capacity]->erese(static_cast<uint32_t>(totalIndex % capacity));
+	multiChunk_[totalIndex / capacity]->erase(static_cast<uint32_t>(totalIndex % capacity));
 }
 
 void ECS::MultiArray::swap(const size_t totalIndexF, const size_t totalIndexS) {

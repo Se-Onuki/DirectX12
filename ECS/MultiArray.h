@@ -64,23 +64,17 @@ namespace ECS {
 			}
 
 			bool operator==(const iterator &other) const {
-				// どちらかが偽なら不一致
-				if (this->compArray_ == nullptr || other.compArray_ == nullptr) { return false; }
-				return this->compArray_->componentAddress_ == other.compArray_->componentAddress_ && this->index_ == other.index_;
+				return this->componentAddress_ == other.componentAddress_ && this->index_ == other.index_;
 			}
 
 			bool operator!=(const iterator &other) const {
-				// どちらもnullptrである場合はendである場合のみ
-				if (this->compArray_ == nullptr && other.compArray_ == nullptr) { return false; }
-				// どちらかが偽なら不一致
-				if (this->compArray_ == nullptr || other.compArray_ == nullptr) { return true; }
-				return  this->compArray_->componentAddress_ != other.compArray_->componentAddress_ || this->index_ != other.index_;
+				return  this->componentAddress_ != other.componentAddress_ || this->index_ != other.index_;
 			}
 
 			uint32_t GetIndex() const { return index_; }
 
 		private:
-			ComponetArray *compArray_;
+			std::unordered_map<std::type_index, void *> componentAddress_;
 			uint32_t index_{};
 
 		};
@@ -94,6 +88,8 @@ namespace ECS {
 		iterator begin() { return iterator{ this, 0u }; }
 		iterator end() { return iterator{ this, size_ }; }
 
+		iterator operator[](const uint32_t index) { return iterator{ this,index }; }
+
 		std::unordered_map<std::type_index, void *> componentAddress_;
 		uint32_t size_;
 	};
@@ -105,7 +101,7 @@ namespace ECS {
 
 		/// @brief データの置き換えによるデータの破棄
 		/// @param index 破棄するデータの内部index
-		void erese(uint32_t index);
+		void erase(uint32_t index);
 
 		void swap(const uint32_t indexF, const uint32_t indexS);
 
@@ -132,6 +128,26 @@ namespace ECS {
 
 		template<typename... Ts>
 		std::tuple<Ts *const...> GetItem(const uint32_t index);
+
+		template<typename T, typename...Ts>
+		void erase_if(const std::function <bool(const T *const, const Ts *const...)> &func) {
+			auto arrItr = this->get<T, Ts...>().begin();
+
+			while (arrItr != this->get<T, Ts...>().end()) {
+				if (std::apply([&](auto... args)
+					{
+						return func(args...);
+					}, *arrItr)
+					) {
+					this->erase(arrItr.GetIndex());
+					arrItr = this->get<T, Ts...>()[arrItr.GetIndex()];
+				}
+				else {
+					++arrItr;
+				}
+			}
+			//func;
+		}
 
 	private:
 		uint32_t size_{};
@@ -227,6 +243,11 @@ namespace ECS {
 						this->compArrayItr_ != other.compArrayItr_;
 				}
 
+				size_t GetTotalIndex() const {
+					size_t result = std::distance(pMultiChunk_->begin(), chunkItr_);
+					result += compArrayItr_.GetIndex();
+					return result;
+				}
 
 			private:
 				uint32_t capacity_;
@@ -263,7 +284,19 @@ namespace ECS {
 
 		/// @brief データの破棄
 		/// @param totalIndex 破棄するindex
-		void erese(const size_t totalIndex);
+		void erase(const size_t totalIndex);
+
+		template<typename T, typename... Ts>
+		MultiCompArray<T, Ts...>::iterator erase(typename const MultiCompArray<T, Ts...>::iterator &arrItr) {
+			//auto result = arrItr;
+
+			std::size_t totalIndex = arrItr.GetTotalIndex();
+			this->erase(totalIndex);
+
+
+			return this->get<T, Ts...>().begin()[totalIndex];
+		}
+
 
 		void swap(const size_t totalIndexF, const size_t totalIndexS);
 
@@ -333,13 +366,14 @@ namespace ECS {
 
 
 	template<typename ...Ts>
-	inline ComponetArray<Ts...>::iterator::iterator(ComponetArray *const compArray, uint32_t index) :compArray_(compArray) {
+	inline ComponetArray<Ts...>::iterator::iterator(ComponetArray *const compArray, uint32_t index) {
+		componentAddress_ = compArray->componentAddress_;
 		index_ = index;
 	}
 
 	template<typename ...Ts>
 	inline  std::tuple<Ts *const...> ComponetArray<Ts...>::iterator::operator*() {
-		return std::make_tuple(&(static_cast<Ts *const>(compArray_->componentAddress_.at(typeid(Ts)))[index_])...);
+		return std::make_tuple(&(static_cast<Ts *const>(componentAddress_.at(typeid(Ts)))[index_])...);
 	}
 
 	template<typename ...Ts>
@@ -369,6 +403,7 @@ namespace ECS {
 			else {
 				compArray_ = {};
 				compArrayItr_ = {};
+				break;
 			}
 
 		}
@@ -404,8 +439,6 @@ namespace ECS {
 
 		return result;
 	}
-
-
 
 	template<typename T, typename... Ts>
 	inline MultiArray::MultiCompArray<T, Ts...> MultiArray::get() {

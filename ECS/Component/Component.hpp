@@ -45,6 +45,10 @@ namespace ECS {
 
 	struct IComponent {};
 
+	struct IsAlive : IComponent {
+		bool isAlive_ = true;
+	};
+
 	struct Identifier : IComponent {
 		ConstString<8u> name_;
 	};

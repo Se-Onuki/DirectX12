@@ -28,7 +28,7 @@ void GameScene::OnEnter() {
 	// world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
 
 	Archetype archetype;
-	archetype.AddClassData<ECS::Identifier, ECS::ModelComp>();
+	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive>();
 
 	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
 
@@ -48,10 +48,40 @@ void GameScene::OnEnter() {
 	}
 
 	for (uint32_t i = 0u; i < 10u; i++) {
-		const auto &[name, model] = mArray_->create_back<ECS::Identifier, ECS::ModelComp>();
+		// 作成されたデータへのポインタ
+		const auto &[name, model, alive] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::IsAlive>();
 		// データを代入
 		name->name_ = std::string("test") + std::to_string(i + 10u);
+		if (i % 2u == 0u) {
+			alive->isAlive_ = false;
+		}
 	}
+
+	/*for (auto itr = mArray_->get<ECS::IsAlive>().begin(); itr != mArray_->get<ECS::IsAlive>().end(); ) {
+		auto [alive] = *itr;
+
+		if (not alive->isAlive_) {
+			mArray_->erese(itr.GetTotalIndex());
+		}
+		else {
+			++itr;
+		}
+	}*/
+
+	//auto itr = mArray_->get<ECS::IsAlive>().begin();
+	//while (itr != mArray_->get<ECS::IsAlive>().end()) {
+
+	//	const auto& [alive] = *itr;
+	//	if (not alive->isAlive_) {
+	//		mArray_->erese(itr.GetTotalIndex());
+	//		itr = mArray_->get<ECS::IsAlive>().begin()/*[itr.GetTotalIndex()]*/;
+	//	}
+	//	else {
+	//		++itr;
+	//	}
+	//}
+
+	mArray_->GetChunk()[0]->erase_if(std::function<bool(const ECS::IsAlive *const)>([](const ECS::IsAlive *const a) ->bool { if (a->isAlive_ == false) { return true; } return false; }));
 
 	// 隙間が空いた分を埋める。
 	mArray_->Normalize();
