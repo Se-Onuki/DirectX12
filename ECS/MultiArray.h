@@ -45,7 +45,7 @@ namespace ECS {
 
 			iterator operator[](uint32_t index) {
 				iterator result = *this;
-				result.index_ + index;
+				result.index_ += index;
 
 				return result;
 			}
@@ -266,6 +266,9 @@ namespace ECS {
 		template<typename T, typename... Ts>
 		MultiCompArray<T, Ts...> get();
 
+		template<typename T, typename... Ts>
+		std::tuple<T *const, Ts *const...> create_back();
+
 	private:
 		Archetype archetype_;
 		MultiChunkClass multiChunk_;
@@ -391,6 +394,16 @@ namespace ECS {
 		MultiArray::MultiCompArray<T, Ts...> result{ &this->multiChunk_, static_cast<uint32_t>(archetype_.GetChunkCapacity()) };
 
 		return result;
+	}
+
+	template<typename T, typename ...Ts>
+	inline std::tuple<T *const, Ts *const...> MultiArray::create_back() {
+		size_t totalIndex = this->push_back();
+
+		// 可変長テンプレートを使ったtemplateGetItem関数に置き換える
+		return *multiChunk_.back()->get<T, Ts...>().begin()[static_cast<uint32_t>(totalIndex % archetype_.GetChunkCapacity())];
+
+		//return std::tuple<T, Ts...>();
 	}
 
 }

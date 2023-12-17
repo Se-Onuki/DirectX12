@@ -47,6 +47,12 @@ void GameScene::OnEnter() {
 		name->name_ = std::string("test") + std::to_string(i);
 	}
 
+	for (uint32_t i = 0u; i < 10u; i++) {
+		const auto &[name, model] = mArray_->create_back<ECS::Identifier, ECS::ModelComp>();
+		// データを代入
+		name->name_ = std::string("test") + std::to_string(i + 10u);
+	}
+
 	// 隙間が空いた分を埋める。
 	mArray_->Normalize();
 
