@@ -130,6 +130,9 @@ namespace ECS {
 		template<typename... Ts>
 		ComponetArray<Ts...> get();
 
+		template<typename... Ts>
+		std::tuple<Ts *const...> GetItem(const uint32_t index);
+
 	private:
 		uint32_t size_{};
 
@@ -294,6 +297,20 @@ namespace ECS {
 		return result;
 	}
 
+	template<typename ...Ts>
+	inline std::tuple<Ts *const...> MultiChunk::GetItem(const uint32_t index) {
+
+#ifdef _DEBUG
+
+		assert(size_ > index);
+
+#endif // _DEBUG
+
+		return std::make_tuple(&(static_cast<Ts *const>(this->componentAddress_.at(typeid(Ts)).first)[index])...);
+
+
+	}
+
 
 	template<SoLib::IsNotPointer T>
 	T &MultiArray::GetItem(size_t totalIndex) {
@@ -402,7 +419,7 @@ namespace ECS {
 		size_t totalIndex = this->push_back();
 
 		// 可変長テンプレートを使ったtemplateGetItem関数に置き換える
-		return *multiChunk_.back()->get<T, Ts...>().begin()[static_cast<uint32_t>(totalIndex % archetype_.GetChunkCapacity())];
+		return multiChunk_.back()->GetItem<T, Ts...>(static_cast<uint32_t>(totalIndex % archetype_.GetChunkCapacity()));
 
 		//return std::tuple<T, Ts...>();
 	}
