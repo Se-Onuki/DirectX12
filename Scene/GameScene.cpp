@@ -57,8 +57,6 @@ void GameScene::OnEnter() {
 		}
 	}
 
-	mArray_->erase_if(std::function<bool(const ECS::IsAlive *const)>([](const ECS::IsAlive *const a) { if (a->isAlive_ == false) { return true; } return false; }));
-
 }
 
 void GameScene::OnExit() {
@@ -67,8 +65,16 @@ void GameScene::OnExit() {
 
 void GameScene::Update() {
 
-	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	light_->ImGuiWidget();
+
+	// もし生存フラグが折れていたら、配列から削除
+	mArray_->erase_if(std::function<bool(const ECS::IsAlive *const)>(
+		[](const ECS::IsAlive *const a)
+		{
+			return not a->isAlive_;
+		}
+	));
 
 	for (const auto &[id, model] : mArray_->get<ECS::Identifier, ECS::ModelComp>()) {
 		ImGui::Text("%s,%x", id->name_.data(), model->model_);
