@@ -59,6 +59,8 @@ namespace SoLib {
 	template <typename T>
 	inline bool ImGuiWidget(const char *const label, ValueRange<T> *const value);
 
+	bool ImGuiDragEuler(const char *const label, Vector3 *const value);
+
 }
 
 #pragma region inline関数の記述
@@ -83,5 +85,5 @@ bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 #endif // _DEBUG
 
 	return isAction;
-	}
+}
 #pragma endregion

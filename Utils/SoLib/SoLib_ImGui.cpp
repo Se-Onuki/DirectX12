@@ -1,5 +1,6 @@
 #include "SoLib_ImGui.h"
 #include <imgui.h>
+#include <imgui_internal.h>
 
 template<>
 void SoLib::ImGuiText([[maybe_unused]] const char *const label, [[maybe_unused]] const std::string &text) {
@@ -97,4 +98,35 @@ bool SoLib::ImGuiWidgetAngle([[maybe_unused]] const char *const label, [[maybe_u
 #else
 	return false;
 #endif // _DEBUG
+}
+
+bool SoLib::ImGuiDragEuler(const char *const label, Vector3 *const value)
+{
+	ImGuiWindow *window = ImGui::GetCurrentWindow();
+	if (window->SkipItems)
+		return false;
+
+	ImGuiContext &g = *GImGui;
+	bool value_changed = false;
+	ImGui::BeginGroup();
+	ImGui::PushID(label);
+	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+	for (int i = 0; i < 3; i++) {
+		ImGui::PushID(i);
+		if (i > 0)
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+		value_changed |= ImGui::SliderAngle("", &value->data()[i]);
+		ImGui::PopID();
+		ImGui::PopItemWidth();
+	}
+	ImGui::PopID();
+
+	const char *label_end = ImGui::FindRenderedTextEnd(label);
+	if (label != label_end) {
+		ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+		ImGui::TextEx(label, label_end);
+	}
+
+	ImGui::EndGroup();
+	return value_changed;
 }
