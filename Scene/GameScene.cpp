@@ -81,7 +81,7 @@ void GameScene::OnEnter() {
 	//	}
 	//}
 
-	mArray_->GetChunk()[0]->erase_if(std::function<bool(const ECS::IsAlive *const)>([](const ECS::IsAlive *const a) ->bool { if (a->isAlive_ == false) { return true; } return false; }));
+	mArray_->GetChunk()[0]->erase_if(std::function<bool(const ECS::IsAlive *const)>([](const ECS::IsAlive *const a) { if (a->isAlive_ == false) { return true; } return false; }));
 
 	// 隙間が空いた分を埋める。
 	mArray_->Normalize();

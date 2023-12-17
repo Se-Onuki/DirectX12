@@ -43,6 +43,13 @@ namespace ECS {
 				return *this;
 			}
 
+			iterator &operator--() {
+
+				this->index_--;
+
+				return *this;
+			}
+
 			iterator operator[](uint32_t index) {
 				iterator result = *this;
 				result.index_ += index;
@@ -132,15 +139,20 @@ namespace ECS {
 		template<typename T, typename...Ts>
 		void erase_if(const std::function <bool(const T *const, const Ts *const...)> &func) {
 			auto arrItr = this->get<T, Ts...>().begin();
+			auto endItr = this->get<T, Ts...>().end();
 
-			while (arrItr != this->get<T, Ts...>().end()) {
-				if (std::apply([&](auto... args)
+			while (arrItr != endItr) {
+				if (
+					// tupleを展開して格納
+					std::apply([&](auto... args)
 					{
 						return func(args...);
 					}, *arrItr)
 					) {
 					this->erase(arrItr.GetIndex());
-					arrItr = this->get<T, Ts...>()[arrItr.GetIndex()];
+
+					// 終端の距離を1縮小
+					--endItr;
 				}
 				else {
 					++arrItr;
