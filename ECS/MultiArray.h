@@ -145,9 +145,9 @@ namespace ECS {
 				if (
 					// tupleを展開して格納
 					std::apply([&](auto... args)
-					{
-						return func(args...);
-					}, *arrItr)
+						{
+							return func(args...);
+						}, *arrItr)
 					) {
 					this->erase(arrItr.GetIndex());
 
@@ -283,6 +283,14 @@ namespace ECS {
 		std::unique_ptr<MultiChunk> &AddChunk();
 
 		auto &GetChunk() { return multiChunk_; }
+
+		template<typename T, typename...Ts>
+		void erase_if(const std::function <bool(const T *const, const Ts *const...)> &func) {
+			for (auto &chunk : multiChunk_) {
+				chunk->erase_if(func);
+			}
+			this->Normalize();
+		}
 
 		/// @brief 末尾に要素を追加
 		/// @return 追加された要素のindex

@@ -53,7 +53,7 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 		// 破棄するデータのアドレスを取得
 		auto fPtr = GetItemPtr(classData.typeInfo_, indexF);
 		// 末尾のデータのアドレスをを取得
-		auto sPtr = GetItemPtr(classData.typeInfo_, size_ - 1u);
+		auto sPtr = GetItemPtr(classData.typeInfo_, indexS);
 
 		std::memcpy(temp.get(), fPtr, classData.size_);
 		std::memcpy(fPtr, sPtr, classData.size_);

@@ -47,6 +47,8 @@ void GameScene::OnEnter() {
 		name->name_ = std::string("test") + std::to_string(i);
 	}
 
+	mArray_->AddChunk();
+
 	for (uint32_t i = 0u; i < 10u; i++) {
 		// 作成されたデータへのポインタ
 		const auto &[name, model, alive] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::IsAlive>();
@@ -81,10 +83,10 @@ void GameScene::OnEnter() {
 	//	}
 	//}
 
-	mArray_->GetChunk()[0]->erase_if(std::function<bool(const ECS::IsAlive *const)>([](const ECS::IsAlive *const a) { if (a->isAlive_ == false) { return true; } return false; }));
+	mArray_->erase_if(std::function<bool(const ECS::IsAlive *const)>([](const ECS::IsAlive *const a) { if (a->isAlive_ == false) { return true; } return false; }));
 
 	// 隙間が空いた分を埋める。
-	mArray_->Normalize();
+	//mArray_->Normalize();
 
 
 }
