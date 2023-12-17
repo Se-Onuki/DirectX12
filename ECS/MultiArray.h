@@ -89,6 +89,7 @@ namespace ECS {
 
 
 		bool operator!=(const ComponetArray<Ts...> &other) const {
+			if (not this->componentAddress_.size() && not other.componentAddress_.size()) { return false; }
 			return this->componentAddress_ != other.componentAddress_ || this->size_ != other.size_;
 		}
 
@@ -266,7 +267,7 @@ namespace ECS {
 				MultiChunkClass *pMultiChunk_;
 				MultiChunkClass::iterator chunkItr_;
 				ComponetArray<Ts...> compArray_;
-				ComponetArray<Ts...>::iterator compArrayItr_;
+				ComponetArray<Ts...>::iterator compArrayItr_{};
 			};
 
 			iterator begin();

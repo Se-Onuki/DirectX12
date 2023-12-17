@@ -81,8 +81,13 @@ void GameScene::Update() {
 	}
 
 	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
-		const auto &[alive] = *mArray_->get<ECS::IsAlive>().begin();
-		alive->isAlive_ = false;
+		auto mSubArray = mArray_->get<ECS::IsAlive>();
+		auto mArrBegin = mSubArray.begin();
+		if (mArrBegin != mSubArray.end()) {
+
+			const auto &[alive] = *mArrBegin;
+			alive->isAlive_ = false;
+		}
 	}
 
 }
