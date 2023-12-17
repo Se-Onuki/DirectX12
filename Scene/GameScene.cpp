@@ -91,6 +91,16 @@ void GameScene::Update() {
 		}
 	}
 
+	auto mSubArray = mArray_->get<ECS::Identifier>();
+	auto mArrBegin = mSubArray.begin();
+	if (mArrBegin != mSubArray.end()) {
+
+		const auto &[name] = *mArrBegin;
+
+		SoLib::ImGuiWidget("Name", &name->name_);
+
+	}
+
 }
 
 void GameScene::Draw()

@@ -18,7 +18,10 @@ namespace SoLib {
 
 	// ImGuiの前方宣言
 	template<IsNotPointer T>
-	bool ImGuiWidget(const char *const label, T *const value);
+	bool ImGuiWidget(const char *const label, T *const value) {
+		// ImGuiWidget関数を呼び出す
+		return value->ImGuiWidget(label);
+	}
 
 	template<IsNotPointer T>
 	void ImGuiText(const char *const label, const T &text);
@@ -80,5 +83,5 @@ bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 #endif // _DEBUG
 
 	return isAction;
-}
+	}
 #pragma endregion

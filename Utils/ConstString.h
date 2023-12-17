@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <array>
 #include <string>
+#include "SoLib/SoLib_ImGui.h"
+#include "SoLib/SoLib_Json.h"
 
 template<uint32_t size>
 class ConstString {
@@ -37,6 +39,8 @@ public:
 		return not(std::strcmp(this->data(), str));
 	}
 
+	bool ImGuiWidget(const char *const label);
+
 	operator const char *const ()const { return string_; }
 
 	char *const data() { return string_.data(); }
@@ -52,3 +56,17 @@ private:
 	// 文字列
 	std::array<char, size> string_;
 };
+
+template<uint32_t size>
+inline bool ConstString<size>::ImGuiWidget(const char *const label) {
+#ifdef _DEBUG
+
+	return ImGui::InputText(label, this->data(), size);
+
+#else
+	label; value;
+	return false;
+
+#endif // _DEBUG
+
+}

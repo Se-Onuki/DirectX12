@@ -40,7 +40,7 @@ private:
 
 	std::unique_ptr<ECS::MultiArray> mArray_;
 
-	SoLib::Color::RGB4 rgb_ = 0xFFFFFFF;
+	SoLib::Color::RGB4 rgb_ = 0xFFFFFFFF;
 
 	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
 
