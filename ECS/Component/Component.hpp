@@ -64,6 +64,34 @@ namespace ECS {
 		inline operator const Vector3 &() const { return position_; }
 	};
 
+	struct VelocityComp : IComponent {
+		Vector3 velocity_;
+		inline Vector3 &operator=(const Vector3 &other) { velocity_ = other; }
+		inline operator Vector3 &() { return velocity_; }
+		inline operator const Vector3 &() const { return velocity_; }
+	};
+
+	struct ScaleComp : IComponent {
+		Vector3 scale_;
+		inline Vector3 &operator=(const Vector3 &other) { scale_ = other; }
+		inline operator Vector3 &() { return scale_; }
+		inline operator const Vector3 &() const { return scale_; }
+	};
+
+	struct RotateComp : IComponent {
+		Vector3 rotate_;
+		inline Vector3 &operator=(const Vector3 &other) { rotate_ = other; }
+		inline operator Vector3 &() { return rotate_; }
+		inline operator const Vector3 &() const { return rotate_; }
+	};
+
+	struct TransformMatComp : IComponent {
+		Matrix4x4 transformMat_;
+		inline Matrix4x4 &operator=(const Matrix4x4 &other) { transformMat_ = other; }
+		inline operator Matrix4x4 &() { return transformMat_; }
+		inline operator const Matrix4x4 &() const { return transformMat_; }
+	};
+
 	struct ModelComp : IComponent {
 		void Init(const std::string &key) {
 			model_ = ModelManager::GetInstance()->GetModel(key);

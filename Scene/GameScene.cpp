@@ -28,7 +28,7 @@ void GameScene::OnEnter() {
 	// world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
 
 	Archetype archetype;
-	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive>();
+	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp>();
 
 	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
 
@@ -76,8 +76,8 @@ void GameScene::Update() {
 		}
 	));
 
-	for (const auto &[id, model] : mArray_->get<ECS::Identifier, ECS::ModelComp>()) {
-		ImGui::Text("%s,%x", id->name_.data(), model->model_);
+	for (const auto &[id, model, pos] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp>()) {
+		ImGui::Text("%s,%x\n%s", id->name_.data(), model->model_, SoLib::to_string(pos->position_).c_str());
 	}
 
 	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
