@@ -41,7 +41,8 @@ public:
 
 	bool ImGuiWidget(const char *const label);
 
-	operator const char *const ()const { return string_; }
+	operator char *const () { return string_.data(); }
+	operator const char *const () const { return string_.data(); }
 
 	char *const data() { return string_.data(); }
 	const char *const data()const { return string_.data(); }
@@ -69,4 +70,14 @@ inline bool ConstString<size>::ImGuiWidget(const char *const label) {
 
 #endif // _DEBUG
 
+}
+
+template<uint32_t size>
+void to_json(nlohmann::json &json, const ConstString<size> &value) {
+	json = value.data();
+}
+
+template<uint32_t size>
+void from_json(const nlohmann::json &json, ConstString<size> &value) {
+	value = json.get<std::string>();
 }
