@@ -80,6 +80,11 @@ void GameScene::Update() {
 		ImGui::Text("%s,%x", id->name_.data(), model->model_);
 	}
 
+	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
+		const auto &[alive] = *mArray_->get<ECS::IsAlive>().begin();
+		alive->isAlive_ = false;
+	}
+
 }
 
 void GameScene::Draw()

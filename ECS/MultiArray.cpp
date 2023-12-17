@@ -119,7 +119,7 @@ void ECS::MultiArray::Normalize() {
 	// チャンクが1つ以上なら実行
 	if (multiChunk_.size()) {
 		// チャンクデータが空なら破棄
-		while (multiChunk_.back()->empty()) {
+		while (multiChunk_.size() && multiChunk_.back()->empty()) {
 			multiChunk_.pop_back();
 		}
 		// チャンクの最大値
