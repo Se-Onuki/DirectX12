@@ -69,8 +69,8 @@ void GameScene::Update() {
 	light_->ImGuiWidget();
 
 	// もし生存フラグが折れていたら、配列から削除
-	mArray_->erase_if(std::function<bool(const ECS::IsAlive *const)>(
-		[](const ECS::IsAlive *const a)
+	mArray_->erase_if(std::function<bool(ECS::IsAlive *)>(
+		[](ECS::IsAlive *a)
 		{
 			return not a->isAlive_;
 		}

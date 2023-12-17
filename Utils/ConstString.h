@@ -24,7 +24,7 @@ public:
 	/// @param str 文字列
 	/// @return 文字列クラス
 	inline ConstString &operator=(const std::string &str) {
-		std::memcpy(string_.data(), str.data(), (std::min<uint32_t>)(size - 1u, static_cast<uint32_t>(str.size())));
+		std::memcpy(string_.data(), str.data(), (std::min<uint32_t>)(size - 1u, static_cast<uint32_t>(str.size() + 1u)));
 
 		return *this;
 	}

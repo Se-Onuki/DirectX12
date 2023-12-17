@@ -137,7 +137,7 @@ namespace ECS {
 		std::tuple<Ts *const...> GetItem(const uint32_t index);
 
 		template<typename T, typename...Ts>
-		void erase_if(const std::function <bool(const T *const, const Ts *const...)> &func) {
+		void erase_if(const std::function <bool(T *, Ts *...)> &func) {
 			auto arrItr = this->get<T, Ts...>().begin();
 			auto endItr = this->get<T, Ts...>().end();
 
@@ -285,7 +285,7 @@ namespace ECS {
 		auto &GetChunk() { return multiChunk_; }
 
 		template<typename T, typename...Ts>
-		void erase_if(const std::function <bool(const T *const, const Ts *const...)> &func) {
+		void erase_if(const std::function <bool(T *, Ts *...)> &func) {
 			for (auto &chunk : multiChunk_) {
 				chunk->erase_if(func);
 			}
