@@ -125,7 +125,7 @@ namespace ECS {
 		bool IsMax() const { return size_ >= archetype_->GetChunkCapacity(); }
 		bool empty() const { return not size_; }
 
-		void *GetItemPtr(const ClassData &classData, const uint32_t index);
+		void *GetItemPtr(const std::type_index type, const uint32_t index);
 
 		template<typename... Ts>
 		ComponetArray<Ts...> get();
@@ -138,7 +138,8 @@ namespace ECS {
 
 		std::unique_ptr<void, ChunkDeleter> memoryPtr_;
 
-		std::unordered_map<ClassData, void *> componentAddress_;
+		//std::unordered_map<ClassData, void *> componentAddress_;
+		std::unordered_map<std::type_index, std::pair<void *, ClassData>> componentAddress_;
 	};
 
 	template<SoLib::IsNotPointer T>
@@ -279,14 +280,14 @@ namespace ECS {
 
 	template<SoLib::IsNotPointer T>
 	inline SubMultiArray<T> MultiChunk::GetSubArray() {
-		return SubMultiArray{ reinterpret_cast<T *>(componentAddress_.at(ClassData{typeid(T),sizeof(T)})), size_ };
+		return SubMultiArray{ reinterpret_cast<T *>(componentAddress_.at(typeid(T)).first), size_ };
 	}
 
 	template<typename ...T>
 	inline ComponetArray<T...> MultiChunk::get() {
 		ComponetArray<T...> result;
 		for (auto &[comp, ptr] : this->componentAddress_) {
-			result.componentAddress_.insert(std::make_pair(comp.typeInfo_, ptr));
+			result.componentAddress_.insert(std::make_pair(comp, ptr.first));
 		}
 		result.size_ = size_;
 

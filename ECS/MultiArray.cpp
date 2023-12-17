@@ -10,7 +10,7 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 
 	memoryType *address = reinterpret_cast<memoryType *>(memoryPtr_.get()) + sizeof(ECS::Entity) * capacity / sizeof(memoryType);
 	for (const auto &classData : archetype_->data_) {
-		componentAddress_[classData] = address;
+		componentAddress_[classData.typeInfo_] = std::make_pair(address, classData);
 		address += (classData.size_ * capacity / sizeof(memoryType));
 	}
 
@@ -20,9 +20,9 @@ void ECS::MultiChunk::erese(uint32_t index) {
 	if (size_ > index) {
 		for (const auto &classData : archetype_->data_) {
 			// 破棄するデータのアドレスを取得
-			auto ptr = GetItemPtr(classData, index);
+			auto ptr = GetItemPtr(classData.typeInfo_, index);
 			// 末尾のデータのアドレスをを取得
-			auto backPtr = GetItemPtr(classData, size_ - 1u);
+			auto backPtr = GetItemPtr(classData.typeInfo_, size_ - 1u);
 			// 破棄するデータを末尾のデータで上書き
 			std::memcpy(ptr, backPtr, classData.size_);
 
@@ -51,9 +51,9 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 	for (const auto &classData : archetype_->data_) {
 
 		// 破棄するデータのアドレスを取得
-		auto fPtr = GetItemPtr(classData, indexF);
+		auto fPtr = GetItemPtr(classData.typeInfo_, indexF);
 		// 末尾のデータのアドレスをを取得
-		auto sPtr = GetItemPtr(classData, size_ - 1u);
+		auto sPtr = GetItemPtr(classData.typeInfo_, size_ - 1u);
 
 		std::memcpy(temp.get(), fPtr, classData.size_);
 		std::memcpy(fPtr, sPtr, classData.size_);
@@ -66,7 +66,7 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 uint32_t ECS::MultiChunk::push_back() {
 
 	for (const auto &classData : archetype_->data_) {
-		auto ptr = GetItemPtr(classData, size_);
+		auto ptr = GetItemPtr(classData.typeInfo_, size_);
 		classData.constructor_(ptr);
 	}
 
@@ -84,8 +84,10 @@ void ECS::MultiChunk::Normalize() {
 
 }
 
-void *ECS::MultiChunk::GetItemPtr(const ClassData &classData, const uint32_t index) {
-	return reinterpret_cast<memoryType *>(componentAddress_.at(classData)) + classData.size_ / sizeof(memoryType) * index;
+void *ECS::MultiChunk::GetItemPtr(const std::type_index type, const uint32_t index) {
+	const auto &[itemPtr, classData] = componentAddress_.at(type);
+
+	return reinterpret_cast<memoryType *>(itemPtr) + classData.size_ / sizeof(memoryType) * index;
 }
 
 std::unique_ptr<ECS::MultiChunk> &ECS::MultiArray::AddChunk() {
@@ -190,9 +192,9 @@ void ECS::MultiArray::swap(const size_t totalIndexF, const size_t totalIndexS) {
 	for (const auto &classData : archetype_.data_) {
 
 		// 破棄するデータのアドレスを取得
-		auto fPtr = firstItem->GetItemPtr(classData, static_cast<uint32_t>(totalIndexF % capacity));
+		auto fPtr = firstItem->GetItemPtr(classData.typeInfo_, static_cast<uint32_t>(totalIndexF % capacity));
 		// 末尾のデータのアドレスをを取得
-		auto sPtr = secondItem->GetItemPtr(classData, static_cast<uint32_t>(totalIndexS % capacity));
+		auto sPtr = secondItem->GetItemPtr(classData.typeInfo_, static_cast<uint32_t>(totalIndexS % capacity));
 
 		std::memcpy(temp.get(), fPtr, classData.size_);
 		std::memcpy(fPtr, sPtr, classData.size_);
