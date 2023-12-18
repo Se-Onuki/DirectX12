@@ -77,8 +77,10 @@ void GameScene::Update() {
 
 	SoLib::ImGuiWidget("Color", &rgb_);
 
-	for (const auto &[id, model, pos] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp>()) {
-		ImGui::Text("%s,%x\n%s", id->name_.data(), model->model_, SoLib::to_string(pos->position_).c_str());
+	for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
+		ImGui::Text("%s,%x\n", id->name_.data(), model->model_);
+		SoLib::ImGuiWidget((id->name_.data() + std::string(" : pos")).c_str(), &pos->position_);
+		SoLib::ImGuiDragEuler((id->name_.data() + std::string(" : rot")).c_str(), rot->rotate_.data());
 	}
 
 	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
