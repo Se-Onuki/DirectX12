@@ -65,7 +65,7 @@ inline bool ConstString<size>::ImGuiWidget(const char *const label) {
 	return ImGui::InputText(label, this->data(), size);
 
 #else
-	label; value;
+	label;
 	return false;
 
 #endif // _DEBUG
