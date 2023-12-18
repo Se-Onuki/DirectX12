@@ -100,7 +100,7 @@ bool SoLib::ImGuiWidgetAngle([[maybe_unused]] const char *const label, [[maybe_u
 #endif // _DEBUG
 }
 
-bool SoLib::ImGuiDragEuler(const char *const label, float value[3])
+bool SoLib::ImGuiDragEuler(const char *const label, float* value)
 {
 	ImGuiWindow *window = ImGui::GetCurrentWindow();
 	if (window->SkipItems)
@@ -115,7 +115,7 @@ bool SoLib::ImGuiDragEuler(const char *const label, float value[3])
 		ImGui::PushID(i);
 		if (i > 0)
 			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
-		value_changed |= ImGui::SliderAngle("", &value[i]);
+		value_changed |= ImGui::SliderAngle("", &value[i],-180.f,180.f);
 		ImGui::PopID();
 		ImGui::PopItemWidth();
 	}

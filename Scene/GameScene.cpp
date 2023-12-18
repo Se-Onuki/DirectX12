@@ -80,7 +80,7 @@ void GameScene::Update() {
 	for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
 		ImGui::Text("%s,%x\n", id->name_.data(), model->model_);
 		SoLib::ImGuiWidget((id->name_.data() + std::string(" : pos")).c_str(), &pos->position_);
-		SoLib::ImGuiDragEuler((id->name_.data() + std::string(" : rot")).c_str(), rot->rotate_.data());
+		SoLib::ImGuiWidget((id->name_.data() + std::string(" : rot")).c_str(), &rot->rotate_);
 	}
 
 	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {

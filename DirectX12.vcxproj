@@ -261,6 +261,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\ConstString.h" />
     <ClInclude Include="Utils\Graphics\Color.h" />
     <ClInclude Include="Utils\Math\Angle.h" />
+    <ClInclude Include="Utils\Math\Euler.h" />
     <ClInclude Include="Utils\Math\FloatArray.h" />
     <ClInclude Include="Utils\Math\Math.hpp" />
     <ClInclude Include="Utils\Math\Matrix.h" />

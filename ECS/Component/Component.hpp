@@ -12,6 +12,7 @@
 #include "../../Engine/DirectBase/Model/Model.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../Utils/ConstString.h"
+#include "../../Utils/Math/Euler.h"
 
 // class SpriteManager {
 // public:
@@ -79,10 +80,10 @@ namespace ECS {
 	};
 
 	struct RotateComp : IComponent {
-		Vector3 rotate_;
-		inline Vector3 &operator=(const Vector3 &other) { rotate_ = other; }
-		inline operator Vector3 &() { return rotate_; }
-		inline operator const Vector3 &() const { return rotate_; }
+		SoLib::Math::Euler rotate_;
+		inline SoLib::Math::Euler &operator=(const SoLib::Math::Euler &other) { rotate_ = other; }
+		inline operator SoLib::Math::Euler &() { return rotate_; }
+		inline operator const SoLib::Math::Euler &() const { return rotate_; }
 	};
 
 	struct TransformMatComp : IComponent {

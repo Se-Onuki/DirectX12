@@ -59,7 +59,7 @@ namespace SoLib {
 	template <typename T>
 	inline bool ImGuiWidget(const char *const label, ValueRange<T> *const value);
 
-	bool ImGuiDragEuler(const char *const label, float value[3]);
+	bool ImGuiDragEuler(const char *const label, float *value);
 
 }
 

@@ -665,6 +665,9 @@
     <ClInclude Include="Utils\Graphics\Color.h">
       <Filter>Utils\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Math\Euler.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

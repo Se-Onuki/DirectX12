@@ -14,7 +14,7 @@ SoLib::Color::RGB4::RGB4(const std::array<uint8_t, 4u> &color) {
 
 SoLib::Color::RGB4::RGB4(const uint32_t &color) {
 
-	for (int i = 0; i < 4; ++i) {
+	for (uint8_t i = 0; i < 4; ++i) {
 		this->data()[i] = static_cast<float>((color >> (8u * (3u - i))) & 0xFF) / 0xFF;
 	}
 }
