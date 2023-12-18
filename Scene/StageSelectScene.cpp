@@ -84,8 +84,8 @@ void StageSelectScene::Update()
 	cameraManager_->Update(deltaTime);
 
 	// スペースを押すと次のシーンへ
-	if (stageSelectManager_->GetImageTimer().IsFinish() || stageSelectManager_->GetImageTimer().GetProgress() > 0.5f) {
-		if ((keyBoard->IsPress(DIK_SPACE) || input_->GetXInput()->IsPress(KeyCode::A)) && Fade::GetInstance()->GetSprite()->GetColor().w <= 0.f) {
+	if (stageSelectManager_->GetImageTimer().IsFinish() || stageSelectManager_->GetImageTimer().GetProgress() > 0.3f) {
+		if ((keyBoard->IsPress(DIK_SPACE) || input_->GetXInput()->IsPress(KeyCode::A)) && Fade::GetInstance()->GetSprite()->GetColor().w <= 0.1f) {
 			if (!sceneChanging_) {
 				audio_->PlayWave(startStageSE_, false, 0.45f);
 				// フェードアウト開始
