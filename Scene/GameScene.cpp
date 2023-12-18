@@ -101,32 +101,6 @@ void GameScene::Update() {
 
 	}
 
-
-	static Vector3 angle{};
-	const char label[] = "Test";
-	const float sliderWidth = ImGui::CalcItemWidth();
-
-	ImGui::PushID(label);
-
-	for (int i = 0; i < 3; ++i) {
-		char angleLabel[32];
-		snprintf(angleLabel, sizeof(angleLabel), "##Angle%d", i);
-
-		ImGui::PushItemWidth(sliderWidth / 3); // 要素ごとの横幅を調整
-		ImGui::SliderAngle(angleLabel, angle.data(), -180.f, 180.f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-	}
-
-	ImGui::PopID();
-	ImGui::Text("%s", label);
-
-	ImGui::DragFloat3("Vec3", angle.data(), 0, 100);
-
-	SoLib::ImGuiDragEuler("TestEuler", &angle);
-
-	ImGui::ShowDemoWindow();
-
 }
 
 void GameScene::Draw()
