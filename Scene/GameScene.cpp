@@ -22,6 +22,10 @@ GameScene::~GameScene() {
 }
 
 void GameScene::OnEnter() {
+
+	[[maybe_unused]] bool a = file_.Load("resources/sample.csv");
+	csv_ = file_;
+
 	light_ = DirectionLight::Create();
 
 	world_ = World::GetInstance();
@@ -65,6 +69,11 @@ void GameScene::OnExit() {
 void GameScene::Update() {
 
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+
+	std::stringstream outPut{};
+	outPut << csv_;
+	ImGui::Text("%s", outPut.str().c_str());
+
 	//light_->ImGuiWidget();
 
 	// もし生存フラグが折れていたら、配列から削除
@@ -105,8 +114,7 @@ void GameScene::Update() {
 
 }
 
-void GameScene::Draw()
-{
+void GameScene::Draw() {
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
