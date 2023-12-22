@@ -5,6 +5,14 @@ void MapChip::Init() {
 	pModel_ = ModelManager::GetInstance()->GetModel("Block");
 }
 
+void MapChip::Load(const SoLib::IO::CSV &csv) {
+	for (auto &line : csv) {
+		for (auto &item : line) {
+			
+		}
+	}
+}
+
 void MapChip::Update([[maybe_unused]] const float deltaTime) {
 }
 

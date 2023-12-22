@@ -2,6 +2,7 @@
 #include <list>
 #include "../Collision/Collision.h"
 #include "Block/BlockManager.h"
+#include "../../Utils/IO/CSV.h"
 
 class MapChip
 {
@@ -11,7 +12,7 @@ public:
 
 	void Init();
 
-	//void Load(const )
+	void Load(const SoLib::IO::CSV &csv);
 
 	void Update(const float deltaTime);
 
@@ -21,6 +22,8 @@ private:
 
 	BlockManager *pBlockManager_;
 	Model *pModel_;
+
+	//std::
 
 	std::list<AABB> boxList_;
 
