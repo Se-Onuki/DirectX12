@@ -118,6 +118,9 @@
     <Filter Include="Utils\Graphics">
       <UniqueIdentifier>{34273b47-9ebb-47d3-b275-7eee60fc69bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\IO">
+      <UniqueIdentifier>{f6b1456a-8fef-4089-b818-81770d49cd28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -359,6 +362,12 @@
     </ClCompile>
     <ClCompile Include="Utils\Graphics\Color.cpp">
       <Filter>Utils\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\IO\CSV.cpp">
+      <Filter>Utils\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\IO\File.cpp">
+      <Filter>Utils\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -667,6 +676,12 @@
     </ClInclude>
     <ClInclude Include="Utils\Math\Euler.h">
       <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\IO\CSV.h">
+      <Filter>Utils\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\IO\File.h">
+      <Filter>Utils\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
