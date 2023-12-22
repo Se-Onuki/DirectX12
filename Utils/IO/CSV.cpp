@@ -36,7 +36,17 @@ SoLib::IO::CsvData &SoLib::IO::CsvData::operator=(const std::string &line) {
 
 	std::string cell = "";
 	std::stringstream lineBuff = std::stringstream(line);
-	while (std::getline(lineBuff, cell, ',')) {
+	while (std::getline(lineBuff, cell, ',')) {// 先頭の空白文字を削除
+		size_t start = cell.find_first_not_of(" \t");
+		if (start != std::string::npos) {
+			cell = cell.substr(start);
+		}
+
+		// 終端の空白文字を削除
+		size_t end = cell.find_last_not_of(" \t");
+		if (end != std::string::npos) {
+			cell = cell.substr(0, end + 1);
+		}
 		cellList_.push_back(cell);
 	}
 	size_ = cellList_.size();
