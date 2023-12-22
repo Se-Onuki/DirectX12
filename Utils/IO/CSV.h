@@ -94,6 +94,9 @@ namespace SoLib {
 			auto end() const { return data_.cend(); }
 			auto cend() const { return data_.cend(); }
 
+			size_t GetWidth() const { return width_; }
+			size_t GetHeight() const { return height_; }
+
 		private:
 			// 横幅
 			size_t width_;
