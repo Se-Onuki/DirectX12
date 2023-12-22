@@ -22,6 +22,7 @@ GameScene::~GameScene() {
 }
 
 void GameScene::OnEnter() {
+	cameraManager_->Init();
 
 	[[maybe_unused]] bool a = file_.Load("resources/Level/Level1.csv");
 	csv_ = file_;
@@ -49,6 +50,9 @@ void GameScene::Update() {
 	std::stringstream outPut{};
 	outPut << csv_;
 	ImGui::Text("%s", outPut.str().c_str());
+
+	cameraManager_->Update(deltaTime);
+	cameraManager_->DisplayImGui();
 
 	//light_->ImGuiWidget();
 

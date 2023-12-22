@@ -21,6 +21,9 @@ public:
 
 private:
 
+	const float kChipScale_ = 1.f;
+	const float kBoxScale = 0.5f;
+
 	BlockManager *pBlockManager_;
 	Model *pModel_;
 
