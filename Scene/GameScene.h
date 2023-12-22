@@ -19,6 +19,7 @@
 #include "../Header/Collision/Collision.h"
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Header/Object/MapChip.h"
+#include "../Utils/IO/CSV.h"
 
 class GameScene : public IScene {
 public:
@@ -42,6 +43,9 @@ private:
 	std::unique_ptr<AABB> block_;
 	BlockManager *pBlockManager_;
 	std::unique_ptr<MapChip> mapChip_;
+
+	SoLib::IO::File file_;
+	SoLib::IO::CSV csv_;
 
 	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
 

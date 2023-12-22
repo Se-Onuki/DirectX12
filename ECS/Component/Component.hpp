@@ -51,7 +51,7 @@ namespace ECS {
 	};
 
 	struct Identifier : IComponent {
-		ConstString<8u> name_;
+		SoLib::ConstString<8u> name_;
 	};
 
 	struct TransformComp : IComponent {
