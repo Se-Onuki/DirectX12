@@ -3,6 +3,7 @@
 #include "../Collision/Collision.h"
 #include "Block/BlockManager.h"
 #include "../../Utils/IO/CSV.h"
+#include "../../Utils/Containers/Array2D.h"
 
 class MapChip
 {
@@ -23,7 +24,7 @@ private:
 	BlockManager *pBlockManager_;
 	Model *pModel_;
 
-	//std::
+	SoLib::Containers::Array2D<uint32_t> mapData_;
 
 	std::list<AABB> boxList_;
 

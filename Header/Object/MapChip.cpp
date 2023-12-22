@@ -6,6 +6,9 @@ void MapChip::Init() {
 }
 
 void MapChip::Load(const SoLib::IO::CSV &csv) {
+
+	mapData_.Resize(csv.Get)
+
 	for (auto &line : csv) {
 		for (auto &item : line) {
 			
