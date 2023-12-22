@@ -270,9 +270,6 @@
     <ClCompile Include="Header\Entity\Entity.cpp">
       <Filter>Header\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Object\Player.cpp">
-      <Filter>Header\Entity\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Object\BaseCharacter.cpp">
       <Filter>Header\Entity\Object</Filter>
     </ClCompile>
@@ -359,6 +356,12 @@
     </ClCompile>
     <ClCompile Include="Utils\Graphics\Color.cpp">
       <Filter>Utils\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\MovingBall.cpp">
+      <Filter>Header\Entity\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\MapChip.cpp">
+      <Filter>Header\Entity\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -554,9 +557,6 @@
     <ClInclude Include="Header\Object\FollowCamera.h">
       <Filter>Header\Entity\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Object\Player.h">
-      <Filter>Header\Entity\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Object\BaseCharacter.h">
       <Filter>Header\Entity\Object</Filter>
     </ClInclude>
@@ -667,6 +667,15 @@
     </ClInclude>
     <ClInclude Include="Utils\Math\Euler.h">
       <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Entity\Component\PlayerComp.h">
+      <Filter>Header\Entity\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\MovingBall.h">
+      <Filter>Header\Entity\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\MapChip.h">
+      <Filter>Header\Entity\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

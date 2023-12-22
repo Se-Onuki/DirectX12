@@ -16,6 +16,9 @@
 #include "../ECS/Viewer.h"
 
 #include "../Utils/Graphics/Color.h"
+#include "../Header/Collision/Collision.h"
+#include "../Header/Object/Block/BlockManager.h"
+#include "../Header/Object/MapChip.h"
 
 class GameScene : public IScene {
 public:
@@ -36,11 +39,9 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	World *world_ = nullptr;
-
-	std::unique_ptr<ECS::MultiArray> mArray_;
-
-	SoLib::Color::RGB4 rgb_ = 0xFFFFFFFF;
+	std::unique_ptr<AABB> block_;
+	BlockManager *pBlockManager_;
+	std::unique_ptr<MapChip> mapChip_;
 
 	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
 

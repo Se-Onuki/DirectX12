@@ -13,13 +13,6 @@ void BlockManager::Init(uint32_t maxCount)
 	device->CreateShaderResourceView(blocks_.GetResources(), &blocks_.GetDesc(), heapRange_.GetHandle(0).cpuHandle_);
 }
 
-void BlockManager::Update()
-{
-	for (auto &[model, blockList] : blockMap_) {
-		blockList->Update();
-	}
-}
-
 void BlockManager::Draw(const Camera3D &camera)
 {
 	// 始点となる添え字
@@ -37,7 +30,7 @@ void BlockManager::Draw(const Camera3D &camera)
 		// パーティクルをひとつづつ取得
 		for (const auto &block : blocks) {
 			// 書き込み先にパーティクルのデータを渡す
-			blocks_[targetIndex].transform.World = block.transform_.matWorld_;
+			blocks_[targetIndex].transform.World = block.transformMat_;
 			blocks_[targetIndex].color = block.color_;
 			targetIndex++;
 		}
@@ -67,22 +60,8 @@ void BlockManager::Draw(const Camera3D &camera)
 	}
 }
 
-void BlockList::Update()
-{
-
-	for (auto &block : blocks_) {
-		block.Update();
-	}
-}
-
 IBlock *const BlockList::push_back(IBlock &&block)
 {
 	blocks_.push_back(std::move(block));
 	return &blocks_.back();
-}
-
-void IBlock::Update()
-{
-	// トランスフォームの更新と転送
-	transform_.UpdateMatrix();
 }

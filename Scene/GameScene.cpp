@@ -24,38 +24,13 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	light_ = DirectionLight::Create();
 
-	world_ = World::GetInstance();
-	// world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
+	ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
+	mapChip_ = std::make_unique<MapChip>();
+	mapChip_->Init();
 
-	Archetype archetype;
-	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp>();
+	pBlockManager_ = BlockManager::GetInstance();
+	pBlockManager_->Init(1024u);
 
-	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
-
-	// エンティティの追加(idは先頭からのindex)
-	size_t entityID = mArray_->push_back();
-	// 添え字を使って要素にアクセス。
-	mArray_->GetItem<ECS::Identifier>(entityID).name_ = "hello";
-	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
-	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
-
-	for (uint32_t i = 0u; i < 10u; i++) {
-		size_t index = mArray_->push_back();
-		// 要素を追加し、その要素のデータをイテレータから取得してstd::tupleで展開する
-		const auto &[name, model] = (*mArray_->get<ECS::Identifier, ECS::ModelComp>().begin()[index]);
-		// データを代入
-		name->name_ = std::string("test") + std::to_string(i);
-	}
-
-	for (uint32_t i = 0u; i < 10u; i++) {
-		// 作成されたデータへのポインタ
-		const auto &[name, model, alive] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::IsAlive>();
-		// データを代入
-		name->name_ = std::string("test") + std::to_string(i + 10u);
-		if (i % 2u == 0u) {
-			alive->isAlive_ = false;
-		}
-	}
 }
 
 void GameScene::OnExit() {
@@ -67,46 +42,17 @@ void GameScene::Update() {
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	//light_->ImGuiWidget();
 
-	// もし生存フラグが折れていたら、配列から削除
-	mArray_->erase_if(std::function<bool(ECS::IsAlive *)>(
-		[](ECS::IsAlive *a)
-		{
-			return not a->isAlive_;
-		}
-	));
-
-	SoLib::ImGuiWidget("Color", &rgb_);
-
-	for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
-		ImGui::Text("%s,%x\n", id->name_.data(), model->model_);
-		SoLib::ImGuiWidget((id->name_.data() + std::string(" : pos")).c_str(), &pos->position_);
-		SoLib::ImGuiWidget((id->name_.data() + std::string(" : rot")).c_str(), &rot->rotate_);
-	}
-
-	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
-		auto mSubArray = mArray_->get<ECS::IsAlive>();
-		auto mArrBegin = mSubArray.begin();
-		if (mArrBegin != mSubArray.end()) {
-
-			const auto &[alive] = *mArrBegin;
-			alive->isAlive_ = false;
-		}
-	}
-
-	auto mSubArray = mArray_->get<ECS::Identifier>();
-	auto mArrBegin = mSubArray.begin();
-	if (mArrBegin != mSubArray.end()) {
-
-		const auto &[name] = *mArrBegin;
-
-		SoLib::ImGuiWidget("Name", &name->name_);
-
-	}
+	mapChip_->Update(deltaTime);
 
 }
 
-void GameScene::Draw()
-{
+void GameScene::Draw() {
+
+	pBlockManager_->clear();
+	mapChip_->Draw();
+
+	const auto &camera = *cameraManager_->GetUseCamera();
+
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
@@ -129,8 +75,12 @@ void GameScene::Draw()
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
+	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
 
 	light_->SetLight(commandList);
+
+	pBlockManager_->Draw(camera);
+
 
 	Model::EndDraw();
 
