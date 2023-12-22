@@ -1,26 +1,46 @@
 #include "Color.h"
 
 const SoLib::Color::RGB4 kWhite = 0xFFFFFFFF;
+const SoLib::Color::RGB4 kBlack = 0x00000000;
+const SoLib::Color::RGB4 kRed = 0xFF000000;
+const SoLib::Color::RGB4 kGreen = 0x00FF0000;
+const SoLib::Color::RGB4 kBlue = 0x0000FF00;
 
 SoLib::Color::RGB4::RGB4(const std::array<float, 4u> &color) {
 	std::memcpy(this->data(), color.data(), RGB4::size());
 }
 
-SoLib::Color::RGB4::RGB4(const std::array<uint8_t, 4u> &color) {
+SoLib::Color::RGB4::RGB4(const std::array<uint8_t, 4u> color) {
 	for (uint8_t i = 0u; i < 4u; i++) {
 		this->data()[i] = color[i] / 255.f;
 	}
 }
 
-SoLib::Color::RGB4::RGB4(const uint32_t &color) {
+SoLib::Color::RGB4::RGB4(const uint32_t color) {
 
 	for (uint8_t i = 0; i < 4; ++i) {
 		this->data()[i] = static_cast<float>((color >> (8u * (3u - i))) & 0xFF) / 0xFF;
 	}
 }
 
-SoLib::Color::RGB4 &SoLib::Color::RGB4::operator=(const uint32_t &color) {
+SoLib::Color::RGB4 &SoLib::Color::RGB4::operator=(const uint32_t color) {
 	return *this = RGB4(color);
+}
+
+SoLib::Color::RGB4 &SoLib::Color::RGB4::operator=(const Vector4 &color)
+{
+	return *this = RGB4(color);
+}
+
+SoLib::Color::RGB4::operator uint32_t() const {
+	uint32_t result{};
+
+	for (uint8_t i = 0u; i < 4u; ++i) {
+		result |= static_cast<uint8_t>(this->data()[i] * 255.f);
+
+		if (i != 3u) { result <<= 8u; }
+	}
+	return result;
 }
 
 SoLib::Color::RGB4::operator std::array<uint8_t, 4u>() const {
@@ -38,6 +58,33 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 #else
 	return false;
 #endif // _DEBUG
+}
+SoLib::Color::RGB4 SoLib::Color::operator+(const RGB4 &a, const RGB4 &b) {
+	RGB4 result;
+
+	for (uint8_t i = 0u; i < 4; i++) {
+		result.data()[i] = std::clamp(a.data()[i] + b.data()[i], 0.f, 1.f);
+	}
+
+	return result;
+}
+SoLib::Color::RGB4 SoLib::Color::operator-(const RGB4 &a, const RGB4 &b) {
+	RGB4 result;
+
+	for (uint8_t i = 0u; i < 4; i++) {
+		result.data()[i] = std::clamp(a.data()[i] - b.data()[i], 0.f, 1.f);
+	}
+
+	return result;
+}
+SoLib::Color::RGB4 SoLib::Color::operator*(const RGB4 &a, const float b) {
+	RGB4 result;
+
+	for (uint8_t i = 0u; i < 4; i++) {
+		result.data()[i] = std::clamp(a.data()[i] * b, 0.f, 1.f);
+	}
+
+	return result;
 }
 void SoLib::Color::to_json(nlohmann::json &json, const RGB4 &color) {
 	json = static_cast<std::array<uint8_t, 4u>>(color);

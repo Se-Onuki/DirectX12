@@ -109,8 +109,8 @@ struct Sphere {
 	Vector3 centor;
 	float radius;
 
-	bool IsCollision(const Sphere &other) { return Collision::IsHit(*this, other); }
-	bool IsCollision(const Plane &plane) { return Collision::IsHit(*this, plane); }
+	bool IsCollision(const Sphere &other) const { return Collision::IsHit(*this, other); }
+	bool IsCollision(const Plane &plane) const { return Collision::IsHit(*this, plane); }
 
 	void ImGuiDebug(const std::string &group);
 };
@@ -149,6 +149,10 @@ struct AABB {
 
 	Vector3 GetNormal(const Vector3 &surface) const;
 	Vector3 GetNormal(const Vector3 &surface, const Vector3 &direction) const;
+
+	/// @brief Transform行列の生成
+	/// @return transform行列
+	Matrix4x4 TransMat() const;
 
 	/// @brief 新規生成
 	/// @param origin 原点
@@ -204,7 +208,7 @@ struct ConicalPendulum {
 };
 
 struct Capsule {
-	LineBase segment{ .lineType = LineBase::LineType::Ray };
+	LineBase segment{ .lineType = LineBase::LineType::Segment };
 	float radius;
 
 	Vector3 GetHitPoint(const Plane &plane);

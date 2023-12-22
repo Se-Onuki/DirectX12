@@ -4,6 +4,7 @@
 #include "../SoLib/SoLib_ImGui.h"
 
 #include "../SoLib/SoLib_Json.h"
+#include "../Math/Vector4.h"
 
 namespace SoLib {
 
@@ -14,20 +15,25 @@ namespace SoLib {
 			RGB4() = default;
 			RGB4(const RGB4 &) = default;
 			RGB4(RGB4 &&) = default;
+			RGB4(const float r, const float g, const float b, const float a) :r(r), g(g), b(b), a(a) {}
 			RGB4(const std::array<float, 4u> &color);
-			RGB4(const std::array<uint8_t, 4u> &color);
-
-
-			RGB4(const uint32_t &color);
+			RGB4(const std::array<uint8_t, 4u> color);
+			RGB4(const Vector4 &color) { std::memcpy(this, color.data(), size()); }
+			RGB4(const uint32_t color);
 
 			RGB4 &operator=(const RGB4 &) = default;
 			RGB4 &operator=(RGB4 &&) = default;
-			RGB4 &operator=(const uint32_t &color);
+			RGB4 &operator=(const uint32_t color);
+			RGB4 &operator=(const Vector4 &color);
 
 			float r, g, b, a;
 
 			// 白
 			static const RGB4 kWhite;
+			static const RGB4 kBlack;
+			static const RGB4 kRed;
+			static const RGB4 kGreen;
+			static const RGB4 kBlue;
 
 			static uint32_t size() { return 4u; }
 
@@ -60,10 +66,20 @@ namespace SoLib {
 			inline operator const float *() const { return data(); }
 
 			operator std::array<uint8_t, 4u>() const;
+			operator uint32_t() const;
+
+			inline operator Vector4 &() { return *(reinterpret_cast<Vector4 *>(this)); }
+			inline operator const Vector4 &() const { return  *(reinterpret_cast<const Vector4 *>(this)); }
 
 		private:
 
 		};
+
+		RGB4 operator+(const RGB4 &a, const RGB4 &b);
+		RGB4 operator-(const RGB4 &a, const RGB4 &b);
+
+		RGB4 operator*(const RGB4 &a, const float b);
+		inline RGB4 operator/(const RGB4 &a, const float b) { return a * (1.f / b); }
 
 		void to_json(nlohmann::json &json, const RGB4 &color);
 		void from_json(const nlohmann::json &json, RGB4 &color);

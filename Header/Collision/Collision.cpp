@@ -401,6 +401,10 @@ Vector3 AABB::GetNormal(const Vector3 &surface, const Vector3 &direction) const 
 	return result.Nomalize();
 }
 
+Matrix4x4 AABB::TransMat() const {
+	return Matrix4x4::Affine(this->GetRadius(), Vector3::zero, this->GetCentor());
+}
+
 AABB AABB::Create(const Vector3 &origin, const Vector3 &radius) {
 	AABB result{};
 	result.min = -radius;
