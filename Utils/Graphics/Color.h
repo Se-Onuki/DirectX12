@@ -18,7 +18,7 @@ namespace SoLib {
 			RGB4(const float r, const float g, const float b, const float a) :r(r), g(g), b(b), a(a) {}
 			RGB4(const std::array<float, 4u> &color);
 			RGB4(const std::array<uint8_t, 4u> color);
-			RGB4(const Vector4 &color) { std::memcpy(this, color.data(), size()); }
+			RGB4(const Vector4 &color) { std::memcpy(this->data(), color.data(), sizeof(RGB4)); }
 			RGB4(const uint32_t color);
 
 			RGB4 &operator=(const RGB4 &) = default;
