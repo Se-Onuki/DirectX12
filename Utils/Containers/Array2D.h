@@ -60,6 +60,9 @@ namespace SoLib {
 				ResizeCols(newCols);
 			}
 
+			auto &get() { return data_; }
+			const auto &get()const { return data_; }
+
 
 			class iterator {
 			public:
