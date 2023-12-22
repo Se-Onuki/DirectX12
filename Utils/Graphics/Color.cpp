@@ -7,7 +7,7 @@ const SoLib::Color::RGB4 kGreen = 0x00FF0000;
 const SoLib::Color::RGB4 kBlue = 0x0000FF00;
 
 SoLib::Color::RGB4::RGB4(const std::array<float, 4u> &color) {
-	std::memcpy(this->data(), color.data(), RGB4::size());
+	std::memcpy(this->data(), color.data(), sizeof(RGB4));
 }
 
 SoLib::Color::RGB4::RGB4(const std::array<uint8_t, 4u> color) {
@@ -27,8 +27,7 @@ SoLib::Color::RGB4 &SoLib::Color::RGB4::operator=(const uint32_t color) {
 	return *this = RGB4(color);
 }
 
-SoLib::Color::RGB4 &SoLib::Color::RGB4::operator=(const Vector4 &color)
-{
+SoLib::Color::RGB4 &SoLib::Color::RGB4::operator=(const Vector4 &color) {
 	return *this = RGB4(color);
 }
 
