@@ -8,6 +8,7 @@ const SoLib::Color::RGB4 kBlue = 0x0000FF00;
 
 SoLib::Color::RGB4::RGB4(const std::array<float, 4u> &color) {
 	std::memcpy(this->data(), color.data(), sizeof(RGB4));
+	Clamp();
 }
 
 SoLib::Color::RGB4::RGB4(const std::array<uint8_t, 4u> color) {

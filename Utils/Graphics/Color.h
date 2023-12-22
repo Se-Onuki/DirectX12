@@ -15,11 +15,14 @@ namespace SoLib {
 			RGB4() = default;
 			RGB4(const RGB4 &) = default;
 			RGB4(RGB4 &&) = default;
-			RGB4(const float r, const float g, const float b, const float a) :r(r), g(g), b(b), a(a) {}
+			RGB4(const float r, const float g, const float b, const float a) :r(r), g(g), b(b), a(a) { Clamp(); }
 			RGB4(const std::array<float, 4u> &color);
 			RGB4(const std::array<uint8_t, 4u> color);
-			RGB4(const Vector4 &color) { std::memcpy(this->data(), color.data(), sizeof(RGB4)); }
 			RGB4(const uint32_t color);
+			RGB4(const Vector4 &color) {
+				std::memcpy(this->data(), color.data(), sizeof(RGB4));
+				Clamp();
+			}
 
 			RGB4 &operator=(const RGB4 &) = default;
 			RGB4 &operator=(RGB4 &&) = default;
@@ -72,6 +75,11 @@ namespace SoLib {
 			inline operator const Vector4 &() const { return  *(reinterpret_cast<const Vector4 *>(this)); }
 
 		private:
+			inline void Clamp() {
+				for (uint8_t i = 0u; i < 4; i++) {
+					this->data()[i] = std::clamp(this->data()[i], 0.f, 1.f);
+				}
+			}
 
 		};
 
