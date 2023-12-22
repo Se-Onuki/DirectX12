@@ -23,6 +23,8 @@ SoLib::IO::CSV &SoLib::IO::CSV::operator=(const File &file) {
 	for (auto &item : data_) {
 		item.resize(maxLength);
 	}
+	width_ = maxLength;
+	height_ = data_.size();
 
 	return *this;
 }

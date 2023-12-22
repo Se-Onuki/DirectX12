@@ -264,6 +264,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Utils\ConstString.h" />
+    <ClInclude Include="Utils\Containers\Array2D.h" />
     <ClInclude Include="Utils\Graphics\Color.h" />
     <ClInclude Include="Utils\IO\CSV.h" />
     <ClInclude Include="Utils\IO\File.h" />

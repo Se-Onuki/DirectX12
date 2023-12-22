@@ -95,6 +95,10 @@ namespace SoLib {
 			auto cend() const { return data_.cend(); }
 
 		private:
+			// 横幅
+			size_t width_;
+			// 縦幅
+			size_t height_;
 
 			Map data_;
 
