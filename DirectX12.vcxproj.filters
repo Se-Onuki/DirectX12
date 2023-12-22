@@ -683,6 +683,9 @@
     <ClInclude Include="Utils\IO\File.h">
       <Filter>Utils\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Containers\Array2D.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
