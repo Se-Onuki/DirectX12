@@ -23,7 +23,7 @@ GameScene::~GameScene() {
 
 void GameScene::OnEnter() {
 
-	[[maybe_unused]] bool a = file_.Load("resources/sample.csv");
+	[[maybe_unused]] bool a = file_.Load("resources/Level/Level1.csv");
 	csv_ = file_;
 
 	light_ = DirectionLight::Create();
@@ -31,6 +31,7 @@ void GameScene::OnEnter() {
 	ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 	mapChip_ = std::make_unique<MapChip>();
 	mapChip_->Init();
+	mapChip_->Load(csv_);
 
 	pBlockManager_ = BlockManager::GetInstance();
 	pBlockManager_->Init(1024u);
