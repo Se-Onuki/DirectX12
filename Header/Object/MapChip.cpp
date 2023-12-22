@@ -9,8 +9,8 @@ void MapChip::Load(const SoLib::IO::CSV &csv) {
 
 	mapData_.Resize(csv.GetHeight(), csv.GetWidth());
 	auto mapItr = mapData_.begin();
-	for (auto &line : csv) {
-		for (auto &item : line) {
+	for (auto lineItr = csv.Get().rbegin(); lineItr != csv.Get().rend(); ++lineItr) {
+		for (auto &item : *lineItr) {
 			if (item == "") { *mapItr = 0u; }
 			else { *mapItr = static_cast<uint32_t>(std::stoul(item)); }
 			++mapItr;
