@@ -6,6 +6,7 @@
 
 #include "../Create/Create.h"
 #include "DirectXCommon.h"
+#include "CBuffer.h"
 
 #include "../../../Utils/SoLib/SoLib_Traits.h"
 
@@ -190,14 +191,12 @@ inline ArrayBuffer<T>::~ArrayBuffer() {
 template<SoLib::IsNotPointer T>
 class StructuredBuffer {
 public:
-	StructuredBuffer(uint32_t size = 0u);
+	StructuredBuffer(uint32_t maxSize = 0u);
 	StructuredBuffer &operator= (const StructuredBuffer &) = default;
 	~StructuredBuffer() = default;
 public:
 
-	using map_struct = T::map_struct;
-
-	inline const ArrayBuffer<map_struct> &GetBuffer() const { return arrayBuffer_; }
+	inline const ArrayBuffer<T> &GetBuffer() const { return arrayBuffer_; }
 
 	inline ID3D12Resource *const GetResources() noexcept { return arrayBuffer_.GetResources(); }
 	inline const ID3D12Resource *const GetResources() const noexcept { return arrayBuffer_.GetResources(); }
@@ -206,48 +205,85 @@ public:
 
 	inline operator bool() const noexcept { return static_cast<bool>(arrayBuffer_); }		// 値が存在するか
 
-	inline operator T *() noexcept { return data_.data(); }			// 参照
-	inline operator const T *() const noexcept { return data_.data(); }	// const参照
+	inline operator T *() noexcept { return arrayBuffer_.data(); }			// 参照
+	inline operator const T *() const noexcept { return arrayBuffer_.data(); }	// const参照
 
-	inline T &operator[](uint32_t index) noexcept { return data_[index]; }
-	inline const T &operator[](uint32_t index) const noexcept { return data_[index]; }
+	inline T &operator[](uint32_t index) noexcept { return arrayBuffer_[index]; }
+	inline const T &operator[](uint32_t index) const noexcept { return arrayBuffer_[index]; }
 
-	inline T *const operator->() noexcept { return data_.data(); }					// dataのメンバへのアクセス
-	inline const T *const operator->() const noexcept { return data_.data(); }	// dataのメンバへのアクセス(const)
+	inline T *const operator->() noexcept { return arrayBuffer_.data(); }					// dataのメンバへのアクセス
+	inline const T *const operator->() const noexcept { return arrayBuffer_.data(); }	// dataのメンバへのアクセス(const)
 
-	uint32_t size() const noexcept { return static_cast<uint32_t>(data_.size()); }
-	T *const data() const noexcept { return data_.data(); }
-	T *const begin() const noexcept { return &data_.begin(); }
-	T *const end() const noexcept { return &data_.end(); }
+	uint32_t size() const noexcept { return size_; }
 
+	T *const data() noexcept { return arrayBuffer_.data(); }
+	const T *const data() const noexcept { return arrayBuffer_.data(); }
+
+	T *const begin() noexcept { return &arrayBuffer_.begin(); }
+	const T *const begin() const noexcept { return &arrayBuffer_.begin(); }
+	const T *const cbegin() const noexcept { return &arrayBuffer_.begin(); }
+
+	T *const end() noexcept { return &arrayBuffer_.end(); }
+	const T *const end() const noexcept { return &arrayBuffer_.end(); }
+	const T *const cend() const noexcept { return &arrayBuffer_.end(); }
+
+	void push_back(const T &data);
+	void push_back(T &&data);
+
+	void clear();
 
 	template <SoLib::IsContainer U>
 	inline StructuredBuffer &operator=(const U &other);	// コピー演算子
 
 	const auto &GetHeapRange() const { return heapRange_; }
 
+	const CBuffer<uint32_t> &GetStartIndex() const { return startIndex_; }
+
 
 private:
-	std::vector<T> data_;
-	ArrayBuffer<map_struct> arrayBuffer_;
+
+	ArrayBuffer<T> arrayBuffer_;
 	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
+	CBuffer<uint32_t> startIndex_;
+
+	uint32_t size_;
+
+	uint32_t maxSize_;
 
 };
 
 template<SoLib::IsNotPointer T>
-inline StructuredBuffer<T>::StructuredBuffer(uint32_t size) {
-	arrayBuffer_.CreateBuffer(size);
-	data_.resize(size);
-
-	for (uint32_t i = 0u; i < size; ++i) {
-		data_[i] = &arrayBuffer_[i];
-	}
+inline StructuredBuffer<T>::StructuredBuffer(uint32_t maxSize) {
+	arrayBuffer_.CreateBuffer(maxSize);
+	maxSize_ = maxSize;
+	startIndex_ = 0u;
 
 	static auto *const device = DirectXCommon::GetInstance()->GetDevice();
 	static auto *const srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
 	heapRange_ = srvHeap->RequestHeapAllocation(1u);
 	device->CreateShaderResourceView(GetResources(), &GetDesc(), heapRange_.GetHandle(0u).cpuHandle_);
+}
+
+template<SoLib::IsNotPointer T>
+inline void StructuredBuffer<T>::push_back(const T &data) {
+	// もし、最大値の方が大きかったら
+	if (size_ < maxSize_) {
+		// データを追加して、インクリメント
+		arrayBuffer_[size_++] = data;
+	}
+}
+
+template<SoLib::IsNotPointer T>
+inline void StructuredBuffer<T>::push_back(T &&data) {
+	if (size_ < maxSize_) {
+		arrayBuffer_[size_++] = std::move(data);
+	}
+}
+
+template<SoLib::IsNotPointer T>
+inline void StructuredBuffer<T>::clear() {
+	size_ = 0u;
 }
 
 template<SoLib::IsNotPointer T>

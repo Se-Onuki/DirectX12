@@ -27,8 +27,10 @@ void GameScene::OnEnter() {
 
 	world_ = World::GetInstance();
 	cameraManager_->Init();
+	ModelManager::GetInstance()->CreateDefaultModel();
 
-	model_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
+	ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
+	model_ = ModelManager::GetInstance()->GetModel("Plane");
 
 	Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::Color>();
@@ -82,6 +84,8 @@ void GameScene::Update() {
 
 	//light_->ImGuiWidget();
 
+	particleArray_.clear();
+
 	// もし生存フラグが折れていたら、配列から削除
 	mArray_->erase_if(std::function<bool(ECS::IsAlive *)>(
 		[](ECS::IsAlive *a)
@@ -117,6 +121,21 @@ void GameScene::Update() {
 		SoLib::ImGuiWidget((id->name_.data() + std::string(" : rot")).c_str(), &rot->rotate_);
 	}
 
+	for (const auto &[scale, rotate, pos, mat] : mArray_->get<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp>()) {
+
+		*mat = Matrix4x4::Affine(*scale, rotate->rotate_, *pos);
+
+	}
+
+	for (const auto &[color, mat] : mArray_->get< ECS::Color, ECS::TransformMatComp>()) {
+
+
+		particleArray_.push_back(Particle::ParticleData{ .transform = *mat,.color = color->color_ });
+
+	}
+
+
+
 	/*if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
 		auto mSubArray = mArray_->get<ECS::IsAlive>();
 		auto mArrBegin = mSubArray.begin();
@@ -143,6 +162,9 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+
+	const auto &camera = *cameraManager_->GetUseCamera();
+
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
@@ -165,8 +187,11 @@ void GameScene::Draw() {
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
+	Model::SetPipelineType(Model::PipelineType::kParticle);
 
 	light_->SetLight(commandList);
+
+	model_->Draw(particleArray_, camera);
 
 	Model::EndDraw();
 

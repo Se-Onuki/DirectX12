@@ -63,7 +63,7 @@ namespace ECS {
 	};
 
 	struct Color : IComponent {
-		SoLib::Color::RGB4 color_{};
+		SoLib::Color::RGB4 color_ = 0xFFFFFFFF;
 	};
 
 	/*struct TransformComp : IComponent {
@@ -72,35 +72,35 @@ namespace ECS {
 
 	struct PositionComp : IComponent {
 		Vector3 position_;
-		inline Vector3 &operator=(const Vector3 &other) { position_ = other; }
+		inline Vector3 &operator=(const Vector3 &other) { return  position_ = other; }
 		inline operator Vector3 &() { return position_; }
 		inline operator const Vector3 &() const { return position_; }
 	};
 
 	struct VelocityComp : IComponent {
 		Vector3 velocity_;
-		inline Vector3 &operator=(const Vector3 &other) { velocity_ = other; }
+		inline Vector3 &operator=(const Vector3 &other) { return velocity_ = other; }
 		inline operator Vector3 &() { return velocity_; }
 		inline operator const Vector3 &() const { return velocity_; }
 	};
 
 	struct ScaleComp : IComponent {
-		Vector3 scale_;
-		inline Vector3 &operator=(const Vector3 &other) { scale_ = other; }
+		Vector3 scale_ = Vector3::one;
+		inline Vector3 &operator=(const Vector3 &other) { return scale_ = other; }
 		inline operator Vector3 &() { return scale_; }
 		inline operator const Vector3 &() const { return scale_; }
 	};
 
 	struct RotateComp : IComponent {
 		SoLib::Math::Euler rotate_;
-		inline SoLib::Math::Euler &operator=(const SoLib::Math::Euler &other) { rotate_ = other; }
+		inline SoLib::Math::Euler &operator=(const SoLib::Math::Euler &other) { return rotate_ = other; }
 		inline operator SoLib::Math::Euler &() { return rotate_; }
 		inline operator const SoLib::Math::Euler &() const { return rotate_; }
 	};
 
 	struct TransformMatComp : IComponent {
 		Matrix4x4 transformMat_;
-		inline Matrix4x4 &operator=(const Matrix4x4 &other) { transformMat_ = other; }
+		inline Matrix4x4 &operator=(const Matrix4x4 &other) { return transformMat_ = other; }
 		inline operator Matrix4x4 &() { return transformMat_; }
 		inline operator const Matrix4x4 &() const { return transformMat_; }
 	};

@@ -38,8 +38,7 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	ArrayBuffer<Particle::ParticleData> particleArray_{ 1024u };
-
+	StructuredBuffer<Particle::ParticleData> particleArray_{ 1024u };
 
 	Model *model_ = nullptr;
 
