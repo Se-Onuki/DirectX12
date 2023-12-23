@@ -22,6 +22,8 @@ void ImGuiManager::StaticInit(const HWND &hwnd, ID3D12Device *const device, uint
 	//ImGuiの初期化
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	// 日本語対応
+	ImGui::GetIO().Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\msgothic.ttc", 13.0f, NULL, ImGui::GetIO().Fonts->GetGlyphRangesJapanese());
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX12_Init(device,
