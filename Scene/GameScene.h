@@ -43,9 +43,6 @@ private:
 
 	SoLib::Color::RGB4 rgb_ = Vector4::one;
 
-	SoLib::IO::File file_;
-	SoLib::IO::CSV csv_;
-
 	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
 
 
