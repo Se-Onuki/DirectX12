@@ -54,9 +54,13 @@ namespace ECS {
 		SoLib::ConstString<8u> name_;
 	};
 
-	struct TransformComp : IComponent {
-		BaseTransform wTransform_;
+	struct AliveTime : IComponent {
+		SoLib::Time::SecondF aliveTime_{};
 	};
+
+	/*struct TransformComp : IComponent {
+		BaseTransform wTransform_;
+	};*/
 
 	struct PositionComp : IComponent {
 		Vector3 position_;

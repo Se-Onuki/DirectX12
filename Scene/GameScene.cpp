@@ -28,8 +28,10 @@ void GameScene::OnEnter() {
 	world_ = World::GetInstance();
 	// world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
 
+
+
 	Archetype archetype;
-	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp>();
+	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime>();
 
 	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
 
@@ -82,6 +84,13 @@ void GameScene::Update() {
 			return not a->isAlive_;
 		}
 	));
+
+	for (const auto &[aliveTime] : mArray_->get<ECS::AliveTime>()) {
+		aliveTime->aliveTime_.GetTime() += deltaTime;
+	}
+	for (const auto &[id, aliveTime] : mArray_->get<ECS::Identifier, ECS::AliveTime>()) {
+		ImGui::Text("%s : %f", id->name_.data(), aliveTime->aliveTime_.GetTime());
+	}
 
 
 	for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
