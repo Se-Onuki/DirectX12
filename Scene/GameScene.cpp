@@ -26,9 +26,9 @@ void GameScene::OnEnter() {
 	light_ = DirectionLight::Create();
 
 	world_ = World::GetInstance();
-	// world_->GetEntityManager()->CreateEntity<ECS::TransformComp>();
+	cameraManager_->Init();
 
-
+	model_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 
 	Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::Color>();
@@ -48,6 +48,8 @@ void GameScene::OnEnter() {
 		const auto &[name, model] = (*mArray_->get<ECS::Identifier, ECS::ModelComp>().begin()[index]);
 		// データを代入
 		name->name_ = std::string("test") + std::to_string(i);
+
+		model->model_ = model_;
 	}
 
 	for (uint32_t i = 0u; i < 10u; i++) {
@@ -58,7 +60,10 @@ void GameScene::OnEnter() {
 		if (i % 2u == 0u) {
 			aliveTime->lifeLimit_ = i * 1.5f;
 		}
+		model->model_ = model_;
+
 	}
+
 }
 
 void GameScene::OnExit() {
@@ -102,7 +107,7 @@ void GameScene::Update() {
 	}
 
 	for (const auto &[id, aliveTime] : mArray_->get<ECS::Identifier, ECS::AliveTime>()) {
-		ImGui::Text("%s : %f", id->name_.data(), aliveTime->aliveTime_);
+		ImGui::Text("%s : %.2f", id->name_.data(), aliveTime->aliveTime_);
 	}
 
 
@@ -112,7 +117,7 @@ void GameScene::Update() {
 		SoLib::ImGuiWidget((id->name_.data() + std::string(" : rot")).c_str(), &rot->rotate_);
 	}
 
-	if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
+	/*if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
 		auto mSubArray = mArray_->get<ECS::IsAlive>();
 		auto mArrBegin = mSubArray.begin();
 		if (mArrBegin != mSubArray.end()) {
@@ -130,7 +135,10 @@ void GameScene::Update() {
 
 		SoLib::ImGuiWidget("Name", &name->name_);
 
-	}
+	}*/
+
+	cameraManager_->DisplayImGui();
+	cameraManager_->Update(deltaTime);
 
 }
 

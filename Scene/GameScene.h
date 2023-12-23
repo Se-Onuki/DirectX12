@@ -17,6 +17,7 @@
 
 #include "../Utils/Graphics/Color.h"
 #include "../Utils/IO/CSV.h"
+#include "../../Header/Object/Particle.h"
 
 class GameScene : public IScene {
 public:
@@ -37,9 +38,15 @@ private:
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
+	ArrayBuffer<Particle::ParticleData> particleArray_{ 1024u };
+
+
+	Model *model_ = nullptr;
+
 	World *world_ = nullptr;
 
 	std::unique_ptr<ECS::MultiArray> mArray_;
+	std::unique_ptr<ECS::MultiArray> emitterArray_;
 
 	SoLib::Color::RGB4 rgbFrom_ = Vector4::one;
 	SoLib::Color::RGB4 rgbTo_ = Vector4::one;
