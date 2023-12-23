@@ -13,6 +13,7 @@
 #include "../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../Utils/ConstString.h"
 #include "../../Utils/Math/Euler.h"
+#include "../../Utils/Graphics/Color.h"
 
 // class SpriteManager {
 // public:
@@ -55,7 +56,12 @@ namespace ECS {
 	};
 
 	struct AliveTime : IComponent {
-		SoLib::Time::SecondF aliveTime_{};
+		float aliveTime_{};
+		float lifeLimit_{};
+	};
+
+	struct Color : IComponent {
+		SoLib::Color::RGB4 color_{};
 	};
 
 	/*struct TransformComp : IComponent {

@@ -31,7 +31,7 @@ void GameScene::OnEnter() {
 
 
 	Archetype archetype;
-	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime>();
+	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::Color>();
 
 	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
 
@@ -52,11 +52,11 @@ void GameScene::OnEnter() {
 
 	for (uint32_t i = 0u; i < 10u; i++) {
 		// 作成されたデータへのポインタ
-		const auto &[name, model, alive] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::IsAlive>();
+		const auto &[name, model, aliveTime] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::AliveTime>();
 		// データを代入
 		name->name_ = std::string("test") + std::to_string(i + 10u);
 		if (i % 2u == 0u) {
-			alive->isAlive_ = false;
+			aliveTime->lifeLimit_ = i * 1.5f;
 		}
 	}
 }
@@ -85,11 +85,23 @@ void GameScene::Update() {
 		}
 	));
 
-	for (const auto &[aliveTime] : mArray_->get<ECS::AliveTime>()) {
-		aliveTime->aliveTime_.GetTime() += deltaTime;
+	for (const auto &[aliveTime, isAlive] : mArray_->get<ECS::AliveTime, ECS::IsAlive>()) {
+		// もし寿命が定められていたら
+		if (aliveTime->lifeLimit_ != 0.f) {
+			// 寿命を超過していたら
+			if (aliveTime->lifeLimit_ < aliveTime->aliveTime_) {
+				// 死ぬ
+				isAlive->isAlive_ = false;
+			}
+		}
 	}
+
+	for (const auto &[aliveTime] : mArray_->get<ECS::AliveTime>()) {
+		aliveTime->aliveTime_ += deltaTime;
+	}
+
 	for (const auto &[id, aliveTime] : mArray_->get<ECS::Identifier, ECS::AliveTime>()) {
-		ImGui::Text("%s : %f", id->name_.data(), aliveTime->aliveTime_.GetTime());
+		ImGui::Text("%s : %f", id->name_.data(), aliveTime->aliveTime_);
 	}
 
 
