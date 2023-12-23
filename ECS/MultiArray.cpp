@@ -6,12 +6,14 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 	// メモリの確保
 	memoryPtr_.reset(operator new(Archetype::OneChunkCapacity));
 
-	size_t capacity = archetype_->GetChunkCapacity();
+	//size_t capacity = archetype_->GetChunkCapacity();
+	//size_t offset = capacity / sizeof(memoryType);
+	size_t offset = 1u;
 
-	memoryType *address = reinterpret_cast<memoryType *>(memoryPtr_.get()) + sizeof(ECS::Entity) * capacity / sizeof(memoryType);
+	memoryType *address = reinterpret_cast<memoryType *>(memoryPtr_.get()) + sizeof(ECS::Entity) * offset;
 	for (const auto &classData : archetype_->data_) {
 		componentAddress_[classData.typeInfo_] = std::make_pair(address, classData);
-		address += (classData.size_ * capacity / sizeof(memoryType));
+		address += (classData.size_ * offset);
 	}
 
 }
@@ -87,7 +89,7 @@ void ECS::MultiChunk::Normalize() {
 void *ECS::MultiChunk::GetItemPtr(const std::type_index type, const uint32_t index) {
 	const auto &[itemPtr, classData] = componentAddress_.at(type);
 
-	return reinterpret_cast<memoryType *>(itemPtr) + classData.size_ / sizeof(memoryType) * index;
+	return reinterpret_cast<memoryType *>(itemPtr) + archetype_->GetTotalSize() * index;
 }
 
 std::unique_ptr<ECS::MultiChunk> &ECS::MultiArray::AddChunk() {

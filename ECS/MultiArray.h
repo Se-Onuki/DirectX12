@@ -80,6 +80,7 @@ namespace ECS {
 		private:
 			std::unordered_map<std::type_index, void *> componentAddress_;
 			uint32_t index_{};
+			size_t entitySize_{};
 
 		};
 
@@ -97,11 +98,12 @@ namespace ECS {
 
 		std::unordered_map<std::type_index, void *> componentAddress_;
 		uint32_t size_;
+		size_t entitySize_{};
 	};
 
 	class MultiChunk {
-		using memoryType = uint8_t;
 	public:
+		using memoryType = uint8_t;
 		MultiChunk(MultiArray *const parent);
 
 		/// @brief データの置き換えによるデータの破棄
@@ -307,6 +309,7 @@ namespace ECS {
 			result.componentAddress_.insert(std::make_pair(comp, ptr.first));
 		}
 		result.size_ = size_;
+		result.entitySize_ = archetype_->GetTotalSize();
 
 		return result;
 	}
@@ -319,8 +322,9 @@ namespace ECS {
 		assert(size_ > index);
 
 #endif // _DEBUG
+		size_t totalSize = archetype_->GetTotalSize();
 
-		return std::make_tuple(&(static_cast<Ts *const>(this->componentAddress_.at(typeid(Ts)).first)[index])...);
+		return std::make_tuple((reinterpret_cast<Ts *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(Ts)).first) + index * totalSize))...);
 
 
 	}
@@ -350,11 +354,12 @@ namespace ECS {
 	inline ComponetArray<Ts...>::iterator::iterator(ComponetArray *const compArray, uint32_t index) {
 		componentAddress_ = compArray->componentAddress_;
 		index_ = index;
+		entitySize_ = compArray->entitySize_;
 	}
 
 	template<typename ...Ts>
 	inline  std::tuple<Ts *const...> ComponetArray<Ts...>::iterator::operator*() {
-		return std::make_tuple(&(static_cast<Ts *const>(componentAddress_.at(typeid(Ts)))[index_])...);
+		return std::make_tuple((reinterpret_cast<Ts *const>(static_cast<MultiChunk::memoryType *const>(this->componentAddress_.at(typeid(Ts))) + index_ * entitySize_))...);
 	}
 
 	template<typename ...Ts>
