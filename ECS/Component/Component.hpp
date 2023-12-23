@@ -52,9 +52,15 @@ namespace ECS {
 		bool isAlive_ = true;
 	};
 
+	struct EmitterComp : IComponent {
+		int32_t count_;
+		SoLib::DeltaTimer frequency_;
+	};
+
 	struct Identifier : IComponent {
 		SoLib::ConstString<8u> name_;
 	};
+
 	struct BillboardRotate : IComponent {
 		std::bitset<3u> isActive_ = 0b111;
 	};

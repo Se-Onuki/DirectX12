@@ -31,6 +31,7 @@ void GameScene::OnEnter() {
 
 	ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->GetModel("Plane");
+	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
 
 	Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color>();
@@ -38,40 +39,42 @@ void GameScene::OnEnter() {
 	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
 
 	Archetype emitterArchetype;
-	emitterArchetype.AddClassData<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit>();
+	emitterArchetype.AddClassData<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 	emitterArray_ = std::make_unique<ECS::MultiArray>(emitterArchetype);
 
-	// エンティティの追加(idは先頭からのindex)
-	size_t entityID = mArray_->push_back();
-	// 添え字を使って要素にアクセス。
-	mArray_->GetItem<ECS::Identifier>(entityID).name_ = "hello";
-	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
-	mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
+	//// エンティティの追加(idは先頭からのindex)
+	//size_t entityID = mArray_->push_back();
+	//// 添え字を使って要素にアクセス。
+	//mArray_->GetItem<ECS::Identifier>(entityID).name_ = "hello";
+	//mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
+	//mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
 
-	for (uint32_t i = 0u; i < 10u; i++) {
-		size_t index = mArray_->push_back();
-		// 要素を追加し、その要素のデータをイテレータから取得してstd::tupleで展開する
-		const auto &[name, model] = (*mArray_->get<ECS::Identifier, ECS::ModelComp>().begin()[index]);
-		// データを代入
-		name->name_ = std::string("test") + std::to_string(i);
+	//for (uint32_t i = 0u; i < 10u; i++) {
+	//	size_t index = mArray_->push_back();
+	//	// 要素を追加し、その要素のデータをイテレータから取得してstd::tupleで展開する
+	//	const auto &[name, model] = (*mArray_->get<ECS::Identifier, ECS::ModelComp>().begin()[index]);
+	//	// データを代入
+	//	name->name_ = std::string("test") + std::to_string(i);
 
-		model->model_ = model_;
-	}
+	//	model->model_ = model_;
+	//}
 
 	for (uint32_t i = 0u; i < 10u; i++) {
 		// 作成されたデータへのポインタ
 		const auto &[name, model, aliveTime] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit>();
 		// データを代入
-		name->name_ = std::string("test") + std::to_string(i + 10u);
-		if (i % 2u == 0u) {
-			aliveTime->lifeLimit_ = i * 1.5f;
-		}
+		name->name_ = std::string("test") + std::to_string(i);
+		//if (i % 2u == 0u) {
+		aliveTime->lifeLimit_ = 2.f;
+		//}
 		model->model_ = model_;
 
 	}
 
-	const auto &[id] = emitterArray_->create_back<ECS::Identifier>();
+	const auto &[id, emittComp] = emitterArray_->create_back<ECS::Identifier, ECS::EmitterComp>();
 	id->name_ = "emitter";
+	emittComp->count_ = 1u;
+	emittComp->frequency_.Start(0.2f);
 }
 
 void GameScene::OnExit() {
@@ -114,12 +117,42 @@ void GameScene::Update() {
 		}
 	}
 
+	for (const auto &[aliveTime, lifeLimit, color] : mArray_->get<ECS::AliveTime, ECS::LifeLimit, ECS::Color>()) {
+		// もし寿命が定められていたら
+		if (lifeLimit->lifeLimit_ != 0.f) {
+			color->color_ = SoLib::Lerp(rgbFrom_, rgbTo_, aliveTime->aliveTime_ / lifeLimit->lifeLimit_);
+		}
+	}
+
 	for (const auto &[aliveTime] : mArray_->get<ECS::AliveTime>()) {
 		// 生存時間を加算
 		aliveTime->aliveTime_ += deltaTime;
 	}
 
-	for (const auto &[id, aliveTime] : mArray_->get<ECS::Identifier, ECS::AliveTime>()) {
+	for (const auto &[aliveTime] : emitterArray_->get<ECS::AliveTime>()) {
+		// 生存時間を加算
+		aliveTime->aliveTime_ += deltaTime;
+	}
+
+	for (const auto &[pos, rot, scale, transMat, emitterComp] : emitterArray_->get<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::EmitterComp>()) {
+		SoLib::ImGuiWidget("Emitter:Pos", &pos->position_);
+		SoLib::ImGuiWidget("Emitter:EmittCount", &emitterComp->count_);
+		SoLib::ImGuiWidget("Emitter:EmittSpan", &emitterComp->frequency_);
+		emitterComp->frequency_.Update(deltaTime);
+		if (emitterComp->frequency_.IsFinish()) {
+			emitterComp->frequency_.Start();
+			for (int32_t i = 0u; i < emitterComp->count_; i++) {
+				const auto &[cId, cModel, cLifeLimit, cPos] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp>();
+
+				cModel->model_ = model_;
+				cLifeLimit->lifeLimit_ = 10.f;
+
+				*cPos = *pos;
+			}
+		}
+	}
+
+	/*for (const auto &[id, aliveTime] : mArray_->get<ECS::Identifier, ECS::AliveTime>()) {
 		ImGui::Text("%s : %.2f", id->name_.data(), aliveTime->aliveTime_);
 	}
 
@@ -128,7 +161,7 @@ void GameScene::Update() {
 		ImGui::Text("%s,%x\n", id->name_.data(), model->model_);
 		SoLib::ImGuiWidget((id->name_.data() + std::string(" : pos")).c_str(), &pos->position_);
 		SoLib::ImGuiWidget((id->name_.data() + std::string(" : rot")).c_str(), &rot->rotate_);
-	}
+	}*/
 
 	for (const auto &[scale, rotate, pos, mat] : mArray_->get<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp>()) {
 
@@ -144,34 +177,11 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[color, mat] : mArray_->get< ECS::Color, ECS::TransformMatComp>()) {
-
+	for (const auto &[color, mat] : mArray_->get<ECS::Color, ECS::TransformMatComp>()) {
 
 		particleArray_.push_back(Particle::ParticleData{ .transform = *mat,.color = color->color_ });
 
 	}
-
-
-
-	/*if (input_->GetDirectInput()->IsTrigger(DIK_P)) {
-		auto mSubArray = mArray_->get<ECS::IsAlive>();
-		auto mArrBegin = mSubArray.begin();
-		if (mArrBegin != mSubArray.end()) {
-
-			const auto &[alive] = *mArrBegin;
-			alive->isAlive_ = false;
-		}
-	}
-
-	auto mSubArray = mArray_->get<ECS::Identifier>();
-	auto mArrBegin = mSubArray.begin();
-	if (mArrBegin != mSubArray.end()) {
-
-		const auto &[name] = *mArrBegin;
-
-		SoLib::ImGuiWidget("Name", &name->name_);
-
-	}*/
 
 
 }
