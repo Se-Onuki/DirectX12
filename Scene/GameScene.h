@@ -41,7 +41,9 @@ private:
 
 	std::unique_ptr<ECS::MultiArray> mArray_;
 
-	SoLib::Color::RGB4 rgb_ = Vector4::one;
+	SoLib::Color::RGB4 rgbFrom_ = Vector4::one;
+	SoLib::Color::RGB4 rgbTo_ = Vector4::one;
+	float t_{};
 
 	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
 

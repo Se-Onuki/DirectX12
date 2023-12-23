@@ -77,7 +77,12 @@ void GameScene::Update() {
 		}
 	));
 
-	SoLib::ImGuiWidget("Color", &rgb_);
+	SoLib::ImGuiWidget("ColorFrom", &rgbFrom_);
+	SoLib::ImGuiWidget("ColorTo", &rgbTo_);
+	SoLib::ImGuiWidget("ColorT", &t_);
+	SoLib::Color::RGB4 resultColor = SoLib::Lerp(rgbFrom_, rgbTo_, t_);
+	SoLib::ImGuiWidget("ResultColor", &resultColor);
+
 
 	for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
 		ImGui::Text("%s,%x\n", id->name_.data(), model->model_);
