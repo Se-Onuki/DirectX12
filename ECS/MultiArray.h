@@ -318,6 +318,7 @@ namespace ECS {
 			return this->get<T, Ts...>().begin()[totalIndex];
 		}
 
+		size_t size() const;
 
 		void swap(const size_t totalIndexF, const size_t totalIndexS);
 

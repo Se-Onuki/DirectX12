@@ -689,6 +689,9 @@
     <ClInclude Include="Utils\Containers\Array2D.h">
       <Filter>Utils\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Containers\ConstVector.h">
+      <Filter>Utils\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

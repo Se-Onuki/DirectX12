@@ -18,6 +18,7 @@
 #include "../Utils/Graphics/Color.h"
 #include "../Utils/IO/CSV.h"
 #include "../../Header/Object/Particle.h"
+#include "../Utils/Containers/ConstVector.h"
 
 class GameScene : public IScene {
 public:

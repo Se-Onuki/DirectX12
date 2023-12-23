@@ -1,20 +1,21 @@
 #pragma once
 #include <memory>
 
-#include <typeinfo>
 #include <concepts>
+#include <typeinfo>
 
-#include <string>
-#include <unordered_map>
-#include "../../Utils/Math/Transform.h"
-#include "../../Utils/Math/Vector2.h"
-#include "../../Utils/Math/Vector3.h"
 #include "../../Engine/DirectBase/Model/Model.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../Utils/ConstString.h"
-#include "../../Utils/Math/Euler.h"
+#include "../../Utils/Containers/ConstVector.h"
 #include "../../Utils/Graphics/Color.h"
+#include "../../Utils/Math/Euler.h"
+#include "../../Utils/Math/Transform.h"
+#include "../../Utils/Math/Vector2.h"
+#include "../../Utils/Math/Vector3.h"
 #include <bitset>
+#include <string>
+#include <unordered_map>
 
 // class SpriteManager {
 // public:
@@ -52,9 +53,34 @@ namespace ECS {
 		bool isAlive_ = true;
 	};
 
+	struct ParticleComp : IComponent {
+		SoLib::Color::RGB4 start_;
+		SoLib::Color::RGB4 end_;
+	};
+
 	struct EmitterComp : IComponent {
 		int32_t count_;
 		SoLib::DeltaTimer frequency_;
+		SoLib::Color::RGB4 startColor_ = 0xFFFFFFFF;
+		SoLib::Color::RGB4 endColor_{};
+
+		ValueRange<float> spawnLifeLimit_{ };
+
+		ValueRange<float> spawnPower_{};
+		SoLib::Math::Euler spawnRange_{};
+
+		// SoLib::ConstVector<uint32_t, 7u> color_;
+
+
+		bool ImGuiWidget(const char *const label) {
+			bool isChanged = false;
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : EmittCount" }).c_str(), &count_);
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : EmittSpan" }).c_str(), &frequency_);
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnLifeLimit" }).c_str(), &spawnLifeLimit_);
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnPower" }).c_str(), &spawnPower_);
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnRange" }).c_str(), &spawnRange_);
+			return isChanged;
+		}
 	};
 
 	struct Identifier : IComponent {
