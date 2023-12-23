@@ -9,6 +9,7 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 	//size_t capacity = archetype_->GetChunkCapacity();
 	//size_t offset = capacity / sizeof(memoryType);
 	size_t offset = 1u;
+	entitySize_ = static_cast<uint32_t>(archetype_->GetTotalSize());
 
 	memoryType *address = reinterpret_cast<memoryType *>(memoryPtr_.get()) + sizeof(ECS::Entity) * offset;
 	for (const auto &classData : archetype_->data_) {
@@ -20,15 +21,18 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 
 void ECS::MultiChunk::erase(uint32_t index) {
 	if (size_ > index) {
-		for (const auto &classData : archetype_->data_) {
+		//size_t totalSize = archetype_->GetTotalSize();
+		//for (const auto &classData : archetype_->data_) {
 			// 破棄するデータのアドレスを取得
-			auto ptr = GetItemPtr(classData.typeInfo_, index);
-			// 末尾のデータのアドレスをを取得
-			auto backPtr = GetItemPtr(classData.typeInfo_, size_ - 1u);
-			// 破棄するデータを末尾のデータで上書き
-			std::memcpy(ptr, backPtr, classData.size_);
+			//auto ptr = GetItemPtr(classData.typeInfo_, index);
+		auto ptr = GetEntityPtr(index);
+		// 末尾のデータのアドレスをを取得
+		//auto backPtr = GetItemPtr(classData.typeInfo_, size_ - 1u);
+		auto backPtr = GetEntityPtr(size_ - 1u);
+		// 破棄するデータを末尾のデータで上書き
+		std::memcpy(ptr, backPtr, entitySize_);
 
-		}
+		//}
 		// 配列のサイズを短縮
 		size_--;
 	}
@@ -89,7 +93,11 @@ void ECS::MultiChunk::Normalize() {
 void *ECS::MultiChunk::GetItemPtr(const std::type_index type, const uint32_t index) {
 	const auto &[itemPtr, classData] = componentAddress_.at(type);
 
-	return reinterpret_cast<memoryType *>(itemPtr) + archetype_->GetTotalSize() * index;
+	return reinterpret_cast<memoryType *>(itemPtr) + entitySize_ * index;
+}
+
+void *ECS::MultiChunk::GetEntityPtr(const uint32_t index) {
+	return reinterpret_cast<memoryType *>(this->memoryPtr_.get()) + entitySize_ * index;
 }
 
 std::unique_ptr<ECS::MultiChunk> &ECS::MultiArray::AddChunk() {
@@ -192,29 +200,25 @@ size_t ECS::MultiArray::size() const {
 
 void ECS::MultiArray::swap(const size_t totalIndexF, const size_t totalIndexS) {
 	const auto capacity = archetype_.GetChunkCapacity();
+	const auto entitySize = archetype_.GetTotalSize();
 
 	auto &firstItem = multiChunk_[totalIndexF / capacity];
 	auto &secondItem = multiChunk_[totalIndexS / capacity];
 
-	size_t maxMemSize{};
-	for (const auto &classData : archetype_.data_) {
-		maxMemSize = (std::max)(maxMemSize, classData.size_);
-
-	}
 	// 一時的なメモリを最大値で確保
-	std::unique_ptr<char[]> temp(std::make_unique<char[]>(maxMemSize));
+	std::unique_ptr<char[]> temp(std::make_unique<char[]>(entitySize));
 
-	for (const auto &classData : archetype_.data_) {
+	//for (const auto &classData : archetype_.data_) {
 
 		// 破棄するデータのアドレスを取得
-		auto fPtr = firstItem->GetItemPtr(classData.typeInfo_, static_cast<uint32_t>(totalIndexF % capacity));
-		// 末尾のデータのアドレスをを取得
-		auto sPtr = secondItem->GetItemPtr(classData.typeInfo_, static_cast<uint32_t>(totalIndexS % capacity));
+	auto fPtr = firstItem->GetEntityPtr(static_cast<uint32_t>(totalIndexF % capacity));
+	// 末尾のデータのアドレスをを取得
+	auto sPtr = secondItem->GetEntityPtr(static_cast<uint32_t>(totalIndexS % capacity));
 
-		std::memcpy(temp.get(), fPtr, classData.size_);
-		std::memcpy(fPtr, sPtr, classData.size_);
-		std::memcpy(sPtr, temp.get(), classData.size_);
+	std::memcpy(temp.get(), fPtr, entitySize);
+	std::memcpy(fPtr, sPtr, entitySize);
+	std::memcpy(sPtr, temp.get(), entitySize);
 
-	}
+	//}
 
 }

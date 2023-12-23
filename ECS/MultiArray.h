@@ -127,6 +127,8 @@ namespace ECS {
 
 		void *GetItemPtr(const std::type_index type, const uint32_t index);
 
+		void *GetEntityPtr(const uint32_t index);
+
 		template<typename... Ts>
 		ComponetArray<Ts...> get();
 
@@ -160,6 +162,7 @@ namespace ECS {
 
 	private:
 		uint32_t size_{};
+		uint32_t entitySize_{};
 
 		MultiArray *const parent_ = nullptr;
 		const Archetype *const archetype_;
