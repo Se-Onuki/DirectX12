@@ -121,6 +121,9 @@
     <Filter Include="Utils\IO">
       <UniqueIdentifier>{f6b1456a-8fef-4089-b818-81770d49cd28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Containers">
+      <UniqueIdentifier>{0f92dbed-cd85-4b89-919d-4810ed34015e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -684,7 +687,7 @@
       <Filter>Utils\IO</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Containers\Array2D.h">
-      <Filter>Utils</Filter>
+      <Filter>Utils\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

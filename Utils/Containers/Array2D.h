@@ -9,6 +9,7 @@ namespace SoLib {
 		class Array2D {
 		public:
 			// コンストラクタ
+			Array2D() = default;
 			Array2D(size_t rows, size_t cols) { Resize(rows, cols); }
 
 			// 行数を取得
