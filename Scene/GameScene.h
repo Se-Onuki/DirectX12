@@ -41,7 +41,9 @@ private:
 
 	std::unique_ptr<ECS::MultiArray> mArray_;
 
-	SoLib::Color::RGB4 rgb_ = Vector4::one;
+	SoLib::Color::RGB4 rgbFrom_ = Vector4::one;
+	SoLib::Color::RGB4 rgbTo_ = Vector4::one;
+	float t_{};
 
 	SoLib::IO::File file_;
 	SoLib::IO::CSV csv_;
