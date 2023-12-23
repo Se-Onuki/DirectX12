@@ -67,6 +67,12 @@ void GameScene::Update() {
 
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
+	SoLib::ImGuiWidget("ColorFrom", &rgbFrom_);
+	SoLib::ImGuiWidget("ColorTo", &rgbTo_);
+	SoLib::ImGuiWidget("ColorT", &t_);
+	SoLib::Color::RGB4 resultColor = SoLib::Lerp(rgbFrom_, rgbTo_, t_);
+	SoLib::ImGuiWidget("ResultColor", &resultColor);
+
 	//light_->ImGuiWidget();
 
 	// もし生存フラグが折れていたら、配列から削除
@@ -76,12 +82,6 @@ void GameScene::Update() {
 			return not a->isAlive_;
 		}
 	));
-
-	SoLib::ImGuiWidget("ColorFrom", &rgbFrom_);
-	SoLib::ImGuiWidget("ColorTo", &rgbTo_);
-	SoLib::ImGuiWidget("ColorT", &t_);
-	SoLib::Color::RGB4 resultColor = SoLib::Lerp(rgbFrom_, rgbTo_, t_);
-	SoLib::ImGuiWidget("ResultColor", &resultColor);
 
 
 	for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
