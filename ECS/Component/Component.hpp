@@ -57,6 +57,8 @@ namespace ECS {
 
 	struct AliveTime : IComponent {
 		float aliveTime_{};
+	};
+	struct LifeLimit : IComponent {
 		float lifeLimit_{};
 	};
 
