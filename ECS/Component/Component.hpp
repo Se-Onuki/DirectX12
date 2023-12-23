@@ -14,6 +14,7 @@
 #include "../../Utils/ConstString.h"
 #include "../../Utils/Math/Euler.h"
 #include "../../Utils/Graphics/Color.h"
+#include <bitset>
 
 // class SpriteManager {
 // public:
@@ -53,6 +54,9 @@ namespace ECS {
 
 	struct Identifier : IComponent {
 		SoLib::ConstString<8u> name_;
+	};
+	struct BillboardRotate : IComponent {
+		std::bitset<3u> isActive_ = 0b111;
 	};
 
 	struct AliveTime : IComponent {

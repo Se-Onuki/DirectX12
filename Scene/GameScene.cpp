@@ -33,9 +33,13 @@ void GameScene::OnEnter() {
 	model_ = ModelManager::GetInstance()->GetModel("Plane");
 
 	Archetype archetype;
-	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::Color>();
+	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color>();
 
 	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
+
+	Archetype emitterArchetype;
+	emitterArchetype.AddClassData<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit>();
+	emitterArray_ = std::make_unique<ECS::MultiArray>(emitterArchetype);
 
 	// エンティティの追加(idは先頭からのindex)
 	size_t entityID = mArray_->push_back();
@@ -66,6 +70,8 @@ void GameScene::OnEnter() {
 
 	}
 
+	const auto &[id] = emitterArray_->create_back<ECS::Identifier>();
+	id->name_ = "emitter";
 }
 
 void GameScene::OnExit() {
@@ -83,6 +89,9 @@ void GameScene::Update() {
 	SoLib::ImGuiWidget("ResultColor", &resultColor);
 
 	//light_->ImGuiWidget();
+
+	cameraManager_->DisplayImGui();
+	cameraManager_->Update(deltaTime);
 
 	particleArray_.clear();
 
@@ -127,6 +136,14 @@ void GameScene::Update() {
 
 	}
 
+	Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
+
+	for (const auto &[billboard, mat] : mArray_->get<ECS::BillboardRotate, ECS::TransformMatComp>()) {
+
+		*mat = mat->transformMat_ * billboardMat;
+
+	}
+
 	for (const auto &[color, mat] : mArray_->get< ECS::Color, ECS::TransformMatComp>()) {
 
 
@@ -156,8 +173,6 @@ void GameScene::Update() {
 
 	}*/
 
-	cameraManager_->DisplayImGui();
-	cameraManager_->Update(deltaTime);
 
 }
 
