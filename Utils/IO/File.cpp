@@ -2,8 +2,8 @@
 
 SoLib::IO::Value &SoLib::IO::Value::convert() {
 
-	if (std::holds_alternative<SoLib::ConstString<12u>>(item_)) {
-		const std::string strValue = std::get<SoLib::ConstString<12u>>(item_).data();
+	if (std::holds_alternative<SoLib::Text::ConstString<12u>>(item_)) {
+		const std::string strValue = std::get<SoLib::Text::ConstString<12u>>(item_).data();
 
 		// 数字と小数点以外の文字を検知
 		if (strValue.find_first_not_of("-0123456789.") != std::string::npos) {

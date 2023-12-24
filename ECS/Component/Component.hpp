@@ -6,7 +6,7 @@
 
 #include "../../Engine/DirectBase/Model/Model.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
-#include "../../Utils/ConstString.h"
+#include "../../Utils/Text/ConstString.h"
 #include "../../Utils/Containers/ConstVector.h"
 #include "../../Utils/Graphics/Color.h"
 #include "../../Utils/Math/Euler.h"
@@ -84,7 +84,7 @@ namespace ECS {
 	};
 
 	struct Identifier : IComponent {
-		SoLib::ConstString<8u> name_;
+		SoLib::Text::ConstString<8u> name_;
 	};
 
 	struct BillboardRotate : IComponent {

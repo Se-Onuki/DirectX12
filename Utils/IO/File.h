@@ -5,21 +5,21 @@
 
 #include <variant>
 #include <optional>
-#include "../ConstString.h"
+#include "../Text/ConstString.h"
 
 namespace SoLib {
 
 	namespace IO {
 
-		using ValueItem = std::variant<int32_t, float, SoLib::ConstString<12u>>;
+		using ValueItem = std::variant<int32_t, float, SoLib::Text::ConstString<12u>>;
 		class Value final {
 		public:
-			Value(const SoLib::ConstString<12u> &str = {}) : item_(str) {};
+			Value(const SoLib::Text::ConstString<12u> &str = {}) : item_(str) {};
 			Value(const std::string &value) { *this = value; }
 			Value(const ValueItem &value) : item_(value) {}
 			~Value() = default;
 
-			Value &operator=(const std::string &value) { item_ = SoLib::ConstString<12u>{ value.c_str() }; return *this; }
+			Value &operator=(const std::string &value) { item_ = SoLib::Text::ConstString<12u>{ value.c_str() }; return *this; }
 			Value &operator=(const ValueItem &value) { item_ = value; return *this; }
 			Value &operator=(ValueItem &&value) { item_ = value; return *this; }
 
