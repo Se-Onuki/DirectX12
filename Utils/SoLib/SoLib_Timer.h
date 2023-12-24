@@ -2,6 +2,7 @@
 #include <functional>
 #include <chrono>
 #include "SoLib_Traits.h"
+#include "SoLib_ImGui.h"
 
 
 namespace SoLib {
@@ -27,9 +28,11 @@ namespace SoLib {
 
 			using type = T;
 
-			const T GetTime() const noexcept { return time_; }
+			T &GetTime()  noexcept { return time_; }
+			const T &GetTime() const noexcept { return time_; }
 
-			inline operator T () const noexcept { return time_; }
+			inline operator T &()  noexcept { return time_; }
+			inline operator const T &() const noexcept { return time_; }
 
 			inline operator std::chrono::duration<T>() const noexcept { return static_cast<std::chrono::duration<T>>(time_); };
 
@@ -135,15 +138,17 @@ namespace SoLib {
 			inline void SetGoal(float Goal) { goalFlame_ = Goal; }
 
 		public:
-			DeltaTimer(float goal = 0u, bool start = false) : goalFlame_(goal), nowFlame_(0), isFinish_(true), isActive_(false) {
+			DeltaTimer(float goal = 0.f, bool start = false) : goalFlame_(goal), nowFlame_(0.f), isFinish_(true), isActive_(false) {
 				if (start) {
 					Start(goal);
 				}
 			}
 
+			bool ImGuiWidget(const char *const label);
+
 			/// @brief 更新処理 ( 基本的に各フレームの先頭で行うこと )
 			/// @return bool 実行中である場合true
-			virtual bool Update(float deltaTime);
+			bool Update(float deltaTime);
 
 			/// @brief フレームのリセット
 			void Start();
@@ -190,3 +195,31 @@ namespace SoLib {
 
 	using namespace Time;
 }
+
+inline bool SoLib::DeltaTimer::ImGuiWidget(const char *const label) {
+
+#ifdef _DEBUG
+	bool isChanged = false;
+
+	isChanged |= ImGui::DragFloat(label, &this->goalFlame_, 0.1f, 0.f, 100.f, "%.3fsec");
+
+	if (ImGui::Button("Stop")) {
+		this->Clear();
+		isChanged = true;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Start")) {
+		this->Start();
+		isChanged = true;
+	}
+
+	return isChanged;
+
+#else
+
+	label;
+	return false;
+
+#endif // _DEBUG
+
+	}

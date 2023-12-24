@@ -4,6 +4,7 @@
 #include "../Base/DirectXCommon.h"
 
 #include "../Render/Render.h"
+#include "../../../Utils/SoLib/SoLib_ImGui.h"
 
 
 void Camera<Render::CameraType::Projecction>::Init() {
@@ -41,7 +42,7 @@ bool Camera<Render::CameraType::Projecction>::ImGuiWidget(std::string id)
 	if (ImGui::TreeNode(id.c_str())) {
 		bool isUsing = false;
 
-		isUsing |= ImGui::DragFloat3("Rotate", &rotation_.x, Angle::Dig2Rad);
+		isUsing |= SoLib::ImGuiDragEuler("Rotate", &rotation_.x);
 
 		isUsing |= ImGui::DragFloat3("Transform", &translation_.x, 0.01f);
 

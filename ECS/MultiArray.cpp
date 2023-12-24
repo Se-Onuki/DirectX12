@@ -175,6 +175,19 @@ void ECS::MultiArray::erase(const size_t totalIndex) {
 	multiChunk_[totalIndex / capacity]->erase(static_cast<uint32_t>(totalIndex % capacity));
 }
 
+size_t ECS::MultiArray::size() const {
+	// チャンクの数
+	size_t chunkCount = this->multiChunk_.size();
+	// もしチャンクが空なら
+	if (not chunkCount) {
+		return 0u;
+	}
+	else {
+		size_t chunkCapacity = archetype_.GetChunkCapacity();
+		return (chunkCount - 1u) * chunkCapacity + multiChunk_.back()->size();
+	}
+}
+
 void ECS::MultiArray::swap(const size_t totalIndexF, const size_t totalIndexS) {
 	const auto capacity = archetype_.GetChunkCapacity();
 

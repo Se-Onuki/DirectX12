@@ -9,7 +9,8 @@ namespace SoLib {
 		class Array2D {
 		public:
 			// コンストラクタ
-			Array2D(size_t rows = 0u, size_t cols = 0u) { Resize(rows, cols); }
+			Array2D() = default;
+			Array2D(size_t rows, size_t cols) { Resize(rows, cols); }
 
 			// 行数を取得
 			size_t GetRows() const {

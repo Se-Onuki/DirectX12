@@ -8,6 +8,7 @@ const SoLib::Color::RGB4 kBlue = 0x0000FF00;
 
 SoLib::Color::RGB4::RGB4(const std::array<float, 4u> &color) {
 	std::memcpy(this->data(), color.data(), sizeof(RGB4));
+	Clamp();
 }
 
 SoLib::Color::RGB4::RGB4(const std::array<uint8_t, 4u> color) {
@@ -62,7 +63,7 @@ SoLib::Color::RGB4 SoLib::Color::operator+(const RGB4 &a, const RGB4 &b) {
 	RGB4 result;
 
 	for (uint8_t i = 0u; i < 4; i++) {
-		result.data()[i] = std::clamp(a.data()[i] + b.data()[i], 0.f, 1.f);
+		result.data()[i] = a.data()[i] + b.data()[i];
 	}
 
 	return result;
@@ -71,7 +72,7 @@ SoLib::Color::RGB4 SoLib::Color::operator-(const RGB4 &a, const RGB4 &b) {
 	RGB4 result;
 
 	for (uint8_t i = 0u; i < 4; i++) {
-		result.data()[i] = std::clamp(a.data()[i] - b.data()[i], 0.f, 1.f);
+		result.data()[i] = a.data()[i] - b.data()[i];
 	}
 
 	return result;
@@ -80,7 +81,7 @@ SoLib::Color::RGB4 SoLib::Color::operator*(const RGB4 &a, const float b) {
 	RGB4 result;
 
 	for (uint8_t i = 0u; i < 4; i++) {
-		result.data()[i] = std::clamp(a.data()[i] * b, 0.f, 1.f);
+		result.data()[i] =a.data()[i] * b;
 	}
 
 	return result;

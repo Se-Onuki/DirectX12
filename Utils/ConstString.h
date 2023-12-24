@@ -4,6 +4,7 @@
 #include <string>
 #include "SoLib/SoLib_ImGui.h"
 #include "SoLib/SoLib_Json.h"
+
 namespace SoLib {
 	template<uint32_t size>
 	class ConstString {

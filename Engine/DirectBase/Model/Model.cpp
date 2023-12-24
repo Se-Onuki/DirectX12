@@ -673,6 +673,7 @@ Model *Model::CreatePlane() {
 	newModel->name_ = "plane";
 
 	material->Create();
+	material->blendMode_ = Model::BlendMode::kAdd;
 
 	mesh->SetMaterial(material.get());
 
