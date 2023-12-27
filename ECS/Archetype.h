@@ -10,7 +10,8 @@ class ClassData {
 public:
 	std::type_index typeInfo_ = typeid(void);
 	size_t size_;
-	std::function<void(void *)> constructor_;
+
+	void (*constructor_)(void *);
 
 	template<SoLib::IsNotPointer T>
 	static ClassData Create() {
