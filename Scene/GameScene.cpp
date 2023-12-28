@@ -116,18 +116,18 @@ void GameScene::Update() {
 	//	}
 	//));
 
-	for (const auto &hitChunk : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
-		for (const auto &[aliveTime, lifeLimit, isAlive] : hitChunk->get< ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
-			// もし寿命が定められていたら
-			if (lifeLimit->lifeLimit_ >= 0.f) {
-				// 寿命を超過していたら
-				if (lifeLimit->lifeLimit_ < aliveTime->aliveTime_) {
-					// 死ぬ
-					isAlive->isAlive_ = false;
-				}
+	//for (const auto &hitChunk : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
+	for (const auto &[aliveTime, lifeLimit, isAlive] : world_->viewClass< ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
+		// もし寿命が定められていたら
+		if (lifeLimit->lifeLimit_ >= 0.f) {
+			// 寿命を超過していたら
+			if (lifeLimit->lifeLimit_ < aliveTime->aliveTime_) {
+				// 死ぬ
+				isAlive->isAlive_ = false;
 			}
 		}
 	}
+	//}
 	//for (const auto &[aliveTime, lifeLimit, color] : mArray_->get<ECS::AliveTime, ECS::LifeLimit, ECS::Color>()) {
 	//	// もし寿命が定められていたら
 	//	if (lifeLimit->lifeLimit_ >= 0.f) {

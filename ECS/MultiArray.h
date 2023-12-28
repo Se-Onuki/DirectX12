@@ -182,7 +182,7 @@ namespace ECS {
 		template<typename... Ts>
 		class MultiCompArray {
 		public:
-
+			MultiCompArray() = default;
 			MultiCompArray(MultiChunkClass *const multiChunk, const uint32_t capacity) :pMultiChunk_(multiChunk), capacity_(capacity) {}
 			~MultiCompArray() = default;
 
@@ -243,7 +243,7 @@ namespace ECS {
 			iterator end();
 
 		private:
-			MultiChunkClass *const pMultiChunk_;
+			MultiChunkClass *pMultiChunk_;
 			uint32_t capacity_;
 		};
 

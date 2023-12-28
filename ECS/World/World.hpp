@@ -3,11 +3,73 @@
 #include <functional>
 #include <list>
 #include "../MultiArray.h"
-
-class SystemBase;
 namespace ECS {
 	class EntityManager;
+
+	template<typename... Ts>
+	class View {
+	public:
+		View() = default;
+
+		class iterator {
+		public:
+			iterator(View *const view) { mArrayList_ = view->mArrayList_; }
+
+			//private:
+			std::list<ECS::MultiArray *> mArrayList_;
+			std::list<ECS::MultiArray *>::iterator mArrayListItr_;
+
+			ECS::MultiArray::MultiCompArray<Ts...> mDataArray_;
+			ECS::MultiArray::MultiCompArray<Ts...>::iterator mDataArrayItr_;
+
+			std::tuple<Ts *const...> operator*() {
+				return *mDataArrayItr_;
+			}
+
+			iterator &operator++() {
+
+
+
+				return *this;
+			}
+
+			bool operator!=(const iterator &other) {
+				other;
+				return true;
+
+			}
+
+
+		};
+
+		iterator begin() {
+			iterator result{ this };
+			result.mArrayListItr_ = result.mArrayList_.begin();
+			if (result.mArrayList_.size()) {
+				result.mDataArray_ = (*result.mArrayListItr_)->get<Ts...>();
+				result.mDataArrayItr_ = result.mDataArray_.begin();
+			}
+			return result;
+		}
+
+		iterator end() {
+			iterator result{ this };
+			result.mArrayListItr_ = result.mArrayList_.end();
+
+			return result;
+		}
+
+
+
+		//private:
+
+		std::list<ECS::MultiArray *> mArrayList_;
+	};
+
 }
+
+
+class SystemBase;
 class World {
 
 public:
@@ -39,6 +101,21 @@ public:
 		for (const auto &[archetype, mArray] : chunkList_) {
 			if (checkArche <= archetype) {
 				result.push_back(mArray.get());
+			}
+		}
+		return result;
+	}
+
+	template<typename T, typename... Ts>
+	ECS::View<T, Ts...> viewClass() {
+		ECS::View<T, Ts...> result;
+
+		Archetype checkArche;
+		checkArche.AddClassData<T, Ts...>();
+
+		for (const auto &[archetype, mArray] : chunkList_) {
+			if (checkArche <= archetype) {
+				result.mArrayList_.push_back(mArray.get());
 			}
 		}
 		return result;
