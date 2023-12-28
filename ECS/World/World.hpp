@@ -150,6 +150,13 @@ public:
 		for (const auto &[archetype, chunk] : chunkList_) {
 			chunk->erase_if(func);
 		}
+		std::erase_if(chunkList_, [](const auto &pair)
+			{
+				// データが保存されていないコンテナを破棄する
+				return not pair.second->size();
+			}
+		);
+
 	}
 
 
