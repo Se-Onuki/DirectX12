@@ -25,7 +25,9 @@ void GameScene::OnEnter() {
 
 	light_ = DirectionLight::Create();
 
-	world_ = World::GetInstance();
+
+	world_ = std::make_unique<World>();
+	entityManager_ = world_->GetEntityManager();
 	cameraManager_->Init();
 	ModelManager::GetInstance()->CreateDefaultModel();
 
@@ -33,14 +35,16 @@ void GameScene::OnEnter() {
 	model_ = ModelManager::GetInstance()->GetModel("Plane");
 	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
 
-	Archetype archetype;
+	/*Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
 
 	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
 
 	Archetype emitterArchetype;
 	emitterArchetype.AddClassData<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
-	emitterArray_ = std::make_unique<ECS::MultiArray>(emitterArchetype);
+	emitterArray_ = std::make_unique<ECS::MultiArray>(emitterArchetype);*/
+
+	entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
 
 	//// エンティティの追加(idは先頭からのindex)
 	//size_t entityID = mArray_->push_back();
@@ -71,10 +75,10 @@ void GameScene::OnEnter() {
 	//
 	//}
 
-	const auto &[id, emittComp] = emitterArray_->create_back<ECS::Identifier, ECS::EmitterComp>();
+	/*const auto &[id, emittComp] = emitterArray_->create_back<ECS::Identifier, ECS::EmitterComp>();
 	id->name_ = "emitter";
 	emittComp->count_ = 1u;
-	emittComp->frequency_.Start(0.2f);
+	emittComp->frequency_.Start(0.2f);*/
 
 }
 
@@ -86,7 +90,7 @@ void GameScene::Update() {
 
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
-	ImGui::Text("ParticleCount / %lu", mArray_->size());
+	//ImGui::Text("ParticleCount / %lu", mArray_->size());
 
 	SoLib::ImGuiWidget("ColorFrom", &rgbFrom_);
 	SoLib::ImGuiWidget("ColorTo", &rgbTo_);
@@ -94,6 +98,9 @@ void GameScene::Update() {
 	SoLib::Color::RGB4 resultColor = SoLib::Lerp(rgbFrom_, rgbTo_, t_);
 	SoLib::ImGuiWidget("ResultColor", &resultColor);
 
+	static SoLib::Color::RGB4 testColor;
+
+	ImGui::ColorEdit4("testColor", testColor, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
 	//light_->ImGuiWidget();
 
 	cameraManager_->DisplayImGui();
@@ -101,116 +108,117 @@ void GameScene::Update() {
 
 	particleArray_.clear();
 
-	// もし生存フラグが折れていたら、配列から削除
-	mArray_->erase_if(std::function<bool(ECS::IsAlive *)>(
-		[](ECS::IsAlive *a)
-		{
-			return not a->isAlive_;
-		}
-	));
+	//// もし生存フラグが折れていたら、配列から削除
+	//mArray_->erase_if(std::function<bool(ECS::IsAlive *)>(
+	//	[](ECS::IsAlive *a)
+	//	{
+	//		return not a->isAlive_;
+	//	}
+	//));
 
-	for (const auto &[aliveTime, lifeLimit, isAlive] : mArray_->get<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
-		// もし寿命が定められていたら
-		if (lifeLimit->lifeLimit_ >= 0.f) {
-			// 寿命を超過していたら
-			if (lifeLimit->lifeLimit_ < aliveTime->aliveTime_) {
-				// 死ぬ
-				isAlive->isAlive_ = false;
-			}
-		}
-	}
-
-	for (const auto &[aliveTime, lifeLimit, color] : mArray_->get<ECS::AliveTime, ECS::LifeLimit, ECS::Color>()) {
-		// もし寿命が定められていたら
-		if (lifeLimit->lifeLimit_ >= 0.f) {
-			color->color_ = SoLib::Lerp(rgbFrom_, rgbTo_, aliveTime->aliveTime_ / lifeLimit->lifeLimit_);
-		}
-	}
-
-	for (const auto &[aliveTime] : mArray_->get<ECS::AliveTime>()) {
-		// 生存時間を加算
-		aliveTime->aliveTime_ += deltaTime;
-	}
-
-	for (const auto &[aliveTime] : emitterArray_->get<ECS::AliveTime>()) {
-		// 生存時間を加算
-		aliveTime->aliveTime_ += deltaTime;
-	}
-
-
-	for (const auto &[pos, velocity] : mArray_->get<ECS::PositionComp, ECS::VelocityComp>()) {
-
-		pos->position_ += *velocity;
-
-	}
-
-	for (const auto &[pos, rot, scale, transMat, emitterComp] : emitterArray_->get<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::EmitterComp>()) {
-
-		*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
-
-		SoLib::ImGuiWidget("Emitter : Pos", &pos->position_);
-		SoLib::ImGuiWidget("Emitter", emitterComp);
-
-		emitterComp->frequency_.Update(deltaTime);
-		if (emitterComp->frequency_.IsFinish()) {
-			emitterComp->frequency_.Start();
-			for (int32_t i = 0u; i < emitterComp->count_; i++) {
-				const auto &[cId, cModel, cLifeLimit, cPos, cVelocity] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp, ECS::VelocityComp>();
-
-				cModel->model_ = model_;
-				cLifeLimit->lifeLimit_ = emitterComp->spawnLifeLimit_.Random();
-
-				SoLib::Math::Euler fireDir = emitterComp->spawnRange_;
-				for (auto &item : fireDir) {
-					item = Random::GetRandom<float>(-item, item);
+	for (const auto &hitChunk : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
+		for (const auto &[aliveTime, lifeLimit, isAlive] : hitChunk->get< ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
+			// もし寿命が定められていたら
+			if (lifeLimit->lifeLimit_ >= 0.f) {
+				// 寿命を超過していたら
+				if (lifeLimit->lifeLimit_ < aliveTime->aliveTime_) {
+					// 死ぬ
+					isAlive->isAlive_ = false;
 				}
-
-				Vector3 direction;
-				direction.x = cos(fireDir.x) * cos(fireDir.y);
-				direction.y = sin(fireDir.x) * cos(fireDir.y);
-				direction.z = -sin(fireDir.y);
-
-				*cVelocity = direction * emitterComp->spawnPower_.Random()/* * Matrix4x4::EulerRotate(fireDir)*/;
-
-				*cPos = *pos;
-
 			}
 		}
 	}
+	//for (const auto &[aliveTime, lifeLimit, color] : mArray_->get<ECS::AliveTime, ECS::LifeLimit, ECS::Color>()) {
+	//	// もし寿命が定められていたら
+	//	if (lifeLimit->lifeLimit_ >= 0.f) {
+	//		color->color_ = SoLib::Lerp(rgbFrom_, rgbTo_, aliveTime->aliveTime_ / lifeLimit->lifeLimit_);
+	//	}
+	//}
 
-	/*for (const auto &[id, aliveTime] : mArray_->get<ECS::Identifier, ECS::AliveTime>()) {
-		ImGui::Text("%s : %.2f", id->name_.data(), aliveTime->aliveTime_);
-	}
+	//for (const auto &[aliveTime] : mArray_->get<ECS::AliveTime>()) {
+	//	// 生存時間を加算
+	//	aliveTime->aliveTime_ += deltaTime;
+	//}
+
+	//for (const auto &[aliveTime] : emitterArray_->get<ECS::AliveTime>()) {
+	//	// 生存時間を加算
+	//	aliveTime->aliveTime_ += deltaTime;
+	//}
 
 
-	for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
-		ImGui::Text("%s,%x\n", id->name_.data(), model->model_);
-		SoLib::ImGuiWidget((id->name_.data() + std::string(" : pos")).c_str(), &pos->position_);
-		SoLib::ImGuiWidget((id->name_.data() + std::string(" : rot")).c_str(), &rot->rotate_);
-	}*/
+	//for (const auto &[pos, velocity] : mArray_->get<ECS::PositionComp, ECS::VelocityComp>()) {
+
+	//	pos->position_ += *velocity;
+
+	//}
+
+	//for (const auto &[pos, rot, scale, transMat, emitterComp] : emitterArray_->get<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::EmitterComp>()) {
+
+	//	*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
+
+	//	SoLib::ImGuiWidget("Emitter : Pos", &pos->position_);
+	//	SoLib::ImGuiWidget("Emitter", emitterComp);
+
+	//	emitterComp->frequency_.Update(deltaTime);
+	//	if (emitterComp->frequency_.IsFinish()) {
+	//		emitterComp->frequency_.Start();
+	//		for (int32_t i = 0u; i < emitterComp->count_; i++) {
+	//			const auto &[cId, cModel, cLifeLimit, cPos, cVelocity] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp, ECS::VelocityComp>();
+
+	//			cModel->model_ = model_;
+	//			cLifeLimit->lifeLimit_ = emitterComp->spawnLifeLimit_.Random();
+
+	//			SoLib::Math::Euler fireDir = emitterComp->spawnRange_;
+	//			for (auto &item : fireDir) {
+	//				item = Random::GetRandom<float>(-item, item);
+	//			}
+
+	//			Vector3 direction;
+	//			direction.x = cos(fireDir.x) * cos(fireDir.y);
+	//			direction.y = sin(fireDir.x) * cos(fireDir.y);
+	//			direction.z = -sin(fireDir.y);
+
+	//			*cVelocity = direction * emitterComp->spawnPower_.Random()/* * Matrix4x4::EulerRotate(fireDir)*/;
+
+	//			*cPos = *pos;
+
+	//		}
+	//	}
+	//}
+
+	///*for (const auto &[id, aliveTime] : mArray_->get<ECS::Identifier, ECS::AliveTime>()) {
+	//	ImGui::Text("%s : %.2f", id->name_.data(), aliveTime->aliveTime_);
+	//}
 
 
-	Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
+	//for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
+	//	ImGui::Text("%s,%x\n", id->name_.data(), model->model_);
+	//	SoLib::ImGuiWidget((id->name_.data() + std::string(" : pos")).c_str(), &pos->position_);
+	//	SoLib::ImGuiWidget((id->name_.data() + std::string(" : rot")).c_str(), &rot->rotate_);
+	//}*/
 
-	for (const auto &[scale, rotate, pos, mat] : mArray_->get<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp>()) {
 
-		*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
-		mat->transformMat_ *= billboardMat;
-		*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3]) = *pos;
+	//Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
 
-	}
+	//for (const auto &[scale, rotate, pos, mat] : mArray_->get<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp>()) {
 
-	/*for (const auto &[billboard, mat] : mArray_->get<ECS::BillboardRotate, ECS::TransformMatComp>()) {
+	//	*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
+	//	mat->transformMat_ *= billboardMat;
+	//	*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3]) = *pos;
 
-		*mat = mat->transformMat_ * billboardMat;
+	//}
 
-	}*/
+	///*for (const auto &[billboard, mat] : mArray_->get<ECS::BillboardRotate, ECS::TransformMatComp>()) {
 
-	for (const auto &[color, billboard, mat] : mArray_->get<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
+	//	*mat = mat->transformMat_ * billboardMat;
 
-		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
+	//}*/
 
-	}
+	//for (const auto &[color, billboard, mat] : mArray_->get<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
+
+	//	particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
+
+	//}
 
 
 }

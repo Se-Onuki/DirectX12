@@ -30,23 +30,23 @@ namespace ECS {
 			return entity;
 		}*/
 
-		template<typename... Ts> const ECS::Entity CreateEntity() {
+		template<typename... Ts>
+		const ECS::Entity CreateEntity() {
 			ECS::Entity entity{};
 			Archetype archetype;
 			archetype.AddClassData<Ts...>();
 
-			entity.chunkId_ = static_cast<uint32_t>(world_->FindMatchChunk(archetype));
+			entity.arrayPtr_ = world_->GetChunk(archetype);
 
-			if (entity.chunkId_ == UINT32_MAX) {
-				entity.chunkId_ = static_cast<uint32_t>(world_->CreateChunk(archetype));
+			if (not entity.arrayPtr_) {
+				entity.arrayPtr_ = world_->CreateChunk(archetype);
 			}
-			Chunk *chunk = world_->GetChunk(entity.chunkId_);
-			entity.chunkIndex_ = chunk->entityCount_++;
-
-			Process<Ts...>(chunk);
+			entity.chunkIndex_ = entity.arrayPtr_->emplace_back<Ts...>();
 
 			return entity;
 		}
+		
+		/*
 
 		ECS::Entity CreateEntity(const uint32_t &chunkId) {
 			Chunk *targetChunk = world_->GetChunk(chunkId);
@@ -54,35 +54,36 @@ namespace ECS {
 			if (targetChunk->maxCount_ < targetChunk->entityCount_) {
 			}
 			ECS::Entity{ chunkId, targetChunk->entityCount_ };
-		}
+		}*/
 
 		// std::vector<Chunk&> FindHitChunk(const Archetype& archetype);
 
-		template<typename T> T &GetComponent(Entity entity) {
+		/*template<typename T> T &GetComponent(Entity entity) {
 			return world_->GetChunk(entity.chunkId_)->GetArray<T>()[entity.chunkIndex_];
-		}
+		}*/
 
-		template<typename T> void SetComponent(Entity entity, T &component) {
-			Chunk *chunk = world_->GetChunk(entity.chunkId_);
-			CustomArray &componentArray = chunk->GetCustomArray<T>();
-			if (componentArray.size() == chunk->size() &&
-				componentArray.size() <=
-				entity.chunkIndex_) // 配列の要素数がchunkの制御番号を超えていない +
-				// エンティティの登録番号がオーバーしていない。
-				return;
-			componentArray.setOrPush(entity.chunkIndex_, component);
-		}
+		//template<typename T> void SetComponent(Entity entity, T &component) {
+		//	Chunk *chunk = world_->GetChunk(entity.chunkId_);
+		//	CustomArray &componentArray = chunk->GetCustomArray<T>();
+		//	if (componentArray.size() == chunk->size() &&
+		//		componentArray.size() <=
+		//		entity.chunkIndex_) // 配列の要素数がchunkの制御番号を超えていない +
+		//		// エンティティの登録番号がオーバーしていない。
+		//		return;
+		//	componentArray.setOrPush(entity.chunkIndex_, component);
+		//}
 
 	private:
-		template<typename T, typename... Ts> void Process(Chunk *chunk) {
-			/*size_t hash =std::hash<std::string>{}(typeid(T).name()); */
-			//size_t size = sizeof(T);
-			chunk->GetCustomArray<T>().push_back<T>();
-			if constexpr (sizeof...(Ts) > 0) {
-				Process<Ts...>(chunk);
-			}
-		}
-		void CheckORCreateChunk() {}
+		//template<typename T, typename... Ts> void Process(Chunk *chunk) {
+		//	/*size_t hash =std::hash<std::string>{}(typeid(T).name()); */
+		//	//size_t size = sizeof(T);
+		//	chunk->GetCustomArray<T>().push_back<T>();
+		//	if constexpr (sizeof...(Ts) > 0) {
+		//		Process<Ts...>(chunk);
+		//	}
+		//}
+		//void CheckORCreateChunk() {}
+
 		World *world_;
 	};
 }

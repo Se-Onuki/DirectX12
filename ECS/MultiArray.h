@@ -250,7 +250,7 @@ namespace ECS {
 
 		const Archetype &GetArchetype() const { return archetype_; }
 
-		std::unique_ptr<MultiChunk> &AddChunk();
+		MultiChunk *AddChunk();
 
 		auto &GetChunk() { return multiChunk_; }
 
@@ -266,8 +266,8 @@ namespace ECS {
 		/// @return 追加された要素のindex
 		size_t push_back();
 
-		template<SoLib::IsNotPointer T>
-		T &GetItem(size_t totalIndex);
+		template<SoLib::IsNotPointer T, SoLib::IsNotPointer... Ts>
+		std::tuple<T *const, Ts *const...> GetItem(size_t totalIndex);
 
 		/// @brief 穴抜けの部分を埋める
 		void Normalize();
@@ -296,6 +296,9 @@ namespace ECS {
 
 		template<typename T, typename... Ts>
 		std::tuple<T *const, Ts *const...> create_back();
+
+		template<typename... Ts>
+		size_t emplace_back();
 
 	private:
 		Archetype archetype_;
@@ -333,11 +336,11 @@ namespace ECS {
 	}
 
 
-	template<SoLib::IsNotPointer T>
-	T &MultiArray::GetItem(size_t totalIndex) {
+	template<SoLib::IsNotPointer T, SoLib::IsNotPointer... Ts>
+	std::tuple<T *const, Ts *const...> MultiArray::GetItem(size_t totalIndex) {
 		const auto capacity = archetype_.GetChunkCapacity();
 
-		return *static_cast<T *>(multiChunk_[totalIndex / capacity]->GetItemPtr(typeid(T), static_cast<uint32_t>(totalIndex % capacity)));
+		return *static_cast<T *>(multiChunk_[totalIndex / capacity]->GetItem<T, Ts...>(static_cast<uint32_t>(totalIndex % capacity)));
 
 	}
 
@@ -444,6 +447,19 @@ namespace ECS {
 		return multiChunk_.back()->GetItem<T, Ts...>(static_cast<uint32_t>(totalIndex % archetype_.GetChunkCapacity()));
 
 		//return std::tuple<T, Ts...>();
+	}
+
+	template<typename ...Ts>
+	inline size_t MultiArray::emplace_back() {
+
+		size_t target = push_back();
+
+		const auto chunk = multiChunk_.back().get();
+		uint32_t index = static_cast<uint32_t>(target % archetype_.GetChunkCapacity());
+
+		(new (chunk->GetItemPtr(typeid(Ts), index)) Ts{}, ...);
+
+		return target;
 	}
 
 }

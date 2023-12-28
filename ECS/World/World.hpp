@@ -2,6 +2,7 @@
 #include "../Chunk/Chunk.hpp"
 #include <functional>
 #include <list>
+#include "../MultiArray.h"
 
 class SystemBase;
 namespace ECS {
@@ -10,81 +11,90 @@ namespace ECS {
 class World {
 
 public:
-	static World *GetInstance() {
-		static World instance;
-		return &instance;
-	}
+	World();
+	~World() = default;
 
 	ECS::EntityManager *GetEntityManager() { return entityManager_.get(); }
 
-	size_t CreateChunk(const Archetype &archetype) {
-		chunkList_.emplace_back(archetype, 16u);
-		return chunkList_.size() - 1u;
+	ECS::MultiArray *CreateChunk(const Archetype &archetype) {
+		chunkList_[archetype] = std::make_unique<ECS::MultiArray>(archetype);
+		return chunkList_.at(archetype).get();
 	}
-	size_t FindMatchChunk(const Archetype &archetype) {
-		for (uint32_t i = 0; i < chunkList_.size(); ++i) {
-			if (chunkList_[i].GetArchetype() == archetype) {
-				return i;
+
+	ECS::MultiArray *GetChunk(const Archetype &archetype) {
+		auto item = chunkList_.find(archetype);
+		if (item == chunkList_.end()) {
+			return nullptr;
+		}
+		return item->second.get();
+	}
+
+	template<typename T, typename... Ts>
+	std::list<ECS::MultiArray *> view() {
+		std::list<ECS::MultiArray *> result;
+
+		Archetype checkArche;
+		checkArche.AddClassData<T, Ts...>();
+
+		for (const auto &[archetype, mArray] : chunkList_) {
+			if (checkArche <= archetype) {
+				result.push_back(mArray.get());
 			}
 		}
-		return (std::numeric_limits<size_t>::max)();
+		return result;
 	}
 
-	Chunk *GetChunk(const uint32_t &index) { return &chunkList_[index]; }
-
-	std::vector<Chunk> chunkList_ = {};
-
-	template<typename A> void ForEach(std::function<void(A &)> func);
-	template<typename A, typename B> void ForEach(std::function<void(A &, B &)> func);
-	template<typename A, typename B, typename C> void ForEach(std::function<void(A &, B &, C &)> func);
+	//template<typename T, typename...Ts> void ForEach(const std::function<void(T *, Ts*...)> &func);
+	/*template<typename A, typename B> void ForEach(std::function<void(A &, B &)> func);
+	template<typename A, typename B, typename C> void ForEach(std::function<void(A &, B &, C &)> func);*/
 
 private:
-	World();
-	World(const World &) = delete;
-	World &operator==(const World &) = delete;
-	~World();
+	std::unordered_map<Archetype, std::unique_ptr<ECS::MultiArray>> chunkList_ = {};
 	std::unique_ptr<ECS::EntityManager> entityManager_;
 };
-
-template<typename A> inline void World::ForEach(std::function<void(A &)> func) {
-	Archetype arType;
-	arType.AddClassData<A>();
-	for (Chunk &chunk : chunkList_) {
-		if (!(arType <= chunk.GetArchetype()))
-			continue;
-		A *dataA = chunk.GetArray<A>();
-		for (uint32_t i = 0; i < chunk.entityCount_; i++) {
-			func(dataA[i]);
-		}
-	}
-}
-
-template<typename A, typename B> inline void World::ForEach(std::function<void(A &, B &)> func) {
-	Archetype arType;
-	arType.AddClassData<A, B>();
-	for (Chunk &chunk : chunkList_) {
-		if (!(arType <= chunk.GetArchetype()))
-			continue;
-		A *dataA = chunk.GetArray<A>();
-		B *dataB = chunk.GetArray<B>();
-		for (uint32_t i = 0; i < chunk.entityCount_; i++) {
-			func(dataA[i], dataB[i]);
-		}
-	}
-}
-
-template<typename A, typename B, typename C>
-inline void World::ForEach(std::function<void(A &, B &, C &)> func) {
-	Archetype arType;
-	arType.AddClassData<A, B, C>();
-	for (Chunk &chunk : chunkList_) {
-		if (!(arType <= chunk.GetArchetype()))
-			continue;
-		A *dataA = chunk.GetArray<A>();
-		B *dataB = chunk.GetArray<B>();
-		C *dataC = chunk.GetArray<C>();
-		for (uint32_t i = 0; i < chunk.entityCount_; i++) {
-			func(dataA[i], dataB[i], dataC[i]);
-		}
-	}
-}
+//
+//template<typename T, typename...Ts> inline void World::ForEach(const std::function<void(T *, Ts*...)> &func) {
+//	Archetype arType;
+//	arType.AddClassData<T, Ts...>();
+//	for (auto &[archetype, mArray] : chunkList_) {
+//		if (not (arType <= archetype)) { continue; }
+//		for (size_t i = 0; i < mArray->size(); i++) {
+//
+//			auto item = mArray->GetItem<T, Ts...>(i);
+//			std::apply([&](auto... args)
+//				{
+//					return func(args...);
+//				}, item);
+//		}
+//	}
+//}
+//
+//template<typename A, typename B> inline void World::ForEach(std::function<void(A &, B &)> func) {
+//	Archetype arType;
+//	arType.AddClassData<A, B>();
+//	for (Chunk &chunk : chunkList_) {
+//		if (!(arType <= chunk.GetArchetype()))
+//			continue;
+//		A *dataA = chunk.GetArray<A>();
+//		B *dataB = chunk.GetArray<B>();
+//		for (uint32_t i = 0; i < chunk.entityCount_; i++) {
+//			func(dataA[i], dataB[i]);
+//		}
+//	}
+//}
+//
+//template<typename A, typename B, typename C>
+//inline void World::ForEach(std::function<void(A &, B &, C &)> func) {
+//	Archetype arType;
+//	arType.AddClassData<A, B, C>();
+//	for (Chunk &chunk : chunkList_) {
+//		if (!(arType <= chunk.GetArchetype()))
+//			continue;
+//		A *dataA = chunk.GetArray<A>();
+//		B *dataB = chunk.GetArray<B>();
+//		C *dataC = chunk.GetArray<C>();
+//		for (uint32_t i = 0; i < chunk.entityCount_; i++) {
+//			func(dataA[i], dataB[i], dataC[i]);
+//		}
+//	}
+//}

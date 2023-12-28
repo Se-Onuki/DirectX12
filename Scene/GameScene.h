@@ -43,10 +43,11 @@ private:
 
 	Model *model_ = nullptr;
 
-	World *world_ = nullptr;
+	std::unique_ptr<World> world_ = nullptr;
+	ECS::EntityManager *entityManager_;
 
-	std::unique_ptr<ECS::MultiArray> mArray_;
-	std::unique_ptr<ECS::MultiArray> emitterArray_;
+	//std::unique_ptr<ECS::MultiArray> mArray_;
+	//std::unique_ptr<ECS::MultiArray> emitterArray_;
 
 	SoLib::Color::RGB4 rgbFrom_ = Vector4::one;
 	SoLib::Color::RGB4 rgbTo_ = Vector4::one;

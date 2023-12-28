@@ -71,10 +71,10 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 
 uint32_t ECS::MultiChunk::push_back() {
 
-	for (const auto &classData : archetype_->data_) {
+	/*for (const auto &classData : archetype_->data_) {
 		auto ptr = GetItemPtr(classData.typeInfo_, size_);
 		classData.constructor_(ptr);
-	}
+	}*/
 
 	return size_++;
 }
@@ -100,9 +100,9 @@ void *ECS::MultiChunk::GetEntityPtr(const uint32_t index) {
 	return reinterpret_cast<memoryType *>(this->memoryPtr_.get()) + entitySize_ * index;
 }
 
-std::unique_ptr<ECS::MultiChunk> &ECS::MultiArray::AddChunk() {
+ECS::MultiChunk *ECS::MultiArray::AddChunk() {
 	multiChunk_.push_back(std::make_unique<ECS::MultiChunk>(this));
-	return multiChunk_.back();
+	return multiChunk_.back().get();
 }
 
 size_t ECS::MultiArray::push_back() {

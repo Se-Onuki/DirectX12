@@ -1,11 +1,17 @@
 #pragma once
 #include <cstdint>
+
 namespace ECS {
+
+	class MultiArray;
 
 	class Entity {
 	public:
-		uint32_t chunkId_; // 所属チャンク
-		uint32_t chunkIndex_; // チャンク内番号
+		MultiArray *arrayPtr_;
+		size_t chunkIndex_; // チャンク内番号
+		uint32_t version_;
+
+
 
 		//template<typename T> T& GetComp();
 	};

@@ -90,3 +90,20 @@ private:
 	size_t totalSize_;
 	size_t chunkCapacity_;
 };
+
+
+
+namespace std {
+	template<>
+	struct hash<Archetype> {
+		std::size_t operator()(const Archetype &obj) const {
+			std::string typeNames;
+
+			for (const auto &type : obj.data_) {
+				typeNames += type.typeInfo_.name();
+			}
+			return std::hash<std::string>{}(typeNames);
+
+		}
+	};
+}
