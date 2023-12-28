@@ -31,7 +31,7 @@ namespace ECS {
 		}*/
 
 		template<typename... Ts>
-		const ECS::Entity CreateEntity() {
+		const ECS::Entity CreateEntity(uint32_t count = 1u) {
 			ECS::Entity entity{};
 			Archetype archetype;
 			archetype.AddClassData<Ts...>();
@@ -41,11 +41,13 @@ namespace ECS {
 			if (not entity.arrayPtr_) {
 				entity.arrayPtr_ = world_->CreateChunk(archetype);
 			}
-			entity.chunkIndex_ = entity.arrayPtr_->emplace_back<Ts...>();
+			for (uint32_t i = 0u; i < count; i++) {
+				entity.chunkIndex_ = entity.arrayPtr_->emplace_back<Ts...>();
+			}
 
 			return entity;
 		}
-		
+
 		/*
 
 		ECS::Entity CreateEntity(const uint32_t &chunkId) {

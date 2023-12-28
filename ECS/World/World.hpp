@@ -114,7 +114,7 @@ public:
 		return item->second.get();
 	}
 
-	template<typename T, typename... Ts>
+	/*template<typename T, typename... Ts>
 	std::list<ECS::MultiArray *> view() {
 		std::list<ECS::MultiArray *> result;
 
@@ -127,10 +127,10 @@ public:
 			}
 		}
 		return result;
-	}
+	}*/
 
 	template<typename T, typename... Ts>
-	ECS::View<T, Ts...> viewClass() {
+	ECS::View<T, Ts...> view() {
 		ECS::View<T, Ts...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 

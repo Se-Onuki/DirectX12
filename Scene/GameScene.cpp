@@ -44,7 +44,8 @@ void GameScene::OnEnter() {
 	emitterArchetype.AddClassData<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 	emitterArray_ = std::make_unique<ECS::MultiArray>(emitterArchetype);*/
 
-	entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
+	entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>(3u);
+	entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 
 	//// エンティティの追加(idは先頭からのindex)
 	//size_t entityID = mArray_->push_back();
@@ -117,7 +118,7 @@ void GameScene::Update() {
 	//));
 
 	//for (const auto &hitChunk : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
-	for (const auto &[aliveTime, lifeLimit, isAlive] : world_->viewClass< ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
+	for (const auto &[aliveTime, lifeLimit, isAlive] : world_->view< ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
 		// もし寿命が定められていたら
 		if (lifeLimit->lifeLimit_ >= 0.f) {
 			// 寿命を超過していたら
