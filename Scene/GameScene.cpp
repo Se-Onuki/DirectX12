@@ -109,13 +109,13 @@ void GameScene::Update() {
 
 	particleArray_.clear();
 
-	//// もし生存フラグが折れていたら、配列から削除
-	//mArray_->erase_if(std::function<bool(ECS::IsAlive *)>(
-	//	[](ECS::IsAlive *a)
-	//	{
-	//		return not a->isAlive_;
-	//	}
-	//));
+	// もし生存フラグが折れていたら、配列から削除
+	world_->erase_if(std::function<bool(ECS::IsAlive *)>(
+		[](ECS::IsAlive *a)
+		{
+			return not a->isAlive_;
+		}
+	));
 
 	//for (const auto &hitChunk : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
 	for (const auto &[aliveTime, lifeLimit, isAlive] : world_->view< ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
@@ -136,10 +136,10 @@ void GameScene::Update() {
 	//	}
 	//}
 
-	//for (const auto &[aliveTime] : mArray_->get<ECS::AliveTime>()) {
-	//	// 生存時間を加算
-	//	aliveTime->aliveTime_ += deltaTime;
-	//}
+	for (const auto &[aliveTime] : world_->view<ECS::AliveTime>()) {
+		// 生存時間を加算
+		aliveTime->aliveTime_ += deltaTime;
+	}
 
 	//for (const auto &[aliveTime] : emitterArray_->get<ECS::AliveTime>()) {
 	//	// 生存時間を加算

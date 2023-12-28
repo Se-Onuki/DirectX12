@@ -145,6 +145,14 @@ public:
 		return result;
 	}
 
+	template<typename T, typename...Ts>
+	void erase_if(const std::function <bool(T *, Ts *...)> &func) {
+		for (const auto &[archetype, chunk] : chunkList_) {
+			chunk->erase_if(func);
+		}
+	}
+
+
 	//template<typename T, typename...Ts> void ForEach(const std::function<void(T *, Ts*...)> &func);
 	/*template<typename A, typename B> void ForEach(std::function<void(A &, B &)> func);
 	template<typename A, typename B, typename C> void ForEach(std::function<void(A &, B &, C &)> func);*/
