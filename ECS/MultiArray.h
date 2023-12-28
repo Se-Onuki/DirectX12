@@ -20,6 +20,55 @@ namespace ECS {
 
 
 	template<typename... Ts>
+	struct ComponentMiniArray {
+
+		struct iterator {
+			iterator() = default;
+			iterator(ComponentMiniArray *const parent, uint32_t index) {
+				itemPtr_ = parent->itemPtr_;
+				itemCount_ = parent->itemCount_;
+				index_ = index;
+			}
+
+			std::tuple<Ts *...> operator*() {
+				std::tuple<Ts*...> result = itemPtr_;
+
+				//std::apply([index_](auto&... args)
+				//	{
+				//		(args += index_, ...);
+				//	}, result);
+
+				return result;
+			}
+
+			iterator &operator++() {
+				++index_;
+				return *this;
+			}
+
+			bool operator !=(const iterator &other) {
+				return this->itemPtr_ != other.itemPtr_ ||
+					this->itemCount_ != other.itemCount_ ||
+					this->index_ != other.index_;
+			}
+
+
+			std::shared_ptr<std::tuple<Ts *...>> itemPtr_;
+			uint32_t itemCount_;
+			uint32_t index_;
+		};
+
+		iterator begin() { return iterator{ this,0u }; }
+		iterator end() { return iterator{ this,itemCount_ }; }
+		iterator operator[](const uint32_t index) { return iterator{ this,index }; }
+
+		std::shared_ptr<std::tuple<Ts *...>> itemPtr_;
+		uint32_t itemCount_;
+
+	};
+
+
+	template<typename... Ts>
 	struct ComponetArray {
 
 		struct iterator {
@@ -78,7 +127,7 @@ namespace ECS {
 			uint32_t GetIndex() const { return index_; }
 
 		private:
-			std::unordered_map<std::type_index, void *> componentAddress_;
+			std::shared_ptr<std::unordered_map<std::type_index, void *>> componentAddress_;
 			uint32_t index_{};
 			size_t entitySize_{};
 
@@ -87,7 +136,7 @@ namespace ECS {
 
 
 		bool operator!=(const ComponetArray<Ts...> &other) const {
-			if (not this->componentAddress_.size() && not other.componentAddress_.size()) { return false; }
+			if (not this->componentAddress_ && not other.componentAddress_) { return false; }
 			return this->componentAddress_ != other.componentAddress_ || this->size_ != other.size_;
 		}
 
@@ -96,7 +145,7 @@ namespace ECS {
 
 		iterator operator[](const uint32_t index) { return iterator{ this,index }; }
 
-		std::unordered_map<std::type_index, void *> componentAddress_;
+		std::shared_ptr<std::unordered_map<std::type_index, void *>> componentAddress_;
 		uint32_t size_;
 		size_t entitySize_{};
 	};
@@ -137,8 +186,9 @@ namespace ECS {
 
 		template<typename T, typename...Ts>
 		void erase_if(const std::function <bool(T *, Ts *...)> &func) {
-			auto arrItr = this->get<T, Ts...>().begin();
-			auto endItr = this->get<T, Ts...>().end();
+			auto getItem = this->get<T, Ts...>();
+			auto arrItr = getItem.begin();
+			auto endItr = getItem.end();
 
 			while (arrItr != endItr) {
 				if (
@@ -311,8 +361,9 @@ namespace ECS {
 	template<typename ...T>
 	inline ComponetArray<T...> MultiChunk::get() {
 		ComponetArray<T...> result;
+		result.componentAddress_ = std::make_shared<std::unordered_map<std::type_index, void *>>();
 		for (auto &[comp, ptr] : this->componentAddress_) {
-			result.componentAddress_.insert(std::make_pair(comp, ptr.first));
+			result.componentAddress_->insert(std::make_pair(comp, ptr.first));
 		}
 		result.size_ = size_;
 		result.entitySize_ = archetype_->GetTotalSize();
@@ -330,7 +381,7 @@ namespace ECS {
 #endif // _DEBUG
 		size_t totalSize = archetype_->GetTotalSize();
 
-		return std::make_tuple((reinterpret_cast<Ts *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(Ts)).first) + index * totalSize))...);
+		return std::make_tuple((reinterpret_cast<Ts *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_->at(typeid(Ts)).first) + index * totalSize))...);
 
 
 	}
@@ -365,7 +416,7 @@ namespace ECS {
 
 	template<typename ...Ts>
 	inline  std::tuple<Ts *const...> ComponetArray<Ts...>::iterator::operator*() {
-		return std::make_tuple((reinterpret_cast<Ts *const>(static_cast<MultiChunk::memoryType *const>(this->componentAddress_.at(typeid(Ts))) + index_ * entitySize_))...);
+		return std::make_tuple((reinterpret_cast<Ts *const>(static_cast<MultiChunk::memoryType *const>(this->componentAddress_->at(typeid(Ts))) + index_ * entitySize_))...);
 	}
 
 	template<typename ...Ts>
