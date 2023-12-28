@@ -128,6 +128,7 @@ void GameScene::Update() {
 			}
 		}
 	}
+
 	//}
 	//for (const auto &[aliveTime, lifeLimit, color] : mArray_->get<ECS::AliveTime, ECS::LifeLimit, ECS::Color>()) {
 	//	// もし寿命が定められていたら
@@ -141,19 +142,14 @@ void GameScene::Update() {
 		aliveTime->aliveTime_ += deltaTime;
 	}
 
-	//for (const auto &[aliveTime] : emitterArray_->get<ECS::AliveTime>()) {
-	//	// 生存時間を加算
-	//	aliveTime->aliveTime_ += deltaTime;
-	//}
 
+	for (const auto &[pos, velocity] : world_->view<ECS::PositionComp, ECS::VelocityComp>()) {
 
-	//for (const auto &[pos, velocity] : mArray_->get<ECS::PositionComp, ECS::VelocityComp>()) {
+		pos->position_ += *velocity;
 
-	//	pos->position_ += *velocity;
+	}
 
-	//}
-
-	//for (const auto &[pos, rot, scale, transMat, emitterComp] : emitterArray_->get<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::EmitterComp>()) {
+	//for (const auto &[pos, rot, scale, transMat, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::EmitterComp>()) {
 
 	//	*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
 
@@ -164,7 +160,7 @@ void GameScene::Update() {
 	//	if (emitterComp->frequency_.IsFinish()) {
 	//		emitterComp->frequency_.Start();
 	//		for (int32_t i = 0u; i < emitterComp->count_; i++) {
-	//			const auto &[cId, cModel, cLifeLimit, cPos, cVelocity] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp, ECS::VelocityComp>();
+	//			const auto &[cId, cModel, cLifeLimit, cPos, cVelocity] = entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
 
 	//			cModel->model_ = model_;
 	//			cLifeLimit->lifeLimit_ = emitterComp->spawnLifeLimit_.Random();
