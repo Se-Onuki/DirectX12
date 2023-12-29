@@ -11,8 +11,6 @@ namespace ECS {
 		size_t chunkIndex_; // チャンク内番号
 		uint32_t version_;
 
-
-
 		//template<typename T> T& GetComp();
 	};
 }

@@ -71,10 +71,10 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 
 uint32_t ECS::MultiChunk::push_back() {
 
-	/*for (const auto &classData : archetype_->data_) {
+	for (const auto &classData : archetype_->data_) {
 		auto ptr = GetItemPtr(classData.typeInfo_, size_);
 		classData.constructor_(ptr);
-	}*/
+	}
 
 	return size_++;
 }

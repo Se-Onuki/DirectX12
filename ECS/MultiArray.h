@@ -181,8 +181,11 @@ namespace ECS {
 		template<typename... Ts>
 		ComponetArray<Ts...> get();
 
-		template<typename... Ts>
-		std::tuple<Ts *const...> GetItem(const uint32_t index);
+		template<typename T, typename... Ts>
+		std::tuple<T *const, Ts *const...> GetItem(const uint32_t index);
+
+		template<typename T>
+		T &GetOneItem(const uint32_t index);
 
 		template<typename T, typename...Ts>
 		void erase_if(const std::function <bool(T *, Ts *...)> &func) {
@@ -319,6 +322,9 @@ namespace ECS {
 		template<SoLib::IsNotPointer T, SoLib::IsNotPointer... Ts>
 		std::tuple<T *const, Ts *const...> GetItem(size_t totalIndex);
 
+		template<SoLib::IsNotPointer T>
+		T &GetOneItem(size_t totalIndex);
+
 		/// @brief 穴抜けの部分を埋める
 		void Normalize();
 
@@ -336,6 +342,8 @@ namespace ECS {
 
 			return this->get<T, Ts...>().begin()[totalIndex];
 		}
+
+		bool empty() const { return this->multiChunk_.empty() || this->multiChunk_.back()->empty(); }
 
 		size_t size() const;
 
@@ -371,8 +379,8 @@ namespace ECS {
 		return result;
 	}
 
-	template<typename ...Ts>
-	inline std::tuple<Ts *const...> MultiChunk::GetItem(const uint32_t index) {
+	template<typename T, typename... Ts>
+	inline std::tuple<T *const, Ts *const...> MultiChunk::GetItem(const uint32_t index) {
 
 #ifdef _DEBUG
 
@@ -381,8 +389,24 @@ namespace ECS {
 #endif // _DEBUG
 		size_t totalSize = archetype_->GetTotalSize();
 
-		return std::make_tuple((reinterpret_cast<Ts *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_->at(typeid(Ts)).first) + index * totalSize))...);
+		return std::make_tuple(
+			(reinterpret_cast<T *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(T)).first) + index * totalSize)),
+			(reinterpret_cast<Ts *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(Ts)).first) + index * totalSize))...);
 
+
+	}
+
+	template<typename T>
+	inline T &MultiChunk::GetOneItem(const uint32_t index) {
+
+#ifdef _DEBUG
+
+		assert(size_ > index);
+
+#endif // _DEBUG
+		size_t totalSize = archetype_->GetTotalSize();
+
+		return *(reinterpret_cast<T *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(T)).first) + index * totalSize));
 
 	}
 
@@ -391,7 +415,16 @@ namespace ECS {
 	std::tuple<T *const, Ts *const...> MultiArray::GetItem(size_t totalIndex) {
 		const auto capacity = archetype_.GetChunkCapacity();
 
-		return *static_cast<T *>(multiChunk_[totalIndex / capacity]->GetItem<T, Ts...>(static_cast<uint32_t>(totalIndex % capacity)));
+		return multiChunk_[totalIndex / capacity]->GetItem<T, Ts...>(static_cast<uint32_t>(totalIndex % capacity));
+
+	}
+
+
+	template<SoLib::IsNotPointer T>
+	T &MultiArray::GetOneItem(size_t totalIndex) {
+		const auto capacity = archetype_.GetChunkCapacity();
+
+		return multiChunk_[totalIndex / capacity]->GetOneItem<T>(static_cast<uint32_t>(totalIndex % capacity));
 
 	}
 

@@ -139,7 +139,9 @@ public:
 
 		for (const auto &[archetype, mArray] : chunkList_) {
 			if (checkArche <= archetype) {
-				result.mArrayList_->push_back(mArray.get());
+				if (not mArray->empty()) {
+					result.mArrayList_->push_back(mArray.get());
+				}
 			}
 		}
 		return result;
