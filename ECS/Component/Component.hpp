@@ -9,6 +9,7 @@
 #include "../../Utils/ConstString.h"
 #include "../../Utils/Containers/ConstVector.h"
 #include "../../Utils/Graphics/Color.h"
+#include "../../Utils/SoLib/SoLib.h"
 #include "../../Utils/Math/Euler.h"
 #include "../../Utils/Math/Transform.h"
 #include "../../Utils/Math/Vector2.h"
@@ -81,6 +82,13 @@ namespace ECS {
 			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnRange" }).c_str(), &spawnRange_);
 			return isChanged;
 		}
+	};
+	struct ColorLarp :IComponent {
+		SoLib::Color::RGB4 start_;
+		SoLib::Color::RGB4 end_;
+		SoLib::EaseFunc easeFunc_;
+
+		SoLib::Color::RGB4 EaseColor(float t);
 	};
 
 	struct Identifier : IComponent {

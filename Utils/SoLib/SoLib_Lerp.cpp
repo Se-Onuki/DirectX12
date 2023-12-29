@@ -7,11 +7,6 @@
 
 namespace SoLib {
 
-	template<>
-	BaseTransform Lerp(const BaseTransform &, const BaseTransform &, float) {
-		return BaseTransform();
-	}
-
 	Vector3 Slerp(const Vector3 &Start, const Vector3 &End, float t) {
 		if (Start.LengthSQ() == 0.f || End.LengthSQ() == 0.f) { // 片方の長さが0であった場合、「角度」が存在しないので通常の線形補間を行う。
 			return Lerp(Start, End, t);
@@ -34,4 +29,27 @@ namespace SoLib {
 		// nStartとnEndが同じ == 角度の差がない == 距離だけの線形補間でよい。
 		return LerpLength * (std::sin((1 - t) * theta) * nStart + std::sin(t * theta) * nEnd) / sinTheta;
 	}
+
+
+	uint32_t ColorLerp(uint32_t statColor, uint32_t endColor, float easingVolume) {
+
+
+		/*std::array<int16_t, 4u> intStart{};
+		std::array<int16_t, 4u> intEnd;
+		for (uint8_t i = 0; i < 4; i++) {
+			intStart[i] = static_cast<int16_t>((statColor >> (8u * (i))) & 0xFF);
+			intEnd[i] = static_cast<int16_t>((endColor >> (8u * (i))) & 0xFF);
+		}*/
+
+		std::array<uint8_t, 4u> result{};
+
+		for (uint8_t i = 0u; i < 4u; i++) {
+
+			result[i] = static_cast<uint8_t>(std::lerp<float,float,float>((*reinterpret_cast<std::array<int8_t, 4u> *>(&statColor))[i], (*reinterpret_cast<std::array<int8_t, 4u> *>(&endColor))[i], easingVolume));
+		}
+
+
+		return *reinterpret_cast<uint32_t *>(&result);
+	}
+
 }

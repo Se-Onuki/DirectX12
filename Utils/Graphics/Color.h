@@ -5,6 +5,7 @@
 
 #include "../SoLib/SoLib_Json.h"
 #include "../Math/Vector4.h"
+#include "../SoLib/SoLib_Lerp.h"
 
 namespace SoLib {
 
@@ -20,7 +21,7 @@ namespace SoLib {
 			RGB4(const std::array<uint8_t, 4u> color);
 			RGB4(const uint32_t color);
 			RGB4(const Vector4 &color) {
-				std::memcpy(this->data(), color.data(), sizeof(RGB4));
+				std::memcpy(this->data(), color.data(), sizeof(*this));
 				Clamp();
 			}
 

@@ -1,3 +1,4 @@
+#include "Component.hpp"
 //#include "Component.hpp"
 ////
 ////
@@ -10,3 +11,8 @@
 ////Transform::Transform() {}
 ////
 ////Transform::~Transform() {}
+
+SoLib::Color::RGB4 ECS::ColorLarp::EaseColor(float t) {
+
+	return SoLib::Lerp(start_, end_, easeFunc_(t));
+}

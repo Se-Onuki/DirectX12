@@ -45,7 +45,7 @@ void GameScene::OnEnter() {
 	emitterArray_ = std::make_unique<ECS::MultiArray>(emitterArchetype);*/
 
 	Archetype particleArchetype;
-	particleArchetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
+	particleArchetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>();
 
 	entityManager_->CreateEntity(particleArchetype, 3u);
 	auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
@@ -142,6 +142,10 @@ void GameScene::Update() {
 	}
 
 
+	for (const auto &[aliveTime, lifelimit, colorLerp, color] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::ColorLarp, ECS::Color>()) {
+		color->color_ = colorLerp->EaseColor(aliveTime->aliveTime_ / lifelimit->lifeLimit_);
+	}
+
 	for (const auto &[pos, velocity] : world_->view<ECS::PositionComp, ECS::VelocityComp>()) {
 
 		pos->position_ += *velocity;
@@ -158,10 +162,10 @@ void GameScene::Update() {
 		emitterComp->frequency_.Update(deltaTime);
 		if (emitterComp->frequency_.IsFinish()) {
 			emitterComp->frequency_.Start();
-			auto particleList = entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>(emitterComp->count_);
+			auto particleList = entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>(emitterComp->count_);
 
 			for (const auto &particle : particleList) {
-				const auto &[cId, cModel, cLifeLimit, cPos, cVelocity] = entityManager_->GetComponent<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp, ECS::VelocityComp>(particle);
+				const auto &[cId, cModel, cLifeLimit, cPos, cVelocity, colorLerp] = entityManager_->GetComponent<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp, ECS::VelocityComp, ECS::ColorLarp>(particle);
 
 				cModel->model_ = model_;
 				cLifeLimit->lifeLimit_ = emitterComp->spawnLifeLimit_.Random();
@@ -179,6 +183,9 @@ void GameScene::Update() {
 				*cVelocity = direction * emitterComp->spawnPower_.Random()/* * Matrix4x4::EulerRotate(fireDir)*/;
 
 				*cPos = *pos;
+
+				colorLerp->start_ = rgbFrom_;
+				colorLerp->end_ = rgbTo_;
 
 			}
 		}
