@@ -99,7 +99,7 @@ void GameScene::Update() {
 
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
-	//ImGui::Text("ParticleCount / %lu", mArray_->size());
+	ImGui::Text("ParticleCount / %lu", world_->Count());
 
 	SoLib::ImGuiWidget("ColorFrom", &rgbFrom_);
 	SoLib::ImGuiWidget("ColorTo", &rgbTo_);
@@ -125,7 +125,6 @@ void GameScene::Update() {
 		}
 	));
 
-	//for (const auto &hitChunk : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
 	for (const auto &[aliveTime, lifeLimit, isAlive] : world_->view< ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
 		// もし寿命が定められていたら
 		if (lifeLimit->lifeLimit_ >= 0.f) {
@@ -185,9 +184,9 @@ void GameScene::Update() {
 		}
 	}
 
-	for (const auto &[id, aliveTime] : world_->view<ECS::Identifier, ECS::AliveTime>()) {
+	/*for (const auto &[id, aliveTime] : world_->view<ECS::Identifier, ECS::AliveTime>()) {
 		ImGui::Text("%s : %.2f", id->name_.data(), aliveTime->aliveTime_);
-	}
+	}*/
 
 
 	//for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
@@ -197,15 +196,15 @@ void GameScene::Update() {
 	//}
 
 
-	//Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
+	Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
 
-	//for (const auto &[scale, rotate, pos, mat] : mArray_->get<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp>()) {
+	for (const auto &[scale, rotate, pos, mat, billboardRot] : world_->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
 
-	//	*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
-	//	mat->transformMat_ *= billboardMat;
-	//	*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3]) = *pos;
+		*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
+		mat->transformMat_ *= billboardMat;
+		*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3]) = *pos;
 
-	//}
+	}
 
 	///*for (const auto &[billboard, mat] : mArray_->get<ECS::BillboardRotate, ECS::TransformMatComp>()) {
 
@@ -213,11 +212,11 @@ void GameScene::Update() {
 
 	//}*/
 
-	//for (const auto &[color, billboard, mat] : mArray_->get<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
+	for (const auto &[color, billboard, mat] : world_->view<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
 
-	//	particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
+		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
 
-	//}
+	}
 
 
 }

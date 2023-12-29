@@ -32,6 +32,9 @@ namespace ECS {
 
 		template<typename... Ts>
 		const std::list<ECS::Entity> CreateEntity(uint32_t count = 1u) {
+			if (not count) {
+				return {};
+			}
 			Archetype archetype;
 			archetype.AddClassData<Ts...>();
 
@@ -40,6 +43,9 @@ namespace ECS {
 
 		const std::list<ECS::Entity> CreateEntity(const Archetype &archetype, uint32_t count = 1u) {
 			std::list<ECS::Entity> entityList{};
+			if (not count) {
+				return entityList;
+			}
 
 			auto mArray = world_->GetChunk(archetype);
 

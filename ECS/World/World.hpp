@@ -114,6 +114,16 @@ public:
 		return item->second.get();
 	}
 
+	size_t Count() {
+		size_t result{};
+
+		for (const auto &mArray : chunkList_) {
+			result += mArray.second->size();
+		}
+
+		return result;
+	}
+
 	/*template<typename T, typename... Ts>
 	std::list<ECS::MultiArray *> view() {
 		std::list<ECS::MultiArray *> result;
