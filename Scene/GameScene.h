@@ -13,7 +13,6 @@
 #include "../ECS/World/World.hpp"
 #include "../ECS/Entity/EntityManager.hpp"
 #include "../ECS/MultiArray.h"
-#include "../ECS/Viewer.h"
 
 #include "../Utils/Graphics/Color.h"
 #include "../Utils/IO/CSV.h"
@@ -52,6 +51,8 @@ private:
 	SoLib::Color::RGB4 rgbFrom_ = Vector4::one;
 	SoLib::Color::RGB4 rgbTo_ = Vector4::one;
 	float t_{};
+
+	
 
 	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
 
