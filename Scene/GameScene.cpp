@@ -48,9 +48,9 @@ void GameScene::OnEnter() {
 	particleArchetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>();
 
 	entityManager_->CreateEntity(particleArchetype, 3u);
-	auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
+	//auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 
-	/*prefab += ECS::Identifier{};
+	prefab += ECS::Identifier{};
 	prefab += ECS::IsAlive{};
 	prefab += ECS::PositionComp{};
 	prefab += ECS::RotateComp{};
@@ -58,9 +58,9 @@ void GameScene::OnEnter() {
 	prefab += ECS::TransformMatComp{};
 	prefab += ECS::AliveTime{};
 	prefab += ECS::LifeLimit{};
-	prefab += ECS::EmitterComp{ .count_ = 75u,.startColor_ = 0xFFFF00FF };
+	prefab += ECS::EmitterComp{ .count_ = 75u,.startColor_ = 0xFFFF00FF,.spawnLifeLimit_{0.1f,0.2f} };
 
-	auto emitterList = entityManager_->CreateEntity(prefab);*/
+	auto emitterList = entityManager_->CreateEntity(prefab);
 
 	for (const auto &emitter : emitterList) {
 		const auto &[lifeLimit] = entityManager_->GetComponent<ECS::LifeLimit>(emitter);
