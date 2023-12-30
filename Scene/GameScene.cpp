@@ -58,7 +58,8 @@ void GameScene::OnEnter() {
 	prefab += ECS::TransformMatComp{};
 	prefab += ECS::AliveTime{};
 	prefab += ECS::LifeLimit{};
-	prefab += ECS::EmitterComp{ .count_ = 75u,.startColor_ = 0xFFFF00FF,.spawnLifeLimit_{0.1f,0.2f} };
+	prefab += ECS::EmitterComp{ .count_ = 5u,.startColor_ = 0xFFFF00FF,.spawnLifeLimit_{0.1f,0.2f} };
+	prefab += ECS::InputFlagComp{};
 
 	auto emitterList = entityManager_->CreateEntity(prefab);
 
@@ -156,6 +157,12 @@ void GameScene::Update() {
 	for (const auto &[pos, velocity] : world_->view<ECS::PositionComp, ECS::VelocityComp>()) {
 
 		pos->position_ += *velocity;
+
+	}
+
+	for (const auto &[pos, input] : world_->view<ECS::PositionComp, ECS::InputFlagComp>()) {
+		Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
+		pos->position_ += Vector3{ inputLs.x,0.f,inputLs.y }*0.05f;
 
 	}
 
