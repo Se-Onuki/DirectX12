@@ -162,7 +162,7 @@ void GameScene::Update() {
 
 	for (const auto &[pos, input] : world_->view<ECS::PositionComp, ECS::InputFlagComp>()) {
 		Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
-		pos->position_ += Vector3{ inputLs.x,0.f,inputLs.y }*0.05f;
+		pos->position_ += Vector3{ inputLs.x,0.f,inputLs.y }*0.1f;
 
 	}
 
