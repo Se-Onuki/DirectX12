@@ -37,14 +37,14 @@ namespace std {
 
 class Archetype {
 public:
-	std::unordered_set<ClassData> data_;
+	std::unordered_map<std::type_index, ClassData> data_;
 
 	static constexpr size_t OneChunkCapacity = 16u * 1024u;
 
 	Archetype() = default;
 
 	template<typename T, typename... Ts> void AddClassData() {
-		data_.insert(ClassData::Create<T>());
+		data_[typeid(T)] = ClassData::Create<T>();
 		if constexpr (sizeof...(Ts) > 0) {
 			AddClassData<Ts...>();
 		}
@@ -77,7 +77,7 @@ private:
 		result += sizeof(ECS::Entity);
 
 		for (auto &item : data_) {
-			result += item.size_;
+			result += item.second.size_;
 		}
 
 		return result;
@@ -100,7 +100,7 @@ namespace std {
 			std::string typeNames;
 
 			for (const auto &type : obj.data_) {
-				typeNames += type.typeInfo_.name();
+				typeNames += type.first.name();
 			}
 			return std::hash<std::string>{}(typeNames);
 
