@@ -101,16 +101,9 @@ void GameScene::Update() {
 
 	ImGui::Text("ParticleCount / %lu", world_->Count());
 
-	SoLib::ImGuiWidget("ColorFrom", &rgbFrom_);
-	SoLib::ImGuiWidget("ColorTo", &rgbTo_);
-	SoLib::ImGuiWidget("ColorT", &t_);
-	SoLib::Color::RGB4 resultColor = SoLib::Lerp(rgbFrom_, rgbTo_, t_);
-	SoLib::ImGuiWidget("ResultColor", &resultColor);
-
 	static SoLib::Color::RGB4 testColor;
 
-	ImGui::ColorEdit4("testColor", testColor, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
-	//light_->ImGuiWidget();
+	ImGui::ColorEdit4("TestColor", testColor, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
 
 	cameraManager_->DisplayImGui();
 	cameraManager_->Update(deltaTime);
@@ -125,7 +118,7 @@ void GameScene::Update() {
 		}
 	));
 
-	for (const auto &[aliveTime, lifeLimit, isAlive] : world_->view< ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
+	for (const auto &[aliveTime, lifeLimit, isAlive] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
 		// もし寿命が定められていたら
 		if (lifeLimit->lifeLimit_ >= 0.f) {
 			// 寿命を超過していたら
@@ -184,8 +177,8 @@ void GameScene::Update() {
 
 				*cPos = *pos;
 
-				colorLerp->start_ = rgbFrom_;
-				colorLerp->end_ = rgbTo_;
+				colorLerp->start_ = emitterComp->startColor_;
+				colorLerp->end_ = emitterComp->endColor_;
 
 			}
 		}

@@ -80,6 +80,8 @@ namespace ECS {
 			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnLifeLimit" }).c_str(), &spawnLifeLimit_);
 			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnPower" }).c_str(), &spawnPower_);
 			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnRange" }).c_str(), &spawnRange_);
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : StartColor" }).c_str(), &startColor_);
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : EndColor" }).c_str(), &endColor_);
 			return isChanged;
 		}
 	};
