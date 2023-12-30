@@ -45,4 +45,6 @@ private:
 	std::unique_ptr<World> world_ = nullptr;
 	ECS::EntityManager *entityManager_;
 
+	ECS::Prefab prefab;
+
 };

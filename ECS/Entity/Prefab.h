@@ -19,6 +19,12 @@ namespace ECS {
 
 		const Archetype &GetArchetype() const { return archetype_; }
 
+		template<BasedIComponent T>
+		Prefab &operator+= (const T &comp) {
+			this->AddComponent<T>() = comp;
+			return *this;
+		}
+
 	private:
 		std::unordered_map<std::type_index, std::unique_ptr<ECS::IComponent>> componentData_;
 		Archetype archetype_;
@@ -33,13 +39,13 @@ namespace ECS {
 		// 既に保存されているか確認
 		auto findItr = componentData_.find(type);
 		// 存在したらそのまま返す
-		if (findItr == componentData_.end()) { return *dynamic_cast<T *>(findItr->second.get()); }
+		if (findItr != componentData_.end()) { return *reinterpret_cast<T *>(findItr->second.get()); }
 		// 存在しなかったら新しく追加
 		componentData_[type] = std::make_unique<T>();
 		// アーキタイプも追加
 		archetype_.AddClassData<T>();
 		// ポインタを返す
-		return *dynamic_cast<T *>(componentData_.at(type).get());
+		return *reinterpret_cast<T *>(componentData_.at(type).get());
 	}
 
 }

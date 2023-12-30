@@ -50,6 +50,18 @@ void GameScene::OnEnter() {
 	entityManager_->CreateEntity(particleArchetype, 3u);
 	auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 
+	/*prefab += ECS::Identifier{};
+	prefab += ECS::IsAlive{};
+	prefab += ECS::PositionComp{};
+	prefab += ECS::RotateComp{};
+	prefab += ECS::ScaleComp{};
+	prefab += ECS::TransformMatComp{};
+	prefab += ECS::AliveTime{};
+	prefab += ECS::LifeLimit{};
+	prefab += ECS::EmitterComp{ .count_ = 75u,.startColor_ = 0xFFFF00FF };
+
+	auto emitterList = entityManager_->CreateEntity(prefab);*/
+
 	for (const auto &emitter : emitterList) {
 		const auto &[lifeLimit] = entityManager_->GetComponent<ECS::LifeLimit>(emitter);
 		lifeLimit->lifeLimit_ = -1.f;
@@ -88,6 +100,8 @@ void GameScene::OnEnter() {
 	id->name_ = "emitter";
 	emittComp->count_ = 1u;
 	emittComp->frequency_.Start(0.2f);*/
+
+
 
 }
 
@@ -184,18 +198,6 @@ void GameScene::Update() {
 		}
 	}
 
-	/*for (const auto &[id, aliveTime] : world_->view<ECS::Identifier, ECS::AliveTime>()) {
-		ImGui::Text("%s : %.2f", id->name_.data(), aliveTime->aliveTime_);
-	}*/
-
-
-	//for (const auto &[id, model, pos, rot] : mArray_->get<ECS::Identifier, ECS::ModelComp, ECS::PositionComp, ECS::RotateComp>()) {
-	//	ImGui::Text("%s,%x\n", id->name_.data(), model->model_);
-	//	SoLib::ImGuiWidget((id->name_.data() + std::string(" : pos")).c_str(), &pos->position_);
-	//	SoLib::ImGuiWidget((id->name_.data() + std::string(" : rot")).c_str(), &rot->rotate_);
-	//}
-
-
 	Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
 
 	for (const auto &[scale, rotate, pos, mat, billboardRot] : world_->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
@@ -205,12 +207,6 @@ void GameScene::Update() {
 		*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3]) = *pos;
 
 	}
-
-	///*for (const auto &[billboard, mat] : mArray_->get<ECS::BillboardRotate, ECS::TransformMatComp>()) {
-
-	//	*mat = mat->transformMat_ * billboardMat;
-
-	//}*/
 
 	for (const auto &[color, billboard, mat] : world_->view<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
 
