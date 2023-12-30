@@ -6,6 +6,7 @@
 #include "../Component/Component.hpp"
 #include "../Entity/Entity.hpp"
 #include "../World/World.hpp"
+#include "Prefab.h"
 
 namespace ECS {
 
@@ -39,6 +40,28 @@ namespace ECS {
 			archetype.AddClassData<Ts...>();
 
 			return CreateEntity(archetype, count);
+		}
+
+		template<typename... Ts>
+		const std::list<ECS::Entity> CreateEntity(const ECS::Prefab &prefab, uint32_t count = 1u) {
+			std::list<ECS::Entity> entityList{};
+			if (not count) {
+				return entityList;
+			}
+
+			auto mArray = world_->GetChunk(prefab.GetArchetype());
+
+			if (not mArray) {
+				mArray = world_->CreateChunk(prefab.GetArchetype());
+			}
+			for (uint32_t i = 0u; i < count; i++) {
+				ECS::Entity &entity = entityList.emplace_back();
+
+				entity.arrayPtr_ = mArray;
+				entity.chunkIndex_ = mArray->push_back(prefab);
+			}
+
+			return entityList;
 		}
 
 		const std::list<ECS::Entity> CreateEntity(const Archetype &archetype, uint32_t count = 1u) {

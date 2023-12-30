@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include "Entity/Prefab.h"
 #include "../Utils/SoLib/SoLib_Traits.h"
 
 namespace ECS {
@@ -167,6 +168,10 @@ namespace ECS {
 		/// @return 追加されたデータの内部index
 		uint32_t push_back();
 
+		/// @brief 末尾へのデータの追加
+		/// @return 追加されたデータの内部index
+		uint32_t push_back(const ECS::Prefab& prefab);
+
 		uint32_t pop_back();
 
 		uint32_t size() const { return size_; }
@@ -319,6 +324,10 @@ namespace ECS {
 		/// @brief 末尾に要素を追加
 		/// @return 追加された要素のindex
 		size_t push_back();
+
+		/// @brief 末尾に要素を追加
+		/// @return 追加された要素のindex
+		size_t push_back(const ECS::Prefab& prefab);
 
 		template<SoLib::IsNotPointer T, SoLib::IsNotPointer... Ts>
 		std::tuple<T *, Ts *...> GetItem(size_t totalIndex);

@@ -79,6 +79,16 @@ uint32_t ECS::MultiChunk::push_back() {
 	return size_++;
 }
 
+uint32_t ECS::MultiChunk::push_back(const ECS::Prefab &prefab) {
+
+	for (const auto &[typeindex, classData] : archetype_->data_) {
+		auto ptr = GetItemPtr(typeindex, size_);
+		std::memcpy(ptr, prefab.GetComponentMap().at(typeindex).get(), prefab.GetArchetype().data_.at(typeindex).size_);
+	}
+
+	return size_++;
+}
+
 uint32_t ECS::MultiChunk::pop_back() {
 	if (size_ > 0u) {
 		return --size_;
@@ -119,6 +129,25 @@ size_t ECS::MultiArray::push_back() {
 	else {
 		// 余裕があるなら、そのままエンティティを追加。
 		index = (*backChunk)->push_back();
+	}
+
+	return index + (multiChunk_.size() - 1u) * archetype_.GetChunkCapacity();
+}
+
+size_t ECS::MultiArray::push_back(const ECS::Prefab &prefab) {
+
+	auto backChunk = multiChunk_.rbegin();
+
+	size_t index{};
+
+	// 最後尾が最大であるか
+	if (multiChunk_.empty() || (*backChunk)->IsMax()) {
+		// 最大ならチャンクを追加して、エンティティを追加
+		index = this->AddChunk()->push_back(prefab);
+	}
+	else {
+		// 余裕があるなら、そのままエンティティを追加。
+		index = (*backChunk)->push_back(prefab);
 	}
 
 	return index + (multiChunk_.size() - 1u) * archetype_.GetChunkCapacity();
