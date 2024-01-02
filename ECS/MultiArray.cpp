@@ -81,9 +81,12 @@ uint32_t ECS::MultiChunk::push_back() {
 
 uint32_t ECS::MultiChunk::push_back(const ECS::Prefab &prefab) {
 
+	auto compItr = prefab.GetComponentMap().begin();
+
 	for (const auto &[typeindex, classData] : archetype_->data_) {
 		auto ptr = GetItemPtr(typeindex, size_);
-		std::memcpy(ptr, prefab.GetComponentMap().at(typeindex).get(), prefab.GetArchetype().data_.at(typeindex).size_);
+		std::memcpy(ptr, compItr->second.get(), classData.size_);
+		++compItr;
 	}
 
 	return size_++;
