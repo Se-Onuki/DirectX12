@@ -18,6 +18,7 @@
 #include "../Utils/IO/CSV.h"
 #include "../../Header/Object/Particle.h"
 #include "../Utils/Containers/ConstVector.h"
+#include "../ECS/System/SystemManager.h"
 
 class GameScene : public IScene {
 public:
@@ -40,11 +41,15 @@ private:
 
 	StructuredBuffer<Particle::ParticleData> particleArray_{ 1024u };
 
+	ECS::SystemManager systemManager_;
+
 	Model *model_ = nullptr;
 
 	std::unique_ptr<World> world_ = nullptr;
 	ECS::EntityManager *entityManager_;
 
-	ECS::Prefab prefab;
+	std::unique_ptr<ECS::Prefab> prefab;
+
+	std::unique_ptr<ECS::Prefab> enemyPrefab;
 
 };

@@ -50,23 +50,24 @@ void GameScene::OnEnter() {
 	entityManager_->CreateEntity(particleArchetype, 3u);
 	//auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 
-	prefab += ECS::Identifier{};
-	prefab += ECS::IsAlive{};
-	prefab += ECS::PositionComp{};
-	prefab += ECS::RotateComp{};
-	prefab += ECS::ScaleComp{};
-	prefab += ECS::TransformMatComp{};
-	prefab += ECS::AliveTime{};
-	prefab += ECS::LifeLimit{};
-	prefab += ECS::EmitterComp{ .count_ = 5u,.startColor_ = 0xFFFF00FF,.spawnLifeLimit_{0.1f,0.2f} };
-	prefab += ECS::InputFlagComp{};
+	prefab = std::make_unique<ECS::Prefab>();
 
-	auto emitterList = entityManager_->CreateEntity(prefab);
+	*prefab += ECS::Identifier{};
+	*prefab += ECS::IsAlive{};
+	*prefab += ECS::PositionComp{};
+	*prefab += ECS::RotateComp{};
+	*prefab += ECS::ScaleComp{};
+	*prefab += ECS::TransformMatComp{};
+	*prefab += ECS::AliveTime{};
+	*prefab += ECS::EmitterComp{ .count_ = 5u,.startColor_ = 0xFFFF00FF,.endColor_ = 0xFF000000,.spawnLifeLimit_{0.1f,0.2f} };
+	*prefab += ECS::InputFlagComp{};
 
-	for (const auto &emitter : emitterList) {
+	entityManager_->CreateEntity(*prefab);
+
+	/*for (const auto &emitter : emitterList) {
 		const auto &[lifeLimit] = entityManager_->GetComponent<ECS::LifeLimit>(emitter);
 		lifeLimit->lifeLimit_ = -1.f;
-	}
+	}*/
 
 	//// エンティティの追加(idは先頭からのindex)
 	//size_t entityID = mArray_->push_back();
