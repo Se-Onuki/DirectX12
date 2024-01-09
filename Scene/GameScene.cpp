@@ -127,7 +127,7 @@ void GameScene::Update() {
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
 	ImGui::Text("XInput左スティックで移動");
-	ImGui::Text("ParticleCount / %lu", world_->Count());
+	ImGui::Text("ParticleCount / %lu", world_->size());
 
 	static SoLib::Color::RGB4 testColor;
 

@@ -114,7 +114,7 @@ public:
 		return item->second.get();
 	}
 
-	size_t Count() {
+	size_t size() {
 		size_t result{};
 
 		for (const auto &mArray : chunkList_) {
