@@ -48,8 +48,8 @@ private:
 	std::unique_ptr<World> world_ = nullptr;
 	ECS::EntityManager *entityManager_;
 
-	std::unique_ptr<ECS::Prefab> prefab;
+	std::unique_ptr<ECS::Prefab> prefab_;
 
-	std::unique_ptr<ECS::Prefab> enemyPrefab;
+	std::unique_ptr<ECS::Prefab> enemyPrefab_;
 
 };

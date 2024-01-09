@@ -50,19 +50,30 @@ void GameScene::OnEnter() {
 	entityManager_->CreateEntity(particleArchetype, 3u);
 	//auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 
-	prefab = std::make_unique<ECS::Prefab>();
+	prefab_ = std::make_unique<ECS::Prefab>();
 
-	*prefab += ECS::Identifier{};
-	*prefab += ECS::IsAlive{};
-	*prefab += ECS::PositionComp{};
-	*prefab += ECS::RotateComp{};
-	*prefab += ECS::ScaleComp{};
-	*prefab += ECS::TransformMatComp{};
-	*prefab += ECS::AliveTime{};
-	*prefab += ECS::EmitterComp{ .count_ = 5u,.startColor_ = 0xFFFF00FF,.endColor_ = 0xFF000000,.spawnLifeLimit_{0.1f,0.2f} };
-	*prefab += ECS::InputFlagComp{};
+	*prefab_ += ECS::Identifier{};
+	*prefab_ += ECS::IsAlive{};
+	*prefab_ += ECS::PositionComp{};
+	*prefab_ += ECS::RotateComp{};
+	*prefab_ += ECS::ScaleComp{};
+	*prefab_ += ECS::TransformMatComp{};
+	*prefab_ += ECS::AliveTime{};
+	*prefab_ += ECS::EmitterComp{ .count_ = 5u,.startColor_ = 0xFFFF00FF,.endColor_ = 0xFF000000,.spawnLifeLimit_{0.1f,0.2f},.spawnPower_{0.05f,0.1f},.spawnRange_{90._deg,180._deg,0.f} };
+	*prefab_ += ECS::InputFlagComp{};
 
-	entityManager_->CreateEntity(*prefab);
+	entityManager_->CreateEntity(*prefab_);
+
+	enemyPrefab_ = std::make_unique<ECS::Prefab>();
+
+	*enemyPrefab_ += ECS::IsAlive{};
+	*enemyPrefab_ += ECS::PositionComp{};
+	*enemyPrefab_ += ECS::PositionComp{};
+	*enemyPrefab_ += ECS::QuaternionRotComp{};
+	//*enemyPrefab_ += ECS::RotateComp{};
+
+
+
 
 	/*for (const auto &emitter : emitterList) {
 		const auto &[lifeLimit] = entityManager_->GetComponent<ECS::LifeLimit>(emitter);

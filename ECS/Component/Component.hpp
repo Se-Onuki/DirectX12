@@ -145,6 +145,10 @@ namespace ECS {
 		inline operator const SoLib::Math::Euler &() const { return rotate_; }
 	};
 
+	struct QuaternionRotComp : IComponent {
+		Quaternion quateRot_ = Quaternion::Identity;
+	};
+
 	struct TransformMatComp : IComponent {
 		Matrix4x4 transformMat_;
 		inline Matrix4x4 &operator=(const Matrix4x4 &other) { return transformMat_ = other; }
