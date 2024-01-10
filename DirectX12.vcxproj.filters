@@ -375,6 +375,9 @@
     <ClCompile Include="Utils\IO\File.cpp">
       <Filter>Utils\IO</Filter>
     </ClCompile>
+    <ClCompile Include="ECS\System\SystemManager.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -671,6 +674,12 @@
     <ClInclude Include="ECS\Archetype.h">
       <Filter>ECS</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\ConstString.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Viewer.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
     <ClInclude Include="ECS\Viewer.h">
       <Filter>ECS</Filter>
     </ClInclude>
@@ -689,11 +698,20 @@
     <ClInclude Include="Utils\Containers\Array2D.h">
       <Filter>Utils\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Containers\ConstVector.h">
-      <Filter>Utils\Containers</Filter>
+    <ClInclude Include="ECS\System\ISystem.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\System\SystemManager.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Entity\Prefab.h">
+      <Filter>ECS</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Text\ConstString.h">
       <Filter>Utils\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Containers\ConstVector.h">
+      <Filter>Utils\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

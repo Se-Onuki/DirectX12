@@ -1,6 +1,6 @@
 #include "SoLib_Easing.h"
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 #include "../Math/Angle.h"
 
@@ -101,18 +101,5 @@ namespace SoLib {
 			: std::pow(2.0f, -10.0f * x) * std::sin((x * 10.0f - 0.75f) * c4) + 1.0f;
 	}
 
-
-
-	uint32_t ColorLerp(uint32_t statColor, uint32_t endColor, float easingVolume) {
-
-		uint32_t redColor = std::clamp<uint32_t>(static_cast<uint32_t>(std::lerp<uint32_t>((((statColor & 0xFF000000) >> (4 * 6)) & 0xFF), (((endColor & 0xFF000000) >> (4 * 6)) & 0xFF), easingVolume)), 0x00, 0xFF);
-		uint32_t greenColor = std::clamp<uint32_t>(static_cast<uint32_t>(std::lerp<uint32_t>((((statColor & 0x00FF0000) >> (4 * 4)) & 0xFF), (((endColor & 0x00FF0000) >> (4 * 4)) & 0xFF), easingVolume)), 0x00, 0xFF);
-		uint32_t blueColor = std::clamp<uint32_t>(static_cast<uint32_t>(std::lerp<uint32_t>((((statColor & 0x0000FF00) >> (4 * 2)) & 0xFF), (((endColor & 0x0000FF00) >> (4 * 2)) & 0xFF), easingVolume)), 0x00, 0xFF);
-
-		uint32_t alphaColor = std::clamp<uint32_t>(static_cast<uint32_t>(std::lerp<uint32_t>((statColor & 0x000000FF), (endColor & 0x000000FF), easingVolume)), 0x00, 0xFF);
-
-		return (redColor << (4 * 6)) + (greenColor << (4 * 4)) + (blueColor << (4 * 2)) + (alphaColor);
-
-	}
 
 }

@@ -5,6 +5,7 @@
 
 #include "../SoLib/SoLib_Json.h"
 #include "../Math/Vector4.h"
+#include "../SoLib/SoLib_Lerp.h"
 
 namespace SoLib {
 
@@ -20,7 +21,7 @@ namespace SoLib {
 			RGB4(const std::array<uint8_t, 4u> color);
 			RGB4(const uint32_t color);
 			RGB4(const Vector4 &color) {
-				std::memcpy(this->data(), color.data(), sizeof(RGB4));
+				std::memcpy(this->data(), color.data(), sizeof(*this));
 				Clamp();
 			}
 
@@ -91,6 +92,73 @@ namespace SoLib {
 
 		void to_json(nlohmann::json &json, const RGB4 &color);
 		void from_json(const nlohmann::json &json, RGB4 &color);
+
+		struct HSV4 {
+			HSV4() = default;
+			HSV4(const HSV4 &) = default;
+			HSV4(HSV4 &&) = default;
+
+			HSV4(const float h, const float s, const float v, const float a) :h(h), s(s), v(v), a(a) { Clamp(); }
+			HSV4(const std::array<float, 4u> &color);
+			HSV4(const std::array<uint8_t, 4u> color);
+			HSV4(const uint32_t color);
+			HSV4(const Vector4 &color) {
+				std::memcpy(this->data(), color.data(), sizeof(*this));
+				Clamp();
+			}
+
+			HSV4 &operator=(const HSV4 &) = default;
+			HSV4 &operator=(HSV4 &&) = default;
+			HSV4 &operator=(const uint32_t color);
+			HSV4 &operator=(const Vector4 &color);
+		public:
+
+			float h, s, v, a;
+
+		public:
+			static uint32_t size() { return 4u; }
+
+			/// @brief 始点イテレータ
+			/// @return イテレータ
+			float *const begin() { return &h; }
+			const float *const begin() const { return &h; }
+
+			/// @brief 始点イテレータ
+			/// @return イテレータ
+			const float *const cbegin() const { return &h; }
+
+			/// @brief メモリアクセス
+			/// @return 始点アドレス
+			float *const data() { return &h; }
+			const float *const data() const { return &h; }
+
+			/// @brief 終点イテレータ
+			/// @return イテレータ
+			float *const end() { return &h + size(); }
+			const float *const end() const { return &h + size(); }
+
+			/// @brief 終点イテレータ
+			/// @return イテレータ
+			const float *const cend() const { return &h + size(); }
+
+			/// @brief floatポインタ への非明示的変換
+			inline operator float *const () { return data(); }
+			/// @brief floatポインタ への非明示的変換
+			inline operator const float *() const { return data(); }
+
+			operator std::array<uint8_t, 4u>() const;
+			operator uint32_t() const;
+
+			inline operator Vector4 &() { return *(reinterpret_cast<Vector4 *>(this)); }
+			inline operator const Vector4 &() const { return  *(reinterpret_cast<const Vector4 *>(this)); }
+
+		private:
+			inline void Clamp() {
+				for (uint8_t i = 0u; i < 4; i++) {
+					this->data()[i] = std::clamp(this->data()[i], 0.f, 1.f);
+				}
+			}
+		};
 	}
 }
 

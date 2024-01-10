@@ -10,7 +10,8 @@ class ClassData {
 public:
 	std::type_index typeInfo_ = typeid(void);
 	size_t size_;
-	std::function<void(void *)> constructor_;
+
+	void (*constructor_)(void *);
 
 	template<SoLib::IsNotPointer T>
 	static ClassData Create() {
@@ -36,14 +37,14 @@ namespace std {
 
 class Archetype {
 public:
-	std::unordered_set<ClassData> data_;
+	std::unordered_map<std::type_index, ClassData> data_;
 
 	static constexpr size_t OneChunkCapacity = 16u * 1024u;
 
 	Archetype() = default;
 
 	template<typename T, typename... Ts> void AddClassData() {
-		data_.insert(ClassData::Create<T>());
+		data_[typeid(T)] = ClassData::Create<T>();
 		if constexpr (sizeof...(Ts) > 0) {
 			AddClassData<Ts...>();
 		}
@@ -76,7 +77,7 @@ private:
 		result += sizeof(ECS::Entity);
 
 		for (auto &item : data_) {
-			result += item.size_;
+			result += item.second.size_;
 		}
 
 		return result;
@@ -89,3 +90,20 @@ private:
 	size_t totalSize_;
 	size_t chunkCapacity_;
 };
+
+
+
+namespace std {
+	template<>
+	struct hash<Archetype> {
+		std::size_t operator()(const Archetype &obj) const {
+			std::string typeNames;
+
+			for (const auto &type : obj.data_) {
+				typeNames += type.first.name();
+			}
+			return std::hash<std::string>{}(typeNames);
+
+		}
+	};
+}

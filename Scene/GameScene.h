@@ -13,12 +13,12 @@
 #include "../ECS/World/World.hpp"
 #include "../ECS/Entity/EntityManager.hpp"
 #include "../ECS/MultiArray.h"
-#include "../ECS/Viewer.h"
 
 #include "../Utils/Graphics/Color.h"
 #include "../Utils/IO/CSV.h"
 #include "../../Header/Object/Particle.h"
 #include "../Utils/Containers/ConstVector.h"
+#include "../ECS/System/SystemManager.h"
 
 class GameScene : public IScene {
 public:
@@ -41,18 +41,15 @@ private:
 
 	StructuredBuffer<Particle::ParticleData> particleArray_{ 1024u };
 
+	ECS::SystemManager systemManager_;
+
 	Model *model_ = nullptr;
 
-	World *world_ = nullptr;
+	std::unique_ptr<World> world_ = nullptr;
+	ECS::EntityManager *entityManager_;
 
-	std::unique_ptr<ECS::MultiArray> mArray_;
-	std::unique_ptr<ECS::MultiArray> emitterArray_;
+	std::unique_ptr<ECS::Prefab> prefab_;
 
-	SoLib::Color::RGB4 rgbFrom_ = Vector4::one;
-	SoLib::Color::RGB4 rgbTo_ = Vector4::one;
-	float t_{};
-
-	//std::unique_ptr<ECS::Viewer<ECS::Identifier>> mViewer_;
-
+	std::unique_ptr<ECS::Prefab> enemyPrefab_;
 
 };

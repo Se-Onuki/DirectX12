@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include "Entity/Prefab.h"
 #include "../Utils/SoLib/SoLib_Traits.h"
 
 namespace ECS {
@@ -19,6 +20,55 @@ namespace ECS {
 	};
 
 
+	//template<typename... Ts>
+	//struct ComponentMiniArray {
+
+	//	struct iterator {
+	//		iterator() = default;
+	//		iterator(ComponentMiniArray *const parent, uint32_t index) {
+	//			itemPtr_ = parent->itemPtr_;
+	//			itemCount_ = parent->itemCount_;
+	//			index_ = index;
+	//		}
+
+	//		std::tuple<Ts *...> operator*() {
+	//			std::tuple<Ts*...> result = itemPtr_;
+
+	//			//std::apply([index_](auto&... args)
+	//			//	{
+	//			//		(args += index_, ...);
+	//			//	}, result);
+
+	//			return result;
+	//		}
+
+	//		iterator &operator++() {
+	//			++index_;
+	//			return *this;
+	//		}
+
+	//		bool operator !=(const iterator &other) {
+	//			return this->itemPtr_ != other.itemPtr_ ||
+	//				this->itemCount_ != other.itemCount_ ||
+	//				this->index_ != other.index_;
+	//		}
+
+
+	//		std::shared_ptr<std::tuple<Ts *...>> itemPtr_;
+	//		uint32_t itemCount_;
+	//		uint32_t index_;
+	//	};
+
+	//	iterator begin() { return iterator{ this,0u }; }
+	//	iterator end() { return iterator{ this,itemCount_ }; }
+	//	iterator operator[](const uint32_t index) { return iterator{ this,index }; }
+
+	//	std::shared_ptr<std::tuple<Ts *...>> itemPtr_;
+	//	uint32_t itemCount_;
+
+	//};
+
+
 	template<typename... Ts>
 	struct ComponetArray {
 
@@ -31,7 +81,7 @@ namespace ECS {
 			iterator &operator =(const iterator &) = default;
 			iterator &operator =(iterator &&) = default;
 
-			std::tuple<Ts *const...> operator *();
+			std::tuple<Ts *...> operator *();
 
 			iterator &operator++() {
 
@@ -78,15 +128,18 @@ namespace ECS {
 			uint32_t GetIndex() const { return index_; }
 
 		private:
-			std::unordered_map<std::type_index, void *> componentAddress_;
+
+		private:
+			std::shared_ptr<std::tuple<Ts *...>> componentAddress_;
 			uint32_t index_{};
+			size_t entitySize_{};
 
 		};
 
 
 
 		bool operator!=(const ComponetArray<Ts...> &other) const {
-			if (not this->componentAddress_.size() && not other.componentAddress_.size()) { return false; }
+			if (not this->componentAddress_ && not other.componentAddress_) { return false; }
 			return this->componentAddress_ != other.componentAddress_ || this->size_ != other.size_;
 		}
 
@@ -95,13 +148,14 @@ namespace ECS {
 
 		iterator operator[](const uint32_t index) { return iterator{ this,index }; }
 
-		std::unordered_map<std::type_index, void *> componentAddress_;
+		std::shared_ptr<std::tuple<Ts *...>> componentAddress_;
 		uint32_t size_;
+		size_t entitySize_{};
 	};
 
 	class MultiChunk {
-		using memoryType = uint8_t;
 	public:
+		using memoryType = uint8_t;
 		MultiChunk(MultiArray *const parent);
 
 		/// @brief データの置き換えによるデータの破棄
@@ -114,6 +168,10 @@ namespace ECS {
 		/// @return 追加されたデータの内部index
 		uint32_t push_back();
 
+		/// @brief 末尾へのデータの追加
+		/// @return 追加されたデータの内部index
+		uint32_t push_back(const ECS::Prefab& prefab);
+
 		uint32_t pop_back();
 
 		uint32_t size() const { return size_; }
@@ -125,16 +183,22 @@ namespace ECS {
 
 		void *GetItemPtr(const std::type_index type, const uint32_t index);
 
+		void *GetEntityPtr(const uint32_t index);
+
 		template<typename... Ts>
 		ComponetArray<Ts...> get();
 
-		template<typename... Ts>
-		std::tuple<Ts *const...> GetItem(const uint32_t index);
+		template<typename T, typename... Ts>
+		std::tuple<T *, Ts *...> GetItem(const uint32_t index);
+
+		template<typename T>
+		T &GetOneItem(const uint32_t index);
 
 		template<typename T, typename...Ts>
 		void erase_if(const std::function <bool(T *, Ts *...)> &func) {
-			auto arrItr = this->get<T, Ts...>().begin();
-			auto endItr = this->get<T, Ts...>().end();
+			auto getItem = this->get<T, Ts...>();
+			auto arrItr = getItem.begin();
+			auto endItr = getItem.end();
 
 			while (arrItr != endItr) {
 				if (
@@ -153,11 +217,11 @@ namespace ECS {
 					++arrItr;
 				}
 			}
-			//func;
 		}
 
 	private:
 		uint32_t size_{};
+		uint32_t entitySize_{};
 
 		MultiArray *const parent_ = nullptr;
 		const Archetype *const archetype_;
@@ -177,7 +241,7 @@ namespace ECS {
 		template<typename... Ts>
 		class MultiCompArray {
 		public:
-
+			MultiCompArray() = default;
 			MultiCompArray(MultiChunkClass *const multiChunk, const uint32_t capacity) :pMultiChunk_(multiChunk), capacity_(capacity) {}
 			~MultiCompArray() = default;
 
@@ -198,11 +262,11 @@ namespace ECS {
 
 				iterator operator[](const size_t index) const;
 
-				std::tuple<Ts *const...> operator *() {
+				std::tuple<Ts *...> operator *() {
 					return *(this->compArrayItr_);
 				}
 
-				std::tuple<Ts *const...> operator->() {
+				std::tuple<Ts *...> operator->() {
 					return *(this->compArrayItr_);
 				}
 
@@ -238,14 +302,14 @@ namespace ECS {
 			iterator end();
 
 		private:
-			MultiChunkClass *const pMultiChunk_;
+			MultiChunkClass *pMultiChunk_;
 			uint32_t capacity_;
 		};
 
 
 		const Archetype &GetArchetype() const { return archetype_; }
 
-		std::unique_ptr<MultiChunk> &AddChunk();
+		MultiChunk *AddChunk();
 
 		auto &GetChunk() { return multiChunk_; }
 
@@ -261,8 +325,15 @@ namespace ECS {
 		/// @return 追加された要素のindex
 		size_t push_back();
 
+		/// @brief 末尾に要素を追加
+		/// @return 追加された要素のindex
+		size_t push_back(const ECS::Prefab& prefab);
+
+		template<SoLib::IsNotPointer T, SoLib::IsNotPointer... Ts>
+		std::tuple<T *, Ts *...> GetItem(size_t totalIndex);
+
 		template<SoLib::IsNotPointer T>
-		T &GetItem(size_t totalIndex);
+		T &GetOneItem(size_t totalIndex);
 
 		/// @brief 穴抜けの部分を埋める
 		void Normalize();
@@ -282,6 +353,8 @@ namespace ECS {
 			return this->get<T, Ts...>().begin()[totalIndex];
 		}
 
+		bool empty() const { return this->multiChunk_.empty() || this->multiChunk_.back()->empty(); }
+
 		size_t size() const;
 
 		void swap(const size_t totalIndexF, const size_t totalIndexS);
@@ -290,7 +363,10 @@ namespace ECS {
 		MultiCompArray<T, Ts...> get();
 
 		template<typename T, typename... Ts>
-		std::tuple<T *const, Ts *const...> create_back();
+		std::tuple<T *, Ts *...> create_back();
+
+		template<typename... Ts>
+		size_t emplace_back();
 
 	private:
 		Archetype archetype_;
@@ -300,61 +376,85 @@ namespace ECS {
 
 #pragma region Func
 
-	template<typename ...T>
-	inline ComponetArray<T...> MultiChunk::get() {
-		ComponetArray<T...> result;
-		for (auto &[comp, ptr] : this->componentAddress_) {
-			result.componentAddress_.insert(std::make_pair(comp, ptr.first));
-		}
+	template<typename ...Ts>
+	inline ComponetArray<Ts...> MultiChunk::get() {
+		ComponetArray<Ts...> result;
+		result.componentAddress_ = std::make_shared<std::tuple<Ts *...>>();
+		*result.componentAddress_ = std::make_tuple(reinterpret_cast<Ts *>(componentAddress_.at(typeid(Ts)).first)...);
+
 		result.size_ = size_;
+		result.entitySize_ = archetype_->GetTotalSize();
 
 		return result;
 	}
 
-	template<typename ...Ts>
-	inline std::tuple<Ts *const...> MultiChunk::GetItem(const uint32_t index) {
+	template<typename T, typename... Ts>
+	inline std::tuple<T *, Ts *...> MultiChunk::GetItem(const uint32_t index) {
 
 #ifdef _DEBUG
 
 		assert(size_ > index);
 
 #endif // _DEBUG
+		size_t totalSize = archetype_->GetTotalSize();
 
-		return std::make_tuple(&(static_cast<Ts *const>(this->componentAddress_.at(typeid(Ts)).first)[index])...);
+		return std::make_tuple(
+			(reinterpret_cast<T *>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(T)).first) + index * totalSize)),
+			(reinterpret_cast<Ts *>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(Ts)).first) + index * totalSize))...);
 
+
+	}
+
+	template<typename T>
+	inline T &MultiChunk::GetOneItem(const uint32_t index) {
+
+#ifdef _DEBUG
+
+		assert(size_ > index);
+
+#endif // _DEBUG
+		size_t totalSize = archetype_->GetTotalSize();
+
+		return *(reinterpret_cast<T *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(T)).first) + index * totalSize));
+
+	}
+
+
+	template<SoLib::IsNotPointer T, SoLib::IsNotPointer... Ts>
+	std::tuple<T *, Ts *...> MultiArray::GetItem(size_t totalIndex) {
+		const auto capacity = archetype_.GetChunkCapacity();
+
+		return multiChunk_[totalIndex / capacity]->GetItem<T, Ts...>(static_cast<uint32_t>(totalIndex % capacity));
 
 	}
 
 
 	template<SoLib::IsNotPointer T>
-	T &MultiArray::GetItem(size_t totalIndex) {
+	T &MultiArray::GetOneItem(size_t totalIndex) {
 		const auto capacity = archetype_.GetChunkCapacity();
 
-		return *static_cast<T *>(multiChunk_[totalIndex / capacity]->GetItemPtr(typeid(T), static_cast<uint32_t>(totalIndex % capacity)));
+		return multiChunk_[totalIndex / capacity]->GetOneItem<T>(static_cast<uint32_t>(totalIndex % capacity));
 
 	}
 
 
 #pragma endregion
 
-	/*template<typename ...Ts>
-	inline ComponetArray<Ts...>::iterator::operator std::tuple<Ts*...>() {
-		std::tuple<Ts*...> result = std::make_tuple(&(static_cast<Ts *>(compArray_->componentAddress_.at(typeid(Ts)))[index_])...);
-
-		return result;
-	}*/
-
-
 
 	template<typename ...Ts>
 	inline ComponetArray<Ts...>::iterator::iterator(ComponetArray *const compArray, uint32_t index) {
 		componentAddress_ = compArray->componentAddress_;
 		index_ = index;
+		entitySize_ = compArray->entitySize_;
 	}
 
 	template<typename ...Ts>
-	inline  std::tuple<Ts *const...> ComponetArray<Ts...>::iterator::operator*() {
-		return std::make_tuple(&(static_cast<Ts *const>(componentAddress_.at(typeid(Ts)))[index_])...);
+	inline  std::tuple<Ts *...> ComponetArray<Ts...>::iterator::operator*() {
+		//std::tuple<Ts*...> result = componentAddress_;
+
+		//return std::make_tuple((Ts *const)((char *)std::get<Is>(t) + sizeof(Ts))...);
+		//return this->IncrementAddress<Ts...>(*this->componentAddress_, index_);
+		return std::make_tuple((reinterpret_cast<Ts *>(reinterpret_cast<MultiChunk::memoryType *>(std::get<Ts*>(*this->componentAddress_)) + index_ * entitySize_))...);
 	}
 
 	template<typename ...Ts>
@@ -429,13 +529,26 @@ namespace ECS {
 	}
 
 	template<typename T, typename ...Ts>
-	inline std::tuple<T *const, Ts *const...> MultiArray::create_back() {
+	inline std::tuple<T *, Ts *...> MultiArray::create_back() {
 		size_t totalIndex = this->push_back();
 
 		// 可変長テンプレートを使ったtemplateGetItem関数に置き換える
 		return multiChunk_.back()->GetItem<T, Ts...>(static_cast<uint32_t>(totalIndex % archetype_.GetChunkCapacity()));
 
 		//return std::tuple<T, Ts...>();
+	}
+
+	template<typename ...Ts>
+	inline size_t MultiArray::emplace_back() {
+
+		size_t target = push_back();
+
+		const auto chunk = multiChunk_.back().get();
+		uint32_t index = static_cast<uint32_t>(target % archetype_.GetChunkCapacity());
+
+		(new (chunk->GetItemPtr(typeid(Ts), index)) Ts{}, ...);
+
+		return target;
 	}
 
 }

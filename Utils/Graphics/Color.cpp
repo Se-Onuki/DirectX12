@@ -36,7 +36,7 @@ SoLib::Color::RGB4::operator uint32_t() const {
 	uint32_t result{};
 
 	for (uint8_t i = 0u; i < 4u; ++i) {
-		result |= static_cast<uint8_t>(this->data()[i] * 255.f);
+		result |= static_cast<uint8_t>(this->data()[3u - i] * 255.f);
 
 		if (i != 3u) { result <<= 8u; }
 	}
@@ -59,6 +59,7 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 	return false;
 #endif // _DEBUG
 }
+
 SoLib::Color::RGB4 SoLib::Color::operator+(const RGB4 &a, const RGB4 &b) {
 	RGB4 result;
 
@@ -81,7 +82,7 @@ SoLib::Color::RGB4 SoLib::Color::operator*(const RGB4 &a, const float b) {
 	RGB4 result;
 
 	for (uint8_t i = 0u; i < 4; i++) {
-		result.data()[i] =a.data()[i] * b;
+		result.data()[i] = a.data()[i] * b;
 	}
 
 	return result;

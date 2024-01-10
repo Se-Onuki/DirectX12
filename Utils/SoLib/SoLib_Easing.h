@@ -6,6 +6,7 @@
 ///
 
 namespace SoLib {
+	
 	inline float easeLinear(float number) { return number; }
 
 	float easeInSine(float x);
@@ -33,11 +34,12 @@ namespace SoLib {
 
 	float easeOutElastic(float x);
 
+	struct EaseFunc {
+		float operator()(float value) {
+			return easeFunc(value);
+		}
 
-	/// @brief 色用の線形補間
-	/// @param statColor 始点RGBA色
-	/// @param endColor 終点RGBA色
-	/// @param easingVolume 係数
-	/// @return 計算結果
-	uint32_t ColorLerp(uint32_t statColor, uint32_t endColor, float easingVolume);
+		float (*easeFunc)(float) = easeLinear;
+	};
+
 }

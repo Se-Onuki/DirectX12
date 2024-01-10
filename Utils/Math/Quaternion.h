@@ -5,6 +5,11 @@
 #include <array>
 #include <cmath>
 #include "Matrix4x4.h"
+//#include "Euler.h"
+namespace SoLib::Math {
+
+	struct Euler;
+}
 
 struct Quaternion final {
 	Quaternion() = default;
@@ -47,6 +52,8 @@ struct Quaternion final {
 	static inline Vector3 RotateVector(const Vector3 &a, const Quaternion &b);
 
 	static Quaternion AnyAxisRotation(const Vector3 &axis, float angle);
+
+	static Quaternion Create(const SoLib::Math::Euler &euler);
 
 	/// @brief 明示的な型変換
 	inline explicit operator __m128() const noexcept { return _mm_load_ps(&x); }
@@ -128,6 +135,7 @@ inline Quaternion Quaternion::AnyAxisRotation(const Vector3 &axis, float angle) 
 	float halfAngle = angle / 2.f;
 	return Quaternion{ axis * std::sin(halfAngle), std::cos(halfAngle) };
 }
+
 
 inline float Quaternion::LengthSQ() const {
 	__m128 value = static_cast<__m128>(*this);

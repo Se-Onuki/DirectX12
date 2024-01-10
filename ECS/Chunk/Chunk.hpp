@@ -224,7 +224,7 @@ public:
 
 	void CreateArray(const Archetype &archetype, const uint32_t &maxSize = 16) {
 		for (const auto &element : archetype.data_) {
-			componentList_[element.typeInfo_].Init(element, maxSize);
+			componentList_[element.first].Init(element.second, maxSize);
 		}
 		archetype_ = archetype;
 	}

@@ -9,6 +9,7 @@
 #include "../../Utils/Text/ConstString.h"
 #include "../../Utils/Containers/ConstVector.h"
 #include "../../Utils/Graphics/Color.h"
+#include "../../Utils/SoLib/SoLib.h"
 #include "../../Utils/Math/Euler.h"
 #include "../../Utils/Math/Transform.h"
 #include "../../Utils/Math/Vector2.h"
@@ -79,8 +80,17 @@ namespace ECS {
 			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnLifeLimit" }).c_str(), &spawnLifeLimit_);
 			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnPower" }).c_str(), &spawnPower_);
 			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnRange" }).c_str(), &spawnRange_);
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : StartColor" }).c_str(), &startColor_);
+			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : EndColor" }).c_str(), &endColor_);
 			return isChanged;
 		}
+	};
+	struct ColorLarp :IComponent {
+		SoLib::Color::RGB4 start_;
+		SoLib::Color::RGB4 end_;
+		SoLib::EaseFunc easeFunc_;
+
+		SoLib::Color::RGB4 EaseColor(float t);
 	};
 
 	struct Identifier : IComponent {
@@ -94,6 +104,7 @@ namespace ECS {
 	struct AliveTime : IComponent {
 		float aliveTime_{};
 	};
+
 	struct LifeLimit : IComponent {
 		float lifeLimit_{};
 	};
@@ -134,6 +145,10 @@ namespace ECS {
 		inline operator const SoLib::Math::Euler &() const { return rotate_; }
 	};
 
+	struct QuaternionRotComp : IComponent {
+		Quaternion quateRot_ = Quaternion::Identity;
+	};
+
 	struct TransformMatComp : IComponent {
 		Matrix4x4 transformMat_;
 		inline Matrix4x4 &operator=(const Matrix4x4 &other) { return transformMat_ = other; }
@@ -152,5 +167,8 @@ namespace ECS {
 	struct InputFlagComp : IComponent {};
 
 	template<class T>
-	constexpr bool cIsComponentData = std::is_base_of_v<IComponent, T> &&std::is_trivial_v<T> &&std::is_trivially_destructible_v<T>;
+	constexpr bool cIsComponentData = std::is_base_of_v<IComponent, T> &&std::is_trivially_copyable_v<T> &&std::is_trivially_destructible_v<T>;
+
+	template<class T>
+	concept BasedIComponent = cIsComponentData<T>;
 }
