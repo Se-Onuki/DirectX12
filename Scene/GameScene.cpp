@@ -129,9 +129,10 @@ void GameScene::Update() {
 	ImGui::Text("XInput左スティックで移動");
 	ImGui::Text("ParticleCount / %lu", world_->size());
 
-	static SoLib::Color::RGB4 testColor;
+	static SoLib::Color::HSV4 testColor;
 
 	ImGui::ColorEdit4("TestColor", testColor, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
+	SoLib::ImGuiWidget("SoLibColor", &testColor);
 
 	const SoLib::Math::Euler eulerRotate{ 30._deg,0.f,0.f };
 

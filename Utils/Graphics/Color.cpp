@@ -60,6 +60,15 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 #endif // _DEBUG
 }
 
+template<>
+bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused]] Color::HSV4 *const value) {
+#ifdef _DEBUG
+	return ImGui::ColorEdit4(label, *value, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
+#else
+	return false;
+#endif // _DEBUG
+}
+
 SoLib::Color::RGB4 SoLib::Color::operator+(const RGB4 &a, const RGB4 &b) {
 	RGB4 result;
 
@@ -93,4 +102,18 @@ void SoLib::Color::to_json(nlohmann::json &json, const RGB4 &color) {
 
 void SoLib::Color::from_json(const nlohmann::json &json, RGB4 &color) {
 	color = RGB4(json.get<std::array<uint8_t, 4u>>());
+}
+
+SoLib::Color::HSV4::HSV4(const uint32_t color) {
+	for (uint8_t i = 0; i < 4; ++i) {
+		this->data()[i] = static_cast<float>((color >> (8u * (3u - i))) & 0xFF) / 0xFF;
+	}
+}
+
+SoLib::Color::HSV4 &SoLib::Color::HSV4::operator=(const uint32_t color) {
+	return *this = HSV4{ color };
+}
+
+SoLib::Color::HSV4 &SoLib::Color::HSV4::operator=(const Vector4 &color) {
+	return *this = HSV4{ color };
 }

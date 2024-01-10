@@ -99,8 +99,8 @@ namespace SoLib {
 			HSV4(HSV4 &&) = default;
 
 			HSV4(const float h, const float s, const float v, const float a) :h(h), s(s), v(v), a(a) { Clamp(); }
-			HSV4(const std::array<float, 4u> &color);
-			HSV4(const std::array<uint8_t, 4u> color);
+			//HSV4(const std::array<float, 4u> &color);
+			//HSV4(const std::array<uint8_t, 4u> color);
 			HSV4(const uint32_t color);
 			HSV4(const Vector4 &color) {
 				std::memcpy(this->data(), color.data(), sizeof(*this));
@@ -164,3 +164,6 @@ namespace SoLib {
 
 template<>
 bool SoLib::ImGuiWidget(const char *const label, SoLib::Color::RGB4 *const value);
+
+template<>
+bool SoLib::ImGuiWidget(const char *const label, SoLib::Color::HSV4 *const value);
