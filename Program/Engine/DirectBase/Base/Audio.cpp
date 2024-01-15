@@ -31,7 +31,7 @@ Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float vo
 
 	//	auto handle = indexManager_.RequestRange(1u);
 
-		// 波形フォーマットを基にSourceVoiceの生成
+	// 波形フォーマットを基にSourceVoiceの生成
 	IXAudio2SourceVoice *pSourceVoice = nullptr;
 	hr = xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex, 0, 2.0f, &voiceCallback_);
 	assert(SUCCEEDED(hr));
@@ -45,6 +45,7 @@ Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float vo
 	// 再生する波形データの設定
 	XAUDIO2_BUFFER buf{};
 	buf.pAudioData = soundData.pBuffer;
+	buf.pContext = voice.sourceVoice;
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
 	if (loopFlag) {
@@ -85,7 +86,7 @@ void Audio::StopWave(Voice &voiceHandle) {
 		it->sourceVoice->DestroyVoice();
 
 		voices_.erase(it);
-		voiceHandle.sourceVoice = nullptr;
+		//voiceHandle.sourceVoice = nullptr;
 	}
 }
 
@@ -230,7 +231,10 @@ void Audio::SoundData::Unload()
 //}
 void Audio::XAudio2VoiceCallback::OnBufferEnd(THIS_ void *pBufferContext) {
 
-	Voice *voice = reinterpret_cast<Voice *>(pBufferContext);
-	// 再生リストから除外
-	Audio::GetInstance()->voices_.erase(*voice);
+	if (pBufferContext) {
+		Voice voice;
+		voice.sourceVoice = reinterpret_cast<IXAudio2SourceVoice *>(pBufferContext);
+		// 再生リストから除外
+		Audio::GetInstance()->voices_.erase(voice);
+	}
 }
