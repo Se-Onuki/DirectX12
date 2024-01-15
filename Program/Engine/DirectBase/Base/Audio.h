@@ -85,7 +85,9 @@ public:
 	struct VoiceHandle {
 		using HandleType = Voice *;
 
-		VoiceHandle(const HandleType handle) : handle_(handle) {};
+		VoiceHandle() = default;
+		VoiceHandle(const HandleType handle) : handle_(handle) {}
+		VoiceHandle &operator=(const HandleType handle) { handle_ = handle; return *this; }
 
 		inline operator HandleType () const { return handle_; }
 
@@ -130,12 +132,10 @@ public:
 
 	bool IsPlaying(Voice voiceHandle);
 
-	void StopWave(Voice& voiceHandle);
+	void StopWave(Voice &voiceHandle);
 	void StopAllWave();
 	uint32_t LoadWave(const char *filename);
 	SoundData *const GetWave(const uint32_t index);
-
-	//uint32_t FindUnusedIndex() const;
 
 public:
 
@@ -150,9 +150,6 @@ private:
 	std::unordered_map<std::string, uint32_t> fileMap_;
 	std::unordered_set<Voice, VoiceHash> voices_;
 
-	//MemoryUsageManager indexManager_{ kMaxSound };
-	// 次に使う再生中データの番号
-	// uint32_t indexVoice_ = 0u;
 	// オーディオコールバック
 	XAudio2VoiceCallback voiceCallback_;
 
