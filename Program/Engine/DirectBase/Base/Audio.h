@@ -10,6 +10,9 @@
 #include <array>
 #include <string>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
+#include "MemoryUsageManager.h"
 
 class Audio {
 	Audio() = default;
@@ -50,13 +53,49 @@ public:
 
 	// 再生データ
 	struct Voice {
-		uint32_t handle = 0u;
+		bool operator==(Voice other) const {
+			return this->sourceVoice == other.sourceVoice;
+		}
+
 		IXAudio2SourceVoice *sourceVoice = nullptr;
 	};
 
+	struct VoiceHash {
+		size_t operator()(const Voice &voice) const {
+			return std::hash<IXAudio2SourceVoice *>()(voice.sourceVoice);
+		}
+	};
+
+
+	struct SoundHandle {
+
+		SoundHandle(const uint32_t handle) : handle_(handle) {};
+
+		inline operator uint32_t () const { return handle_; }
+
+		uint32_t Get() const { return handle_; }
+
+	private:
+		uint32_t handle_;
+	};
+
+
+	struct VoiceHandle {
+		using HandleType = Voice *;
+
+		VoiceHandle(const HandleType handle) : handle_(handle) {};
+
+		inline operator HandleType () const { return handle_; }
+
+		HandleType Get() const { return handle_; }
+
+	private:
+		HandleType handle_;
+	};
+
 	/// <summary>
-/// オーディオコールバック
-/// </summary>
+	/// オーディオコールバック
+	/// </summary>
 	class XAudio2VoiceCallback : public IXAudio2VoiceCallback {
 	public:
 		// ボイス処理パスの開始時
@@ -84,24 +123,34 @@ public:
 	void Finalize();
 
 	void StaticInit();
-	void PlayWave(const SoundData &soundData, bool loopFlag, float volume);
-	uint32_t PlayWave(uint32_t index, bool loopFlag, float volume);
+	Voice PlayWave(const SoundData &soundData, bool loopFlag, float volume);
+	Voice PlayWave(uint32_t index, bool loopFlag, float volume);
 
-	bool IsPlaying(uint32_t voiceHandle);
+	bool IsPlaying(Voice voiceHandle);
 
-	void StopWave(uint32_t voiceHandle);
+	void StopWave(Voice voiceHandle);
 	void StopAllWave();
 	uint32_t LoadWave(const char *filename);
 	SoundData *const GetWave(const uint32_t index);
+
+	//uint32_t FindUnusedIndex() const;
+
+public:
+
+	static const uint32_t kMaxSound = 512u;
+
 private:
 
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_ = nullptr;
 	IXAudio2MasteringVoice *masterVoice_ = nullptr;
 
-	std::array<std::unique_ptr<SoundData>, 512u> soundArray_;
-	std::set<Voice *> voices_;
+	std::array<std::unique_ptr<SoundData>, kMaxSound> soundArray_;
+	std::unordered_map<std::string, uint32_t> fileMap_;
+	std::unordered_set<Voice, VoiceHash> voices_;
+
+	MemoryUsageManager indexManager_{ kMaxSound };
 	// 次に使う再生中データの番号
-	uint32_t indexVoice_ = 0u;
+	// uint32_t indexVoice_ = 0u;
 	// オーディオコールバック
 	XAudio2VoiceCallback voiceCallback_;
 
