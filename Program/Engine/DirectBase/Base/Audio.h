@@ -69,14 +69,16 @@ public:
 
 	struct SoundHandle {
 
+		SoundHandle() = default;
 		SoundHandle(const uint32_t handle) : handle_(handle) {};
+		SoundHandle &operator=(const uint32_t handle) { handle_ = handle; return *this; }
 
 		inline operator uint32_t () const { return handle_; }
 
 		uint32_t Get() const { return handle_; }
 
 	private:
-		uint32_t handle_;
+		uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
 	};
 
 
@@ -90,7 +92,7 @@ public:
 		HandleType Get() const { return handle_; }
 
 	private:
-		HandleType handle_;
+		HandleType handle_ = nullptr;
 	};
 
 	/// <summary>
@@ -128,7 +130,7 @@ public:
 
 	bool IsPlaying(Voice voiceHandle);
 
-	void StopWave(Voice voiceHandle);
+	void StopWave(Voice& voiceHandle);
 	void StopAllWave();
 	uint32_t LoadWave(const char *filename);
 	SoundData *const GetWave(const uint32_t index);
@@ -148,7 +150,7 @@ private:
 	std::unordered_map<std::string, uint32_t> fileMap_;
 	std::unordered_set<Voice, VoiceHash> voices_;
 
-	MemoryUsageManager indexManager_{ kMaxSound };
+	//MemoryUsageManager indexManager_{ kMaxSound };
 	// 次に使う再生中データの番号
 	// uint32_t indexVoice_ = 0u;
 	// オーディオコールバック

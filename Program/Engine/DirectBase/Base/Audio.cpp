@@ -77,7 +77,7 @@ bool Audio::IsPlaying(Voice voiceHandle) {
 	return false;
 }
 
-void Audio::StopWave(Voice voiceHandle) {
+void Audio::StopWave(Voice &voiceHandle) {
 	// 再生中リストから検索
 	auto it = voices_.find(voiceHandle);
 	// 発見
@@ -85,6 +85,7 @@ void Audio::StopWave(Voice voiceHandle) {
 		it->sourceVoice->DestroyVoice();
 
 		voices_.erase(it);
+		voiceHandle.sourceVoice = nullptr;
 	}
 }
 
@@ -114,10 +115,11 @@ uint32_t Audio::LoadWave(const char *filename) {
 		}
 	}
 	assert(0 && "Soundの追加に失敗しました");
-	return 0;
+	return (std::numeric_limits<uint32_t>::max)();
 }
 
 Audio::SoundData *const Audio::GetWave(uint32_t index) {
+	if (index == (std::numeric_limits<uint32_t>::max)()) { return nullptr; }
 	return soundArray_[index].get();
 }
 //

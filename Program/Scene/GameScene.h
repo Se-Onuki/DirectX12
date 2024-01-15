@@ -52,4 +52,9 @@ private:
 
 	std::unique_ptr<ECS::Prefab> enemyPrefab_;
 
+	Audio::SoundHandle soundA_;
+	Audio::SoundHandle soundB_;
+
+	Audio::Voice voice_;
+
 };

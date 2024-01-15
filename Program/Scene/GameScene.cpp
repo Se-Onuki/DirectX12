@@ -72,6 +72,9 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
 	//*enemyPrefab_ += ECS::RotateComp{};
 
+	soundA_ = audio_->LoadWave("resources/Alarm01.wav");
+	soundB_ = audio_->LoadWave("resources/Alarm01.wav");
+
 
 
 
@@ -114,7 +117,7 @@ void GameScene::OnEnter() {
 	emittComp->count_ = 1u;
 	emittComp->frequency_.Start(0.2f);*/
 
-
+	voice_ = audio_->PlayWave(soundA_, false, 1.f);
 
 }
 
@@ -242,7 +245,9 @@ void GameScene::Update() {
 
 	}
 
-
+	if (input_->GetDirectInput()->IsPress(DIK_SPACE)) {
+		audio_->StopWave(voice_);
+	}
 }
 
 void GameScene::Draw() {
