@@ -232,9 +232,8 @@ void Audio::SoundData::Unload()
 void Audio::XAudio2VoiceCallback::OnBufferEnd(THIS_ void *pBufferContext) {
 
 	if (pBufferContext) {
-		Voice voice;
-		voice.sourceVoice = reinterpret_cast<IXAudio2SourceVoice *>(pBufferContext);
+
 		// 再生リストから除外
-		Audio::GetInstance()->voices_.erase(voice);
+		Audio::GetInstance()->voices_.erase(Voice{ reinterpret_cast<IXAudio2SourceVoice *>(pBufferContext) });
 	}
 }
