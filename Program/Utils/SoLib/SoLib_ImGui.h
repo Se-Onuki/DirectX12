@@ -95,7 +95,7 @@ bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index
 
 	T *selectItem = nullptr;
 
-	if (ImGui::BeginCombo(label, std::to_string(index).c_str())) {
+	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), std::to_string(index).c_str())) {
 		for (uint32_t i = 0u; i < value->size(); i++) {
 			bool is_selected = (index == i);
 			if (ImGui::Selectable(std::to_string(i).c_str(), is_selected)) {
