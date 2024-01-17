@@ -50,8 +50,33 @@ void BoneModel::Init() {
 	bone_ = std::make_unique<Bone>();
 }
 
+BoneModel::Bone *BoneModel::AddBone(const std::string &key, Model *model, Bone *parent) {
+	Bone *pParent = bone_.get();
+	if (parent) {
+		pParent = parent;
+	}
+
+	Bone *newBone = pParent->AddChild(model);
+
+	modelKey_[key] = newBone;
+
+	return newBone;
+}
+
+bool BoneModel::BoneTransform::ImGuiWidget(const char *const label) {
+	bool isChanged = false;
+	if (ImGui::TreeNode(label)) {
+		isChanged |= SoLib::ImGuiWidget("Scale", &scale_);
+		isChanged |= ImGui::DragFloat4("Rotate", &rotate_.x);
+		isChanged |= SoLib::ImGuiWidget("Position", &translate_);
+		ImGui::TreePop();
+	}
+
+	return isChanged;
+}
+
 void BoneModel::BoneTransform::CalcTransMat(const Matrix4x4 *parent) {
-	transMat_ = SoLib::Math::Affine(scale_, rotate_, transform_);
+	transMat_ = SoLib::Math::Affine(scale_, rotate_, translate_);
 
 	// 親が指定されていた場合は計算
 	if (parent) {

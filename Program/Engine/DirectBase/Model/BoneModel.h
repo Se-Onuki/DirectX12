@@ -34,9 +34,11 @@ public:
 
 	struct BoneTransform {
 
-		Vector3 scale_;
-		Quaternion rotate_;
-		Vector3 transform_;
+		Vector3 scale_ = Vector3::one;
+		Quaternion rotate_ = Quaternion::Identity;
+		Vector3 translate_;
+
+		bool ImGuiWidget(const char *const label);
 
 		Matrix4x4 transMat_;
 
@@ -53,6 +55,8 @@ public:
 
 	void Init();
 
+	Bone *AddBone(const std::string &key, Model *model, Bone *parent = nullptr);
+
 	template<size_t I>
 	void Draw(const std::array<BoneTransform, I> &boneTrans) const;
 
@@ -60,6 +64,8 @@ private:
 
 	std::unique_ptr<Bone> bone_;
 	std::unordered_map<const Bone *, uint32_t> boneNumberMap_;
+
+	std::unordered_map<std::string, Bone *> modelKey_;
 
 };
 
@@ -69,7 +75,13 @@ inline void BoneModel::CalcTransMat(std::array<BoneTransform, I> &boneTrans) con
 	for (auto &bone : bone_->GetBoneList()) {
 		BoneTransform &item = boneTrans[boneNumberMap_.at(bone)];
 
-		item.CalcTransMat(bone->GetParent());
+		auto *parent = bone->GetParent();
+		Matrix4x4 *parentMat = nullptr;
+		if (parent) {
+			parentMat = &boneTrans[boneNumberMap_.at(parent)].transMat_;
+		}
+
+		item.CalcTransMat(parentMat);
 
 	}
 
@@ -81,7 +93,7 @@ inline void BoneModel::Draw(const std::array<BoneTransform, I> &boneTrans) const
 
 
 	for (auto &bone : bone_->GetBoneList()) {
-		BoneTransform &item = boneTrans[boneNumberMap_.at(bone)];
+		const BoneTransform &item = boneTrans[boneNumberMap_.at(bone)];
 
 		if (not bone->GetModel()) { continue; }
 

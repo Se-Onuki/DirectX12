@@ -51,6 +51,9 @@ namespace SoLib {
 	template <>
 	bool ImGuiWidget<Angle::Radian>(const char *const label, Angle::Radian *const value);
 
+	template <typename T, IsContainsType<T> C>
+	bool ImGuiWidget(const char *const label, C *const value, uint32_t &index);
+
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 
 	template<typename T>
@@ -86,4 +89,33 @@ bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 
 	return isAction;
 }
+
+template<typename T, SoLib::IsContainsType<T> C>
+bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index) {
+
+	T *selectItem = nullptr;
+
+	if (ImGui::BeginCombo(label, std::to_string(index).c_str())) {
+		for (uint32_t i = 0u; i < value->size(); i++) {
+			bool is_selected = (index == i);
+			if (ImGui::Selectable(std::to_string(i).c_str(), is_selected)) {
+				index = i;
+			}
+			if (is_selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	selectItem = &((*value)[index]);
+
+	bool isChanged = false;
+	if (selectItem) {
+		isChanged |= SoLib::ImGuiWidget(label, selectItem);
+	}
+
+	return isChanged;
+}
+
 #pragma endregion

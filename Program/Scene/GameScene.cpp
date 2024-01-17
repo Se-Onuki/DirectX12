@@ -82,6 +82,12 @@ void GameScene::OnEnter() {
 
 	soundA_ = audio_->LoadWave("resources/Alarm01.wav");
 
+	boneModel_.Init();
+	auto *bodyPtr = boneModel_.AddBone("Body", boxModel_);
+	boneModel_.AddBone("Head", boxModel_, bodyPtr);
+
+	boneModel_.SetNumber();
+
 }
 
 void GameScene::OnExit() {
@@ -227,6 +233,14 @@ void GameScene::Update() {
 		blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = *transMat });
 
 	}
+	static uint32_t index = 0u;
+	SoLib::ImGuiWidget<BoneModel::BoneTransform, decltype(boneTransform_)>("BoneTransform", &boneTransform_, index);
+
+	boneModel_.CalcTransMat(boneTransform_);
+
+	boneModel_.Draw(boneTransform_);
+
+
 }
 
 void GameScene::Draw() {

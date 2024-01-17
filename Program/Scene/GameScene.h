@@ -61,4 +61,6 @@ private:
 
 	BoneModel boneModel_;
 
+	std::array<BoneModel::BoneTransform, 5u> boneTransform_;
+
 };
