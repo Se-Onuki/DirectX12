@@ -3,6 +3,7 @@
 #include <numbers>
 
 #include "Angle.h"
+#include "Quaternion.h"
 struct Polar;
 
 struct Vector2;
@@ -154,3 +155,14 @@ Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m);
 //	//enum class 
 //
 //} // namespace Angle
+
+namespace SoLib {
+
+	namespace Math {
+
+		Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &transform);
+		Matrix4x4 Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform);
+
+	}
+
+}

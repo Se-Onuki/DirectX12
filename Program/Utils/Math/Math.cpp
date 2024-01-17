@@ -217,3 +217,21 @@ Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m) {
 //	}
 //	return result;
 //}
+
+Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &transform) {
+	return Matrix4x4::Affine(scale, rotate, transform);
+}
+
+Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform) {
+	Matrix4x4 result;
+
+	result = quaternion.RotateMatrix();
+
+	Vector4 *const matItr = reinterpret_cast<Vector4 *>(result.data());
+	for (uint8_t i = 0u; i < 3u; i++) {
+		matItr[i] *= scale.data()[i];
+	}
+	*reinterpret_cast<Vector3 *>(result.m[3]) = transform;
+
+	return result;
+}

@@ -15,7 +15,7 @@ public: // パブリックなメンバ変数
 	Matrix4x4 transMat_;
 
 	//　色
-	SoLib::Color::RGB4 color_ = SoLib::Color::RGB4::kWhite;
+	SoLib::Color::RGB4 color_ = 0xFFFFFFFF;
 
 };
 /// <summary>

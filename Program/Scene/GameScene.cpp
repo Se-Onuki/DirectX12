@@ -34,7 +34,7 @@ void GameScene::OnEnter() {
 	cameraManager_->Init();
 	ModelManager::GetInstance()->CreateDefaultModel();
 
-	ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
+	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->GetModel("Plane");
 	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
 
@@ -111,6 +111,8 @@ void GameScene::Update() {
 	cameraManager_->Update(deltaTime);
 
 	particleArray_.clear();
+
+	blockRender_->clear();
 
 	// もし生存フラグが折れていたら、配列から削除
 	world_->erase_if(std::function<bool(ECS::IsAlive *)>(
@@ -205,6 +207,24 @@ void GameScene::Update() {
 	for (const auto &[color, billboard, mat] : world_->view<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
 
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
+
+	}
+
+	for (const auto &[rot, input] : world_->view<ECS::QuaternionRotComp, ECS::InputFlagComp>()) {
+		if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {
+			rot->quateRot_ *= Quaternion::AnyAxisRotation(Vector3::up, 90._deg * deltaTime);
+		}
+		if (input_->GetXInput()->IsPress(KeyCode::LEFT_SHOULDER)) {
+			rot->quateRot_ *= Quaternion::AnyAxisRotation(Vector3::up, -90._deg * deltaTime);
+		}
+
+	}
+
+	for (const auto &[scale, quate, pos, transMat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
+
+		*transMat = SoLib::Math::Affine(*scale, quate->quateRot_, *pos);
+
+		blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = *transMat });
 
 	}
 }

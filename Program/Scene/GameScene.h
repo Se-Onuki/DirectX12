@@ -42,11 +42,12 @@ private:
 
 	StructuredBuffer<Particle::ParticleData> particleArray_{ 1024u };
 
-	BlockManager* blockRender_;
+	BlockManager *blockRender_;
 
 	ECS::SystemManager systemManager_;
 
 	Model *model_ = nullptr;
+	Model *boxModel_ = nullptr;
 
 	std::unique_ptr<World> world_ = nullptr;
 	ECS::EntityManager *entityManager_;
