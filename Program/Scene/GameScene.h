@@ -20,6 +20,7 @@
 #include "../Utils/Containers/ConstVector.h"
 #include "../ECS/System/SystemManager.h"
 #include "../Header/Object/Block/BlockManager.h"
+#include "../Engine/DirectBase/Model/BoneModel.h"
 
 class GameScene : public IScene {
 public:
@@ -57,5 +58,7 @@ private:
 	std::unique_ptr<ECS::Prefab> enemyPrefab_;
 
 	Audio::SoundHandle soundA_;
+
+	BoneModel boneModel_;
 
 };

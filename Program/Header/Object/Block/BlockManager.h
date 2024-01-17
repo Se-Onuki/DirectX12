@@ -138,6 +138,9 @@ public: // メンバ関数
 	void Draw(const Camera3D &camera);
 
 	IBlock *const AddBox(const Model *const model, IBlock &&block) {
+
+		if (not model) { return nullptr; }
+
 		decltype(blockMap_)::iterator blockListItr = blockMap_.find(model);
 		if (blockListItr == blockMap_.end()) {
 			blockMap_[model] = std::make_unique<BlockList>();

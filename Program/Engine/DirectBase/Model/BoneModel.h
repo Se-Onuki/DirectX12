@@ -2,6 +2,7 @@
 #include "Model.h"
 #include <unordered_map>
 #include <array>
+#include "../../Header/Object/Block/BlockManager.h"
 
 class BoneModel {
 public:
@@ -50,6 +51,11 @@ public:
 
 	void SetNumber();
 
+	void Init();
+
+	template<size_t I>
+	void Draw(const std::array<BoneTransform, I> &boneTrans) const;
+
 private:
 
 	std::unique_ptr<Bone> bone_;
@@ -64,6 +70,22 @@ inline void BoneModel::CalcTransMat(std::array<BoneTransform, I> &boneTrans) con
 		BoneTransform &item = boneTrans[boneNumberMap_.at(bone)];
 
 		item.CalcTransMat(bone->GetParent());
+
+	}
+
+}
+
+template<size_t I>
+inline void BoneModel::Draw(const std::array<BoneTransform, I> &boneTrans) const {
+	static BlockManager *const blockManager = BlockManager::GetInstance();
+
+
+	for (auto &bone : bone_->GetBoneList()) {
+		BoneTransform &item = boneTrans[boneNumberMap_.at(bone)];
+
+		if (not bone->GetModel()) { continue; }
+
+		blockManager->AddBox(bone->GetModel(), IBlock{ .transMat_ = item.transMat_ });
 
 	}
 

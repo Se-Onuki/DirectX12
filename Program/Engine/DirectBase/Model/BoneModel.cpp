@@ -46,6 +46,10 @@ void BoneModel::SetNumber() {
 
 }
 
+void BoneModel::Init() {
+	bone_ = std::make_unique<Bone>();
+}
+
 void BoneModel::BoneTransform::CalcTransMat(const Matrix4x4 *parent) {
 	transMat_ = SoLib::Math::Affine(scale_, rotate_, transform_);
 
