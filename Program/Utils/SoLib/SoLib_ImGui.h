@@ -101,9 +101,9 @@ bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index
 			if (ImGui::Selectable(std::to_string(i).c_str(), is_selected)) {
 				index = i;
 			}
-			if (is_selected) {
+		/*	if (is_selected) {
 				ImGui::SetItemDefaultFocus();
-			}
+			}*/
 		}
 		ImGui::EndCombo();
 	}
