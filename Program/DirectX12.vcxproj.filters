@@ -381,6 +381,9 @@
     <ClCompile Include="ECS\System\SystemManager.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\BoneModel.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -712,6 +715,9 @@
     </ClInclude>
     <ClInclude Include="ECS\System\ISystem.h">
       <Filter>ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\BoneModel.h">
+      <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
