@@ -4,22 +4,18 @@
 #include "../../../Engine/DirectBase/Base/StructBuffer.h"
 #include "../../../Engine/DirectBase/Model/ModelManager.h"
 #include "../Particle.h"
+#include "../../Utils/Graphics/Color.h"
 
 class IBlock {
 public: // コンストラクタ
 
-	/// <summary>
-	/// 更新関数
-	/// </summary>
-	void Update();
-
 public: // パブリックなメンバ変数
 
 	// トランスフォーム
-	BaseTransform transform_;
+	Matrix4x4 transMat_;
 
 	//　色
-	Vector4 color_ = { 1.f, 1.f, 1.f, 1.f };
+	SoLib::Color::RGB4 color_ = SoLib::Color::RGB4::kWhite;
 
 };
 /// <summary>
@@ -28,11 +24,6 @@ public: // パブリックなメンバ変数
 class BlockList {
 public: // メンバ関数
 
-	/// <summary>
-	/// 更新関数
-	/// </summary>
-	/// <param name="deltaTime"></param>
-	void Update();
 
 public: // アクセッサ等
 
@@ -139,11 +130,6 @@ public: // メンバ関数
 	/// <param name="maxCount">最大数</param>
 	void Init(uint32_t maxCount);
 
-	/// <summary>
-	/// 更新関数
-	/// </summary>
-	/// <param name="deltaTime"></param>
-	void Update();
 
 	/// <summary>
 	/// 描画関数

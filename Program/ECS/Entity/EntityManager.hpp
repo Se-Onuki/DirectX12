@@ -42,7 +42,7 @@ namespace ECS {
 			return CreateEntity(archetype, count);
 		}
 
-		template<typename... Ts>
+		//template<typename... Ts>
 		const std::list<ECS::Entity> CreateEntity(const ECS::Prefab &prefab, uint32_t count = 1u) {
 			std::list<ECS::Entity> entityList{};
 			if (not count) {

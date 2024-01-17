@@ -14,6 +14,7 @@ GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	cameraManager_ = CameraManager::GetInstance();
+	blockRender_ = BlockManager::GetInstance();
 	// collisionManager_ = CollisionManager::GetInstance();
 }
 
@@ -24,6 +25,8 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 
 	light_ = DirectionLight::Create();
+
+	blockRender_->Init(1024u);
 
 
 	world_ = std::make_unique<World>();
@@ -67,58 +70,17 @@ void GameScene::OnEnter() {
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 
 	*enemyPrefab_ += ECS::IsAlive{};
-	*enemyPrefab_ += ECS::PositionComp{};
-	*enemyPrefab_ += ECS::PositionComp{};
+	*enemyPrefab_ += ECS::ScaleComp{};
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
+	*enemyPrefab_ += ECS::PositionComp{};
+	*enemyPrefab_ += ECS::TransformMatComp{};
+	*enemyPrefab_ += ECS::InputFlagComp{};
+
+	entityManager_->CreateEntity(*enemyPrefab_);
+
 	//*enemyPrefab_ += ECS::RotateComp{};
 
 	soundA_ = audio_->LoadWave("resources/Alarm01.wav");
-	soundB_ = audio_->LoadWave("resources/Alarm02.wav");
-
-
-
-
-	/*for (const auto &emitter : emitterList) {
-		const auto &[lifeLimit] = entityManager_->GetComponent<ECS::LifeLimit>(emitter);
-		lifeLimit->lifeLimit_ = -1.f;
-	}*/
-
-	//// エンティティの追加(idは先頭からのindex)
-	//size_t entityID = mArray_->push_back();
-	//// 添え字を使って要素にアクセス。
-	//mArray_->GetItem<ECS::Identifier>(entityID).name_ = "hello";
-	//mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "goodbye";
-	//mArray_->GetItem<ECS::Identifier>(mArray_->push_back()).name_ = "hi";
-
-	//for (uint32_t i = 0u; i < 10u; i++) {
-	//	size_t index = mArray_->push_back();
-	//	// 要素を追加し、その要素のデータをイテレータから取得してstd::tupleで展開する
-	//	const auto &[name, model] = (*mArray_->get<ECS::Identifier, ECS::ModelComp>().begin()[index]);
-	//	// データを代入
-	//	name->name_ = std::string("test") + std::to_string(i);
-
-	//	model->model_ = model_;
-	//}
-
-	//for (uint32_t i = 0u; i < 10u; i++) {
-	//	// 作成されたデータへのポインタ
-	//	const auto &[name, model, aliveTime] = mArray_->create_back<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit>();
-	//	// データを代入
-	//	name->name_ = std::string("test") + std::to_string(i);
-	//	//if (i % 2u == 0u) {
-	//	aliveTime->lifeLimit_ = 2.f;
-	//	//}
-	//	model->model_ = model_;
-	//
-	//}
-
-	/*const auto &[id, emittComp] = emitterArray_->create_back<ECS::Identifier, ECS::EmitterComp>();
-	id->name_ = "emitter";
-	emittComp->count_ = 1u;
-	emittComp->frequency_.Start(0.2f);*/
-
-	voice_ = audio_->PlayWave(soundA_, false, 1.f);
-	audio_->PlayWave(soundB_, false, 1.f);
 
 }
 
@@ -245,10 +207,6 @@ void GameScene::Update() {
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
 
 	}
-
-	if (input_->GetDirectInput()->IsPress(DIK_SPACE)) {
-		audio_->StopWave(voice_);
-	}
 }
 
 void GameScene::Draw() {
@@ -282,6 +240,12 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	model_->Draw(particleArray_, camera);
+
+	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
+
+	light_->SetLight(commandList);
+
+	blockRender_->Draw(camera);
 
 	Model::EndDraw();
 

@@ -19,6 +19,7 @@
 #include "../../Header/Object/Particle.h"
 #include "../Utils/Containers/ConstVector.h"
 #include "../ECS/System/SystemManager.h"
+#include "../Header/Object/Block/BlockManager.h"
 
 class GameScene : public IScene {
 public:
@@ -41,6 +42,8 @@ private:
 
 	StructuredBuffer<Particle::ParticleData> particleArray_{ 1024u };
 
+	BlockManager* blockRender_;
+
 	ECS::SystemManager systemManager_;
 
 	Model *model_ = nullptr;
@@ -53,8 +56,5 @@ private:
 	std::unique_ptr<ECS::Prefab> enemyPrefab_;
 
 	Audio::SoundHandle soundA_;
-	Audio::SoundHandle soundB_;
-
-	Audio::Voice voice_;
 
 };

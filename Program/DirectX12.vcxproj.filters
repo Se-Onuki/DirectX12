@@ -127,6 +127,9 @@
     <Filter Include="Utils\Text">
       <UniqueIdentifier>{482b4099-ec56-45dc-b5cd-ca4a5614906b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ECS\System">
+      <UniqueIdentifier>{49b232f6-b920-49bf-b068-d7a1b0a86325}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -674,12 +677,6 @@
     <ClInclude Include="ECS\Archetype.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\ConstString.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\Viewer.h">
-      <Filter>ECS</Filter>
-    </ClInclude>
     <ClInclude Include="ECS\Viewer.h">
       <Filter>ECS</Filter>
     </ClInclude>
@@ -698,9 +695,6 @@
     <ClInclude Include="Utils\Containers\Array2D.h">
       <Filter>Utils\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\System\ISystem.h">
-      <Filter>ECS</Filter>
-    </ClInclude>
     <ClInclude Include="ECS\System\SystemManager.h">
       <Filter>ECS</Filter>
     </ClInclude>
@@ -712,6 +706,12 @@
     </ClInclude>
     <ClInclude Include="Utils\Containers\ConstVector.h">
       <Filter>Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\System\Systems.h">
+      <Filter>ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\System\ISystem.h">
+      <Filter>ECS\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
