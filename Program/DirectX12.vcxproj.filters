@@ -680,9 +680,6 @@
     <ClInclude Include="ECS\Archetype.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Viewer.h">
-      <Filter>ECS</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\Graphics\Color.h">
       <Filter>Utils\Graphics</Filter>
     </ClInclude>
@@ -718,6 +715,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\BoneModel.h">
       <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Containers\Singleton.h">
+      <Filter>Utils\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

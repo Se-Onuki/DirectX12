@@ -116,7 +116,7 @@ struct Sphere {
 };
 
 struct LineBase final {
-	enum class LineType { Line, Ray, Segment };
+	enum class LineType : uint32_t{ Line, Ray, Segment };
 	// LineBase(const Vector3& Origin, const Vector3& Diff) : origin(Origin), diff(Diff) {}
 	Vector3 origin; // 始点
 	Vector3 diff;   // 終点へのベクトル
@@ -211,7 +211,7 @@ struct Capsule {
 	LineBase segment{ .lineType = LineBase::LineType::Segment };
 	float radius;
 
-	Vector3 GetHitPoint(const Plane &plane);
+	Vector3 GetHitPoint(const Plane &plane) const;
 };
 
 /// @brief AABB同士の結合

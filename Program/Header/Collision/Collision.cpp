@@ -553,7 +553,7 @@ void Ball::Update(const Plane &plane, const float deltaTime, const float elastic
 	acceleration = Vector3::zero;
 }
 
-Vector3 Capsule::GetHitPoint(const Plane &plane) {
+Vector3 Capsule::GetHitPoint(const Plane &plane) const {
 	// 引き戻す単位
 	const Vector3 invDiff = -segment.diff.Nomalize();
 	// 引き戻す時の係数

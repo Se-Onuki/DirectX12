@@ -17,6 +17,7 @@
 #include <bitset>
 #include <string>
 #include <unordered_map>
+#include <typeindex>
 
 // class SpriteManager {
 // public:
@@ -50,7 +51,21 @@ namespace ECS {
 
 	struct IComponent {};
 
-	struct IsAlive : IComponent {
+	template <SoLib::IsNotPointer T>
+	struct IClassData {
+
+		static const std::type_index &GetTypeid() {
+			static std::type_index typeindex{ typeid(T) };
+			return typeindex;
+		}
+
+		static size_t GetSize() {
+			return sizeof(T);
+		}
+
+	};
+
+	struct IsAlive : IComponent, public IClassData<IsAlive> {
 		bool isAlive_ = true;
 	};
 

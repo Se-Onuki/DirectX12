@@ -8,6 +8,7 @@
 #include "DirectXCommon.h"
 
 #include "../../../Utils/SoLib/SoLib_Traits.h"
+#include "../String/String.h"
 
 #pragma region 単体定数バッファ
 
@@ -49,6 +50,10 @@ public:
 
 	inline T *const get() { return mapData_; }
 	inline const T *const get() const { return mapData_; }
+
+	template <typename U = CBuffer>
+	void SetName();
+
 public:
 
 	CBuffer();					// デフォルトコンストラクタ
@@ -130,6 +135,12 @@ inline void CBuffer<T, IsActive>::CreateBuffer() {
 
 	result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 	assert(SUCCEEDED(result));
+
+#ifdef _DEBUG
+
+	this->SetName();
+
+#endif // _DEBUG
 
 }
 
@@ -325,4 +336,18 @@ template<SoLib::IsNotPointer T>
 inline ConstantContainer<T> &ConstantContainer<T>::operator=(const ConstantContainer<T> &other) {
 	*this = other.data_;
 	return *this;
+}
+
+template<SoLib::IsNotPointer T, bool IsActive>
+template<typename U>
+inline void CBuffer<T, IsActive>::SetName() {
+
+#ifdef _DEBUG
+
+	if (resources_) {
+		resources_->SetName(ConvertString(typeid(U).name()).c_str());
+	}
+
+#endif // _DEBUG
+
 }
