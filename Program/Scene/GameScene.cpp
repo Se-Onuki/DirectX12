@@ -75,6 +75,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::PositionComp{};
 	*enemyPrefab_ += ECS::TransformMatComp{};
 	*enemyPrefab_ += ECS::InputFlagComp{};
+	*enemyPrefab_ += ECS::BoneTransformComp{};
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
@@ -223,12 +224,12 @@ void GameScene::Update() {
 		if (input_->GetXInput()->IsPress(KeyCode::LEFT_SHOULDER)) {
 			rot->quateRot_ *= Quaternion::AnyAxisRotation(Vector3::up, -90._deg * deltaTime);
 		}
-
+		rot->quateRot_ = rot->quateRot_.Normalize();
 	}
 
 	for (const auto &[scale, quate, pos, transMat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
 
-		*transMat = SoLib::Math::Affine(*scale, quate->quateRot_, *pos);
+		*transMat = SoLib::Math::Affine(*scale, quate->quateRot_.Normalize(), *pos);
 
 		blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = *transMat });
 
@@ -267,17 +268,18 @@ void GameScene::Draw() {
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
-	Model::SetPipelineType(Model::PipelineType::kParticle);
-
-	light_->SetLight(commandList);
-
-	model_->Draw(particleArray_, camera);
 
 	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
 
 	light_->SetLight(commandList);
 
 	blockRender_->Draw(camera);
+
+	Model::SetPipelineType(Model::PipelineType::kParticle);
+
+	light_->SetLight(commandList);
+
+	model_->Draw(particleArray_, camera);
 
 	Model::EndDraw();
 

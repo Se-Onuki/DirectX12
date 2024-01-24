@@ -27,7 +27,7 @@ std::list<const BoneModel::Bone *> BoneModel::Bone::GetBoneList() const {
 
 	for (const auto &child : children_) {
 		auto childList = child->GetBoneList();
-		result.insert(result.end(), childList.begin(), childList.end());
+		result.splice(result.end(), std::move(childList));
 	}
 
 	return result;

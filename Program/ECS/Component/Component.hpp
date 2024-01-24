@@ -19,6 +19,8 @@
 #include <unordered_map>
 #include <typeindex>
 
+#include "../../Engine/DirectBase/Model/BoneModel.h"
+
 // class SpriteManager {
 // public:
 //	static SpriteManager& getInstance() {
@@ -177,6 +179,11 @@ namespace ECS {
 		}
 		Model *model_;
 
+	};
+
+	//template <size_t I>
+	struct BoneTransformComp : IComponent {
+		std::array<BoneModel::SimpleTransform, 6u> boneTransform_;
 	};
 
 	struct WeaponComp : IComponent {
