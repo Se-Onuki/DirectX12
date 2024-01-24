@@ -20,6 +20,7 @@
 #include <typeindex>
 
 #include "../../Engine/DirectBase/Model/BoneModel.h"
+#include "../../Header/Collision/Collision.h"
 
 // class SpriteManager {
 // public:
@@ -181,13 +182,13 @@ namespace ECS {
 
 	};
 
-	//template <size_t I>
 	struct BoneTransformComp : IComponent {
 		std::array<BoneModel::SimpleTransform, 6u> boneTransform_;
 	};
 
 	struct WeaponComp : IComponent {
-
+		uint32_t parentIndex_;
+		Sphere collision_;
 	};
 
 	struct InputFlagComp : IComponent {};
