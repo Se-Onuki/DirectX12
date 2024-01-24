@@ -127,7 +127,7 @@ inline Matrix4x4 Quaternion::RotateMatrix() const {
 		Vector4{w * w + x * x - y * y - z * z, 2.f * (x * y + w * z), 2.f * (x * z - w * y),0.f},
 		Vector4{2.f * (x * y - w * z), w * w - x * x + y * y - z * z,2.f * (y * z + w * x),0.f },
 		Vector4{2.f * (x * z + w * y),2.f * (y * z - w * x),w * w - x * x - y * y + z * z,0.f},
-		Vector4{.w = 1.f}
+		Vector4{0.f, 0.f, 0.f, 1.f}
 	};
 }
 

@@ -565,11 +565,18 @@ Vector3 Capsule::GetHitPoint(const Plane &plane) const {
 
 AABB operator+(const AABB &first, const AABB &second) {
 	AABB mergedAABB;
-	mergedAABB.min.x = min(first.min.x, second.min.x);
-	mergedAABB.min.y = min(first.min.y, second.min.y);
-	mergedAABB.min.z = min(first.min.z, second.min.z);
-	mergedAABB.max.x = max(first.max.x, second.max.x);
-	mergedAABB.max.y = max(first.max.y, second.max.y);
-	mergedAABB.max.z = max(first.max.z, second.max.z);
+	for (uint32_t i = 0u; i < 3; i++) {
+		(&mergedAABB.min.x)[i] = (std::min)((&first.min.x)[i], (&second.min.x)[i]);
+
+		(&mergedAABB.max.x)[i] = (std::max)((&first.max.x)[i], (&second.max.x)[i]);
+
+	}
+
+	//mergedAABB.min.x = (std::min)(first.min.x, second.min.x);
+	//mergedAABB.min.y = (std::min)(first.min.y, second.min.y);
+	//mergedAABB.min.z = (std::min)(first.min.z, second.min.z);
+	//mergedAABB.max.x = (std::max)(first.max.x, second.max.x);
+	//mergedAABB.max.y = (std::max)(first.max.y, second.max.y);
+	//mergedAABB.max.z = (std::max)(first.max.z, second.max.z);
 	return mergedAABB;
 }

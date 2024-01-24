@@ -26,8 +26,8 @@ std::list<const BoneModel::Bone *> BoneModel::Bone::GetBoneList() const {
 	result.push_back(this);
 
 	for (const auto &child : children_) {
-
-		result.merge(child->GetBoneList());
+		auto childList = child->GetBoneList();
+		result.insert(result.end(), childList.begin(), childList.end());
 	}
 
 	return result;
@@ -83,4 +83,27 @@ void BoneModel::BoneTransform::CalcTransMat(const Matrix4x4 *parent) {
 		transMat_ *= *parent;
 	}
 
+}
+
+bool BoneModel::SimpleTransform::ImGuiWidget(const char *const label) {
+	bool isChanged = false;
+	if (ImGui::TreeNode(label)) {
+		isChanged |= SoLib::ImGuiWidget("Scale", &scale_);
+		isChanged |= ImGui::DragFloat4("Rotate", &rotate_.x);
+		isChanged |= SoLib::ImGuiWidget("Position", &translate_);
+		ImGui::TreePop();
+	}
+
+	return isChanged;
+}
+
+Matrix4x4 BoneModel::SimpleTransform::CalcTransMat(const Matrix4x4 *parent) {
+	Matrix4x4 transMat = SoLib::Math::Affine(scale_, rotate_, translate_);
+
+	// 親が指定されていた場合は計算
+	if (parent) {
+		transMat *= *parent;
+	}
+
+	return transMat;
 }

@@ -234,11 +234,9 @@ void GameScene::Update() {
 
 	}
 	static uint32_t index = 0u;
-	SoLib::ImGuiWidget<BoneModel::BoneTransform, decltype(boneTransform_)>("BoneTransform", &boneTransform_, index);
+	SoLib::ImGuiWidget<BoneModel::SimpleTransform, decltype(boneTransform_)>("BoneTransform", &boneTransform_, index);
 
-	boneModel_.CalcTransMat(boneTransform_);
-
-	boneModel_.Draw(boneTransform_);
+	boneModel_.Draw(boneModel_.CalcTransMat(boneTransform_));
 
 
 }

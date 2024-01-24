@@ -46,10 +46,24 @@ public:
 
 	};
 
+	struct SimpleTransform {
+		Vector3 scale_ = Vector3::one;
+		Quaternion rotate_ = Quaternion::Identity;
+		Vector3 translate_;
+
+		bool ImGuiWidget(const char *const label);
+
+		Matrix4x4 CalcTransMat(const Matrix4x4 *parent = nullptr);
+
+	};
+
 public:
 
 	template<size_t I>
 	void CalcTransMat(std::array<BoneTransform, I> &boneTrans) const;
+
+	template<size_t I>
+	std::array<Matrix4x4, I> CalcTransMat(std::array<SimpleTransform, I> &boneTrans) const;
 
 	void SetNumber();
 
@@ -59,6 +73,9 @@ public:
 
 	template<size_t I>
 	void Draw(const std::array<BoneTransform, I> &boneTrans) const;
+
+	template<size_t I>
+	void Draw(const std::array<Matrix4x4, I> &boneTrans) const;
 
 private:
 
@@ -86,6 +103,29 @@ inline void BoneModel::CalcTransMat(std::array<BoneTransform, I> &boneTrans) con
 	}
 
 }
+template<size_t I>
+inline std::array<Matrix4x4, I> BoneModel::CalcTransMat(std::array<SimpleTransform, I> &boneTrans) const {
+
+	std::array<Matrix4x4, I> result;
+	//result.
+	std::fill_n(result.data(), I, Matrix4x4::Identity());
+
+	for (const auto *const bone : bone_->GetBoneList()) {
+		uint32_t itemNumber = boneNumberMap_.at(bone);
+		SimpleTransform &item = boneTrans[itemNumber];
+
+		auto *parent = bone->GetParent();
+		Matrix4x4 *parentMat = nullptr;
+		if (parent) {
+			parentMat = &result[boneNumberMap_.at(parent)];
+		}
+
+		result[itemNumber] = item.CalcTransMat(parentMat);
+
+	}
+
+	return result;
+}
 
 template<size_t I>
 inline void BoneModel::Draw(const std::array<BoneTransform, I> &boneTrans) const {
@@ -98,6 +138,22 @@ inline void BoneModel::Draw(const std::array<BoneTransform, I> &boneTrans) const
 		if (not bone->GetModel()) { continue; }
 
 		blockManager->AddBox(bone->GetModel(), IBlock{ .transMat_ = item.transMat_ });
+
+	}
+
+}
+
+template<size_t I>
+inline void BoneModel::Draw(const std::array<Matrix4x4, I> &boneTrans) const {
+	static BlockManager *const blockManager = BlockManager::GetInstance();
+
+
+	for (auto &bone : bone_->GetBoneList()) {
+		const Matrix4x4 &item = boneTrans[boneNumberMap_.at(bone)];
+
+		if (not bone->GetModel()) { continue; }
+
+		blockManager->AddBox(bone->GetModel(), IBlock{ .transMat_ = item });
 
 	}
 

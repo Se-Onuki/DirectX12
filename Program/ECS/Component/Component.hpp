@@ -179,6 +179,10 @@ namespace ECS {
 
 	};
 
+	struct WeaponComp : IComponent {
+
+	};
+
 	struct InputFlagComp : IComponent {};
 
 	template<class T>
