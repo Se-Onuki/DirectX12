@@ -5,6 +5,7 @@
 #include <array>
 #include <cmath>
 #include "Matrix4x4.h"
+#include "../SoLib/SoLib_Lerp.h"
 //#include "Euler.h"
 namespace SoLib::Math {
 
@@ -53,7 +54,7 @@ struct Quaternion final {
 
 	static Quaternion AnyAxisRotation(const Vector3 &axis, float angle);
 
-	static Quaternion Create(const SoLib::Math::Euler &euler);
+	static Quaternion Create(const SoLib::Math::Euler &euler); static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
 
 	/// @brief 明示的な型変換
 	inline explicit operator __m128() const noexcept { return _mm_load_ps(&x); }
@@ -152,4 +153,28 @@ inline Vector3 Quaternion::RotateVector(const Vector3 &a, const Quaternion &b) {
 	Quaternion result = b * Quaternion{ a } *b.Conjugation();
 
 	return result.vec();
+}
+
+inline Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &end, float t) {
+
+	std::array<SoLib::Math::SIMD128, 2u> vec{ static_cast<__m128>(start),static_cast<__m128>(end) };
+
+	Quaternion result;
+	float dot = SoLib::Math::SIMD128::Dot<4u>(vec[0], vec[1]);
+
+	if (dot < 0) {
+		vec[0] = -vec[0];
+		dot = -dot;
+	}
+	if (dot >= 1.f - std::numeric_limits<float>::epsilon()) {
+		result = SoLib::Lerp(vec[0], vec[1], t);
+		return result;
+	}
+
+	const float theta = std::acos(dot);
+
+	const float sin = std::sin(theta);
+
+	result = vec[0] * (std::sin((1 - t) * theta) / sin) + vec[1] * std::sin(t * theta) / sin;
+	return result;
 }

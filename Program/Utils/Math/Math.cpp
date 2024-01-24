@@ -237,6 +237,5 @@ Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion
 }
 
 Quaternion SoLib::Math::MakeQuaternion(const SoLib::Math::Euler &euler) {
-	euler;
-	return Quaternion();
+	return Quaternion::Create(euler);
 }

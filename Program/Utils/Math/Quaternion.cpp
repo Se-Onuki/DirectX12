@@ -17,7 +17,7 @@ Quaternion Quaternion::Create(const SoLib::Math::Euler &euler) {
 		tX[kCos] * tY[kSin] * tZ[kSin] + tX[kSin] * tY[kCos] * tZ[kCos],
 		-tX[kSin] * tY[kCos] * tZ[kSin] + tX[kCos] * tY[kSin] * tZ[kCos],
 		tX[kCos] * tY[kCos] * tZ[kSin] + tX[kSin] * tY[kSin] * tZ[kCos],
-		-tX[kSin] * tY[kSin] * tZ[kCos] + tX[kCos] * tY[kCos] * tZ[kCos]
+		-tX[kSin] * tY[kSin] * tZ[kSin] + tX[kCos] * tY[kCos] * tZ[kCos]
 	};
 
 	return result.Normalize();
