@@ -81,12 +81,11 @@ uint32_t ECS::MultiChunk::push_back() {
 
 uint32_t ECS::MultiChunk::push_back(const ECS::Prefab &prefab) {
 
-	auto compItr = prefab.GetComponentMap().begin();
+	const auto& compItr = prefab.GetComponentMap();
 
 	for (const auto &[typeindex, classData] : archetype_->data_) {
 		auto ptr = GetItemPtr(typeindex, size_);
-		std::memcpy(ptr, compItr->second.get(), classData.size_);
-		++compItr;
+		std::memcpy(ptr, compItr.at(typeindex).get(), classData.size_);
 	}
 
 	return size_++;
@@ -106,11 +105,16 @@ void ECS::MultiChunk::Normalize() {
 void *ECS::MultiChunk::GetItemPtr(const std::type_index type, const uint32_t index) {
 	const auto &[itemPtr, classData] = componentAddress_.at(type);
 
-	return reinterpret_cast<memoryType *>(itemPtr) + entitySize_ * index;
+	return GetItemPtr(itemPtr, entitySize_, index);
 }
 
 void *ECS::MultiChunk::GetEntityPtr(const uint32_t index) {
 	return reinterpret_cast<memoryType *>(this->memoryPtr_.get()) + entitySize_ * index;
+}
+
+void *ECS::MultiChunk::GetItemPtr(void *begin, size_t entitySize, uint32_t index) {
+
+	return reinterpret_cast<MultiChunk::memoryType *>(begin) + index * entitySize;
 }
 
 ECS::MultiChunk *ECS::MultiArray::AddChunk() {

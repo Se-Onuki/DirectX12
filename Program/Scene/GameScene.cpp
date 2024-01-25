@@ -77,6 +77,9 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::InputFlagComp{};
 	*enemyPrefab_ += ECS::BoneTransformComp{};
 
+	/*Archetype enemyArchetype{};
+	enemyArchetype.AddClassData<ECS::IsAlive, ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp, ECS::InputFlagComp, ECS::BoneTransformComp>();*/
+
 	entityManager_->CreateEntity(*enemyPrefab_);
 
 	//*enemyPrefab_ += ECS::RotateComp{};
@@ -227,17 +230,21 @@ void GameScene::Update() {
 		rot->quateRot_ = rot->quateRot_.Normalize();
 	}
 
-	for (const auto &[scale, quate, pos, transMat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
+	for (const auto &[scale, quate, pos, bone] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp>()) {
 
-		*transMat = SoLib::Math::Affine(*scale, quate->quateRot_.Normalize(), *pos);
+		bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
 
-		blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = *transMat });
+		//blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = bone->boneTransform_[0].CalcTransMat() });
 
 	}
-	static uint32_t index = 0u;
+
+	for (const auto &[bone] : world_->view<ECS::BoneTransformComp>()) {
+		boneModel_.Draw(boneModel_.CalcTransMat(bone->boneTransform_));
+	}
+	/*static uint32_t index = 0u;
 	SoLib::ImGuiWidget<BoneModel::SimpleTransform, decltype(boneTransform_)>("BoneTransform", &boneTransform_, index);
 
-	boneModel_.Draw(boneModel_.CalcTransMat(boneTransform_));
+	boneModel_.Draw(boneModel_.CalcTransMat(boneTransform_));*/
 
 
 }

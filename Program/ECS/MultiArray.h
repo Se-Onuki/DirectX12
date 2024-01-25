@@ -170,7 +170,7 @@ namespace ECS {
 
 		/// @brief 末尾へのデータの追加
 		/// @return 追加されたデータの内部index
-		uint32_t push_back(const ECS::Prefab& prefab);
+		uint32_t push_back(const ECS::Prefab &prefab);
 
 		uint32_t pop_back();
 
@@ -218,6 +218,8 @@ namespace ECS {
 				}
 			}
 		}
+
+		static void *GetItemPtr(void *begin, size_t size, uint32_t index);
 
 	private:
 		uint32_t size_{};
@@ -327,7 +329,7 @@ namespace ECS {
 
 		/// @brief 末尾に要素を追加
 		/// @return 追加された要素のindex
-		size_t push_back(const ECS::Prefab& prefab);
+		size_t push_back(const ECS::Prefab &prefab);
 
 		template<SoLib::IsNotPointer T, SoLib::IsNotPointer... Ts>
 		std::tuple<T *, Ts *...> GetItem(size_t totalIndex);
@@ -454,7 +456,7 @@ namespace ECS {
 
 		//return std::make_tuple((Ts *const)((char *)std::get<Is>(t) + sizeof(Ts))...);
 		//return this->IncrementAddress<Ts...>(*this->componentAddress_, index_);
-		return std::make_tuple((reinterpret_cast<Ts *>(reinterpret_cast<MultiChunk::memoryType *>(std::get<Ts*>(*this->componentAddress_)) + index_ * entitySize_))...);
+		return std::make_tuple(reinterpret_cast<Ts *>(MultiChunk::GetItemPtr(std::get<Ts *>(*this->componentAddress_), entitySize_, index_))...);
 	}
 
 	template<typename ...Ts>
