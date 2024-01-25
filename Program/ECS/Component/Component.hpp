@@ -187,7 +187,7 @@ namespace ECS {
 	};
 
 	struct BoneTransformComp : IComponent {
-		std::array<BoneModel::SimpleTransform, 3u> boneTransform_{};
+		std::array<BoneModel::SimpleTransform, 6u> boneTransform_{};
 	};
 
 	struct WeaponComp : IComponent {
