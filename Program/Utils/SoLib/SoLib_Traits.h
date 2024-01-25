@@ -33,6 +33,9 @@ namespace SoLib {
 		requires std::same_as<typename T::value_type, U>; // Tの要素の型がUであることを確認
 	};
 
+	/// @brief TがUを継承しているか
+	template <typename T, typename U>
+	concept IsBased = std::is_base_of_v<U, T>;
 
 
 	/// @brief 浮動小数点型である
@@ -46,6 +49,41 @@ namespace SoLib {
 	/// @brief 数値型である
 	template <typename T>
 	concept IsNumber = std::is_floating_point_v<T> || std::is_integral_v<T>;
+
+
+	template <typename R, typename T/*, T R:: *Ptr = nullptr*/>
+	struct Wrapping {
+
+		using WrappedType = T;
+
+		inline operator T &() { return static_cast<R *>(this)->Get(); }
+		inline operator const T &() const { return static_cast<const R *>(this)->Get(); }
+
+		inline T &operator *() { return static_cast<R *>(this)->Get(); }
+		inline const T &operator *() const { return static_cast<const R *>(this)->Get(); }
+
+		Wrapping &operator=(const Wrapping &) = default;
+		Wrapping &operator=(Wrapping &&) = default;
+
+		R &operator=(const T &other) { static_cast<R *>(this)->Get() = other; return *static_cast<R *>(this); }
+		R &operator=(T &&other) { static_cast<R *>(this)->Get() = std::move(other); return *static_cast<R *>(this); }
+
+		bool operator ==(const T &other) { return static_cast<R *>(this)->Get() == other; }
+
+		T &Get() {
+			auto &ptr = *reinterpret_cast<T *>(this);
+			return ptr;
+			//return reinterpret_cast<R *>(this)->*(R::GetPtr());
+		}
+
+		const T &Get() const {
+			return *reinterpret_cast<const T *>(this);
+			//return reinterpret_cast<const R *>(this)->*(R::GetPtr());
+		}
+
+		//static T R:: *GetPtr() { return reinterpret_cast<T R:: *>(this); }
+
+	};
 
 
 

@@ -72,6 +72,10 @@ namespace ECS {
 		bool isAlive_ = true;
 	};
 
+	struct Gravity : IComponent, public IClassData<Gravity> {
+		Vector3 gravity_{};
+	};
+
 	struct ParticleComp : IComponent {
 		SoLib::Color::RGB4 start_;
 		SoLib::Color::RGB4 end_;
