@@ -35,8 +35,10 @@ void GameScene::OnEnter() {
 	ModelManager::GetInstance()->CreateDefaultModel();
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
-	model_ = ModelManager::GetInstance()->GetModel("Plane");
+	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
 	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
+
+
 
 	/*Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
@@ -73,7 +75,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::ScaleComp{};
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
 	*enemyPrefab_ += ECS::PositionComp{};
-	*enemyPrefab_ += ECS::TransformMatComp{};
+	// *enemyPrefab_ += ECS::TransformMatComp{};
 	*enemyPrefab_ += ECS::InputFlagComp{};
 	*enemyPrefab_ += ECS::BoneTransformComp{};
 
@@ -91,6 +93,8 @@ void GameScene::OnEnter() {
 	boneModel_.AddBone("Head", boxModel_, bodyPtr);
 
 	boneModel_.SetNumber();
+
+	ground_.Init();
 
 }
 
@@ -246,6 +250,8 @@ void GameScene::Update() {
 
 	boneModel_.Draw(boneModel_.CalcTransMat(boneTransform_));*/
 
+
+	blockRender_->AddBox(ground_.model_, IBlock{ .transMat_ = ground_.CalcMatrix() });
 
 }
 

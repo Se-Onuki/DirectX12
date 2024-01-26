@@ -21,6 +21,7 @@
 #include "../ECS/System/SystemManager.h"
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Engine/DirectBase/Model/BoneModel.h"
+#include "../Header/Object/Ground.h"
 
 class GameScene : public IScene {
 public:
@@ -56,6 +57,8 @@ private:
 	std::unique_ptr<ECS::Prefab> prefab_;
 
 	std::unique_ptr<ECS::Prefab> enemyPrefab_;
+
+	Ground ground_{ 0.f, Vector2{100.f,100.f} };
 
 	Audio::SoundHandle soundA_;
 

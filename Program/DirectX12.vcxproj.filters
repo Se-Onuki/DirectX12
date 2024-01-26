@@ -22,9 +22,6 @@
     <Filter Include="Header\Entity">
       <UniqueIdentifier>{3111759b-0bb8-488a-a007-ceee6c80174c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header\FollowCamera">
-      <UniqueIdentifier>{045a8eee-9582-423c-bec6-9aca40ef0678}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header\Entity\Component">
       <UniqueIdentifier>{a686d45a-498c-4ad2-b9e7-3cbab9f39e24}</UniqueIdentifier>
     </Filter>
@@ -85,32 +82,8 @@
     <Filter Include="Utils\SoLib">
       <UniqueIdentifier>{718943a2-fecd-4a48-a88c-ffda723192fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header\Entity\Object">
-      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity\Object\Particle">
-      <UniqueIdentifier>{f27eee7f-b96d-41b7-8091-4390e104378f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity\Object\Particle\Particles">
-      <UniqueIdentifier>{bfcbf39d-7f11-45dd-aeb4-c96e91717d21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity\Object\Particle\Particles\StarParticle">
-      <UniqueIdentifier>{3451eb81-cad9-40d5-91ef-7928b32133c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity\Object\Particle\Particles\TestParticle">
-      <UniqueIdentifier>{f707e732-b8ea-4cf3-adc1-6cfc6dc57180}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Render\CameraAnimations">
       <UniqueIdentifier>{1b09de97-f37d-47ef-a58e-986936e385cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity\Object\Block">
-      <UniqueIdentifier>{0701f625-dfe0-4534-bda1-06815d39c16b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity\Object\SkyDome">
-      <UniqueIdentifier>{e5ac1d12-cd78-4c1b-88be-cc904778dc1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity\Object\Particle\Particles\GetParticle">
-      <UniqueIdentifier>{5335fb9d-4068-44ac-a8c9-e761918551f0}</UniqueIdentifier>
     </Filter>
     <Filter Include="ECS">
       <UniqueIdentifier>{44ca97f6-34d4-44d8-be16-15451311710c}</UniqueIdentifier>
@@ -129,6 +102,30 @@
     </Filter>
     <Filter Include="ECS\System">
       <UniqueIdentifier>{49b232f6-b920-49bf-b068-d7a1b0a86325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object">
+      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object\Particle">
+      <UniqueIdentifier>{f27eee7f-b96d-41b7-8091-4390e104378f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object\Particle\Particles">
+      <UniqueIdentifier>{bfcbf39d-7f11-45dd-aeb4-c96e91717d21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object\Particle\Particles\StarParticle">
+      <UniqueIdentifier>{3451eb81-cad9-40d5-91ef-7928b32133c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object\Particle\Particles\TestParticle">
+      <UniqueIdentifier>{f707e732-b8ea-4cf3-adc1-6cfc6dc57180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object\Particle\Particles\GetParticle">
+      <UniqueIdentifier>{5335fb9d-4068-44ac-a8c9-e761918551f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object\Block">
+      <UniqueIdentifier>{0701f625-dfe0-4534-bda1-06815d39c16b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Object\SkyDome">
+      <UniqueIdentifier>{e5ac1d12-cd78-4c1b-88be-cc904778dc1b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -283,13 +280,13 @@
       <Filter>Header\Entity</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Player.cpp">
-      <Filter>Header\Entity\Object</Filter>
+      <Filter>Header\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\BaseCharacter.cpp">
-      <Filter>Header\Entity\Object</Filter>
+      <Filter>Header\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\FollowCamera.cpp">
-      <Filter>Header\Entity\Object</Filter>
+      <Filter>Header\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Base\RootSignature.cpp">
       <Filter>Engine\Base</Filter>
@@ -301,22 +298,22 @@
       <Filter>Header\Entity\Component</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\ParticleManager.cpp">
-      <Filter>Header\Entity\Object\Particle</Filter>
+      <Filter>Header\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle.cpp">
-      <Filter>Header\Entity\Object\Particle</Filter>
+      <Filter>Header\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp">
-      <Filter>Header\Entity\Object\Particle</Filter>
+      <Filter>Header\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\ParticleEmitterManager.cpp">
-      <Filter>Header\Entity\Object\Particle</Filter>
+      <Filter>Header\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
-      <Filter>Header\Entity\Object\Particle\Particles\StarParticle</Filter>
+      <Filter>Header\Object\Particle\Particles\StarParticle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
-      <Filter>Header\Entity\Object\Particle\Particles\TestParticle</Filter>
+      <Filter>Header\Object\Particle\Particles\TestParticle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp">
       <Filter>Engine\Render\CameraAnimations</Filter>
@@ -334,19 +331,19 @@
       <Filter>Utils\Math</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Block\BlockManager.cpp">
-      <Filter>Header\Entity\Object\Block</Filter>
+      <Filter>Header\Object\Block</Filter>
     </ClCompile>
     <ClCompile Include="Scene\TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Fade.cpp">
-      <Filter>Header\Entity\Object</Filter>
+      <Filter>Header\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\SkyDome\SkyDome.cpp">
-      <Filter>Header\Entity\Object\SkyDome</Filter>
+      <Filter>Header\Object\SkyDome</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\GetParticle.cpp">
-      <Filter>Header\Entity\Object\Particle\Particles\GetParticle</Filter>
+      <Filter>Header\Object\Particle\Particles\GetParticle</Filter>
     </ClCompile>
     <ClCompile Include="Utils\SoLib\SoLib_Json.cpp">
       <Filter>Utils\SoLib</Filter>
@@ -383,6 +380,9 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\BoneModel.cpp">
       <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Ground.cpp">
+      <Filter>Header\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -576,13 +576,13 @@
       <Filter>Header\Entity</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\FollowCamera.h">
-      <Filter>Header\Entity\Object</Filter>
+      <Filter>Header\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Player.h">
-      <Filter>Header\Entity\Object</Filter>
+      <Filter>Header\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\BaseCharacter.h">
-      <Filter>Header\Entity\Object</Filter>
+      <Filter>Header\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h">
       <Filter>Engine\Descriptor</Filter>
@@ -606,25 +606,25 @@
       <Filter>Utils\Math</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleManager.h">
-      <Filter>Header\Entity\Object\Particle</Filter>
+      <Filter>Header\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle.h">
-      <Filter>Header\Entity\Object\Particle</Filter>
+      <Filter>Header\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h">
-      <Filter>Header\Entity\Object\Particle</Filter>
+      <Filter>Header\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleEmitterManager.h">
-      <Filter>Header\Entity\Object\Particle</Filter>
+      <Filter>Header\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\StarParticle.h">
-      <Filter>Header\Entity\Object\Particle\Particles\StarParticle</Filter>
+      <Filter>Header\Object\Particle\Particles\StarParticle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleList.h">
-      <Filter>Header\Entity\Object\Particle\Particles</Filter>
+      <Filter>Header\Object\Particle\Particles</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\TestParticle.h">
-      <Filter>Header\Entity\Object\Particle\Particles\TestParticle</Filter>
+      <Filter>Header\Object\Particle\Particles\TestParticle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h">
       <Filter>Engine\Render\CameraAnimations</Filter>
@@ -645,16 +645,16 @@
       <Filter>Utils\Math</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Block\BlockManager.h">
-      <Filter>Header\Entity\Object\Block</Filter>
+      <Filter>Header\Object\Block</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Fade.h">
-      <Filter>Header\Entity\Object</Filter>
+      <Filter>Header\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\SkyDome\SkyDome.h">
-      <Filter>Header\Entity\Object\SkyDome</Filter>
+      <Filter>Header\Object\SkyDome</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\GetParticle.h">
-      <Filter>Header\Entity\Object\Particle\Particles\GetParticle</Filter>
+      <Filter>Header\Object\Particle\Particles\GetParticle</Filter>
     </ClInclude>
     <ClInclude Include="Utils\SoLib\SoLib_Json.h">
       <Filter>Utils\SoLib</Filter>
@@ -718,6 +718,9 @@
     </ClInclude>
     <ClInclude Include="Utils\Containers\Singleton.h">
       <Filter>Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Ground.h">
+      <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
