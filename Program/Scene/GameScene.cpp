@@ -65,24 +65,27 @@ void GameScene::OnEnter() {
 	*prefab_ += ECS::TransformMatComp{};
 	*prefab_ += ECS::AliveTime{};
 	*prefab_ += ECS::EmitterComp{ .count_ = 5u,.startColor_ = 0xFFFF00FF,.endColor_ = 0xFF000000,.spawnLifeLimit_{0.1f,0.2f},.spawnPower_{0.05f,0.1f},.spawnRange_{90._deg,180._deg,0.f} };
-	*prefab_ += ECS::InputFlagComp{};
 
 	entityManager_->CreateEntity(*prefab_);
 
-	enemyPrefab_ = std::make_unique<ECS::Prefab>();
+	playerPrefab_ = std::make_unique<ECS::Prefab>();
 
-	*enemyPrefab_ += ECS::IsAlive{};
-	*enemyPrefab_ += ECS::ScaleComp{};
-	*enemyPrefab_ += ECS::QuaternionRotComp{};
-	*enemyPrefab_ += ECS::PositionComp{};
+	*playerPrefab_ += ECS::IsAlive{};
+	*playerPrefab_ += ECS::ScaleComp{};
+	*playerPrefab_ += ECS::QuaternionRotComp{};
+	*playerPrefab_ += ECS::PositionComp{};
 	// *enemyPrefab_ += ECS::TransformMatComp{};
-	*enemyPrefab_ += ECS::InputFlagComp{};
-	*enemyPrefab_ += ECS::BoneTransformComp{};
+	*playerPrefab_ += ECS::InputFlagComp{};
+	*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
+	*playerPrefab_ += ECS::VelocityComp{};
+	*playerPrefab_ += ECS::AccelerationComp{};
+	*playerPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
+	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
 
 	/*Archetype enemyArchetype{};
 	enemyArchetype.AddClassData<ECS::IsAlive, ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp, ECS::InputFlagComp, ECS::BoneTransformComp>();*/
 
-	entityManager_->CreateEntity(*enemyPrefab_);
+	entityManager_->CreateEntity(*playerPrefab_);
 
 	//*enemyPrefab_ += ECS::RotateComp{};
 
@@ -107,7 +110,7 @@ void GameScene::Update() {
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
 	ImGui::Text("XInput左スティックで移動");
-	ImGui::Text("ParticleCount / %lu", world_->size());
+	ImGui::Text("エンティティ数 / %lu", world_->size());
 
 	static SoLib::Color::HSV4 testColor;
 
@@ -157,16 +160,40 @@ void GameScene::Update() {
 		color->color_ = colorLerp->EaseColor(aliveTime->aliveTime_ / lifelimit->lifeLimit_);
 	}
 
-	for (const auto &[pos, velocity] : world_->view<ECS::PositionComp, ECS::VelocityComp>()) {
+	for (const auto &[acceleration, gravity] : world_->view<ECS::AccelerationComp, ECS::GravityComp>()) {
 
-		pos->position_ += *velocity;
+		acceleration->acceleration_ += gravity->gravity_ * deltaTime;
+
+	}
+	for (const auto &[velocity, acceleration] : world_->view<ECS::VelocityComp, ECS::AccelerationComp>()) {
+
+		velocity->velocity_ += acceleration->acceleration_;
+		acceleration->acceleration_ = {};
 
 	}
 
-	for (const auto &[pos, input] : world_->view<ECS::PositionComp, ECS::InputFlagComp>()) {
+	for (const auto &[pos, velocity] : world_->view<ECS::PositionComp, ECS::VelocityComp>()) {
+
+		pos->position_ += velocity->velocity_ * deltaTime;
+
+	}
+
+	for (const auto &[collision, pos, velocity] : world_->view<ECS::CollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
+
+		if ((pos->position_.y + collision->collision_.centor.y - collision->collision_.radius) < ground_.hight_) {
+			pos->position_.y = ground_.hight_ - collision->collision_.centor.y + collision->collision_.radius;
+			velocity->velocity_ = Vector3::zero;
+		}
+
+	}
+
+	for (const auto &[pos, acceleration, input] : world_->view<ECS::PositionComp, ECS::AccelerationComp, ECS::InputFlagComp>()) {
 		Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
 		pos->position_ += Vector3{ inputLs.x,0.f,inputLs.y }*0.1f;
 
+		if (input_->GetDirectInput()->IsTrigger(DIK_SPACE)) {
+			acceleration->acceleration_.y += 10.f;
+		}
 	}
 
 	for (const auto &[pos, rot, scale, transMat, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::EmitterComp>()) {
@@ -245,6 +272,7 @@ void GameScene::Update() {
 	for (const auto &[bone] : world_->view<ECS::BoneTransformComp>()) {
 		boneModel_.Draw(boneModel_.CalcTransMat(bone->boneTransform_));
 	}
+
 	/*static uint32_t index = 0u;
 	SoLib::ImGuiWidget<BoneModel::SimpleTransform, decltype(boneTransform_)>("BoneTransform", &boneTransform_, index);
 

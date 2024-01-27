@@ -72,7 +72,11 @@ namespace ECS {
 		bool isAlive_ = true;
 	};
 
-	struct Gravity : IComponent, public IClassData<Gravity> {
+	struct AccelerationComp : IComponent, public IClassData<AccelerationComp> {
+		Vector3 acceleration_;
+	};
+
+	struct GravityComp : IComponent, public IClassData<GravityComp> {
 		Vector3 gravity_{};
 	};
 
@@ -135,10 +139,6 @@ namespace ECS {
 		SoLib::Color::RGB4 color_ = 0xFFFFFFFF;
 	};
 
-	/*struct TransformComp : IComponent {
-		BaseTransform wTransform_;
-	};*/
-
 	struct PositionComp : IComponent {
 		Vector3 position_;
 		inline Vector3 &operator=(const Vector3 &other) { return  position_ = other; }
@@ -192,6 +192,10 @@ namespace ECS {
 
 	struct WeaponComp : IComponent {
 		uint32_t parentIndex_;
+		Sphere collision_;
+	};
+
+	struct CollisionComp : IComponent {
 		Sphere collision_;
 	};
 

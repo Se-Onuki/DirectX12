@@ -69,7 +69,17 @@ public:
 
 	void Init();
 
+	/// @brief ボーンの追加
+	/// @param key 紐づける文字列
+	/// @param model モデル
+	/// @param parent 親ボーン
+	/// @return 追加されたボーン
 	Bone *AddBone(const std::string &key, Model *model, Bone *parent = nullptr);
+
+	/// @brief ボーンの取得
+	/// @param key 文字列キー
+	/// @return ボーンのポインタ
+	Bone *GetBone(const std::string &key);
 
 	template<size_t I>
 	void Draw(const std::array<BoneTransform, I> &boneTrans) const;
@@ -82,7 +92,7 @@ private:
 	std::unique_ptr<Bone> bone_;
 	std::unordered_map<const Bone *, uint32_t> boneNumberMap_;
 
-	std::unordered_map<std::string, Bone *> modelKey_;
+	std::unordered_map<std::string, Bone *> BoneKeyMap_;
 
 };
 

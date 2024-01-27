@@ -56,7 +56,7 @@ private:
 
 	std::unique_ptr<ECS::Prefab> prefab_;
 
-	std::unique_ptr<ECS::Prefab> enemyPrefab_;
+	std::unique_ptr<ECS::Prefab> playerPrefab_;
 
 	Ground ground_{ 0.f, Vector2{100.f,100.f} };
 

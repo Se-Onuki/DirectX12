@@ -58,9 +58,22 @@ BoneModel::Bone *BoneModel::AddBone(const std::string &key, Model *model, Bone *
 
 	Bone *newBone = pParent->AddChild(model);
 
-	modelKey_[key] = newBone;
+	BoneKeyMap_[key] = newBone;
 
 	return newBone;
+}
+
+BoneModel::Bone *BoneModel::GetBone(const std::string &key) {
+
+	// マップから検索
+	auto modelItr = BoneKeyMap_.find(key);
+
+	// もし存在してなかったら何も返さない
+	if (modelItr == BoneKeyMap_.end()) {
+		return nullptr;
+	}
+	// ボーンのポインタを返す
+	return modelItr->second;
 }
 
 bool BoneModel::BoneTransform::ImGuiWidget(const char *const label) {
