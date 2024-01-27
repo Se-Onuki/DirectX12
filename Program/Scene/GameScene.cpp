@@ -89,6 +89,11 @@ void GameScene::OnEnter() {
 
 	entityManager_->CreateEntity(*playerPrefab_);
 
+	Archetype followCameraArchetype{};
+	followCameraArchetype.AddClassData<ECS::FollowCamera, ECS::PositionComp>();
+
+	entityManager_->CreateEntity(followCameraArchetype);
+
 	//*enemyPrefab_ += ECS::RotateComp{};
 
 	soundA_ = audio_->LoadWave("resources/Alarm01.wav");
@@ -280,8 +285,15 @@ void GameScene::Update() {
 
 	for (const auto &[player, pos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
 
-		followCamera_->translation_ = pos->position_ + Vector3{ 0.f, 1.f,-5.f };
+
+		for (const auto &[followCamera, cameraPos] : world_->view<ECS::FollowCamera, ECS::PositionComp>()) {
+			*cameraPos = pos->position_ + Vector3{ 0.f, 1.f,-5.f };
+
+			followCamera->TransferData(*followCamera_, *cameraPos);
+		}
 	}
+
+
 
 	cameraManager_->DisplayImGui();
 	cameraManager_->Update(deltaTime);

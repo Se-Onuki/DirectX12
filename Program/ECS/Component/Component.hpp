@@ -190,6 +190,28 @@ namespace ECS {
 
 	};
 
+	struct FollowCamera : IComponent {
+
+#pragma region ビュー行列の設定
+
+		SoLib::Math::Euler rotation_{};
+
+#pragma endregion
+
+#pragma region 射影行列の設定
+		// 垂直方向視野角
+		float fovAngleY = 45._deg;
+		// ビューポートのアスペクト比
+		float aspectRatio = 16.f / 9;
+		// 深度限界（手前側）
+		float nearZ = 0.1f;
+		// 深度限界（奥側）
+		float farZ = 1000.0f;
+#pragma endregion
+
+		void TransferData(Camera3D &camera, const Vector3 &translate) const;
+	};
+
 	struct BoneTransformComp : IComponent {
 		std::array<BoneModel::SimpleTransform, 6u> boneTransform_{};
 	};

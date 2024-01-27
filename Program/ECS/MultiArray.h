@@ -317,8 +317,13 @@ namespace ECS {
 
 		template<typename T, typename...Ts>
 		void erase_if(const std::function <bool(T *, Ts *...)> &func) {
-			for (auto &chunk : multiChunk_) {
-				chunk->erase_if(func);
+			Archetype archetype{};
+			archetype.AddClassData<T, Ts...>();
+			// もし、対応した型があったら実行
+			if (archetype <= this->archetype_) {
+				for (auto &chunk : multiChunk_) {
+					chunk->erase_if(func);
+				}
 			}
 			this->Normalize();
 		}
