@@ -60,6 +60,8 @@ private:
 
 	Ground ground_{ 0.f, Vector2{100.f,100.f} };
 
+	std::unique_ptr<ECS::Prefab> enemyPrefab_ = nullptr;
+
 	Camera3D *followCamera_;
 
 	Audio::SoundHandle soundA_;

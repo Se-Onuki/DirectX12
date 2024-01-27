@@ -84,6 +84,10 @@ namespace ECS {
 		uint32_t number_;
 	};
 
+	struct EnemyTag : IComponent {
+		uint32_t number_;
+	};
+
 	struct ParticleComp : IComponent {
 		SoLib::Color::RGB4 start_;
 		SoLib::Color::RGB4 end_;

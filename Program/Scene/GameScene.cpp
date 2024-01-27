@@ -63,7 +63,6 @@ void GameScene::OnEnter() {
 	*prefab_ += ECS::PositionComp{};
 	*prefab_ += ECS::RotateComp{};
 	*prefab_ += ECS::ScaleComp{};
-	*prefab_ += ECS::TransformMatComp{};
 	*prefab_ += ECS::AliveTime{};
 	*prefab_ += ECS::EmitterComp{ .count_ = 5u,.startColor_ = 0xFFFF00FF,.endColor_ = 0xFF000000,.spawnLifeLimit_{0.1f,0.2f},.spawnPower_{0.05f,0.1f},.spawnRange_{90._deg,180._deg,0.f} };
 
@@ -83,6 +82,19 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
 	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
 	*playerPrefab_ += ECS::PlayerTag{};
+
+	enemyPrefab_ = std::make_unique<ECS::Prefab>();
+	*enemyPrefab_ += ECS::IsAlive{};
+	*enemyPrefab_ += ECS::ScaleComp{};
+	*enemyPrefab_ += ECS::QuaternionRotComp{};
+	*enemyPrefab_ += ECS::PositionComp{};
+	*enemyPrefab_ += ECS::TransformMatComp{};
+	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
+	*enemyPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
+	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
+	*enemyPrefab_ += ECS::EnemyTag{};
+
+	entityManager_->CreateEntity(*enemyPrefab_);
 
 	/*Archetype enemyArchetype{};
 	enemyArchetype.AddClassData<ECS::IsAlive, ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp, ECS::InputFlagComp, ECS::BoneTransformComp>();*/
@@ -273,6 +285,19 @@ void GameScene::Update() {
 
 	for (const auto &[bone] : world_->view<ECS::BoneTransformComp>()) {
 		boneModel_.Draw(boneModel_.CalcTransMat(bone->boneTransform_));
+	}
+
+	for (const auto &[scale, quate, pos, mat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
+
+		mat->transformMat_ = SoLib::Math::Affine(*scale, quate->quateRot_.Normalize(), *pos);
+
+		//blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = bone->boneTransform_[0].CalcTransMat() });
+
+	}
+
+	for (const auto &[model, translateMat, enemy] : world_->view<ECS::ModelComp, ECS::TransformMatComp, ECS::EnemyTag>()) {
+		blockRender_->AddBox(model->model_, IBlock{ .transMat_ = translateMat->transformMat_ });
+
 	}
 
 	/*static uint32_t index = 0u;
