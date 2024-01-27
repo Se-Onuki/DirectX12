@@ -31,14 +31,15 @@ void GameScene::OnEnter() {
 
 	world_ = std::make_unique<World>();
 	entityManager_ = world_->GetEntityManager();
-	cameraManager_->Init();
 	ModelManager::GetInstance()->CreateDefaultModel();
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
 	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
 
-
+	cameraManager_->Init();
+	followCamera_ = cameraManager_->AddCamera("FollowCamera");
+	cameraManager_->SetUseCamera(followCamera_);
 
 	/*Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
@@ -81,6 +82,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AccelerationComp{};
 	*playerPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
 	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
+	*playerPrefab_ += ECS::PlayerTag{};
 
 	/*Archetype enemyArchetype{};
 	enemyArchetype.AddClassData<ECS::IsAlive, ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp, ECS::InputFlagComp, ECS::BoneTransformComp>();*/
@@ -122,10 +124,6 @@ void GameScene::Update() {
 
 	ImGui::Text("%s", SoLib::to_string(Vector3::front * Matrix4x4::EulerRotate(eulerRotate)).c_str());
 	ImGui::Text("%s", SoLib::to_string(Quaternion::RotateVector(Vector3::front, Quaternion::Create(eulerRotate))).c_str());
-
-
-	cameraManager_->DisplayImGui();
-	cameraManager_->Update(deltaTime);
 
 	particleArray_.clear();
 
@@ -179,10 +177,15 @@ void GameScene::Update() {
 	}
 
 	for (const auto &[collision, pos, velocity] : world_->view<ECS::CollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
-
+		// 地面より座標が下なら
 		if ((pos->position_.y + collision->collision_.centor.y - collision->collision_.radius) < ground_.hight_) {
+			// 地面の上に当たり判定を上にする
 			pos->position_.y = ground_.hight_ - collision->collision_.centor.y + collision->collision_.radius;
-			velocity->velocity_ = Vector3::zero;
+			// もし落下していたら
+			if (velocity->velocity_.y < 0.f) {
+				// 移動速度を0にする
+				velocity->velocity_.y = 0.f;
+			}
 		}
 
 	}
@@ -191,7 +194,7 @@ void GameScene::Update() {
 		Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
 		pos->position_ += Vector3{ inputLs.x,0.f,inputLs.y }*0.1f;
 
-		if (input_->GetDirectInput()->IsTrigger(DIK_SPACE)) {
+		if (input_->GetXInput()->IsTrigger(KeyCode::A)) {
 			acceleration->acceleration_.y += 10.f;
 		}
 	}
@@ -245,12 +248,6 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[color, billboard, mat] : world_->view<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
-
-		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
-
-	}
-
 	for (const auto &[rot, input] : world_->view<ECS::QuaternionRotComp, ECS::InputFlagComp>()) {
 		if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {
 			rot->quateRot_ *= Quaternion::AnyAxisRotation(Vector3::up, 90._deg * deltaTime);
@@ -281,6 +278,20 @@ void GameScene::Update() {
 
 	blockRender_->AddBox(ground_.model_, IBlock{ .transMat_ = ground_.CalcMatrix() });
 
+	for (const auto &[player, pos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
+
+		followCamera_->translation_ = pos->position_ + Vector3{ 0.f, 1.f,-5.f };
+	}
+
+	cameraManager_->DisplayImGui();
+	cameraManager_->Update(deltaTime);
+
+
+	for (const auto &[color, billboard, mat] : world_->view<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
+
+		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
+
+	}
 }
 
 void GameScene::Draw() {

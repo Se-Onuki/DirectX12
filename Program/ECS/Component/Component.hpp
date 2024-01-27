@@ -80,6 +80,10 @@ namespace ECS {
 		Vector3 gravity_{};
 	};
 
+	struct PlayerTag : IComponent {
+		uint32_t number_;
+	};
+
 	struct ParticleComp : IComponent {
 		SoLib::Color::RGB4 start_;
 		SoLib::Color::RGB4 end_;
