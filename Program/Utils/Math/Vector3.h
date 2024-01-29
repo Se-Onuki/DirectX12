@@ -138,7 +138,7 @@ struct Vector3 {
 		if (y == 0) {
 			out.x = 0;
 		}
-		else { out.x = std::atan2(-y, std::sqrt(std::powf(x, 2) + std::powf(z, 2))); }
+		else { out.x = std::atan2(-y, Vector2{ x,y }.Length()); }
 
 		return out;
 	}

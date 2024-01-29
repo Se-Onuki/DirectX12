@@ -58,22 +58,38 @@ BoneModel::Bone *BoneModel::AddBone(const std::string &key, Model *model, Bone *
 
 	Bone *newBone = pParent->AddChild(model);
 
-	BoneKeyMap_[key] = newBone;
+	boneKeyMap_[key] = newBone;
 
 	return newBone;
 }
 
-BoneModel::Bone *BoneModel::GetBone(const std::string &key) {
+BoneModel::Bone *BoneModel::GetBone(const std::string &key) const {
 
 	// マップから検索
-	auto modelItr = BoneKeyMap_.find(key);
+	auto modelItr = boneKeyMap_.find(key);
 
 	// もし存在してなかったら何も返さない
-	if (modelItr == BoneKeyMap_.end()) {
+	if (modelItr == boneKeyMap_.end()) {
 		return nullptr;
 	}
 	// ボーンのポインタを返す
 	return modelItr->second;
+}
+
+uint32_t BoneModel::GetIndex(const std::string &key) const {
+	auto bone = GetBone(key);
+	// ボーンが存在するなら
+	if (bone) {
+		// 対応したindexを返す
+		return boneNumberMap_.at(bone);
+	}
+
+#ifdef _DEBUG
+	assert(0 && "文字列に対応するボーンが保存されていません。");
+#endif // _DEBUG
+
+	// 存在しないなら
+	return (std::numeric_limits<uint32_t>::max)();
 }
 
 bool BoneModel::BoneTransform::ImGuiWidget(const char *const label) {

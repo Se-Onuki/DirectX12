@@ -2,6 +2,7 @@
 #include <immintrin.h>
 #include "SimdCalc.h"
 #include "Vector3.h"
+#include "Vector3Norm.h"
 #include <array>
 #include <cmath>
 #include "Matrix4x4.h"
@@ -53,13 +54,16 @@ struct Quaternion final {
 	static inline Vector3 RotateVector(const Vector3 &a, const Quaternion &b);
 	inline Vector3 RotateVector(const Vector3 &v) const;
 
-	static Quaternion AnyAxisRotation(const Vector3 &axis, float angle);
+	static Quaternion AnyAxisRotation(const Vector3Norm &axis, float angle);
 
 	static Quaternion Create(const SoLib::Math::Euler &euler);
 
 	static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
 
-	static Quaternion LookAt(const Vector3 &direction);
+	/// @brief 指定の方向に向く回転クォータニオンを作成
+	/// @param direction 向きたい方向( 非正規化 OK )
+	/// @return クォータニオン
+	static Quaternion LookAt(const Vector3Norm &direction);
 
 	/// @brief 明示的な型変換
 	inline explicit operator __m128() const noexcept { return _mm_load_ps(&x); }
@@ -137,7 +141,7 @@ inline Matrix4x4 Quaternion::MakeRotateMatrix() const {
 	};
 }
 
-inline Quaternion Quaternion::AnyAxisRotation(const Vector3 &axis, float angle) {
+inline Quaternion Quaternion::AnyAxisRotation(const Vector3Norm &axis, float angle) {
 	float halfAngle = angle / 2.f;
 	return Quaternion{ axis * std::sin(halfAngle), std::cos(halfAngle) };
 }
@@ -166,34 +170,44 @@ inline Vector3 Quaternion::RotateVector(const Vector3 &v) const {
 
 inline Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &end, float t) {
 
+	// Simdに変換
 	std::array<SoLib::Math::SIMD128, 2u> vec{ static_cast<__m128>(start),static_cast<__m128>(end) };
 
+	// 返り値
 	Quaternion result;
+	// クォータニオン同士のドット積
 	float dot = SoLib::Math::SIMD128::Dot<4u>(vec[0], vec[1]);
 
+	// 逆方向なら正方向に反転
 	if (dot < 0) {
 		vec[0] = -vec[0];
 		dot = -dot;
 	}
+	// 同方向のクォータニオンである場合は単純な線形補間を行う。
 	if (dot >= 1.f - std::numeric_limits<float>::epsilon()) {
 		result = SoLib::Lerp(vec[0], vec[1], t);
 		return result;
 	}
-
+	// 度数を生成
 	const float theta = std::acos(dot);
-
+	// sin値
 	const float sin = std::sin(theta);
-
+	// 計算
 	result = vec[0] * (std::sin((1 - t) * theta) / sin) + vec[1] * std::sin(t * theta) / sin;
 	return result;
 }
 
-inline Quaternion Quaternion::LookAt(const Vector3 &direction) {
+inline Quaternion Quaternion::LookAt(const Vector3Norm &direction) {
+	// ドット積を計算
 	float dot = Vector3::front * direction;
+	// acosの時に範囲を超えないように
 	dot = std::clamp(dot, -1.f, 1.f);
-	const float theta = std::acos(dot); //角度の算出
-	const Vector3 cross = Vector3::front.cross(direction).Nomalize(); //中心ベクトル
+	// 角度を取得
+	const float theta = std::acos(dot);
 
+	// 回転軸のベクトル
+	const Vector3Norm cross = Vector3::front.cross(direction);
+	// 任意軸回転クォータニオンを作成
 	return Quaternion::AnyAxisRotation(cross, theta).Normalize();
 
 }

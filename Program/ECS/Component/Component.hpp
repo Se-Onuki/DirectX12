@@ -226,6 +226,10 @@ namespace ECS {
 		std::array<BoneModel::SimpleTransform, 6u> boneTransform_{};
 	};
 
+	struct AnimateParametor : IComponent {
+		float parametor_{};
+	};
+
 	struct WeaponComp : IComponent {
 		uint32_t parentIndex_;
 		Sphere collision_;

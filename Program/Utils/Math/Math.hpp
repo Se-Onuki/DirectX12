@@ -4,6 +4,7 @@
 
 #include "Angle.h"
 #include "Quaternion.h"
+#include "Euler.h"
 struct Polar;
 
 struct Vector2;
@@ -165,6 +166,10 @@ namespace SoLib {
 
 
 		Quaternion MakeQuaternion(const SoLib::Math::Euler &euler);
+
+		Vector3 EulerToDirection(const SoLib::Math::Euler &euler);
+
+		SoLib::Math::Euler DirectionToEuler(const Vector3 &direction);
 
 	}
 

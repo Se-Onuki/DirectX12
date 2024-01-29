@@ -239,3 +239,15 @@ Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion
 Quaternion SoLib::Math::MakeQuaternion(const SoLib::Math::Euler &euler) {
 	return Quaternion::Create(euler);
 }
+
+Vector3 SoLib::Math::EulerToDirection(const SoLib::Math::Euler &euler) {
+	Vector3 direction;
+	direction.x = std::cos(euler.x) * std::cos(euler.y);
+	direction.y = std::sin(euler.x) * std::cos(euler.y);
+	direction.z = -std::sin(euler.y);
+	return Vector3();
+}
+
+SoLib::Math::Euler SoLib::Math::DirectionToEuler(const Vector3 &direction) {
+	return direction.Direction2Euler();
+}

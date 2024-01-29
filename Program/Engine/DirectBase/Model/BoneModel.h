@@ -79,7 +79,9 @@ public:
 	/// @brief ボーンの取得
 	/// @param key 文字列キー
 	/// @return ボーンのポインタ
-	Bone *GetBone(const std::string &key);
+	Bone *GetBone(const std::string &key) const;
+
+	uint32_t GetIndex(const std::string &key) const;
 
 	template<size_t I>
 	void Draw(const std::array<BoneTransform, I> &boneTrans) const;
@@ -92,7 +94,7 @@ private:
 	std::unique_ptr<Bone> bone_;
 	std::unordered_map<const Bone *, uint32_t> boneNumberMap_;
 
-	std::unordered_map<std::string, Bone *> BoneKeyMap_;
+	std::unordered_map<std::string, Bone *> boneKeyMap_;
 
 };
 

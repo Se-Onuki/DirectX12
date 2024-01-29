@@ -249,10 +249,7 @@ void GameScene::Update() {
 					item = Random::GetRandom<float>(-item, item);
 				}
 
-				Vector3 direction;
-				direction.x = cos(fireDir.x) * cos(fireDir.y);
-				direction.y = sin(fireDir.x) * cos(fireDir.y);
-				direction.z = -sin(fireDir.y);
+				Vector3 direction = SoLib::Math::EulerToDirection(fireDir);
 
 				*cVelocity = direction * emitterComp->spawnPower_.Random()/* * Matrix4x4::EulerRotate(fireDir)*/;
 
@@ -275,23 +272,19 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[rot, input] : world_->view<ECS::QuaternionRotComp, ECS::InputFlagComp>()) {
-		if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {
-			rot->quateRot_ *= Quaternion::AnyAxisRotation(Vector3::up, 90._deg * deltaTime);
-		}
-		if (input_->GetXInput()->IsPress(KeyCode::LEFT_SHOULDER)) {
-			rot->quateRot_ *= Quaternion::AnyAxisRotation(Vector3::up, -90._deg * deltaTime);
-		}
-		rot->quateRot_ = rot->quateRot_.Normalize();
-	}
-
 	for (const auto &[scale, quate, pos, bone] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp>()) {
 
 		bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
 
+		auto &head = bone->boneTransform_[boneModel_.GetIndex("Head")];
+		head.translate_.y = 2.f;
+		head.scale_ = Vector3::one * 0.5f;
+
 		//blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = bone->boneTransform_[0].CalcTransMat() });
 
 	}
+
+
 
 	for (const auto &[bone] : world_->view<ECS::BoneTransformComp>()) {
 		boneModel_.Draw(boneModel_.CalcTransMat(bone->boneTransform_));
