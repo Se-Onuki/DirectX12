@@ -198,6 +198,10 @@ inline Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &e
 }
 
 inline Quaternion Quaternion::LookAt(const Vector3Norm &direction) {
+	if (not direction) {
+		return Quaternion::Identity;
+	}
+
 	// ドット積を計算
 	float dot = Vector3::front * direction;
 	// acosの時に範囲を超えないように

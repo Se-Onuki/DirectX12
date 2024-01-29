@@ -216,7 +216,6 @@ void GameScene::Update() {
 		const Vector3 rotateInput = Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y).RotateVector(input3d);
 		pos->position_ += rotateInput * (500.f * deltaTime * deltaTime);
 
-		//Vector3 rotFront = quateRot->quateRot_.RotateVector(Vector3::front);
 		if (input3d.LengthSQ()) {
 			quateRot->quateRot_ = Quaternion::LookAt(rotateInput);
 		}
@@ -276,10 +275,16 @@ void GameScene::Update() {
 
 		bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
 
-		auto &head = bone->boneTransform_[boneModel_.GetIndex("Head")];
-		head.translate_.y = 2.f;
-		head.scale_ = Vector3::one * 0.5f;
+		{ // 頭のパラメータ
+			auto &head = bone->boneTransform_[boneModel_.GetIndex("Head")];
+			head.translate_.y = 2.f;
+			head.scale_ = Vector3::one * 0.5f;
+		}
+		{ // 体のパラメータ
+			auto &body = bone->boneTransform_[boneModel_.GetIndex("Body")];
 
+			body.scale_ = { 0.5f,1.f,0.5f };
+		}
 		//blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = bone->boneTransform_[0].CalcTransMat() });
 
 	}

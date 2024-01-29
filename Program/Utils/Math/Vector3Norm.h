@@ -2,7 +2,10 @@
 #include "Vector3.h"
 
 struct Vector3Norm final : public Vector3 {
+
 	Vector3Norm() = default;
+	Vector3Norm(float x, float y, float z) : Vector3::Vector3(Vector3{ x,y,z }.Nomalize()) {};
+
 	Vector3Norm(const Vector3Norm &) = default;
 	Vector3Norm(Vector3Norm &&) = default;
 
