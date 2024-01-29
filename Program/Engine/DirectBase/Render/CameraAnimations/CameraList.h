@@ -38,7 +38,7 @@ public: // メンバ関数
 public: // メンバ変数
 
 	// カメラの配列
-	std::map<std::string, std::unique_ptr<Camera3D>> cameraMap_;
+	std::unordered_map<std::string, std::unique_ptr<Camera3D>> cameraMap_;
 
 };
 

@@ -89,7 +89,8 @@ public:
 
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
 	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera, const Material &material) const;
-	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera<Render::CameraType::Projecction> &camera) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const;
 	template <typename T>
 	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const;
 

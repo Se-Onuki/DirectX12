@@ -48,13 +48,18 @@ struct Quaternion final {
 	/// @return 単位クォータニオン
 	inline Quaternion Normalize() const;
 
-	Matrix4x4 RotateMatrix() const;
+	Matrix4x4 MakeRotateMatrix() const;
 
 	static inline Vector3 RotateVector(const Vector3 &a, const Quaternion &b);
+	inline Vector3 RotateVector(const Vector3 &v) const;
 
 	static Quaternion AnyAxisRotation(const Vector3 &axis, float angle);
 
-	static Quaternion Create(const SoLib::Math::Euler &euler); static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
+	static Quaternion Create(const SoLib::Math::Euler &euler);
+
+	static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
+
+	static Quaternion LookAt(const Vector3 &direction);
 
 	/// @brief 明示的な型変換
 	inline explicit operator __m128() const noexcept { return _mm_load_ps(&x); }
@@ -123,7 +128,7 @@ inline Quaternion Quaternion::Normalize() const {
 	return result;
 }
 
-inline Matrix4x4 Quaternion::RotateMatrix() const {
+inline Matrix4x4 Quaternion::MakeRotateMatrix() const {
 	return Matrix4x4{
 		Vector4{w * w + x * x - y * y - z * z, 2.f * (x * y + w * z), 2.f * (x * z - w * y),0.f},
 		Vector4{2.f * (x * y - w * z), w * w - x * x + y * y - z * z,2.f * (y * z + w * x),0.f },
@@ -150,7 +155,11 @@ inline float Quaternion::Length() const {
 
 inline Vector3 Quaternion::RotateVector(const Vector3 &a, const Quaternion &b) {
 
-	Quaternion result = b * Quaternion{ a } *b.Conjugation();
+	return b.RotateVector(a);
+}
+
+inline Vector3 Quaternion::RotateVector(const Vector3 &v) const {
+	Quaternion result = *this * Quaternion{ v } *this->Conjugation();
 
 	return result.vec();
 }
@@ -177,4 +186,14 @@ inline Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &e
 
 	result = vec[0] * (std::sin((1 - t) * theta) / sin) + vec[1] * std::sin(t * theta) / sin;
 	return result;
+}
+
+inline Quaternion Quaternion::LookAt(const Vector3 &direction) {
+	float dot = Vector3::front * direction;
+	dot = std::clamp(dot, -1.f, 1.f);
+	const float theta = std::acos(dot); //角度の算出
+	const Vector3 cross = Vector3::front.cross(direction).Nomalize(); //中心ベクトル
+
+	return Quaternion::AnyAxisRotation(cross, theta).Normalize();
+
 }

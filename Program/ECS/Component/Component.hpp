@@ -198,7 +198,10 @@ namespace ECS {
 
 #pragma region ビュー行列の設定
 
-		SoLib::Math::Euler rotation_{};
+		SoLib::Math::Euler rotation_{ 15._deg,0.f,0.f };
+
+		Vector3 offset_{ 0.f, 0.f,-15.f };
+
 
 #pragma endregion
 
@@ -213,6 +216,9 @@ namespace ECS {
 		float farZ = 1000.0f;
 #pragma endregion
 
+		/// @brief カメラにデータを転送する
+		/// @param camera 転送先のカメラ
+		/// @param translate 平行移動
 		void TransferData(Camera3D &camera, const Vector3 &translate) const;
 	};
 

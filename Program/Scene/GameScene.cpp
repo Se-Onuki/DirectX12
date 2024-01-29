@@ -40,6 +40,7 @@ void GameScene::OnEnter() {
 	cameraManager_->Init();
 	followCamera_ = cameraManager_->AddCamera("FollowCamera");
 	cameraManager_->SetUseCamera(followCamera_);
+	cameraManager_->Update(0.f);
 
 	/*Archetype archetype;
 	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
@@ -88,8 +89,9 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::ScaleComp{};
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
 	*enemyPrefab_ += ECS::PositionComp{};
-	*enemyPrefab_ += ECS::TransformMatComp{};
+	//*enemyPrefab_ += ECS::TransformMatComp{};
 	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
+	*enemyPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*enemyPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
 	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
@@ -207,18 +209,26 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[pos, acceleration, input] : world_->view<ECS::PositionComp, ECS::AccelerationComp, ECS::InputFlagComp>()) {
-		Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
-		pos->position_ += Vector3{ inputLs.x,0.f,inputLs.y }*0.1f;
+	for (const auto &[pos, quateRot, acceleration, input] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp>()) {
+		const auto *const camera = cameraManager_->GetUseCamera();
+		const Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
+		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
+		const Vector3 rotateInput = Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y).RotateVector(input3d);
+		pos->position_ += rotateInput * (500.f * deltaTime * deltaTime);
+
+		//Vector3 rotFront = quateRot->quateRot_.RotateVector(Vector3::front);
+		if (input3d.LengthSQ()) {
+			quateRot->quateRot_ = Quaternion::LookAt(rotateInput);
+		}
 
 		if (input_->GetXInput()->IsTrigger(KeyCode::A)) {
 			acceleration->acceleration_.y += 10.f;
 		}
 	}
 
-	for (const auto &[pos, rot, scale, transMat, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::EmitterComp>()) {
+	for (const auto &[pos, rot, scale, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::EmitterComp>()) {
 
-		*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
+		//*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
 
 		SoLib::ImGuiWidget("Emitter : Pos", &pos->position_);
 		SoLib::ImGuiWidget("Emitter", emitterComp);
@@ -312,13 +322,14 @@ void GameScene::Update() {
 
 
 		for (const auto &[followCamera, cameraPos] : world_->view<ECS::FollowCamera, ECS::PositionComp>()) {
-			*cameraPos = pos->position_ + Vector3{ 0.f, 1.f,-5.f };
+			*cameraPos = pos->position_;
 
-			followCamera->TransferData(*followCamera_, *cameraPos);
+			//followCamera->rotation_.x += -input_->GetXInput()->GetState()->stickR_.y * 90._deg * deltaTime;
+			followCamera->rotation_.y += input_->GetXInput()->GetState()->stickR_.x * 90._deg * deltaTime;
+
+			followCamera->TransferData(*cameraManager_->GetUseCamera(), *cameraPos);
 		}
 	}
-
-
 
 	cameraManager_->DisplayImGui();
 	cameraManager_->Update(deltaTime);

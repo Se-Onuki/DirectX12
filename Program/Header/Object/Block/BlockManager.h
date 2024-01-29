@@ -136,6 +136,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="camera"></param>
 	void Draw(const Camera3D &camera);
+	void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
 
 	IBlock *const AddBox(const Model *const model, IBlock &&block) {
 

@@ -225,7 +225,7 @@ Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Vector3 &rotate, const
 Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform) {
 	Matrix4x4 result;
 
-	result = quaternion.RotateMatrix();
+	result = quaternion.MakeRotateMatrix();
 
 	Vector4 *const matItr = reinterpret_cast<Vector4 *>(result.data());
 	for (uint8_t i = 0u; i < 3u; i++) {

@@ -704,7 +704,7 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 
 }
 
-void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera<Render::CameraType::Projecction> &camera) const {
+void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const {
 	assert((sPipelineType_ == PipelineType::kParticle || sPipelineType_ == PipelineType::kShadowParticle) && "設定されたシグネチャがkParticleではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
@@ -715,6 +715,20 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 		mesh->Draw(commandList_, drawCount);
 	}
 }
+
+void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const
+{
+	assert((sPipelineType_ == PipelineType::kParticle || sPipelineType_ == PipelineType::kShadowParticle) && "設定されたシグネチャがkParticleではありません");
+
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
+	for (auto &mesh : meshList_) {
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get());		// PSOを設定
+		mesh->Draw(commandList_, drawCount);
+	}
+}
+
 
 void Mesh::CreateBuffer() {
 
