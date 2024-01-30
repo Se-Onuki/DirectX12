@@ -230,9 +230,14 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[enemy, pos, rotate] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp>()) {
+	{
+		Vector3 playerPos{};
 		for (const auto &[player, plPos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
-			Vector3 direction = (plPos->position_ - pos->position_).Nomalize() * 100.f * powDeltaTime;
+			playerPos = *plPos;
+		}
+
+		for (const auto &[enemy, pos, rotate] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp>()) {
+			Vector3 direction = (playerPos - pos->position_).Nomalize() * 100.f * powDeltaTime;
 			direction.y = 0.f;
 			pos->position_ += direction;
 
@@ -254,14 +259,22 @@ void GameScene::Update() {
 		}
 	}
 
-	for (const auto &[weapon] : world_->view<ECS::WeaponComp>()) {
+	{
+		std::list<ECS::WeaponComp *> weaponList{};
+
+		for (const auto &[weapon] : world_->view<ECS::WeaponComp>()) {
+			weaponList.push_back(weapon);
+		}
+
 		for (const auto &[enemy, pos, collision, isAlive] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::IsAlive>()) {
 
 			Sphere sphere = collision->collision_;
 			sphere.centor += *pos;
 
-			if (Collision::IsHit(sphere, weapon->collision_)) {
-				isAlive->isAlive_ = false;
+			for (const auto *weapon : weaponList) {
+				if (Collision::IsHit(sphere, weapon->collision_)) {
+					isAlive->isAlive_ = false;
+				}
 			}
 
 		}
