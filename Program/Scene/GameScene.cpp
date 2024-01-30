@@ -83,13 +83,14 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
 	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
 	*playerPrefab_ += ECS::PlayerTag{};
+	*playerPrefab_ += ECS::WeaponComp{ .collision_{.radius = 1.f} };
 	*playerPrefab_ += ECS::AnimateParametor{};
 
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 	*enemyPrefab_ += ECS::IsAlive{};
 	*enemyPrefab_ += ECS::ScaleComp{};
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
-	*enemyPrefab_ += ECS::PositionComp{ .position_{.y = 1.f} };
+	*enemyPrefab_ += ECS::PositionComp{ .position_{0.f, 1.f, 10.f} };
 	*enemyPrefab_ += ECS::TransformMatComp{};
 	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
 	// *enemyPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
@@ -122,6 +123,8 @@ void GameScene::OnEnter() {
 
 	ground_.Init();
 
+	spawnTimer_.Start();
+
 }
 
 void GameScene::OnExit() {
@@ -150,6 +153,13 @@ void GameScene::Update() {
 	particleArray_.clear();
 
 	blockRender_->clear();
+	spawnTimer_.Update(deltaTime);
+
+	if (spawnTimer_.IsFinish()) {
+
+		entityManager_->CreateEntity(*enemyPrefab_);
+		spawnTimer_.Start();
+	}
 
 	// もし生存フラグが折れていたら、配列から削除
 	world_->erase_if(std::function<bool(ECS::IsAlive *)>(
@@ -242,7 +252,19 @@ void GameScene::Update() {
 				velocity->velocity_.y = 0.f;
 			}
 		}
+	}
 
+	for (const auto &[weapon] : world_->view<ECS::WeaponComp>()) {
+		for (const auto &[enemy, pos, collision, isAlive] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::IsAlive>()) {
+
+			Sphere sphere = collision->collision_;
+			sphere.centor += *pos;
+
+			if (Collision::IsHit(sphere, weapon->collision_)) {
+				isAlive->isAlive_ = false;
+			}
+
+		}
 	}
 
 	for (const auto &[pos, quateRot, acceleration, input, animate] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor>()) {
@@ -359,8 +381,12 @@ void GameScene::Update() {
 
 
 
-	for (const auto &[bone] : world_->view<ECS::BoneTransformComp>()) {
-		boneModel_.Draw(boneModel_.CalcTransMat(bone->boneTransform_));
+	for (const auto &[bone, weapon] : world_->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
+		auto matrixArray = boneModel_.CalcTransMat(bone->boneTransform_);
+
+		boneModel_.Draw(matrixArray);
+
+		weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_.GetIndex("Sword", 0)].m[3]);
 	}
 
 	for (const auto &[scale, quate, pos, mat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {

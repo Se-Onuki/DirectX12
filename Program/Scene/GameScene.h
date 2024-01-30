@@ -68,6 +68,8 @@ private:
 
 	BoneModel boneModel_;
 
+	SoLib::DeltaTimer spawnTimer_{ 5.f };
+
 	std::array<BoneModel::SimpleTransform, 5u> boneTransform_;
 
 };
