@@ -89,12 +89,12 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::IsAlive{};
 	*enemyPrefab_ += ECS::ScaleComp{};
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
-	*enemyPrefab_ += ECS::PositionComp{};
-	//*enemyPrefab_ += ECS::TransformMatComp{};
+	*enemyPrefab_ += ECS::PositionComp{ .position_{.y = 1.f} };
+	*enemyPrefab_ += ECS::TransformMatComp{};
 	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
-	*enemyPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
+	// *enemyPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*enemyPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
-	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
+	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
 
 	entityManager_->CreateEntity(*enemyPrefab_);
@@ -131,6 +131,7 @@ void GameScene::OnExit() {
 void GameScene::Update() {
 
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+	[[maybe_unused]] const float powDeltaTime = deltaTime * deltaTime;
 
 	ImGui::Text("XInput左スティックで移動");
 	ImGui::Text("エンティティ数 / %lu", world_->size());
@@ -219,6 +220,17 @@ void GameScene::Update() {
 
 	}
 
+	for (const auto &[enemy, pos, rotate] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp>()) {
+		for (const auto &[player, plPos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
+			Vector3 direction = (plPos->position_ - pos->position_).Nomalize() * 100.f * powDeltaTime;
+			direction.y = 0.f;
+			pos->position_ += direction;
+
+			rotate->quateRot_ = Quaternion::LookAt(direction);
+
+		}
+	}
+
 	for (const auto &[collision, pos, velocity] : world_->view<ECS::CollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
 		// 地面より座標が下なら
 		if ((pos->position_.y + collision->collision_.centor.y - collision->collision_.radius) < ground_.hight_) {
@@ -238,7 +250,7 @@ void GameScene::Update() {
 		const Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
 		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
 		const Vector3 rotateInput = Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y).RotateVector(input3d);
-		pos->position_ += rotateInput * (500.f * deltaTime * deltaTime);
+		pos->position_ += rotateInput * (500.f * powDeltaTime);
 
 		if (input3d.LengthSQ()) {
 			quateRot->quateRot_ = Quaternion::LookAt(rotateInput);
@@ -254,6 +266,8 @@ void GameScene::Update() {
 			}
 		}
 	}
+
+
 
 	for (const auto &[pos, rot, scale, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::EmitterComp>()) {
 
@@ -376,7 +390,6 @@ void GameScene::Update() {
 		for (const auto &[followCamera, cameraPos] : world_->view<ECS::FollowCamera, ECS::PositionComp>()) {
 			*cameraPos = pos->position_;
 
-			//followCamera->rotation_.x += -input_->GetXInput()->GetState()->stickR_.y * 90._deg * deltaTime;
 			followCamera->rotation_.y += input_->GetXInput()->GetState()->stickR_.x * 90._deg * deltaTime;
 
 			followCamera->TransferData(*cameraManager_->GetUseCamera(), *cameraPos);
