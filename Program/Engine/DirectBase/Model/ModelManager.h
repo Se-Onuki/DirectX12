@@ -19,8 +19,8 @@ public:
 	/// @brief モデルの追加
 	/// @param key 文字列キー
 	/// @param model モデルデータ
-	Model *const AddModel(const std::string &key, Model *const model) {
-		models_[key].reset(model);
+	Model *const AddModel(const std::string &key, std::unique_ptr<Model> model) {
+		models_[key] = std::move(model);
 		return models_[key].get();
 	}
 

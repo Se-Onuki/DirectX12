@@ -18,6 +18,7 @@
 #include <d3d12.h>
 
 #include <array>
+#include <memory>
 
 #include "../../../Utils/Math/Transform.h"
 #include "../Base/VertexBuffer.h"
@@ -102,11 +103,11 @@ public:
 
 	static void SetPipelineType(const PipelineType pipelineType);
 
-	[[nodiscard]] static Model *CreatePlane();
+	[[nodiscard]] static std::unique_ptr<Model> CreatePlane();
 
-	[[nodiscard]] static Model *const CreateSphere();
+	[[nodiscard]] static std::unique_ptr<Model> CreateSphere();
 
-	[[nodiscard]] static Model *const LoadObjFile(const std::string &directoryPath, const std::string &fileName);
+	[[nodiscard]] static std::unique_ptr<Model> LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 private:
 	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
 

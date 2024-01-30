@@ -475,16 +475,16 @@ void Model::EndDraw() {
 	commandList_ = nullptr;
 }
 
-Model *const Model::LoadObjFile(const std::string &directoryPath, const std::string &fileName) {
+std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, const std::string &fileName) {
 
 #pragma region 1. ファイルを開く
 
 	std::ifstream file{ defaultDirectory + directoryPath + fileName };
-	if (!file.is_open()) return nullptr;		// 開けなかった場合、処理を終了する
+	if (!file.is_open()) { return nullptr; }		// 開けなかった場合、処理を終了する
 
 #pragma endregion
 
-	Model *const result = new Model;
+	auto result = std::make_unique<Model>();
 
 	result->name_ = fileName.substr(0, fileName.size() - 4);
 
@@ -495,7 +495,7 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 	Mesh *modelData = nullptr;				// 構築するModelData
 	Material *materialData = nullptr;		// マテリアルの共用
 
-	result->meshList_.emplace_back(new Mesh);
+	result->meshList_.emplace_back(std::make_unique<Mesh>());
 
 	modelData = result->meshList_.back().get();
 
@@ -571,7 +571,7 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 		}
 		else if (identifier == "o") {
 			if (!modelData->vertices_.empty())
-				result->meshList_.emplace_back(new Mesh);
+				result->meshList_.emplace_back(std::make_unique<Mesh>());
 
 			modelData = result->meshList_.back().get();		// 構築するModelData
 
@@ -601,10 +601,10 @@ Model *const Model::LoadObjFile(const std::string &directoryPath, const std::str
 		mesh->vertices_.clear();
 		mesh->indexs_.clear();
 	}
-	return result;
+	return std::move(result);
 }
 
-Model *const Model::CreateSphere()
+std::unique_ptr<Model> Model::CreateSphere()
 {
 	return nullptr;
 }
@@ -639,8 +639,8 @@ void Model::SetPipelineType(const PipelineType pipelineType) {
 	}
 }
 
-Model *Model::CreatePlane() {
-	Model *const newModel = new Model{};
+std::unique_ptr<Model> Model::CreatePlane() {
+	auto newModel = std::make_unique<Model>();
 
 	newModel->meshList_.push_back(std::make_unique<Mesh>());
 	auto &mesh = *newModel->meshList_.begin();
@@ -677,7 +677,7 @@ Model *Model::CreatePlane() {
 
 	mesh->SetMaterial(material.get());
 
-	return newModel;
+	return std::move(newModel);
 }
 
 void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const {
