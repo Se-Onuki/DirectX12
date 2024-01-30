@@ -144,7 +144,7 @@ void GameScene::Update() {
 	ImGui::ColorEdit4("TestColor", testColor, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
 	SoLib::ImGuiWidget("SoLibColor", &testColor);
 
-	const SoLib::Math::Euler eulerRotate{ -30._deg,0._deg,0._deg };
+	const SoLib::Math::Euler eulerRotate{ -30._deg,90._deg,180._deg };
 
 
 	ImGui::Text("%s", SoLib::to_string(Vector3::front * Matrix4x4::EulerRotate(eulerRotate)).c_str());
