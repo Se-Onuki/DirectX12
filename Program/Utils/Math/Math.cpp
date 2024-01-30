@@ -242,21 +242,18 @@ Quaternion SoLib::Math::MakeQuaternion(const SoLib::Math::Euler &euler) {
 
 Vector3 SoLib::Math::EulerToDirection(const SoLib::Math::Euler &euler) {
 	Vector3 direction;
-	/*direction.x = std::sin(euler.y);
-	direction.y = std::cos(euler.x) * std::sin(euler.z);
-	direction.z = std::cos(euler.x) * std::cos(euler.y);*/
 	enum SinCos {
 		kSin,
 		kCos
 	};
 
-	const std::array<float, 2u> tX = { std::sin(euler.x / 2.f), std::cos(euler.x / 2.f) };
-	const std::array<float, 2u> tY = { std::sin(euler.y / 2.f), std::cos(euler.y / 2.f) };
-	const std::array<float, 2u> tZ = { std::sin(euler.z / 2.f), std::cos(euler.z / 2.f) };
+	const std::array<float, 2u> eX = { std::sin(euler.x), std::cos(euler.x) };
+	const std::array<float, 2u> eY = { std::sin(euler.y), std::cos(euler.y) };
+	const std::array<float, 2u> eZ = { std::sin(euler.z), std::cos(euler.z) };
 
-	direction.x = (std::cos(euler.x) * std::sin(euler.y) * std::cos(euler.z) + std::sin(euler.x) * std::sin(euler.z));
-	direction.y = (std::cos(euler.x) * std::sin(euler.y) * std::sin(euler.z) - std::sin(euler.x) * std::cos(euler.z));
-	direction.z = (std::cos(euler.x) * std::cos(euler.y));
+	direction.x = (eX[kCos] * eY[kSin] * eZ[kCos] + eX[kSin] * eZ[kSin]);
+	direction.y = (eX[kCos] * eY[kSin] * eZ[kSin] - eX[kSin] * eZ[kCos]);
+	direction.z = (eX[kCos] * eY[kCos]);
 	return direction;
 }
 
