@@ -121,6 +121,8 @@ namespace SoLib {
 	}
 
 	float DeltaTimer::GetProgress() const {
+		// もしゴールが未設定の場合は0を返す
+		if (not goalFlame_) { return 0.f; }
 		return std::clamp(nowFlame_ / goalFlame_, 0.f, 1.f);
 	}
 

@@ -223,11 +223,17 @@ namespace ECS {
 	};
 
 	struct BoneTransformComp : IComponent {
-		std::array<BoneModel::SimpleTransform, 6u> boneTransform_{};
+		std::array<BoneModel::SimpleTransform, 7u> boneTransform_{};
 	};
 
 	struct AnimateParametor : IComponent {
-		float parametor_{};
+		// アニメーションの情報
+		uint32_t animIndex_{};
+		// 次のアニメーションの情報
+		uint32_t nextAnimIndex_{};
+
+		// アニメーションの進行度
+		SoLib::DeltaTimer timer_{};
 	};
 
 	struct WeaponComp : IComponent {

@@ -1,17 +1,35 @@
 #include "BoneModel.h"
 
-BoneModel::Bone *BoneModel::Bone::AddChild(Model *const model) {
-	auto bone = std::make_unique<Bone>();
-	bone->Init(model);
+BoneModel::Box *BoneModel::Bone::AddBox(Model *const model) {
+	// モデルを保存したBoxを追加して、その添え字を返す
+	uint32_t index = AddBox(Box{ model });
 
-	return AddChild(std::move(bone));
+	// 添え字を使ってデータを取得する。
+	return boxArray_[index].get();
 }
+uint32_t BoneModel::Bone::AddBox(Box &&box) {
+	// ボックスを作成
+	auto boxItem = std::make_unique<Box>(std::move(box));
+	// 親を指定
+	boxItem->parent_ = this;
+
+	// 配列に追加
+	boxArray_.push_back(std::move(boxItem));
+	// 添え字を返す
+	return static_cast<uint32_t>(boxArray_.size() - 1u);
+}
+
 
 BoneModel::Bone *BoneModel::Bone::AddChild(std::unique_ptr<Bone> child) {
 	child->SetParent(this);
-	this->children_.push_back(std::move(child));
+	this->boneChildren_.push_back(std::move(child));
 
-	return children_.back().get();
+	return boneChildren_.back().get();
+}
+
+BoneModel::Bone *BoneModel::Bone::AddChild()
+{
+	return AddChild(std::make_unique<Bone>());
 }
 
 void BoneModel::Bone::SetParent(Bone *const parent) {
@@ -25,9 +43,29 @@ std::list<const BoneModel::Bone *> BoneModel::Bone::GetBoneList() const {
 
 	result.push_back(this);
 
-	for (const auto &child : children_) {
+	for (const auto &child : boneChildren_) {
 		auto childList = child->GetBoneList();
 		result.splice(result.end(), std::move(childList));
+	}
+
+	return result;
+}
+
+std::list<const BoneModel::Box *> BoneModel::Bone::GetBoxList() const {
+	std::list<const Box *> result{};
+
+	// boxの情報をコピー
+	for (const auto &boxItem : boxArray_) {
+		result.push_back(boxItem.get());
+	}
+
+	// 子供のボーンをfor文で回す
+	for (const auto &child : boneChildren_) {
+		// ボーンのリストを取得(再帰関数)
+		auto boxList = child->GetBoxList();
+
+		// 自分自身のリストの末尾に子供の配列を結合
+		result.splice(result.end(), std::move(boxList));
 	}
 
 	return result;
@@ -36,11 +74,18 @@ std::list<const BoneModel::Bone *> BoneModel::Bone::GetBoneList() const {
 void BoneModel::SetNumber() {
 
 	boneNumberMap_.clear();
+	boxNumberMap_.clear();
 	uint32_t boneNumber = 0u;
 
 	for (auto &bone : bone_->GetBoneList()) {
 
 		boneNumberMap_[bone] = boneNumber++;
+
+	}
+
+	for (auto &box : bone_->GetBoxList()) {
+
+		boxNumberMap_[box] = boneNumber++;
 
 	}
 
@@ -51,15 +96,29 @@ void BoneModel::Init() {
 }
 
 BoneModel::Bone *BoneModel::AddBone(const std::string &key, Model *model, Bone *parent) {
+
+	Bone *newBone = AddBone(key, parent);
+	newBone->AddBox(model);
+
+	return newBone;
+}
+
+BoneModel::Bone *BoneModel::AddBone(const std::string &key, Bone *parent)
+{
+	// 親ボーン
 	Bone *pParent = bone_.get();
+	// 引数で親が指定されていた場合はそれに変える
 	if (parent) {
 		pParent = parent;
 	}
 
-	Bone *newBone = pParent->AddChild(model);
+	// ボーンの追加
+	Bone *newBone = pParent->AddChild();
 
+	// ボーンを文字列に登録する
 	boneKeyMap_[key] = newBone;
 
+	// ボーンのアドレスを返す
 	return newBone;
 }
 
@@ -82,6 +141,22 @@ uint32_t BoneModel::GetIndex(const std::string &key) const {
 	if (bone) {
 		// 対応したindexを返す
 		return boneNumberMap_.at(bone);
+	}
+
+#ifdef _DEBUG
+	assert(0 && "文字列に対応するボーンが保存されていません。");
+#endif // _DEBUG
+
+	// 存在しないなら
+	return (std::numeric_limits<uint32_t>::max)();
+}
+
+uint32_t BoneModel::GetIndex(const std::string &key, const uint32_t boxIndex) const {
+	auto bone = GetBone(key);
+	// ボーンが存在するなら
+	if (bone) {
+		// 対応したindexを返す
+		return boxNumberMap_.at(bone->GetBox(boxIndex));
 	}
 
 #ifdef _DEBUG

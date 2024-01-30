@@ -83,6 +83,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
 	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
 	*playerPrefab_ += ECS::PlayerTag{};
+	*playerPrefab_ += ECS::AnimateParametor{};
 
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 	*enemyPrefab_ += ECS::IsAlive{};
@@ -115,6 +116,7 @@ void GameScene::OnEnter() {
 	boneModel_.Init();
 	auto *bodyPtr = boneModel_.AddBone("Body", boxModel_);
 	boneModel_.AddBone("Head", boxModel_, bodyPtr);
+	boneModel_.AddBone("Sword", boxModel_, bodyPtr);
 
 	boneModel_.SetNumber();
 
@@ -172,6 +174,28 @@ void GameScene::Update() {
 		aliveTime->aliveTime_ += deltaTime;
 	}
 
+	for (const auto &[animate] : world_->view<ECS::AnimateParametor>()) {
+		auto &timer = animate->timer_;
+
+		// 動作パラメータを追加
+		timer.Update(deltaTime);
+
+		if (timer.IsActive() && timer.IsFinish()) {
+			// 次のアニメーションの情報を格納
+
+			// 仮実装なので、マジックナンバーで行う
+			if (animate->animIndex_ == 0u) {
+				animate->animIndex_ = 1u;
+				timer.Start();
+			}
+			else {
+				animate->animIndex_ = 0u;
+			}
+
+
+		}
+	}
+
 
 	for (const auto &[aliveTime, lifelimit, colorLerp, color] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::ColorLarp, ECS::Color>()) {
 		color->color_ = colorLerp->EaseColor(aliveTime->aliveTime_ / lifelimit->lifeLimit_);
@@ -209,7 +233,7 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[pos, quateRot, acceleration, input] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp>()) {
+	for (const auto &[pos, quateRot, acceleration, input, animate] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor>()) {
 		const auto *const camera = cameraManager_->GetUseCamera();
 		const Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
 		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
@@ -222,6 +246,12 @@ void GameScene::Update() {
 
 		if (input_->GetXInput()->IsTrigger(KeyCode::A)) {
 			acceleration->acceleration_.y += 10.f;
+		}
+
+		if (animate->animIndex_ == 0u && animate->timer_.IsFinish()) {
+			if (input_->GetXInput()->GetState()->triggerR_ > 0.5f) {
+				animate->timer_.Start(0.5f);
+			}
 		}
 	}
 
@@ -271,21 +301,45 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[scale, quate, pos, bone] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp>()) {
+	for (const auto &[scale, quate, pos, bone, animate] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::AnimateParametor>()) {
 
 		bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
 
-		{ // 頭のパラメータ
+		// 頭のパラメータ
+		{
 			auto &head = bone->boneTransform_[boneModel_.GetIndex("Head")];
 			head.translate_.y = 2.f;
 			head.scale_ = Vector3::one * 0.5f;
 		}
-		{ // 体のパラメータ
-			auto &body = bone->boneTransform_[boneModel_.GetIndex("Body")];
 
-			body.scale_ = { 0.5f,1.f,0.5f };
+		// 体のパラメータ
+		{
+			auto &body = bone->boneTransform_[boneModel_.GetIndex("Body", 0)];
+
+			body.scale_ = { 0.75f,1.f,0.75f };
 		}
-		//blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = bone->boneTransform_[0].CalcTransMat() });
+
+		// 剣のパラメータ
+		{
+			auto &swordModel = bone->boneTransform_[boneModel_.GetIndex("Sword", 0)];
+
+			swordModel.translate_.y = 3.f;
+
+			swordModel.scale_ = { 0.25f,1.f,0.25f };
+
+
+			auto &sword = bone->boneTransform_[boneModel_.GetIndex("Sword")];
+
+			if (not animate->timer_.IsFinish()) {
+				if (animate->animIndex_ == 0u) {
+					sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(animate->timer_.GetProgress()));
+				}
+				else {
+					sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(1.f - animate->timer_.GetProgress()));
+				}
+			}
+		}
+
 
 	}
 
