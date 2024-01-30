@@ -148,7 +148,9 @@ void GameScene::Update() {
 
 
 	ImGui::Text("%s", SoLib::to_string(Vector3::front * Matrix4x4::EulerRotate(eulerRotate)).c_str());
-	ImGui::Text("%s", SoLib::to_string(Quaternion::RotateVector(Vector3::front, Quaternion::Create(eulerRotate))).c_str());
+	ImGui::Text("%s", SoLib::to_string(Quaternion::RotateVector(Vector3::front, SoLib::MakeQuaternion(eulerRotate))).c_str());
+	ImGui::Text("%s", SoLib::to_string(Vector3::front * SoLib::MakeQuaternion(eulerRotate).MakeRotateMatrix()).c_str());
+	ImGui::Text("%s", SoLib::to_string(SoLib::EulerToDirection(eulerRotate)).c_str());
 
 	particleArray_.clear();
 

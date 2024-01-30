@@ -244,8 +244,8 @@ Vector3 SoLib::Math::EulerToDirection(const SoLib::Math::Euler &euler) {
 	Vector3 direction;
 	direction.x = std::cos(euler.x) * std::cos(euler.y);
 	direction.y = std::sin(euler.x) * std::cos(euler.y);
-	direction.z = -std::sin(euler.y);
-	return Vector3();
+	direction.z = std::sin(euler.y);
+	return direction;
 }
 
 SoLib::Math::Euler SoLib::Math::DirectionToEuler(const Vector3 &direction) {
