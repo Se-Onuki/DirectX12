@@ -33,9 +33,11 @@ private:
 	// 音インスタンス
 	Audio *audio_ = nullptr;
 	// カメラマネージャー
-	CameraManager* cameraManager_ = nullptr;
+	CameraManager *cameraManager_ = nullptr;
 
 	// 平行光源
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
+	std::unique_ptr<Sprite> sprite_;
 
 };

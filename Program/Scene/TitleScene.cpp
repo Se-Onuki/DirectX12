@@ -6,6 +6,7 @@
 #include "../Utils/SoLib/SoLib.h"
 
 #include "../Header/Object/Fade.h"
+#include "GameScene.h"
 
 TitleScene::TitleScene() {
 	input_ = Input::GetInstance();
@@ -19,6 +20,8 @@ TitleScene::~TitleScene() {
 void TitleScene::OnEnter() {
 	// ライトの生成
 	light_ = DirectionLight::Create();
+
+	Fade::GetInstance()->Start(Vector2{}, 0x00000000, 1.f);
 }
 
 void TitleScene::OnExit() {
@@ -30,6 +33,11 @@ void TitleScene::Update() {
 	// キーボードの入力取得
 	static const auto *const keyBoard = input_->GetDirectInput();
 
+
+	if (input_->GetXInput()->IsTrigger(KeyCode::A)) {
+		sceneManager_->ChangeScene<GameScene>(1.f);
+		Fade::GetInstance()->Start(Vector2{}, 0x000000FF, 1.f);
+	}
 	// デルタタイムの取得
 	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 }
@@ -66,6 +74,7 @@ void TitleScene::Draw() {
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
+	Fade::GetInstance()->Draw();
 
 	Sprite::EndDraw();
 

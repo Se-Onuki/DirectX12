@@ -472,10 +472,10 @@ void Sprite::SetPosition(const Vector2 &position)
 	transform_.CalcMatrix();
 }
 
-Sprite *const Sprite::Create() {
-	Sprite *sprite = new Sprite();
+std::unique_ptr<Sprite> Sprite::Create() {
+	auto sprite = std::make_unique<Sprite>();
 	sprite->Init();
-	return sprite;
+	return std::move(sprite);
 }
 
 void Sprite::CalcBuffer() {
@@ -504,20 +504,20 @@ void Sprite::CalcBuffer() {
 	transform_.CalcMatrix();
 }
 
-Sprite *const Sprite::Create(const uint32_t textureHaundle)
+std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle)
 {
-	Sprite *sprite = new Sprite();
+	auto sprite = std::make_unique<Sprite>();
 	sprite->Init(textureHaundle);
-	return sprite;
+	return std::move(sprite);
 }
 
-Sprite *const Sprite::Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale)
+std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale)
 {
-	Sprite *sprite = Create(textureHaundle);
+	auto sprite = Create(textureHaundle);
 	sprite->transform_.translate = { position.x,position.y,0.f };
 	sprite->transform_.scale = { scale.x,scale.y,1.f };
 	sprite->transform_.CalcMatrix();
-	return sprite;
+	return std::move(sprite);
 }
 
 void Sprite::SetColor(const Vector4 &color)

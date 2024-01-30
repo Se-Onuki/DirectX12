@@ -3,7 +3,7 @@
 #include "../../Engine/DirectBase/Base/WinApp.h"
 #include "../../Utils/SoLib/SoLib_Lerp.h"
 
-const Vector4 Fade::kFadeColor_ = Vector4{ 0xed,0x7b,0x68,0x00 };
+const SoLib::Color::RGB4 Fade::kFadeColor_ = 0xed7b6800;
 
 void Fade::StaticInit() {
 	auto *const instance = GetInstance();
@@ -12,17 +12,17 @@ void Fade::StaticInit() {
 
 	auto *const winApp = WinApp::GetInstance();
 
-	instance->sprite_.reset(Sprite::Create());
+	instance->sprite_ = Sprite::Create();
 	instance->sprite_->SetScale({ static_cast<float>(winApp->kWindowWidth), static_cast<float>(winApp->kWindowHeight) });
 
 }
 
-void Fade::SetState(const Vector2 &pos, const Vector4 &color) {
+void Fade::SetState(const Vector2 &pos, const SoLib::Color::RGB4 &color) {
 	sprite_->SetPosition(pos);
 	sprite_->SetColor(color);
 }
 
-void Fade::Start(const Vector2 &targetPos, const Vector4 &targetColor, float goalTime) {
+void Fade::Start(const Vector2 &targetPos, const SoLib::Color::RGB4 &targetColor, float goalTime) {
 
 	// 目的地と、現在地を設定
 	targetPos_ = targetPos;

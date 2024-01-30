@@ -71,6 +71,9 @@ public:
 	/// @param transitionTime 必要とする時間
 	void ChangeScene(std::unique_ptr<IScene> nextScene, const float transitionTime);
 
+	template<SoLib::IsBased<IScene> T>
+	void ChangeScene(const float transitionTime);
+
 
 	/// @brief シーンの更新
 	void Update(float deltaTime);
@@ -79,3 +82,9 @@ public:
 	/// @brief シーンの描画
 	void Draw() const;
 };
+
+template<SoLib::IsBased<IScene> T>
+inline void SceneManager::ChangeScene(const float transitionTime)
+{
+	ChangeScene(std::make_unique<T>(), transitionTime);
+}

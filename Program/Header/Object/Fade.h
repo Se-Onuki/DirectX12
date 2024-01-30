@@ -9,6 +9,8 @@
 #include "../../Utils/Math/Vector4.h"
 #include "../../Engine/DirectBase/2D/Sprite.h"
 
+#include "../../Utils/Graphics/Color.h"
+
 class Fade {
 	Fade() = default;
 	Fade(const Fade &) = delete;
@@ -23,9 +25,9 @@ public:
 
 	static void StaticInit();
 
-	void SetState(const Vector2 &pos, const Vector4 &alpha);
+	void SetState(const Vector2 &pos, const SoLib::Color::RGB4 &alpha);
 
-	void Start(const Vector2 &targetPos, const Vector4 &targetAlpha, float goalTime);
+	void Start(const Vector2 &targetPos, const SoLib::Color::RGB4 &targetAlpha, float goalTime);
 	void Update(float deltaTime);
 	void Draw();
 
@@ -34,15 +36,15 @@ public:
 	Sprite *const GetSprite() { return sprite_.get(); }
 	const SoLib::DeltaTimer *const GetTimer() { return timer_.get(); }
 
-	static const Vector4 kFadeColor_;
+	static const SoLib::Color::RGB4 kFadeColor_;
 
 private:
 
 	Vector2 targetPos_{};	// 移動後の座標
 	Vector2 originalPos_{};	// 移動前の座標
 
-	Vector4 targetColor_{};	// 変更後の色
-	Vector4 originalColor_{};	// 変更前の色
+	SoLib::Color::RGB4 targetColor_{};	// 変更後の色
+	SoLib::Color::RGB4 originalColor_{};	// 変更前の色
 
 	/// @brief イージング関数の関数ポインタ
 	float (*easeFunc_)(float) = SoLib::easeLinear;

@@ -9,6 +9,7 @@
 #include "../Utils/SoLib/SoLib_ImGui.h"
 #include "../Utils/SoLib/SoLib.h"
 #include <imgui.h>
+#include "TitleScene.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -124,6 +125,7 @@ void GameScene::OnEnter() {
 	ground_.Init();
 
 	spawnTimer_.Start();
+	Fade::GetInstance()->Start(Vector2{}, 0x00000000, 1.f);
 
 }
 
@@ -162,6 +164,11 @@ void GameScene::Update() {
 
 		entityManager_->CreateEntity(*enemyPrefab_);
 		spawnTimer_.Start();
+	}
+
+	if (input_->GetXInput()->IsTrigger(KeyCode::START)) {
+		sceneManager_->ChangeScene<TitleScene>(1.f);
+		Fade::GetInstance()->Start(Vector2{}, 0x000000FF, 1.f);
 	}
 
 	// もし生存フラグが折れていたら、配列から削除
@@ -497,6 +504,7 @@ void GameScene::Draw() {
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
+	Fade::GetInstance()->Draw();
 
 	Sprite::EndDraw();
 

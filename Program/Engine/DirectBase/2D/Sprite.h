@@ -149,9 +149,9 @@ public:
 	/// @brief 描画
 	void Draw() const;
 
-	[[nodiscard]] static Sprite *const Create();
-	[[nodiscard]] static Sprite *const Create(const uint32_t textureHaundle);
-	[[nodiscard]] static Sprite *const Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale);
+	[[nodiscard]] static std::unique_ptr<Sprite> Create();
+	[[nodiscard]] static std::unique_ptr<Sprite> Create(const uint32_t textureHaundle);
+	[[nodiscard]] static std::unique_ptr<Sprite> Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale);
 
 	void ImGuiWidget();
 
