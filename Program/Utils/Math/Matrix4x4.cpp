@@ -93,22 +93,32 @@ Matrix4x4 Matrix4x4::Affine(const Vector3 &scale, const Vector3 &rotate, const V
 Matrix4x4 Matrix4x4::EulerRotate(EulerAngle eulerAngle, float angle) {
 	switch (eulerAngle) {
 	case Matrix4x4::Pitch:
-		return Matrix4x4{ 1,
-						 0,
-						 0,
-						 0,
-						 0,
-						 std::cos(angle),
-						 std::sin(angle),
-						 0,
-						 0,
-						 -std::sin(angle),
-						 std::cos(angle),
-						 0,
-						 0,
-						 0,
-						 0,
-						 1 };
+		return Matrix4x4{
+			Vector4{
+				1,
+				0,
+				0,
+				0,
+			},
+			Vector4{
+				0,
+				std::cos(angle),
+				std::sin(angle),
+				0,
+			},
+			Vector4{
+				 0,
+				 -std::sin(angle),
+				 std::cos(angle),
+				 0,
+			},
+			Vector4{
+				 0,
+				 0,
+				 0,
+				 1
+			}
+		};
 		break;
 	case Matrix4x4::Yaw:
 		return Matrix4x4{ std::cos(angle), 0, -std::sin(angle), 0, 0, 1, 0, 0,

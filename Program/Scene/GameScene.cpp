@@ -144,13 +144,14 @@ void GameScene::Update() {
 	ImGui::ColorEdit4("TestColor", testColor, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
 	SoLib::ImGuiWidget("SoLibColor", &testColor);
 
-	const SoLib::Math::Euler eulerRotate{ 30._deg,0.f,0.f };
+	const SoLib::Math::Euler eulerRotate{ -30._deg,0._deg,0._deg };
 
 
 	ImGui::Text("%s", SoLib::to_string(Vector3::front * Matrix4x4::EulerRotate(eulerRotate)).c_str());
 	ImGui::Text("%s", SoLib::to_string(Quaternion::RotateVector(Vector3::front, SoLib::MakeQuaternion(eulerRotate))).c_str());
 	ImGui::Text("%s", SoLib::to_string(Vector3::front * SoLib::MakeQuaternion(eulerRotate).MakeRotateMatrix()).c_str());
 	ImGui::Text("%s", SoLib::to_string(SoLib::EulerToDirection(eulerRotate)).c_str());
+	ImGui::Text("%s", SoLib::to_string(Quaternion::LookAt(SoLib::EulerToDirection(eulerRotate)).RotateVector(Vector3::front)).c_str());
 
 	particleArray_.clear();
 

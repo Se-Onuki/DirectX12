@@ -242,9 +242,9 @@ Quaternion SoLib::Math::MakeQuaternion(const SoLib::Math::Euler &euler) {
 
 Vector3 SoLib::Math::EulerToDirection(const SoLib::Math::Euler &euler) {
 	Vector3 direction;
-	direction.x = std::cos(euler.x) * std::cos(euler.y);
-	direction.y = std::sin(euler.x) * std::cos(euler.y);
-	direction.z = std::sin(euler.y);
+	direction.x = std::sin(euler.y);
+	direction.y = -std::sin(euler.x) * std::cos(euler.y);
+	direction.z = std::cos(euler.x) * std::cos(euler.y);
 	return direction;
 }
 
