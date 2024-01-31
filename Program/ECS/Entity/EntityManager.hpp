@@ -58,7 +58,7 @@ namespace ECS {
 				ECS::Entity &entity = entityList.emplace_back();
 
 				entity.arrayPtr_ = mArray;
-				entity.chunkIndex_ = mArray->push_back(prefab);
+				entity.totalIndex_ = mArray->push_back(prefab);
 			}
 
 			return entityList;
@@ -79,7 +79,7 @@ namespace ECS {
 				ECS::Entity &entity = entityList.emplace_back();
 
 				entity.arrayPtr_ = mArray;
-				entity.chunkIndex_ = mArray->push_back();
+				entity.totalIndex_ = mArray->push_back();
 			}
 
 			return entityList;
@@ -104,13 +104,13 @@ namespace ECS {
 		template<typename T, typename... Ts>
 		std::tuple<T *const, Ts *const...> GetComponent(const ECS::Entity &entity) {
 
-			return entity.arrayPtr_->GetItem<T, Ts...>(entity.chunkIndex_);
+			return entity.arrayPtr_->GetItem<T, Ts...>(entity.totalIndex_);
 		}
 
 		template<typename T>
 		T &GetOneComponent(const ECS::Entity &entity) {
 
-			return entity.arrayPtr_->GetItem<T>(entity.chunkIndex_);
+			return entity.arrayPtr_->GetItem<T>(entity.totalIndex_);
 		}
 
 		//template<typename T> void SetComponent(Entity entity, T &component) {

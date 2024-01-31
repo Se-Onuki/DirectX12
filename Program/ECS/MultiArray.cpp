@@ -75,18 +75,27 @@ uint32_t ECS::MultiChunk::push_back() {
 		auto ptr = GetItemPtr(classData.first, size_);
 		classData.second.constructor_(ptr);
 	}
+	auto entity = static_cast<ECS::Entity *>(this->GetEntityPtr(size_));
+	entity->arrayPtr_ = this->parent_;
+	entity->totalIndex_ = size_;
+	entity->version_++;
 
 	return size_++;
 }
 
 uint32_t ECS::MultiChunk::push_back(const ECS::Prefab &prefab) {
 
-	const auto& compItr = prefab.GetComponentMap();
+	const auto &compItr = prefab.GetComponentMap();
 
 	for (const auto &[typeindex, classData] : archetype_->data_) {
 		auto ptr = GetItemPtr(typeindex, size_);
 		std::memcpy(ptr, compItr.at(typeindex).get(), classData.size_);
 	}
+	auto entity = static_cast<ECS::Entity *>(this->GetEntityPtr(size_));
+	entity->arrayPtr_ = this->parent_;
+	entity->totalIndex_ = size_;
+	entity->version_++;
+
 
 	return size_++;
 }
@@ -246,14 +255,22 @@ void ECS::MultiArray::swap(const size_t totalIndexF, const size_t totalIndexS) {
 
 	//for (const auto &classData : archetype_.data_) {
 
-		// 破棄するデータのアドレスを取得
-	auto fPtr = firstItem->GetEntityPtr(static_cast<uint32_t>(totalIndexF % capacity));
+	// 破棄するデータのアドレスを取得
+	ECS::Entity *fPtr = static_cast<ECS::Entity *>(firstItem->GetEntityPtr(static_cast<uint32_t>(totalIndexF % capacity)));
 	// 末尾のデータのアドレスをを取得
-	auto sPtr = secondItem->GetEntityPtr(static_cast<uint32_t>(totalIndexS % capacity));
+	ECS::Entity *sPtr = static_cast<ECS::Entity *>(secondItem->GetEntityPtr(static_cast<uint32_t>(totalIndexS % capacity)));
+
+	// データを一時保存
+	Entity first = *fPtr;
+	Entity second = *sPtr;
 
 	std::memcpy(temp.get(), fPtr, entitySize);
 	std::memcpy(fPtr, sPtr, entitySize);
 	std::memcpy(sPtr, temp.get(), entitySize);
+
+	// データを戻す
+	*fPtr = first;
+	*sPtr = second;
 
 	//}
 

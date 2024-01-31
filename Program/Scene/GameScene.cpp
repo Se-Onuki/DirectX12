@@ -174,7 +174,7 @@ void GameScene::Update() {
 	}
 
 	// もし生存フラグが折れていたら、配列から削除
-	world_->erase_if(std::function<bool(ECS::Entity*, ECS::IsAlive *)>(
+	world_->erase_if(std::function<bool(ECS::Entity *, ECS::IsAlive *)>(
 		[](ECS::Entity *, ECS::IsAlive *a)
 		{
 			return not a->isAlive_;
@@ -259,6 +259,8 @@ void GameScene::Update() {
 	}
 
 	for (const auto &[entity, collision, pos, velocity] : world_->view<ECS::CollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
+		const auto &[isLanding] = entityManager_->GetComponent<ECS::IsLanding>(*entity);
+
 		// 地面より座標が下なら
 		if ((pos->position_.y + collision->collision_.centor.y - collision->collision_.radius) < ground_.hight_) {
 			// 地面の上に当たり判定を上にする
@@ -267,6 +269,16 @@ void GameScene::Update() {
 			if (velocity->velocity_.y < 0.f) {
 				// 移動速度を0にする
 				velocity->velocity_.y = 0.f;
+			}
+
+			if (isLanding) {
+				isLanding->isLanding_ = true;
+			}
+		}
+		else {
+
+			if (isLanding) {
+				isLanding->isLanding_ = false;
 			}
 		}
 	}
@@ -292,7 +304,7 @@ void GameScene::Update() {
 		}
 	}
 
-	for (const auto &[entity, pos, quateRot, acceleration, input, animate] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor>()) {
+	for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding>()) {
 		const auto *const camera = cameraManager_->GetUseCamera();
 		const Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
 		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
@@ -303,7 +315,7 @@ void GameScene::Update() {
 			quateRot->quateRot_ = Quaternion::LookAt(rotateInput);
 		}
 
-		if (input_->GetXInput()->IsTrigger(KeyCode::A)) {
+		if (isLanding->isLanding_ && input_->GetXInput()->IsTrigger(KeyCode::A)) {
 			acceleration->acceleration_.y += 10.f;
 		}
 
