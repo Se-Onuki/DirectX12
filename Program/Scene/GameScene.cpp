@@ -244,7 +244,7 @@ void GameScene::Update() {
 
 	{
 		Vector3 playerPos{};
-		for (const auto &[entity, player, plPos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
+		for (const auto &[entity, player, plPos] : world_->view<const ECS::PlayerTag, const ECS::PositionComp>()) {
 			playerPos = *plPos;
 		}
 
