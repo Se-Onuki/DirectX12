@@ -2,6 +2,7 @@
 
 #include "Matrix2x2.h"
 #include "Vector3.h"
+#include "Vector3Norm.h"
 
 #include <immintrin.h>
 
@@ -176,7 +177,7 @@ Matrix4x4 Matrix4x4::EulerRotate(const Vector3 &rotate) {
 		1 };
 }
 
-Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float angle) {
+Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3Norm &axis, const float angle) {
 
 	const float cosTheta = std::cos(angle);
 	const float sinTheta = std::sin(angle);
@@ -184,7 +185,7 @@ Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float angle) {
 	return AnyAngleRotate(axis, cosTheta, sinTheta);
 }
 
-Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float cos, const float sin) {
+Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3Norm &axis, const float cos, const float sin) {
 
 	const float minusCosTheta = 1.f - cos;
 
@@ -196,14 +197,14 @@ Matrix4x4 Matrix4x4::AnyAngleRotate(const Vector3 &axis, const float cos, const 
 	};
 }
 
-Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3 &from, const Vector3 &to) {
+Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3Norm &from, const Vector3Norm &to) {
 
-	const Vector3 u = from.Nomalize();
-	const Vector3 v = to.Nomalize();
+	const Vector3 &u = from;
+	const Vector3 &v = to;
 
 	const float dot = u * v;
 	const Vector3 cross = u.cross(v);
-	Vector3 axis = cross.Nomalize();
+	Vector3Norm axis = cross;
 
 	if (dot == -1.f) {
 		if (u.x != 0.f || u.y != 0.f) {

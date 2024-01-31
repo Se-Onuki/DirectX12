@@ -4,6 +4,7 @@
 #include <array>
 
 struct Vector3;
+struct Vector3Norm;
 
 struct Matrix4x4 final {
 	enum EulerAngle {
@@ -85,17 +86,24 @@ struct Matrix4x4 final {
 	Matrix4x4 Crop() const;
 
 	Matrix4x4 GetRotate() const { return this->Crop<3u, 3u>(); }
+	
+	const Vector3 &GetRight() const { return *reinterpret_cast<const Vector3 *>(m[0]); }
+	const Vector3 &GetUp() const { return *reinterpret_cast<const Vector3 *>(m[1]); }
+
+	/// @brief 前方ベクトル
+	const Vector3 &GetFront() const { return *reinterpret_cast<const Vector3 *>(m[2]); }
+	const Vector3 &GetTranslate() const { return *reinterpret_cast<const Vector3 *>(m[3]); }
 
 	static Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);
 
 	static Matrix4x4 EulerRotate(EulerAngle, float angle);
 	static Matrix4x4 EulerRotate(const Vector3 &angle);
 
-	static Matrix4x4 AnyAngleRotate(const Vector3 &axis, const float angle);
+	static Matrix4x4 AnyAngleRotate(const Vector3Norm &axis, const float angle);
 
-	static Matrix4x4 AnyAngleRotate(const Vector3 &axis, const float cos, const float sin);
+	static Matrix4x4 AnyAngleRotate(const Vector3Norm &axis, const float cos, const float sin);
 
-	static Matrix4x4 DirectionToDirection(const Vector3 &from, const Vector3 &to);
+	static Matrix4x4 DirectionToDirection(const Vector3Norm &from, const Vector3Norm &to);
 
 	/// @brief 単位行列関数
 	/// @return 単位行列

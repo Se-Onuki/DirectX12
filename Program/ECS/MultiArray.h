@@ -81,7 +81,7 @@ namespace ECS {
 			iterator &operator =(const iterator &) = default;
 			iterator &operator =(iterator &&) = default;
 
-			std::tuple<Ts *...> operator *();
+			std::tuple<ECS::Entity *, Ts *...> operator *();
 
 			iterator &operator++() {
 
@@ -133,6 +133,7 @@ namespace ECS {
 			std::shared_ptr<std::tuple<Ts *...>> componentAddress_;
 			uint32_t index_{};
 			size_t entitySize_{};
+			MultiChunk *multiChunk_ = nullptr;
 
 		};
 
@@ -151,6 +152,7 @@ namespace ECS {
 		std::shared_ptr<std::tuple<Ts *...>> componentAddress_;
 		uint32_t size_;
 		size_t entitySize_{};
+		MultiChunk *multiChunk_ = nullptr;
 	};
 
 	class MultiChunk {
@@ -195,7 +197,7 @@ namespace ECS {
 		T &GetOneItem(const uint32_t index);
 
 		template<typename T, typename...Ts>
-		void erase_if(const std::function <bool(T *, Ts *...)> &func) {
+		void erase_if(const std::function <bool(ECS::Entity*, T *, Ts *...)> &func) {
 			auto getItem = this->get<T, Ts...>();
 			auto arrItr = getItem.begin();
 			auto endItr = getItem.end();
@@ -264,7 +266,7 @@ namespace ECS {
 
 				iterator operator[](const size_t index) const;
 
-				std::tuple<Ts *...> operator *() {
+				std::tuple<ECS::Entity *, Ts *...> operator *() {
 					return *(this->compArrayItr_);
 				}
 
@@ -316,7 +318,7 @@ namespace ECS {
 		auto &GetChunk() { return multiChunk_; }
 
 		template<typename T, typename...Ts>
-		void erase_if(const std::function <bool(T *, Ts *...)> &func) {
+		void erase_if(const std::function <bool(ECS::Entity *, T *, Ts *...)> &func) {
 			Archetype archetype{};
 			archetype.AddClassData<T, Ts...>();
 			// もし、対応した型があったら実行
@@ -389,6 +391,8 @@ namespace ECS {
 		result.componentAddress_ = std::make_shared<std::tuple<Ts *...>>();
 		*result.componentAddress_ = std::make_tuple(reinterpret_cast<Ts *>(componentAddress_.at(typeid(Ts)).first)...);
 
+		result.multiChunk_ = this;
+
 		result.size_ = size_;
 		result.entitySize_ = archetype_->GetTotalSize();
 
@@ -453,15 +457,16 @@ namespace ECS {
 		componentAddress_ = compArray->componentAddress_;
 		index_ = index;
 		entitySize_ = compArray->entitySize_;
+		multiChunk_ = compArray->multiChunk_;
 	}
 
 	template<typename ...Ts>
-	inline  std::tuple<Ts *...> ComponetArray<Ts...>::iterator::operator*() {
+	inline  std::tuple<ECS::Entity *, Ts *...> ComponetArray<Ts...>::iterator::operator*() {
 		//std::tuple<Ts*...> result = componentAddress_;
 
 		//return std::make_tuple((Ts *const)((char *)std::get<Is>(t) + sizeof(Ts))...);
 		//return this->IncrementAddress<Ts...>(*this->componentAddress_, index_);
-		return std::make_tuple(reinterpret_cast<Ts *>(MultiChunk::GetItemPtr(std::get<Ts *>(*this->componentAddress_), entitySize_, index_))...);
+		return std::make_tuple(static_cast<ECS::Entity *>(multiChunk_->GetEntityPtr(index_)), reinterpret_cast<Ts *>(MultiChunk::GetItemPtr(std::get<Ts *>(*this->componentAddress_), entitySize_, index_))...);
 	}
 
 	template<typename ...Ts>

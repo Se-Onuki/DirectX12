@@ -22,7 +22,7 @@ namespace ECS {
 			ECS::MultiArray::MultiCompArray<Ts...> mDataArray_;
 			ECS::MultiArray::MultiCompArray<Ts...>::iterator mDataArrayItr_;
 
-			std::tuple<Ts *const...> operator*() {
+			std::tuple<ECS::Entity *, Ts *const...> operator*() {
 				return *mDataArrayItr_;
 			}
 

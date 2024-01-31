@@ -84,6 +84,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
 	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
 	*playerPrefab_ += ECS::PlayerTag{};
+	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::WeaponComp{ .collision_{.radius = 1.f} };
 	*playerPrefab_ += ECS::AnimateParametor{};
 
@@ -150,6 +151,7 @@ void GameScene::Update() {
 
 
 	ImGui::Text("%s", SoLib::to_string(Vector3::front * Matrix4x4::EulerRotate(eulerRotate)).c_str());
+	ImGui::Text("%s", SoLib::to_string(Matrix4x4::EulerRotate(eulerRotate).GetFront()).c_str());
 	ImGui::Text("%s", SoLib::to_string(Quaternion::RotateVector(Vector3::front, SoLib::MakeQuaternion(eulerRotate))).c_str());
 	ImGui::Text("%s", SoLib::to_string(Vector3::front * SoLib::MakeQuaternion(eulerRotate).MakeRotateMatrix()).c_str());
 	ImGui::Text("%s", SoLib::to_string(SoLib::EulerToDirection(eulerRotate)).c_str());
@@ -172,14 +174,14 @@ void GameScene::Update() {
 	}
 
 	// もし生存フラグが折れていたら、配列から削除
-	world_->erase_if(std::function<bool(ECS::IsAlive *)>(
-		[](ECS::IsAlive *a)
+	world_->erase_if(std::function<bool(ECS::Entity*, ECS::IsAlive *)>(
+		[](ECS::Entity *, ECS::IsAlive *a)
 		{
 			return not a->isAlive_;
 		}
 	));
 
-	for (const auto &[aliveTime, lifeLimit, isAlive] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
+	for (const auto &[entity, aliveTime, lifeLimit, isAlive] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
 		// もし寿命が定められていたら
 		if (lifeLimit->lifeLimit_ >= 0.f) {
 			// 寿命を超過していたら
@@ -190,12 +192,12 @@ void GameScene::Update() {
 		}
 	}
 
-	for (const auto &[aliveTime] : world_->view<ECS::AliveTime>()) {
+	for (const auto &[entity, aliveTime] : world_->view<ECS::AliveTime>()) {
 		// 生存時間を加算
 		aliveTime->aliveTime_ += deltaTime;
 	}
 
-	for (const auto &[animate] : world_->view<ECS::AnimateParametor>()) {
+	for (const auto &[entity, animate] : world_->view<ECS::AnimateParametor>()) {
 		auto &timer = animate->timer_;
 
 		// 動作パラメータを追加
@@ -218,23 +220,23 @@ void GameScene::Update() {
 	}
 
 
-	for (const auto &[aliveTime, lifelimit, colorLerp, color] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::ColorLarp, ECS::Color>()) {
+	for (const auto &[entity, aliveTime, lifelimit, colorLerp, color] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::ColorLarp, ECS::Color>()) {
 		color->color_ = colorLerp->EaseColor(aliveTime->aliveTime_ / lifelimit->lifeLimit_);
 	}
 
-	for (const auto &[acceleration, gravity] : world_->view<ECS::AccelerationComp, ECS::GravityComp>()) {
+	for (const auto &[entity, acceleration, gravity] : world_->view<ECS::AccelerationComp, ECS::GravityComp>()) {
 
 		acceleration->acceleration_ += gravity->gravity_ * deltaTime;
 
 	}
-	for (const auto &[velocity, acceleration] : world_->view<ECS::VelocityComp, ECS::AccelerationComp>()) {
+	for (const auto &[entity, velocity, acceleration] : world_->view<ECS::VelocityComp, ECS::AccelerationComp>()) {
 
 		velocity->velocity_ += acceleration->acceleration_;
 		acceleration->acceleration_ = {};
 
 	}
 
-	for (const auto &[pos, velocity] : world_->view<ECS::PositionComp, ECS::VelocityComp>()) {
+	for (const auto &[entity, pos, velocity] : world_->view<ECS::PositionComp, ECS::VelocityComp>()) {
 
 		pos->position_ += velocity->velocity_ * deltaTime;
 
@@ -242,11 +244,11 @@ void GameScene::Update() {
 
 	{
 		Vector3 playerPos{};
-		for (const auto &[player, plPos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
+		for (const auto &[entity, player, plPos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
 			playerPos = *plPos;
 		}
 
-		for (const auto &[enemy, pos, rotate] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp>()) {
+		for (const auto &[entity, enemy, pos, rotate] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp>()) {
 			Vector3 direction = (playerPos - pos->position_).Nomalize() * 100.f * powDeltaTime;
 			direction.y = 0.f;
 			pos->position_ += direction;
@@ -256,7 +258,7 @@ void GameScene::Update() {
 		}
 	}
 
-	for (const auto &[collision, pos, velocity] : world_->view<ECS::CollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
+	for (const auto &[entity, collision, pos, velocity] : world_->view<ECS::CollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
 		// 地面より座標が下なら
 		if ((pos->position_.y + collision->collision_.centor.y - collision->collision_.radius) < ground_.hight_) {
 			// 地面の上に当たり判定を上にする
@@ -272,11 +274,11 @@ void GameScene::Update() {
 	{
 		std::list<ECS::WeaponComp *> weaponList{};
 
-		for (const auto &[weapon] : world_->view<ECS::WeaponComp>()) {
+		for (const auto &[entity, weapon] : world_->view<ECS::WeaponComp>()) {
 			weaponList.push_back(weapon);
 		}
 
-		for (const auto &[enemy, pos, collision, isAlive] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::IsAlive>()) {
+		for (const auto &[entity, enemy, pos, collision, isAlive] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::IsAlive>()) {
 
 			Sphere sphere = collision->collision_;
 			sphere.centor += *pos;
@@ -290,7 +292,7 @@ void GameScene::Update() {
 		}
 	}
 
-	for (const auto &[pos, quateRot, acceleration, input, animate] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor>()) {
+	for (const auto &[entity, pos, quateRot, acceleration, input, animate] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor>()) {
 		const auto *const camera = cameraManager_->GetUseCamera();
 		const Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
 		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
@@ -314,7 +316,7 @@ void GameScene::Update() {
 
 
 
-	for (const auto &[pos, rot, scale, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::EmitterComp>()) {
+	for (const auto &[entity, pos, rot, scale, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::EmitterComp>()) {
 
 		//*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
 
@@ -352,7 +354,7 @@ void GameScene::Update() {
 
 	Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
 
-	for (const auto &[scale, rotate, pos, mat, billboardRot] : world_->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
+	for (const auto &[entity, scale, rotate, pos, mat, billboardRot] : world_->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
 
 		*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
 		mat->transformMat_ *= billboardMat;
@@ -360,7 +362,7 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[scale, quate, pos, bone, animate] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::AnimateParametor>()) {
+	for (const auto &[entity, scale, quate, pos, bone, animate] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::AnimateParametor>()) {
 
 		bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
 
@@ -404,7 +406,7 @@ void GameScene::Update() {
 
 
 
-	for (const auto &[bone, weapon] : world_->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
+	for (const auto &[entity, bone, weapon] : world_->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
 		auto matrixArray = boneModel_.CalcTransMat(bone->boneTransform_);
 
 		boneModel_.Draw(matrixArray);
@@ -412,7 +414,7 @@ void GameScene::Update() {
 		weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_.GetIndex("Sword", 0)].m[3]);
 	}
 
-	for (const auto &[scale, quate, pos, mat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
+	for (const auto &[entity, scale, quate, pos, mat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
 
 		mat->transformMat_ = SoLib::Math::Affine(*scale, quate->quateRot_.Normalize(), *pos);
 
@@ -420,7 +422,7 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[model, translateMat, enemy] : world_->view<ECS::ModelComp, ECS::TransformMatComp, ECS::EnemyTag>()) {
+	for (const auto &[entity, model, translateMat, enemy] : world_->view<ECS::ModelComp, ECS::TransformMatComp, ECS::EnemyTag>()) {
 		blockRender_->AddBox(model->model_, IBlock{ .transMat_ = translateMat->transformMat_ });
 
 	}
@@ -433,10 +435,10 @@ void GameScene::Update() {
 
 	blockRender_->AddBox(ground_.model_, IBlock{ .transMat_ = ground_.CalcMatrix() });
 
-	for (const auto &[player, pos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
+	for (const auto &[plEntity, player, pos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
 
 
-		for (const auto &[followCamera, cameraPos] : world_->view<ECS::FollowCamera, ECS::PositionComp>()) {
+		for (const auto &[entity, followCamera, cameraPos] : world_->view<ECS::FollowCamera, ECS::PositionComp>()) {
 			*cameraPos = pos->position_;
 
 			followCamera->rotation_.y += input_->GetXInput()->GetState()->stickR_.x * 90._deg * deltaTime;
@@ -449,7 +451,7 @@ void GameScene::Update() {
 	cameraManager_->Update(deltaTime);
 
 
-	for (const auto &[color, billboard, mat] : world_->view<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
+	for (const auto &[entity, color, billboard, mat] : world_->view<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
 
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
 

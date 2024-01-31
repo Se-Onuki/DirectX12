@@ -84,6 +84,10 @@ namespace ECS {
 		uint32_t number_;
 	};
 
+	struct IsLanding : IComponent {
+		bool isLanding_;
+	};
+
 	struct EnemyTag : IComponent {
 		uint32_t number_;
 	};
