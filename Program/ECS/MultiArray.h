@@ -407,14 +407,18 @@ namespace ECS {
 		assert(size_ > index);
 
 #endif // _DEBUG
-		size_t totalSize = archetype_->GetTotalSize();
+		//size_t totalSize = archetype_->GetTotalSize();
 
 		return std::make_tuple(
 			(
-				this->componentAddress_.find(typeid(T)) == this->componentAddress_.end() ?
-				nullptr :
-				reinterpret_cast<T *>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(T)).first) + index * totalSize)
-				)...);
+
+				[this, index]()
+				{
+					auto it = this->componentAddress_.find(typeid(T));
+					return (it == this->componentAddress_.end() ? nullptr :
+						reinterpret_cast<T *>(static_cast<MultiChunk::memoryType *>(it->second.first) + index * entitySize_));
+				}()
+					)...);
 
 
 	}
