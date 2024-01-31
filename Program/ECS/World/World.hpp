@@ -89,6 +89,89 @@ namespace ECS {
 		std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
 	};
 
+	template<typename... Ts>
+	class ConstView {
+	public:
+		ConstView() = default;
+
+		class iterator {
+		public:
+			iterator(ConstView *const view) { mArrayList_ = view->mArrayList_; }
+
+			//private:
+			std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
+			std::list<ECS::MultiArray *>::iterator mArrayListItr_;
+
+			ECS::MultiArray::MultiCompArray<Ts...> mDataArray_;
+			ECS::MultiArray::MultiCompArray<Ts...>::iterator mDataArrayItr_;
+
+			std::tuple<const ECS::Entity *const, const Ts *const...> operator*() {
+				return *mDataArrayItr_;
+			}
+
+			iterator &operator++() {
+
+				++mDataArrayItr_;
+
+				while (not (mDataArrayItr_ != mDataArray_.end())) {
+					++mArrayListItr_;
+
+					if (mArrayListItr_ != mArrayList_->end()) {
+						mDataArray_ = (*mArrayListItr_)->get<Ts...>();
+						mDataArrayItr_ = mDataArray_.begin();
+					}
+					else {
+						mDataArray_ = {};
+						mDataArrayItr_ = {};
+						break;
+					}
+
+				}
+
+
+				return *this;
+			}
+
+			bool operator!=(const iterator &other) {
+				if (/*this->mArrayList_ != other.mArrayList_ ||*/ this->mArrayListItr_ != other.mArrayListItr_) {
+					return true;
+				}
+				if (/*this->mDataArray_ == ECS::MultiArray::MultiCompArray<Ts...>{} ||*/ not (this->mDataArrayItr_ != decltype(this->mDataArrayItr_){})) {
+					return false;
+				}
+				if (/*this->mDataArray_ != other.mDataArray_ ||*/ this->mDataArrayItr_ != other.mDataArrayItr_) {
+					return true;
+				}
+				return false;
+			}
+
+
+		};
+
+		iterator begin() {
+			iterator result{ this };
+			result.mArrayListItr_ = result.mArrayList_->begin();
+			if (result.mArrayList_->size()) {
+				result.mDataArray_ = (*result.mArrayListItr_)->get<Ts...>();
+				result.mDataArrayItr_ = result.mDataArray_.begin();
+			}
+			return result;
+		}
+
+		iterator end() {
+			iterator result{ this };
+			result.mArrayListItr_ = result.mArrayList_->end();
+
+			return result;
+		}
+
+
+
+		//private:
+
+		std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
+	};
+
 }
 
 
@@ -140,8 +223,28 @@ public:
 	}*/
 
 	template<typename T, typename... Ts>
+		requires (not SoLib::IsConst<T> && ... && not SoLib::IsConst<Ts>)
 	ECS::View<T, Ts...> view() {
 		ECS::View<T, Ts...> result;
+		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
+
+		Archetype checkArche;
+		checkArche.AddClassData<T, Ts...>();
+
+		for (const auto &[archetype, mArray] : chunkList_) {
+			if (checkArche <= archetype) {
+				if (not mArray->empty()) {
+					result.mArrayList_->push_back(mArray.get());
+				}
+			}
+		}
+		return result;
+	}
+
+	template<typename T, typename... Ts>
+		requires (SoLib::IsConst<T> && ... && SoLib::IsConst<Ts>)
+	ECS::ConstView<T, Ts...> view() {
+		ECS::ConstView<T, Ts...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 
 		Archetype checkArche;

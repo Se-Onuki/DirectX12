@@ -37,6 +37,8 @@ namespace SoLib {
 	template <typename T, typename U>
 	concept IsBased = std::is_base_of_v<U, T>;
 
+	template <typename T>
+	concept IsConst = std::is_const_v<T>;
 
 	/// @brief 浮動小数点型である
 	template <typename T>

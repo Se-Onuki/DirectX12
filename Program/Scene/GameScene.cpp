@@ -434,7 +434,7 @@ void GameScene::Update() {
 
 	}
 
-	for (const auto &[entity, model, translateMat, enemy] : world_->view<ECS::ModelComp, ECS::TransformMatComp, ECS::EnemyTag>()) {
+	for (const auto &[entity, model, translateMat, enemy] : world_->view<const ECS::ModelComp, const ECS::TransformMatComp, const ECS::EnemyTag>()) {
 		blockRender_->AddBox(model->model_, IBlock{ .transMat_ = translateMat->transformMat_ });
 
 	}
@@ -463,7 +463,7 @@ void GameScene::Update() {
 	cameraManager_->Update(deltaTime);
 
 
-	for (const auto &[entity, color, billboard, mat] : world_->view<ECS::Color, ECS::BillboardRotate, ECS::TransformMatComp>()) {
+	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
 

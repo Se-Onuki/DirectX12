@@ -435,7 +435,7 @@ namespace ECS {
 
 		return *(reinterpret_cast<T *const>(static_cast<MultiChunk::memoryType *>(this->componentAddress_.at(typeid(T)).first) + index * totalSize));
 
-}
+	}
 
 
 	template<SoLib::IsNotPointer T, SoLib::IsNotPointer... Ts>
@@ -473,7 +473,7 @@ namespace ECS {
 
 		//return std::make_tuple((Ts *const)((char *)std::get<Is>(t) + sizeof(Ts))...);
 		//return this->IncrementAddress<Ts...>(*this->componentAddress_, index_);
-		return std::make_tuple(static_cast<ECS::Entity *>(multiChunk_->GetEntityPtr(index_)), reinterpret_cast<Ts *>(MultiChunk::GetItemPtr(std::get<Ts *>(*this->componentAddress_), entitySize_, index_))...);
+		return std::make_tuple(static_cast<ECS::Entity *>(multiChunk_->GetEntityPtr(index_)), (reinterpret_cast<Ts *>(multiChunk_->GetItemPtr(typeid(Ts), index_))) ...);
 	}
 
 	template<typename ...Ts>
