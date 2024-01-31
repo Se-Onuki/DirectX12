@@ -28,6 +28,8 @@ public:
 		~HeapRange();
 		std::shared_ptr<MemoryUsageManager::MemoryRange> memoryRange_;
 
+		operator bool() const { return static_cast<bool>(memoryRange_); }
+
 		/// @brief デスクリプタハンドルを取得する
 		/// @param index 添え字
 		/// @return デスクリプタハンドル

@@ -16,4 +16,6 @@ public:
 
 	Matrix4x4 CalcMatrix() const;
 
+	void Draw();
+
 };

@@ -2,6 +2,7 @@
 #include "../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../Utils/Math/Math.hpp"
 #include "../../Utils/Math/Euler.h"
+#include "Block/BlockManager.h"
 
 void Ground::Init() {
 	model_ = ModelManager::GetInstance()->GetModel("Plane");
@@ -26,4 +27,11 @@ Matrix4x4 Ground::CalcMatrix() const {
 	//result = SoLib::Math::Affine({ radius_.x,radius_.y,1.f }, SoLib::Math::MakeQuaternion({ 90._deg,0.f,0.f }), { 0.f,hight_,0.f });
 
 	return result;
+}
+
+void Ground::Draw() {
+	static auto *const blockManager = BlockManager::GetInstance();
+
+	blockManager->AddBox(model_, IBlock{ CalcMatrix() });
+
 }

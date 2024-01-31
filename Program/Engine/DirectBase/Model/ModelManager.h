@@ -20,6 +20,10 @@ public:
 	/// @param key 文字列キー
 	/// @param model モデルデータ
 	Model *const AddModel(const std::string &key, std::unique_ptr<Model> model) {
+		// モデルを検索して、存在したらそれを返す
+		auto modelPtr = GetModel(key);
+		if (modelPtr) { return modelPtr; }
+
 		models_[key] = std::move(model);
 		return models_[key].get();
 	}

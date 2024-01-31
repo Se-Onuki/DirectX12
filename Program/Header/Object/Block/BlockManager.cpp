@@ -9,8 +9,10 @@ void BlockManager::Init(uint32_t maxCount)
 	// SRVヒープの取得
 	auto *srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
-	heapRange_ = srvHeap->RequestHeapAllocation(1);
-	device->CreateShaderResourceView(blocks_.GetResources(), &blocks_.GetDesc(), heapRange_.GetHandle(0).cpuHandle_);
+	if (not heapRange_) {
+		heapRange_ = srvHeap->RequestHeapAllocation(1);
+		device->CreateShaderResourceView(blocks_.GetResources(), &blocks_.GetDesc(), heapRange_.GetHandle(0).cpuHandle_);
+	}
 }
 
 void BlockManager::Draw(const Camera3D &camera)

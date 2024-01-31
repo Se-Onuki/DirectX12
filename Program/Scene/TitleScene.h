@@ -16,6 +16,9 @@
 
 #include "../Header/Object/TitleManager/TitleManager.h"
 
+#include "../Header/Object/Block/BlockManager.h"
+#include "../Header/Object/Ground.h"
+
 class TitleScene : public IScene {
 public:
 	TitleScene();
@@ -39,5 +42,12 @@ private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
 	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr<Sprite> button_;
+
+	Ground ground_{ 0.f, Vector2{100.f,100.f} };
+
+	BlockManager *blockRender_;
+
+	Camera3D camera_;
 
 };

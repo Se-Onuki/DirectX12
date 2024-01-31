@@ -104,7 +104,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// フェード演出の初期化
 	Fade::StaticInit(); // 静的初期化
-	Fade::GetInstance()->SetState({ 0.f,0.f }, Vector4{ 0.f,0.f,0.f,1.f });
+	Fade::GetInstance()->SetState({ 0.f,0.f }, 0x000000FF);
 	Fade::GetInstance()->SetEaseFunc(SoLib::easeInQuad);
 
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
@@ -113,11 +113,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->Init();
-	sceneManager->ChangeScene(std::make_unique<GameScene>());
+	sceneManager->ChangeScene(std::make_unique<TitleScene>());
 
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
-		if (winApp->ProcessMessage() /*|| directInput->IsPress(DIK_ESCAPE)*/) break;
+		if (winApp->ProcessMessage() /*|| directInput->IsPress(DIK_ESCAPE)*/) { break; }
 
 		// キーボードの更新
 		input->Update();
@@ -136,7 +136,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		ImGui::Begin("Flame");
 		ImGui::Text("FPS   : %f", ImGui::GetIO().Framerate);
-		ImGui::Text("Delta : %f", ImGui::GetIO().DeltaTime);
+		ImGui::Text("Delta : %f", deltaTime);
 
 		ImGui::End();
 

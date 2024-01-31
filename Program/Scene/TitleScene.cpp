@@ -12,6 +12,7 @@ TitleScene::TitleScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	cameraManager_ = CameraManager::GetInstance();
+	blockRender_ = BlockManager::GetInstance();
 }
 
 TitleScene::~TitleScene() {
@@ -20,8 +21,18 @@ TitleScene::~TitleScene() {
 void TitleScene::OnEnter() {
 	// ライトの生成
 	light_ = DirectionLight::Create();
+	blockRender_->Init(1024u);
+	ModelManager::GetInstance()->CreateDefaultModel();
+
+	sprite_ = Sprite::Create(TextureManager::Load("UI/TitleECS.png"));
+	button_ = Sprite::Create(TextureManager::Load("UI/TD2_3week_2/Title/Start_CR.png"));
 
 	Fade::GetInstance()->Start(Vector2{}, 0x00000000, 1.f);
+
+	ground_.Init();
+	camera_.Init();
+
+	camera_.translation_.y = 5.f;
 }
 
 void TitleScene::OnExit() {
@@ -31,8 +42,24 @@ void TitleScene::OnExit() {
 void TitleScene::Update() {
 
 	// キーボードの入力取得
-	static const auto *const keyBoard = input_->GetDirectInput();
+	[[maybe_unused]] static const auto *const keyBoard = input_->GetDirectInput();
 
+	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+
+	blockRender_->clear();
+
+	camera_.rotation_.y += 22.5_deg * deltaTime;
+	camera_.UpdateMatrix();
+
+	sprite_->SetScale(Vector2{ 256,64 } *2.f);
+	sprite_->SetPivot({ 0.5f,0.5f });
+
+	sprite_->SetPosition(Vector2{ WinApp::kWindowWidth * 0.5f,WinApp::kWindowHeight * (1.f / 4.f) });
+
+	button_->SetScale(Vector2{ 256,64 } *2.f);
+	button_->SetPivot({ 0.5f,0.5f });
+
+	button_->SetPosition(Vector2{ WinApp::kWindowWidth * 0.5f,WinApp::kWindowHeight * (2.f / 4.f) });
 
 	if (input_->GetXInput()->IsTrigger(KeyCode::A)) {
 		sceneManager_->ChangeScene<GameScene>(1.f);
@@ -62,8 +89,12 @@ void TitleScene::Draw() {
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
+	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
 
 	light_->SetLight(commandList);
+	ground_.Draw();
+
+	blockRender_->Draw(camera_);
 
 	Model::EndDraw();
 
@@ -74,6 +105,9 @@ void TitleScene::Draw() {
 	Sprite::StartDraw(commandList);
 
 	// スプライトの描画
+	sprite_->Draw();
+	button_->Draw();
+
 	Fade::GetInstance()->Draw();
 
 	Sprite::EndDraw();
