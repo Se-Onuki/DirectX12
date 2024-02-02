@@ -5,6 +5,7 @@ struct Material
     float4 emissive;
 
     float4x4 uvTransform;
+    float shininess;
 };
 
 
