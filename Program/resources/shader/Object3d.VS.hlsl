@@ -11,8 +11,8 @@ struct ViewProjectionMatrix
     float3 cameraPos;
 };
 
-ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b3);
-ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
+ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
+ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b3);
 
 struct VertexShaderInput
 {
@@ -29,5 +29,6 @@ VertexShaderOutput main(VertexShaderInput input)
     output.position = mul(input.position, matWVP);
     output.texCoord = input.texCoord;
     output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.World));
+    output.worldPos = mul(input.position, gTransformationMatrix.World).xyz;
     return output;
 }

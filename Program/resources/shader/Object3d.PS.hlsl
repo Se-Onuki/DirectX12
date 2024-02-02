@@ -17,8 +17,16 @@ struct DirectionalLight
     int pattern;
 };
 
+struct ViewProjectionMatrix
+{
+    matrix view;
+    matrix projection;
+    float3 cameraPos;
+};
+
 ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
+ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b3);
 
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
@@ -40,6 +48,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         discard;
     }
     
+    float3 toEye = normalize(gViewProjectionMatrix.cameraPos - input.worldPos);
     
     float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
     if (gDirectionalLight.pattern == 0)
