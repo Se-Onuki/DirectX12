@@ -10,6 +10,7 @@
 #include "../Utils/SoLib/SoLib.h"
 #include <imgui.h>
 #include "TitleScene.h"
+#include "../Header/Entity/Component/ModelComp.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -37,6 +38,7 @@ void GameScene::OnEnter() {
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
 	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
+	auto sphere = ModelManager::GetInstance()->AddModel("Sphere", Model::LoadObjFile("", "Sphere.obj"));
 
 	cameraManager_->Init();
 	followCamera_ = cameraManager_->AddCamera("FollowCamera");
@@ -127,6 +129,14 @@ void GameScene::OnEnter() {
 
 	spawnTimer_.Start();
 	Fade::GetInstance()->Start(Vector2{}, 0x00000000, 1.f);
+
+	{
+		gameObject_.Init();
+		auto modelComp = gameObject_.AddComponent<ModelComp>();
+		modelComp->AddBone("Body", sphere);
+
+		gameObject_.transform_.translate = { 0.f,3.f,0.f };
+	}
 
 }
 
@@ -460,6 +470,8 @@ void GameScene::Update() {
 	cameraManager_->DisplayImGui();
 	cameraManager_->Update(deltaTime);
 
+	gameObject_.Update(deltaTime);
+
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
@@ -494,6 +506,10 @@ void GameScene::Draw() {
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
+
+	light_->SetLight(commandList);
+
+	gameObject_.Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
 

@@ -56,9 +56,9 @@ void ModelComp::ModelBone::Update() {
 }
 
 void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
-
-	this->model_->Draw(transform_, vp);
-
+	if (model_) {
+		this->model_->Draw(transform_, vp);
+	}
 	for (auto &child : children_) {
 		child->Draw(vp);
 	}

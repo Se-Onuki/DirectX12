@@ -8,6 +8,7 @@
 
 #include "../../Utils/Math/Transform.h"
 #include "../../Engine/DirectBase/Render/Camera.h"
+#include "../../Utils/SoLib/SoLib.h"
 //#include "../../Engine/DirectBase/Render/Camera.h"
 
 class GameObject;
@@ -120,7 +121,7 @@ public:
 	/// @brief コンポーネントを追加
 	/// @tparam T コンポーネントの型
 	/// @return コンポーネントのポインタ
-	template <typename T>
+	template <SoLib::IsBased<IComponent> T>
 	inline T *const AddComponent();
 
 	/// @brief コンポーネントの取得
@@ -164,7 +165,7 @@ private:
 
 };
 
-template <typename T>
+template <SoLib::IsBased<IComponent> T>
 T *const GameObject::AddComponent() {
 	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
 
