@@ -93,7 +93,7 @@ public:
 
 	void push_back(ColliderComp *collider) { colliderList_.push_back(collider); }
 
-	void push_back(Entity *object) {
+	void push_back(GameObject *object) {
 		auto *const colliderComp = object->GetComponent<ColliderComp>();
 		if (colliderComp) {
 			colliderList_.push_back(colliderComp);

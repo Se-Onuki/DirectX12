@@ -22,6 +22,7 @@
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Engine/DirectBase/Model/BoneModel.h"
 #include "../Header/Object/Ground.h"
+#include "../Header/Entity/Entity.h"
 
 class GameScene : public IScene {
 public:
@@ -71,5 +72,7 @@ private:
 	SoLib::DeltaTimer spawnTimer_{ 5.f };
 
 	std::array<BoneModel::SimpleTransform, 5u> boneTransform_;
+
+	GameObject gameObject_;
 
 };

@@ -10,7 +10,7 @@
 #include "../../Engine/DirectBase/Render/Camera.h"
 //#include "../../Engine/DirectBase/Render/Camera.h"
 
-class Entity;
+class GameObject;
 //class IScene;
 
 ///	
@@ -40,7 +40,7 @@ class IComponent {
 public:
 	/// @brief 自動的に呼ばれるコンストラクタ
 	/// @param object 紐づけられる実体のアドレス
-	IComponent(Entity *const object);
+	IComponent(GameObject *const object);
 	virtual ~IComponent() = default;
 
 
@@ -68,20 +68,20 @@ public:
 
 	/// @brief 接触時に実行される関数
 	/// @param Object* other : 接触相手のアドレスが代入される
-	inline virtual void OnCollision(Entity *const) {};
+	inline virtual void OnCollision(GameObject *const) {};
 
 	/// @brief デルタタイムを取得する
 	/// @return 前フレームからの時間差分
 	float GetDeltaTime() const;
 
 	// 紐づけられた実体
-	Entity *const object_ = nullptr;
+	GameObject *const object_ = nullptr;
 	BaseTransform *const transform_;
 
 	float monoTimeScale_ = 1.f;
 };
 
-class Entity {
+class GameObject {
 	// 生きているか
 	bool isActive_ = false;
 	// コンポーネントの連想コンテナ
@@ -105,9 +105,9 @@ public:
 	// オブジェクトのSRT
 	BaseTransform transform_;
 
-	Entity() = default;
+	GameObject() = default;
 	//Object(const Object&) = default;
-	virtual ~Entity() = default;
+	virtual ~GameObject() = default;
 
 	virtual void Init();
 	virtual void Reset();
@@ -152,7 +152,7 @@ public:
 
 	const Vector3 &GetWorldPos();
 
-	virtual void OnCollision(Entity *const other);
+	virtual void OnCollision(GameObject *const other);
 
 	void ImGuiWidget();
 
@@ -165,7 +165,7 @@ private:
 };
 
 template <typename T>
-T *const Entity::AddComponent() {
+T *const GameObject::AddComponent() {
 	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
 
 	// 既に存在する場合はその場で終了
@@ -186,7 +186,7 @@ T *const Entity::AddComponent() {
 
 
 template <typename T>
-T *const Entity::GetComponent() const {
+T *const GameObject::GetComponent() const {
 	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
 
 	const auto &it = componentMap_.find(std::type_index(typeid(T)));

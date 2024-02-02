@@ -68,12 +68,12 @@ private: // メンバ変数
 	CameraManager* cameraManager_ = nullptr;
 
 	// 天球
-	std::unique_ptr<Entity> skyDome_;
+	std::unique_ptr<GameObject> skyDome_;
 
 	// プレイヤー
-	std::unique_ptr<Entity> playerModel_;
+	std::unique_ptr<GameObject> playerModel_;
 	// ブロック
-	std::unique_ptr<Entity> blockModel_;
+	std::unique_ptr<GameObject> blockModel_;
 
 	UISprite titleUI_;
 	UISprite circleUI_;

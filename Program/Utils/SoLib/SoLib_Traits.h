@@ -87,7 +87,31 @@ namespace SoLib {
 
 	};
 
+	template <typename T>
+	struct ContainerBeginEnd {
+	private:
+		T &Self() { return *static_cast<T *>(this); }
+		const T &Self() const { return *static_cast<const T *>(this); }
 
+	public:
+		/// @brief 先頭要素のイテレータ
+		/// @return イテレータ
+		typename T::iterator begin() { return Self().beginImpl(); }
+		typename T::const_iterator begin() const { return Self().beginImpl(); }
+
+		/// @brief 先頭要素のイテレータ
+		/// @return イテレータ
+		typename T::const_iterator cbegin() const { return Self().beginImpl(); }
+
+		/// @brief 終端要素のイテレータ
+		/// @return イテレータ
+		typename T::iterator end() { return Self().endImpl(); }
+		typename T::const_iterator end() const { return Self().endImpl(); }
+
+		/// @brief 終端要素のイテレータ
+		/// @return イテレータ
+		typename T::const_iterator cend() const { return Self().endImpl(); }
+	};
 
 	template <typename T>
 	struct Traits {

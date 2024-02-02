@@ -6,7 +6,7 @@ public:
 	using IComponent::IComponent;
 	~ProjectileComp() override = default;
 
-	void OnCollision(Entity *other) override;
+	void OnCollision(GameObject *other) override;
 
 	void SetDamage(const float value) { damage_ = value; }
 

@@ -416,8 +416,6 @@ void GameScene::Update() {
 
 	}
 
-
-
 	for (const auto &[entity, bone, weapon] : world_->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
 		auto matrixArray = boneModel_.CalcTransMat(bone->boneTransform_);
 

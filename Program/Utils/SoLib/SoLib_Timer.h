@@ -57,7 +57,7 @@ namespace SoLib {
 			inline void SetGoal(const int &Goal) { goalFlame_ = Goal; }
 
 		public:
-			FlameTimer(uint32_t goal = 0u) : goalFlame_(goal), nowFlame_(0), isFinish_(true), isActive_(false) {}
+			FlameTimer(uint32_t goal = 0u) : goalFlame_(goal), nowFlame_(0), isFinish_(false), isActive_(false) {}
 
 			/// @brief 更新処理 ( 基本的に各フレームの先頭で行うこと )
 			/// @return bool 実行中である場合true
@@ -138,7 +138,7 @@ namespace SoLib {
 			inline void SetGoal(float Goal) { goalFlame_ = Goal; }
 
 		public:
-			DeltaTimer(float goal = 0.f, bool start = false) : goalFlame_(goal), nowFlame_(0.f), isFinish_(true), isActive_(false) {
+			DeltaTimer(float goal = 0.f, bool start = false) : goalFlame_(goal), nowFlame_(0.f), isFinish_(false), isActive_(false) {
 				if (start) {
 					Start(goal);
 				}

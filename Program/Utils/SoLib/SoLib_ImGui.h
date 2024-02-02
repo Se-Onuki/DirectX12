@@ -54,6 +54,9 @@ namespace SoLib {
 	template <typename T, IsContainsType<T> C>
 	bool ImGuiWidget(const char *const label, C *const value, uint32_t &index);
 
+	template <SoLib::IsContainer C>
+	bool ImGuiWidget(const char *const label, C *const value, uint32_t &index);
+
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 
 	template<typename T>
@@ -90,10 +93,11 @@ bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 	return isAction;
 }
 
-template<typename T, SoLib::IsContainsType<T> C>
+template<SoLib::IsContainer C>
 bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index) {
 
-	T *selectItem = nullptr;
+	//T *selectItem = nullptr;
+
 
 	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), std::to_string(index).c_str())) {
 		for (uint32_t i = 0u; i < value->size(); i++) {
@@ -101,18 +105,18 @@ bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index
 			if (ImGui::Selectable(std::to_string(i).c_str(), is_selected)) {
 				index = i;
 			}
-		/*	if (is_selected) {
-				ImGui::SetItemDefaultFocus();
-			}*/
+			/*	if (is_selected) {
+					ImGui::SetItemDefaultFocus();
+				}*/
 		}
 		ImGui::EndCombo();
 	}
 
-	selectItem = &((*value)[index]);
+	auto selectItem = std::next(value->begin(), index);
 
 	bool isChanged = false;
-	if (selectItem) {
-		isChanged |= SoLib::ImGuiWidget(label, selectItem);
+	if (*selectItem) {
+		isChanged |= SoLib::ImGuiWidget(label, &*selectItem);
 	}
 
 	return isChanged;

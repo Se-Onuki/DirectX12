@@ -3,17 +3,17 @@
 #include "Component/Rigidbody.h"
 
 
-void Entity::Init() {
+void GameObject::Init() {
 	isActive_ = true;
 }
 
-void Entity::Reset() {
+void GameObject::Reset() {
 	for (auto &component : componentMap_) {
 		component.second->Reset();
 	}
 }
 
-void Entity::Update(float deltaTime) {
+void GameObject::Update(float deltaTime) {
 	deltaTime_ = deltaTime;
 
 	auto *const modelComp = GetComponent<ModelComp>();
@@ -33,7 +33,7 @@ void Entity::Update(float deltaTime) {
 	}
 }
 
-void Entity::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
+void GameObject::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
 	auto *const modelComp = GetComponent<ModelComp>();
 
 	for (auto &component : componentMap_) {
@@ -47,25 +47,25 @@ void Entity::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
 }
 
 
-const Vector3 &Entity::GetWorldPos() {
+const Vector3 &GameObject::GetWorldPos() {
 	transform_.CalcMatrix();
 	return *reinterpret_cast<Vector3 *>(transform_.matWorld_.m[3]);
 }
 
-void Entity::OnCollision(Entity *const other) {
+void GameObject::OnCollision(GameObject *const other) {
 	for (auto &component : componentMap_) {
 		component.second->OnCollision(other);
 	}
 }
 
-void Entity::ImGuiWidget() {
+void GameObject::ImGuiWidget() {
 	transform_.ImGuiWidget();
 	for (auto &component : componentMap_) {
 		component.second->ImGuiWidget();
 	}
 }
 
-IComponent::IComponent(Entity *const object) : object_(object), transform_(&static_cast<BaseTransform &>(object->transform_)) {
+IComponent::IComponent(GameObject *const object) : object_(object), transform_(&static_cast<BaseTransform &>(object->transform_)) {
 }
 
 float IComponent::GetDeltaTime() const {
