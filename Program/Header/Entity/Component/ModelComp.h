@@ -55,6 +55,8 @@ public:
 	void Draw(const Camera<Render::CameraType::Projecction> &vp)const override;
 	void Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const;
 
+	void ImGuiWidget() override;
+
 	ModelBone *const AddBone(const std::string &key, Model *const model, const BaseTransform &srt = {});
 	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const BaseTransform &srt);
 

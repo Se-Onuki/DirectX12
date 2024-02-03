@@ -1,4 +1,5 @@
 #pragma once
+#include "../../Utils/Graphics/Color.h"
 #include "../../Utils/Math/Euler.h"
 #include "../../Utils/Math/Vector3.h"
 #include "../../Utils/Math/Vector4.h"
@@ -27,7 +28,7 @@ public:
 	~DirectionLight() = default;
 
 	struct Direction {
-		Vector4 color;		// 色(RGBA)
+		SoLib::Color::RGB4 color;		// 色(RGBA)
 		Vector3 direction;	// ライトの向き
 		float intensity;	// 輝度
 		int32_t pattern;	// ライティングの種類

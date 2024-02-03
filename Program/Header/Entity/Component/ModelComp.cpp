@@ -18,6 +18,12 @@ void ModelComp::Draw(const Camera<Render::CameraType::Projecction> &vp, const Ma
 	}
 }
 
+void ModelComp::ImGuiWidget() {
+	for (auto &item : modelTree_) {
+		item->ImGuiWidget();
+	}
+}
+
 void ModelComp::ModelBone::Init(Model *const model) {
 	if (model) { model_ = model; }
 }
@@ -76,7 +82,7 @@ bool ModelComp::ModelBone::ImGuiWidget() {
 	bool result = false;
 	result |= this->model_->ImGuiWidget();
 
-	result |= this->transform_->ImGuiWidget();
+	result |= this->transform_->ImGuiWidget(model_->name_);
 
 	//for (auto &item : this->children_) {
 	//	result |= item->ImGuiWidget();

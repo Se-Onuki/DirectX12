@@ -43,6 +43,7 @@
 #include "Header/Object/Particle/ParticleManager.h"
 
 #include "Header/Object/Fade.h"
+#include "Scene/CGTaskScene.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -113,7 +114,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->Init();
-	sceneManager->ChangeScene(std::make_unique<TitleScene>());
+	sceneManager->ChangeScene(std::make_unique<CGTaskScene>());
 
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {

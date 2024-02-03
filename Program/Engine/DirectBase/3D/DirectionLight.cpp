@@ -10,7 +10,7 @@ void DirectionLight::Init()
 
 	lightResource_->Map(0, nullptr, reinterpret_cast<void **>(&lightData_));
 
-	lightData_->color = { 1.f, 1.f, 1.f,1.f };
+	lightData_->color = 0xFFFFFFFF;
 	lightData_->direction = Vector3{ 0.f,-1.f,0.f }.Nomalize();
 	lightData_->intensity = 1.f;
 	lightData_->pattern = int32_t(Pattern::kHalfLambert);
@@ -32,7 +32,7 @@ std::unique_ptr<DirectionLight> DirectionLight::Create()
 
 void DirectionLight::ImGuiWidget()
 {
-	ImGui::ColorEdit3("Color", &lightData_->color.x);
+	ImGui::ColorEdit3("Color", &lightData_->color.r);
 	//if (ImGui::DragFloat3("Direction", &lightData_->direction.x, 1.f / 255, -1, 1)) {
 	if (SoLib::ImGuiDragEuler("Direction", &euler_.x)) {
 		lightData_->direction = SoLib::EulerToDirection(euler_).Nomalize();
