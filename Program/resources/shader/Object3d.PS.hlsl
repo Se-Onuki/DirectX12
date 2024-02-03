@@ -54,10 +54,6 @@ PixelShaderOutput main(VertexShaderOutput input)
     
     float RditE = dot(reflectLight, normalize(toEye));
     float specularPow = pow(saturate(RditE), gMaterial.shininess * 100.f); // 反射強度
-    if (RditE <= 0.f)
-    {
-        specularPow = 0.f;
-    }
     
     float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
     if (gDirectionalLight.pattern == 0)

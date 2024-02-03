@@ -12,6 +12,7 @@
 #include <windows.h>
 #include <fstream>
 #include <json.hpp>
+#include "BoneModel.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 const char *const Model::defaultDirectory = "resources/";
@@ -427,19 +428,19 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 		else if (identifier == "map_Kd") {
 
 			std::string token;
-			BaseTransform uv{};
-			uv.scale = Vector3::one;
+			BoneModel::SimpleTransform uv{};
+			uv.scale_ = Vector3::one;
 
 			while (s >> token) {
 				if (token == "-o") {
-					s >> uv.translate.x >> uv.translate.y >> uv.translate.z;
+					s >> uv.translate_.x >> uv.translate_.y >> uv.translate_.z;
 				}
 				else if (token == "-s") {
-					s >> uv.scale.x >> uv.scale.y >> uv.scale.z;
+					s >> uv.scale_.x >> uv.scale_.y >> uv.scale_.z;
 				}
 				else {
 
-					if (!materialData) return;
+					if (!materialData) { return; }
 					// 連結してファイルバスにする
 					materialData->textureName_ = directoryPath + token;
 					materialData->texHandle_ = TextureManager::Load(directoryPath + token);
@@ -448,7 +449,7 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 			}
 			// uvTransformの値を代入する
 			if (materialData && materialData->materialBuff_) {
-				materialData->materialBuff_->uvTransform = uv.Affine();
+				materialData->materialBuff_->uvTransform = uv.CalcTransMat();
 			}
 		}
 	}
