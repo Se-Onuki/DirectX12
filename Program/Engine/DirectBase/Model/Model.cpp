@@ -410,7 +410,7 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 		if (identifier == "newmtl") {
 			std::string materialName;
 			s >> materialName;
-			materialMap_[materialName].reset(new Material{ materialName });
+			materialMap_[materialName] = std::make_unique<Material>(materialName);
 			materialData = materialMap_[materialName].get();
 			materialData->CreateBuffer();
 			// 仮読み込み
@@ -677,7 +677,7 @@ std::unique_ptr<Model> Model::CreatePlane() {
 	newModel->name_ = "plane";
 
 	material->Create();
-	material->blendMode_ = Model::BlendMode::kAdd;
+	material->blendMode_ = Model::BlendMode::kNone;
 
 	mesh->SetMaterial(material.get());
 
@@ -787,9 +787,9 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount
 
 void Material::CreateBuffer() {
 	// マテリアルにデータを書き込む
-	materialBuff_->color = Vector4{ 1.f,1.f,1.f,1.f };
-	materialBuff_->emissive = Vector4{ 0.f,0.f,0.f,0.f };
-	materialBuff_->uvTransform = Matrix4x4::Identity();
+	this->Create();
+	/*materialBuff_->emissive = Vector4{ 0.f,0.f,0.f,0.f };
+	materialBuff_->uvTransform = Matrix4x4::Identity();*/
 }
 
 void Material::ImGuiWidget()
@@ -825,6 +825,7 @@ void Material::ImGuiWidget()
 			texHandle_ = TextureManager::GetInstance()->ImGuiTextureSelecter(texHandle_);
 			ImGui::TreePop();
 		}
+		ImGui::SliderFloat("Shininess", &materialBuff_->shininess, 0.f, 1.f);
 
 		ImGui::TreePop();
 	}
@@ -840,7 +841,8 @@ void Material::Create() {
 	materialBuff_ = Material::MaterialData{
 		.color = Vector4{1.f,1.f,1.f,1.f},
 		.emissive = {},
-		.uvTransform = Matrix4x4::Identity()
+		.uvTransform = Matrix4x4::Identity(),
+		.shininess = 1.f,
 	};
 }
 

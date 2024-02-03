@@ -132,7 +132,7 @@ public:
 		Vector4 emissive;		// 自己発光色(RGBA)
 		Matrix4x4 uvTransform;
 
-		float shininess;
+		float shininess = { 1.f };
 	};
 
 	Model::BlendMode blendMode_ = Model::BlendMode::kNone;

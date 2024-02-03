@@ -38,6 +38,7 @@ void GameScene::OnEnter() {
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
 	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
+	model_->materialMap_.begin()->second->blendMode_ = Model::BlendMode::kAdd;
 	auto sphere = ModelManager::GetInstance()->AddModel("Sphere", Model::LoadObjFile("", "Sphere.obj"));
 
 	cameraManager_->Init();
@@ -166,6 +167,9 @@ void GameScene::Update() {
 	ImGui::Text("%s", SoLib::to_string(Vector3::front * SoLib::MakeQuaternion(eulerRotate).MakeRotateMatrix()).c_str());
 	ImGui::Text("%s", SoLib::to_string(SoLib::EulerToDirection(eulerRotate)).c_str());
 	ImGui::Text("%s", SoLib::to_string(Quaternion::LookAt(SoLib::EulerToDirection(eulerRotate)).RotateVector(Vector3::front)).c_str());
+
+	light_->ImGuiWidget();
+	gameObject_.GetComponent<ModelComp>()->GetBone("Body")->model_->ImGuiWidget();
 
 	particleArray_.clear();
 

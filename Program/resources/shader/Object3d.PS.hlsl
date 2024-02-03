@@ -50,6 +50,14 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     
     float3 toEye = normalize(gViewProjectionMatrix.cameraPos - input.worldPos);
+    float3 reflectLight = reflect(normalize(gDirectionalLight.direction), normalize(input.normal));
+    
+    float RditE = dot(reflectLight, normalize(toEye));
+    float specularPow = pow(saturate(RditE), gMaterial.shininess * 100.f); // 反射強度
+    if (RditE <= 0.f)
+    {
+        specularPow = 0.f;
+    }
     
     float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
     if (gDirectionalLight.pattern == 0)
@@ -60,15 +68,19 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     else if (gDirectionalLight.pattern == 1)
     {
-        output.color.rgb = saturate(gMaterial.color.rgb * gDirectionalLight.color.rgb * NdotL * gDirectionalLight.intensity); // 
+        output.color.rgb = saturate(gMaterial.color.rgb * gDirectionalLight.color.rgb * NdotL * gDirectionalLight.intensity); // 拡散反射
         output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
         output.color.a = gMaterial.color.a * textureColor.a; // α値
     }
     else if (gDirectionalLight.pattern == 2)
     {
         float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
-        output.color.rgb = gMaterial.color.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity; // 
-        output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
+        float3 diffuse = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity; // 拡散反射
+        float3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float3(1.0f, 1.0f, 1.0f);
+        
+        output.color.rgb = saturate(diffuse + specular);
+        
+        //output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
         output.color.a = gMaterial.color.a * textureColor.a; // α値
     }
     
