@@ -50,10 +50,14 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     
     float3 toEye = normalize(gViewProjectionMatrix.cameraPos - input.worldPos);
-    float3 reflectLight = reflect(normalize(gDirectionalLight.direction), normalize(input.normal));
+    float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
+    float NDotH = dot(normalize(input.normal), halfVector);
+    float specularPow = pow(saturate(NDotH), gMaterial.shininess * 100.f);
     
-    float RditE = dot(reflectLight, normalize(toEye));
-    float specularPow = pow(saturate(RditE), gMaterial.shininess * 100.f); // 反射強度
+    //float3 reflectLight = reflect(normalize(gDirectionalLight.direction), normalize(input.normal));
+    
+    //float RditE = dot(reflectLight, normalize(toEye));
+    //float specularPow = pow(saturate(RditE), gMaterial.shininess * 100.f); // 反射強度
     
     float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
     if (gDirectionalLight.pattern == 0)
