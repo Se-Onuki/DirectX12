@@ -2,6 +2,7 @@
 #include "../Base/DirectXCommon.h"
 #include "../Create/Create.h"
 #include "../Model/Model.h"
+#include "../../Utils/Math/Math.hpp"
 
 void DirectionLight::Init()
 {
@@ -13,6 +14,8 @@ void DirectionLight::Init()
 	lightData_->direction = Vector3{ 0.f,-1.f,0.f }.Nomalize();
 	lightData_->intensity = 1.f;
 	lightData_->pattern = int32_t(Pattern::kHalfLambert);
+
+	euler_ = Vector3{ 90._deg,0.f,0.f };
 }
 
 void DirectionLight::SetLight(ID3D12GraphicsCommandList *const commandList)
@@ -30,8 +33,9 @@ std::unique_ptr<DirectionLight> DirectionLight::Create()
 void DirectionLight::ImGuiWidget()
 {
 	ImGui::ColorEdit3("Color", &lightData_->color.x);
-	if (ImGui::DragFloat3("Direction", &lightData_->direction.x, 1.f / 255, -1, 1)) {
-		lightData_->direction = lightData_->direction.Nomalize();
+	//if (ImGui::DragFloat3("Direction", &lightData_->direction.x, 1.f / 255, -1, 1)) {
+	if (SoLib::ImGuiDragEuler("Direction", &euler_.x)) {
+		lightData_->direction = SoLib::EulerToDirection(euler_).Nomalize();
 	}
 	ImGui::DragFloat("Brightness ", &lightData_->intensity, 0.01f, 0, 1);
 	const static std::array<std::string, 3u>lightPattern{ "kNone", "kLambert","kHalfLambert" };

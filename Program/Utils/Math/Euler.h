@@ -3,6 +3,7 @@
 #include "Matrix4x4.h"
 #include "../SoLib/SoLib_Json.h"
 #include "../SoLib/SoLib_ImGui.h"
+#include <initializer_list>
 
 namespace SoLib {
 	namespace Math {
@@ -23,6 +24,11 @@ namespace SoLib {
 
 			Euler &operator=(const Vector3 &other) { return *this = Euler(other); }
 			Euler &operator=(Vector3 &&other) { return *this = Euler(other); }
+
+			//Euler &operator=(std::initializer_list<float> &&other) {
+			//	std::copy(other.begin(), other.end(), *this);
+			//	return *this;
+			//}
 
 			inline operator Vector3 &() { return *reinterpret_cast<Vector3 *>(this); }
 			inline operator const Vector3 &() const { return *reinterpret_cast<const Vector3 *>(this); }

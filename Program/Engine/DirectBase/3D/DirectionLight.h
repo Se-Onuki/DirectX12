@@ -1,4 +1,5 @@
 #pragma once
+#include "../../Utils/Math/Euler.h"
 #include "../../Utils/Math/Vector3.h"
 #include "../../Utils/Math/Vector4.h"
 #include <stdint.h>
@@ -49,5 +50,6 @@ private:
 
 	ComPtr<ID3D12Resource> lightResource_ = nullptr;
 	Direction *lightData_ = nullptr;
+	SoLib::Math::Euler euler_;
 
 };
