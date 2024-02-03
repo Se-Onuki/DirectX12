@@ -3,6 +3,7 @@ struct TransformationMatrix
 {
     //matrix WVP;
     matrix World;
+    matrix WorldInverseTranspose;
 };
 struct ViewProjectionMatrix
 {
@@ -28,7 +29,7 @@ VertexShaderOutput main(VertexShaderInput input)
     matrix matWVP = mul(gTransformationMatrix.World, matVP);
     output.position = mul(input.position, matWVP);
     output.texCoord = input.texCoord;
-    output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.World));
+    output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.WorldInverseTranspose));
     output.worldPos = mul(input.position, gTransformationMatrix.World).xyz;
     return output;
 }

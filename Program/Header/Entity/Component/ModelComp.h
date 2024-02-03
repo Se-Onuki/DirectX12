@@ -26,6 +26,8 @@ public:
 		void Update();
 		void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
 		void Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const;
+
+		bool ImGuiWidget();
 	};
 
 	//using ModelPair = std::pair<Transform, Model *>;

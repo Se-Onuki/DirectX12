@@ -24,6 +24,7 @@ void BaseTransform::CalcMatrix()
 void BaseTransform::TransferMatrix() {
 	if (mapTarget_) {
 		mapTarget_->World = matWorld_;
+		mapTarget_->WorldInverseTranspose = matWorld_.InverseSRT().Transpose();
 	}
 }
 
@@ -40,9 +41,7 @@ bool BaseTransform::ImGuiWidget(const std::string &name) {
 
 		isUsing |= ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 100.f);
 
-		isUsing |= ImGui::SliderAngle("RotateX", &rotate.x, Angle::Dig2Rad);
-		isUsing |= ImGui::SliderAngle("RotateY", &rotate.y, Angle::Dig2Rad);
-		isUsing |= ImGui::SliderAngle("RotateZ", &rotate.z, Angle::Dig2Rad);
+		isUsing |= SoLib::ImGuiDragEuler("Rotate", &rotate.x);
 
 		isUsing |= ImGui::DragFloat3("Transform", &translate.x, 0.01f);
 

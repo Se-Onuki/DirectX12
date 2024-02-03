@@ -99,7 +99,7 @@ public:
 	static void EndDraw();
 	static const char *const defaultDirectory;
 
-	void ImGuiWidget();
+	bool ImGuiWidget();
 
 	static void SetPipelineType(const PipelineType pipelineType);
 
@@ -144,7 +144,7 @@ public:
 
 	void CreateBuffer();
 
-	void ImGuiWidget();
+	bool ImGuiWidget();
 
 	void Create();
 

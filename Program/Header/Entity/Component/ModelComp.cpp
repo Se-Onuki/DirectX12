@@ -72,6 +72,18 @@ void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &v
 	}
 }
 
+bool ModelComp::ModelBone::ImGuiWidget() {
+	bool result = false;
+	result |= this->model_->ImGuiWidget();
+
+	result |= this->transform_->ImGuiWidget();
+
+	//for (auto &item : this->children_) {
+	//	result |= item->ImGuiWidget();
+	//}
+	return result;
+}
+
 ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, const BaseTransform &srt) {
 	if (modelKey_.count(key) != 0u) return nullptr;
 	auto  newBone = std::make_unique<ModelBone>();

@@ -10,6 +10,7 @@
 /// @brief GPUに渡す構造体
 struct TransformMatrix {
 	Matrix4x4 World;
+	Matrix4x4 WorldInverseTranspose;
 };
 
 /// @brief Transformクラス

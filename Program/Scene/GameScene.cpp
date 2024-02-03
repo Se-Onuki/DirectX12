@@ -169,7 +169,7 @@ void GameScene::Update() {
 	ImGui::Text("%s", SoLib::to_string(Quaternion::LookAt(SoLib::EulerToDirection(eulerRotate)).RotateVector(Vector3::front)).c_str());
 
 	light_->ImGuiWidget();
-	gameObject_.GetComponent<ModelComp>()->GetBone("Body")->model_->ImGuiWidget();
+	gameObject_.GetComponent<ModelComp>()->GetBone("Body")->ImGuiWidget();
 
 	particleArray_.clear();
 

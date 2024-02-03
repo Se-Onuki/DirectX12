@@ -614,14 +614,16 @@ std::unique_ptr<Model> Model::CreateSphere()
 	return nullptr;
 }
 
-void Model::ImGuiWidget()
+bool Model::ImGuiWidget()
 {
+	bool result = false;
 	if (ImGui::TreeNode(name_.c_str())) {
 		for (auto &material : materialMap_) {
-			material.second->ImGuiWidget();
+			result |= material.second->ImGuiWidget();
 		}
 		ImGui::TreePop();
 	}
+	return result;
 }
 
 void Model::SetPipelineType(const PipelineType pipelineType) {
@@ -793,8 +795,9 @@ void Material::CreateBuffer() {
 	materialBuff_->uvTransform = Matrix4x4::Identity();*/
 }
 
-void Material::ImGuiWidget()
+bool Material::ImGuiWidget()
 {
+	bool result = false;
 	if (ImGui::TreeNode(name_.c_str())) {
 		static BaseTransform transform;
 		transform.MatToSRT(materialBuff_->uvTransform);
@@ -826,10 +829,11 @@ void Material::ImGuiWidget()
 			texHandle_ = TextureManager::GetInstance()->ImGuiTextureSelecter(texHandle_);
 			ImGui::TreePop();
 		}
-		ImGui::SliderFloat("Shininess", &materialBuff_->shininess, 0.f, 1.f);
+		result |= ImGui::SliderFloat("Shininess", &materialBuff_->shininess, 0.f, 1.f);
 
 		ImGui::TreePop();
 	}
+	return result;
 }
 
 void Material::Create() {
