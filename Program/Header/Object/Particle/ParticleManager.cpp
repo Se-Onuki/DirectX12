@@ -1,5 +1,6 @@
 #include "ParticleManager.h"
 #include "../../../Engine/DirectBase/Base/DirectXCommon.h"
+#include "../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
 void ParticleManager::Init(uint32_t maxCount)
 {
@@ -93,9 +94,11 @@ void ParticleList::Update(float deltaTime)
 			}
 			return false;
 		});
+	const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
 
 	for (auto &particle : particles_) {
 		particle->Update(deltaTime);
+		particle->transform_.matWorld_ *= billboardMat;
 	}
 }
 

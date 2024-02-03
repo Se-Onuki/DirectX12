@@ -5,7 +5,7 @@
 
 namespace Angle {
 
-	constexpr float PI = static_cast<float>(std::numbers::pi);
+	constexpr float PI = std::numbers::pi_v<float>;
 	constexpr float hPI = PI * 0.5f;
 	constexpr float PI2 = PI * 2.f;
 

@@ -1,14 +1,18 @@
 #pragma once
 #include "../../Utils/Math/Transform.h"
 #include "../../Utils/Math/Vector4.h"
+#include "../../Utils/Graphics/Color.h"
 
 struct Particle {
+	struct TransMat {
+		Matrix4x4 World;
+	};
 	struct ParticleData {
-		TransformMatrix transform;
-		Vector4 color;
+		TransMat transform;
+		SoLib::Color::RGB4 color;
 	};
 	BaseTransform transform_;
-	Vector4 color_;
+	SoLib::Color::RGB4 color_;
 
 	using map_struct = ParticleData;
 	Particle &operator=(map_struct *const target);

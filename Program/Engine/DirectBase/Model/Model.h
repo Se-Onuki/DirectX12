@@ -27,6 +27,7 @@
 
 #include "../Base/StructBuffer.h"
 #include "../Descriptor/DescriptorManager.h"
+#include "../../Utils/Graphics/Color.h"
 
 class ViewProjection;
 
@@ -128,7 +129,7 @@ public:
 	}
 
 	struct MaterialData {
-		Vector4 color;			// 色(RGBA)
+		SoLib::Color::RGB4 color;			// 色(RGBA)
 		Vector4 emissive;		// 自己発光色(RGBA)
 		Matrix4x4 uvTransform;
 

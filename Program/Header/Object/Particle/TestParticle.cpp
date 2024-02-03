@@ -9,7 +9,7 @@ void TestParticle::Update([[maybe_unused]] float deltaTime)
 {
 	if (!timer_.IsFinish()) {
 		transform_.translate += velocity_ * deltaTime;
-		color_.w = (1.f - timer_.GetProgress());
+		color_.a = (1.f - timer_.GetProgress());
 		transform_.scale = SoLib::Lerp(startScale_, endScale_, timer_.GetProgress());
 	}
 	else {

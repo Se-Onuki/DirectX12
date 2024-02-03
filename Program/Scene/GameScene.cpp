@@ -11,12 +11,14 @@
 #include <imgui.h>
 #include "TitleScene.h"
 #include "../Header/Entity/Component/ModelComp.h"
+#include "../../Utils/Math/Angle.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	cameraManager_ = CameraManager::GetInstance();
 	blockRender_ = BlockManager::GetInstance();
+	particleManager_ = ParticleManager::GetInstance();
 	// collisionManager_ = CollisionManager::GetInstance();
 }
 
@@ -29,11 +31,12 @@ void GameScene::OnEnter() {
 	light_ = DirectionLight::Create();
 
 	blockRender_->Init(1024u);
-
+	particleManager_->Init(2048u);
 
 	world_ = std::make_unique<World>();
 	entityManager_ = world_->GetEntityManager();
 	ModelManager::GetInstance()->CreateDefaultModel();
+	//ModelManager::GetInstance()->GetModel("Plane")->materialMap_.begin()->second->materialBuff_->color = 0x555555FF;
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
@@ -298,9 +301,9 @@ void GameScene::Update() {
 	}
 
 	{
-		std::list<ECS::WeaponComp *> weaponList{};
+		std::list<const ECS::WeaponComp *> weaponList{};
 
-		for (const auto &[entity, weapon] : world_->view<ECS::WeaponComp>()) {
+		for (const auto &[entity, weapon] : world_->view<const ECS::WeaponComp>()) {
 			weaponList.push_back(weapon);
 		}
 
@@ -312,6 +315,13 @@ void GameScene::Update() {
 			for (const auto *weapon : weaponList) {
 				if (Collision::IsHit(sphere, weapon->collision_)) {
 					isAlive->isAlive_ = false;
+
+					for (uint32_t i = 0u; i < 10u; i++) {
+						auto particle = particleManager_->AddParticle(model_, std::make_unique<TestParticle>(sphere.centor));
+						particle->SetAliveTime(Random::GetRandom<float>(0.5f, 1.5f));
+						particle->acceleration_ = SoLib::Math::EulerToDirection(Vector3{ Random::GetRandom<float>(-Angle::hPI,Angle::hPI),Random::GetRandom<float>(-Angle::PI,Angle::PI),0.f }) * Random::GetRandom<float>(0.1f, 2.f);
+						particle->transform_.scale = Vector3::one * 5.f;
+					}
 				}
 			}
 
@@ -319,7 +329,7 @@ void GameScene::Update() {
 	}
 
 	for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding>()) {
-		const auto *const camera = cameraManager_->GetUseCamera();
+		const auto *const camera = cameraManager_->GetCamera("FollowCamera");
 		const Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
 		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
 		const Vector3 rotateInput = Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y).RotateVector(input3d);
@@ -342,41 +352,41 @@ void GameScene::Update() {
 
 
 
-	for (const auto &[entity, pos, rot, scale, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::EmitterComp>()) {
+	//for (const auto &[entity, pos, rot, scale, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::EmitterComp>()) {
 
-		//*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
+	//	//*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
 
-		SoLib::ImGuiWidget("Emitter : Pos", &pos->position_);
-		SoLib::ImGuiWidget("Emitter", emitterComp);
+	//	SoLib::ImGuiWidget("Emitter : Pos", &pos->position_);
+	//	SoLib::ImGuiWidget("Emitter", emitterComp);
 
-		emitterComp->frequency_.Update(deltaTime);
-		if (emitterComp->frequency_.IsFinish()) {
-			emitterComp->frequency_.Start();
-			auto particleList = entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>(emitterComp->count_);
+	//	emitterComp->frequency_.Update(deltaTime);
+	//	if (emitterComp->frequency_.IsFinish()) {
+	//		emitterComp->frequency_.Start();
+	//		auto particleList = entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>(emitterComp->count_);
 
-			for (const auto &particle : particleList) {
-				const auto &[cId, cModel, cLifeLimit, cPos, cVelocity, colorLerp] = entityManager_->GetComponent<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp, ECS::VelocityComp, ECS::ColorLarp>(particle);
+	//		for (const auto &particle : particleList) {
+	//			const auto &[cId, cModel, cLifeLimit, cPos, cVelocity, colorLerp] = entityManager_->GetComponent<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp, ECS::VelocityComp, ECS::ColorLarp>(particle);
 
-				cModel->model_ = model_;
-				cLifeLimit->lifeLimit_ = emitterComp->spawnLifeLimit_.Random();
+	//			cModel->model_ = model_;
+	//			cLifeLimit->lifeLimit_ = emitterComp->spawnLifeLimit_.Random();
 
-				SoLib::Math::Euler fireDir = emitterComp->spawnRange_;
-				for (auto &item : fireDir) {
-					item = Random::GetRandom<float>(-item, item);
-				}
+	//			SoLib::Math::Euler fireDir = emitterComp->spawnRange_;
+	//			for (auto &item : fireDir) {
+	//				item = Random::GetRandom<float>(-item, item);
+	//			}
 
-				Vector3 direction = SoLib::Math::EulerToDirection(fireDir);
+	//			Vector3 direction = SoLib::Math::EulerToDirection(fireDir);
 
-				*cVelocity = direction * emitterComp->spawnPower_.Random()/* * Matrix4x4::EulerRotate(fireDir)*/;
+	//			*cVelocity = direction * emitterComp->spawnPower_.Random()/* * Matrix4x4::EulerRotate(fireDir)*/;
 
-				*cPos = *pos;
+	//			*cPos = *pos;
 
-				colorLerp->start_ = emitterComp->startColor_;
-				colorLerp->end_ = emitterComp->endColor_;
+	//			colorLerp->start_ = emitterComp->startColor_;
+	//			colorLerp->end_ = emitterComp->endColor_;
 
-			}
-		}
-	}
+	//		}
+	//	}
+	//}
 
 	Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
 
@@ -457,7 +467,7 @@ void GameScene::Update() {
 	boneModel_.Draw(boneModel_.CalcTransMat(boneTransform_));*/
 
 
-	blockRender_->AddBox(ground_.model_, IBlock{ .transMat_ = ground_.CalcMatrix() });
+	ground_.Draw();
 
 	for (const auto &[plEntity, player, pos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
 
@@ -467,7 +477,7 @@ void GameScene::Update() {
 
 			followCamera->rotation_.y += input_->GetXInput()->GetState()->stickR_.x * 90._deg * deltaTime;
 
-			followCamera->TransferData(*cameraManager_->GetUseCamera(), *cameraPos);
+			followCamera->TransferData(*cameraManager_->GetCamera("FollowCamera"), *cameraPos);
 		}
 	}
 
@@ -482,6 +492,8 @@ void GameScene::Update() {
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
 
 	}
+
+	particleManager_->Update(deltaTime);
 }
 
 void GameScene::Draw() {
@@ -526,6 +538,8 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	model_->Draw(particleArray_, camera);
+
+	particleManager_->Draw(camera);
 
 	Model::EndDraw();
 

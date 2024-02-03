@@ -809,7 +809,7 @@ bool Material::ImGuiWidget()
 			materialBuff_->uvTransform = Matrix4x4::Identity();
 		}
 
-		ImGui::ColorEdit4("BaseColor", &materialBuff_->color.x);
+		ImGui::ColorEdit4("BaseColor", &materialBuff_->color.r);
 		ImGui::ColorEdit3("EmissiveColor", &materialBuff_->emissive.x);
 
 		const static std::array<std::string, 6u>blendStr{ "kNone", "kNormal", "kAdd", "kSubtract", "kMultily", "kScreen" };

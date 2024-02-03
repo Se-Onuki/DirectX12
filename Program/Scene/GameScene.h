@@ -23,6 +23,7 @@
 #include "../Engine/DirectBase/Model/BoneModel.h"
 #include "../Header/Object/Ground.h"
 #include "../Header/Entity/Entity.h"
+#include "../Header/Object/Particle/ParticleManager.h"
 
 class GameScene : public IScene {
 public:
@@ -74,5 +75,7 @@ private:
 	std::array<BoneModel::SimpleTransform, 5u> boneTransform_;
 
 	GameObject gameObject_;
+
+	ParticleManager *particleManager_;
 
 };

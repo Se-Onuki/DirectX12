@@ -32,6 +32,6 @@ Matrix4x4 Ground::CalcMatrix() const {
 void Ground::Draw() {
 	static auto *const blockManager = BlockManager::GetInstance();
 
-	blockManager->AddBox(model_, IBlock{ CalcMatrix() });
+	blockManager->AddBox(model_, IBlock{ .transMat_ = CalcMatrix(), .color_ = 0x555555FF });
 
 }

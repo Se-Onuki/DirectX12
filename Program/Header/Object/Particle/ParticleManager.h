@@ -18,8 +18,8 @@ private: // コンストラクタ等
 	// シングルトンパターンの設定
 	ParticleManager() = default;
 	~ParticleManager() = default;
-	ParticleManager(const ParticleManager&) = delete;
-	const ParticleManager& operator=(const ParticleManager&) = delete;
+	ParticleManager(const ParticleManager &) = delete;
+	const ParticleManager &operator=(const ParticleManager &) = delete;
 
 public:
 
@@ -27,7 +27,7 @@ public:
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>シングルトンインスタンス</returns>
-	static ParticleManager* GetInstance() {
+	static ParticleManager *GetInstance() {
 		static ParticleManager instance;
 		return &instance;
 	};
@@ -48,9 +48,9 @@ public:
 	/// 描画関数
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera3D& camera);
+	void Draw(const Camera3D &camera);
 
-	IParticle* AddParticle(const Model* const modelKey, std::unique_ptr<IParticle> particle);
+	IParticle *AddParticle(const Model *const modelKey, std::unique_ptr<IParticle> particle);
 
 private: // メンバ変数
 
@@ -60,7 +60,7 @@ private: // メンバ変数
 	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
 
 	// パーティクル配列
-	std::unordered_map<const Model*, std::unique_ptr<ParticleList>> particleMap_;
+	std::unordered_map<const Model *, std::unique_ptr<ParticleList>> particleMap_;
 
 };
 
@@ -83,13 +83,13 @@ public: // アクセッサ等
 	/// </summary>
 	/// <param name="particle">粒子</param>
 	/// <returns>配列に追加された粒子</returns>
-	IParticle* const push_back(std::unique_ptr<IParticle> particle);
+	IParticle *const push_back(std::unique_ptr<IParticle> particle);
 
 	/// <summary>
 	/// 粒子配列のリストゲッター
 	/// </summary>
 	/// <returns>粒子配列</returns>
-	const auto& GetParticleList() { return particles_; }
+	const auto &GetParticleList() { return particles_; }
 
 	/// <summary>
 	/// 粒子配列サイズゲッター
@@ -123,7 +123,7 @@ public: // アクセッサ等
 	/// パーティクルに使用するモデルセッター
 	/// </summary>
 	/// <param name="model">パーティクルに使用するモデル</param>
-	void SetModel(const Model* const model) { model_ = model; }
+	void SetModel(const Model *const model) { model_ = model; }
 
 	/// <summary>
 	/// 描画インデックス位置セッター
@@ -134,7 +134,7 @@ public: // アクセッサ等
 	/// 描画インデックス位置ゲッター
 	/// </summary>
 	/// <returns>描画インデックス位置</returns>
-	const auto& GetLoaction() const { return indexLocation_; }
+	const auto &GetLoaction() const { return indexLocation_; }
 
 private:
 
@@ -144,7 +144,7 @@ private:
 	CBuffer<uint32_t> indexLocation_;
 
 	// 粒子モデル
-	const Model* model_;
+	const Model *model_;
 	// 粒子配列
 	std::list<std::unique_ptr<IParticle>> particles_;
 };
@@ -156,7 +156,7 @@ class IParticle
 {
 public: // コンストラクタ等
 
-	IParticle(const Vector3& translate) { transform_.translate = translate; };			// コンストラクタ
+	IParticle(const Vector3 &translate) { transform_.translate = translate; };			// コンストラクタ
 	virtual ~IParticle() = default;	// デストラクタ
 
 public: // 純粋仮想関数
@@ -178,19 +178,19 @@ public: // アクセッサ等
 	/// トランスフォームのゲッター
 	/// </summary>
 	/// <returns>トランスフォーム</returns>
-	const BaseTransform& GetTransform()const { return transform_; }
+	const BaseTransform &GetTransform()const { return transform_; }
 
 	/// <summary>
 	/// 色ゲッター
 	/// </summary>
 	/// <returns>色</returns>
-	const Vector4& GetColor() const { return color_; }
+	const SoLib::Color::RGB4 &GetColor() const { return color_; }
 
 	/// <summary>
 	/// 生存状態ゲッター
 	/// </summary>
 	/// <returns>生存状態</returns>
-	const bool& GetisAlive() const { return isAlive_; }
+	const bool &GetisAlive() const { return isAlive_; }
 
 	/// <summary>
 	/// 生存秒数セッター
@@ -202,7 +202,7 @@ public: // パブリックメンバ変数
 	// トランスフォーム
 	BaseTransform transform_;
 	// 色
-	Vector4 color_ = { 1.f, 1.f, 1.f, 1.f };
+	SoLib::Color::RGB4 color_ = 0xFFFFFFFF;
 
 	// 速度
 	Vector3 velocity_ = Vector3::zero;
