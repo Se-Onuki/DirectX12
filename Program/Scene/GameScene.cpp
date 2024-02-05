@@ -483,7 +483,6 @@ void GameScene::Update() {
 		}
 	}
 
-	cameraManager_->DisplayImGui();
 	cameraManager_->Update(deltaTime);
 
 	gameObject_.Update(deltaTime);
