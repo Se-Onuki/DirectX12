@@ -94,11 +94,12 @@ void ParticleList::Update(float deltaTime)
 			}
 			return false;
 		});
-	const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
+	const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().Transpose();
 
 	for (auto &particle : particles_) {
 		particle->Update(deltaTime);
 		particle->transform_.matWorld_ *= billboardMat;
+		*reinterpret_cast<Vector3 *>(particle->transform_.matWorld_.m[3]) = particle->GetTransform().translate;
 	}
 }
 

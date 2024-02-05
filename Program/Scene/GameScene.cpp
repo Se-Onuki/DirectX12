@@ -120,7 +120,7 @@ void GameScene::OnEnter() {
 
 	//*enemyPrefab_ += ECS::RotateComp{};
 
-	soundA_ = audio_->LoadWave("resources/Alarm01.wav");
+	soundA_ = audio_->LoadWave("resources/Audio/SE/Player/startRotate1.wav");
 
 	boneModel_.Init();
 	auto *bodyPtr = boneModel_.AddBone("Body", boxModel_);
@@ -316,10 +316,12 @@ void GameScene::Update() {
 				if (Collision::IsHit(sphere, weapon->collision_)) {
 					isAlive->isAlive_ = false;
 
+					soundA_.Play(false, 1.f);
+
 					for (uint32_t i = 0u; i < 10u; i++) {
-						auto particle = particleManager_->AddParticle(model_, std::make_unique<TestParticle>(sphere.centor));
+						auto particle = particleManager_->AddParticle<TestParticle>(model_, sphere.centor);
 						particle->SetAliveTime(Random::GetRandom<float>(0.5f, 1.5f));
-						particle->acceleration_ = SoLib::Math::EulerToDirection(Vector3{ Random::GetRandom<float>(-Angle::hPI,Angle::hPI),Random::GetRandom<float>(-Angle::PI,Angle::PI),0.f }) * Random::GetRandom<float>(0.1f, 2.f);
+						particle->acceleration_ = SoLib::Math::EulerToDirection(Vector3{ Random::GetRandom<float>(-Angle::hPI,Angle::hPI),Random::GetRandom<float>(-Angle::PI,Angle::PI),0.f }) * Random::GetRandom<float>(10.f, 20.f);
 						particle->transform_.scale = Vector3::one * 5.f;
 					}
 				}

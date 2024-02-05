@@ -51,6 +51,8 @@ public:
 	void Draw(const Camera3D &camera);
 
 	IParticle *AddParticle(const Model *const modelKey, std::unique_ptr<IParticle> particle);
+	template<SoLib::IsBased<IParticle> T >
+	T *AddParticle(const Model *const modelKey, const Vector3 &translate = {});
 
 private: // メンバ変数
 
@@ -221,3 +223,8 @@ public: // パブリックメンバ変数
 
 template<class SelectParticle>
 concept IsIParticle = std::is_base_of<IParticle, SelectParticle>::value;
+
+template<SoLib::IsBased<IParticle> T>
+inline T *ParticleManager::AddParticle(const Model *const modelKey, const Vector3 &translate) {
+	return dynamic_cast<T *>(AddParticle(modelKey, std::make_unique<T>(translate)));
+}

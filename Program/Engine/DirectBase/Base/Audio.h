@@ -77,8 +77,11 @@ public:
 
 		uint32_t Get() const { return handle_; }
 
+		Voice Play(bool loopFlag, float volume) const { return audio_->PlayWave(handle_, loopFlag, volume); }
+
 	private:
 		uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
+		static Audio *const audio_;
 	};
 
 

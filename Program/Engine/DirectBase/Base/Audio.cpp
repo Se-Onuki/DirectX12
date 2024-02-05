@@ -1,6 +1,8 @@
 #include "Audio.h"
 #include <cassert>
 
+Audio *const Audio::SoundHandle::audio_ = Audio::GetInstance();
+
 void Audio::Finalize() {
 	xAudio2_.Reset();
 	for (auto &sound : soundArray_) {
