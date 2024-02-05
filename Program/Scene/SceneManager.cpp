@@ -1,12 +1,18 @@
 #include "SceneManager.h"
 #include "../Header/Object/Fade.h"
+#include "GameScene.h"
+#include "TitleScene.h"
 
-SceneManager *IScene::sceneManager_ = nullptr;
+SceneManager *const IScene::sceneManager_ = SceneManager::GetInstance();
 
 
 void SceneManager::Init() {
-	IScene::sceneManager_ = this;
 	transitionTimer_.Clear();
+}
+
+void SceneManager::StaticInit() {
+	sceneFactory_["TitleScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<TitleScene>(); };
+	sceneFactory_["GameScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<GameScene>(); };
 }
 
 void SceneManager::Cancel() {
@@ -36,8 +42,38 @@ void SceneManager::ChangeScene(std::unique_ptr<IScene> nextScene, const float tr
 	transitionTimer_.Start(transitionTime);
 }
 
+void SceneManager::ChangeScene(const std::string &nextScene, const float transitionTime) {
+
+	ChangeScene(sceneFactory_.at(nextScene)(), transitionTime);
+}
+
+bool SceneManager::ImGuiWidget() {
+
+#ifdef _DEBUG
+
+	static uint32_t index = 0u;
+
+	SoLib::ImGuiWidget("SceneManager", &sceneFactory_, index,
+		[this](uint32_t itemIndex)->std::string
+		{
+			// データの取得
+			auto item = std::next(sceneFactory_.begin(), itemIndex);
+			return item->first;
+		}
+	);
+	static float transitionTime = 0.f;
+	ImGui::DragFloat("TransitionTime", &transitionTime, 0.1f, 0.f, 10.f, "%.3fsec");
+	if (ImGui::Button("Change")) {
+		ChangeScene(std::next(sceneFactory_.begin(), index)->second(), transitionTime);
+	}
+
+#endif // _DEBUG
+
+	return false;
+}
+
 void SceneManager::Update(float deltaTime) {
-	
+
 	// フェード演出の更新
 	Fade::GetInstance()->Update(deltaTime);
 

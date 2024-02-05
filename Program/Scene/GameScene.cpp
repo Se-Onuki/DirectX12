@@ -153,8 +153,6 @@ void GameScene::Update() {
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	[[maybe_unused]] const float powDeltaTime = deltaTime * deltaTime;
 
-	audio_->ImGuiWidget();
-
 	ImGui::Text("XInput左スティックで移動");
 	ImGui::Text("エンティティ数 / %lu", world_->size());
 

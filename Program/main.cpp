@@ -113,8 +113,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
+	sceneManager->StaticInit();
 	sceneManager->Init();
-	sceneManager->ChangeScene(std::make_unique<TitleScene>());
+	sceneManager->ChangeScene("TitleScene", 0.f);
 
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
@@ -140,6 +141,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGui::Text("Delta : %f", deltaTime);
 
 		ImGui::End();
+
+		sceneManager->ImGuiWidget();
+		audio->ImGuiWidget();
 
 #endif // _DEBUG
 

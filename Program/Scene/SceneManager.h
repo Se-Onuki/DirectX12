@@ -20,7 +20,7 @@ public:
 	virtual void Update() = 0;	// 更新処理
 	virtual void Draw() = 0;	// 描画処理
 
-	static SceneManager *sceneManager_;
+	static SceneManager *const sceneManager_;
 
 	/// 今後実装
 	// void AddObject(Object*const object);
@@ -46,6 +46,8 @@ private:
 	SceneManager operator=(const SceneManager &) = delete;
 	~SceneManager() = default;
 
+	std::unordered_map<std::string, std::unique_ptr<IScene>(*)()> sceneFactory_;
+
 public:
 
 	void Init();
@@ -57,6 +59,8 @@ public:
 		static SceneManager instance;
 		return &instance;
 	}
+
+	void StaticInit();
 
 	void Cancel();
 
@@ -73,6 +77,10 @@ public:
 
 	template<SoLib::IsBased<IScene> T>
 	void ChangeScene(const float transitionTime);
+
+	void ChangeScene(const std::string &nextScene, const float transitionTime);
+
+	bool ImGuiWidget();
 
 
 	/// @brief シーンの更新
