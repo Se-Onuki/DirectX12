@@ -73,7 +73,7 @@ uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
 	if (ImGui::BeginCombo("TextureList", textureArray_[index].name.c_str())) {
 
 		for (uint32_t i = 0; i < textureArray_.size(); i++) {
-			if (textureArray_[i].name == "") continue;
+			if (textureArray_[i].name == "") { continue; }
 			if (ImGui::Selectable((textureArray_[i].name + "[" + std::to_string(i) + "]").c_str())) {
 				index = i;
 				break;
@@ -105,8 +105,9 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 {
 #pragma region Texture検索
 
-	auto it = std::find_if(textureArray_.begin(), textureArray_.end(), [&](const auto &texture) {
-		return texture.name == file_name;
+	auto it = std::find_if(textureArray_.begin(), textureArray_.end(), [&](const auto &texture)
+		{
+			return texture.name == file_name;
 		}
 	);
 	if (it != textureArray_.end()) {

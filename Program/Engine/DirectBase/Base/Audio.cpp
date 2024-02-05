@@ -1,5 +1,6 @@
 #include "Audio.h"
 #include <cassert>
+#include "../../Utils/SoLib/SoLib.h"
 
 Audio *const Audio::SoundHandle::audio_ = Audio::GetInstance();
 
@@ -125,6 +126,45 @@ Audio::SoundData *const Audio::GetWave(uint32_t index) {
 	if (index == (std::numeric_limits<uint32_t>::max)()) { return nullptr; }
 	return soundArray_[index].get();
 }
+bool Audio::ImGuiWidget() {
+
+#ifdef _DEBUG
+
+	ImGui::Begin("AudioManager");
+	static uint32_t index = 0u;
+
+	SoLib::ImGuiWidget("AudioList", &soundArray_, index,
+		[this](uint32_t itemIndex)->std::string
+		{
+			auto item = soundArray_[itemIndex].get();
+			// 値が無かった場合は空文字列を返す
+			if (not item) {
+				return std::string();
+			}
+
+			auto itemItr = std::find_if(fileMap_.begin(), fileMap_.end(), [itemIndex](const std::pair<std::string, uint32_t> &itr)->bool
+				{
+					return itr.second == itemIndex;
+				});
+
+			if (itemItr != fileMap_.end()) {
+				return itemItr->first;
+			}
+			return std::string();
+		}
+	);
+
+	if (ImGui::Button("Play")) {
+		PlayWave(index, false, 1.f);
+	}
+
+	ImGui::End();
+
+#endif // _DEBUG
+
+	return false;
+}
+
 //
 //uint32_t Audio::FindUnusedIndex() const {
 //	return indexManager_.FindUnusedRange(1u);

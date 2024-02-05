@@ -51,11 +51,11 @@ namespace SoLib {
 	template <>
 	bool ImGuiWidget<Angle::Radian>(const char *const label, Angle::Radian *const value);
 
-	template <typename T, IsContainsType<T> C>
-	bool ImGuiWidget(const char *const label, C *const value, uint32_t &index);
+	//template <typename T, IsContainsType<T> C>
+	//bool ImGuiWidget(const char *const label, C *const value, uint32_t &index);
 
 	template <SoLib::IsContainer C>
-	bool ImGuiWidget(const char *const label, C *const value, uint32_t &index);
+	bool ImGuiWidget(const char *const label, C *const value, uint32_t &index, const std::function<std::string(uint32_t)> &displayChar = [](uint32_t i) { return std::to_string(i); });
 
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 
@@ -94,16 +94,25 @@ bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 }
 
 template<SoLib::IsContainer C>
-bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index) {
+bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index, const std::function<std::string(uint32_t)>& displayChar) {
 
 	//T *selectItem = nullptr;
 
+	bool isChanged = false;
 
-	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), std::to_string(index).c_str())) {
+	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), displayChar(index).c_str())) {
 		for (uint32_t i = 0u; i < value->size(); i++) {
 			bool is_selected = (index == i);
-			if (ImGui::Selectable(std::to_string(i).c_str(), is_selected)) {
-				index = i;
+
+			std::string itemName = displayChar(i);
+
+			// もし空文字列なら表示しない
+			if (itemName != "") {
+
+				if (ImGui::Selectable(itemName.c_str(), is_selected)) {
+					index = i;
+					isChanged = true;
+				}
 			}
 			/*	if (is_selected) {
 					ImGui::SetItemDefaultFocus();
@@ -112,12 +121,11 @@ bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index
 		ImGui::EndCombo();
 	}
 
-	auto selectItem = std::next(value->begin(), index);
+	/*auto selectItem = std::next(value->begin(), index);
 
-	bool isChanged = false;
 	if (*selectItem) {
 		isChanged |= SoLib::ImGuiWidget(label, &*selectItem);
-	}
+	}*/
 
 	return isChanged;
 }

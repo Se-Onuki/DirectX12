@@ -140,6 +140,8 @@ public:
 	uint32_t LoadWave(const char *filename);
 	SoundData *const GetWave(const uint32_t index);
 
+	bool ImGuiWidget();
+
 public:
 
 	static const uint32_t kMaxSound = 512u;
