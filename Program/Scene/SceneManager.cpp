@@ -49,7 +49,7 @@ void SceneManager::ChangeScene(const std::string &nextScene, const float transit
 
 bool SceneManager::ImGuiWidget() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("SceneManager");
 	static uint32_t index = 0u;
@@ -69,7 +69,7 @@ bool SceneManager::ImGuiWidget() {
 	}
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 	return false;
 }

@@ -128,7 +128,7 @@ Audio::SoundData *const Audio::GetWave(uint32_t index) {
 }
 bool Audio::ImGuiWidget() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("AudioManager");
 	static uint32_t index = 0u;
@@ -166,7 +166,7 @@ bool Audio::ImGuiWidget() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 	return false;
 }

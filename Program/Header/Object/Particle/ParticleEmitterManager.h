@@ -101,7 +101,7 @@ public: // メンバ関数
 		return retrurnEmitter;
 	}
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	/// <summary>
 	/// パーティクルの型リストに追加する関数
 	/// </summary>
@@ -116,7 +116,7 @@ public: // メンバ関数
 				})
 			});
 	}
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 private: // メンバ変数
 
@@ -126,7 +126,7 @@ private: // メンバ変数
 	// パーティクルエミッター達
 	std::list<std::unique_ptr<ParticleEmitter>> emitters_;
 
-#ifdef _DEBUG // ImGui用変数
+#ifdef USE_IMGUI // ImGui用変数
 
 	// パーティクル型マップ
 	std::map <std::type_index, std::function<std::unique_ptr<IParticle>(const Vector3 &)>> moldMap_;
@@ -142,6 +142,6 @@ private: // メンバ変数
 	// 生成座標
 	BaseTransform imGuiEmitTransform_;
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 };

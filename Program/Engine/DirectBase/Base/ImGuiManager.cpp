@@ -45,12 +45,12 @@ void ImGuiManager::CreateCommand()
 void ImGuiManager::Draw(ID3D12GraphicsCommandList *const commandList)
 {
 	commandList;
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	// 実際のCommandListにImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 
-#endif // DEBUG
+#endif // USE_IMGUI
 
 }
 

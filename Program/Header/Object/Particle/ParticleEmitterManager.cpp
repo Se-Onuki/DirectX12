@@ -12,7 +12,7 @@ void ParticleEmitterManager::Init()
 	StarParticle::AddItem();
 	StarParticle::ApplyItem();
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	// デバッグ用の型を追加
 	AddParticleMold<TestParticle>(); // テストパーティクル
@@ -41,7 +41,7 @@ void ParticleEmitterManager::Init()
 		iter++;
 	}
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 }
 
@@ -61,7 +61,7 @@ void ParticleEmitterManager::Update(float deltaTime)
 		emitter->Update(deltaTime);
 	}
 
-#ifdef _DEBUG // デバッグ時のみImGuiの描画
+#ifdef USE_IMGUI // デバッグ時のみImGuiの描画
 	// ImGUiの開始
 	ImGui::Begin("ParticleManager");
 	// 全パーティクルのImGuiを描画
@@ -174,6 +174,6 @@ void ParticleEmitterManager::Update(float deltaTime)
 
 	StarParticle::DisplayImGui();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 

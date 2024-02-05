@@ -53,20 +53,20 @@ SoLib::Color::RGB4::operator std::array<uint8_t, 4u>() const {
 
 template<>
 bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused]] Color::RGB4 *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::ColorEdit4(label, *value);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused]] Color::HSV4 *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::ColorEdit4(label, *value, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 SoLib::Color::RGB4 SoLib::Color::operator+(const RGB4 &a, const RGB4 &b) {

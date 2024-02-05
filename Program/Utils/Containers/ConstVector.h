@@ -69,7 +69,7 @@ namespace SoLib {
 	template <SoLib::IsNotPointer T, uint32_t maxSize>
 	inline bool ConstVector<T, maxSize>::ImGuiWidget(const char *const label)
 	{
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 		bool isChanged = false;
 
@@ -83,7 +83,7 @@ namespace SoLib {
 		label;
 		return false;
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 	}
 
 	template<SoLib::IsNotPointer T, uint32_t maxSize>

@@ -80,12 +80,12 @@ void ParticleEmitter::Update([[maybe_unused]]float deltaTime)
 	emitAliveTimer_.Update(deltaTime);
 	emitIntervalTimer_.Update(deltaTime);
 
-#ifdef _DEBUG // デバッグ時のみ調整項目クラスから値を読む
+#ifdef USE_IMGUI // デバッグ時のみ調整項目クラスから値を読む
 
 	// エミッタの値を読み込む
 	ApplyItem();
 
-#endif // _DEBUG // デバッグ時のみ調整項目クラスから値を読む
+#endif // USE_IMGUI // デバッグ時のみ調整項目クラスから値を読む
 
 }
 

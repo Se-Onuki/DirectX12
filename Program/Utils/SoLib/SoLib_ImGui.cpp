@@ -4,100 +4,100 @@
 
 template<>
 void SoLib::ImGuiText([[maybe_unused]] const char *const label, [[maybe_unused]] const std::string &text) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	ImGui::Text("%s : %s", label, text.c_str());
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget<bool>([[maybe_unused]] const char *const label, [[maybe_unused]] bool *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::Checkbox(label, value);
 
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 }
 
 template<>
 bool SoLib::ImGuiWidget<int32_t>([[maybe_unused]] const char *const label, [[maybe_unused]] int32_t *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::InputInt(label, value);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget<float>([[maybe_unused]] const char *const label, [[maybe_unused]] float *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::DragFloat(label, value, 0.1f);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget<double>([[maybe_unused]] const char *const label, [[maybe_unused]] double *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::InputDouble(label, value, 0.1f);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget<Vector2>([[maybe_unused]] const char *const label, [[maybe_unused]] Vector2 *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::DragFloat2(label, &value->x, 0.1f);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget<Vector3>([[maybe_unused]] const char *const label, [[maybe_unused]] Vector3 *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::DragFloat3(label, &value->x, 0.1f);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget<Vector4>([[maybe_unused]] const char *const label, [[maybe_unused]] Vector4 *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::DragFloat4(label, &value->x, 0.1f);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused]] std::string *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::InputText(label, value->data(), value->size() + 1);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 template<>
 bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused]] Angle::Radian *const value) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::SliderAngle(label, &value->Get(), 0.1f);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 bool SoLib::ImGuiWidgetAngle([[maybe_unused]] const char *const label, [[maybe_unused]] float *const value, [[maybe_unused]] float min, [[maybe_unused]] float max) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	return ImGui::SliderAngle(label, value, min, max);
 #else
 	return false;
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 bool SoLib::ImGuiDragEuler(const char *const label, float *value)

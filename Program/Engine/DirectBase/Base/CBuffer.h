@@ -136,11 +136,11 @@ inline void CBuffer<T, IsActive>::CreateBuffer() {
 	result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 	assert(SUCCEEDED(result));
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	this->SetName();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 }
 
@@ -342,12 +342,12 @@ template<SoLib::IsNotPointer T, bool IsActive>
 template<typename U>
 inline void CBuffer<T, IsActive>::SetName() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	if (resources_) {
 		resources_->SetName(ConvertString(typeid(U).name()).c_str());
 	}
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 }

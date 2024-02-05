@@ -143,9 +143,9 @@ uint32_t BoneModel::GetIndex(const std::string &key) const {
 		return boneNumberMap_.at(bone);
 	}
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	assert(0 && "文字列に対応するボーンが保存されていません。");
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 	// 存在しないなら
 	return (std::numeric_limits<uint32_t>::max)();
@@ -159,9 +159,9 @@ uint32_t BoneModel::GetIndex(const std::string &key, const uint32_t boxIndex) co
 		return boxNumberMap_.at(bone->GetBox(boxIndex));
 	}
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	assert(0 && "文字列に対応するボーンが保存されていません。");
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 	// 存在しないなら
 	return (std::numeric_limits<uint32_t>::max)();

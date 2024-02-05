@@ -78,7 +78,7 @@ template<typename T>
 bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 	bool isAction = false;
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	if (ImGui::TreeNode(label)) {
 		isAction |= SoLib::ImGuiWidget("min", &(value->min_));
@@ -88,7 +88,7 @@ bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 #else
 	label; value;
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 	return isAction;
 }

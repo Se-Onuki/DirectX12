@@ -34,13 +34,13 @@ WinApp *const WinApp::GetInstance()
 LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam)) {
 		return true;
 	}
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 	// メッセージに応じてゲーム固有の処理を行う
 	switch (msg) {

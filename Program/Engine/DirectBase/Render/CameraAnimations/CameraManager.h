@@ -89,7 +89,7 @@ private: // メンバ変数
 	// 使用中のカメラ
 	Camera3D* useCamera_;
 
-#ifdef _DEBUG // ImGui用メンバ変数
+#ifdef USE_IMGUI // ImGui用メンバ変数
 
 	// 終端値のパラメーターを取得するカメラ名格納用
 	char imGuiEndCameraName_[20];
@@ -102,7 +102,7 @@ private: // メンバ変数
 	// 待機秒数
 	float imGuiStandByTime_ = 0.0f;
 
-#endif // _DEBUG // ImGui用メンバ変数
+#endif // USE_IMGUI // ImGui用メンバ変数
 
 
 };

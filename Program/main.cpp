@@ -134,7 +134,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 		ImGui::Begin("Flame");
 		ImGui::Text("FPS   : %f", ImGui::GetIO().Framerate);
@@ -145,7 +145,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		sceneManager->ImGuiWidget();
 		audio->ImGuiWidget();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 
 		gVariable->Update();

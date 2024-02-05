@@ -198,7 +198,7 @@ namespace SoLib {
 
 inline bool SoLib::DeltaTimer::ImGuiWidget(const char *const label) {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	bool isChanged = false;
 
 	isChanged |= ImGui::DragFloat(label, &this->goalFlame_, 0.1f, 0.f, 100.f, "%.3fsec");
@@ -220,6 +220,6 @@ inline bool SoLib::DeltaTimer::ImGuiWidget(const char *const label) {
 	label;
 	return false;
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 	}

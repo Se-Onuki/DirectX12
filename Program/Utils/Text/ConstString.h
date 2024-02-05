@@ -62,7 +62,7 @@ namespace SoLib {
 
 		template<uint32_t size>
 		inline bool ConstString<size>::ImGuiWidget(const char *const label) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 			return ImGui::InputText(label, this->data(), size);
 
@@ -70,7 +70,7 @@ namespace SoLib {
 			label;
 			return false;
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 		}
 
