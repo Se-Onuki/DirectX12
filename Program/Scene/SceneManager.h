@@ -82,6 +82,8 @@ public:
 
 	bool ImGuiWidget();
 
+	void Finalize();
+
 
 	/// @brief シーンの更新
 	void Update(float deltaTime);

@@ -158,7 +158,10 @@ bool Audio::ImGuiWidget() {
 	);
 
 	if (ImGui::Button("Play")) {
-		PlayWave(index, false, 1.f);
+		// 値がある場合
+		if (soundArray_[index]) {
+			PlayWave(index, false, 1.f);
+		}
 	}
 
 	ImGui::End();

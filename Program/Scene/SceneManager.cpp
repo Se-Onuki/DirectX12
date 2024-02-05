@@ -51,6 +51,7 @@ bool SceneManager::ImGuiWidget() {
 
 #ifdef _DEBUG
 
+	ImGui::Begin("SceneManager");
 	static uint32_t index = 0u;
 
 	SoLib::ImGuiWidget("SceneManager", &sceneFactory_, index,
@@ -61,15 +62,22 @@ bool SceneManager::ImGuiWidget() {
 			return item->first;
 		}
 	);
-	static float transitionTime = 0.f;
+	static float transitionTime = 1.f;
 	ImGui::DragFloat("TransitionTime", &transitionTime, 0.1f, 0.f, 10.f, "%.3fsec");
 	if (ImGui::Button("Change")) {
 		ChangeScene(std::next(sceneFactory_.begin(), index)->second(), transitionTime);
 	}
+	ImGui::End();
 
 #endif // _DEBUG
 
 	return false;
+}
+
+void SceneManager::Finalize() {
+	nextScene_ = nullptr;
+	currentScene_ = nullptr;
+	transitionTimer_.Clear();
 }
 
 void SceneManager::Update(float deltaTime) {
