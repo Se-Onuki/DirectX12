@@ -133,7 +133,7 @@ bool Audio::ImGuiWidget() {
 	ImGui::Begin("AudioManager");
 	static uint32_t index = 0u;
 
-	SoLib::ImGuiWidget("AudioList", &soundArray_, index,
+	index = SoLib::ImGuiWidget("AudioList", &soundArray_, index,
 		[this](uint32_t itemIndex)->std::string
 		{
 			// データの取得

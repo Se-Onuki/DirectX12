@@ -52,6 +52,24 @@ namespace SoLib {
 	template <typename T>
 	concept IsNumber = std::is_floating_point_v<T> || std::is_integral_v<T>;
 
+	template <typename Itr>
+	concept IsIterator = requires(Itr iter) {
+		// イテレータのデリファレンス可能性を確認
+		{ *iter } -> std::same_as<typename std::iterator_traits<Itr>::value_type &>;
+
+		// インクリメント可能性を確認
+		{ ++iter } -> std::same_as<Itr &>;
+
+		// インクリメント後のイテレータを作成できることを確認
+		{ iter++ } -> std::same_as<Itr>;
+
+		// 2つのイテレータを比較できることを確認
+		{ iter == iter } -> std::same_as<bool>;
+
+		// 2つのイテレータを比較できることを確認
+		{ iter != iter } -> std::same_as<bool>;
+	};
+
 
 	template <typename R, typename T/*, T R:: *Ptr = nullptr*/>
 	struct Wrapping {

@@ -55,7 +55,10 @@ namespace SoLib {
 	//bool ImGuiWidget(const char *const label, C *const value, uint32_t &index);
 
 	template <SoLib::IsContainer C>
-	bool ImGuiWidget(const char *const label, C *const value, uint32_t &index, const std::function<std::string(uint32_t)> &displayChar = [](uint32_t i) { return std::to_string(i); });
+	uint32_t ImGuiWidget(const char *const label, C *const value, const uint32_t index, const std::function<std::string(uint32_t)> &displayChar = [](uint32_t i) { return std::to_string(i); });
+
+	template <SoLib::IsContainer C, SoLib::IsIterator iterator = typename C::iterator>
+	iterator ImGuiWidget(const char *const label, C *const value, const iterator &itr, const std::function<std::string(const iterator &)> &displayChar);
 
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 
@@ -94,11 +97,10 @@ bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
 }
 
 template<SoLib::IsContainer C>
-bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index, const std::function<std::string(uint32_t)>& displayChar) {
+uint32_t SoLib::ImGuiWidget(const char *const label, C *const value, const uint32_t index, const std::function<std::string(uint32_t)> &displayChar) {
 
 	//T *selectItem = nullptr;
-
-	bool isChanged = false;
+	uint32_t result = index;
 
 	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), displayChar(index).c_str())) {
 		for (uint32_t i = 0u; i < value->size(); i++) {
@@ -110,8 +112,7 @@ bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index
 			if (itemName != "") {
 
 				if (ImGui::Selectable(itemName.c_str(), is_selected)) {
-					index = i;
-					isChanged = true;
+					result = i;
 				}
 			}
 			/*	if (is_selected) {
@@ -127,7 +128,35 @@ bool SoLib::ImGuiWidget(const char *const label, C *const value, uint32_t &index
 		isChanged |= SoLib::ImGuiWidget(label, &*selectItem);
 	}*/
 
-	return isChanged;
+	return result;
+}
+
+template<SoLib::IsContainer C, SoLib::IsIterator iterator>
+iterator SoLib::ImGuiWidget(const char *const label, C *const value, const iterator &itr, const std::function<std::string(const iterator &)> &displayChar) {
+
+	iterator result = itr;
+
+	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), displayChar(itr).c_str())) {
+		for (iterator i = value->begin(); i != value->end(); ++i) {
+			bool is_selected = (itr == i);
+
+			std::string itemName = displayChar(i);
+
+			// もし空文字列なら表示しない
+			if (itemName != "") {
+
+				if (ImGui::Selectable(itemName.c_str(), is_selected)) {
+					result = i;
+				}
+			}
+			/*	if (is_selected) {
+					ImGui::SetItemDefaultFocus();
+				}*/
+		}
+		ImGui::EndCombo();
+	}
+
+	return result;
 }
 
 #pragma endregion

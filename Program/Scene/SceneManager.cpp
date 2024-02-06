@@ -54,7 +54,7 @@ bool SceneManager::ImGuiWidget() {
 	ImGui::Begin("SceneManager");
 	static uint32_t index = 0u;
 
-	SoLib::ImGuiWidget("SceneManager", &sceneFactory_, index,
+	index = SoLib::ImGuiWidget("SceneManager", &sceneFactory_, index,
 		[this](uint32_t itemIndex)->std::string
 		{
 			// データの取得
