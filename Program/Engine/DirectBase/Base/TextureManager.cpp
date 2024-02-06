@@ -8,6 +8,7 @@
 #include "DirectXCommon.h"
 
 #include <imgui.h>
+#include "../../../Utils/SoLib/SoLib_ImGui.h"
 
 void TextureManager::StartDraw()
 {
@@ -70,17 +71,15 @@ uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
 		filePath[0] = '\0';
 	}
 
-	if (ImGui::BeginCombo("TextureList", textureArray_[index].name.c_str())) {
-
-		for (uint32_t i = 0; i < textureArray_.size(); i++) {
-			if (textureArray_[i].name == "") { continue; }
-			if (ImGui::Selectable((textureArray_[i].name + "[" + std::to_string(i) + "]").c_str())) {
-				index = i;
-				break;
-			}
+	index = SoLib::ImGuiWidget("TextureList", &textureArray_, index,
+		[this](const decltype(index) &itemIndex)->std::string
+		{
+			if (not textureArray_[itemIndex].name.size()) { return ""; }
+			return (textureArray_[itemIndex].name + "[" + std::to_string(itemIndex) + "]").c_str();
 		}
-		ImGui::EndCombo();
-	}
+	);
+
+
 	if (textureArray_[index].gpuHandleSRV.ptr) {
 		const auto &resourceDesc = textureArray_[index].textureResource->GetDesc();
 		const Vector2 &texSize = Vector2{ (float)resourceDesc.Width,(float)resourceDesc.Height } / (float)resourceDesc.Width * 100.f;

@@ -102,7 +102,7 @@ uint32_t SoLib::ImGuiWidget(const char *const label, C *const value, const uint3
 	//T *selectItem = nullptr;
 	uint32_t result = index;
 
-	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), displayChar(index).c_str())) {
+	if (ImGui::BeginCombo(label, displayChar(index).c_str())) {
 		for (uint32_t i = 0u; i < value->size(); i++) {
 			bool is_selected = (index == i);
 
@@ -148,7 +148,7 @@ Itr SoLib::ImGuiWidget(const char *const label, C *const value, Itr itr, const F
 		previewName = displayChar(itr);
 	}
 
-	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), previewName.c_str())) {
+	if (ImGui::BeginCombo(label, previewName.c_str())) {
 		for (Itr i = value->begin(); i != value->end(); ++i) {
 			//bool is_selected = (itr == i);
 
