@@ -58,7 +58,7 @@ namespace SoLib {
 	uint32_t ImGuiWidget(const char *const label, C *const value, const uint32_t index, const std::function<std::string(uint32_t)> &displayChar = [](uint32_t i) { return std::to_string(i); });
 
 	template <SoLib::IsContainer C, SoLib::IsIterator Itr = decltype(std::begin(std::declval<C>())), SoLib::IsFunction<std::string, const Itr &> Func = std::function<std::string(const Itr &)>>
-	Itr ImGuiWidget(const char *const label, C *const value, const Itr &itr, const Func &displayChar);
+	Itr ImGuiWidget(const char *const label, C *const value, Itr itr, const Func &displayChar);
 
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 
@@ -132,14 +132,12 @@ uint32_t SoLib::ImGuiWidget(const char *const label, C *const value, const uint3
 }
 
 template<SoLib::IsContainer C, SoLib::IsIterator Itr, SoLib::IsFunction<std::string, const Itr &> Func>
-Itr SoLib::ImGuiWidget(const char *const label, C *const value, const Itr &itr, const Func &displayChar) {
-	// 出力イテレータ
-	Itr result = itr;
+Itr SoLib::ImGuiWidget(const char *const label, C *const value, Itr itr, const Func &displayChar) {
 
 	// イテレータが無効であった場合に初期化する
-	if (result == value->end()) {
+	if (itr == value->end()) {
 		// 初期化
-		result = value->begin();
+		itr = value->begin();
 	}
 	// 表示文字列
 	std::string previewName;
@@ -147,12 +145,12 @@ Itr SoLib::ImGuiWidget(const char *const label, C *const value, const Itr &itr, 
 	// コンテナが空でなければ
 	if (value->size()) {
 		// 文字列を代入
-		previewName = displayChar(result);
+		previewName = displayChar(itr);
 	}
 
 	if (ImGui::BeginCombo((label + std::string("Combo")).c_str(), previewName.c_str())) {
 		for (Itr i = value->begin(); i != value->end(); ++i) {
-			bool is_selected = (result == i);
+			//bool is_selected = (itr == i);
 
 			// アイテムの文字列
 			std::string itemName = displayChar(i);
@@ -160,8 +158,8 @@ Itr SoLib::ImGuiWidget(const char *const label, C *const value, const Itr &itr, 
 			// もし空文字列なら表示しない
 			if (itemName != "") {
 
-				if (ImGui::Selectable(itemName.c_str(), is_selected)) {
-					result = i;
+				if (ImGui::Selectable(itemName.c_str()/*, is_selected*/)) {
+					itr = i;
 				}
 			}
 			/*	if (is_selected) {
@@ -171,7 +169,7 @@ Itr SoLib::ImGuiWidget(const char *const label, C *const value, const Itr &itr, 
 		ImGui::EndCombo();
 	}
 
-	return result;
+	return itr;
 }
 
 #pragma endregion

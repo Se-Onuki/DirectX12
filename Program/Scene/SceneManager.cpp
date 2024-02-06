@@ -63,7 +63,9 @@ bool SceneManager::ImGuiWidget() {
 	static float transitionTime = 1.f;
 	ImGui::DragFloat("TransitionTime", &transitionTime, 0.1f, 0.f, 10.f, "%.3fsec");
 	if (ImGui::Button("Change")) {
-		ChangeScene(itr->second(), transitionTime);
+		if (itr != sceneFactory_.end()) {
+			ChangeScene(itr->second(), transitionTime);
+		}
 	}
 	ImGui::End();
 

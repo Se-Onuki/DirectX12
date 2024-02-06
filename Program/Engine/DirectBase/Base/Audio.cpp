@@ -141,7 +141,9 @@ bool Audio::ImGuiWidget() {
 	);
 
 	if (ImGui::Button("Play")) {
-		PlayWave(itr->second, false, 1.f);
+		if (itr != fileMap_.end()) {
+			PlayWave(itr->second, false, 1.f);
+		}
 	}
 
 	ImGui::End();
