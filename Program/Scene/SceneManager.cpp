@@ -52,20 +52,18 @@ bool SceneManager::ImGuiWidget() {
 #ifdef USE_IMGUI
 
 	ImGui::Begin("SceneManager");
-	static uint32_t index = 0u;
+	static auto itr = sceneFactory_.begin();
 
-	index = SoLib::ImGuiWidget("SceneManager", &sceneFactory_, index,
-		[this](uint32_t itemIndex)->std::string
+	itr = SoLib::ImGuiWidget("SceneManager", &sceneFactory_, itr,
+		[](const decltype(itr) &itemIndex)->std::string
 		{
-			// データの取得
-			auto item = std::next(sceneFactory_.begin(), itemIndex);
-			return item->first;
+			return itemIndex->first;
 		}
 	);
 	static float transitionTime = 1.f;
 	ImGui::DragFloat("TransitionTime", &transitionTime, 0.1f, 0.f, 10.f, "%.3fsec");
 	if (ImGui::Button("Change")) {
-		ChangeScene(std::next(sceneFactory_.begin(), index)->second(), transitionTime);
+		ChangeScene(itr->second(), transitionTime);
 	}
 	ImGui::End();
 

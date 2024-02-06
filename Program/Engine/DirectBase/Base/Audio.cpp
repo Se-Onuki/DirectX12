@@ -131,37 +131,17 @@ bool Audio::ImGuiWidget() {
 #ifdef USE_IMGUI
 
 	ImGui::Begin("AudioManager");
-	static uint32_t index = 0u;
+	static auto itr = fileMap_.begin();
 
-	index = SoLib::ImGuiWidget("AudioList", &soundArray_, index,
-		[this](uint32_t itemIndex)->std::string
+	itr = SoLib::ImGuiWidget("AudioList", &fileMap_, itr,
+		[](const decltype(itr) &itemIndex)->std::string
 		{
-			// データの取得
-			auto item = soundArray_[itemIndex].get();
-			// データが無かった場合は空文字を返す
-			if (not item) {
-				return std::string();
-			}
-			// ファイルのリストからデータを取得
-			auto itemItr = std::find_if(fileMap_.begin(), fileMap_.end(), [itemIndex](const std::pair<std::string, uint32_t> &itr)->bool
-				{
-					// 値が一致した場合にtrueを返す
-					return itr.second == itemIndex;
-				});
-			// 末尾に到達していない場合に文字列を返す
-			if (itemItr != fileMap_.end()) {
-				return itemItr->first;
-			}
-			// 到達してしまった場合は空文字を返す
-			return std::string();
+			return itemIndex->first;
 		}
 	);
 
 	if (ImGui::Button("Play")) {
-		// 値がある場合
-		if (soundArray_[index]) {
-			PlayWave(index, false, 1.f);
-		}
+		PlayWave(itr->second, false, 1.f);
 	}
 
 	ImGui::End();

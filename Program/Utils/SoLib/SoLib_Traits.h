@@ -70,6 +70,11 @@ namespace SoLib {
 		{ iter != iter } -> std::same_as<bool>;
 	};
 
+	template <typename Func, typename ReturnType, typename... Args>
+	concept IsFunction = requires(Func func, Args... args) {
+		// 関数の戻り値の型を確認
+		{ func(args...) } -> std::same_as<ReturnType>;
+	};
 
 	template <typename R, typename T/*, T R:: *Ptr = nullptr*/>
 	struct Wrapping {
