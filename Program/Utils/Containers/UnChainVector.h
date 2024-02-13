@@ -83,7 +83,7 @@ namespace SoLib {
 		iterator begin() {
 			iterator result{};
 			result.outItr_ = item_.begin();
-			result.inItr_ = (*item_.begin())->begin();
+			result.inItr_ = item_.front()->begin();
 			return result;
 		}
 

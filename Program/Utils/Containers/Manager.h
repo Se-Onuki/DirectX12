@@ -2,12 +2,13 @@
 #include "Singleton.h"
 #include <memory>
 #include <vector>
+#include "UnChainVector.h"
 
 namespace SoLib {
 
-	template <SoLib::IsNotPointer T, SoLib::IsNotPointer ItemType>
-	class Manager : public SoLib::Singleton<T> {
-		friend SoLib::Singleton<T>;
+	template <SoLib::IsNotPointer Crtp, SoLib::IsNotPointer ItemType>
+	class Manager : public SoLib::Singleton<Crtp> {
+		friend SoLib::Singleton<Crtp>;
 		Manager() = default;
 		Manager(const Manager &) = delete;
 		Manager &operator=(const Manager &) = delete;
@@ -44,7 +45,7 @@ namespace SoLib {
 
 
 	private:
-		std::vector<std::unique_ptr<ItemType>> manageItems_;
+		SoLib::UnChainVector<std::unique_ptr<ItemType>> manageItems_;
 	};
 
 }
