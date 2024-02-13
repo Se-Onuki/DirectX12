@@ -1,6 +1,13 @@
 {
     "files.associations": {
         "iomanip": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "array": "cpp",
+        "map": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "xstring": "cpp",
+        "memory": "cpp",
+        "xutility": "cpp"
     }
 }

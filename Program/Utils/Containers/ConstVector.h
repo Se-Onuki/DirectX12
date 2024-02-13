@@ -2,6 +2,7 @@
 #include "../SoLib/SoLib_Traits.h"
 #include <cstdint>
 #include <vector>
+#include <algorithm>
 
 namespace SoLib {
 
@@ -11,9 +12,17 @@ namespace SoLib {
 		using iterator = T *;
 		using const_iterator = const T *;
 
-		using ConstArrayType = std::array<T, maxSize>;
+		using ArrayType = std::array<T, maxSize>;
+		using InnerArrayType = std::array<char, sizeof(T) *maxSize>;
+
+		/// @brief デストラクタを持っているか
+		static constexpr bool kIsHasDestructor = !std::is_trivially_destructible_v<T>;
 
 		ConstVector(uint32_t size = 0u) : size_(size) {}
+
+		// デストラクタ
+		~ConstVector() requires kIsHasDestructor { clear(); }	// デストラクタがある場合は実行してから破棄する
+		~ConstVector() requires not kIsHasDestructor = default;	// デストラクタが無い場合はそのまま破棄する
 
 		template <SoLib::IsContainsType<T> U>
 		ConstVector(const U &cont) { *this = cont; }
@@ -28,41 +37,45 @@ namespace SoLib {
 			return *this;
 		}
 
-		T &operator[](const uint32_t index) { itemData_[index]; }
-		const T &operator[](const uint32_t index) const { itemData_[index]; }
+		T &operator[](const uint32_t index) { GetArray()[index]; }
+		const T &operator[](const uint32_t index) const { GetArray()[index]; }
 
 		bool ImGuiWidget(const char *const label);
 
 		uint32_t size() const { return size_; }
 
 		void clear() {
-			for (auto &item : itemData_) {
-				std::destroy_at(&item);
+			if constexpr (kIsHasDestructor) {
+				for (uint32_t i = 0u; i < size_; i++) {
+					std::destroy_at(&GetArray()[i]);
+				}
 			}
 			size_ = 0u;
+		}
+
+		bool IsMax()const {
+			return size_ == maxSize;
 		}
 
 		void push_back(const T &other);
 		void push_back(T &&other);
 
-		iterator beginImpl() { return itemData_; }
-		const_iterator beginImpl() const { return itemData_; }
+		iterator beginImpl() { return GetArray().data(); }
+		const_iterator beginImpl() const { return GetArray().data(); }
 
-		iterator endImpl() { return itemData_ + size_; }
-		const_iterator endImpl() const { return itemData_ + size_; }
+		iterator endImpl() { return GetArray().data() + size_; }
+		const_iterator endImpl() const { return GetArray().data() + size_; }
 
-		/*T *const data() { return itemData_.data(); }
-		const T *const data() const { return itemData_.data(); }
+		T &at(uint32_t index) { return GetArray()[index]; }
+		const T &at(uint32_t index) const { return GetArray()[index]; }
 
-		ConstArrayType::iterator begin() { return itemData_.begin(); }
-		ConstArrayType::const_iterator begin() const { return itemData_.begin(); }
-
-		ConstArrayType::iterator end() { return itemData_.begin() + size_; }
-		ConstArrayType::const_iterator end() const { return itemData_.begin() + size_; }*/
 
 	private:
+
+		ArrayType &GetArray() { return *reinterpret_cast<ArrayType *>(itemData_.data()); }
+		const ArrayType &GetArray() const { return *reinterpret_cast<const ArrayType *>(itemData_.data()); }
 		// 配列
-		std::array<T, maxSize> itemData_;
+		alignas(alignof(T)) InnerArrayType itemData_ {};
 		uint32_t size_;
 	};
 
@@ -74,7 +87,7 @@ namespace SoLib {
 		bool isChanged = false;
 
 		for (uint32_t i = 0; i < size_; i++) {
-			isChanged |= SoLib::ImGuiWidget((label + std::to_string(i)).c_str(), &itemData_[i]);
+			isChanged |= SoLib::ImGuiWidget((label + std::to_string(i)).c_str(), &GetArray()[i]);
 		}
 
 		return isChanged;
@@ -89,8 +102,10 @@ namespace SoLib {
 	template<SoLib::IsNotPointer T, uint32_t maxSize>
 	inline void ConstVector<T, maxSize>::push_back(const T &other) {
 		if (maxSize > size_) {
-
-			itemData_[size_++] = other;
+			// 対象となるアドレス
+			T *itemPtr = &GetArray()[size_++];
+			// 配置new
+			new(itemPtr)T{ other };
 
 		}
 	}
@@ -99,7 +114,10 @@ namespace SoLib {
 	inline void ConstVector<T, maxSize>::push_back(T &&other) {
 		if (maxSize > size_) {
 
-			itemData_[size_++] = std::move(other);
+			// 対象となるアドレス
+			T *itemPtr = &GetArray()[size_++];
+			// 配置new
+			new(itemPtr)T{ std::move(other) };
 
 		}
 	}

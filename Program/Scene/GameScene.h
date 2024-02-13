@@ -24,6 +24,7 @@
 #include "../Header/Object/Ground.h"
 #include "../Header/Entity/Entity.h"
 #include "../Header/Object/Particle/ParticleManager.h"
+#include "../Utils/Containers/UnChainVector.h"
 
 class GameScene : public IScene {
 public:
@@ -63,6 +64,8 @@ private:
 	Ground ground_{ 0.f, Vector2{100.f,100.f} };
 
 	std::unique_ptr<ECS::Prefab> enemyPrefab_ = nullptr;
+
+	SoLib::UnChainVector<uint32_t> unVector_;
 
 	Camera3D *followCamera_;
 

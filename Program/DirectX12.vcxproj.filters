@@ -734,6 +734,12 @@
     <ClInclude Include="Scene\CGTaskScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Containers\Manager.h">
+      <Filter>Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Containers\UnChainVector.h">
+      <Filter>Utils\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

@@ -90,17 +90,17 @@ public: // パブリックメンバ変数
 	// オフセット
 	Vector3 offset_ = { 0.0f, 0.0f, 0.0f };
 
-	// 発生座標ターゲット
-	const BaseTransform* targetTransform_ = nullptr;
-
 	// 終了しているか
 	bool isEnd_ = false;
 
-	// エミッタのタイマー
-	SoLib::DeltaTimer emitAliveTimer_;
-
 	// ループトリガー
 	bool isLoop_ = false;
+
+	// 発生座標ターゲット
+	const BaseTransform* targetTransform_ = nullptr;
+
+	// エミッタのタイマー
+	SoLib::DeltaTimer emitAliveTimer_;
 
 #pragma endregion
 
