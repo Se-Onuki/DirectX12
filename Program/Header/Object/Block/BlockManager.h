@@ -5,6 +5,7 @@
 #include "../../../Engine/DirectBase/Model/ModelManager.h"
 #include "../Particle.h"
 #include "../../Utils/Graphics/Color.h"
+#include "../../Utils/Containers/Singleton.h"
 
 class IBlock {
 public: // コンストラクタ
@@ -103,8 +104,7 @@ private: // メンバ変数
 /// <summary>
 /// ステージ上のブロックをインスタンシングで描画するマネージャ
 /// </summary>
-class BlockManager
-{
+class BlockManager : public SoLib::Singleton<BlockManager> {
 private: // コンストラクタ等
 
 	// シングルトンパターンの設定
@@ -114,15 +114,16 @@ private: // コンストラクタ等
 	const BlockManager &operator=(const BlockManager &) = delete;
 
 public: // メンバ関数
+	friend SoLib::Singleton<BlockManager>;
 
-	/// <summary>
+	/*/// <summary>
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>シングルトンインスタンス</returns>
 	static BlockManager *GetInstance() {
 		static BlockManager instance;
 		return &instance;
-	};
+	};*/
 
 	/// <summary>
 	/// 初期化関数

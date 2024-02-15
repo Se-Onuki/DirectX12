@@ -36,6 +36,8 @@ namespace SoLib {
 
 	public:
 
+
+
 		/// @brief アイテムの取得
 		/// @param index 添え字
 		/// @return アイテムのアドレス
