@@ -2,6 +2,7 @@
 #include "ISystem.h"
 #include <list>
 #include <memory>
+#include <array>
 
 namespace ECS {
 
@@ -21,7 +22,9 @@ namespace ECS {
 		void Update(const float deltaTime);
 
 	private:
-		std::list<std::unique_ptr<ECS::ISystem>> systemList_;
+
+		std::array<std::array<std::list<std::unique_ptr<ECS::ISystem>>, 2u>, static_cast<uint32_t>(SimulationSystemGroup::kMaxSize)> systemList_;
+
 
 	};
 

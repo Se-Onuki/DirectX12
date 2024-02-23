@@ -127,6 +127,9 @@
     <Filter Include="Header\Object\SkyDome">
       <UniqueIdentifier>{e5ac1d12-cd78-4c1b-88be-cc904778dc1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Thread">
+      <UniqueIdentifier>{adf22241-dcde-48d5-b8dc-0cbdd655e5ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -739,6 +742,12 @@
     </ClInclude>
     <ClInclude Include="Utils\Containers\UnChainVector.h">
       <Filter>Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Math\TransformMatrix.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Thread\ThreadPool.h">
+      <Filter>Engine\Thread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

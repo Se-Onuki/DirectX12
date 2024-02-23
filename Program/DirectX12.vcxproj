@@ -278,6 +278,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Render\Render.h" />
     <ClInclude Include="Engine\DirectBase\String\String.h" />
     <ClInclude Include="Engine\DirectBase\Texture\Texture.h" />
+    <ClInclude Include="Engine\DirectBase\Thread\ThreadPool.h" />
     <ClInclude Include="Engine\SolEngine.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
@@ -336,6 +337,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\Math\Random.h" />
     <ClInclude Include="Utils\Math\SimdCalc.h" />
     <ClInclude Include="Utils\Math\Transform.h" />
+    <ClInclude Include="Utils\Math\TransformMatrix.h" />
     <ClInclude Include="Utils\Math\ValueRange.h" />
     <ClInclude Include="Utils\Math\Vector2.h" />
     <ClInclude Include="Utils\Math\Vector3.h" />
