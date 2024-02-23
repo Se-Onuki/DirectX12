@@ -87,8 +87,8 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
-	*playerPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
-	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor {.y = 1.f}, .radius = 1.f} };
+	*playerPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
+	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor = Vector3::up, .radius = 1.f} };
 	*playerPrefab_ += ECS::PlayerTag{};
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::WeaponComp{ .collision_{.radius = 1.f} };
@@ -102,7 +102,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::TransformMatComp{};
 	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
 	// *enemyPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
-	*enemyPrefab_ += ECS::GravityComp{ .gravity_{.y = -9.8f} };
+	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
 	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
 
@@ -184,12 +184,6 @@ void GameScene::Update() {
 		entityManager_->CreateEntity(*enemyPrefab_);
 		spawnTimer_.Start();
 	}
-
-	if (input_->GetXInput()->IsTrigger(KeyCode::START)) {
-		sceneManager_->ChangeScene<TitleScene>(1.f);
-		Fade::GetInstance()->Start(Vector2{}, 0x000000FF, 1.f);
-	}
-
 	// もし生存フラグが折れていたら、配列から削除
 	world_->erase_if(std::function<bool(ECS::Entity *, ECS::IsAlive *)>(
 		[](ECS::Entity *, ECS::IsAlive *a)
@@ -396,7 +390,7 @@ void GameScene::Update() {
 
 		*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
 		mat->transformMat_ *= billboardMat;
-		*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3]) = *pos;
+		*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3].data()) = *pos;
 
 	}
 
@@ -447,7 +441,7 @@ void GameScene::Update() {
 
 		boneModel_.Draw(matrixArray);
 
-		weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_.GetIndex("Sword", 0)].m[3]);
+		weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_.GetIndex("Sword", 0)].m[3].data());
 	}
 
 	for (const auto &[entity, scale, quate, pos, mat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {

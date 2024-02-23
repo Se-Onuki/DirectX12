@@ -49,7 +49,7 @@ void GameObject::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
 
 const Vector3 &GameObject::GetWorldPos() {
 	transform_.CalcMatrix();
-	return *reinterpret_cast<Vector3 *>(transform_.matWorld_.m[3]);
+	return *reinterpret_cast<Vector3 *>(transform_.matWorld_.m[3].data());
 }
 
 void GameObject::OnCollision(GameObject *const other) {

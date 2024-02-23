@@ -11,11 +11,21 @@
 struct Matrix4x4;
 
 struct Vector3 {
-	// Vector3(float x = 0.f, float y = 0.f, float z = 0.f) : x(x), y(y), z(z) {}
 
-	float x;
-	float y;
-	float z;
+#pragma warning(push)  // 現在の警告のステータスを保存する
+#pragma warning(disable : 4201)  // C4201警告を無視する
+
+	union {
+		struct {
+			float x, y, z;
+		};
+		std::array<float, 3u> arr;
+	};
+
+#pragma warning(pop)  // 以前の警告のステータスに戻す
+
+	Vector3() = default;
+	Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
 
 	/// <summary>
 	/// ベクトルをデバック表示する
@@ -149,12 +159,12 @@ struct Vector3 {
 
 	/// @brief 暗黙的な配列への変換
 	inline operator std::array<float, 3u> &() noexcept {
-		return *reinterpret_cast<std::array<float, 3u>*>(&x);
+		return arr;
 	}
 
 	/// @brief 暗黙的な配列への変換
 	inline operator const std::array<float, 3u> &() const noexcept {
-		return *reinterpret_cast<const std::array<float, 3u>*>(&x);
+		return arr;
 	}
 
 	static uint32_t size() { return 3u; }
@@ -178,9 +188,10 @@ struct Vector3 {
 
 	Vector3 &operator=(const nlohmann::json &jsonArray) {
 		if (jsonArray.is_array() && jsonArray.size() == 3u) {
-			x = jsonArray[0];
+			arr = jsonArray;
+			/*x = jsonArray[0];
 			y = jsonArray[1];
-			z = jsonArray[2];
+			z = jsonArray[2];*/
 		}
 		else {
 			*this = Vector3::zero;

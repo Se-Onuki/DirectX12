@@ -221,6 +221,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Utils\Math\Quaternion.cpp" />
     <ClCompile Include="Utils\Math\Random.cpp" />
     <ClCompile Include="Utils\Math\Transform.cpp" />
+    <ClCompile Include="Utils\Math\TransformMatrix.cpp" />
     <ClCompile Include="Utils\Math\ValueRange.cpp" />
     <ClCompile Include="Utils\Math\Vector2.cpp" />
     <ClCompile Include="Utils\Math\Vector3.cpp" />
@@ -241,6 +242,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ECS\Entity\Prefab.h" />
     <ClInclude Include="ECS\MultiArray.h" />
     <ClInclude Include="ECS\System\ISystem.h" />
+    <ClInclude Include="ECS\System\System.h" />
     <ClInclude Include="ECS\System\SystemManager.h" />
     <ClInclude Include="ECS\System\Systems.h" />
     <ClInclude Include="ECS\World\World.hpp" />
@@ -318,6 +320,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Utils\Containers\Array2D.h" />
     <ClInclude Include="Utils\Containers\ConstVector.h" />
+    <ClInclude Include="Utils\Containers\CustomVectors.h" />
     <ClInclude Include="Utils\Containers\Manager.h" />
     <ClInclude Include="Utils\Containers\Singleton.h" />
     <ClInclude Include="Utils\Containers\UnChainVector.h" />

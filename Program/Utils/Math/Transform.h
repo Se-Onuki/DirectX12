@@ -32,7 +32,7 @@ struct BaseTransform {
 
 public:
 
-	const Vector3 &GetGrobalPos() const { return *reinterpret_cast<const Vector3 *const>(matWorld_.m[3]); }
+	const Vector3 &GetGrobalPos() const { return *reinterpret_cast<const Vector3 *const>(matWorld_.m[3].data()); }
 
 	Matrix4x4 Affine() const;
 

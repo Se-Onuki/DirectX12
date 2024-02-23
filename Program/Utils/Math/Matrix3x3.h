@@ -2,6 +2,7 @@
 #include <array>
 #include <cstdint>
 #include <immintrin.h>
+#include "Vector3.h"
 
 struct Matrix3x3 {
 	inline Matrix3x3() = default;
@@ -11,20 +12,26 @@ struct Matrix3x3 {
 	using iterator = float *;
 	using const_iterator = const float *;
 
-	std::array<std::array<float, 3u>, 3u> m;
+#pragma warning(push)  // 現在の警告のステータスを保存する
+#pragma warning(disable : 4201)  // C4201警告を無視する
+
+	// 無名共用体
+	union {
+		std::array<float, 9u> arr;
+		std::array<std::array<float, 3u>, 3u> m;
+		std::array<Vector3, 3u> vec;
+	};
+	
+#pragma warning(pop)  // 以前の警告のステータスに戻す
 
 	//void Printf(const int &x, const int &y) const;
 
-	/// <summary>
-	/// 逆行列関数
-	/// </summary>
-	/// <returns>逆行列</returns>
+	/// @brief 逆行列関数
+	/// @return 逆行列
 	Matrix3x3 Inverse() const;
 
-	/// <summary>
-	/// 転置行列
-	/// </summary>
-	/// <returns>転置行列</returns>
+	/// @brief 転置行列
+	/// @return 転置行列
 	Matrix3x3 Transpose() const;
 
 	Matrix3x3 operator+(const Matrix3x3 &Second) const;

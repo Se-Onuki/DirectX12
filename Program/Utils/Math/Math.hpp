@@ -3,8 +3,8 @@
 #include <numbers>
 
 #include "Angle.h"
-#include "Quaternion.h"
 #include "Euler.h"
+#include "Quaternion.h"
 struct Polar;
 
 struct Vector2;
@@ -14,24 +14,21 @@ struct Matrix2x2;
 struct Matrix3x3;
 struct Matrix4x4;
 
-//static const Vector2 TextSize{ 50, 20 };
-
-
+// static const Vector2 TextSize{ 50, 20 };
 
 /// <summary>
 /// 極座標系をベクトルに変換する。
 /// </summary>
 /// <param name="Polar">極座標</param>
 /// <returns>ベクトル</returns>
-Vector2 operator <<(Vector2 &vec2, const Polar &Polar);
+Vector2 operator<<(Vector2 &vec2, const Polar &Polar);
 
 /// <summary>
 /// ベクトルを極座標系に変換する。
 /// </summary>
 /// <param name="Vector">ベクトル</param>
 /// <returns>極座標クラス</returns>
-Polar operator <<(Polar &Polar, const Vector2 &vec2);
-
+Polar operator<<(Polar &Polar, const Vector2 &vec2);
 
 /// <summary>
 /// 回転行列作成関数
@@ -39,7 +36,6 @@ Polar operator <<(Polar &Polar, const Vector2 &vec2);
 /// <param name="theta">radian角度</param>
 /// <returns>2x2の回転行列</returns>
 Matrix2x2 MakeRotateMatrix(const float &theta);
-
 
 // <summary>
 /// 拡縮行列作成関数
@@ -62,7 +58,6 @@ Matrix4x4 MakeScaleMatrix(const Vector3 &scale);
 /// <returns>3x3の回転行列</returns>
 Matrix3x3 MakeRotateMatrix3x3(const float &theta);
 
-
 /// <summary>
 /// 平行移動行列の作成関数
 /// </summary>
@@ -70,14 +65,12 @@ Matrix3x3 MakeRotateMatrix3x3(const float &theta);
 /// <returns>同次座標系</returns>
 Matrix3x3 MakeTranslateMatrix(const Vector2 &translate);
 
-
 /// <summary>
 /// 平行移動行列の作成関数
 /// </summary>
 /// <param name="translate">変換元のベクトル</param>
 /// <returns>同次座標系</returns>
 Matrix4x4 MakeTranslateMatrix(const Vector3 &translate);
-
 
 /// <summary>
 /// アフィン行列の作成関数
@@ -94,7 +87,7 @@ Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vecto
 ///// <param name="vector">合成前のベクトル</param>
 ///// <param name="matrix">同次座標系の平行移動行列</param>
 ///// <returns>合成したベクトル</returns>
-//Vector2 Transform(const Vector2 &vector, const Matrix3x3 &matrix);
+// Vector2 Transform(const Vector2 &vector, const Matrix3x3 &matrix);
 //
 ///// <summary>
 ///// ベクトルと同次座標系の合成
@@ -102,7 +95,7 @@ Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vecto
 ///// <param name="vector">合成前のベクトル</param>
 ///// <param name="matrix">同次座標系の平行移動行列</param>
 ///// <returns>合成したベクトル</returns>
-//Vector3 Transform(const Vector3 &vector, const Matrix4x4 &matrix);
+// Vector3 Transform(const Vector3 &vector, const Matrix4x4 &matrix);
 
 /// <summary>
 /// 正射影行列
@@ -120,16 +113,15 @@ Matrix3x3 MakeOrthographicMatrix(const Vector2 &LeftTop, const Vector2 &RightBot
 /// <returns>ビューポート行列</returns>
 Matrix3x3 MakeViewportMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom);
 
-
 /// @brief ベクトルの向きのみの回転
 /// @param v 元ベクトル
 /// @param m ワールド行列
 /// @return 回転したベクトル
 Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m);
 
-//float GetRandom(const float min, const float max);
+// float GetRandom(const float min, const float max);
 
-//namespace Angle {
+// namespace Angle {
 //
 //	struct Digree {
 //		float digree;
@@ -153,24 +145,38 @@ Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m);
 //	float Mod(float radian);
 //	Vector3 Mod(const Vector3 &euler);
 //
-//	//enum class 
+//	//enum class
 //
-//} // namespace Angle
+// } // namespace Angle
 
 namespace SoLib {
 
-	namespace Math {
+    namespace Math {
 
-		Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &transform);
-		Matrix4x4 Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform);
+        Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &transform);
+        Matrix4x4 Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform);
 
+        Quaternion MakeQuaternion(const SoLib::Math::Euler &euler);
 
-		Quaternion MakeQuaternion(const SoLib::Math::Euler &euler);
+        Vector3 EulerToDirection(const SoLib::Math::Euler &euler);
 
-		Vector3 EulerToDirection(const SoLib::Math::Euler &euler);
+        SoLib::Math::Euler DirectionToEuler(const Vector3 &direction);
 
-		SoLib::Math::Euler DirectionToEuler(const Vector3 &direction);
+    }
 
-	}
+}
 
+inline Vector3 operator*(const Vector3 &left, const Matrix3x3 &right)
+{
+    Vector3 result;
+
+    // 転置した行列
+    const Matrix3x3 tpMat = right.Transpose();
+
+    // ドット積で代入
+    for (uint32_t i = 0u; i < 3u; i++) {
+        result.arr[i] = left * tpMat.vec[i];
+    }
+
+    return result;
 }

@@ -76,7 +76,7 @@ public:
 	struct SimpleTransform {
 		Vector3 scale_ = Vector3::one;
 		Quaternion rotate_ = Quaternion::Identity;
-		Vector3 translate_;
+		Vector3 translate_{};
 
 		bool ImGuiWidget(const char *const label);
 

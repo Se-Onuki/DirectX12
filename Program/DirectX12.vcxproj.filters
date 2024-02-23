@@ -393,6 +393,9 @@
     <ClCompile Include="Scene\CGTaskScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Math\TransformMatrix.cpp">
+      <Filter>Utils\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">
@@ -748,6 +751,12 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Thread\ThreadPool.h">
       <Filter>Engine\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\System\System.h">
+      <Filter>ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Containers\CustomVectors.h">
+      <Filter>Utils\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

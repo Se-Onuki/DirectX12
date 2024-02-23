@@ -99,7 +99,7 @@ void ParticleList::Update(float deltaTime)
 	for (auto &particle : particles_) {
 		particle->Update(deltaTime);
 		particle->transform_.matWorld_ *= billboardMat;
-		*reinterpret_cast<Vector3 *>(particle->transform_.matWorld_.m[3]) = particle->GetTransform().translate;
+		*reinterpret_cast<Vector3 *>(particle->transform_.matWorld_.m[3].data()) = particle->GetTransform().translate;
 	}
 }
 

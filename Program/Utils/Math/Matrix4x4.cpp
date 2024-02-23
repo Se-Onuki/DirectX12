@@ -45,13 +45,15 @@ Matrix4x4 Matrix4x4::Inverse() const {
 }
 
 Matrix4x4 Matrix4x4::InverseRT() const {
+
+	const __m128 &mm3 = _mm_load_ps(m[3].data());
 	return Matrix4x4{
 		{m[0][0], m[1][0], m[2][0], 0.f},
 		{m[0][1], m[1][1], m[2][1], 0.f},
 		{m[0][2], m[1][2], m[2][2], 0.f},
-		{-_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[3]), _mm_load_ps(m[0]), 0x71)),
-		 -_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[3]), _mm_load_ps(m[1]), 0x71)),
-		 -_mm_cvtss_f32(_mm_dp_ps(_mm_load_ps(m[3]), _mm_load_ps(m[2]), 0x71)), 1.f}
+		{-_mm_cvtss_f32(_mm_dp_ps(mm3, _mm_load_ps(m[0].data()), 0x71)),
+		 -_mm_cvtss_f32(_mm_dp_ps(mm3, _mm_load_ps(m[1].data()), 0x71)),
+		 -_mm_cvtss_f32(_mm_dp_ps(mm3, _mm_load_ps(m[2].data()), 0x71)), 1.f}
 	};
 };
 
@@ -65,24 +67,33 @@ Matrix4x4 Matrix4x4::Transpose() const {
 }
 
 Matrix4x4 Matrix4x4::Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate) {
+	enum SinCos {
+		kSin,
+		kCos,
+	};
+
+	const std::array<float, 2u> rotX{ std::sin(rotate.x),std::cos(rotate.x) };
+	const std::array<float, 2u> rotY{ std::sin(rotate.y),std::cos(rotate.y) };
+	const std::array<float, 2u> rotZ{ std::sin(rotate.z),std::cos(rotate.z) };
+
 	return Matrix4x4{
-		scale.x * (std::cos(rotate.y) * std::cos(rotate.z)),
-		scale.x * (std::cos(rotate.y) * std::sin(rotate.z)),
-		scale.x * (-std::sin(rotate.y)),
+		scale.x * (rotY[kCos] * rotZ[kCos]),
+		scale.x * (rotY[kCos] * rotZ[kSin]),
+		scale.x * (-rotY[kSin]),
 		0,
 
-		scale.y * (std::sin(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) -
-				   std::cos(rotate.x) * std::sin(rotate.z)),
-		scale.y * (std::sin(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) +
-				   std::cos(rotate.x) * std::cos(rotate.z)),
-		scale.y * (std::sin(rotate.x) * std::cos(rotate.y)),
+		scale.y * (rotX[kSin] * rotY[kSin] * rotZ[kCos] -
+				   rotX[kCos] * rotZ[kSin]),
+		scale.y * (rotX[kSin] * rotY[kSin] * rotZ[kSin] +
+				   rotX[kCos] * rotZ[kCos]),
+		scale.y * (rotX[kSin] * rotY[kCos]),
 		0,
 
-		scale.z * (std::cos(rotate.x) * std::sin(rotate.y) * std::cos(rotate.z) +
-				   std::sin(rotate.x) * std::sin(rotate.z)),
-		scale.z * (std::cos(rotate.x) * std::sin(rotate.y) * std::sin(rotate.z) -
-				   std::sin(rotate.x) * std::cos(rotate.z)),
-		scale.z * (std::cos(rotate.x) * std::cos(rotate.y)),
+		scale.z * (rotX[kCos] * rotY[kSin] * rotZ[kCos] +
+				   rotX[kSin] * rotZ[kSin]),
+		scale.z * (rotX[kCos] * rotY[kSin] * rotZ[kSin] -
+				   rotX[kSin] * rotZ[kCos]),
+		scale.z * (rotX[kCos] * rotY[kCos]),
 		0,
 
 		translate.x,

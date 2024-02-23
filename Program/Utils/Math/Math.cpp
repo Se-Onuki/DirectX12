@@ -231,7 +231,7 @@ Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion
 	for (uint8_t i = 0u; i < 3u; i++) {
 		matItr[i] *= scale.data()[i];
 	}
-	*reinterpret_cast<Vector3 *>(result.m[3]) = transform;
+	*reinterpret_cast<Vector3 *>(result.m[3].data()) = transform;
 
 	return result;
 }
