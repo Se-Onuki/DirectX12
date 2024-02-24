@@ -281,3 +281,13 @@ void ECS::System::FollowCameraUpdate::OnUpdate(::World *world, [[maybe_unused]] 
 		}
 	}
 }
+
+void ECS::System::MakeTransMatrix::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+
+	for (const auto &[entity, scale, quate, pos, mat] : world->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
+
+		mat->transformMat_ = SoLib::Math::Affine(*scale, quate->quateRot_.Normalize(), *pos);
+
+	}
+
+}

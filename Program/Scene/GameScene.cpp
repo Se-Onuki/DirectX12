@@ -162,6 +162,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::BoneAnimationCalc>()->boneModel_ = &boneModel_;
 	systemManager_.AddSystem<ECS::System::BoneCollision>()->boneModel_ = &boneModel_;
 	systemManager_.AddSystem<ECS::System::FollowCameraUpdate>();
+	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
 
 }
 
@@ -176,21 +177,6 @@ void GameScene::Update() {
 
 	ImGui::Text("XInput左スティックで移動");
 	ImGui::Text("エンティティ数 / %lu", world_->size());
-
-	static SoLib::Color::HSV4 testColor;
-
-	ImGui::ColorEdit4("TestColor", testColor, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_PickerHueWheel);
-	SoLib::ImGuiWidget("SoLibColor", &testColor);
-
-	const SoLib::Math::Euler eulerRotate{ -30._deg,90._deg,180._deg };
-
-
-	ImGui::Text("%s", SoLib::to_string(Vector3::front * Matrix4x4::EulerRotate(eulerRotate)).c_str());
-	ImGui::Text("%s", SoLib::to_string(Matrix4x4::EulerRotate(eulerRotate).GetFront()).c_str());
-	ImGui::Text("%s", SoLib::to_string(Quaternion::RotateVector(Vector3::front, SoLib::MakeQuaternion(eulerRotate))).c_str());
-	ImGui::Text("%s", SoLib::to_string(Vector3::front * SoLib::MakeQuaternion(eulerRotate).MakeRotateMatrix()).c_str());
-	ImGui::Text("%s", SoLib::to_string(SoLib::EulerToDirection(eulerRotate)).c_str());
-	ImGui::Text("%s", SoLib::to_string(Quaternion::LookAt(SoLib::EulerToDirection(eulerRotate)).RotateVector(Vector3::front)).c_str());
 
 	light_->ImGuiWidget();
 	gameObject_.GetComponent<ModelComp>()->GetBone("Body")->ImGuiWidget();
@@ -215,296 +201,17 @@ void GameScene::Update() {
 
 	systemManager_.Update(world_.get(), deltaTime);
 
-	//for (const auto &[entity, aliveTime, lifeLimit, isAlive] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
-	//	// もし寿命が定められていたら
-	//	if (lifeLimit->lifeLimit_ >= 0.f) {
-	//		// 寿命を超過していたら
-	//		if (lifeLimit->lifeLimit_ < aliveTime->aliveTime_) {
-	//			// 死ぬ
-	//			isAlive->isAlive_ = false;
-	//		}
-	//	}
-	//}
-
-	//for (const auto &[entity, aliveTime] : world_->view<ECS::AliveTime>()) {
-	//	// 生存時間を加算
-	//	aliveTime->aliveTime_ += deltaTime;
-	//}
-
-	//for (const auto &[entity, animate] : world_->view<ECS::AnimateParametor>()) {
-	//	auto &timer = animate->timer_;
-
-	//	// 動作パラメータを追加
-	//	timer.Update(deltaTime);
-
-	//	if (timer.IsActive() && timer.IsFinish()) {
-	//		// 次のアニメーションの情報を格納
-
-	//		// 仮実装なので、マジックナンバーで行う
-	//		if (animate->animIndex_ == 0u) {
-	//			animate->animIndex_ = 1u;
-	//			timer.Start();
-	//		}
-	//		else {
-	//			animate->animIndex_ = 0u;
-	//		}
-
-
-	//	}
-	//}
-
-
-	//for (const auto &[entity, aliveTime, lifelimit, colorLerp, color] : world_->view<ECS::AliveTime, ECS::LifeLimit, ECS::ColorLarp, ECS::Color>()) {
-	//	color->color_ = colorLerp->EaseColor(aliveTime->aliveTime_ / lifelimit->lifeLimit_);
-	//}
-
-	//for (const auto &[entity, acceleration, gravity] : world_->view<ECS::AccelerationComp, ECS::GravityComp>()) {
-
-	//	acceleration->acceleration_ += gravity->gravity_ * deltaTime;
-
-	//}
-
-	//for (const auto &[entity, velocity, acceleration] : world_->view<ECS::VelocityComp, ECS::AccelerationComp>()) {
-
-	//	velocity->velocity_ += acceleration->acceleration_;
-	//	acceleration->acceleration_ = {};
-
-	//}
-
-	//for (const auto &[entity, pos, velocity] : world_->view<ECS::PositionComp, ECS::VelocityComp>()) {
-
-	//	pos->position_ += velocity->velocity_ * deltaTime;
-
-	//}
-
-	//{
-	//	Vector3 playerPos{};
-	//	for (const auto &[entity, player, plPos] : world_->view<const ECS::PlayerTag, const ECS::PositionComp>()) {
-	//		playerPos = *plPos;
-	//	}
-
-	//	for (const auto &[entity, enemy, pos, rotate] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp>()) {
-	//		Vector3 direction = (playerPos - pos->position_).Nomalize() * 100.f * powDeltaTime;
-	//		direction.y = 0.f;
-	//		pos->position_ += direction;
-
-	//		rotate->quateRot_ = Quaternion::LookAt(direction);
-
-	//	}
-	//}
-
-	//for (const auto &[entity, collision, pos, velocity] : world_->view<ECS::CollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
-	//	const auto &[isLanding] = entityManager_->GetComponent<ECS::IsLanding>(*entity);
-
-	//	// 地面より座標が下なら
-	//	if ((pos->position_.y + collision->collision_.centor.y - collision->collision_.radius) < ground_.hight_) {
-	//		// 地面の上に当たり判定を上にする
-	//		pos->position_.y = ground_.hight_ - collision->collision_.centor.y + collision->collision_.radius;
-	//		// もし落下していたら
-	//		if (velocity->velocity_.y < 0.f) {
-	//			// 移動速度を0にする
-	//			velocity->velocity_.y = 0.f;
-	//		}
-
-	//		if (isLanding) {
-	//			isLanding->isLanding_ = true;
-	//		}
-	//	}
-	//	else {
-
-	//		if (isLanding) {
-	//			isLanding->isLanding_ = false;
-	//		}
-	//	}
-	//}
-
-	/*{
-		std::list<const ECS::WeaponComp *> weaponList{};
-
-		for (const auto &[entity, weapon] : world_->view<const ECS::WeaponComp>()) {
-			weaponList.push_back(weapon);
-		}
-
-		for (const auto &[entity, enemy, pos, collision, isAlive] : world_->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::IsAlive>()) {
-
-			Sphere sphere = collision->collision_;
-			sphere.centor += *pos;
-
-			for (const auto *weapon : weaponList) {
-				if (Collision::IsHit(sphere, weapon->collision_)) {
-					isAlive->isAlive_ = false;
-
-					soundA_.Play(false, 1.f);
-
-					for (uint32_t i = 0u; i < 10u; i++) {
-						auto particle = particleManager_->AddParticle<TestParticle>(model_, sphere.centor);
-						particle->SetAliveTime(Random::GetRandom<float>(0.5f, 1.5f));
-						particle->acceleration_ = SoLib::Math::EulerToDirection(Vector3{ Random::GetRandom<float>(-Angle::hPI,Angle::hPI),Random::GetRandom<float>(-Angle::PI,Angle::PI),0.f }) * Random::GetRandom<float>(10.f, 20.f);
-						particle->transform_.scale = Vector3::one * 5.f;
-					}
-				}
-			}
-
-		}
-	}*/
-
-	/*for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding>()) {
-		const auto *const camera = cameraManager_->GetCamera("FollowCamera");
-		const Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
-		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
-		const Vector3 rotateInput = Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y).RotateVector(input3d);
-		pos->position_ += rotateInput * (500.f * powDeltaTime);
-
-		if (input3d.LengthSQ()) {
-			quateRot->quateRot_ = Quaternion::LookAt(rotateInput);
-		}
-
-		if (isLanding->isLanding_ && input_->GetXInput()->IsTrigger(KeyCode::A)) {
-			acceleration->acceleration_.y += 10.f;
-		}
-
-		if (animate->animIndex_ == 0u && animate->timer_.IsFinish()) {
-			if (input_->GetXInput()->GetState()->triggerR_ > 0.5f) {
-				animate->timer_.Start(0.5f);
-			}
-		}
-	}*/
-
-
-
-	//for (const auto &[entity, pos, rot, scale, emitterComp] : world_->view<ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::EmitterComp>()) {
-
-	//	//*transMat = Matrix4x4::Affine(*scale, rot->rotate_, *pos);
-
-	//	SoLib::ImGuiWidget("Emitter : Pos", &pos->position_);
-	//	SoLib::ImGuiWidget("Emitter", emitterComp);
-
-	//	emitterComp->frequency_.Update(deltaTime);
-	//	if (emitterComp->frequency_.IsFinish()) {
-	//		emitterComp->frequency_.Start();
-	//		auto particleList = entityManager_->CreateEntity<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>(emitterComp->count_);
-
-	//		for (const auto &particle : particleList) {
-	//			const auto &[cId, cModel, cLifeLimit, cPos, cVelocity, colorLerp] = entityManager_->GetComponent<ECS::Identifier, ECS::ModelComp, ECS::LifeLimit, ECS::PositionComp, ECS::VelocityComp, ECS::ColorLarp>(particle);
-
-	//			cModel->model_ = model_;
-	//			cLifeLimit->lifeLimit_ = emitterComp->spawnLifeLimit_.Random();
-
-	//			SoLib::Math::Euler fireDir = emitterComp->spawnRange_;
-	//			for (auto &item : fireDir) {
-	//				item = Random::GetRandom<float>(-item, item);
-	//			}
-
-	//			Vector3 direction = SoLib::Math::EulerToDirection(fireDir);
-
-	//			*cVelocity = direction * emitterComp->spawnPower_.Random()/* * Matrix4x4::EulerRotate(fireDir)*/;
-
-	//			*cPos = *pos;
-
-	//			colorLerp->start_ = emitterComp->startColor_;
-	//			colorLerp->end_ = emitterComp->endColor_;
-
-	//		}
-	//	}
-	//}
-
-	//Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
-
-	//for (const auto &[entity, scale, rotate, pos, mat, billboardRot] : world_->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
-
-	//	*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
-	//	mat->transformMat_ *= billboardMat;
-	//	*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3].data()) = *pos;
-
-	//}
-
-	//for (const auto &[entity, scale, quate, pos, bone, animate] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::AnimateParametor>()) {
-
-	//	bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
-
-	//	// 頭のパラメータ
-	//	{
-	//		auto &head = bone->boneTransform_[boneModel_.GetIndex("Head")];
-	//		head.translate_.y = 2.f;
-	//		head.scale_ = Vector3::one * 0.5f;
-	//	}
-
-	//	// 体のパラメータ
-	//	{
-	//		auto &body = bone->boneTransform_[boneModel_.GetIndex("Body", 0)];
-
-	//		body.scale_ = { 0.75f,1.f,0.75f };
-	//	}
-
-	//	// 剣のパラメータ
-	//	{
-	//		auto &swordModel = bone->boneTransform_[boneModel_.GetIndex("Sword", 0)];
-
-	//		swordModel.translate_.y = 3.f;
-
-	//		swordModel.scale_ = { 0.25f,1.f,0.25f };
-
-
-	//		auto &sword = bone->boneTransform_[boneModel_.GetIndex("Sword")];
-
-	//		if (not animate->timer_.IsFinish()) {
-	//			if (animate->animIndex_ == 0u) {
-	//				sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(animate->timer_.GetProgress()));
-	//			}
-	//			else {
-	//				sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(1.f - animate->timer_.GetProgress()));
-	//			}
-	//		}
-	//	}
-
-
-	//}
-
-	//for (const auto &[entity, bone, weapon] : world_->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
-	//	auto matrixArray = boneModel_.CalcTransMat(bone->boneTransform_);
-
-	//	boneModel_.Draw(matrixArray);
-
-	//	weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_.GetIndex("Sword", 0)].m[3].data());
-	//}
-
-	for (const auto &[entity, scale, quate, pos, mat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
-
-		mat->transformMat_ = SoLib::Math::Affine(*scale, quate->quateRot_.Normalize(), *pos);
-
-		//blockRender_->AddBox(boxModel_, IBlock{ .transMat_ = bone->boneTransform_[0].CalcTransMat() });
-
-	}
-
-	for (const auto &[entity, model, translateMat, enemy] : world_->view<const ECS::ModelComp, const ECS::TransformMatComp, const ECS::EnemyTag>()) {
-		blockRender_->AddBox(model->model_, IBlock{ .transMat_ = translateMat->transformMat_ });
-
-	}
-
-	/*static uint32_t index = 0u;
-	SoLib::ImGuiWidget<BoneModel::SimpleTransform, decltype(boneTransform_)>("BoneTransform", &boneTransform_, index);
-
-	boneModel_.Draw(boneModel_.CalcTransMat(boneTransform_));*/
-
 
 	ground_.Draw();
-
-	/*for (const auto &[plEntity, player, pos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
-
-
-		for (const auto &[entity, followCamera, cameraPos] : world_->view<ECS::FollowCamera, ECS::PositionComp>()) {
-			*cameraPos = pos->position_;
-
-			followCamera->rotation_.y += input_->GetXInput()->GetState()->stickR_.x * 90._deg * deltaTime;
-
-			followCamera->TransferData(*cameraManager_->GetCamera("FollowCamera"), *cameraPos);
-		}
-	}*/
 
 	cameraManager_->Update(deltaTime);
 
 	gameObject_.Update(deltaTime);
 
+	for (const auto &[entity, model, translateMat, enemy] : world_->view<const ECS::ModelComp, const ECS::TransformMatComp, const ECS::EnemyTag>()) {
+		blockRender_->AddBox(model->model_, IBlock{ .transMat_ = translateMat->transformMat_ });
+
+	}
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
@@ -542,9 +249,9 @@ void GameScene::Draw() {
 
 	Model::StartDraw(commandList);
 
-	light_->SetLight(commandList);
+	//light_->SetLight(commandList);
 
-	gameObject_.Draw(camera);
+	//gameObject_.Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
 
