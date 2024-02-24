@@ -396,6 +396,9 @@
     <ClCompile Include="Utils\Math\TransformMatrix.cpp">
       <Filter>Utils\Math</Filter>
     </ClCompile>
+    <ClCompile Include="ECS\System\Systems.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imgui.h">

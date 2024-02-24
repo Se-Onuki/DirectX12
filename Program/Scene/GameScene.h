@@ -80,5 +80,4 @@ private:
 	GameObject gameObject_;
 
 	ParticleManager *particleManager_;
-
 };
