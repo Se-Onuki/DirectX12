@@ -162,6 +162,15 @@ namespace SoLib {
 
         SoLib::Math::Euler DirectionToEuler(const Vector3 &direction);
 
+        template <size_t x, size_t y, typename T>
+        void ArrayTranspose(const T *input, T *output) {
+            for (size_t i = 0; i < x; ++i) {
+                for (size_t j = 0; j < y; ++j) {
+                    output[j * x + i] = input[i * y + j];
+                }
+            }
+        }
+
     }
 
 }

@@ -177,14 +177,14 @@ Matrix4x4 Matrix4x4::InverseSRT() const
 		VecSimd{.s = _mm_load_ps(v[3].begin())},
 	};
 
-	constexpr int32_t mask = 0b01110001;
+	constexpr int32_t mask = 0b01111111;
 
 	const VecSimd vecX2 =
-	{ mm[0].v / _mm_cvtss_f32(_mm_dp_ps(mm[0].s, mm[0].s, mask)) };
+	{ .s = _mm_div_ps(mm[0].s , _mm_dp_ps(mm[0].s, mm[0].s, mask)) };
 	const VecSimd vecY2 =
-	{ mm[1].v / _mm_cvtss_f32(_mm_dp_ps(mm[1].s, mm[1].s, mask)) };
+	{ .s = _mm_div_ps(mm[1].s, _mm_dp_ps(mm[1].s, mm[1].s, mask)) };
 	const VecSimd vecZ2 =
-	{ mm[2].v / _mm_cvtss_f32(_mm_dp_ps(mm[2].s, mm[2].s, mask)) };
+	{ .s = _mm_div_ps(mm[2].s, _mm_dp_ps(mm[2].s, mm[2].s, mask)) };
 
 	return Matrix4x4{
 		{vecX2.v.x, vecY2.v.x, vecZ2.v.x, 0.f},
