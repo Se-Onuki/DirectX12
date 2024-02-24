@@ -152,6 +152,16 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::MovePosition>();
 	systemManager_.AddSystem<ECS::System::EnemyMove>();
 	systemManager_.AddSystem<ECS::System::FallCollision>()->ground_ = &ground_;
+	{
+		auto weaponColl = systemManager_.AddSystem<ECS::System::WeaponCollision>();
+		weaponColl->sound_ = soundA_;
+		weaponColl->model_ = model_;
+	}
+	systemManager_.AddSystem<ECS::System::PlayerMove>();
+	systemManager_.AddSystem<ECS::System::BillboardCalc>();
+	systemManager_.AddSystem<ECS::System::BoneAnimationCalc>()->boneModel_ = &boneModel_;
+	systemManager_.AddSystem<ECS::System::BoneCollision>()->boneModel_ = &boneModel_;
+	systemManager_.AddSystem<ECS::System::FollowCameraUpdate>();
 
 }
 
@@ -308,7 +318,7 @@ void GameScene::Update() {
 	//	}
 	//}
 
-	{
+	/*{
 		std::list<const ECS::WeaponComp *> weaponList{};
 
 		for (const auto &[entity, weapon] : world_->view<const ECS::WeaponComp>()) {
@@ -336,9 +346,9 @@ void GameScene::Update() {
 			}
 
 		}
-	}
+	}*/
 
-	for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding>()) {
+	/*for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding] : world_->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding>()) {
 		const auto *const camera = cameraManager_->GetCamera("FollowCamera");
 		const Vector2 inputLs = input_->GetXInput()->GetState()->stickL_;
 		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
@@ -358,7 +368,7 @@ void GameScene::Update() {
 				animate->timer_.Start(0.5f);
 			}
 		}
-	}
+	}*/
 
 
 
@@ -398,65 +408,65 @@ void GameScene::Update() {
 	//	}
 	//}
 
-	Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
+	//Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT();
 
-	for (const auto &[entity, scale, rotate, pos, mat, billboardRot] : world_->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
+	//for (const auto &[entity, scale, rotate, pos, mat, billboardRot] : world_->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
 
-		*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
-		mat->transformMat_ *= billboardMat;
-		*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3].data()) = *pos;
+	//	*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
+	//	mat->transformMat_ *= billboardMat;
+	//	*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3].data()) = *pos;
 
-	}
+	//}
 
-	for (const auto &[entity, scale, quate, pos, bone, animate] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::AnimateParametor>()) {
+	//for (const auto &[entity, scale, quate, pos, bone, animate] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::AnimateParametor>()) {
 
-		bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
+	//	bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
 
-		// 頭のパラメータ
-		{
-			auto &head = bone->boneTransform_[boneModel_.GetIndex("Head")];
-			head.translate_.y = 2.f;
-			head.scale_ = Vector3::one * 0.5f;
-		}
+	//	// 頭のパラメータ
+	//	{
+	//		auto &head = bone->boneTransform_[boneModel_.GetIndex("Head")];
+	//		head.translate_.y = 2.f;
+	//		head.scale_ = Vector3::one * 0.5f;
+	//	}
 
-		// 体のパラメータ
-		{
-			auto &body = bone->boneTransform_[boneModel_.GetIndex("Body", 0)];
+	//	// 体のパラメータ
+	//	{
+	//		auto &body = bone->boneTransform_[boneModel_.GetIndex("Body", 0)];
 
-			body.scale_ = { 0.75f,1.f,0.75f };
-		}
+	//		body.scale_ = { 0.75f,1.f,0.75f };
+	//	}
 
-		// 剣のパラメータ
-		{
-			auto &swordModel = bone->boneTransform_[boneModel_.GetIndex("Sword", 0)];
+	//	// 剣のパラメータ
+	//	{
+	//		auto &swordModel = bone->boneTransform_[boneModel_.GetIndex("Sword", 0)];
 
-			swordModel.translate_.y = 3.f;
+	//		swordModel.translate_.y = 3.f;
 
-			swordModel.scale_ = { 0.25f,1.f,0.25f };
-
-
-			auto &sword = bone->boneTransform_[boneModel_.GetIndex("Sword")];
-
-			if (not animate->timer_.IsFinish()) {
-				if (animate->animIndex_ == 0u) {
-					sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(animate->timer_.GetProgress()));
-				}
-				else {
-					sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(1.f - animate->timer_.GetProgress()));
-				}
-			}
-		}
+	//		swordModel.scale_ = { 0.25f,1.f,0.25f };
 
 
-	}
+	//		auto &sword = bone->boneTransform_[boneModel_.GetIndex("Sword")];
 
-	for (const auto &[entity, bone, weapon] : world_->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
-		auto matrixArray = boneModel_.CalcTransMat(bone->boneTransform_);
+	//		if (not animate->timer_.IsFinish()) {
+	//			if (animate->animIndex_ == 0u) {
+	//				sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(animate->timer_.GetProgress()));
+	//			}
+	//			else {
+	//				sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(1.f - animate->timer_.GetProgress()));
+	//			}
+	//		}
+	//	}
 
-		boneModel_.Draw(matrixArray);
 
-		weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_.GetIndex("Sword", 0)].m[3].data());
-	}
+	//}
+
+	//for (const auto &[entity, bone, weapon] : world_->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
+	//	auto matrixArray = boneModel_.CalcTransMat(bone->boneTransform_);
+
+	//	boneModel_.Draw(matrixArray);
+
+	//	weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_.GetIndex("Sword", 0)].m[3].data());
+	//}
 
 	for (const auto &[entity, scale, quate, pos, mat] : world_->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
 
@@ -479,7 +489,7 @@ void GameScene::Update() {
 
 	ground_.Draw();
 
-	for (const auto &[plEntity, player, pos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
+	/*for (const auto &[plEntity, player, pos] : world_->view<ECS::PlayerTag, ECS::PositionComp>()) {
 
 
 		for (const auto &[entity, followCamera, cameraPos] : world_->view<ECS::FollowCamera, ECS::PositionComp>()) {
@@ -489,7 +499,7 @@ void GameScene::Update() {
 
 			followCamera->TransferData(*cameraManager_->GetCamera("FollowCamera"), *cameraPos);
 		}
-	}
+	}*/
 
 	cameraManager_->Update(deltaTime);
 

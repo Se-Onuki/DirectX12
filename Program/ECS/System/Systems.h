@@ -2,6 +2,8 @@
 #include "ISystem.h"
 #include "../Component/Component.hpp"
 #include "../../Header/Object/Ground.h"
+#include "../../Engine/DirectBase/Base/Audio.h"
+#include "../../Engine/DirectBase/Model/Model.h"
 
 namespace ECS {
 	namespace System {
@@ -61,5 +63,52 @@ namespace ECS {
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
+
+		class WeaponCollision : public ISystem {
+		public:
+			Audio::SoundHandle sound_;
+			Model *model_;
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
+		class PlayerMove : public ISystem {
+		public:
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
+		class BillboardCalc : public ISystem {
+		public:
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+		class BoneAnimationCalc : public ISystem {
+		public:
+			BoneModel* boneModel_;
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+		
+		class BoneCollision : public ISystem {
+		public:
+			BoneModel* boneModel_;
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
+		class FollowCameraUpdate : public ISystem {
+		public:
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
+		
 	}
 }

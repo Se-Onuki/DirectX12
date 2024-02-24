@@ -1,6 +1,9 @@
 #include "Systems.h"
 #include "../World/World.hpp"
 #include "../Entity/EntityManager.hpp"
+#include "../../Header/Object/Particle/TestParticle.h"
+#include "../../Engine/DirectBase/Input/Input.h"
+#include "../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
 void ECS::System::CheckAliveTime::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
@@ -132,4 +135,149 @@ void ECS::System::FallCollision::OnUpdate(::World *world, [[maybe_unused]] const
 		}
 	}
 
+}
+
+void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+	static ParticleManager *const particleManager = ParticleManager::GetInstance();
+
+	{
+		std::list<const ECS::WeaponComp *> weaponList{};
+
+		for (const auto &[entity, weapon] : world->view<const ECS::WeaponComp>()) {
+			weaponList.push_back(weapon);
+		}
+
+		for (const auto &[entity, enemy, pos, collision, isAlive] : world->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::IsAlive>()) {
+
+			Sphere sphere = collision->collision_;
+			sphere.centor += *pos;
+
+			for (const auto *weapon : weaponList) {
+				if (Collision::IsHit(sphere, weapon->collision_)) {
+					isAlive->isAlive_ = false;
+
+					sound_.Play(false, 1.f);
+
+					for (uint32_t i = 0u; i < 10u; i++) {
+						auto particle = particleManager->AddParticle<TestParticle>(model_, sphere.centor);
+						particle->SetAliveTime(Random::GetRandom<float>(0.5f, 1.5f));
+						particle->acceleration_ = SoLib::Math::EulerToDirection(Vector3{ Random::GetRandom<float>(-Angle::hPI,Angle::hPI),Random::GetRandom<float>(-Angle::PI,Angle::PI),0.f }) * Random::GetRandom<float>(10.f, 20.f);
+						particle->transform_.scale = Vector3::one * 5.f;
+					}
+				}
+			}
+
+		}
+	}
+}
+
+void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+	auto *inputManager = Input::GetInstance();
+
+	for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding] : world->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding>()) {
+		const auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
+		const Vector2 inputLs = inputManager->GetXInput()->GetState()->stickL_;
+		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
+		const Vector3 rotateInput = Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y).RotateVector(input3d);
+		pos->position_ += rotateInput * (500.f * deltaTime * deltaTime);
+
+		if (input3d.LengthSQ()) {
+			quateRot->quateRot_ = Quaternion::LookAt(rotateInput);
+		}
+
+		if (isLanding->isLanding_ && inputManager->GetXInput()->IsTrigger(KeyCode::A)) {
+			acceleration->acceleration_.y += 10.f;
+		}
+
+		if (animate->animIndex_ == 0u && animate->timer_.IsFinish()) {
+			if (inputManager->GetXInput()->GetState()->triggerR_ > 0.5f) {
+				animate->timer_.Start(0.5f);
+			}
+		}
+	}
+}
+
+void ECS::System::BillboardCalc::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+	Matrix4x4 billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
+
+	for (const auto &[entity, scale, rotate, pos, mat, billboardRot] : world->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
+
+		*mat = Matrix4x4::Affine(*scale, rotate->rotate_, Vector3::zero);
+		mat->transformMat_ *= billboardMat;
+		*reinterpret_cast<Vector3 *>(mat->transformMat_.m[3].data()) = *pos;
+
+	}
+
+}
+
+void ECS::System::BoneAnimationCalc::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+	for (const auto &[entity, scale, quate, pos, bone, animate] : world->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::AnimateParametor>()) {
+
+		bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
+
+		// 頭のパラメータ
+		{
+			auto &head = bone->boneTransform_[boneModel_->GetIndex("Head")];
+			head.translate_.y = 2.f;
+			head.scale_ = Vector3::one * 0.5f;
+		}
+
+		// 体のパラメータ
+		{
+			auto &body = bone->boneTransform_[boneModel_->GetIndex("Body", 0)];
+
+			body.scale_ = { 0.75f,1.f,0.75f };
+		}
+
+		// 剣のパラメータ
+		{
+			auto &swordModel = bone->boneTransform_[boneModel_->GetIndex("Sword", 0)];
+
+			swordModel.translate_.y = 3.f;
+
+			swordModel.scale_ = { 0.25f,1.f,0.25f };
+
+
+			auto &sword = bone->boneTransform_[boneModel_->GetIndex("Sword")];
+
+			if (not animate->timer_.IsFinish()) {
+				if (animate->animIndex_ == 0u) {
+					sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(animate->timer_.GetProgress()));
+				}
+				else {
+					sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(1.f - animate->timer_.GetProgress()));
+				}
+			}
+		}
+
+
+	}
+}
+
+void ECS::System::BoneCollision::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+
+	for (const auto &[entity, bone, weapon] : world->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
+		auto matrixArray = boneModel_->CalcTransMat(bone->boneTransform_);
+
+		boneModel_->Draw(matrixArray);
+
+		weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_->GetIndex("Sword", 0)].m[3].data());
+	}
+
+}
+
+void ECS::System::FollowCameraUpdate::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+	auto *inputManager = Input::GetInstance();
+
+	for (const auto &[plEntity, player, pos] : world->view<ECS::PlayerTag, ECS::PositionComp>()) {
+
+
+		for (const auto &[entity, followCamera, cameraPos] : world->view<ECS::FollowCamera, ECS::PositionComp>()) {
+			*cameraPos = pos->position_;
+
+			followCamera->rotation_.y += inputManager->GetXInput()->GetState()->stickR_.x * 90._deg * deltaTime;
+
+			followCamera->TransferData(*CameraManager::GetInstance()->GetCamera("FollowCamera"), *cameraPos);
+		}
+	}
 }
