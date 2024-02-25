@@ -198,7 +198,7 @@ void GameScene::Update() {
 			return not a->isAlive_;
 		}
 	));
-
+	// ここでECSのsystemを呼び出す
 	systemManager_.Update(world_.get(), deltaTime);
 
 
