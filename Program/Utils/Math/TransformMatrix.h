@@ -1,26 +1,31 @@
 #pragma once
 #include "Matrix3x3.h"
 #include "Vector3.h"
+#include "Euler.h"
 #include <array>
 #include <tuple>
+#include <immintrin.h>
+#include "../SoLib/SoLib_Traits.h"
+
+struct Matrix4x4;
 
 struct TransformMatrix {
+public:
+	//#pragma warning(push)  // 現在の警告のステータスを保存する
+	//#pragma warning(disable : 4201)  // C4201警告を無視する
 
-#pragma warning(push)  // 現在の警告のステータスを保存する
-#pragma warning(disable : 4201)  // C4201警告を無視する
-
-	// 無名共用体
+		// 無名共用体
 	union {
 		struct {
 			Matrix3x3 rotMat;
 			Vector3 translate;
-		};
+		} transMat;
 		std::array<std::array<float, 3u>, 4u> m;
 		std::array<Vector3, 4u> vec;
 		std::array<float, 12u> arr;
 	};
 
-#pragma warning(pop)  // 以前の警告のステータスに戻す
+	//#pragma warning(pop)  // 以前の警告のステータスに戻す
 
 	static const TransformMatrix one;
 
@@ -32,8 +37,8 @@ struct TransformMatrix {
 
 	/// @brief 回転行列を取得する
 	/// @return 回転行列
-	Matrix3x3 &GetRotateMat() { return rotMat; }
-	const Matrix3x3 &GetRotateMat() const { return rotMat; }
+	Matrix3x3 &GetRotateMat() { return transMat.rotMat; }
+	const Matrix3x3 &GetRotateMat() const { return transMat.rotMat; }
 
 	/// @brief 右を示すベクトルを取得する
 	/// @return 右ベクトル
@@ -52,8 +57,86 @@ struct TransformMatrix {
 
 	/// @brief 平行移動要素を取得する
 	/// @return 平行移動要素
-	Vector3 &GetTranslate() { return translate; }
-	const Vector3 &GetTranslate() const { return translate; }
+	Vector3 &GetTranslate() { return transMat.translate; }
+	const Vector3 &GetTranslate() const { return transMat.translate; }
+
+public:
+
+	static TransformMatrix MakeMatrix(const Matrix4x4 &matrix);
+
+	static TransformMatrix MakeRotate(const SoLib::Math::Euler &rotate);
+
+	static TransformMatrix Affine(const Vector3 &scale, const SoLib::Math::Euler &rotate, const Vector3 &translate);
+	static TransformMatrix AnyAngleRotate(const Vector3Norm &axis, const float angle);
+	static TransformMatrix AnyAngleRotate(const Vector3Norm &axis, const float cos, const float sin);
+
+	static TransformMatrix DirectionToDirection(const Vector3Norm &from, const Vector3Norm &to);
+
+
+public:
+
+	inline static void Mul(TransformMatrix &result, const TransformMatrix &left, const TransformMatrix &right);
 };
 
-TransformMatrix operator*(const TransformMatrix &left, const TransformMatrix &right);
+inline void TransformMatrix::Mul(TransformMatrix &result, const TransformMatrix &left, const TransformMatrix &right)
+{
+
+	// 回転/スケール要素
+	const std::array<__m128, 3u> rows{
+		_mm_loadu_ps(right.m[0].data()),
+		_mm_loadu_ps(right.m[1].data()),
+		_mm_loadu_ps(right.m[2].data()),
+	};
+
+	// 回転/スケール要素を乗算
+	for (uint8_t i = 0; i < 4; i++) {
+		const __m128 brod0 = _mm_set1_ps(left.m[i][0]);
+		const __m128 brod1 = _mm_set1_ps(left.m[i][1]);
+		const __m128 brod2 = _mm_set1_ps(left.m[i][2]);
+
+		// 各要素に対してのドット積
+		const __m128 tmp{
+			_mm_add_ps(
+				_mm_add_ps(_mm_mul_ps(brod0, rows[0]), _mm_mul_ps(brod1, rows[1])),
+				_mm_mul_ps(brod2, rows[2]))
+		};
+
+		// データをコピー
+		result.m[i] = *reinterpret_cast<const std::array<float, 3u>*>(&tmp);
+
+	}
+
+	// 平行移動成分を追加
+	result.GetTranslate() += right.GetTranslate();
+
+}
+
+
+TransformMatrix operator*(const TransformMatrix &left, const TransformMatrix &right) {
+	TransformMatrix result;
+
+	TransformMatrix::Mul(result, left, right);
+
+	return result;
+}
+
+TransformMatrix &operator*=(TransformMatrix &left, const TransformMatrix &right) {
+
+	TransformMatrix::Mul(left, left, right);
+
+	return left;
+
+}
+
+template<>
+struct SoLib::Traits<TransformMatrix> {
+	using Type = TransformMatrix;
+	static constexpr const char* const Name = "TransformMatrix";
+	static constinit const uint32_t Rows = 4u;
+	static constinit const uint32_t Columns = 3u;
+	static constinit const uint32_t Size = Rows * Columns;
+	using ElementType = float;
+
+	static const ElementType *CBegin(const Type &data) { return data.arr.data(); }
+	static const ElementType *End(const Type &data) { return CBegin(data) + Size; }
+};

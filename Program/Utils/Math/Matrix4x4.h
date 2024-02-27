@@ -18,7 +18,7 @@ struct Matrix4x4 final {
 	inline Matrix4x4(
 		float A, float B, float C, float D, float E, float F, float G, float H, float I, float J,
 		float K, float L, float M, float N, float O, float P)
-		: v{
+		: vecs{
 			  Vector4{A, B, C, D},
 			  Vector4{E, F, G, H},
 			  Vector4{I, J, K, L},
@@ -26,19 +26,19 @@ struct Matrix4x4 final {
 
 	inline Matrix4x4(const Vector4 &A, const Vector4 &B, const Vector4 &C, const Vector4 &D)
 	{
-		v[0] = A;
-		v[1] = B;
-		v[2] = C;
-		v[3] = D;
+		vecs[0] = A;
+		vecs[1] = B;
+		vecs[2] = C;
+		vecs[3] = D;
 	}
 
 	inline Matrix4x4(const std::array<Vector4, 4u> &vec)
 	{
-		v = vec;
+		vecs = vec;
 	}
 
 	union {
-		std::array<Vector4, 4u> v;
+		std::array<Vector4, 4u> vecs;
 		std::array<std::array<float, 4u>, 4u> m;
 		std::array<float, 16u> arr;
 	};
@@ -75,15 +75,10 @@ struct Matrix4x4 final {
 
 	Matrix4x4 operator-=(const Matrix4x4 &Second);
 
-	Matrix4x4 operator*=(const Matrix4x4 &Second);
+	inline Matrix4x4 operator*=(const Matrix4x4 &Second);
 
 	Matrix4x4 operator*=(const float &Second);
 	Matrix4x4 operator/=(const float &Second);
-
-	bool operator==(const Matrix4x4 &Second) const
-	{
-		return *this == Second;
-	}
 
 	/// @brief 指定範囲を切り抜く関数
 	/// @tparam row 行(y要素数)
@@ -138,28 +133,47 @@ struct Matrix4x4 final {
 	float *const data() { return begin(); }
 	const float *const data() const { return begin(); }
 	const float *const cdata() const { return begin(); }
+
+private:
+	inline static void Mul(Matrix4x4 &result, const Matrix4x4 &left, const Matrix4x4 &right);
+
 };
 #pragma region 4x4Func
 
 Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &sec) const
 {
 	Matrix4x4 result;
-	__m128 row0 = _mm_load_ps(sec.m[0].data());
-	__m128 row1 = _mm_load_ps(sec.m[1].data());
-	__m128 row2 = _mm_load_ps(sec.m[2].data());
-	__m128 row3 = _mm_load_ps(sec.m[3].data());
-	for (int i = 0; i < 4; i++) {
-		__m128 brod0 = _mm_set1_ps(m[i][0]);
-		__m128 brod1 = _mm_set1_ps(m[i][1]);
-		__m128 brod2 = _mm_set1_ps(m[i][2]);
-		__m128 brod3 = _mm_set1_ps(m[i][3]);
-		__m128 row = _mm_add_ps(
-			_mm_add_ps(_mm_mul_ps(brod0, row0), _mm_mul_ps(brod1, row1)),
-			_mm_add_ps(_mm_mul_ps(brod2, row2), _mm_mul_ps(brod3, row3)));
-		_mm_store_ps(result.m[i].data(), row);
-	}
+	Mul(result, *this, sec);
 	return result;
 }
+
+Matrix4x4 Matrix4x4::operator*=(const Matrix4x4 &sec) {
+
+	Mul(*this, *this, sec);
+	return *this;
+}
+
+inline void Matrix4x4::Mul(Matrix4x4 &result, const Matrix4x4 &left, const Matrix4x4 &right)
+{
+	const __m128 row0 = _mm_loadu_ps(right.m[0].data());
+	const __m128 row1 = _mm_loadu_ps(right.m[1].data());
+	const __m128 row2 = _mm_loadu_ps(right.m[2].data());
+	const __m128 row3 = _mm_loadu_ps(right.m[3].data());
+	for (int i = 0; i < 4; i++) {
+		const __m128 xmm_all = _mm_loadu_ps(left.m[i].data());
+
+		// 1つの__m128構造体から4つの__m128に分解
+		const __m128 brod0 = _mm_permute_ps(xmm_all, 0x00);
+		const __m128 brod1 = _mm_permute_ps(xmm_all, 0x55);
+		const __m128 brod2 = _mm_permute_ps(xmm_all, 0xAA);
+		const __m128 brod3 = _mm_permute_ps(xmm_all, 0xFF);
+		const __m128 row = _mm_add_ps(
+			_mm_add_ps(_mm_mul_ps(brod0, row0), _mm_mul_ps(brod1, row1)),
+			_mm_add_ps(_mm_mul_ps(brod2, row2), _mm_mul_ps(brod3, row3)));
+		_mm_storeu_ps(result.m[i].data(), row);
+	}
+}
+
 
 Matrix4x4 Matrix4x4::InverseSRT() const
 {
@@ -171,13 +185,13 @@ Matrix4x4 Matrix4x4::InverseSRT() const
 		VecSimd &operator=(const Vector4 &other) { v = other; return *this; }
 	};
 	std::array<VecSimd, 4> mm{
-		VecSimd{.s = _mm_load_ps(v[0].begin())},
-		VecSimd{.s = _mm_load_ps(v[1].begin())},
-		VecSimd{.s = _mm_load_ps(v[2].begin())},
-		VecSimd{.s = _mm_load_ps(v[3].begin())},
+		VecSimd{.s = _mm_load_ps(vecs[0].begin())},
+		VecSimd{.s = _mm_load_ps(vecs[1].begin())},
+		VecSimd{.s = _mm_load_ps(vecs[2].begin())},
+		VecSimd{.s = _mm_load_ps(vecs[3].begin())},
 	};
 
-	constexpr int32_t mask = 0b01111111;
+	static const constinit int32_t mask = 0b01111111;
 
 	const VecSimd vecX2 =
 	{ .s = _mm_div_ps(mm[0].s , _mm_dp_ps(mm[0].s, mm[0].s, mask)) };

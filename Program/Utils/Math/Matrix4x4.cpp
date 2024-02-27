@@ -324,10 +324,6 @@ Matrix4x4 Matrix4x4::operator-=(const Matrix4x4 &Second) {
 	return *this;
 }
 
-Matrix4x4 Matrix4x4::operator*=(const Matrix4x4 &Second) {
-
-	return *this = *this * Second;
-}
 Matrix4x4 Matrix4x4::operator*=(const float &Second) {
 
 	this->m[0][0] *= Second;
