@@ -1,4 +1,6 @@
 #include "Object3d.hlsli"
+#include "Math.hlsli"
+
 struct TransformationMatrix
 {
     //matrix WVP;

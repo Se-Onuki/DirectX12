@@ -440,6 +440,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\shader\Math.hlsli" />
     <None Include="resources\shader\Object3d.hlsli" />
     <None Include="resources\shader\Particle.hlsli" />
     <None Include="resources\shader\Sprite.hlsli" />

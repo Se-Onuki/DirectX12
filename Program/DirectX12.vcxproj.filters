@@ -800,5 +800,8 @@
     <None Include="resources\shader\Particle.hlsli">
       <Filter>Engine\Shader</Filter>
     </None>
+    <None Include="resources\shader\Math.hlsli">
+      <Filter>Engine\Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>
