@@ -40,8 +40,7 @@ Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float vo
 	assert(SUCCEEDED(hr));
 
 	// 再生中データ
-	auto voice = Voice{};
-	voice.sourceVoice = pSourceVoice;
+	auto voice = Voice{ .sourceVoice = pSourceVoice };
 	// 再生中データコンテナに登録
 	voices_.insert(voice);
 
