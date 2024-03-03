@@ -18,6 +18,8 @@ namespace SoLib {
 	template<typename T>
 	concept IsNotPointer = !std::is_pointer_v<T>;
 
+	template <typename T>
+	concept IsRealType = not std::is_pointer_v<T> and not std::is_reference_v<T>;
 
 	template<typename T>
 	concept IsContainer = requires(T a) {

@@ -62,8 +62,9 @@ namespace SoLib {
 
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 
-	template<typename T>
-	inline bool ImGuiWidget(VariantItem<T> *const value);
+	template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsNotPointer T = typename ITEM::ItemType>
+		requires(std::same_as<ITEM, VariantItem<V, T>>)
+	inline bool ImGuiWidget(ITEM *const value) { return SoLib::ImGuiWidget(value->GetKey(), &value->GetItem()); }
 
 	template <typename T>
 	inline bool ImGuiWidget(const char *const label, ValueRange<T> *const value);
@@ -73,9 +74,6 @@ namespace SoLib {
 }
 
 #pragma region inline関数の記述
-
-template<typename T>
-bool SoLib::ImGuiWidget(VariantItem<T> *const value) { return SoLib::ImGuiWidget(value->GetKey().c_str(), &value->GetItem()); }
 
 template<typename T>
 bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {

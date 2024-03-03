@@ -44,9 +44,9 @@ class Player : public BaseCharacter {
 	float floatingSwayHand_ = 30 * Angle::Dig2Rad;
 
 	int32_t attackCycle_ = 90u;
-	VariantItem<float> attackStartAngle_{ "CycleRange", 0.f * Angle::Dig2Rad };
-	VariantItem<float> attackSwingAngle_{ "SwayHand",130.f * Angle::Dig2Rad };
-	VariantItem<float> attackClampAngle_{ "ClampAngle",110.f * Angle::Dig2Rad };
+	VariantItem<"CycleRange", float> attackStartAngle_{ 0.f * Angle::Dig2Rad };
+	VariantItem<"SwayHand", float> attackSwingAngle_{ 130.f * Angle::Dig2Rad };
+	VariantItem<"ClampAngle", float> attackClampAngle_{ 110.f * Angle::Dig2Rad };
 
 	void ApplyClobalVariables();
 

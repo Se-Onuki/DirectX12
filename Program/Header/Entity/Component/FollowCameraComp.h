@@ -24,7 +24,7 @@ public:
 
 	const auto &GetCamera() const { return camera_; }
 
-	VariantItem<float> vLerpValue{ "LerpValue", 0.85f };
+	VariantItem<"LerpValue", float> vLerpValue{  0.85f };
 
 private:
 
@@ -32,8 +32,8 @@ private:
 
 	BaseTransform *pTarget_ = nullptr;
 
-	VariantItem<Vector3> offset_{ "Offset",{ 0.f,6.f,-30.f } };
-	VariantItem<Vector3> addOffset_{ "AddOffset",{ 0.f,6.f,0.f } };
+	VariantItem<"Offset", Vector3> offset_{ { 0.f,6.f,-30.f } };
+	VariantItem<"AddOffset", Vector3> addOffset_{ { 0.f,6.f,0.f } };
 
 	Vector3 rotate_;
 	Vector3 prePos_;

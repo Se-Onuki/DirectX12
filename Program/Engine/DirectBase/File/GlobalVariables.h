@@ -62,10 +62,13 @@ public:
 	template<typename T>
 	void SetValue(const std::string &groupName, const std::string &key, const T &value);
 
-	template<typename T>
-	void AddValue(const std::string &groupName, const VariantItem<T> &item);
-	template<typename T>
-	void SetValue(const std::string &groupName, const VariantItem<T> &item);
+	template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
+		requires(std::same_as<ITEM, VariantItem<V, T>>)
+	void AddValue(const std::string &groupName, const ITEM &item);
+
+	template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
+		requires(std::same_as<ITEM, VariantItem<V, T>>)
+	void SetValue(const std::string &groupName, const ITEM &item);
 
 	void Update();
 
@@ -98,8 +101,10 @@ void operator>> (const GlobalVariables::Item &item, T &value) {
 /// @tparam T 代入する型
 /// @param value 代入先の変数
 /// @param item 保存されたItem
-template<typename T>
-void operator>> (const GlobalVariables::Item &item, VariantItem<T> &value) {
+
+template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
+	requires(std::same_as<ITEM, VariantItem<V, T>>)
+void operator>> (const GlobalVariables::Item &item, ITEM &value) {
 
 	// 型が正しいか
 	if (std::holds_alternative<T>(item)) {
@@ -110,8 +115,9 @@ void operator>> (const GlobalVariables::Item &item, VariantItem<T> &value) {
 	value = T{};
 }
 
-template<typename T>
-void operator>> (const GlobalVariables::Group &group, VariantItem<T> &value) {
+template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
+	requires(std::same_as<ITEM, VariantItem<V, T>>)
+void operator>> (const GlobalVariables::Group &group, ITEM &value) {
 
 	// キーがあるか
 	const auto &itItem = group.find(value.GetKey());
@@ -130,8 +136,9 @@ void operator>> (const GlobalVariables::Group &group, VariantItem<T> &value) {
 	value = T{};
 }
 
-template<typename T>
-void operator<< (GlobalVariables::Group &group, const VariantItem<T> &value) {
+template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
+	requires(std::same_as<ITEM, VariantItem<V, T>>)
+void operator<< (GlobalVariables::Group &group, const ITEM &value) {
 	group[value.GetKey()] = value.GetItem();
 }
 
@@ -180,11 +187,14 @@ void GlobalVariables::SetValue(
 	group[key] = value;
 }
 
-template<typename T>
-inline void GlobalVariables::AddValue(const std::string &groupName, const VariantItem<T> &item) {
+template <typename ITEM, SoLib::Text::ConstExprString V,  SoLib::IsRealType T>
+	requires(std::same_as<ITEM, VariantItem<V, T>>)
+inline void GlobalVariables::AddValue(const std::string &groupName, const ITEM &item) {
 	AddValue(groupName, item.GetKey(), item.GetItem());
 }
-template<typename T>
-inline void GlobalVariables::SetValue(const std::string &groupName, const VariantItem<T> &item) {
-	AddValue(groupName, item.GetKey(), item.GetItem());
+
+template <typename ITEM, SoLib::Text::ConstExprString V, SoLib::IsRealType T>
+	requires(std::same_as<ITEM, VariantItem<V, T>>)
+inline void GlobalVariables::SetValue(const std::string &groupName, const ITEM &item) {
+	SetValue(groupName, item.GetKey(), item.GetItem());
 }
