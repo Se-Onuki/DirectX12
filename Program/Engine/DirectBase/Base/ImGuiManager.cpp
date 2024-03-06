@@ -27,6 +27,9 @@ void ImGuiManager::StaticInit(const HWND &hwnd, ID3D12Device *const device, uint
 	imGuiIO.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\msgothic.ttc", 13.0f, NULL, ImGui::GetIO().Fonts->GetGlyphRangesJapanese());
 	// ドッキング機能の有効化
 	imGuiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+	imGuiIO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	imGuiIO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX12_Init(device,
