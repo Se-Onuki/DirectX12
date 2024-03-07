@@ -188,7 +188,12 @@ void GameScene::Update() {
 
 	if (spawnTimer_.IsFinish()) {
 
-		entityManager_->CreateEntity(*enemyPrefab_);
+		auto enemys = entityManager_->CreateEntity(*enemyPrefab_, 10u);
+		for (uint32_t i = 0; auto & enemy : enemys) {
+			auto [pos] = entityManager_->GetComponent<ECS::PositionComp>(enemy);
+			pos->position_ = SoLib::EulerToDirection(SoLib::Euler(0.f, 30._deg * i, 0.f)) * 7.5f + pos->position_;
+			i++;
+		}
 		spawnTimer_.Start();
 	}
 	// もし生存フラグが折れていたら、配列から削除
