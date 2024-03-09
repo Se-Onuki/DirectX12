@@ -20,6 +20,18 @@ void ECS::System::CheckAliveTime::OnUpdate(::World *world, [[maybe_unused]] cons
 
 }
 
+void ECS::System::CheckHealthDie::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+
+	for (const auto &[entity, health, isAlive] : world->view<ECS::HealthComp, ECS::IsAlive>()) {
+		// もし体力が0以下なら
+		if (health->IsDead()) {
+
+			// 死ぬ
+			isAlive->isAlive_ = false;
+		}
+	}
+}
+
 void ECS::System::AddAliveTime::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
 
@@ -103,9 +115,13 @@ void ECS::System::MovePosition::OnUpdate(::World *world, const float deltaTime) 
 void ECS::System::EnemyMove::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
 	Vector3 playerPos{};
-	for (const auto &[entity, player, plPos] : world->view<const ECS::PlayerTag, const ECS::PositionComp>()) {
+	const ECS::Entity *player = nullptr;
+	for (const auto &[entity, playerTag, plPos] : world->view<const ECS::PlayerTag, const ECS::PositionComp>()) {
 		playerPos = *plPos;
+		player = entity;
 	}
+	// プレイヤが存在しない場合そこで終了
+	if (not player) { return; }
 
 	for (const auto &[entity, enemy, pos, rotate] : world->view<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp>()) {
 		Vector3 direction = (playerPos - pos->position_).Nomalize() * (100.f * deltaTime * deltaTime);
@@ -123,7 +139,8 @@ void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const f
 	ECS::AccelerationComp *plAccele = nullptr;
 	ECS::HealthComp *plHealth = nullptr;
 	Sphere plColl{};
-	for (const auto &[entity, player, playerPos, playerHealth, playerCollision, playerAcceleration] : world->view<const ECS::PlayerTag, const ECS::PositionComp, ECS::HealthComp, const ECS::CollisionComp, ECS::AccelerationComp>()) {
+	const ECS::Entity *player = nullptr;
+	for (const auto &[entity, playerTag, playerPos, playerHealth, playerCollision, playerAcceleration] : world->view<const ECS::PlayerTag, const ECS::PositionComp, ECS::HealthComp, const ECS::CollisionComp, ECS::AccelerationComp>()) {
 		// 体力のポインタを取得
 		plHealth = playerHealth;
 		// 加速度のポインタを取得
@@ -135,14 +152,17 @@ void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const f
 
 		// プレイヤの座標
 		plPos = *playerPos;
+		player = entity;
 	}
+	// プレイヤが存在しない場合そこで終了
+	if (not player) { return; }
 
 	for (const auto &[entity, enemy, pos, coll, attackPow, attackCT] : world->view<const ECS::EnemyTag, const ECS::PositionComp, const ECS::CollisionComp, ECS::AttackPower, ECS::AttackCooltime>()) {
 		Sphere enColl = coll->collision_;
 		enColl.centor += *pos;
 
 		// クールタイムが終わっており、接触している場合
-		if (not attackCT->cooltime_.IsActive() and Collision::IsHit(plColl, enColl) and plAccele and plHealth) {
+		if (not attackCT->cooltime_.IsActive() and Collision::IsHit(plColl, enColl)) {
 			// プレイヤに加速度を加算
 			plAccele->acceleration_ += (plPos - *pos) * 15.f;
 			// 体力を減算

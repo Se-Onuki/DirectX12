@@ -145,8 +145,10 @@ void GameScene::OnEnter() {
 	healthBar_->Init();
 
 
-	// 汎用的な処理
+	// 生存などのデータの確認
 	systemManager_.AddSystem<ECS::System::CheckAliveTime>();
+	systemManager_.AddSystem<ECS::System::CheckHealthDie>();
+	// 汎用的な処理
 	systemManager_.AddSystem<ECS::System::AddAliveTime>();
 	systemManager_.AddSystem<ECS::System::AnimateUpdate>();
 	systemManager_.AddSystem<ECS::System::ColorLerp>();
@@ -190,6 +192,7 @@ void GameScene::Update() {
 
 	blockRender_->clear();
 	spawnTimer_.Update(deltaTime);
+	playerSpawn_.Update(deltaTime);
 
 	if (spawnTimer_.IsFinish()) {
 
@@ -201,6 +204,22 @@ void GameScene::Update() {
 		}
 		spawnTimer_.Start();
 	}
+
+	bool isPlayerAlive = false;
+	for (const auto &[entity, player] : world_->view<const ECS::PlayerTag>()) {
+		isPlayerAlive = true;
+	}
+	if (not isPlayerAlive) {
+		if (not playerSpawn_.IsActive()) {
+			playerSpawn_.Start();
+		}
+
+		if (playerSpawn_.IsFinish()) {
+			entityManager_->CreateEntity(*playerPrefab_);
+		}
+	}
+
+
 	// もし生存フラグが折れていたら、配列から削除
 	world_->erase_if(std::function<bool(ECS::Entity *, ECS::IsAlive *)>(
 		[](ECS::Entity *, ECS::IsAlive *a)

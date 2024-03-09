@@ -253,6 +253,7 @@ namespace ECS {
 
 		void Reset() { nowHealth_ = maxHealth_; }
 		float CalcPercent() const { return static_cast<float>(nowHealth_) / maxHealth_; }
+		bool IsDead() const { return nowHealth_ <= 0; }
 	};
 
 	struct InvincibleTime : IComponent {

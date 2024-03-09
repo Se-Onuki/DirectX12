@@ -184,13 +184,17 @@ public:
 
 	ECS::EntityManager *GetEntityManager() { return entityManager_.get(); }
 
+	bool IsHasChank(const Archetype &archetype) {
+		return chunkList_.contains(archetype);
+	}
+
 	ECS::MultiArray *CreateChunk(const Archetype &archetype) {
 		chunkList_[archetype] = std::make_unique<ECS::MultiArray>(archetype);
 		return chunkList_.at(archetype).get();
 	}
 
 	ECS::MultiArray *GetChunk(const Archetype &archetype) {
-		auto item = chunkList_.find(archetype);
+		const auto &item = chunkList_.find(archetype);
 		if (item == chunkList_.end()) {
 			return nullptr;
 		}
@@ -223,7 +227,7 @@ public:
 	}*/
 
 	template<typename T, typename... Ts>
-		//requires (not SoLib::IsConst<T> && ... && not SoLib::IsConst<Ts>)
+	//requires (not SoLib::IsConst<T> && ... && not SoLib::IsConst<Ts>)
 	ECS::View<T, Ts...> view() {
 		ECS::View<T, Ts...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
@@ -266,12 +270,12 @@ public:
 			chunk->erase_if(func);
 		}
 		// 不要なデータを破棄
-		std::erase_if(chunkList_, [](const auto &pair)
-			{
-				// データが保存されていないコンテナを破棄する
-				return not pair.second->size();
-			}
-		);
+		//std::erase_if(chunkList_, [](const auto &pair)
+		//	{
+		//		// データが保存されていないコンテナを破棄する
+		//		return not pair.second->size();
+		//	}
+		//);
 
 	}
 

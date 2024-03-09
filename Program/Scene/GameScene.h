@@ -83,4 +83,6 @@ private:
 	ParticleManager *particleManager_;
 
 	std::unique_ptr<HealthBar> healthBar_;
+
+	SoLib::DeltaTimer playerSpawn_{ 1.f, false };
 };
