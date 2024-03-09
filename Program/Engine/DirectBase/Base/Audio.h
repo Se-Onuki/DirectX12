@@ -70,6 +70,11 @@ public:
 	struct SoundHandle {
 
 		SoundHandle() = default;
+		SoundHandle(const SoundHandle &) = default;
+		SoundHandle(SoundHandle &&) = default;
+		SoundHandle& operator=(const SoundHandle &) = default;
+		SoundHandle& operator=(SoundHandle &&) = default;
+
 		SoundHandle(const uint32_t handle) : handle_(handle) {};
 		SoundHandle &operator=(const uint32_t handle) { handle_ = handle; return *this; }
 

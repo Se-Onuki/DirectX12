@@ -59,6 +59,11 @@ namespace ECS {
 		class FallCollision : public ISystem {
 		public:
 			Ground *ground_;
+			static FallCollision Create(Ground *ground) {
+				FallCollision result;
+				result.ground_ = ground;
+				return result;
+			}
 
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;
@@ -66,6 +71,12 @@ namespace ECS {
 
 		class WeaponCollision : public ISystem {
 		public:
+			WeaponCollision() = default;
+			WeaponCollision(const WeaponCollision &) = default;
+			WeaponCollision(Audio::SoundHandle sound, Model *model) :sound_(sound), model_(model) {}
+
+			static WeaponCollision Create(Audio::SoundHandle sound, Model *model) { return WeaponCollision{ sound, model }; }
+
 			Audio::SoundHandle sound_;
 			Model *model_;
 
@@ -88,15 +99,27 @@ namespace ECS {
 		};
 		class BoneAnimationCalc : public ISystem {
 		public:
-			BoneModel* boneModel_;
+			BoneModel *boneModel_;
+
+			static BoneAnimationCalc Create(BoneModel *bone) {
+				BoneAnimationCalc result;
+				result.boneModel_ = bone;
+				return result;
+			}
 
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
-		
+
 		class BoneCollision : public ISystem {
 		public:
-			BoneModel* boneModel_;
+			BoneModel *boneModel_;
+
+			static BoneCollision Create(BoneModel *bone) {
+				BoneCollision result;
+				result.boneModel_ = bone;
+				return result;
+			}
 
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;
@@ -116,6 +139,6 @@ namespace ECS {
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
 
-		
+
 	}
 }

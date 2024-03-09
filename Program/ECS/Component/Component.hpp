@@ -247,6 +247,19 @@ namespace ECS {
 		Sphere collision_;
 	};
 
+	struct HealthComp : IComponent {
+		int32_t maxHealth_ = 0;
+		int32_t nowHealth_ = 0;
+	};
+
+	struct AttackPower : IComponent {
+		int32_t power_;
+	};
+
+	struct AttackCooltime : IComponent {
+		SoLib::DeltaTimer cooltime_;
+	};
+
 	struct InputFlagComp : IComponent {};
 
 	template<class T>

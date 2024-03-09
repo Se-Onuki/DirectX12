@@ -94,6 +94,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::WeaponComp{ .collision_{.radius = 1.f} };
 	*playerPrefab_ += ECS::AnimateParametor{};
+	*playerPrefab_ += ECS::HealthComp{ .maxHealth_ = 10 };
 
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 	*enemyPrefab_ += ECS::IsAlive{};
@@ -106,6 +107,8 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
 	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
+	*enemyPrefab_ += ECS::AttackPower{ .power_ = 1 };
+	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = {5.f, false} };
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
@@ -151,16 +154,12 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::AddGravity>();
 	systemManager_.AddSystem<ECS::System::MovePosition>();
 	systemManager_.AddSystem<ECS::System::EnemyMove>();
-	systemManager_.AddSystem<ECS::System::FallCollision>()->ground_ = &ground_;
-	{
-		auto weaponColl = systemManager_.AddSystem<ECS::System::WeaponCollision>();
-		weaponColl->sound_ = soundA_;
-		weaponColl->model_ = model_;
-	}
+	systemManager_.AddSystem<ECS::System::FallCollision>(&ground_);
+	systemManager_.AddSystem<ECS::System::WeaponCollision>(soundA_, model_);
 	systemManager_.AddSystem<ECS::System::PlayerMove>();
 	systemManager_.AddSystem<ECS::System::BillboardCalc>();
-	systemManager_.AddSystem<ECS::System::BoneAnimationCalc>()->boneModel_ = &boneModel_;
-	systemManager_.AddSystem<ECS::System::BoneCollision>()->boneModel_ = &boneModel_;
+	systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
+	systemManager_.AddSystem<ECS::System::BoneCollision>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::FollowCameraUpdate>();
 	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
 
