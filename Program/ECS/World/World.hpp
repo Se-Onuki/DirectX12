@@ -223,7 +223,7 @@ public:
 	}*/
 
 	template<typename T, typename... Ts>
-		requires (not SoLib::IsConst<T> && ... && not SoLib::IsConst<Ts>)
+		//requires (not SoLib::IsConst<T> && ... && not SoLib::IsConst<Ts>)
 	ECS::View<T, Ts...> view() {
 		ECS::View<T, Ts...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();

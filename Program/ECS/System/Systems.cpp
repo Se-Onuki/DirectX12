@@ -73,6 +73,16 @@ void ECS::System::AddGravity::OnUpdate(::World *world, [[maybe_unused]] const fl
 	}
 }
 
+void ECS::System::AirResistance::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+
+	for (const auto &[entity, acceleration, velocity] : world->view<ECS::AccelerationComp, ECS::VelocityComp>()) {
+
+		acceleration->acceleration_ -= velocity->velocity_ * (0.6f / 60.f);
+
+	}
+}
+
+
 void ECS::System::MovePosition::OnUpdate(::World *world, const float deltaTime) {
 
 	for (const auto &[entity, velocity, acceleration] : world->view<ECS::VelocityComp, ECS::AccelerationComp>()) {
@@ -107,6 +117,44 @@ void ECS::System::EnemyMove::OnUpdate(::World *world, [[maybe_unused]] const flo
 	}
 
 }
+void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+
+	Vector3 plPos;
+	ECS::AccelerationComp *plAccele = nullptr;
+	ECS::HealthComp *plHealth = nullptr;
+	Sphere plColl;
+	for (const auto &[entity, player, playerPos, playerHealth, playerCollision, playerAcceleration] : world->view<const ECS::PlayerTag, const ECS::PositionComp, ECS::HealthComp, const ECS::CollisionComp, ECS::AccelerationComp>()) {
+		// 体力のポインタを取得
+		plHealth = playerHealth;
+		// 加速度のポインタを取得
+		plAccele = playerAcceleration;
+
+		// 当たり判定を取得
+		plColl = playerCollision->collision_;
+		plColl.centor += *playerPos;
+
+		// プレイヤの座標
+		plPos = *playerPos;
+	}
+
+	for (const auto &[entity, enemy, pos, coll, attackPow, attackCT] : world->view<const ECS::EnemyTag, const ECS::PositionComp, const ECS::CollisionComp, ECS::AttackPower, ECS::AttackCooltime>()) {
+		Sphere enColl = coll->collision_;
+		enColl.centor += *pos;
+
+		// クールタイムが終わっており、接触している場合
+		if (not attackCT->cooltime_.IsActive() and Collision::IsHit(plColl, enColl)) {
+			// プレイヤに加速度を加算
+			plAccele->acceleration_ += (plPos - *pos) * 5.f;
+			// 体力を減算
+			plHealth->nowHealth_ -= attackPow->power_;
+
+			// クールタイムを開始
+			attackCT->cooltime_.Start();
+		}
+
+	}
+}
+
 
 void ECS::System::FallCollision::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 

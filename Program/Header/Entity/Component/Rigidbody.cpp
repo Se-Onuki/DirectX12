@@ -30,9 +30,9 @@ void Rigidbody::Update() {
 
 	transform_->translate += fixVelocity;
 
-	const auto &boxArray = collisionManager->GetBox();
+	//const auto &boxArray = collisionManager->GetBox();
 
-	boxArray;
+	//boxArray;
 
 	isGround_ = false;
 

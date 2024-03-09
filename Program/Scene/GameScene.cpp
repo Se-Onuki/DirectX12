@@ -94,7 +94,8 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::WeaponComp{ .collision_{.radius = 1.f} };
 	*playerPrefab_ += ECS::AnimateParametor{};
-	*playerPrefab_ += ECS::HealthComp{ .maxHealth_ = 10 };
+	*playerPrefab_ += ECS::HealthComp{ .maxHealth_ = 10, .nowHealth_ = 10 };
+	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
 
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 	*enemyPrefab_ += ECS::IsAlive{};
@@ -108,7 +109,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
 	*enemyPrefab_ += ECS::AttackPower{ .power_ = 1 };
-	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = {5.f, false} };
+	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
@@ -147,16 +148,23 @@ void GameScene::OnEnter() {
 	}
 
 
+	// 汎用的な処理
 	systemManager_.AddSystem<ECS::System::CheckAliveTime>();
 	systemManager_.AddSystem<ECS::System::AddAliveTime>();
 	systemManager_.AddSystem<ECS::System::AnimateUpdate>();
 	systemManager_.AddSystem<ECS::System::ColorLerp>();
 	systemManager_.AddSystem<ECS::System::AddGravity>();
+	systemManager_.AddSystem<ECS::System::AirResistance>();
 	systemManager_.AddSystem<ECS::System::MovePosition>();
+
+	// ゲーム固有の処理
 	systemManager_.AddSystem<ECS::System::EnemyMove>();
 	systemManager_.AddSystem<ECS::System::FallCollision>(&ground_);
 	systemManager_.AddSystem<ECS::System::WeaponCollision>(soundA_, model_);
 	systemManager_.AddSystem<ECS::System::PlayerMove>();
+	systemManager_.AddSystem<ECS::System::EnemyAttack>();
+
+	// 汎用的な処理
 	systemManager_.AddSystem<ECS::System::BillboardCalc>();
 	systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::BoneCollision>(&boneModel_);

@@ -42,6 +42,12 @@ namespace ECS {
 			void OnUpdate(::World *world, const float deltaTime) override;
 
 		};
+		class AirResistance : public ISystem {
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+
+		};
 		class MovePosition : public ISystem {
 		public:
 
@@ -50,6 +56,13 @@ namespace ECS {
 		};
 
 		class EnemyMove : public ISystem {
+		public:
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
+		class EnemyAttack : public ISystem {
 		public:
 
 			bool IsConstSystem() const override { return false; }

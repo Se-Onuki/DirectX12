@@ -15,7 +15,7 @@ namespace ECS {
 
 		ECS::ISystem *AddSystem(std::unique_ptr<ECS::ISystem> system);
 
-		/// @brief システムの追加
+		/// @brief システムの追加 ( T::Create(Args...)と等価 )
 		/// @tparam T 追加する型
 		/// @param ...args 引数
 		/// @return 追加されたシステム

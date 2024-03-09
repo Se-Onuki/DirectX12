@@ -252,6 +252,10 @@ namespace ECS {
 		int32_t nowHealth_ = 0;
 	};
 
+	struct InvincibleTime : IComponent {
+		SoLib::DeltaTimer timer_;
+	};
+
 	struct AttackPower : IComponent {
 		int32_t power_;
 	};
