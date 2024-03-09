@@ -25,6 +25,7 @@
 #include "../Header/Entity/Entity.h"
 #include "../Header/Object/Particle/ParticleManager.h"
 #include "../Utils/Containers/UnChainVector.h"
+#include "../Header/Object/HealthBar.h"
 
 class GameScene : public IScene {
 public:
@@ -73,11 +74,13 @@ private:
 
 	BoneModel boneModel_;
 
-	SoLib::DeltaTimer spawnTimer_{ 5.f };
+	SoLib::DeltaTimer spawnTimer_{ 2.5f };
 
 	std::array<BoneModel::SimpleTransform, 5u> boneTransform_;
 
 	GameObject gameObject_;
 
 	ParticleManager *particleManager_;
+
+	std::unique_ptr<HealthBar> healthBar_;
 };

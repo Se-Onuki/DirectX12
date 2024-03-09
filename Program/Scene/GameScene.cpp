@@ -98,6 +98,8 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
 
+	entityManager_->CreateEntity(*playerPrefab_);
+
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 	*enemyPrefab_ += ECS::IsAlive{};
 	*enemyPrefab_ += ECS::ScaleComp{};
@@ -105,7 +107,6 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::PositionComp{ .position_{0.f, 1.f, 10.f} };
 	*enemyPrefab_ += ECS::TransformMatComp{};
 	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
-	// *enemyPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
 	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
@@ -114,15 +115,7 @@ void GameScene::OnEnter() {
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
-	/*Archetype enemyArchetype{};
-	enemyArchetype.AddClassData<ECS::IsAlive, ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp, ECS::InputFlagComp, ECS::BoneTransformComp>();*/
-
-	entityManager_->CreateEntity(*playerPrefab_);
-
-	Archetype followCameraArchetype{};
-	followCameraArchetype.AddClassData<ECS::FollowCamera, ECS::PositionComp>();
-
-	entityManager_->CreateEntity(followCameraArchetype);
+	entityManager_->CreateEntity<ECS::FollowCamera, ECS::PositionComp>();
 
 	//*enemyPrefab_ += ECS::RotateComp{};
 
@@ -147,6 +140,9 @@ void GameScene::OnEnter() {
 
 		gameObject_.transform_.translate = { 0.f,3.f,0.f };
 	}
+
+	healthBar_ = std::make_unique<HealthBar>();
+	healthBar_->Init();
 
 
 	// 汎用的な処理
@@ -288,6 +284,7 @@ void GameScene::Draw() {
 
 	Sprite::StartDraw(commandList);
 
+	healthBar_->Draw();
 	// スプライトの描画
 	Fade::GetInstance()->Draw();
 

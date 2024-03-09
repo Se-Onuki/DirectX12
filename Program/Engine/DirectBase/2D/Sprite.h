@@ -3,6 +3,8 @@
 #include "../../Utils/Math/Vector4.h"
 #include "../../Utils/Math/Vector3.h"
 #include "../../Utils/Math/Vector2.h"
+#include "../../Utils/Graphics/Color.h"
+#include "../File/VariantItem.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include "../../Utils/Math/Transform.h"
@@ -47,12 +49,12 @@ private:
 
 public:
 	struct VertexData {
-		Vector4 position;
-		Vector2 texCoord;
+		VariantItem<"Position", Vector4> position;
+		VariantItem<"TexCoord", Vector2> texCoord;
 	};
 
 	struct ConstData {
-		Vector4 color;
+		VariantItem<"Color", SoLib::Color::RGB4> color;
 		Matrix4x4 matWorldProjection;
 	};
 
@@ -142,8 +144,8 @@ public:
 
 	const auto &GetTransform() const { return transform_; }
 
-	void SetColor(const Vector4 &color);
-	const Vector4 &GetColor()const;
+	void SetColor(const SoLib::Color::RGB4 &color);
+	const SoLib::Color::RGB4 &GetColor()const;
 
 
 	/// @brief 描画

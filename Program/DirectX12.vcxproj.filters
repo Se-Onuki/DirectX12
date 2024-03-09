@@ -129,9 +129,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\SceneManager.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -374,6 +371,12 @@
     </ClCompile>
     <ClCompile Include="ECS\System\Systems.cpp">
       <Filter>ECS\System</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\HealthBar.cpp">
+      <Filter>Header\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -715,6 +718,9 @@
     </ClInclude>
     <ClInclude Include="Utils\Text\StaticString.h">
       <Filter>Utils\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\HealthBar.h">
+      <Filter>Header\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

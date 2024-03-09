@@ -189,6 +189,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\Fade.cpp" />
     <ClCompile Include="Header\Object\FollowCamera.cpp" />
     <ClCompile Include="Header\Object\Ground.cpp" />
+    <ClCompile Include="Header\Object\HealthBar.cpp" />
     <ClCompile Include="Header\Object\Particle.cpp" />
     <ClCompile Include="Header\Object\Particle\GetParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp" />
@@ -290,6 +291,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Fade.h" />
     <ClInclude Include="Header\Object\FollowCamera.h" />
     <ClInclude Include="Header\Object\Ground.h" />
+    <ClInclude Include="Header\Object\HealthBar.h" />
     <ClInclude Include="Header\Object\Particle.h" />
     <ClInclude Include="Header\Object\Particle\GetParticle.h" />
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h" />

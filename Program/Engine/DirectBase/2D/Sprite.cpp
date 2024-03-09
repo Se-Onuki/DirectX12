@@ -429,7 +429,8 @@ void Sprite::ImGuiWidget() {
 	if (transform_.ImGuiWidget2D()) {
 		transform_.CalcMatrix();
 	}
-	ImGui::ColorEdit4("Color", &constData_->color.x);
+	SoLib::ImGuiWidget(&constData_->color);
+
 	static char filePath[32];
 	ImGui::InputText("filePath", filePath, 32u);
 	if (ImGui::Button("Load")) {
@@ -520,12 +521,12 @@ std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle, const Vect
 	return std::move(sprite);
 }
 
-void Sprite::SetColor(const Vector4 &color)
+void Sprite::SetColor(const SoLib::Color::RGB4 &color)
 {
 	constData_->color = color;
 }
 
-const Vector4 &Sprite::GetColor() const
+const SoLib::Color::RGB4 &Sprite::GetColor() const
 {
 	return constData_->color;
 }
