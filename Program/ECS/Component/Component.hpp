@@ -252,7 +252,7 @@ namespace ECS {
 		int32_t nowHealth_ = 0;
 
 		void Reset() { nowHealth_ = maxHealth_; }
-		float CalcPercent() const { return static_cast<float>(nowHealth_) / maxHealth_; }
+		float CalcPercent() const { return nowHealth_ < 0 ? 0.f : static_cast<float>(nowHealth_) / maxHealth_; }
 		bool IsDead() const { return nowHealth_ <= 0; }
 	};
 

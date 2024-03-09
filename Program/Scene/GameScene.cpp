@@ -144,7 +144,6 @@ void GameScene::OnEnter() {
 	healthBar_ = std::make_unique<HealthBar>();
 	healthBar_->Init();
 
-
 	// 生存などのデータの確認
 	systemManager_.AddSystem<ECS::System::CheckAliveTime>();
 	systemManager_.AddSystem<ECS::System::CheckHealthDie>();
