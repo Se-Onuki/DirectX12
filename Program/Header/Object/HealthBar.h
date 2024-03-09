@@ -14,6 +14,8 @@ public:
 
 	void Draw();
 
+	void SetPercent(const float t);
+
 
 private:
 

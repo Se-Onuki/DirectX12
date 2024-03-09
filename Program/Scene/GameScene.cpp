@@ -167,6 +167,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::BoneCollision>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::FollowCameraUpdate>();
 	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
+	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
 
 }
 

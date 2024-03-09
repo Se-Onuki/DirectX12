@@ -4,6 +4,7 @@
 #include "../../Header/Object/Ground.h"
 #include "../../Engine/DirectBase/Base/Audio.h"
 #include "../../Engine/DirectBase/Model/Model.h"
+#include "../../Header/Object/HealthBar.h"
 
 namespace ECS {
 	namespace System {
@@ -147,6 +148,19 @@ namespace ECS {
 
 		class MakeTransMatrix : public ISystem {
 		public:
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
+		class DrawHelthBar : public ISystem {
+		public:
+			HealthBar *healthBar_ = nullptr;
+			static DrawHelthBar Create(HealthBar *healthBar) {
+				DrawHelthBar result;
+				result.healthBar_ = healthBar;
+				return result;
+			}
 
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;

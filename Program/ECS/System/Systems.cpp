@@ -339,3 +339,11 @@ void ECS::System::MakeTransMatrix::OnUpdate(::World *world, [[maybe_unused]] con
 	}
 
 }
+
+void ECS::System::DrawHelthBar::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+	for (const auto &[entity, plTag, health] : world->view<ECS::PlayerTag, ECS::HealthComp>()) {
+
+		healthBar_->SetPercent(health->CalcPercent());
+
+	}
+}

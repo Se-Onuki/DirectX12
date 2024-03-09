@@ -250,6 +250,9 @@ namespace ECS {
 	struct HealthComp : IComponent {
 		int32_t maxHealth_ = 0;
 		int32_t nowHealth_ = 0;
+
+		void Reset() { nowHealth_ = maxHealth_; }
+		float CalcPercent() const { return static_cast<float>(nowHealth_) / maxHealth_; }
 	};
 
 	struct InvincibleTime : IComponent {
