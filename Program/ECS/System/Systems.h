@@ -42,7 +42,7 @@ namespace ECS {
 			void OnUpdate(::World *world, const float deltaTime) override;
 
 		};
-		class AirResistance : public ISystem {
+		class AirResistanceSystem : public ISystem {
 
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;

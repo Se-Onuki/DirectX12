@@ -29,7 +29,6 @@ void ImGuiManager::StaticInit(const HWND &hwnd, ID3D12Device *const device, uint
 	imGuiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	imGuiIO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	imGuiIO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX12_Init(device,

@@ -373,7 +373,7 @@
       <Filter>Utils\Math</Filter>
     </ClCompile>
     <ClCompile Include="ECS\System\Systems.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ECS\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

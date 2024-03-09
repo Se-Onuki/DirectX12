@@ -73,11 +73,11 @@ void ECS::System::AddGravity::OnUpdate(::World *world, [[maybe_unused]] const fl
 	}
 }
 
-void ECS::System::AirResistance::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+void ECS::System::AirResistanceSystem::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
-	for (const auto &[entity, acceleration, velocity] : world->view<ECS::AccelerationComp, ECS::VelocityComp>()) {
+	for (const auto &[entity, acceleration, velocity, airResistance] : world->view<ECS::AccelerationComp, const ECS::VelocityComp, const ECS::AirResistance>()) {
 
-		acceleration->acceleration_ -= velocity->velocity_ * (0.6f / 60.f);
+		acceleration->acceleration_ -= velocity->velocity_ * airResistance->resistance;
 
 	}
 }
@@ -119,10 +119,10 @@ void ECS::System::EnemyMove::OnUpdate(::World *world, [[maybe_unused]] const flo
 }
 void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
-	Vector3 plPos;
+	Vector3 plPos{};
 	ECS::AccelerationComp *plAccele = nullptr;
 	ECS::HealthComp *plHealth = nullptr;
-	Sphere plColl;
+	Sphere plColl{};
 	for (const auto &[entity, player, playerPos, playerHealth, playerCollision, playerAcceleration] : world->view<const ECS::PlayerTag, const ECS::PositionComp, ECS::HealthComp, const ECS::CollisionComp, ECS::AccelerationComp>()) {
 		// 体力のポインタを取得
 		plHealth = playerHealth;
@@ -142,9 +142,9 @@ void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const f
 		enColl.centor += *pos;
 
 		// クールタイムが終わっており、接触している場合
-		if (not attackCT->cooltime_.IsActive() and Collision::IsHit(plColl, enColl)) {
+		if (not attackCT->cooltime_.IsActive() and Collision::IsHit(plColl, enColl) and plAccele and plHealth) {
 			// プレイヤに加速度を加算
-			plAccele->acceleration_ += (plPos - *pos) * 5.f;
+			plAccele->acceleration_ += (plPos - *pos) * 15.f;
 			// 体力を減算
 			plHealth->nowHealth_ -= attackPow->power_;
 

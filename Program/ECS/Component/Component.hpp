@@ -264,6 +264,10 @@ namespace ECS {
 		SoLib::DeltaTimer cooltime_;
 	};
 
+	struct AirResistance : IComponent {
+		float resistance;
+	};
+
 	struct InputFlagComp : IComponent {};
 
 	template<class T>

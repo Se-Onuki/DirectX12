@@ -96,6 +96,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AnimateParametor{};
 	*playerPrefab_ += ECS::HealthComp{ .maxHealth_ = 10, .nowHealth_ = 10 };
 	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
+	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
 
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 	*enemyPrefab_ += ECS::IsAlive{};
@@ -154,7 +155,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::AnimateUpdate>();
 	systemManager_.AddSystem<ECS::System::ColorLerp>();
 	systemManager_.AddSystem<ECS::System::AddGravity>();
-	systemManager_.AddSystem<ECS::System::AirResistance>();
+	systemManager_.AddSystem<ECS::System::AirResistanceSystem>();
 	systemManager_.AddSystem<ECS::System::MovePosition>();
 
 	// ゲーム固有の処理
@@ -198,7 +199,7 @@ void GameScene::Update() {
 		auto enemys = entityManager_->CreateEntity(*enemyPrefab_, 10u);
 		for (uint32_t i = 0; auto & enemy : enemys) {
 			auto [pos] = entityManager_->GetComponent<ECS::PositionComp>(enemy);
-			pos->position_ = SoLib::EulerToDirection(SoLib::Euler(0.f, 30._deg * i, 0.f)) * 7.5f + pos->position_;
+			pos->position_ = SoLib::EulerToDirection(SoLib::Euler(0.f, (Angle::PI2 / 10.f) * i, 0.f)) * 7.5f + pos->position_;
 			i++;
 		}
 		spawnTimer_.Start();
