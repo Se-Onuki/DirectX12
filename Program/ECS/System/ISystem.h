@@ -20,7 +20,7 @@ namespace ECS {
 
 	class ISystem {
 	public:
-		SimulationSystemGroup systemGroup_;
+		//SimulationSystemGroup systemGroup_;
 		virtual ~ISystem() = default;
 		virtual void OnUpdate(::World *world, const float deltaTime) = 0;
 
@@ -29,11 +29,11 @@ namespace ECS {
 		virtual bool IsConstSystem() const = 0;
 
 		/// @brief シミュレーションシステムのグループを設定
-		void SetSimlationSystemGroup(SimulationSystemGroup group) { systemGroup_ = group; }
+		//void SetSimlationSystemGroup(SimulationSystemGroup group) { systemGroup_ = group; }
 
 		/// @brief シミュレーションシステムのグループを取得
 		/// @return シミュレーションシステムのグループ
-		SimulationSystemGroup GetSimlationSystemGroup() const { return systemGroup_; }
+		//SimulationSystemGroup GetSimlationSystemGroup() const { return systemGroup_; }
 	};
 
 	class IJobSystem {
