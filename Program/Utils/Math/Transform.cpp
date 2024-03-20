@@ -81,9 +81,9 @@ void BaseTransform::MatToSRT(const Matrix4x4 &mat) {
 
 	// スケールの取得
 	//scale.x = std::sqrt(mat.m[0][0] * mat.m[0][0] + mat.m[0][1] * mat.m[0][1] + mat.m[0][2] * mat.m[0][2]);
-	scale.arr[0u] = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[0u], vec[0u], 0x71)));
-	scale.arr[1u] = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[1u], vec[1u], 0x71)));
-	scale.arr[2u] = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[2u], vec[2u], 0x71)));
+	scale.arr()[0u] = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[0u], vec[0u], 0x71)));
+	scale.arr()[1u] = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[1u], vec[1u], 0x71)));
+	scale.arr()[2u] = std::sqrt(_mm_cvtss_f32(_mm_dp_ps(vec[2u], vec[2u], 0x71)));
 
 	// 回転行列の取得
 	Matrix4x4 rotMat = Matrix4x4::Identity();

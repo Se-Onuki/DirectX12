@@ -27,10 +27,6 @@ public:
 	// std::list<std::unique_ptr<Object>> objectList_;
 };
 
-template<typename T>
-concept IsBasedIScene = std::is_base_of<IScene, T>::value;
-
-
 class SceneManager {
 private:
 
@@ -46,6 +42,7 @@ private:
 	SceneManager operator=(const SceneManager &) = delete;
 	~SceneManager() = default;
 
+	/// @brief 文字列をキーとしてシーンの生成関数を保存する
 	std::unordered_map<std::string, std::unique_ptr<IScene>(*)()> sceneFactory_;
 
 public:

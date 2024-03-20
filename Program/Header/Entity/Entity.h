@@ -113,7 +113,7 @@ public:
 	virtual void Init();
 	virtual void Reset();
 	virtual void Update(float deltaTime);
-	virtual void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
+	virtual void Draw(const Camera3D &vp) const;
 
 	/*template<typename T>
 	bool HasComponent();*/
@@ -127,7 +127,7 @@ public:
 	/// @brief コンポーネントの取得
 	/// @tparam T コンポーネント型
 	/// @return コンポーネントのポインタ (存在しない場合、nullptr)
-	template <typename T>
+	template <SoLib::IsBased<IComponent> T>
 	T *const GetComponent() const;
 
 	/// @brief 生存しているかを設定する
@@ -167,28 +167,28 @@ private:
 
 template <SoLib::IsBased<IComponent> T>
 T *const GameObject::AddComponent() {
-	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
 
 	// 既に存在する場合はその場で終了
 	T *const findComp = GetComponent<T>();
 	if (findComp) { return findComp; }
 
 	// コンポーネントを生成
-	IComponent *const component = new T(this);
 	std::type_index key = std::type_index(typeid(T));
 
 	// 登録
-	componentMap_[key].reset(component);
+	componentMap_[key] = std::make_unique<T>(this);
+	// 対象のポインタを取得
+	auto &component = componentMap_[key];
 	// 初期化
 	component->Init();
 
-	return GetComponent<T>();
+	return static_cast<T *>(component.get());
 }
 
 
-template <typename T>
+template <SoLib::IsBased<IComponent> T>
 T *const GameObject::GetComponent() const {
-	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
+	//static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");
 
 	const auto &it = componentMap_.find(std::type_index(typeid(T)));
 	if (it != componentMap_.end()) {

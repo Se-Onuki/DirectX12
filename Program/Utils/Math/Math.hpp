@@ -184,7 +184,7 @@ inline Vector3 operator*(const Vector3 &left, const Matrix3x3 &right)
 
     // ドット積で代入
     for (uint32_t i = 0u; i < 3u; i++) {
-        result.arr[i] = left * tpMat.vec[i];
+        result.arr()[i] = left * tpMat.vec[i];
     }
 
     return result;

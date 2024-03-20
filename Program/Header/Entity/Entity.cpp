@@ -33,7 +33,7 @@ void GameObject::Update(float deltaTime) {
 	}
 }
 
-void GameObject::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
+void GameObject::Draw(const Camera3D &vp) const {
 	auto *const modelComp = GetComponent<ModelComp>();
 
 	for (auto &component : componentMap_) {

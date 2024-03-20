@@ -7,25 +7,22 @@
 #include <immintrin.h>
 #include "SimdCalc.h"
 #include <json.hpp>
+#include <cstdint>
 
 struct Matrix4x4;
 
 struct Vector3 {
+public:
 
-#pragma warning(push)  // 現在の警告のステータスを保存する
-#pragma warning(disable : 4201)  // C4201警告を無視する
-
-	union {
-		struct {
-			float x, y, z;
-		};
-		std::array<float, 3u> arr;
+	enum class Preset : uint32_t {
+		kRight,
+		kUp,
+		kFront,
 	};
 
-#pragma warning(pop)  // 以前の警告のステータスに戻す
+public:
 
-	Vector3() = default;
-	Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
+	float x, y, z;
 
 	/// <summary>
 	/// ベクトルをデバック表示する
@@ -100,6 +97,9 @@ struct Vector3 {
 		return *this;
 	}
 
+	float &operator[](uint32_t index) noexcept { return arr()[index]; }
+	float operator[](uint32_t index) const noexcept { return arr()[index]; }
+
 	// Vector3 operator*(const Matrix3x3& Second) const {}
 
 	// Vector3 operator*=(const Matrix3x3& Second) {}
@@ -159,12 +159,19 @@ struct Vector3 {
 
 	/// @brief 暗黙的な配列への変換
 	inline operator std::array<float, 3u> &() noexcept {
-		return arr;
+		return arr();
 	}
 
 	/// @brief 暗黙的な配列への変換
 	inline operator const std::array<float, 3u> &() const noexcept {
-		return arr;
+		return arr();
+	}
+
+	inline std::array<float, 3u> &arr() noexcept {
+		return *reinterpret_cast<std::array<float, 3u>*>(this);
+	}
+	inline const std::array<float, 3u> &arr() const noexcept {
+		return *reinterpret_cast<const std::array<float, 3u>*>(this);
 	}
 
 	static uint32_t size() { return 3u; }
@@ -188,10 +195,7 @@ struct Vector3 {
 
 	Vector3 &operator=(const nlohmann::json &jsonArray) {
 		if (jsonArray.is_array() && jsonArray.size() == 3u) {
-			arr = jsonArray;
-			/*x = jsonArray[0];
-			y = jsonArray[1];
-			z = jsonArray[2];*/
+			arr() = jsonArray;
 		}
 		else {
 			*this = Vector3::zero;

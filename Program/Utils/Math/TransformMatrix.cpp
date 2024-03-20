@@ -15,7 +15,7 @@ TransformMatrix TransformMatrix::Inverse() const
 
 	for (uint8_t i = 0u; i < 3u; i++) {
 		// 転置前の行列とのドット積を代入 == 転置後の行列との行列乗算と同義
-		result.GetTranslate().arr[i] = -(GetTranslate() * tmp.vec[i]);
+		result.GetTranslate().arr()[i] = -(GetTranslate() * tmp.vec[i]);
 	}
 
 	return result;
@@ -29,7 +29,7 @@ TransformMatrix TransformMatrix::InverseRT() const
 
 	for (uint8_t i = 0u; i < 3u; i++) {
 		// 転置前の行列とのドット積を代入 == 転置後の行列との行列乗算と同義
-		result.GetTranslate().arr[i] = -(GetTranslate() * GetRotateMat().vec[i]);
+		result.GetTranslate().arr()[i] = -(GetTranslate() * GetRotateMat().vec[i]);
 	}
 	return result;
 }
