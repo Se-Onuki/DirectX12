@@ -37,7 +37,7 @@ bool Camera<Render::CameraType::Projecction>::ImGuiWidget() {
 	return false;
 }
 
-bool Camera<Render::CameraType::Projecction>::ImGuiWidget(std::string id)
+bool Camera<Render::CameraType::Projecction>::ImGuiWidget(const std::string &id)
 {
 	if (ImGui::TreeNode(id.c_str())) {
 		bool isUsing = false;
@@ -53,7 +53,7 @@ bool Camera<Render::CameraType::Projecction>::ImGuiWidget(std::string id)
 }
 
 void Camera<Render::CameraType::Projecction>::CalcMatrix() {
-	matView_ = Matrix4x4::Affine(Vector3::one, rotation_, translation_).InverseSRT();
+	matView_ = SoLib::Math::Affine(Vector3::one, rotation_, translation_).InverseRT();
 	matProjection_ = Render::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 }
 

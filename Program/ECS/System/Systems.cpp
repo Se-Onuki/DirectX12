@@ -350,6 +350,20 @@ void ECS::System::FollowCameraUpdate::OnUpdate(::World *world, [[maybe_unused]] 
 	}
 }
 
+void ECS::System::SlideFollowCameraUpdate::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
+{
+
+	for (const auto &[plEntity, player, pos] : world->view<ECS::PlayerTag, ECS::PositionComp>()) {
+
+
+		for (const auto &[entity, followCamera, cameraPos] : world->view<ECS::FollowCamera, ECS::PositionComp>()) {
+			*cameraPos = pos->position_;
+
+			followCamera->TransferData(*CameraManager::GetInstance()->GetCamera("FollowCamera"), *cameraPos);
+		}
+	}
+}
+
 void ECS::System::MakeTransMatrix::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
 	for (const auto &[entity, scale, quate, pos, mat] : world->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {

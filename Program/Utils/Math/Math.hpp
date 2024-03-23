@@ -151,41 +151,89 @@ Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m);
 
 namespace SoLib {
 
-    namespace Math {
+	namespace Math {
 
-        Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &transform);
-        Matrix4x4 Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform);
+		Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &transform);
+		Matrix4x4 Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform);
 
-        Quaternion MakeQuaternion(const SoLib::Math::Euler &euler);
+		Quaternion MakeQuaternion(const SoLib::Math::Euler &euler);
 
-        Vector3 EulerToDirection(const SoLib::Math::Euler &euler);
+		Vector3 EulerToDirection(const SoLib::Math::Euler &euler);
 
-        SoLib::Math::Euler DirectionToEuler(const Vector3 &direction);
+		SoLib::Math::Euler DirectionToEuler(const Vector3 &direction);
 
-        template <size_t x, size_t y, typename T>
-        void ArrayTranspose(const T *input, T *output) {
-            for (size_t i = 0; i < x; ++i) {
-                for (size_t j = 0; j < y; ++j) {
-                    output[j * x + i] = input[i * y + j];
-                }
-            }
-        }
+		template <size_t x, size_t y, typename T>
+		void ArrayTranspose(const T *input, T *output) {
+			for (size_t i = 0; i < x; ++i) {
+				for (size_t j = 0; j < y; ++j) {
+					output[j * x + i] = input[i * y + j];
+				}
+			}
+		}
 
-    }
+	}
 
 }
+//
+//inline Vector3 operator*(const Vector3 &left, const Matrix3x3 &right)
+//{
+//	Vector3 result;
+//
+//	// 転置した行列
+//	const Matrix3x3 tpMat = right.Transpose();
+//
+//	// ドット積で代入
+//	for (uint32_t i = 0u; i < 3u; i++) {
+//		result.arr()[i] = left * tpMat.vec[i];
+//	}
+//
+//	return result;
+//}
 
 inline Vector3 operator*(const Vector3 &left, const Matrix3x3 &right)
 {
-    Vector3 result;
 
-    // 転置した行列
-    const Matrix3x3 tpMat = right.Transpose();
+	__m128 row0; *reinterpret_cast<Vector3 *>(&row0) = right.vec[0];
+	__m128 row1; *reinterpret_cast<Vector3 *>(&row1) = right.vec[1];
+	__m128 row2; *reinterpret_cast<Vector3 *>(&row2) = right.vec[2];
 
-    // ドット積で代入
-    for (uint32_t i = 0u; i < 3u; i++) {
-        result.arr()[i] = left * tpMat.vec[i];
-    }
+	__m128 xmm_all; *reinterpret_cast<Vector3 *>(&xmm_all) = left;
 
-    return result;
+	// 1つの__m128構造体から4つの__m128に分解
+	const __m128 brod0 = _mm_permute_ps(xmm_all, 0x00);
+	const __m128 brod1 = _mm_permute_ps(xmm_all, 0x55);
+	const __m128 brod2 = _mm_permute_ps(xmm_all, 0xAA);
+	const __m128 result = { _mm_add_ps(
+		_mm_add_ps(_mm_mul_ps(brod0, row0), _mm_mul_ps(brod1, row1)),
+		_mm_mul_ps(brod2, row2)) };
+
+	return *reinterpret_cast<const Vector3 *>(&result);
+}
+
+inline Vector3 &operator*=(Vector3 &left, const Matrix3x3 &right)
+{
+
+	__m128 row0; *reinterpret_cast<Vector3 *>(&row0) = right.vec[0];
+	__m128 row1; *reinterpret_cast<Vector3 *>(&row1) = right.vec[1];
+	__m128 row2; *reinterpret_cast<Vector3 *>(&row2) = right.vec[2];
+
+	__m128 xmm_all; *reinterpret_cast<Vector3 *>(&xmm_all) = left;
+
+	// 1つの__m128構造体から4つの__m128に分解
+	const __m128 brod0 = _mm_permute_ps(xmm_all, 0x00);
+	const __m128 brod1 = _mm_permute_ps(xmm_all, 0x55);
+	const __m128 brod2 = _mm_permute_ps(xmm_all, 0xAA);
+	const __m128 result = { _mm_add_ps(
+		_mm_add_ps(_mm_mul_ps(brod0, row0), _mm_mul_ps(brod1, row1)),
+		_mm_mul_ps(brod2, row2)) };
+
+	return left = *reinterpret_cast<const Vector3 *>(&result);
+}
+
+inline Vector3 operator*(const Vector3 &left, const Quaternion &right) {
+	return right.RotateVector(left);
+}
+
+inline Vector3 &operator*=(Vector3 &left, const Quaternion &right) {
+	return left = right.RotateVector(left);
 }

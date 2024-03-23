@@ -115,7 +115,11 @@ void GameScene::OnEnter() {
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
-	entityManager_->CreateEntity<ECS::FollowCamera, ECS::PositionComp>();
+	ECS::Prefab followCamera;
+	followCamera += ECS::FollowCamera{};
+	followCamera += ECS::PositionComp{};
+
+	entityManager_->CreateEntity(followCamera);
 
 	//*enemyPrefab_ += ECS::RotateComp{};
 
@@ -166,7 +170,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::BillboardCalc>();
 	systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::BoneCollision>(&boneModel_);
-	systemManager_.AddSystem<ECS::System::FollowCameraUpdate>();
+	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
 	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
 

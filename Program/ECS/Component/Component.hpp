@@ -202,7 +202,7 @@ namespace ECS {
 
 #pragma region ビュー行列の設定
 
-		SoLib::Math::Euler rotation_{ 15._deg,0.f,0.f };
+		Quaternion rotation_ = SoLib::MakeQuaternion({ 15._deg,0.f,0.f });
 
 		Vector3 offset_{ 0.f, 0.f,-15.f };
 

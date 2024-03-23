@@ -37,7 +37,7 @@ public:
 
 #pragma region ビュー行列の設定
 
-	Vector3 rotation_ = { 0, 0, 0 };
+	Quaternion rotation_ = Quaternion::Identity;
 	Vector3 translation_ = { 0, 0, -5 };
 
 #pragma endregion
@@ -71,7 +71,7 @@ public:
 	/// </summary>
 	/// <param name="id">ウィンドウ名</param>
 	/// <returns></returns>
-	bool ImGuiWidget(std::string id);
+	bool ImGuiWidget(const std::string &id);
 
 };
 

@@ -22,14 +22,14 @@ void FollowCameraComp::Update() {
 
 	SoLib::ImGuiText("FollowCameraAngle", SoLib::to_string(rotate_));
 
-	const Vector3 cameraOffset = offset_.GetItem() * Matrix4x4::EulerRotate(rotate_);
+	const Vector3 cameraOffset = offset_.GetItem() * rotate_;
 
 	camera_->translation_ = cameraOffset + SoLib::Lerp(pTarget_->GetGrobalPos(), linePoint, vLerpValue);
 	camera_->translation_.y = cameraOffset.y + SoLib::Lerp(pTarget_->GetGrobalPos().y, linePoint.y, 0.25f) + addOffset_->y;
 
 	Vector3 facing = linePoint - camera_->translation_;
 
-	camera_->rotation_ = facing.Direction2Euler();
+	camera_->rotation_ = Quaternion::LookAt(facing);
 
 	camera_->UpdateMatrix();
 
@@ -45,9 +45,9 @@ void FollowCameraComp::ImGuiWidget() {
 void FollowCameraComp::AddRotate(const Vector3 &euler) {
 	if (euler.LengthSQ() != 0.f) {
 		if (CameraManager::GetInstance()->GetUseCamera() == camera_) {
-			rotate_ += euler;
+			rotate_ *= Quaternion::LookAt(SoLib::EulerToDirection(euler));
 
-			camera_->rotation_ += euler;
+			camera_->rotation_ *= Quaternion::LookAt(SoLib::EulerToDirection(euler));
 			camera_->CalcMatrix();
 		}
 	}

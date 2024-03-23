@@ -35,7 +35,7 @@ private:
 	VariantItem<"Offset", Vector3> offset_{ { 0.f,6.f,-30.f } };
 	VariantItem<"AddOffset", Vector3> addOffset_{ { 0.f,6.f,0.f } };
 
-	Vector3 rotate_;
+	Quaternion rotate_;
 	Vector3 prePos_;
 
 	Camera3D *camera_;

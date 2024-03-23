@@ -16,7 +16,7 @@ namespace SoLib::Math {
 struct Quaternion final {
 	Quaternion() = default;
 	Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {};
-	Quaternion(const Vector3 &vec, float w = 0.f) :w(w) { this->vec() = vec; };
+	Quaternion(const Vector3 &vec, float w) :w(w) { this->vec() = vec; };
 
 	float x, y, z;
 	float w;
@@ -163,7 +163,7 @@ inline Vector3 Quaternion::RotateVector(const Vector3 &a, const Quaternion &b) {
 }
 
 inline Vector3 Quaternion::RotateVector(const Vector3 &v) const {
-	Quaternion result = *this * Quaternion{ v } *this->Conjugation();
+	Quaternion result = *this * Quaternion{ v,0.f } *this->Conjugation();
 
 	return result.vec();
 }

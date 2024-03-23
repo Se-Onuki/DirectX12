@@ -19,8 +19,8 @@ SoLib::Color::RGB4 ECS::ColorLarp::EaseColor(float t) {
 
 void  ECS::FollowCamera::TransferData(Camera3D &camera, const Vector3 &translate) const {
 
-	camera.rotation_ = static_cast<const Vector3 &>(this->rotation_);
-	camera.translation_ = translate + offset_ * Matrix4x4::EulerRotate(rotation_);
+	camera.rotation_ = this->rotation_;
+	camera.translation_ = translate + (offset_ * rotation_);
 	camera.fovAngleY = this->fovAngleY;
 	camera.aspectRatio = this->aspectRatio;
 	camera.nearZ = this->nearZ;
