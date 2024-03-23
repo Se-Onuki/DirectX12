@@ -34,7 +34,7 @@ void HealthBar::Draw() {
 }
 
 void HealthBar::SetPercent(const float t) {
-	Vector2 barSize = vBarScale_.GetItem() - barFlameSize_ * 2.f;
+	Vector2 barSize = *vBarScale_ - barFlameSize_ * 2.f;
 	barSize.x *= t;
 	gauge_->SetScale(barSize);
 }
@@ -43,7 +43,7 @@ void HealthBar::SetCentor(const Vector2 pos)
 {
 	vBarCentor_ = pos;
 	backGround_->SetPosition(vBarCentor_);
-	gauge_->SetPosition(vBarCentor_.GetItem() - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
+	gauge_->SetPosition(*vBarCentor_ - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
 }
 
 void HealthBar::SetScale(const Vector2 radius)
@@ -57,6 +57,6 @@ void HealthBar::SetScale(const Vector2 radius)
 
 	barFlameSize_ = { vBarScale_->x * (vBarFlame_->x / textureSize.x), vBarScale_->y * (vBarFlame_->y / textureSize.y) };
 
-	gauge_->SetScale(vBarScale_.GetItem() - barFlameSize_ * 2.f);
-	gauge_->SetPosition(vBarCentor_.GetItem() - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
+	gauge_->SetScale(*vBarScale_ - barFlameSize_ * 2.f);
+	gauge_->SetPosition(*vBarCentor_ - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
 }

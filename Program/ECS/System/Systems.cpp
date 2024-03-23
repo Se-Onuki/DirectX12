@@ -289,7 +289,7 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 
 		if (animate->animIndex_ == 0u && animate->timer_.IsFinish()) {
 			if (attackCooltime->cooltime_.IsFinish()) {
-				animate->timer_.Start(0.5f);
+				animate->timer_.Start(0.25f);
 			}
 		}
 	}
@@ -464,12 +464,12 @@ void ECS::System::DrawEnemyHelthBar::OnUpdate(::World *world, [[maybe_unused]] c
 
 		// 画面上の場所
 		const Vector3 screenPos = Render::WorldToScreen(**pos + barComp->offset_, matVPVp);
-		// 体力を設定
-		bar->SetPercent(health->CalcPercent());
 		// 描画場所を設定
 		bar->SetCentor(screenPos.ToVec2());
 		// 体力バーのサイズ
 		bar->SetScale(*barComp->vDefaultBarScale_ * 0.25f);
+		// 体力を設定
+		bar->SetPercent(health->CalcPercent());
 
 		// 描画個数を加算
 		drawCount_++;
