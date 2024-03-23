@@ -98,6 +98,11 @@ void ParticleList::Update(float deltaTime)
 
 	for (auto &particle : particles_) {
 		particle->Update(deltaTime);
+
+		// ビルボード計算を行わないなら飛ばす
+		if (not particle->IsBillboard()) { continue; }
+
+		// 行う場合は計算する
 		particle->transform_.matWorld_ *= billboardMat;
 		*reinterpret_cast<Vector3 *>(particle->transform_.matWorld_.m[3].data()) = particle->GetTransform().translate;
 	}

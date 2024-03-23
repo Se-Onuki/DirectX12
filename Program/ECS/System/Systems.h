@@ -117,10 +117,17 @@ namespace ECS {
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
-		
+
 
 		class PlayerAttack : public ISystem {
 		public:
+			Model *attackModel_;
+			static PlayerAttack Create(Model *model) {
+				PlayerAttack result;
+				result.attackModel_ = model;
+
+				return result;
+			}
 
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;

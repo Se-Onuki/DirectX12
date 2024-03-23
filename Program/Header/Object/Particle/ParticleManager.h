@@ -163,6 +163,8 @@ public: // コンストラクタ等
 
 public: // 純粋仮想関数
 
+	virtual bool IsBillboard() const { return true; }
+
 	/// <summary>
 	/// 初期化
 	/// </summary>

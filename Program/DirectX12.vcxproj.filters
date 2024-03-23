@@ -127,6 +127,9 @@
     <Filter Include="Engine\Thread">
       <UniqueIdentifier>{adf22241-dcde-48d5-b8dc-0cbdd655e5ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Object\Particle\Particles\SimpleParticle">
+      <UniqueIdentifier>{c5438e29-0751-412f-85c7-3b0af4efcce0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -377,6 +380,9 @@
     </ClCompile>
     <ClCompile Include="Header\Object\HealthBar.cpp">
       <Filter>Header\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\Particle\SimpleParticle.cpp">
+      <Filter>Header\Object\Particle\Particles\SimpleParticle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -721,6 +727,9 @@
     </ClInclude>
     <ClInclude Include="Header\Object\HealthBar.h">
       <Filter>Header\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\Particle\SimpleParticle.h">
+      <Filter>Header\Object\Particle\Particles\SimpleParticle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

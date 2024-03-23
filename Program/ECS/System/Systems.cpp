@@ -4,6 +4,7 @@
 #include "../../Header/Object/Particle/TestParticle.h"
 #include "../../Engine/DirectBase/Input/Input.h"
 #include "../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../Header/Object/Particle/SimpleParticle.h"
 
 void ECS::System::CheckAliveTime::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
@@ -298,6 +299,7 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 
 void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
 {
+	static ParticleManager *const particleManager = ParticleManager::GetInstance();
 
 	for (const auto &[entity, pos, quateRot, attackSt, attCT, attColl, cursor] : world->view<const ECS::PositionComp, const ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp>()) {
 		// クールタイムが終わってたら
@@ -313,12 +315,20 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 			// 攻撃判定を有効化
 			attColl->isActive_ = true;
 
+			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl->collision_.centor + Vector3{ .y = 0.1f });
+			particle->SetAliveTime(0.5f);
+			particle->transform_.rotate = { 0.f,90._deg, -90._deg };
+			particle->transform_.scale = Vector3::one * (attackSt->radius_ * 2.f);
+
+
 		}
 		// 終わってなかったら
 		else {
 			// 攻撃判定を無効化
 			attColl->isActive_ = false;
 		}
+
+		// 攻撃タイミングをカーソルに代入
 		cursor->progress_ = attCT->cooltime_.GetProgress();
 	}
 }

@@ -43,6 +43,15 @@ void GameScene::OnEnter() {
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
 	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
 	model_->materialMap_.begin()->second->blendMode_ = Model::BlendMode::kAdd;
+
+	attackModel_ = ModelManager::GetInstance()->AddModel("AttackModel", Model::CreatePlane());
+	{
+		auto *const mtr = attackModel_->materialMap_.begin()->second.get();
+		mtr->texHandle_ = TextureManager::Load("UI/fullCircle.png");
+		mtr->blendMode_ = Model::BlendMode::kAdd;
+
+	}
+
 	auto sphere = ModelManager::GetInstance()->AddModel("Sphere", Model::LoadObjFile("", "Sphere.obj"));
 
 	// カーソルのモデル
@@ -103,7 +112,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
 	*playerPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
-	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor = Vector3::up, .radius = 1.f} };
+	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{ .centor = Vector3::up, .radius = 1.f} };
 	*playerPrefab_ += ECS::PlayerTag{};
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::AttackCollisionComp{ };
@@ -135,6 +144,7 @@ void GameScene::OnEnter() {
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
+	// カメラのオフセット位置
 	const Vector3 cameraOffset{ 0.f,1.f,-1.f };
 
 	ECS::Prefab followCamera;
@@ -194,7 +204,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::FallCollision>(&ground_);
 	systemManager_.AddSystem<ECS::System::WeaponCollision>(soundA_, model_);
 	systemManager_.AddSystem<ECS::System::PlayerMove>();
-	systemManager_.AddSystem<ECS::System::PlayerAttack>();
+	systemManager_.AddSystem<ECS::System::PlayerAttack>(attackModel_);
 	systemManager_.AddSystem<ECS::System::EnemyAttack>();
 
 	// 汎用的な処理

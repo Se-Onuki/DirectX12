@@ -86,5 +86,7 @@ private:
 
 	std::array<std::unique_ptr<HealthBar>, 50u> enemyHealthBar_;
 
+	Model *attackModel_ = nullptr;
+
 	SoLib::DeltaTimer playerSpawn_{ 1.f, false };
 };
