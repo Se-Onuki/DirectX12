@@ -319,7 +319,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 			particle->SetAliveTime(0.5f);
 			particle->transform_.rotate = { 0.f,90._deg, -90._deg };
 			particle->transform_.scale = Vector3::one * (attackSt->radius_ * 2.f);
-
+			particle->color_ = 0xFF5555FF;
 
 		}
 		// 終わってなかったら

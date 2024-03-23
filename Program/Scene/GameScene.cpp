@@ -240,12 +240,14 @@ void GameScene::Update() {
 	spawnTimer_.Update(deltaTime);
 	playerSpawn_.Update(deltaTime);
 
+	constexpr uint32_t enemyCount = 5u;
+
 	if (spawnTimer_.IsFinish()) {
 
-		auto enemys = entityManager_->CreateEntity(*enemyPrefab_, 10u);
+		auto enemys = entityManager_->CreateEntity(*enemyPrefab_, enemyCount);
 		for (uint32_t i = 0; auto & enemy : enemys) {
 			auto [pos] = entityManager_->GetComponent<ECS::PositionComp>(enemy);
-			pos->position_ = SoLib::EulerToDirection(SoLib::Euler(0.f, (Angle::PI2 / 10.f) * i, 0.f)) * 7.5f + pos->position_;
+			pos->position_ = SoLib::EulerToDirection(SoLib::Euler(0.f, (Angle::PI2 / enemyCount) * i, 0.f)) * 7.5f + pos->position_;
 			i++;
 		}
 		spawnTimer_.Start();
