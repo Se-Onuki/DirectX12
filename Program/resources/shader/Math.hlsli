@@ -1,4 +1,4 @@
-float4x3 mul(float4x3 leftMatrix, float4x3 rightMatrix)
+float4x3 Mul(float4x3 leftMatrix, float4x3 rightMatrix)
 {
     // Calc Multiply
     float4x3 result = mul(leftMatrix, (float3x3) (rightMatrix));

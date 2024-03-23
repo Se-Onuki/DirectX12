@@ -290,6 +290,12 @@ namespace ECS {
 		float resistance;
 	};
 
+	struct CursorComp : IComponent {
+		float offset_{ 5.f };
+		float scale_{ 2.f };
+		Model *model_;
+	};
+
 	struct InputFlagComp : IComponent {};
 
 	template<class T>

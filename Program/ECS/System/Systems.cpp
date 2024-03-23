@@ -417,3 +417,33 @@ void ECS::System::DrawEnemyHelthBar::OnUpdate(::World *world, [[maybe_unused]] c
 		drawCount_++;
 	}
 }
+
+void ECS::System::CursorDrawer::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
+{
+	// カメラの逆行列
+	const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
+
+	static BlockManager *const blockManager = BlockManager::GetInstance();
+
+	for (const auto &[entity, plTag, pos, rot, cursor] : world->view<ECS::PlayerTag, ECS::PositionComp, ECS::QuaternionRotComp, ECS::CursorComp>()) {
+
+		// カーソルの座標
+		Vector3 cursorPos = rot->quateRot_.GetFront() * cursor->offset_ + **pos + Vector3{ .y = 1.f };
+		// 描画する場所
+		Matrix4x4 item = SoLib::Affine(Vector3::one * cursor->scale_, Vector3::zero, cursorPos);
+		// ビルボード変換
+		item *= billboardMat;
+		// 座標を戻す
+		item.GetTranslate() = cursorPos;
+
+		// モデルの取得
+		const Model *const model = cursor->model_;
+		// 無かったら終わり
+		if (not model) { continue; }
+
+		// 描画
+		blockManager->AddBox(model, IBlock{ .transMat_ = item });
+
+
+	}
+}

@@ -94,7 +94,10 @@ struct Matrix4x4 final {
 
 	/// @brief 前方ベクトル
 	const Vector3 &GetFront() const { return *reinterpret_cast<const Vector3 *>(m[2].data()); }
-	const Vector3 &GetTranslate() const { return *reinterpret_cast<const Vector3 *>(m[3].data()); }
+	/// @brief 平行移動ベクトルを取得する
+	/// @return 平行移動ベクトル
+	Vector3 &GetTranslate() { return reinterpret_cast<Vector3 &>(m[3]); }
+	const Vector3 &GetTranslate() const { return reinterpret_cast<const Vector3 &>(m[3]); }
 
 	static Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);
 

@@ -45,6 +45,14 @@ void GameScene::OnEnter() {
 	model_->materialMap_.begin()->second->blendMode_ = Model::BlendMode::kAdd;
 	auto sphere = ModelManager::GetInstance()->AddModel("Sphere", Model::LoadObjFile("", "Sphere.obj"));
 
+	// カーソルのモデル
+	auto cursor = ModelManager::GetInstance()->AddModel("Cursor", Model::CreatePlane());
+	{
+		auto *const mtr = cursor->materialMap_.begin()->second.get();
+		mtr->texHandle_ = TextureManager::Load("UI/circle.png");
+		mtr->blendMode_ = Model::BlendMode::kAdd;
+	}
+
 	cameraManager_->Init();
 	followCamera_ = cameraManager_->AddCamera("FollowCamera");
 	cameraManager_->SetUseCamera(followCamera_);
@@ -97,6 +105,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::HealthComp::Create(120);
 	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
+	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor };
 
 	entityManager_->CreateEntity(*playerPrefab_);
 
@@ -183,6 +192,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
 	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
+	systemManager_.AddSystem<ECS::System::CursorDrawer>();
 
 }
 

@@ -49,6 +49,18 @@ struct Quaternion final {
 	/// @return 単位クォータニオン
 	inline Quaternion Normalize() const;
 
+	/// @brief 右方向のベクトル
+	/// @return 三次元ベクトル
+	Vector3 GetRight() const noexcept;
+
+	/// @brief 上方向のベクトル
+	/// @return 三次元ベクトル
+	Vector3 GetUp() const noexcept;
+
+	/// @brief 前方向のベクトル
+	/// @return 三次元ベクトル
+	Vector3 GetFront() const noexcept;
+
 	Matrix4x4 MakeRotateMatrix() const;
 
 	static inline Vector3 RotateVector(const Vector3 &a, const Quaternion &b);
@@ -130,6 +142,21 @@ inline Quaternion Quaternion::Normalize() const {
 	// ノルムで割る
 	result = SoLib::Math::SIMD128{ static_cast<__m128>(*this) } / length;
 	return result;
+}
+
+inline Vector3 Quaternion::GetRight() const noexcept
+{
+	return Vector3{ w * w + x * x - y * y - z * z, 2.f * (x * y + w * z), 2.f * (x * z - w * y) };
+}
+
+inline Vector3 Quaternion::GetUp() const noexcept
+{
+	return Vector3{ 2.f * (x * y - w * z), w * w - x * x + y * y - z * z,2.f * (y * z + w * x) };
+}
+
+inline Vector3 Quaternion::GetFront() const noexcept
+{
+	return Vector3{ 2.f * (x * z + w * y),2.f * (y * z - w * x),w * w - x * x - y * y + z * z };
 }
 
 inline Matrix4x4 Quaternion::MakeRotateMatrix() const {
