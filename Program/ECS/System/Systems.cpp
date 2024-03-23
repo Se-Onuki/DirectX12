@@ -243,18 +243,24 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 	auto *inputManager = Input::GetInstance();
 
 	for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding] : world->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding>()) {
-		const auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
+		// const auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
+		// 
+		// 左スティックの入力
 		const Vector2 inputLs = inputManager->GetXInput()->GetState()->stickL_;
-		const Vector3 input3d{ inputLs.x,0.f,inputLs.y };
-		const Vector3 rotateInput = Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y).RotateVector(input3d);
+		// 3次元的に解釈した入力
+		const Vector3 lInput3d{ inputLs.x,0.f,inputLs.y };
+		// カメラの向きに回転したベクトル
+		const Vector3 &rotateInput = lInput3d /** Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y)*/;
+		// 回転したベクトルを使って移動
 		pos->position_ += rotateInput * (500.f * deltaTime * deltaTime);
 
-		if (input3d.LengthSQ()) {
-			quateRot->quateRot_ = Quaternion::LookAt(rotateInput);
-		}
+		// 右スティックの入力
+		const Vector2 inputRs = inputManager->GetXInput()->GetState()->stickR_;
+		// 3次元的に解釈した入力
+		const Vector3 rInput3d{ inputRs.x, 0.f,inputRs.y };
 
-		if (isLanding->isLanding_ && inputManager->GetXInput()->IsTrigger(KeyCode::A)) {
-			acceleration->acceleration_.y += 10.f;
+		if (rInput3d.LengthSQ()) {
+			quateRot->quateRot_ = Quaternion::LookAt(rInput3d);
 		}
 
 		if (animate->animIndex_ == 0u && animate->timer_.IsFinish()) {
