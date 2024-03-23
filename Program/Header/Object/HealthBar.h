@@ -16,6 +16,10 @@ public:
 
 	void SetPercent(const float t);
 
+	void SetCentor(const Vector2 pos);
+
+	void SetScale(const Vector2 radius);
+
 
 private:
 

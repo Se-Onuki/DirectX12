@@ -384,11 +384,24 @@ void ECS::System::DrawHelthBar::OnUpdate(::World *world, [[maybe_unused]] const 
 
 void ECS::System::DrawEnemyHelthBar::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
+	auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
+
+	const Matrix4x4 &vp = Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight, 0.f, 1.f);
+	const Matrix4x4 &matVPVp = camera->matView_ * camera->matProjection_ * vp;
 	drawCount_ = 0u;
-	for (const auto &[entity, plTag, health] : world->view<ECS::PlayerTag, ECS::HealthComp>()) {
+	for (const auto &[entity, enmTag, health, pos] : world->view<ECS::EnemyTag, ECS::HealthComp, ECS::PositionComp>()) {
 
 		if (drawCount_ >= healthBar_->size()) { continue; }
+		// 紐づいた経験値バー
+		auto *const bar = healthBar_->at(drawCount_).get();
+
+		// 新しい場所
+		const Vector2 newPos = Render::WorldToScreen(**pos, matVPVp).ToVec2();
+
+		bar->SetPercent(health->CalcPercent());
+
+		bar->SetCentor(newPos);
+
 		drawCount_++;
-		healthBar_->at(drawCount_)->SetPercent(health->CalcPercent());
 	}
 }

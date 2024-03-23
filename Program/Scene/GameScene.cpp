@@ -110,6 +110,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
 	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
+	*enemyPrefab_ += ECS::HealthComp{ .maxHealth_ = 5, .nowHealth_ = 5 };
 	*enemyPrefab_ += ECS::AttackPower{ .power_ = 1 };
 	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
 
@@ -118,7 +119,7 @@ void GameScene::OnEnter() {
 	const Vector3 cameraOffset{ 0.f,1.f,-1.f };
 
 	ECS::Prefab followCamera;
-	followCamera += ECS::FollowCamera{ .rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -30.f} };
+	followCamera += ECS::FollowCamera{ .rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -40.f} };
 	followCamera += ECS::PositionComp{};
 
 	entityManager_->CreateEntity(followCamera);
@@ -180,7 +181,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
 	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
-	//systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
+	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
 
 }
 
@@ -315,13 +316,13 @@ void GameScene::Draw() {
 
 	Sprite::StartDraw(commandList);
 
-	//for (uint32_t count = 0; const auto & bar : enemyHealthBar_) {
-	//	// もし描画数が超えた場合終了
-	//	if (count++ >= systemManager_.GetSystem<ECS::System::DrawEnemyHelthBar>()->drawCount_) { break; }
+	for (uint32_t count = 0; const auto & bar : enemyHealthBar_) {
+		// もし描画数が超えた場合終了
+		if (count >= systemManager_.GetSystem<ECS::System::DrawEnemyHelthBar>()->drawCount_) { break; }
 
-	//	bar->Draw();
-
-	//}
+		bar->Draw();
+		count++;
+	}
 
 	healthBar_->Draw();
 	// スプライトの描画

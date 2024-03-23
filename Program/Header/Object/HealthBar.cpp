@@ -38,3 +38,25 @@ void HealthBar::SetPercent(const float t) {
 	barSize.x *= t;
 	gauge_->SetScale(barSize);
 }
+
+void HealthBar::SetCentor(const Vector2 pos)
+{
+	vBarCentor_ = pos;
+	backGround_->SetPosition(vBarCentor_);
+	gauge_->SetPosition(vBarCentor_.GetItem() - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
+}
+
+void HealthBar::SetScale(const Vector2 radius)
+{
+	const uint32_t barTexture = backGround_->GetTexHandle();
+	const auto &texDesc = TextureManager::GetInstance()->GetResourceDesc(barTexture);
+	const Vector2 &textureSize = { static_cast<float>(texDesc.Width), static_cast<float>(texDesc.Height) };
+
+	vBarScale_ = radius;
+	backGround_->SetScale(vBarScale_);
+
+	barFlameSize_ = { vBarScale_->x * (vBarFlame_->x / textureSize.x), vBarScale_->y * (vBarFlame_->y / textureSize.y) };
+
+	gauge_->SetScale(vBarScale_.GetItem() - barFlameSize_ * 2.f);
+	gauge_->SetPosition(vBarCentor_.GetItem() - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
+}

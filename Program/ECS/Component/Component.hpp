@@ -156,6 +156,9 @@ namespace ECS {
 		inline Vector3 &operator=(const Vector3 &other) { return  position_ = other; }
 		inline operator Vector3 &() { return position_; }
 		inline operator const Vector3 &() const { return position_; }
+
+		inline Vector3 &operator*() noexcept { return position_; }
+		inline const Vector3 &operator*() const noexcept { return position_; }
 	};
 
 	struct VelocityComp : IComponent {
@@ -163,6 +166,9 @@ namespace ECS {
 		inline Vector3 &operator=(const Vector3 &other) { return velocity_ = other; }
 		inline operator Vector3 &() { return velocity_; }
 		inline operator const Vector3 &() const { return velocity_; }
+
+		inline Vector3 &operator*() noexcept { return velocity_; }
+		inline const Vector3 &operator*() const noexcept { return velocity_; }
 	};
 
 	struct ScaleComp : IComponent {
@@ -170,6 +176,9 @@ namespace ECS {
 		inline Vector3 &operator=(const Vector3 &other) { return scale_ = other; }
 		inline operator Vector3 &() { return scale_; }
 		inline operator const Vector3 &() const { return scale_; }
+
+		inline Vector3 &operator*() noexcept { return scale_; }
+		inline const Vector3 &operator*() const noexcept { return scale_; }
 	};
 
 	struct RotateComp : IComponent {

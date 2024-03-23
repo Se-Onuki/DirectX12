@@ -147,6 +147,7 @@ public:
 	void SetColor(const SoLib::Color::RGB4 &color);
 	const SoLib::Color::RGB4 &GetColor()const;
 
+	uint32_t GetTexHandle() const noexcept { return textureHaundle_; }
 
 	/// @brief 描画
 	void Draw() const;
