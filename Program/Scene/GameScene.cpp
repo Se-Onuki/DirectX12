@@ -94,7 +94,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::WeaponComp{ .collision_{.radius = 1.f} };
 	*playerPrefab_ += ECS::AnimateParametor{};
-	*playerPrefab_ += ECS::HealthComp{ .maxHealth_ = 10, .nowHealth_ = 10 };
+	*playerPrefab_ += ECS::HealthComp::Create(120);
 	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
 
@@ -110,9 +110,9 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
 	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
-	*enemyPrefab_ += ECS::HealthComp{ .maxHealth_ = 5, .nowHealth_ = 5 };
-	*enemyPrefab_ += ECS::HealthBarComp{ };
-	*enemyPrefab_ += ECS::AttackPower{ .power_ = 1 };
+	*enemyPrefab_ += ECS::HealthComp::Create(100);
+	*enemyPrefab_ += ECS::HealthBarComp{};
+	*enemyPrefab_ += ECS::AttackPower{ .power_ = 10 };
 	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
 
 	entityManager_->CreateEntity(*enemyPrefab_);

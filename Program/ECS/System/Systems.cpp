@@ -391,19 +391,23 @@ void ECS::System::DrawEnemyHelthBar::OnUpdate(::World *world, [[maybe_unused]] c
 	drawCount_ = 0u;
 	for (const auto &[entity, enmTag, health, pos, barComp] : world->view<ECS::EnemyTag, ECS::HealthComp, ECS::PositionComp, ECS::HealthBarComp>()) {
 
+		// 描画上限になった場合は終了
 		if (drawCount_ >= healthBar_->size()) { break; }
+		// もしMaxなら表示しない
+		if (health->IsMax()) { continue; }
 		// 紐づいた経験値バー
 		auto *const bar = healthBar_->at(drawCount_).get();
 
-		// 新しい場所
-		const Vector3 newPos = Render::WorldToScreen(**pos + barComp->offset_, matVPVp);
-
+		// 画面上の場所
+		const Vector3 screenPos = Render::WorldToScreen(**pos + barComp->offset_, matVPVp);
+		// 体力を設定
 		bar->SetPercent(health->CalcPercent());
-
-		bar->SetCentor(newPos.ToVec2());
-
+		// 描画場所を設定
+		bar->SetCentor(screenPos.ToVec2());
+		// 体力バーのサイズ
 		bar->SetScale(*barComp->vDefaultBarScale_ * 0.25f);
 
+		// 描画個数を加算
 		drawCount_++;
 	}
 }

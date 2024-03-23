@@ -260,9 +260,12 @@ namespace ECS {
 		int32_t maxHealth_ = 0;
 		int32_t nowHealth_ = 0;
 
-		void Reset() { nowHealth_ = maxHealth_; }
-		float CalcPercent() const { return nowHealth_ < 0 ? 0.f : static_cast<float>(nowHealth_) / maxHealth_; }
-		bool IsDead() const { return nowHealth_ <= 0; }
+		void Reset() noexcept { nowHealth_ = maxHealth_; }
+		float CalcPercent() const noexcept { return nowHealth_ < 0 ? 0.f : static_cast<float>(nowHealth_) / maxHealth_; }
+		bool IsDead() const noexcept { return nowHealth_ <= 0; }
+		bool IsMax() const noexcept { return maxHealth_ == nowHealth_; }
+
+		static HealthComp Create(int32_t health) { return HealthComp{ .maxHealth_ = health, .nowHealth_ = health }; }
 	};
 
 	struct HealthBarComp : IComponent {
