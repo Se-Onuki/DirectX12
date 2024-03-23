@@ -261,15 +261,22 @@ void GameScene::Update() {
 			});
 		spawnTimer_.Start();
 	}
+	// プレイヤのView
 	auto playerView = world_->view<const ECS::PlayerTag>();
-	bool playerIsDead = not (playerView.begin() != playerView.end());
+	// プレイヤのViewの長さが0である場合は死んでいる
+	bool playerIsDead = playerView.begin() == playerView.end();
 
+	// 死んでいた場合は
 	if (playerIsDead) {
+		// スポーンタイマーが止まっていたら
 		if (not playerSpawn_.IsActive()) {
+			// 再度実行
 			playerSpawn_.Start();
 		}
 
+		// 終わっていたら
 		if (playerSpawn_.IsFinish()) {
+			// スポナーに追加
 			spawner_.AddSpawner(playerPrefab_.get());
 		}
 	}

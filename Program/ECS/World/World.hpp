@@ -145,6 +145,10 @@ namespace ECS {
 				return false;
 			}
 
+			bool operator==(const iterator &other) {
+				return not *this != other;
+			}
+
 
 		};
 
