@@ -391,7 +391,7 @@ void ECS::System::DrawEnemyHelthBar::OnUpdate(::World *world, [[maybe_unused]] c
 	drawCount_ = 0u;
 	for (const auto &[entity, enmTag, health, pos] : world->view<ECS::EnemyTag, ECS::HealthComp, ECS::PositionComp>()) {
 
-		if (drawCount_ >= healthBar_->size()) { continue; }
+		if (drawCount_ >= healthBar_->size()) { break; }
 		// 紐づいた経験値バー
 		auto *const bar = healthBar_->at(drawCount_).get();
 
