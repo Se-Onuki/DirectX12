@@ -299,7 +299,7 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
 {
 
-	for (const auto &[entity, pos, quateRot, attackSt, attCT, attColl] : world->view<const ECS::PositionComp, const ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp>()) {
+	for (const auto &[entity, pos, quateRot, attackSt, attCT, attColl, cursor] : world->view<const ECS::PositionComp, const ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp>()) {
 		// クールタイムが終わってたら
 		if (attCT->cooltime_.IsFinish()) {
 			// 再度開始
@@ -319,6 +319,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 			// 攻撃判定を無効化
 			attColl->isActive_ = false;
 		}
+		cursor->progress_ = attCT->cooltime_.GetProgress();
 	}
 }
 
