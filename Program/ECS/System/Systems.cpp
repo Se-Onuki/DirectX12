@@ -42,6 +42,17 @@ void ECS::System::AddAliveTime::OnUpdate(::World *world, [[maybe_unused]] const 
 
 }
 
+
+void ECS::System::AddCoolTime::OnUpdate(::World *world, const float deltaTime)
+{
+	for (const auto &[entity, coolTime] : world->view<ECS::AttackCooltime>()) {
+		// 生存時間を加算
+		coolTime->cooltime_.Update(deltaTime);
+	}
+
+}
+
+
 void ECS::System::AnimateUpdate::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
 	for (const auto &[entity, animate] : world->view<ECS::AnimateParametor>()) {
@@ -209,23 +220,36 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 	static ParticleManager *const particleManager = ParticleManager::GetInstance();
 
 	{
-		std::list<const ECS::WeaponComp *> weaponList{};
+		std::list<
+			std::tuple<
+			const ECS::AttackCollisionComp *,
+			const ECS::AttackPower *
+			>
+		> weaponList{};
 
-		for (const auto &[entity, weapon] : world->view<const ECS::WeaponComp>()) {
-			weaponList.push_back(weapon);
+		// 攻撃判定を保存
+		for (const auto &[entity, weapon, damage] : world->view<const ECS::AttackCollisionComp, const ECS::AttackPower>()) {
+			// 有効なら保存する
+			if (weapon->isActive_) {
+				weaponList.push_back({ weapon, damage });
+			}
 		}
 
-		for (const auto &[entity, enemy, pos, collision, isAlive] : world->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::IsAlive>()) {
+		for (const auto &[entity, enemy, pos, collision, health] : world->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::HealthComp>()) {
 
 			Sphere sphere = collision->collision_;
 			sphere.centor += *pos;
 
-			for (const auto *weapon : weaponList) {
+			for (const auto &[weapon, damage] : weaponList) {
+				// 攻撃判定が当たってたら検知
 				if (Collision::IsHit(sphere, weapon->collision_)) {
-					isAlive->isAlive_ = false;
+					// 体力を減らす
+					health->nowHealth_ -= damage->power_;
 
+					// ダメージ音を出す
 					sound_.Play(false, 1.f);
 
+					// パーティクルを出す
 					for (uint32_t i = 0u; i < 10u; i++) {
 						auto particle = particleManager->AddParticle<TestParticle>(model_, sphere.centor);
 						particle->SetAliveTime(Random::GetRandom<float>(0.5f, 1.5f));
@@ -242,7 +266,7 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 	auto *inputManager = Input::GetInstance();
 
-	for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding] : world->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding>()) {
+	for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding, attackSt, attackCooltime] : world->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding, ECS::AttackStatus, ECS::AttackCooltime>()) {
 		// const auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
 		// 
 		// 左スティックの入力
@@ -264,9 +288,36 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 		}
 
 		if (animate->animIndex_ == 0u && animate->timer_.IsFinish()) {
-			if (inputManager->GetXInput()->GetState()->triggerR_ > 0.5f) {
+			if (attackCooltime->cooltime_.IsFinish()) {
 				animate->timer_.Start(0.5f);
 			}
+		}
+	}
+}
+
+
+void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
+{
+
+	for (const auto &[entity, pos, quateRot, attackSt, attCT, attColl] : world->view<const ECS::PositionComp, const ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp>()) {
+		// クールタイムが終わってたら
+		if (attCT->cooltime_.IsFinish()) {
+			// 再度開始
+			attCT->cooltime_.Start();
+
+			// 攻撃の座標を設定
+			attColl->collision_.centor = quateRot->quateRot_.GetFront() * attackSt->offset_ + **pos;
+			// 攻撃の半径を設定
+			attColl->collision_.radius = attackSt->radius_;
+
+			// 攻撃判定を有効化
+			attColl->isActive_ = true;
+
+		}
+		// 終わってなかったら
+		else {
+			// 攻撃判定を無効化
+			attColl->isActive_ = false;
 		}
 	}
 }
@@ -330,12 +381,19 @@ void ECS::System::BoneAnimationCalc::OnUpdate(::World *world, [[maybe_unused]] c
 
 void ECS::System::BoneCollision::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
-	for (const auto &[entity, bone, weapon] : world->view<ECS::BoneTransformComp, ECS::WeaponComp>()) {
+	for (const auto &[entity, bone, weapon] : world->view<ECS::BoneTransformComp, ECS::AttackCollisionComp>()) {
+		auto matrixArray = boneModel_->CalcTransMat(bone->boneTransform_);
+
+		weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_->GetIndex("Sword", 0)].m[3].data());
+	}
+
+}
+void ECS::System::BoneDrawer::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+
+	for (const auto &[entity, bone, weapon] : world->view<ECS::BoneTransformComp, ECS::AttackCollisionComp>()) {
 		auto matrixArray = boneModel_->CalcTransMat(bone->boneTransform_);
 
 		boneModel_->Draw(matrixArray);
-
-		weapon->collision_.centor = *reinterpret_cast<Vector3 *>(matrixArray[boneModel_->GetIndex("Sword", 0)].m[3].data());
 	}
 
 }

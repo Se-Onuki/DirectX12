@@ -247,9 +247,9 @@ namespace ECS {
 		SoLib::DeltaTimer timer_{};
 	};
 
-	struct WeaponComp : IComponent {
-		uint32_t parentIndex_;
+	struct AttackCollisionComp : IComponent {
 		Sphere collision_;
+		bool isActive_ = false;
 	};
 
 	struct CollisionComp : IComponent {
@@ -296,6 +296,11 @@ namespace ECS {
 		float progress_ = 0.f;
 		Model *model_;
 		Model *inModel_;
+	};
+
+	struct AttackStatus : IComponent {
+		float offset_ = 4.5f;
+		float radius_ = 4.5f;
 	};
 
 	struct InputFlagComp : IComponent {};

@@ -29,6 +29,13 @@ namespace ECS {
 
 		};
 
+		class AddCoolTime : public ISystem {
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+
+		};
+
 		class AnimateUpdate : public ISystem {
 
 			bool IsConstSystem() const override { return false; }
@@ -110,6 +117,14 @@ namespace ECS {
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
+		
+
+		class PlayerAttack : public ISystem {
+		public:
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
 
 		class BillboardCalc : public ISystem {
 		public:
@@ -137,6 +152,20 @@ namespace ECS {
 
 			static BoneCollision Create(BoneModel *bone) {
 				BoneCollision result;
+				result.boneModel_ = bone;
+				return result;
+			}
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
+		class BoneDrawer : public ISystem {
+		public:
+			BoneModel *boneModel_;
+
+			static BoneDrawer Create(BoneModel *bone) {
+				BoneDrawer result;
 				result.boneModel_ = bone;
 				return result;
 			}
