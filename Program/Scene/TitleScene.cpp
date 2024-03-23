@@ -48,7 +48,7 @@ void TitleScene::Update() {
 
 	blockRender_->clear();
 
-	camera_.rotation_.y += 22.5_deg * deltaTime;
+	camera_.rotation_ *= SoLib::MakeQuaternion(SoLib::Euler{ 0.f, 22.5_deg * deltaTime, 0.f });
 	camera_.UpdateMatrix();
 
 	sprite_->SetScale(Vector2{ 256,64 } *2.f);
