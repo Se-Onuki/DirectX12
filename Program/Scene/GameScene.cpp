@@ -251,7 +251,7 @@ void GameScene::Update() {
 
 	if (spawnTimer_.IsFinish()) {
 		// スポナーに追加を要求する
-		spawner_.AddSpawner(enemyPrefab_.get(), enemyCount, [](auto &enemys, auto manager)
+		spawner_.AddSpawner(enemyPrefab_.get(), enemyCount, [](auto enemys, auto manager)
 			{
 				for (uint32_t i = 0; auto & enemy : enemys) {
 					auto [pos] = manager->GetComponent<ECS::PositionComp>(enemy);
