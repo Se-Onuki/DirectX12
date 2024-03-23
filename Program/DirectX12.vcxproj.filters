@@ -731,6 +731,9 @@
     <ClInclude Include="Header\Object\Particle\SimpleParticle.h">
       <Filter>Header\Object\Particle\Particles\SimpleParticle</Filter>
     </ClInclude>
+    <ClInclude Include="ECS\Entity\Spawner.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

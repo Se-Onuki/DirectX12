@@ -37,7 +37,8 @@ void GameScene::OnEnter() {
 	world_ = std::make_unique<World>();
 	entityManager_ = world_->GetEntityManager();
 	ModelManager::GetInstance()->CreateDefaultModel();
-	//ModelManager::GetInstance()->GetModel("Plane")->materialMap_.begin()->second->materialBuff_->color = 0x555555FF;
+
+	spawner_.clear();
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadObjFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
@@ -252,6 +253,10 @@ void GameScene::Update() {
 		}
 		spawnTimer_.Start();
 	}
+	// エンティティの追加
+	spawner_.ActivateSpawn(entityManager_);
+	// プレハブの破棄
+	spawner_.clear();
 
 	bool isPlayerAlive = false;
 	for (const auto &[entity, player] : world_->view<const ECS::PlayerTag>()) {

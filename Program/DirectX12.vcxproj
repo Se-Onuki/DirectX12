@@ -236,6 +236,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ECS\Entity\Entity.hpp" />
     <ClInclude Include="ECS\Entity\EntityManager.hpp" />
     <ClInclude Include="ECS\Entity\Prefab.h" />
+    <ClInclude Include="ECS\Entity\Spawner.h" />
     <ClInclude Include="ECS\MultiArray.h" />
     <ClInclude Include="ECS\System\ISystem.h" />
     <ClInclude Include="ECS\System\System.h" />

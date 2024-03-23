@@ -26,6 +26,7 @@
 #include "../Header/Object/Particle/ParticleManager.h"
 #include "../Utils/Containers/UnChainVector.h"
 #include "../Header/Object/HealthBar.h"
+#include "../ECS/Entity/Spawner.h"
 
 class GameScene : public IScene {
 public:
@@ -57,6 +58,7 @@ private:
 
 	std::unique_ptr<World> world_ = nullptr;
 	ECS::EntityManager *entityManager_;
+	ECS::Spawner spawner_;
 
 	std::unique_ptr<ECS::Prefab> prefab_;
 
