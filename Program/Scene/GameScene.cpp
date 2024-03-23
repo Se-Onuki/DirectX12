@@ -52,6 +52,13 @@ void GameScene::OnEnter() {
 		mtr->texHandle_ = TextureManager::Load("UI/circle.png");
 		mtr->blendMode_ = Model::BlendMode::kAdd;
 	}
+	// カーソルのモデル
+	auto inCursor = ModelManager::GetInstance()->AddModel("InCursor", Model::CreatePlane());
+	{
+		auto *const mtr = inCursor->materialMap_.begin()->second.get();
+		mtr->texHandle_ = TextureManager::Load("UI/fullCircle.png");
+		mtr->blendMode_ = Model::BlendMode::kAdd;
+	}
 
 	cameraManager_->Init();
 	followCamera_ = cameraManager_->AddCamera("FollowCamera");
@@ -105,7 +112,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::HealthComp::Create(120);
 	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
-	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor };
+	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
 
 	entityManager_->CreateEntity(*playerPrefab_);
 

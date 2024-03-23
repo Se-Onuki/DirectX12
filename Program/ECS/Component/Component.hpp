@@ -293,7 +293,9 @@ namespace ECS {
 	struct CursorComp : IComponent {
 		float offset_{ 5.f };
 		float scale_{ 2.f };
+		float progress_ = 0.f;
 		Model *model_;
+		Model *inModel_;
 	};
 
 	struct InputFlagComp : IComponent {};

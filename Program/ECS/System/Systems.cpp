@@ -429,21 +429,42 @@ void ECS::System::CursorDrawer::OnUpdate(::World *world, [[maybe_unused]] const 
 
 		// カーソルの座標
 		Vector3 cursorPos = rot->quateRot_.GetFront() * cursor->offset_ + **pos + Vector3{ .y = 1.f };
-		// 描画する場所
-		Matrix4x4 item = SoLib::Affine(Vector3::one * cursor->scale_, Vector3::zero, cursorPos);
-		// ビルボード変換
-		item *= billboardMat;
-		// 座標を戻す
-		item.GetTranslate() = cursorPos;
+		// 外枠の表示
+		{
+			// 描画する場所
+			Matrix4x4 item = SoLib::Affine(Vector3::one * cursor->scale_, Vector3::zero, cursorPos);
+			// ビルボード変換
+			item *= billboardMat;
+			// 座標を戻す
+			item.GetTranslate() = cursorPos;
 
-		// モデルの取得
-		const Model *const model = cursor->model_;
-		// 無かったら終わり
-		if (not model) { continue; }
+			// モデルの取得
+			const Model *const model = cursor->model_;
+			// 無かったら終わり
+			if (not model) { continue; }
 
-		// 描画
-		blockManager->AddBox(model, IBlock{ .transMat_ = item });
+			// 描画
+			blockManager->AddBox(model, IBlock{ .transMat_ = item });
+		}
 
+		// 描画モデルがあり、倍率が有効な値である場合
+		if (cursor->inModel_ && cursor->progress_) {
+			// 描画する場所
+			Matrix4x4 item = SoLib::Affine(Vector3::one * (cursor->scale_ * cursor->progress_), Vector3::zero, cursorPos);
+			// ビルボード変換
+			item *= billboardMat;
+			// 座標を戻す
+			item.GetTranslate() = cursorPos;
 
+			// 内部のモデルの取得
+			const Model *const model = cursor->inModel_;
+			// 無かったら終わり
+			if (not model) { continue; }
+
+			// 描画
+			blockManager->AddBox(model, IBlock{ .transMat_ = item, .color_ = 0xFFFFFF55 });
+		}
 	}
+
+
 }
