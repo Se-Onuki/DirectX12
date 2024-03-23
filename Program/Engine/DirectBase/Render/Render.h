@@ -3,6 +3,7 @@
 #include "../../../Utils/Math/Vector3.h"
 #include "../../../Utils/Math/Vector4.h"
 #include "../../../Utils/Math/Matrix4x4.h"
+#include "../../../Utils/Math/Math.hpp"
 
 struct Vector2;
 struct Matrix4x4;
@@ -48,6 +49,19 @@ public:
 	/// @param matVPVp 座標変換行列
 	/// @return スクリーン上の座標
 	static Vector3 WorldToScreen(const Vector3 &worldPos, const Matrix4x4 &matVPVp);
+
+	static float GetObjectScale(const Vector3 &worldPos, const Matrix4x4 &projectionMatrix) {
+
+		Vector4 pos = { .w = 1.f };
+		pos.ToVec3() = worldPos;
+
+		// 座標変換
+		Vector4 transformedPosition = pos * projectionMatrix;
+
+		// プロジェクション変換後の座標を除算してスケールを取得
+		return  transformedPosition.w != 0.0f ? transformedPosition.w : 1.0f;
+
+	}
 };
 //
 //namespace Light {

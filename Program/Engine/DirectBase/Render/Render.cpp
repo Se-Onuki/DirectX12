@@ -43,7 +43,7 @@ Matrix4x4 Render::MakeViewportMatrix(
 
 
 std::pair<Vector3, Vector3> Render::ScreenToWorld(const Vector2 &screenPos, const Matrix4x4 &matVPVp) {
-	Matrix4x4 matInvarseVPVp = matVPVp.Inverse();
+	Matrix4x4 matInvarseVPVp = matVPVp.InverseSRT();
 
 	Vector3 posNear{ screenPos.x, screenPos.y, 0.f };
 	Vector3 posFar{ screenPos.x, screenPos.y, 1.f };

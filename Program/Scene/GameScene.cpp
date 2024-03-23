@@ -111,6 +111,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
 	*enemyPrefab_ += ECS::EnemyTag{};
 	*enemyPrefab_ += ECS::HealthComp{ .maxHealth_ = 5, .nowHealth_ = 5 };
+	*enemyPrefab_ += ECS::HealthBarComp{ };
 	*enemyPrefab_ += ECS::AttackPower{ .power_ = 1 };
 	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
 

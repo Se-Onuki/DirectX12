@@ -181,9 +181,11 @@ namespace ECS {
 
 		class DrawEnemyHelthBar : public ISystem {
 		public:
-			std::array<std::unique_ptr<HealthBar>, 30u> *healthBar_ = nullptr;
+			inline static constexpr uint32_t kDrawCount_ = 50u;
+
+			std::array<std::unique_ptr<HealthBar>, kDrawCount_> *healthBar_ = nullptr;
 			uint32_t drawCount_{};
-			static DrawEnemyHelthBar Create(std::array<std::unique_ptr<HealthBar>, 30u> *healthBar) {
+			static DrawEnemyHelthBar Create(std::array<std::unique_ptr<HealthBar>, kDrawCount_> *healthBar) {
 				DrawEnemyHelthBar result;
 				result.healthBar_ = healthBar;
 				return result;

@@ -389,18 +389,20 @@ void ECS::System::DrawEnemyHelthBar::OnUpdate(::World *world, [[maybe_unused]] c
 	const Matrix4x4 &vp = Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight);
 	const Matrix4x4 &matVPVp = camera->matView_ * camera->matProjection_ * vp;
 	drawCount_ = 0u;
-	for (const auto &[entity, enmTag, health, pos] : world->view<ECS::EnemyTag, ECS::HealthComp, ECS::PositionComp>()) {
+	for (const auto &[entity, enmTag, health, pos, barComp] : world->view<ECS::EnemyTag, ECS::HealthComp, ECS::PositionComp, ECS::HealthBarComp>()) {
 
 		if (drawCount_ >= healthBar_->size()) { break; }
 		// 紐づいた経験値バー
 		auto *const bar = healthBar_->at(drawCount_).get();
 
 		// 新しい場所
-		const Vector2 newPos = Render::WorldToScreen(**pos, matVPVp).ToVec2();
+		const Vector3 newPos = Render::WorldToScreen(**pos + barComp->offset_, matVPVp);
 
 		bar->SetPercent(health->CalcPercent());
 
-		bar->SetCentor(newPos);
+		bar->SetCentor(newPos.ToVec2());
+
+		bar->SetScale(*barComp->vDefaultBarScale_ * 0.25f);
 
 		drawCount_++;
 	}

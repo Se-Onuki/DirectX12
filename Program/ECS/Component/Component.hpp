@@ -265,6 +265,12 @@ namespace ECS {
 		bool IsDead() const { return nowHealth_ <= 0; }
 	};
 
+	struct HealthBarComp : IComponent {
+		Vector3 offset_{ .y = 2.f };
+		VariantItem<"DefaultBarScale", Vector2> vDefaultBarScale_{ {360.f,32.f * 1.5f} };
+
+	};
+
 	struct InvincibleTime : IComponent {
 		SoLib::DeltaTimer timer_;
 	};

@@ -84,7 +84,7 @@ private:
 
 	std::unique_ptr<HealthBar> healthBar_;
 
-	std::array<std::unique_ptr<HealthBar>, 30u> enemyHealthBar_;
+	std::array<std::unique_ptr<HealthBar>, 50u> enemyHealthBar_;
 
 	SoLib::DeltaTimer playerSpawn_{ 1.f, false };
 };

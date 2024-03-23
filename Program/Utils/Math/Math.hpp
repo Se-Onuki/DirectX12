@@ -237,3 +237,42 @@ inline Vector3 operator*(const Vector3 &left, const Quaternion &right) {
 inline Vector3 &operator*=(Vector3 &left, const Quaternion &right) {
 	return left = right.RotateVector(left);
 }
+
+inline void Mul(Vector4 &result, const Vector4 &left, const Matrix4x4 &right)
+{
+
+	const __m128 row0 = _mm_loadu_ps(right.m[0].data());
+	const __m128 row1 = _mm_loadu_ps(right.m[1].data());
+	const __m128 row2 = _mm_loadu_ps(right.m[2].data());
+	const __m128 row3 = _mm_loadu_ps(right.m[3].data());
+	const __m128 xmm_all = _mm_loadu_ps(left.data());
+
+	// 1つの__m128構造体から4つの__m128に分解
+	const __m128 brod0 = _mm_permute_ps(xmm_all, 0x00);
+	const __m128 brod1 = _mm_permute_ps(xmm_all, 0x55);
+	const __m128 brod2 = _mm_permute_ps(xmm_all, 0xAA);
+	const __m128 brod3 = _mm_permute_ps(xmm_all, 0xFF);
+	// 計算結果を出す
+	const __m128 row = _mm_add_ps(
+		_mm_add_ps(_mm_mul_ps(brod0, row0), _mm_mul_ps(brod1, row1)),
+		_mm_add_ps(_mm_mul_ps(brod2, row2), _mm_mul_ps(brod3, row3)));
+
+	_mm_storeu_ps(result.data(), row);
+}
+
+inline Vector4 operator*(const Vector4 &left, const Matrix4x4 &right) {
+	Vector4 result;
+
+	Mul(result, left, right);
+
+	return result;
+}
+
+
+inline Vector4 &operator*=(Vector4 &left, const Matrix4x4 &right) {
+
+	Mul(left, left, right);
+
+	return left;
+}
+
