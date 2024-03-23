@@ -32,13 +32,17 @@ namespace ECS {
 		template <SoLib::IsBased<ECS::ISystem> T>
 		T *AddSystem(T &&);
 
+		template <SoLib::IsBased<ECS::ISystem> T>
+		T *GetSystem();
+
+
 		void clear();
 
 		void Update(::World *world, const float deltaTime);
 
 	private:
 
-		std::array<std::list<std::unique_ptr<ECS::ISystem>>, 2u> systemList_;
+		std::list<std::unique_ptr<ECS::ISystem>> systemList_;
 
 
 	};
@@ -60,5 +64,15 @@ namespace ECS {
 	template<SoLib::IsBased<ECS::ISystem> T>
 	inline T *SystemManager::AddSystem(T &&right) {
 		return static_cast<T *>(AddSystem(std::make_unique<T>(std::move(right))));
+	}
+	template<SoLib::IsBased<ECS::ISystem> T>
+	inline T *SystemManager::GetSystem() {
+		for (auto &itr : systemList_) {
+			T *ptr = dynamic_cast<T *>(itr.get());
+			if (ptr) {
+				return ptr;
+			}
+		}
+		return nullptr;
 	}
 }

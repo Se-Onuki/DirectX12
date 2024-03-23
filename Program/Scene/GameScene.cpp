@@ -115,7 +115,7 @@ void GameScene::OnEnter() {
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
-	const Vector3 cameraOffset{ 0.f,10.f,-10.f };
+	const Vector3 cameraOffset{ 0.f,1.f,-1.f };
 
 	ECS::Prefab followCamera;
 	followCamera += ECS::FollowCamera{ .rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -30.f} };
@@ -150,6 +150,11 @@ void GameScene::OnEnter() {
 	healthBar_ = std::make_unique<HealthBar>();
 	healthBar_->Init();
 
+	for (auto &bar : enemyHealthBar_) {
+		bar = std::make_unique<HealthBar>();
+		bar->Init();
+	}
+
 	// 生存などのデータの確認
 	systemManager_.AddSystem<ECS::System::CheckAliveTime>();
 	systemManager_.AddSystem<ECS::System::CheckHealthDie>();
@@ -175,6 +180,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
 	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
+	//systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
 
 }
 
@@ -308,6 +314,14 @@ void GameScene::Draw() {
 #pragma region 前面スプライト
 
 	Sprite::StartDraw(commandList);
+
+	//for (uint32_t count = 0; const auto & bar : enemyHealthBar_) {
+	//	// もし描画数が超えた場合終了
+	//	if (count++ >= systemManager_.GetSystem<ECS::System::DrawEnemyHelthBar>()->drawCount_) { break; }
+
+	//	bar->Draw();
+
+	//}
 
 	healthBar_->Draw();
 	// スプライトの描画

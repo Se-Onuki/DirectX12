@@ -381,3 +381,14 @@ void ECS::System::DrawHelthBar::OnUpdate(::World *world, [[maybe_unused]] const 
 
 	}
 }
+
+void ECS::System::DrawEnemyHelthBar::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+
+	drawCount_ = 0u;
+	for (const auto &[entity, plTag, health] : world->view<ECS::PlayerTag, ECS::HealthComp>()) {
+
+		if (drawCount_ >= healthBar_->size()) { continue; }
+		drawCount_++;
+		healthBar_->at(drawCount_)->SetPercent(health->CalcPercent());
+	}
+}

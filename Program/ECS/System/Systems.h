@@ -179,6 +179,20 @@ namespace ECS {
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
 
+		class DrawEnemyHelthBar : public ISystem {
+		public:
+			std::array<std::unique_ptr<HealthBar>, 30u> *healthBar_ = nullptr;
+			uint32_t drawCount_{};
+			static DrawEnemyHelthBar Create(std::array<std::unique_ptr<HealthBar>, 30u> *healthBar) {
+				DrawEnemyHelthBar result;
+				result.healthBar_ = healthBar;
+				return result;
+			}
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
 
 	}
 }
