@@ -34,8 +34,8 @@ public:
 		const float &fovY, const float &aspectRatio, const float &nearClip, const float &farClip);
 
 	static Matrix4x4 MakeViewportMatrix(
-		const Vector2 &LeftTop, const float &width, const float &height, const float &minDepth,
-		const float &maxDepth);
+		const Vector2 &LeftTop, const float &width, const float &height, const float &minDepth = 0.f,
+		const float &maxDepth = 1.f);
 
 	/// @brief スクリーン座標から3D座標に変換する
 	/// @param screenPos 2次元ベクトル

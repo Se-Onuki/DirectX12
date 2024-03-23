@@ -386,7 +386,7 @@ void ECS::System::DrawEnemyHelthBar::OnUpdate(::World *world, [[maybe_unused]] c
 
 	auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
 
-	const Matrix4x4 &vp = Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight, 0.f, 1.f);
+	const Matrix4x4 &vp = Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight);
 	const Matrix4x4 &matVPVp = camera->matView_ * camera->matProjection_ * vp;
 	drawCount_ = 0u;
 	for (const auto &[entity, enmTag, health, pos] : world->view<ECS::EnemyTag, ECS::HealthComp, ECS::PositionComp>()) {
