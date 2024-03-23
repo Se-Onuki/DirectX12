@@ -115,8 +115,10 @@ void GameScene::OnEnter() {
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
+	const Vector3 cameraOffset{ 0.f,10.f,-10.f };
+
 	ECS::Prefab followCamera;
-	followCamera += ECS::FollowCamera{};
+	followCamera += ECS::FollowCamera{ .rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -30.f} };
 	followCamera += ECS::PositionComp{};
 
 	entityManager_->CreateEntity(followCamera);
