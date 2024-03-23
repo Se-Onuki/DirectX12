@@ -8,7 +8,7 @@ namespace ECS {
 	private:
 
 		// 生成時に呼び出される関数
-		using SpawnFunc = void(*)(std::list<ECS::Entity> &entList);
+		using SpawnFunc = void(*)(std::list<ECS::Entity> &entList, ECS::EntityManager *manager);
 
 		struct SpawnData {
 			// 基礎となるプレハブ
@@ -34,7 +34,7 @@ namespace ECS {
 				// もし生成関数があれば
 				if (spawnData.spawnFunc_) {
 					// 生成関数を実行する
-					spawnData.spawnFunc_(entList);
+					spawnData.spawnFunc_(entList, manager);
 				}
 			}
 		}
@@ -43,7 +43,7 @@ namespace ECS {
 		/// @param prefab 追加するプレハブ
 		/// @param spawnCount 追加する数
 		/// @param spawnFunc 実行する関数
-		void AddSpawner(Prefab *prefab, uint32_t spawnCount, SpawnFunc spawnFunc = nullptr) {
+		void AddSpawner(Prefab *prefab, uint32_t spawnCount = 1u, SpawnFunc spawnFunc = nullptr) {
 			spawnDatas_.push_back({ {prefab,spawnFunc},spawnCount });
 		}
 

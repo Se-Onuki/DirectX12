@@ -113,7 +113,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
 	*playerPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
-	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{ .centor = Vector3::up, .radius = 1.f} };
+	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor = Vector3::up, .radius = 1.f} };
 	*playerPrefab_ += ECS::PlayerTag{};
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::AttackCollisionComp{ };
@@ -241,34 +241,36 @@ void GameScene::Update() {
 	spawnTimer_.Update(deltaTime);
 	playerSpawn_.Update(deltaTime);
 
-	constexpr uint32_t enemyCount = 5u;
-
-	if (spawnTimer_.IsFinish()) {
-
-		auto enemys = entityManager_->CreateEntity(*enemyPrefab_, enemyCount);
-		for (uint32_t i = 0; auto & enemy : enemys) {
-			auto [pos] = entityManager_->GetComponent<ECS::PositionComp>(enemy);
-			pos->position_ = SoLib::EulerToDirection(SoLib::Euler(0.f, (Angle::PI2 / enemyCount) * i, 0.f)) * 7.5f + pos->position_;
-			i++;
-		}
-		spawnTimer_.Start();
-	}
 	// エンティティの追加
 	spawner_.ActivateSpawn(entityManager_);
 	// プレハブの破棄
 	spawner_.clear();
 
-	bool isPlayerAlive = false;
-	for (const auto &[entity, player] : world_->view<const ECS::PlayerTag>()) {
-		isPlayerAlive = true;
+
+	constexpr uint32_t enemyCount = 5u;
+
+	if (spawnTimer_.IsFinish()) {
+		// スポナーに追加を要求する
+		spawner_.AddSpawner(enemyPrefab_.get(), enemyCount, [](auto &enemys, auto manager)
+			{
+				for (uint32_t i = 0; auto & enemy : enemys) {
+					auto [pos] = manager->GetComponent<ECS::PositionComp>(enemy);
+					pos->position_ = SoLib::EulerToDirection(SoLib::Euler(0.f, (Angle::PI2 / enemyCount) * i, 0.f)) * 7.5f + pos->position_;
+					i++;
+				}
+			});
+		spawnTimer_.Start();
 	}
-	if (not isPlayerAlive) {
+	auto playerView = world_->view<const ECS::PlayerTag>();
+	bool playerIsDead = not (playerView.begin() != playerView.end());
+
+	if (playerIsDead) {
 		if (not playerSpawn_.IsActive()) {
 			playerSpawn_.Start();
 		}
 
 		if (playerSpawn_.IsFinish()) {
-			entityManager_->CreateEntity(*playerPrefab_);
+			spawner_.AddSpawner(playerPrefab_.get());
 		}
 	}
 
