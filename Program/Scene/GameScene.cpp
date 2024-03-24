@@ -301,7 +301,6 @@ void GameScene::Update() {
 
 	for (const auto &[entity, model, translateMat, enemy] : world_->view<const ECS::ModelComp, const ECS::TransformMatComp, const ECS::EnemyTag>()) {
 		blockRender_->AddBox(model->model_, IBlock{ .transMat_ = translateMat->transformMat_ });
-
 	}
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {

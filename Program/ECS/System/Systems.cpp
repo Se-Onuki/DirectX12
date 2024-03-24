@@ -317,7 +317,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 
 			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl->collision_.centor + Vector3{ .y = 0.1f });
 			particle->SetAliveTime(0.5f);
-			particle->transform_.rotate = { 0.f,90._deg, -90._deg };
+			particle->transform_.rotate = SoLib::MakeQuaternion({ 90._deg,0,0 });
 			particle->transform_.scale = Vector3::one * (attackSt->radius_ * 2.f);
 			particle->color_ = 0xFF5555FF;
 

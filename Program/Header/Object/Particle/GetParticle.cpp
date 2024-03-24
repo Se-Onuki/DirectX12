@@ -40,7 +40,7 @@ void GetParticle::Init()
 	color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	// エミッタの角度から放出方向を求める
-	const Matrix4x4& mat = Matrix4x4::EulerRotate(transform_.rotate); // 回転行列の生成
+	const Matrix4x4& mat = transform_.rotate.MakeRotateMatrix(); // 回転行列の生成
 	move_ = TransformNormal(velocity_, mat);
 }
 

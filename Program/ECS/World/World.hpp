@@ -146,7 +146,7 @@ namespace ECS {
 			}
 
 			bool operator==(const iterator &other) {
-				return not *this != other;
+				return not (*this != other);
 			}
 
 

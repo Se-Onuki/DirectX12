@@ -9,6 +9,11 @@ namespace Angle {
 	constexpr float hPI = PI * 0.5f;
 	constexpr float PI2 = PI * 2.f;
 
+	constexpr float Rad90 = PI * 0.5f;
+	constexpr float Rad180 = PI;
+	constexpr float Rad270 = PI * 1.5f;
+	constexpr float Rad360 = PI * 2.f;
+
 	constexpr float Dig2Rad = PI / 180.f;
 	constexpr float Rad2Dig = 180.f / PI;
 

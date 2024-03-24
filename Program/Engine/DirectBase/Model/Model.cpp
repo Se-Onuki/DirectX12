@@ -1059,10 +1059,10 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 				(float)rotateJson->at(1).get<double>(),
 				(float)rotateJson->at(2).get<double>()
 			};
-			bone.transform_->rotate = rotate * Angle::Dig2Rad;
+			bone.transform_->rotate = SoLib::MakeQuaternion(rotate * Angle::Dig2Rad);
 		}
 		else {
-			bone.transform_->rotate = Vector3::zero;
+			bone.transform_->rotate = Quaternion::Identity;
 		}
 
 		// キューブ
@@ -1074,18 +1074,8 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 				Cube &cube = bone.cubes_.back();
 				cube.Init();
 
-				const auto &originJson = cubeText.at("origin");
-				Vector3 origin = Vector3{
-					(float)originJson.at(0).get<double>(),
-					(float)originJson.at(1).get<double>(),
-					(float)originJson.at(2).get<double>()
-				};
-				const auto &sizeJson = cubeText.at("size");
-				Vector3 size = Vector3{
-					(float)sizeJson.at(0).get<double>(),
-					(float)sizeJson.at(1).get<double>(),
-					(float)sizeJson.at(2).get<double>()
-				};
+				Vector3 origin = cubeText.at("origin");
+				Vector3 size = cubeText.at("size");
 				origin /= 16.f;
 				size /= 16.f;
 

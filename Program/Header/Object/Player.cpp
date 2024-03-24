@@ -72,7 +72,7 @@ void Player::BehaviorRootUpdate() {
 
 		transformOrigin_->translate += move; // 移動量を追加
 
-		transformOrigin_->rotate = move.Direction2Euler(); // ベクトルからオイラー角を算出
+		transformOrigin_->rotate = Quaternion::LookAt(move); // ベクトルからオイラー角を算出
 	}
 
 	if (input_->GetXInput()->IsPress(KeyCode::RIGHT_SHOULDER)) {

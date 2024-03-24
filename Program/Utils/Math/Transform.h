@@ -24,7 +24,7 @@ struct BaseTransform {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	Vector3 scale = { 1.f,1.f,1.f };
-	Vector3 rotate{};
+	Quaternion rotate = Quaternion::Identity;
 	Vector3 translate{};
 
 	Matrix4x4 matWorld_{};	// ローカル . ワールド変換

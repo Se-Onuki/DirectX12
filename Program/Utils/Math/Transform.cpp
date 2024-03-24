@@ -7,7 +7,7 @@
 
 Matrix4x4 BaseTransform::Affine() const
 {
-	return Matrix4x4::Affine(scale, rotate, translate);
+	return SoLib::Affine(scale, rotate, translate);
 }
 
 
@@ -93,10 +93,10 @@ void BaseTransform::MatToSRT(const Matrix4x4 &mat) {
 		*reinterpret_cast<__m128 *>(rotMat.m[2].data()) = _mm_div_ps(vec[2u], _mm_set1_ps(scale.z));
 	}
 
-	// 回転角度の取得
-	rotate.x = std::atan2(rotMat.m[1][2], rotMat.m[2][2]);
-	rotate.y = std::atan2(-rotMat.m[0][2], std::sqrt(rotMat.m[1][2] * rotMat.m[1][2] + rotMat.m[2][2] * rotMat.m[2][2]));
-	rotate.z = std::atan2(rotMat.m[0][1], rotMat.m[0][0]);
+	//// 回転角度の取得
+	//rotate.x = std::atan2(rotMat.m[1][2], rotMat.m[2][2]);
+	//rotate.y = std::atan2(-rotMat.m[0][2], std::sqrt(rotMat.m[1][2] * rotMat.m[1][2] + rotMat.m[2][2] * rotMat.m[2][2]));
+	//rotate.z = std::atan2(rotMat.m[0][1], rotMat.m[0][0]);
 
 	// 移動量の取得
 	translate = *reinterpret_cast<const Vector3 *>(mat.m[3].data());
