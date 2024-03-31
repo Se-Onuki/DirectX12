@@ -16,21 +16,24 @@ public:
 
 	Archetype() = default;
 
-	template<typename T, typename... Ts> void AddClassData() {
-		// 再帰前の処理
-		{
-			// クラスデータを追加する
-			ClassDataManager::GetInstance()->AddClass<T>();
-			// 型情報を追加
-			data_.insert({ typeid(T) });
-		}
-		if constexpr (sizeof...(Ts) > 0) {
-			AddClassData<Ts...>();
-		}
-		else {
-			totalSize_ = CalcTotalSize();
-			chunkCapacity_ = CalcCapacity();
-		}
+	template<typename T, typename... Ts>
+	void AddClassData() {
+		//// 再帰前の処理
+		//{
+		//	// クラスデータを追加する
+		//	ClassDataManager::GetInstance()->AddClass<T>();
+		//	// 型情報を追加
+		//	data_.insert({ typeid(T) });
+		//}
+		//if constexpr (sizeof...(Ts) > 0) {
+		//	AddClassData<Ts...>();
+		//}
+		//else {
+		//	totalSize_ = CalcTotalSize();
+		//	chunkCapacity_ = CalcCapacity();
+		//}
+
+		InnerAddClassData<T, Ts...>();
 	}
 	bool operator==(const Archetype &other) const { return other.data_ == data_; }
 
@@ -39,17 +42,18 @@ public:
 			return false;
 		}
 		for (const auto &element : data_) {
-			if (std::find(other.data_.begin(), other.data_.end(), element) == other.data_.end()) {
+			// 保存されてなかったら終わり
+			if (not other.data_.count(element)) {
 				return false;
 			}
 		}
 		return true;
 	}
+
 	size_t GetTotalSize() const { return totalSize_; }
 	size_t GetChunkCapacity() const { return chunkCapacity_; }
 
 private:
-
 
 	size_t CalcTotalSize() const {
 		size_t result = 0u;
@@ -68,6 +72,14 @@ private:
 
 	size_t totalSize_;
 	size_t chunkCapacity_;
+
+	template<typename... Ts>
+	void InnerAddClassData()
+	{
+		(data_.insert({ typeid(Ts) }), ...);
+		totalSize_ = (ClassDataManager::GetInstance()->AddClass<Ts>()->size_ + ...);
+		chunkCapacity_ = OneChunkCapacity / totalSize_;
+	}
 };
 
 
