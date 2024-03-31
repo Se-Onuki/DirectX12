@@ -75,6 +75,11 @@ struct Quaternion final {
 	/// @brief 指定の方向に向く回転クォータニオンを作成
 	/// @param direction 向きたい方向( 非正規化 OK )
 	/// @return クォータニオン
+	static Quaternion DirToDir(const Vector3Norm &before, const Vector3Norm &after);
+
+	/// @brief 指定の方向に向く回転クォータニオンを作成
+	/// @param direction 向きたい方向( 非正規化 OK )
+	/// @return クォータニオン
 	static Quaternion LookAt(const Vector3Norm &direction);
 
 	/// @brief 明示的な型変換
@@ -224,21 +229,28 @@ inline Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &e
 	return result;
 }
 
-inline Quaternion Quaternion::LookAt(const Vector3Norm &direction) {
-	if (not direction) {
+inline Quaternion Quaternion::DirToDir(const Vector3Norm &before, const Vector3Norm &after)
+{
+	if (not before or not after) {
 		return Quaternion::Identity;
 	}
 
 	// ドット積を計算
-	float dot = Vector3::front * direction;
+	float dot = before * after;
 	// acosの時に範囲を超えないように
 	dot = std::clamp(dot, -1.f, 1.f);
 	// 角度を取得
 	const float theta = std::acos(dot);
 
 	// 回転軸のベクトル
-	const Vector3Norm cross = Vector3::front.cross(direction);
+	Vector3Norm &&cross = before.cross(after);
 	// 任意軸回転クォータニオンを作成
 	return Quaternion::AnyAxisRotation(cross, theta).Normalize();
+}
+
+
+inline Quaternion Quaternion::LookAt(const Vector3Norm &direction) {
+
+	return DirToDir(Vector3::front, direction);
 
 }

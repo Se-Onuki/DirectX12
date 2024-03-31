@@ -9,13 +9,14 @@
 class ClassData {
 public:
 	std::type_index typeInfo_ = typeid(void);
-	size_t size_;
+	uint32_t size_;
+	uint32_t align_;
 
 	void (*constructor_)(void *);
 
 	template<SoLib::IsNotPointer T>
 	static ClassData Create() {
-		return { typeid(T), sizeof(T), [](void *ptr) { new(ptr) T{}; } };
+		return { .typeInfo_ = typeid(T), .size_ = sizeof(T), .align_ = alignof(T), .constructor_ = [](void *ptr) { new(ptr) T{}; } };
 	}
 
 	bool operator==(const ClassData &other) const {

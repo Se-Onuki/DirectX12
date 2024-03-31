@@ -46,7 +46,7 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 
 #endif // _DEBUG
 
-	size_t maxMemSize{};
+	uint32_t maxMemSize{};
 	for (const auto &classData : archetype_->data_) {
 		maxMemSize = (std::max)(maxMemSize, classData.second.size_);
 
