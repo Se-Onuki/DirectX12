@@ -734,6 +734,9 @@
     <ClInclude Include="ECS\Entity\Spawner.h">
       <Filter>ECS</Filter>
     </ClInclude>
+    <ClInclude Include="ECS\ClassData.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

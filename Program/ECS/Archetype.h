@@ -5,47 +5,25 @@
 #include "Entity/Entity.hpp"
 #include "../Utils/SoLib/SoLib.h"
 #include <unordered_set>
-
-class ClassData {
-public:
-	std::type_index typeInfo_ = typeid(void);
-	uint32_t size_;
-	uint32_t align_;
-
-	void (*constructor_)(void *);
-
-	template<SoLib::IsNotPointer T>
-	static ClassData Create() {
-		return { .typeInfo_ = typeid(T), .size_ = sizeof(T), .align_ = alignof(T), .constructor_ = [](void *ptr) { new(ptr) T{}; } };
-	}
-
-	bool operator==(const ClassData &other) const {
-		return (typeInfo_ == other.typeInfo_ && size_ == other.size_);
-	}
-
-};
-
-
-namespace std {
-	template<>
-	struct hash<ClassData> {
-		std::size_t operator()(const ClassData &obj) const {
-			// std::type_index のハッシュ値をそのまま返す
-			return obj.typeInfo_.hash_code();
-		}
-	};
-}
+#include <set>
+#include "ClassData.h"
 
 class Archetype {
 public:
-	std::unordered_map<std::type_index, ClassData> data_;
+	std::set<ClassDataManager::KeyType> data_;
 
 	static constexpr size_t OneChunkCapacity = 16u * 1024u;
 
 	Archetype() = default;
 
 	template<typename T, typename... Ts> void AddClassData() {
-		data_[typeid(T)] = ClassData::Create<T>();
+		// 再帰前の処理
+		{
+			// クラスデータを追加する
+			ClassDataManager::GetInstance()->AddClass<T>();
+			// 型情報を追加
+			data_.insert({ typeid(T) });
+		}
 		if constexpr (sizeof...(Ts) > 0) {
 			AddClassData<Ts...>();
 		}
@@ -78,7 +56,7 @@ private:
 		result += sizeof(ECS::Entity);
 
 		for (auto &item : data_) {
-			result += item.second.size_;
+			result += item->size_;
 		}
 
 		return result;
@@ -101,7 +79,7 @@ namespace std {
 			std::string typeNames;
 
 			for (const auto &type : obj.data_) {
-				typeNames += type.first.name();
+				typeNames += type.typeIndex_.name();
 			}
 			return std::hash<std::string>{}(typeNames);
 

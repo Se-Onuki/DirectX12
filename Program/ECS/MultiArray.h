@@ -233,7 +233,7 @@ namespace ECS {
 		std::unique_ptr<void, ChunkDeleter> memoryPtr_;
 
 		//std::unordered_map<ClassData, void *> componentAddress_;
-		std::unordered_map<std::type_index, std::pair<void *, ClassData>> componentAddress_;
+		std::unordered_map<ClassDataManager::KeyType, void *> componentAddress_;
 	};
 
 	class MultiArray {
@@ -389,7 +389,7 @@ namespace ECS {
 	inline ComponetArray<Ts...> MultiChunk::get() {
 		ComponetArray<Ts...> result;
 		result.componentAddress_ = std::make_shared<std::tuple<Ts *...>>();
-		*result.componentAddress_ = std::make_tuple(reinterpret_cast<Ts *>(componentAddress_.at(typeid(Ts)).first)...);
+		*result.componentAddress_ = std::make_tuple(reinterpret_cast<Ts *>(componentAddress_.at({ typeid(Ts) }))...);
 
 		result.multiChunk_ = this;
 
@@ -414,9 +414,9 @@ namespace ECS {
 
 				[this, index]()
 				{
-					auto it = this->componentAddress_.find(typeid(T));
+					auto it = this->componentAddress_.find({ typeid(T) });
 					return (it == this->componentAddress_.end() ? nullptr :
-						reinterpret_cast<T *>(static_cast<MultiChunk::memoryType *>(it->second.first) + index * entitySize_));
+						reinterpret_cast<T *>(static_cast<MultiChunk::memoryType *>(it->second) + index * entitySize_));
 				}()
 					)...);
 

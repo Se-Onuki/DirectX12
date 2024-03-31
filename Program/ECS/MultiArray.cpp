@@ -13,8 +13,8 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 
 	memoryType *address = reinterpret_cast<memoryType *>(memoryPtr_.get()) + sizeof(ECS::Entity) * offset;
 	for (const auto &classData : archetype_->data_) {
-		componentAddress_[classData.first] = std::make_pair(address, classData.second);
-		address += (classData.second.size_ * offset);
+		componentAddress_[classData.typeIndex_] = address;
+		address += (classData->size_ * offset);
 	}
 
 }
@@ -48,7 +48,7 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 
 	uint32_t maxMemSize{};
 	for (const auto &classData : archetype_->data_) {
-		maxMemSize = (std::max)(maxMemSize, classData.second.size_);
+		maxMemSize = (std::max)(maxMemSize, classData->size_);
 
 	}
 	// 一時的なメモリを最大値で確保
@@ -57,13 +57,13 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 	for (const auto &classData : archetype_->data_) {
 
 		// 破棄するデータのアドレスを取得
-		auto fPtr = GetItemPtr(classData.first, indexF);
+		auto fPtr = GetItemPtr(classData.typeIndex_, indexF);
 		// 末尾のデータのアドレスをを取得
-		auto sPtr = GetItemPtr(classData.first, indexS);
+		auto sPtr = GetItemPtr(classData.typeIndex_, indexS);
 
-		std::memcpy(temp.get(), fPtr, classData.second.size_);
-		std::memcpy(fPtr, sPtr, classData.second.size_);
-		std::memcpy(sPtr, temp.get(), classData.second.size_);
+		std::memcpy(temp.get(), fPtr, classData->size_);
+		std::memcpy(fPtr, sPtr, classData->size_);
+		std::memcpy(sPtr, temp.get(), classData->size_);
 
 	}
 
@@ -72,8 +72,8 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 uint32_t ECS::MultiChunk::push_back() {
 
 	for (const auto &classData : archetype_->data_) {
-		auto ptr = GetItemPtr(classData.first, size_);
-		classData.second.constructor_(ptr);
+		auto ptr = GetItemPtr(classData.typeIndex_, size_);
+		classData->constructor_(ptr);
 	}
 	auto entity = static_cast<ECS::Entity *>(this->GetEntityPtr(size_));
 	entity->arrayPtr_ = this->parent_;
@@ -87,9 +87,9 @@ uint32_t ECS::MultiChunk::push_back(const ECS::Prefab &prefab) {
 
 	const auto &compItr = prefab.GetComponentMap();
 
-	for (const auto &[typeindex, classData] : archetype_->data_) {
-		auto ptr = GetItemPtr(typeindex, size_);
-		std::memcpy(ptr, compItr.at(typeindex).get(), classData.size_);
+	for (const auto &typeKey : archetype_->data_) {
+		auto ptr = GetItemPtr(typeKey, size_);
+		std::memcpy(ptr, compItr.at(typeKey).get(), typeKey->size_);
 	}
 	auto entity = static_cast<ECS::Entity *>(this->GetEntityPtr(size_));
 	entity->arrayPtr_ = this->parent_;
@@ -112,7 +112,7 @@ void ECS::MultiChunk::Normalize() {
 }
 
 void *ECS::MultiChunk::GetItemPtr(const std::type_index type, const uint32_t index) {
-	const auto &[itemPtr, classData] = componentAddress_.at(type);
+	const auto &itemPtr = componentAddress_.at(type);
 
 	return GetItemPtr(itemPtr, entitySize_, index);
 }
