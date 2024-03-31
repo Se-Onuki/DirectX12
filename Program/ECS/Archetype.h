@@ -76,8 +76,9 @@ private:
 	template<typename... Ts>
 	void InnerAddClassData()
 	{
+		ClassDataManager *const classDataManager = ClassDataManager::GetInstance();
 		(data_.insert({ typeid(Ts) }), ...);
-		totalSize_ = (ClassDataManager::GetInstance()->AddClass<Ts>()->size_ + ...);
+		totalSize_ = (classDataManager->AddClass<Ts>()->size_ + ...);
 		chunkCapacity_ = OneChunkCapacity / totalSize_;
 	}
 };
