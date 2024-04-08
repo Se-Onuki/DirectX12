@@ -81,11 +81,18 @@ public:
 inline void TransformMatrix::Mul(TransformMatrix &result, const TransformMatrix &left, const TransformMatrix &right)
 {
 
+	union VecSimd
+	{
+		__m128 simd;
+		struct { Vector3 val; float pad; } vec;
+		struct { std::array<float, 3u> val; float pad; } arr;
+	};
+
 	// 回転/スケール要素
-	const std::array<__m128, 3u> rows{
-		_mm_loadu_ps(right.m[0].data()),
-		_mm_loadu_ps(right.m[1].data()),
-		_mm_loadu_ps(right.m[2].data()),
+	const std::array<VecSimd, 3u> rows{
+		VecSimd {.arr = right.m[0]},
+		VecSimd {.arr = right.m[1]},
+		VecSimd {.arr = right.m[2]},
 	};
 
 	// 回転/スケール要素を乗算
@@ -95,14 +102,14 @@ inline void TransformMatrix::Mul(TransformMatrix &result, const TransformMatrix 
 		const __m128 brod2 = _mm_set1_ps(left.m[i][2]);
 
 		// 各要素に対してのドット積
-		const __m128 tmp{
+		const VecSimd tmp{
 			_mm_add_ps(
-				_mm_add_ps(_mm_mul_ps(brod0, rows[0]), _mm_mul_ps(brod1, rows[1])),
-				_mm_mul_ps(brod2, rows[2]))
+				_mm_add_ps(_mm_mul_ps(brod0, rows[0].simd), _mm_mul_ps(brod1, rows[1].simd)),
+				_mm_mul_ps(brod2, rows[2].simd))
 		};
 
 		// データをコピー
-		result.m[i] = *reinterpret_cast<const std::array<float, 3u>*>(&tmp);
+		result.m[i] = tmp.vec.val;
 
 	}
 
@@ -131,7 +138,7 @@ TransformMatrix &operator*=(TransformMatrix &left, const TransformMatrix &right)
 template<>
 struct SoLib::Traits<TransformMatrix> {
 	using Type = TransformMatrix;
-	static constexpr const char* const Name = "TransformMatrix";
+	static constexpr const char *const Name = "TransformMatrix";
 	static constinit const uint32_t Rows = 4u;
 	static constinit const uint32_t Columns = 3u;
 	static constinit const uint32_t Size = Rows * Columns;
