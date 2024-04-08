@@ -14,7 +14,7 @@
 
 /// @brief 定数バッファ
 /// @tparam T 型名 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 class ArrayBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "ArrayBufferに与えた型がポインタ型です");
@@ -53,8 +53,7 @@ public:
 	T *const end() const noexcept { return &mapData_[size_]; }
 
 
-	template <SoLib::IsContainer U>
-		requires SoLib::IsContainsType<U, T>
+	template <SoLib::IsContainsType<T> U>
 	inline ArrayBuffer &operator=(const U &other);	// コピー演算子
 
 public:
@@ -67,8 +66,7 @@ public:
 
 	ArrayBuffer(const uint32_t width = 0u);	// デフォルトコンストラクタ
 
-	template <SoLib::IsContainer U>
-		requires SoLib::IsContainsType<U, T>
+	template<SoLib::IsContainsType<T> U>
 	ArrayBuffer(const U &source);		// コピーコンストラクタ
 
 	~ArrayBuffer();
@@ -87,48 +85,46 @@ private:
 
 };
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline ArrayBuffer<T>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline ArrayBuffer<T>::operator T *() noexcept {
 	return *mapData_;
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline ArrayBuffer<T>::operator const T *() const noexcept {
 	return *mapData_;
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline T *const ArrayBuffer<T>::operator->() noexcept {
 	return *mapData_;
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline const T *const ArrayBuffer<T>::operator->() const noexcept {
 	return *mapData_;
 }
 
-template<SoLib::IsNotPointer T>
-template<SoLib::IsContainer U>
-	requires SoLib::IsContainsType<U, T>
+template<SoLib::IsRealType T>
+template<SoLib::IsContainsType<T> U>
 inline ArrayBuffer<T> &ArrayBuffer<T>::operator=(const U &source) {
 	CreateBuffer(static_cast<uint32_t>(source.size()));
 	std::copy(source.begin(), source.end(), mapData_);
 	return *this;
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline ArrayBuffer<T>::ArrayBuffer(const uint32_t width) {
 	CreateBuffer(width);
 }
 
-template<SoLib::IsNotPointer T>
-template <SoLib::IsContainer U>
-	requires SoLib::IsContainsType<U, T>
+template<SoLib::IsRealType T>
+template<SoLib::IsContainsType<T> U>
 inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
@@ -138,7 +134,7 @@ inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 	std::copy(source.begin(), source.end(), mapData_);
 }
 
-//template<SoLib::IsNotPointer T>
+//template<SoLib::IsRealType T>
 //inline CBuffer<T>::CBuffer(CBuffer &&other) {
 //	resources_ = other.resources_;
 //	cbView_ = other.cbView_;
@@ -147,7 +143,7 @@ inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 //}
 
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline void ArrayBuffer<T>::CreateBuffer(uint32_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
 	if (size != 0u && size_ != size) {
@@ -164,7 +160,7 @@ inline void ArrayBuffer<T>::CreateBuffer(uint32_t size) {
 	}
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T>::CreateSrvDesc() const
 {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -180,7 +176,7 @@ inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T>::CreateSrvDesc() const
 	return srvDesc;
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline ArrayBuffer<T>::~ArrayBuffer() {
 	//if (resources_ != nullptr) { resources_->Release(); }
 }
@@ -188,7 +184,7 @@ inline ArrayBuffer<T>::~ArrayBuffer() {
 
 #pragma endregion
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 class StructuredBuffer {
 public:
 	StructuredBuffer(uint32_t maxSize = 0u);
@@ -252,7 +248,7 @@ private:
 
 };
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline StructuredBuffer<T>::StructuredBuffer(uint32_t maxSize) {
 	arrayBuffer_.CreateBuffer(maxSize);
 	maxSize_ = maxSize;
@@ -265,7 +261,7 @@ inline StructuredBuffer<T>::StructuredBuffer(uint32_t maxSize) {
 	device->CreateShaderResourceView(GetResources(), &GetDesc(), heapRange_.GetHandle(0u).cpuHandle_);
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline void StructuredBuffer<T>::push_back(const T &data) {
 	// もし、最大値の方が大きかったら
 	if (size_ < maxSize_) {
@@ -274,19 +270,19 @@ inline void StructuredBuffer<T>::push_back(const T &data) {
 	}
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline void StructuredBuffer<T>::push_back(T &&data) {
 	if (size_ < maxSize_) {
 		arrayBuffer_[size_++] = std::move(data);
 	}
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 inline void StructuredBuffer<T>::clear() {
 	size_ = 0u;
 }
 
-template<SoLib::IsNotPointer T>
+template<SoLib::IsRealType T>
 template<SoLib::IsContainer U>
 inline StructuredBuffer<T> &StructuredBuffer<T>::operator=(const U &other) {
 	arrayBuffer_ = other;
