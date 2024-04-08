@@ -79,11 +79,25 @@ class MeshManager : public SoLib::Singleton<MeshManager>
 public:
 
 	class Key {
+	public:
+		Key() = default;
+		Key(uint32_t v) :index_(v) {}
 
 		operator uint32_t () const noexcept { return index_; }
-		uint32_t operator=(const uint32_t i) noexcept { return index_ = i; }
+		uint32_t operator=(const uint32_t v) noexcept { return index_ = v; }
 
-		Mesh *const operator->()const { return &pMeshManager_->meshArray_[index_]; }
+		Mesh *const operator->()const { return pMeshManager_->InnerGetMesh(index_); }
+
+		// 有効な値を持っているか
+		operator bool() const noexcept {
+			return
+				// 範囲外に出てたら無効
+				pMeshManager_->meshArray_.size() > index_
+				// データが存在しない場合は無効
+				and pMeshManager_->meshArray_.at(index_);
+		}
+
+		uint32_t GetIndex() const noexcept { return index_; }
 
 	private:
 		static MeshManager *const pMeshManager_;
@@ -91,9 +105,40 @@ public:
 		uint32_t index_ = (std::numeric_limits<uint32_t>::max)();
 
 	};
+	/// @brief メッシュの追加
+	/// @param mesh メッシュデータ
+	/// @return メッシュのキー
+	Key AddMesh(std::unique_ptr<Mesh> mesh);
+
+	/// @brief メッシュの取得
+	/// @param key メッシュキー
+	/// @return メッシュ
+	Mesh *const GetMesh(const Key key) const {
+
+		return InnerGetMesh(key.GetIndex());
+	}
+
+	/// @brief そのキーが有効か
+	/// @param key キー
+	/// @return 有効な値ならtrue
+	bool IsActiveKey(const Key key) const {
+		return
+			// 範囲外に出てたら無効
+			meshArray_.size() > key.GetIndex()
+			// データが存在しない場合は無効
+			and meshArray_.at(key.GetIndex());
+	}
 
 private:
 
-	std::vector<Mesh> meshArray_;
+
+	Mesh *const InnerGetMesh(const uint32_t index) const {
+		// 頻度は少ないが、存在しない場合はnullptrを返す
+		if (meshArray_.size() < index) [[unlikely]] { return nullptr; }
+
+		return meshArray_[index].get();
+	}
+
+	std::vector<std::unique_ptr<Mesh>> meshArray_;
 
 };
