@@ -18,22 +18,22 @@ public:
 
 	template<typename T, typename... Ts>
 	void AddClassData() {
-		//// 再帰前の処理
-		//{
-		//	// クラスデータを追加する
-		//	ClassDataManager::GetInstance()->AddClass<T>();
-		//	// 型情報を追加
-		//	data_.insert({ typeid(T) });
-		//}
-		//if constexpr (sizeof...(Ts) > 0) {
-		//	AddClassData<Ts...>();
-		//}
-		//else {
-		//	totalSize_ = CalcTotalSize();
-		//	chunkCapacity_ = CalcCapacity();
-		//}
+		// 再帰前の処理
+		{
+			// クラスデータを追加する
+			ClassDataManager::GetInstance()->AddClass<T>();
+			// 型情報を追加
+			data_.insert({ typeid(T) });
+		}
+		if constexpr (sizeof...(Ts) > 0) {
+			AddClassData<Ts...>();
+		}
+		else {
+			totalSize_ = CalcTotalSize();
+			chunkCapacity_ = CalcCapacity();
+		}
 
-		InnerAddClassData<T, Ts...>();
+		//InnerAddClassData<T, Ts...>();
 	}
 	bool operator==(const Archetype &other) const { return other.data_ == data_; }
 
