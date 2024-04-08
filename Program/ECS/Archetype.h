@@ -66,9 +66,7 @@ private:
 		return result;
 	}
 
-	size_t CalcCapacity() const {
-		return OneChunkCapacity / this->CalcTotalSize();
-	}
+	size_t CalcCapacity() const { return OneChunkCapacity / this->CalcTotalSize(); }
 
 	size_t totalSize_;
 	size_t chunkCapacity_;

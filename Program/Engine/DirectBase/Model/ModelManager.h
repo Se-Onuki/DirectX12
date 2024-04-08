@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 #include "Model.h"
+#include "../../Utils/Containers/Singleton.h"
 
 using ModelHash = size_t;
 
@@ -65,4 +66,34 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<Model>> models_;
 
 private:
+};
+
+class MeshManager : public SoLib::Singleton<MeshManager>
+{
+	friend SoLib::Singleton<MeshManager>;
+	MeshManager() = default;
+	MeshManager(const MeshManager &) = delete;
+	MeshManager &operator=(const MeshManager &) = delete;
+	~MeshManager() = default;
+
+public:
+
+	class Key {
+
+		operator uint32_t () const noexcept { return index_; }
+		uint32_t operator=(const uint32_t i) noexcept { return index_ = i; }
+
+		Mesh *const operator->()const { return &pMeshManager_->meshArray_[index_]; }
+
+	private:
+		static MeshManager *const pMeshManager_;
+
+		uint32_t index_ = (std::numeric_limits<uint32_t>::max)();
+
+	};
+
+private:
+
+	std::vector<Mesh> meshArray_;
+
 };
