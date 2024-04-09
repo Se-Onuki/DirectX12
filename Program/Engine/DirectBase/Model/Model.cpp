@@ -623,15 +623,15 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 	// マテリアルの取得
 	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
 
+
+		// 保存先のマテリアル
+		std::unique_ptr<Material> materialItem = std::make_unique<Material>();
+		// 保存先のデータの構築
+		materialItem->Create();
 		// シーン内のマテリアル
 		aiMaterial *material = scene->mMaterials[materialIndex];
 		// ディフューズのテクスチャが存在するか
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
-
-			// 保存先のマテリアル
-			std::unique_ptr<Material> materialItem = std::make_unique<Material>();
-			// 保存先のデータの構築
-			materialItem->Create();
 
 			// 文字列の保存先
 			aiString textureFilePath;
@@ -642,26 +642,14 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 			materialItem->textureName_ = textureFilePath.C_Str();
 			// テクスチャの読み込み
 			materialItem->texHandle_ = TextureManager::Load(directoryPath + textureFilePath.C_Str());
-
-			// マテリアル名の設定
-			materialItem->name_ = material->GetName().C_Str();
-
-			// 数値の文字列をキーとしてマテリアルのデータを追加
-			result->materialMap_.insert({ SoLib::to_string(materialIndex), std::move(materialItem) });
 		}
-	}
 
-	if (result->materialMap_.empty()) {
-		// 保存先のマテリアル
-		std::unique_ptr<Material> materialItem = std::make_unique<Material>();
-		// 保存先のデータの構築
-		materialItem->Create();
+		// マテリアル名の設定
+		materialItem->name_ = material->GetName().C_Str();
 
 		// 数値の文字列をキーとしてマテリアルのデータを追加
-		result->materialMap_.insert({ SoLib::to_string(0), std::move(materialItem) });
-
+		result->materialMap_.insert({ SoLib::to_string(materialIndex), std::move(materialItem) });
 	}
-
 
 	// メッシュの読み込み
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
@@ -707,7 +695,7 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 
 		}
 
-		meshItem->material_ = result->materialMap_.at(SoLib::to_string(0)).get();
+		meshItem->material_ = result->materialMap_.at(SoLib::to_string(mesh->mMaterialIndex)).get();
 		meshItem->CreateBuffer();
 
 		result->meshList_.push_back(std::move(meshItem));
