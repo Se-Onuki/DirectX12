@@ -694,10 +694,12 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 			}
 
 		}
-
+		// マテリアルのポインタを取得
 		meshItem->material_ = result->materialMap_.at(SoLib::to_string(mesh->mMaterialIndex)).get();
+		// 保存されたデータからメッシュを作成
 		meshItem->CreateBuffer();
 
+		// メッシュをコンテナに保存
 		result->meshList_.push_back(std::move(meshItem));
 
 	}
