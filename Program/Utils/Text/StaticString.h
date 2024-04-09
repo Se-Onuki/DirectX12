@@ -26,11 +26,12 @@ namespace SoLib {
 		/// @tparam Str 文字列
 		template <ConstExprString Str>
 		struct StaticString {
-			static constexpr auto str_ = Str;
+			static constexpr ConstExprString str_ = Str;
 		public:
-
-			constexpr const char *const c_str() const { return str_.buf_.data(); }
-			inline static constexpr friend std::ostream &operator<< (std::ostream &ost, const StaticString str) { return ost << str.c_str(); }
+			/// @brief 文字列のポインタを返す
+			/// @return 文字列ポインタ
+			inline static constexpr const char *const c_str() noexcept { return str_.buf_.data(); }
+			inline static constexpr friend std::ostream &operator<< (std::ostream &ost, const StaticString str) noexcept { return ost << str.c_str(); }
 		};
 	}
 }

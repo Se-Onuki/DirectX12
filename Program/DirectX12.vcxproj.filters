@@ -737,6 +737,12 @@
     <ClInclude Include="ECS\ClassData.h">
       <Filter>ECS</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Math\AlignasVector3.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Containers\WrappingClass.h">
+      <Filter>Utils\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

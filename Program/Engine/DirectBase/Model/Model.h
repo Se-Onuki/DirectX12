@@ -28,6 +28,7 @@
 #include "../Base/StructBuffer.h"
 #include "../Descriptor/DescriptorManager.h"
 #include "../../Utils/Graphics/Color.h"
+#include "../../Utils/Text/StaticString.h"
 
 class ViewProjection;
 
@@ -98,7 +99,9 @@ public:
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
-	static const char *const defaultDirectory;
+
+	/// @brief "resources/"
+	using DefaultDirectory = SoLib::Text::StaticString<"resources/">;
 
 	bool ImGuiWidget();
 
@@ -109,6 +112,8 @@ public:
 	[[nodiscard]] static std::unique_ptr<Model> CreateSphere();
 
 	[[nodiscard]] static std::unique_ptr<Model> LoadObjFile(const std::string &directoryPath, const std::string &fileName);
+
+	[[nodiscard]] static std::unique_ptr<Model> LoadAssimpObjFile(const std::string &directoryPath, const std::string &fileName);
 private:
 	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
 
