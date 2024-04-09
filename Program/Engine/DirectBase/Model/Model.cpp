@@ -610,43 +610,58 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 	std::unique_ptr<Model> result = std::make_unique<Model>();
 
 	// ファイルの名前
-	std::string file{ DefaultDirectory::c_str() + directoryPath + fileName };
+	std::string filePath = DefaultDirectory::c_str() + directoryPath + fileName;
 
 	// assimpのローダ
 	Assimp::Importer importer;
-	// ファイルパス
-	std::string filePath = DefaultDirectory::c_str() + directoryPath + fileName;
 
 	// assimpのscene作成 / 三角形の並び順を逆に / UVの上下を反転
-	const aiScene *const scene = importer.ReadFile(file.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	const aiScene *const scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	// メッシュが存在しない場合はエラーとする
 	assert(scene->HasMeshes() and "Meshが存在しない場合はエラーとする");
 
 	// マテリアルの取得
 	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
-		std::unique_ptr<Material> materialItem = std::make_unique<Material>();
 
-		const aiMaterial *const material = scene->mMaterials[materialIndex];
+		// シーン内のマテリアル
+		aiMaterial *material = scene->mMaterials[materialIndex];
 		// ディフューズのテクスチャが存在するか
-		if (material->GetTextureCount(aiTextureType_DIFFUSE)) {
-			aiString textureFilePath;
-			material->GetTexture(aiTextureType_DIFFUSE, materialIndex, &textureFilePath);
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 
-			// データの構築
+			// 保存先のマテリアル
+			std::unique_ptr<Material> materialItem = std::make_unique<Material>();
+			// 保存先のデータの構築
 			materialItem->Create();
+
+			// 文字列の保存先
+			aiString textureFilePath;
+			// マテリアルからテクスチャ名を取得
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+
 			// テクスチャ名の代入
 			materialItem->textureName_ = textureFilePath.C_Str();
 			// テクスチャの読み込み
-			materialItem->texHandle_ = TextureManager::Load(DefaultDirectory::c_str() + directoryPath + textureFilePath.C_Str());
+			materialItem->texHandle_ = TextureManager::Load(directoryPath + textureFilePath.C_Str());
 
 			// マテリアル名の設定
 			materialItem->name_ = material->GetName().C_Str();
 
+			// 数値の文字列をキーとしてマテリアルのデータを追加
+			result->materialMap_.insert({ SoLib::to_string(materialIndex), std::move(materialItem) });
 		}
+	}
 
-		result->materialMap_.insert({ SoLib::to_string(materialIndex), std::move(materialItem)});
+	if (result->materialMap_.empty()) {
+		// 保存先のマテリアル
+		std::unique_ptr<Material> materialItem = std::make_unique<Material>();
+		// 保存先のデータの構築
+		materialItem->Create();
+
+		// 数値の文字列をキーとしてマテリアルのデータを追加
+		result->materialMap_.insert({ SoLib::to_string(0), std::move(materialItem) });
 
 	}
+
 
 	// メッシュの読み込み
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
@@ -682,8 +697,8 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 
 				// データの補正
 				// aiProcess_MakeLeftHandedは z *= -1 で、右手->左手に変換するので手動で対処
-				vertex.position.x += -1.f;
-				vertex.normal.x += -1.f;
+				vertex.position.x *= -1.f;
+				vertex.normal.x *= -1.f;
 
 				// 頂点の追加
 				meshItem->AddVertex(vertex);
@@ -691,6 +706,11 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 			}
 
 		}
+
+		meshItem->material_ = result->materialMap_.at(SoLib::to_string(0)).get();
+		meshItem->CreateBuffer();
+
+		result->meshList_.push_back(std::move(meshItem));
 
 	}
 
@@ -846,8 +866,7 @@ void Mesh::CreateBuffer()
 
 void Mesh::AddVertex(const VertexData &vertex)
 {
-	size_t hashValue = std::hash<VertexData>()(vertex);
-	auto it = indexMap_.find(hashValue);
+	auto it = indexMap_.find(vertex);
 	if (it != indexMap_.end()) {
 		// 同じ値のデータが存在する場合
 		indexs_.push_back(it->second);
@@ -857,7 +876,7 @@ void Mesh::AddVertex(const VertexData &vertex)
 		const uint32_t index = static_cast<uint32_t>(vertices_.size());
 		vertices_.push_back(vertex);
 		indexs_.push_back(index);
-		indexMap_[hashValue] = index;
+		indexMap_[vertex] = index;
 	}
 }
 

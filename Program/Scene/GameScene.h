@@ -91,4 +91,6 @@ private:
 	Model *attackModel_ = nullptr;
 
 	SoLib::DeltaTimer playerSpawn_{ 1.f, false };
+
+	std::unique_ptr<Model> assimpModel_ = nullptr;
 };
