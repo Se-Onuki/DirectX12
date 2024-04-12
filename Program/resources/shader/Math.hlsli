@@ -8,3 +8,19 @@ float4x3 Mul(float4x3 leftMatrix, float4x3 rightMatrix)
 
     return result;
 }
+
+// RotationMatrixOnry
+float3x3 InverseTranspone(float3x3 input)
+{
+    float3x3 result = input;
+    
+    for (int y = 0; y < 3; y++)
+    {
+        // Divide each value by the norm length
+        result[y] /= length(result[y]);
+    }
+    
+    return result;
+    
+    
+}

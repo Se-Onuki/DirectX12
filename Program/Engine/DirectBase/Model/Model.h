@@ -37,15 +37,17 @@ struct Material;
 struct Mesh;
 
 struct ModelNode {
+	/// @brief データを解析してノードを作成する
+	/// @param node assimpのノード
+	/// @return 解析結果
 	static ModelNode Create(aiNode *node);
 
 	// 回転の姿勢
-	Matrix4x4 localMatrix_;
+	CBuffer<Matrix4x4> localMatrix_;
 	// ノード名
 	std::string name_;
 	// 子供ノード
 	std::vector<ModelNode> children_;
-
 
 };
 
@@ -64,6 +66,7 @@ public:
 		kTexture,			// テクスチャ
 		kLight,				// ライト
 		kInstanceLocation,	// インスタンス先頭値
+		kModelTransform,	// モデルの回転情報
 
 		kSize,				// enumのサイズ
 	};

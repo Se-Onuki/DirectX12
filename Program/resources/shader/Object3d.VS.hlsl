@@ -16,6 +16,7 @@ struct ViewProjectionMatrix
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b3);
+ConstantBuffer<ModelTransfomMatrix> gModelTransMat : register(b4);
 
 struct VertexShaderInput
 {
@@ -27,11 +28,13 @@ struct VertexShaderInput
 VertexShaderOutput main(VertexShaderInput input)
 {
     VertexShaderOutput output;
+    //float4x4 mulWorld = mul(gModelTransMat.modelMat_, gTransformationMatrix.World);
+    float4x4 mulWorld = gTransformationMatrix.World;
     matrix matVP = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
-    matrix matWVP = mul(gTransformationMatrix.World, matVP);
+    matrix matWVP = mul(mulWorld, matVP);
     output.position = mul(input.position, matWVP);
     output.texCoord = input.texCoord;
-    output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.WorldInverseTranspose));
-    output.worldPos = mul(input.position, gTransformationMatrix.World).xyz;
+    output.normal = normalize(mul(input.normal, InverseTranspone((float3x3) mulWorld)));
+    output.worldPos = mul(input.position, mulWorld).xyz;
     return output;
 }

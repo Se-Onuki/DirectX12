@@ -6,3 +6,8 @@ struct VertexShaderOutput
     float3 normal : NORMAL0;
     float3 worldPos : POSITION0;
 };
+
+struct ModelTransfomMatrix
+{
+    float4x4 modelMat_;
+};

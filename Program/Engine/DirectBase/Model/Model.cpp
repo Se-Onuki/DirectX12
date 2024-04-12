@@ -76,6 +76,10 @@ void Model::CreatePipeLine()
 	rootParameters[(uint32_t)Model::RootParameter::kLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[(uint32_t)Model::RootParameter::kLight].Descriptor.ShaderRegister = 1;                    // レジスタ番号1とバインド
 
+	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;    // CBVを使う
+	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; // PixelShaderで使う
+	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].Descriptor.ShaderRegister = 4;                    // レジスタ番号4とバインド
+
 #pragma region Texture
 
 	// DescriptorRangeの設定
@@ -100,7 +104,7 @@ void Model::CreatePipeLine()
 
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  // CBVを使う
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; // VertexShaderで使う
-	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].Descriptor.ShaderRegister = 3;                  // レジスタ番号1とバインド
+	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].Descriptor.ShaderRegister = 3;                  // レジスタ番号3とバインド
 
 	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Create(rootParameters.data(), rootParameters.size());
 
@@ -1254,11 +1258,11 @@ ModelNode ModelNode::Create(aiNode *node)
 	// 列ベクトルを行ベクトルに変換
 	aiLocalMat.Transpose();
 
-	// 4x4行列に変換
+	// 4x4行列に代入
 	result.localMatrix_ = Matrix4x4::Identity();
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {
-			result.localMatrix_.m[y][x] = aiLocalMat[y][x];
+			result.localMatrix_->m[y][x] = aiLocalMat[y][x];
 		}
 	}
 
