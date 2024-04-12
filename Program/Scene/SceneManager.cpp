@@ -2,6 +2,7 @@
 #include "../Header/Object/Fade.h"
 #include "GameScene.h"
 #include "TitleScene.h"
+#include "CGTaskScene.h"
 
 SceneManager *const IScene::sceneManager_ = SceneManager::GetInstance();
 
@@ -13,6 +14,7 @@ void SceneManager::Init() {
 void SceneManager::StaticInit() {
 	sceneFactory_["TitleScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<TitleScene>(); };
 	sceneFactory_["GameScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<GameScene>(); };
+	sceneFactory_["CGTaskScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<CGTaskScene>(); };
 }
 
 void SceneManager::Cancel() {

@@ -39,9 +39,13 @@ bool BaseTransform::ImGuiWidget(const std::string &name) {
 	if (ImGui::TreeNode((name + "Transform").c_str())) {
 		bool isUsing = false;
 
+		static SoLib::Math::Euler rot{};
 		isUsing |= ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 100.f);
 
-		isUsing |= SoLib::ImGuiDragEuler("Rotate", &rotate.x);
+		if (SoLib::ImGuiDragEuler("Rotate", &rot.x)) {
+			rotate = SoLib::MakeQuaternion(rot);
+			isUsing = true;
+		}
 
 		isUsing |= ImGui::DragFloat3("Transform", &translate.x, 0.01f);
 

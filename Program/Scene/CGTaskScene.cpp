@@ -8,10 +8,11 @@
 
 void CGTaskScene::OnEnter()
 {
-	auto sphere = ModelManager::GetInstance()->AddModel("Sphere", Model::LoadObjFile("", "Sphere.obj"));
+	model_ = ModelManager::GetInstance()->AddModel("PlaneGltf", Model::LoadAssimpModelFile("", "plane.gltf"));
 
-	CameraManager::GetInstance()->Init();
 	light_ = DirectionLight::Create();
+	CameraManager::GetInstance()->Init();
+	/*
 	{
 		gameObject_ = std::make_unique<GameObject>();
 		gameObject_->Init();
@@ -20,7 +21,7 @@ void CGTaskScene::OnEnter()
 
 		gameObject_->transform_.translate = { 0.f,0.f,0.f };
 		gameObject_->transform_.rotate = { 0.f,90._deg,0.f };
-	}
+	}*/
 
 }
 
@@ -33,8 +34,10 @@ void CGTaskScene::Update()
 	const float deltaTime = ImGui::GetIO().DeltaTime;
 
 	light_->ImGuiWidget();
-	gameObject_->ImGuiWidget();
-	gameObject_->Update(deltaTime);
+	model_->ImGuiWidget();
+	transform_->ImGuiWidget();
+	transform_->UpdateMatrix();
+	//gameObject_->Update(deltaTime);
 
 	CameraManager::GetInstance()->DisplayImGui();
 	CameraManager::GetInstance()->Update(deltaTime);
@@ -66,7 +69,7 @@ void CGTaskScene::Draw()
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
 	light_->SetLight(commandList);
-	gameObject_->Draw(camera);
+	model_->Draw(transform_, camera);
 
 	Model::EndDraw();
 

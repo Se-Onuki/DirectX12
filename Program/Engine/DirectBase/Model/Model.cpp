@@ -601,7 +601,7 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, cons
 	return std::move(result);
 }
 
-std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath, const std::string &fileName)
+std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPath, const std::string &fileName)
 {
 	// マテリアルのID
 	constexpr uint32_t defaultMaterialIndex = 0u;
@@ -622,7 +622,6 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 
 	// マテリアルの取得
 	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
-
 
 		// 保存先のマテリアル
 		std::unique_ptr<Material> materialItem = std::make_unique<Material>();
@@ -648,7 +647,7 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 		materialItem->name_ = material->GetName().C_Str();
 
 		// 数値の文字列をキーとしてマテリアルのデータを追加
-		result->materialMap_.insert({ SoLib::to_string(materialIndex), std::move(materialItem) });
+		result->materialMap_.insert({ std::to_string(materialIndex), std::move(materialItem) });
 	}
 
 	// メッシュの読み込み
@@ -690,9 +689,7 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 
 				// 頂点の追加
 				meshItem->AddVertex(vertex);
-
 			}
-
 		}
 		// マテリアルのポインタを取得
 		meshItem->material_ = result->materialMap_.at(SoLib::to_string(mesh->mMaterialIndex)).get();
@@ -701,8 +698,12 @@ std::unique_ptr<Model> Model::LoadAssimpObjFile(const std::string &directoryPath
 
 		// メッシュをコンテナに保存
 		result->meshList_.push_back(std::move(meshItem));
-
 	}
+
+	// ノードの構成
+	result->rootNode_ = ModelNode::Create(scene->mRootNode);
+
+	result->name_ = fileName;
 
 	return std::move(result);
 }
@@ -787,7 +788,7 @@ std::unique_ptr<Model> Model::CreatePlane()
 	return std::move(newModel);
 }
 
-void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const
+void Model::Draw(const Transform &transform, const Camera3D &camera) const
 {
 	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
@@ -799,7 +800,7 @@ void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Pr
 	}
 }
 
-void Model::Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera, const Material &material) const
+void Model::Draw(const Transform &transform, const Camera3D &camera, const Material &material) const
 {
 	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
@@ -1240,4 +1241,38 @@ void MinecraftModel::Face::SetVertex(const std::array<Vector3, 4u> &vertex, cons
 		vertices_[i].normal = face;
 		vertices_[i].texCoord = { 0.f, 0.f };
 	}
+}
+
+ModelNode ModelNode::Create(aiNode *node)
+{
+	// 返す値
+	ModelNode result{};
+
+	// nodeのlocalMatを取得
+	aiMatrix4x4 aiLocalMat = node->mTransformation;
+
+	// 列ベクトルを行ベクトルに変換
+	aiLocalMat.Transpose();
+
+	// 4x4行列に変換
+	result.localMatrix_ = Matrix4x4::Identity();
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			result.localMatrix_.m[y][x] = aiLocalMat[y][x];
+		}
+	}
+
+	// 名前の設定
+	result.name_ = node->mName.C_Str();
+
+	// 子ノードの数だけ領域を確保
+	result.children_.resize(node->mNumChildren);
+
+	// 子ノードの設定
+	for (uint32_t i = 0; i < node->mNumChildren; i++) {
+		// 再起的に読み込む
+		result.children_[i] = ModelNode::Create(node->mChildren[i]);
+	}
+
+	return result;
 }

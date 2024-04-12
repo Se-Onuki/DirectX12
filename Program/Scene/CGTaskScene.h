@@ -15,6 +15,8 @@ public:
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	std::unique_ptr<GameObject> gameObject_;
+	Model *model_;
+
+	Transform transform_;
 
 };

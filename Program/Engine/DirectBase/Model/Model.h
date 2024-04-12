@@ -29,11 +29,25 @@
 #include "../Descriptor/DescriptorManager.h"
 #include "../../Utils/Graphics/Color.h"
 #include "../../Utils/Text/StaticString.h"
+#include <assimp/mesh.h>
 
 class ViewProjection;
 
 struct Material;
 struct Mesh;
+
+struct ModelNode {
+	static ModelNode Create(aiNode *node);
+
+	// 回転の姿勢
+	Matrix4x4 localMatrix_;
+	// ノード名
+	std::string name_;
+	// 子供ノード
+	std::vector<ModelNode> children_;
+
+
+};
 
 class Model {
 public:
@@ -90,12 +104,14 @@ public:
 	std::vector<std::unique_ptr<Mesh>> meshList_;
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
-	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera) const;
-	void Draw(const Transform &transform, const Camera<Render::CameraType::Projecction> &camera, const Material &material) const;
+	ModelNode rootNode_;
+
+	void Draw(const Transform &transform, const Camera3D &camera) const;
+	void Draw(const Transform &transform, const Camera3D &camera, const Material &material) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const;
 	template <typename T>
-	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const;
+	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
@@ -113,14 +129,13 @@ public:
 
 	[[nodiscard]] static std::unique_ptr<Model> LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 
-	[[nodiscard]] static std::unique_ptr<Model> LoadAssimpObjFile(const std::string &directoryPath, const std::string &fileName);
+	[[nodiscard]] static std::unique_ptr<Model> LoadAssimpModelFile(const std::string &directoryPath, const std::string &fileName);
 private:
 	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
 
 	static ID3D12GraphicsCommandList *commandList_;
 
 };
-
 
 
 struct Material {
