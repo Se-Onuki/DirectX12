@@ -12,8 +12,14 @@ struct ViewProjectionMatrix
     float3 cameraPos;
 };
 
-struct InstanceLocation {
+struct InstanceLocation
+{
     uint location;
+};
+
+struct ModelTransfomMatrix
+{
+    float4x4 modelMat_;
 };
 
 StructuredBuffer<ParticleMatrix> gParticleMatrix : register(t0);
