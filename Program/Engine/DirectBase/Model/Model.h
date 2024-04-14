@@ -41,6 +41,7 @@ struct ModelNode {
 	/// @param node assimpのノード
 	/// @return 解析結果
 	static ModelNode Create(aiNode *node);
+	ModelNode();
 
 	// 回転の姿勢
 	CBuffer<Matrix4x4> localMatrix_;

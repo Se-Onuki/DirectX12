@@ -1284,3 +1284,8 @@ ModelNode ModelNode::Create(aiNode *node)
 
 	return result;
 }
+
+ModelNode::ModelNode()
+{
+	localMatrix_ = Matrix4x4::Identity();
+}

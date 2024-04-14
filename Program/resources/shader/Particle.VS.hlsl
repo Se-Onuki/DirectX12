@@ -26,6 +26,7 @@ StructuredBuffer<ParticleMatrix> gParticleMatrix : register(t0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 
 ConstantBuffer<InstanceLocation> gInstanceLocation : register(b2);
+ConstantBuffer<ModelTransfomMatrix> gModelTransMat : register(b4);
 
 struct VertexShaderInput
 {
@@ -40,12 +41,14 @@ VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID
     
     uint targetLocation = instanceId + gInstanceLocation.location;
     
+    float4x4 matWorld = mul(gModelTransMat.modelMat_, gParticleMatrix[targetLocation].World);
+    
     matrix matVP = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
-    matrix matWVP = mul(gParticleMatrix[targetLocation].World, matVP);
+    matrix matWVP = mul(matWorld, matVP);
     
     output.position = mul(input.position, matWVP);
     output.texCoord = input.texCoord;
-    output.normal = normalize(mul(input.normal, (float3x3) gParticleMatrix[targetLocation].World));
+    output.normal = normalize(mul(input.normal, (float3x3) matWorld));
     output.color = gParticleMatrix[targetLocation].color;
     return output;
 }
