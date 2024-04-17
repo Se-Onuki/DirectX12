@@ -41,10 +41,14 @@ struct ModelNode {
 	/// @param node assimpのノード
 	/// @return 解析結果
 	static ModelNode Create(aiNode *node);
-	ModelNode();
+	ModelNode() = default;
+
+	static std::unique_ptr<CBuffer<Matrix4x4>> kIdentity_;
+
+	const CBuffer<Matrix4x4> &GetLocalMatrix() const;
 
 	// 回転の姿勢
-	CBuffer<Matrix4x4> localMatrix_;
+	std::unique_ptr<CBuffer<Matrix4x4>> localMatrix_;
 	// ノード名
 	std::string name_;
 	// 子供ノード

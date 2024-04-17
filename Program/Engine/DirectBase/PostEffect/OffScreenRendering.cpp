@@ -2,45 +2,47 @@
 
 namespace PostEffect {
 
-    void OffScreenRenderer::Init()
-    {
-    }
+	void OffScreenRenderer::Init()
+	{
+		//const SoLib::Color::RGB4 &clearColor = 0xFF0000FF; // 赤を指定しておく
+		// auto renderTargetTexture = CreateResource()
+	}
 
-    OffScreenRenderer::ComPtr<ID3D12Resource> OffScreenRenderer::CreateResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor)
-    {
-        // 1. metadataを基にResourceの設定
-        D3D12_RESOURCE_DESC resourceDesc{};
-        resourceDesc.Width = width;                                   // textureの幅
-        resourceDesc.Height = height;                                 // textureの高さ
-        resourceDesc.MipLevels = 1;                                   // mipMapの数
-        resourceDesc.DepthOrArraySize = 1;                            // 奥行き or 配列Textureの配列数
-        resourceDesc.Format = format;                                 // TextureのFormat
-        resourceDesc.SampleDesc.Count = 1;                            // サンプリングカウント
-        resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;  // Textureの次元数。普段使っているのは2次元。
-        resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして利用できるようにする
+	OffScreenRenderer::ComPtr<ID3D12Resource> OffScreenRenderer::CreateResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor)
+	{
+		// 1. metadataを基にResourceの設定
+		D3D12_RESOURCE_DESC resourceDesc{};
+		resourceDesc.Width = width;                                   // textureの幅
+		resourceDesc.Height = height;                                 // textureの高さ
+		resourceDesc.MipLevels = 1;                                   // mipMapの数
+		resourceDesc.DepthOrArraySize = 1;                            // 奥行き or 配列Textureの配列数
+		resourceDesc.Format = format;                                 // TextureのFormat
+		resourceDesc.SampleDesc.Count = 1;                            // サンプリングカウント
+		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;  // Textureの次元数。普段使っているのは2次元。
+		resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして利用できるようにする
 
-        // 2. 利用するHeapの設定。
-        D3D12_HEAP_PROPERTIES heapProperties{};
-        heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // VRAM上に作成
+		// 2. 利用するHeapの設定。
+		D3D12_HEAP_PROPERTIES heapProperties{};
+		heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // VRAM上に作成
 
-        // クリアする色の設定
-        D3D12_CLEAR_VALUE clearValue;
-        clearValue.Format = format;
-        for (int i = 0; i < 4; i++) {
-            clearValue.Color[i] = clearColor[i];
-        }
+		// クリアする色の設定
+		D3D12_CLEAR_VALUE clearValue;
+		clearValue.Format = format;
+		for (int i = 0; i < 4; i++) {
+			clearValue.Color[i] = clearColor[i];
+		}
 
-        // 3. Resourceを生成する
-        ComPtr<ID3D12Resource> resource = nullptr;
-        HRESULT hr = S_FALSE;
-        hr = device->CreateCommittedResource(
-            &heapProperties,                    // Heapの設定
-            D3D12_HEAP_FLAG_NONE,               // Heapの特殊な設定。特になし。
-            &resourceDesc,                      // Resourceの設定
-            D3D12_RESOURCE_STATE_RENDER_TARGET, // これから描画することを前提としたTextureなのでRenderTargetとして使うことから始める
-            &clearValue,                        // Clear最適値｡ ClearRenderTargetのClearがこの値で行われる
-            IID_PPV_ARGS(&resource));           // 作成するResourceへのポインタ
-        assert(SUCCEEDED(hr));
-        return resource;
-    }
+		// 3. Resourceを生成する
+		ComPtr<ID3D12Resource> resource = nullptr;
+		HRESULT hr = S_FALSE;
+		hr = device->CreateCommittedResource(
+			&heapProperties,                    // Heapの設定
+			D3D12_HEAP_FLAG_NONE,               // Heapの特殊な設定。特になし。
+			&resourceDesc,                      // Resourceの設定
+			D3D12_RESOURCE_STATE_RENDER_TARGET, // これから描画することを前提としたTextureなのでRenderTargetとして使うことから始める
+			&clearValue,                        // Clear最適値｡ ClearRenderTargetのClearがこの値で行われる
+			IID_PPV_ARGS(&resource));           // 作成するResourceへのポインタ
+		assert(SUCCEEDED(hr));
+		return std::move(resource);
+	}
 }

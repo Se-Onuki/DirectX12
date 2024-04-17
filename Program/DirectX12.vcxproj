@@ -262,6 +262,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Base\Audio.h" />
     <ClInclude Include="Engine\DirectBase\Base\CBuffer.h" />
     <ClInclude Include="Engine\DirectBase\Base\DirectXCommon.h" />
+    <ClInclude Include="Engine\DirectBase\Base\EngineObject.h" />
     <ClInclude Include="Engine\DirectBase\Base\ImGuiManager.h" />
     <ClInclude Include="Engine\DirectBase\Base\LeakChecker.h" />
     <ClInclude Include="Engine\DirectBase\Base\MemoryUsageManager.h" />

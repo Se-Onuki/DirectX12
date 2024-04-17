@@ -60,6 +60,8 @@ public:
 	CBuffer(const CBuffer &);	// コピーコンストラクタ
 	CBuffer(CBuffer &&);		// ムーブコンストラクタ
 
+	CBuffer(const T &r);
+
 	CBuffer &operator=(const CBuffer &other) { return *this = static_cast<const T &>(other); }	// コピー演算子
 	CBuffer &operator=(CBuffer &&);			// ムーブ演算子
 
@@ -119,6 +121,15 @@ inline CBuffer<T, IsActive>::CBuffer(CBuffer &&other) {
 	this->resources_ = std::move(other.resources_);
 	this->mapData_ = std::move(other.mapData_);
 	this->cbView_ = std::move(other.cbView_);
+}
+
+template<SoLib::IsNotPointer T, bool IsActive>
+inline CBuffer<T, IsActive>::CBuffer(const T &r)
+{
+	CreateBuffer();
+
+	// データのコピー
+	*mapData_ = r;
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>

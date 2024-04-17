@@ -26,9 +26,14 @@ std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 8u>, 3u> Mode
 std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
 Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 
+std::unique_ptr<CBuffer<Matrix4x4>> ModelNode::kIdentity_;
+
 void Model::StaticInit()
 {
 	CreatePipeLine();
+
+	ModelNode::kIdentity_ = std::make_unique<CBuffer<Matrix4x4>>(Matrix4x4::Identity());
+
 }
 
 void Model::CreatePipeLine()
@@ -798,7 +803,7 @@ void Model::Draw(const Transform &transform, const Camera3D &camera) const
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.localMatrix_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.GetLocalMatrix().GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_);
@@ -811,7 +816,7 @@ void Model::Draw(const Transform &transform, const Camera3D &camera, const Mater
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.localMatrix_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.GetLocalMatrix().GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(material.blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, 1u, &material);
@@ -825,7 +830,7 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.localMatrix_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.GetLocalMatrix().GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, drawCount);
@@ -839,7 +844,7 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.localMatrix_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.GetLocalMatrix().GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, drawCount);
@@ -1262,13 +1267,18 @@ ModelNode ModelNode::Create(aiNode *node)
 	// 列ベクトルを行ベクトルに変換
 	aiLocalMat.Transpose();
 
+	// 一時保存用の行列
+	Matrix4x4 matrixBuffer;
+
 	// 4x4行列に代入
-	result.localMatrix_ = Matrix4x4::Identity();
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {
-			result.localMatrix_->m[y][x] = aiLocalMat[y][x];
+			matrixBuffer.m[y][x] = aiLocalMat[y][x];
 		}
 	}
+	
+	// 行列を代入
+	result.localMatrix_ = std::make_unique<CBuffer<Matrix4x4>>(matrixBuffer);
 
 	// 名前の設定
 	result.name_ = node->mName.C_Str();
@@ -1285,7 +1295,12 @@ ModelNode ModelNode::Create(aiNode *node)
 	return result;
 }
 
-ModelNode::ModelNode()
+const CBuffer<Matrix4x4> &ModelNode::GetLocalMatrix() const
 {
-	localMatrix_ = Matrix4x4::Identity();
+	if (localMatrix_) {
+		return *localMatrix_;
+	}
+	else {
+		return *ModelNode::kIdentity_;
+	}
 }

@@ -388,7 +388,7 @@
       <Filter>Header\Object\Particle\Particles\SimpleParticle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\PostEffect\OffScreenRendering.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\PostEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -751,6 +751,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h">
       <Filter>Engine\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Base\EngineObject.h">
+      <Filter>Engine\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
