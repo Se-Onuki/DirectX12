@@ -13,8 +13,8 @@ void CGTaskScene::OnEnter()
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
 
-	//offScreen_ = PostEffect::OffScreenRenderer::GetInstance();
-	//offScreen_->Init();
+	offScreen_ = PostEffect::OffScreenRenderer::GetInstance();
+	offScreen_->Init();
 
 	/*
 	{

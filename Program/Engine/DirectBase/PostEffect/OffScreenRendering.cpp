@@ -14,20 +14,10 @@ namespace PostEffect {
 
 		// RTVの作成
 
-		// RTVの設定
-		rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      // 出力結果をSRGBに変換して書き込む
-		rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
-
 		// 描画先のテクスチャ
-		auto renderTargetTexture = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clearColor_);
-
-		// RTVのDescripter
-		rtvDescHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>>(device, 1);
-
-		rtvHandle_ = rtvDescHeap_->GetHandle(0, 0);
-
+		renderTargetTexture_ = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clearColor_);
 		// 
-		device->CreateRenderTargetView(renderTargetTexture.Get(), &rtvDesc_, rtvHandle_.cpuHandle_);
+		device->CreateRenderTargetView(renderTargetTexture_.Get(), &rtvDesc_, rtvHandle_.cpuHandle_);
 
 
 		// SRVの作成

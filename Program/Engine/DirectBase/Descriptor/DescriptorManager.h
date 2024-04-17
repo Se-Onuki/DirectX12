@@ -40,7 +40,7 @@ public:
 		DescHeap *descHeap_ = nullptr;// 使用しているデスクリプタヒープのアドレス
 	};
 
-	DescHeap(ID3D12Device *const device, uint32_t size);
+	DescHeap(ID3D12Device *const device, uint32_t size, bool shaderVisible = true);
 	DescHeap(const DescHeap &) = delete;
 	DescHeap &operator=(const DescHeap &) = delete;
 	~DescHeap() = default;
@@ -75,10 +75,10 @@ private:
 };
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
-DescHeap<HeapType>::DescHeap(ID3D12Device *const device, uint32_t size) : heapSize_(size), memoryManager_(size) {
+DescHeap<HeapType>::DescHeap(ID3D12Device *const device, uint32_t size, bool shaderVisible) : heapSize_(size), memoryManager_(size) {
 	itemSize_ = device->GetDescriptorHandleIncrementSize(HeapType);
 
-	descriptorHeap_ = CreateDescriptorHeap(device, HeapType, heapSize_, true);
+	descriptorHeap_ = CreateDescriptorHeap(device, HeapType, heapSize_, shaderVisible);
 }
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
