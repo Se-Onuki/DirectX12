@@ -35,7 +35,7 @@ public:
 	};
 
 	static const uint32_t backBufferCount_ = 2u;
-	static const uint32_t srvCount_ = 256u;
+	static const uint32_t srvCount_ = 512u;
 
 private:
 

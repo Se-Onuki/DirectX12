@@ -181,6 +181,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Model\BoneModel.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\Model.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelManager.cpp" />
+    <ClCompile Include="Engine\DirectBase\PostEffect\OffScreenRendering.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Camera.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp" />

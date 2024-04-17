@@ -27,6 +27,7 @@ namespace TextureFunc
 		// ミップマップ付きのデータを返す
 		return mipImages;
 	}
+
 	/// @brief DirectX12のTextureResourceを作る
 	/// @param device デバイス
 	/// @param metadata テクスチャメタデータ
@@ -60,7 +61,6 @@ namespace TextureFunc
 		assert(SUCCEEDED(hr));
 		return resource;
 	}
-
 
 	inline [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> UpdateData(ID3D12Resource *texture, const DirectX::ScratchImage &mipImages, ID3D12Device *device, ID3D12GraphicsCommandList *commandList) {
 		//// Meta情報を取得
