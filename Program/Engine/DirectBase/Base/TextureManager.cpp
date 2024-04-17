@@ -74,8 +74,8 @@ uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
 	index = SoLib::ImGuiWidget("TextureList", &textureArray_, index,
 		[this](const decltype(index) &itemIndex)->std::string
 		{
-			if (not textureArray_[itemIndex].name.size()) { return ""; }
-			return (textureArray_[itemIndex].name + "[" + std::to_string(itemIndex) + "]").c_str();
+			if (textureArray_[itemIndex].name.empty()) { return ""; }
+			return textureArray_[itemIndex].name + "[" + std::to_string(itemIndex) + "]";
 		}
 	);
 

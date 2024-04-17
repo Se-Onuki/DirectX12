@@ -144,6 +144,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		sceneManager->ImGuiWidget();
 		audio->ImGuiWidget();
+		textureManager->ImGuiWindow();
 
 #endif // USE_IMGUI
 

@@ -282,6 +282,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Model\MinecraftModel.h" />
     <ClInclude Include="Engine\DirectBase\Model\Model.h" />
     <ClInclude Include="Engine\DirectBase\Model\ModelManager.h" />
+    <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h" />
     <ClInclude Include="Engine\DirectBase\Render\Camera.h" />
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.h" />
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h" />

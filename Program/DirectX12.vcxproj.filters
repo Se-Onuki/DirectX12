@@ -130,6 +130,9 @@
     <Filter Include="Header\Object\Particle\Particles\SimpleParticle">
       <UniqueIdentifier>{c5438e29-0751-412f-85c7-3b0af4efcce0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\PostEffect">
+      <UniqueIdentifier>{cd004645-b61c-4c69-b6d4-5ab977e667f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -742,6 +745,9 @@
     </ClInclude>
     <ClInclude Include="Utils\Containers\WrappingClass.h">
       <Filter>Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h">
+      <Filter>Engine\PostEffect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
