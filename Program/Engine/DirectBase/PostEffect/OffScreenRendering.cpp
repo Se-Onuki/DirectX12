@@ -4,11 +4,38 @@ namespace PostEffect {
 
 	void OffScreenRenderer::Init()
 	{
-		//const SoLib::Color::RGB4 &clearColor = 0xFF0000FF; // 赤を指定しておく
-		// auto renderTargetTexture = CreateResource()
+		WinApp *winApp = WinApp::GetInstance();
+		auto device = GetDevice();
+#ifdef _DEBUG
+
+		assert(device and "Deviceがnullptrです");
+
+#endif // _DEBUG
+
+		// RTVの作成
+
+		// RTVの設定
+		rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      // 出力結果をSRGBに変換して書き込む
+		rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
+
+		// 描画先のテクスチャ
+		auto renderTargetTexture = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clearColor_);
+
+		// RTVのDescripter
+		rtvDescHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>>(device, 1);
+
+		rtvHandle_ = rtvDescHeap_->GetHandle(0, 0);
+
+		// 
+		device->CreateRenderTargetView(renderTargetTexture.Get(), &rtvDesc_, rtvHandle_.cpuHandle_);
+
+
+		// SRVの作成
+
+
 	}
 
-	OffScreenRenderer::ComPtr<ID3D12Resource> OffScreenRenderer::CreateResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor)
+	OffScreenRenderer::ComPtr<ID3D12Resource> OffScreenRenderer::CreateRenderTextrueResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor)
 	{
 		// 1. metadataを基にResourceの設定
 		D3D12_RESOURCE_DESC resourceDesc{};

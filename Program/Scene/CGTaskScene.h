@@ -3,6 +3,7 @@
 #include <memory>
 #include "../Engine/DirectBase/3D/DirectionLight.h"
 #include "../Header/Entity/Entity.h"
+#include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -18,5 +19,7 @@ private:
 	Model *model_;
 
 	Transform transform_;
+
+	PostEffect::OffScreenRenderer *offScreen_ = nullptr;
 
 };

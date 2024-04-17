@@ -20,6 +20,8 @@ public:
 		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
 	};
 
+	inline static const D3D12_DESCRIPTOR_HEAP_TYPE HeapType_ = HeapType;
+
 	/// @brief デスクリプタヒープの使用領域
 	struct HeapRange {
 		HeapRange() = default;
@@ -88,9 +90,10 @@ inline void DescHeap<HeapType>::SetCommand(ID3D12GraphicsCommandList *const comm
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 inline  DescHeap<HeapType>::Handle DescHeap<HeapType>::GetHandle(const uint32_t offset, const uint32_t index) {
 	const uint32_t handle = offset + index;
-	Handle heapHandle;
-	heapHandle.cpuHandle_ = DescriptorHandle::GetCPUHandle(descriptorHeap_.Get(), itemSize_, handle);
-	heapHandle.gpuHandle_ = DescriptorHandle::GetGPUHandle(descriptorHeap_.Get(), itemSize_, handle);
+	Handle heapHandle{
+	.cpuHandle_ = DescriptorHandle::GetCPUHandle(descriptorHeap_.Get(), itemSize_, handle),
+	.gpuHandle_ = DescriptorHandle::GetGPUHandle(descriptorHeap_.Get(), itemSize_, handle),
+	};
 	return heapHandle;
 }
 
@@ -135,3 +138,6 @@ inline DescHeap<HeapType>::HeapRange::~HeapRange() {
 //	DescHeap<HeapType, > descriptorHeap_{};
 //
 //};
+
+/// @brief SRVやCBVなどのデスクリプタヒープ
+using DescHeapCbvSrvUav = DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>;

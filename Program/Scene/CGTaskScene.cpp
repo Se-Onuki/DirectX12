@@ -12,6 +12,10 @@ void CGTaskScene::OnEnter()
 
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
+
+	//offScreen_ = PostEffect::OffScreenRenderer::GetInstance();
+	//offScreen_->Init();
+
 	/*
 	{
 		gameObject_ = std::make_unique<GameObject>();

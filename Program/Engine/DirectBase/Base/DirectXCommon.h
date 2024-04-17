@@ -75,7 +75,7 @@ private:
 	ComPtr<ID3D12DescriptorHeap> dsvHeap_;
 
 	// SRVデスクリプタヒープ
-	std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>> srvHeap_;
+	std::unique_ptr<DescHeapCbvSrvUav> srvHeap_;
 
 	std::unique_ptr<FPSManager> fpsManager_ = nullptr;
 public:
@@ -90,7 +90,7 @@ public:
 		return commandList_.Get();
 	}
 
-	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *const GetSRVHeap() {
+	DescHeapCbvSrvUav *const GetSRVHeap() {
 		return srvHeap_.get();
 	}
 
@@ -123,4 +123,6 @@ private:
 	void CreateDepthStencile();
 
 	void CreateFence();
+
+	void TransfarEngineObject();
 };
