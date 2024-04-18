@@ -17,7 +17,7 @@ namespace PostEffect {
 		// 描画先のテクスチャ
 		renderTargetTexture_ = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clearColor_);
 		// 
-		device->CreateRenderTargetView(renderTargetTexture_.Get(), &rtvDesc_, rtvHandle_.cpuHandle_);
+		// device->CreateRenderTargetView(renderTargetTexture_.Get(), &rtvDesc_, rtvHandle_.cpuHandle_);
 
 
 		// SRVの作成

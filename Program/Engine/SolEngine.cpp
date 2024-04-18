@@ -8,9 +8,9 @@
 #include "DirectBase/Model/Model.h"
 #include "DirectBase/2D/Sprite.h"
 
-void SolEngine::StaticInit(const char *title, UINT windowStyle, int32_t clientWidth, int32_t clientHeight) {
+void Engine::StaticInit(const char *title, UINT windowStyle, int32_t clientWidth, int32_t clientHeight) {
 
-	SolEngine *const instance = SolEngine::GetInstance();
+	Engine *const instance = Engine::GetInstance();
 
 #pragma region 基盤初期化
 

@@ -66,7 +66,7 @@ private:
 	// スワップチェーン
 	ComPtr<IDXGISwapChain4> swapChain_;
 
-	ComPtr<ID3D12DescriptorHeap> rtvHeap_;
+	std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>> rtvDescHeap_;
 	std::array<ComPtr<ID3D12Resource>, backBufferCount_> backBuffers_;
 
 	ComPtr<ID3D12Fence> fence_;

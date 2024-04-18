@@ -72,11 +72,14 @@ private:
 	uint32_t itemSize_;
 
 	MemoryUsageManager memoryManager_;
+
+	bool isShaderVisible_;
 };
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 DescHeap<HeapType>::DescHeap(ID3D12Device *const device, uint32_t size, bool shaderVisible) : heapSize_(size), memoryManager_(size) {
 	itemSize_ = device->GetDescriptorHandleIncrementSize(HeapType);
+	isShaderVisible_ = shaderVisible;
 
 	descriptorHeap_ = CreateDescriptorHeap(device, HeapType, heapSize_, shaderVisible);
 }
@@ -90,10 +93,11 @@ inline void DescHeap<HeapType>::SetCommand(ID3D12GraphicsCommandList *const comm
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 inline  DescHeap<HeapType>::Handle DescHeap<HeapType>::GetHandle(const uint32_t offset, const uint32_t index) {
 	const uint32_t handle = offset + index;
-	Handle heapHandle{
-	.cpuHandle_ = DescriptorHandle::GetCPUHandle(descriptorHeap_.Get(), itemSize_, handle),
-	.gpuHandle_ = DescriptorHandle::GetGPUHandle(descriptorHeap_.Get(), itemSize_, handle),
-	};
+	Handle heapHandle{};
+	heapHandle.cpuHandle_ = DescriptorHandle::GetCPUHandle(descriptorHeap_.Get(), itemSize_, handle);
+	if (isShaderVisible_) {
+		heapHandle.gpuHandle_ = DescriptorHandle::GetGPUHandle(descriptorHeap_.Get(), itemSize_, handle);
+	}
 	return heapHandle;
 }
 

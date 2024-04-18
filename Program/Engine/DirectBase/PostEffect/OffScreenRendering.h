@@ -26,14 +26,9 @@ namespace PostEffect {
 		static ComPtr<ID3D12Resource> CreateRenderTextrueResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor);
 
 	private:
-		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};
 
 		// クリア時の色
 		const SoLib::Color::RGB4 &clearColor_ = 0xFF0000FF; // 赤を指定しておく
-
-		std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>> rtvDescHeap_;
-
-		DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>::Handle rtvHandle_;
 
 		ComPtr<ID3D12Resource> renderTargetTexture_;
 

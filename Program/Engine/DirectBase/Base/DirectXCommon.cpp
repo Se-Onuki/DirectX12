@@ -86,7 +86,7 @@ void DirectXCommon::StartDraw()
 
 	// 描画先のRTVとDSVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetCPUDescriptorHandleForHeapStart();
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvHeap_->GetCPUDescriptorHandleForHeapStart(), backBufferIndex, descriptorSizeRTV);
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvDescHeap_->GetHeap()->GetCPUDescriptorHandleForHeapStart(), backBufferIndex, descriptorSizeRTV);
 	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
@@ -341,8 +341,10 @@ void DirectXCommon::CreateRenderTarget()
 
 	HRESULT hr;
 
+
 	// RTV用のヒープでディスクリプタの数は2。RTVはShader内で触るものではないので、ShaderVisibleはfalse
-	rtvHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, backBufferCount_, false);
+	rtvDescHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>>(device_.Get(), backBufferCount_, false);
+	//rtvHeap_ = CreateDescriptorHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, backBufferCount_, false);
 
 #pragma region SwapChainからResourceを引っ張ってくる
 	// SwapChainからResourceを引っ張ってくる
@@ -362,14 +364,17 @@ void DirectXCommon::CreateRenderTarget()
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      // 出力結果をSRGBに変換して書き込む
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
 	// ディスクリプタの先頭を取得する
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvHeap_->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescHeap_->GetHeap()->GetCPUDescriptorHandleForHeapStart();
+
+	auto handle = rtvDescHeap_->GetHandle(0, 0);
+
 	// RTVを2つ作るのでディスクリプタを2つ用意
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 	// まずは1つめを作る。1つ目は最初の所に作る。作る場所をこちらで指定してあげる必要がある。
-	rtvHandles[0].ptr = rtvStartHandle.ptr;
+	rtvHandles[0] = rtvDescHeap_->GetHandle(0, 0).cpuHandle_;
 	device_->CreateRenderTargetView(backBuffers_[0].Get(), &rtvDesc, rtvHandles[0]);
 	// 2つ目のディスクリプタハンドルを作る。
-	rtvHandles[1].ptr = rtvStartHandle.ptr +device_.Get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	rtvHandles[1] = rtvDescHeap_->GetHandle(0, 1).cpuHandle_;
 	device_->CreateRenderTargetView(backBuffers_[1].Get(), &rtvDesc, rtvHandles[1]);
 
 #pragma endregion

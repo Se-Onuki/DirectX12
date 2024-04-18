@@ -8,16 +8,16 @@
 
 class DirectXCommon;
 
-class SolEngine {
-	SolEngine() = default;
-	SolEngine(const SolEngine &) = delete;
-	SolEngine operator=(const SolEngine &) = delete;
-	SolEngine operator=(SolEngine &&) = delete;
-	~SolEngine() = default;
+class Engine {
+	Engine() = default;
+	Engine(const Engine &) = delete;
+	Engine operator=(const Engine &) = delete;
+	Engine operator=(Engine &&) = delete;
+	~Engine() = default;
 public:
 
-	static SolEngine *const GetInstance() {
-		static SolEngine instance{};
+	static Engine *const GetInstance() {
+		static Engine instance{};
 		return &instance;
 	}
 
