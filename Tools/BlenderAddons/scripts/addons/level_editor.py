@@ -52,6 +52,7 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
         # トップバーの｢エディターメニュー｣に項目(オペレータ)を追加
         self.layout.operator("wm.url_open_preset", text="Manual", icon='HELP')
         self.layout.operator(MYADDON_OT_stretch_vertex.bl_idname, text= MYADDON_OT_stretch_vertex.bl_label)
+        self.layout.operator(MYADDON_OT_create_ico_sphere.bl_idname, text= MYADDON_OT_create_ico_sphere.bl_label)
     
     # 既存のメニューにサブメニューを追加
     def submenu(self, context):
@@ -75,10 +76,27 @@ class MYADDON_OT_stretch_vertex(bpy.types.Operator):
         # オペレータの命令終了を通知
         return {"FINISHED"}
 
+# オペレータ ICO球の生成
+class MYADDON_OT_create_ico_sphere(bpy.types.Operator):
+    bl_idname = "myaddon.myaddon_ot_create_ico_sphere"
+    bl_label = "ICO球の生成"
+    bl_description = "ICO球を生成します"
+    bl_options = {"REGISTER", "UNDO"}
+
+    # メニューを実行するときに呼ばれるコールバック関数
+    def execute(self, context):
+        # ico球を生成 参考url: https://docs.blender.org/api/current/bpy.ops.mesh.html#bpy.ops.mesh.primitive_ico_sphere_add
+        bpy.ops.mesh.primitive_ico_sphere_add()
+        print ("ICO球を生成しました")
+
+        # オペレータの命令終了を通知
+        return {"FINISHED"}
+
 # Blenderに登録するクラスのリスト
 classes = (
     TOPBAR_MT_my_menu,
     MYADDON_OT_stretch_vertex,
+    MYADDON_OT_create_ico_sphere,
 )
 
 # メニュー項目描画
