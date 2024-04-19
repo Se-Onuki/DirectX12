@@ -32,6 +32,10 @@ namespace PostEffect {
 
 		ComPtr<ID3D12Resource> renderTargetTexture_;
 
+		std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>> rtvDesscHeap_;
+
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
+
 	};
 
 }
