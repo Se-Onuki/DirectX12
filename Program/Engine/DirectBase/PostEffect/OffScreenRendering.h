@@ -27,14 +27,19 @@ namespace PostEffect {
 
 	private:
 
+		DirectResourceLeakChecker leakChecker_{};
+
 		// クリア時の色
 		const SoLib::Color::RGB4 &clearColor_ = 0xFF0000FF; // 赤を指定しておく
+
+		// DescHeapCbvSrvUav::HeapRange srvHeapRange_;
 
 		ComPtr<ID3D12Resource> renderTargetTexture_;
 
 		std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>> rtvDesscHeap_;
 
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
+
 
 	};
 

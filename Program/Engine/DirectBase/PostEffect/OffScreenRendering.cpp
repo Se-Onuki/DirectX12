@@ -4,29 +4,39 @@ namespace PostEffect {
 
 	void OffScreenRenderer::Init()
 	{
-		WinApp *winApp = WinApp::GetInstance();
-		auto device = GetDevice();
+		//WinApp *winApp = WinApp::GetInstance();
+		//auto device = GetDevice();
+		//auto srvDescHeap = GetDescHeapCbvSrvUav();
+
 #ifdef _DEBUG
 
-		assert(device and "Deviceがnullptrです");
+		//assert(device and "Deviceがnullptrです");
 
 #endif // _DEBUG
 
 		// RTVの作成
-		rtvDesscHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>>(device, 1, false);
+		//rtvDesscHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>>(device, 1, false);
 
-		// 
+		//
 		rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      // 出力結果をSRGBに変換して書き込む
 		rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
 
 		// 描画先のテクスチャ
-		renderTargetTexture_ = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clearColor_);
-		// 
-		device->CreateRenderTargetView(renderTargetTexture_.Get(), &rtvDesc_, rtvDesscHeap_->GetHandle(0, 0).cpuHandle_);
+		//renderTargetTexture_ = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clearColor_);
 
+		//
+		//device->CreateRenderTargetView(renderTargetTexture_.Get(), &rtvDesc_, rtvDesscHeap_->GetHandle(0, 0).cpuHandle_);
 
-		// SRVの作成
+		//// SRVの作成
+		//D3D12_SHADER_RESOURCE_VIEW_DESC renderTexturSrvDesc_{};
+		//renderTexturSrvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		//renderTexturSrvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		//renderTexturSrvDesc_.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		//renderTexturSrvDesc_.Texture2D.MipLevels = 1u;
 
+		//srvHeapRange_ = srvDescHeap->RequestHeapAllocation(1);
+
+		//device->CreateShaderResourceView(renderTargetTexture_.Get(), &renderTexturSrvDesc_, srvHeapRange_.GetHandle(0).cpuHandle_);
 
 	}
 

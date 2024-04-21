@@ -72,8 +72,8 @@ public:
 		SoundHandle() = default;
 		SoundHandle(const SoundHandle &) = default;
 		SoundHandle(SoundHandle &&) = default;
-		SoundHandle& operator=(const SoundHandle &) = default;
-		SoundHandle& operator=(SoundHandle &&) = default;
+		SoundHandle &operator=(const SoundHandle &) = default;
+		SoundHandle &operator=(SoundHandle &&) = default;
 
 		SoundHandle(const uint32_t handle) : handle_(handle) {};
 		SoundHandle &operator=(const uint32_t handle) { handle_ = handle; return *this; }
@@ -111,19 +111,19 @@ public:
 	class XAudio2VoiceCallback : public IXAudio2VoiceCallback {
 	public:
 		// ボイス処理パスの開始時
-		STDMETHOD_(void, OnVoiceProcessingPassStart)(THIS_ UINT32) {};
+		STDMETHOD_(void, OnVoiceProcessingPassStart)(UINT32) {};
 		// ボイス処理パスの終了時
-		STDMETHOD_(void, OnVoiceProcessingPassEnd)(THIS) {};
+		STDMETHOD_(void, OnVoiceProcessingPassEnd)() {};
 		// バッファストリームの再生が終了した時
-		STDMETHOD_(void, OnStreamEnd)(THIS) {};
+		STDMETHOD_(void, OnStreamEnd)() {};
 		// バッファの使用開始時
-		STDMETHOD_(void, OnBufferStart)(THIS_ void *) {};
+		STDMETHOD_(void, OnBufferStart)(void *) {};
 		// バッファの末尾に達した時
-		STDMETHOD_(void, OnBufferEnd)(THIS_ void *pBufferContext);
+		STDMETHOD_(void, OnBufferEnd)(void *pBufferContext);
 		// 再生がループ位置に達した時
-		STDMETHOD_(void, OnLoopEnd)(THIS_ void *) {};
+		STDMETHOD_(void, OnLoopEnd)(void *) {};
 		// ボイスの実行エラー時
-		STDMETHOD_(void, OnVoiceError)(THIS_ void *, HRESULT) {};
+		STDMETHOD_(void, OnVoiceError)(void *, HRESULT) {};
 	};
 
 

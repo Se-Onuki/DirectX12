@@ -36,6 +36,11 @@ namespace SolEngine {
 		/// @return ID3D12Deviceポインタ
 		static ID3D12Device *GetDevice() { return device_; }
 
+		static decltype(srvHeap_) GetDescHeapCbvSrvUav() { return srvHeap_; }
+
+		template <D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
+		static uint32_t GetDescSize();
+
 		static uint32_t GetDescriptorSizeSRV() { return descriptorSizeSRV_; }
 		static uint32_t GetDescriptorSizeRTV() { return descriptorSizeRTV_; }
 		static uint32_t GetDescriptorSizeDSV() { return descriptorSizeDSV_; }

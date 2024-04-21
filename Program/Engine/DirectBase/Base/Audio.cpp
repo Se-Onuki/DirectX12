@@ -258,7 +258,7 @@ void Audio::SoundData::Unload()
 //STDMETHODIMP_(void __stdcall) Audio::XAudio2VoiceCallback::OnBufferEnd(void* pBufferContext)
 //{
 //}
-void Audio::XAudio2VoiceCallback::OnBufferEnd(THIS_ void *pBufferContext) {
+void Audio::XAudio2VoiceCallback::OnBufferEnd(void *pBufferContext) {
 
 	if (pBufferContext) {
 

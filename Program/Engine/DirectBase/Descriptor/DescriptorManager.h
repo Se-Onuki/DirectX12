@@ -27,7 +27,7 @@ public:
 		HeapRange() = default;
 		//HeapRange(uint32_t offset, uint32_t width, DescHeap *descHeap) : offset_(offset), width_(width), descHeap_(descHeap) {}
 		HeapRange(std::shared_ptr<MemoryUsageManager::MemoryRange> &memoryRange, DescHeap *descHeap) : memoryRange_(memoryRange), descHeap_(descHeap) {}
-		~HeapRange();
+		~HeapRange() = default;
 		std::shared_ptr<MemoryUsageManager::MemoryRange> memoryRange_;
 
 		operator bool() const { return static_cast<bool>(memoryRange_); }
@@ -117,9 +117,9 @@ inline DescHeap<HeapType>::Handle DescHeap<HeapType>::HeapRange::GetHandle(const
 	return descHeap_->GetHandle(memoryRange_->offset, index);
 }
 
-template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
-inline DescHeap<HeapType>::HeapRange::~HeapRange() {
-}
+//template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
+//inline DescHeap<HeapType>::HeapRange::~HeapRange() {
+//}
 //template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 //class DescriptorManager {
 //	DescriptorManager() = default;
