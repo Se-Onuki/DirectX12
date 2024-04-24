@@ -16,7 +16,8 @@ void CGTaskScene::OnEnter()
 	offScreen_ = PostEffect::OffScreenRenderer::GetInstance();
 	offScreen_->Init();
 
-	animation_ = ModelAnimation::Animaiton::CreateFromFile("Model/AnimatedCube/", "AnimatedCube.gltf");
+	// アニメーションを設定
+	animation_.SetAnimation(ModelAnimation::Animation::CreateFromFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
 
 	/*
 	{

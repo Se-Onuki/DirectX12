@@ -22,6 +22,6 @@ private:
 
 	PostEffect::OffScreenRenderer *offScreen_ = nullptr;
 
-	ModelAnimation::Animaiton animation_;
+	ModelAnimation::AnimationPlayer animation_;
 
 };

@@ -30,9 +30,9 @@ std::unique_ptr<CBuffer<Matrix4x4>> ModelNode::kIdentity_ = nullptr;
 
 namespace ModelAnimation {
 
-	Animaiton Animaiton::CreateFromFile(const std::string &directoryPath, const std::string &filename)
+	Animation Animation::CreateFromFile(const std::string &directoryPath, const std::string &filename)
 	{
-		Animaiton result{};
+		Animation result{};
 
 		Assimp::Importer importer;
 

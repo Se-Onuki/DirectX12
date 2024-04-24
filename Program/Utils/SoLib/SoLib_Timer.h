@@ -129,6 +129,7 @@ namespace SoLib {
 			float nowFlame_;
 			bool isFinish_;
 			bool isActive_;
+			bool isLoop_ = false;
 
 			/// @brief 時間の加算
 			void AddFlame(float deltaTime);
@@ -138,9 +139,9 @@ namespace SoLib {
 			inline void SetGoal(float Goal) { goalFlame_ = Goal; }
 
 		public:
-			DeltaTimer(float goal = 0.f, bool start = false) : goalFlame_(goal), nowFlame_(0.f), isFinish_(false), isActive_(false) {
+			DeltaTimer(float goal = 0.f, bool start = false, bool isLoop = false) : goalFlame_(goal), nowFlame_(0.f), isFinish_(false), isActive_(false), isLoop_(isLoop) {
 				if (start) {
-					Start(goal);
+					Start(goal, isLoop);
 				}
 			}
 
@@ -151,11 +152,12 @@ namespace SoLib {
 			bool Update(float deltaTime);
 
 			/// @brief フレームのリセット
-			void Start();
+			void Start(bool isLoop = false);
 
 			/// @brief フレームの初期化
 			/// @param goal 必要フレーム
-			void Start(float goal);
+			/// @param isLoop ループを行うか
+			void Start(float goal, bool isLoop = false);
 
 			/// @brief 完全停止
 			void Clear();
@@ -222,4 +224,4 @@ inline bool SoLib::DeltaTimer::ImGuiWidget(const char *const label) {
 
 #endif // USE_IMGUI
 
-	}
+}

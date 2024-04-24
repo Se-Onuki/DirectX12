@@ -109,11 +109,31 @@ namespace ModelAnimation {
 		AnimationCurve<KeyFlameVector3> translate_;	// 平行移動要素のAnimationCurve
 	};
 
-	struct Animaiton {
+	struct Animation {
 		SoLib::Time::SecondF duration_;							// アニメーション全体の尺
 		std::map<std::string, NodeAnimation> nodeAnimations_;	// NodeAnimationの集合｡Node名で検索ができる｡
 
-		static Animaiton CreateFromFile(const std::string &directoryPath, const std::string &filename);
+		static Animation CreateFromFile(const std::string &directoryPath, const std::string &filename);
+	};
+
+	class AnimationPlayer {
+	public:
+		AnimationPlayer() = default;
+		AnimationPlayer(const Animation &animation) : animation_(animation) {}
+		AnimationPlayer(Animation &&animation) : animation_(std::move(animation)) {}
+
+		inline void SetAnimation(const Animation &animation) { animation_ = animation; }
+		inline void SetAnimation(Animation &&animation) { animation_ = std::move(animation); }
+
+		void Init();
+
+		void Update(float deltaTime);
+
+	private:
+		SoLib::Time::DeltaTimer animationTimer_;	// アニメーションの時刻
+
+		Animation animation_;
+
 	};
 
 }

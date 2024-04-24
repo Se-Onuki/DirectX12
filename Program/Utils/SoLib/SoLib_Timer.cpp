@@ -87,13 +87,29 @@ namespace SoLib {
 
 
 	bool DeltaTimer::Update(float deltaTime) {
+		// 終了フラグが立っていたら
 		if (isFinish_) {
-			isActive_ = false;
-			return false;
+			// ループが有効なら
+			if (isLoop_) {
+				// 終了フラグを折る
+				isFinish_ = false;
+			}
+			// ループが無効なら
+			else {
+				// 動作を終了する｡
+				isActive_ = false;
+				return false;
+			}
 		}
+		// 値を加算する
 		AddFlame(deltaTime);
 		if (nowFlame_ >= goalFlame_) {
 			isFinish_ = true;
+			// もしループが有効であったら
+			if (isLoop_) {
+				// ゴール以降の時間を返す
+				nowFlame_ = std::fmodf(nowFlame_, goalFlame_);
+			}
 		}
 		return true;
 	}
@@ -102,14 +118,15 @@ namespace SoLib {
 		nowFlame_ += deltaTime;
 	}
 
-	void DeltaTimer::Start() {
+	void DeltaTimer::Start(bool isLoop) {
 		nowFlame_ = 0.f;
 		isFinish_ = false;
 		isActive_ = true;
+		isLoop_ = isLoop;
 	}
 
-	void DeltaTimer::Start(float goal) {
-		Start();
+	void DeltaTimer::Start(float goal, bool isLoop) {
+		Start(isLoop);
 		SetGoal(goal);
 	}
 
