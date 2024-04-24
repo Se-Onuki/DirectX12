@@ -8,13 +8,15 @@
 
 void CGTaskScene::OnEnter()
 {
-	model_ = ModelManager::GetInstance()->AddModel("PlaneGltf", Model::LoadAssimpModelFile("", "plane.gltf"));
+	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
 
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
 
 	offScreen_ = PostEffect::OffScreenRenderer::GetInstance();
 	offScreen_->Init();
+
+	animation_ = ModelAnimation::Animaiton::CreateFromFile("Model/AnimatedCube/", "AnimatedCube.gltf");
 
 	/*
 	{
