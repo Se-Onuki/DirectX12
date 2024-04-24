@@ -33,6 +33,12 @@ void TitleScene::OnEnter() {
 	camera_.Init();
 
 	camera_.translation_.y = 5.f;
+
+	// bgmのロード
+	soundA_ = audio_->LoadMP3("resources/Audio/BGM/TitleBGM.mp3");
+
+	soundA_.Play(true, 0.5f);
+
 }
 
 void TitleScene::OnExit() {

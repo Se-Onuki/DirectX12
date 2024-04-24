@@ -50,4 +50,6 @@ private:
 
 	Camera3D camera_;
 
+	// bgm
+	Audio::SoundHandle soundA_;
 };

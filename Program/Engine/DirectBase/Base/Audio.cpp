@@ -7,6 +7,7 @@ Audio *const Audio::SoundHandle::audio_ = Audio::GetInstance();
 
 void Audio::Finalize()
 {
+	HRESULT hr = S_FALSE;
 	xAudio2_.Reset();
 	for (auto &sound : soundArray_) {
 		if (sound) {
@@ -14,7 +15,8 @@ void Audio::Finalize()
 		}
 	}
 
-	MFShutdown();
+	hr = MFShutdown();
+	assert(SUCCEEDED(hr));
 
 }
 
@@ -396,10 +398,7 @@ Audio::SoundData SoundLoadMP3(const char *filename)
 void Audio::SoundData::Unload()
 {
 	// バッファのメモリを解放
-	if (pBuffer) {
-		pBuffer.reset();
-	}
-	pBuffer = nullptr;
+	pBuffer.reset();
 	bufferSize = 0u;
 	wfex = {};
 }

@@ -256,8 +256,8 @@ void GameScene::Update() {
 		spawner_.AddSpawner(enemyPrefab_.get(), enemyCount, [](auto enemys, auto manager)
 			{
 				for (uint32_t i = 0; auto & enemy : enemys) {
-					const auto& [pos] = manager->GetComponent<ECS::PositionComp>(enemy);
-					pos->position_ = SoLib::EulerToDirection(SoLib::Euler(0.f, (Angle::PI2 / enemyCount) * i, 0.f)) * 7.5f + pos->position_;
+					const auto &[pos] = manager->GetComponent<ECS::PositionComp>(enemy);
+					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::PI2 / enemyCount) * i, 0.f }) * 7.5f + pos->position_;
 					i++;
 				}
 			});
