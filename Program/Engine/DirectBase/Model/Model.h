@@ -31,6 +31,9 @@
 #include "../../Utils/Text/StaticString.h"
 #include <assimp/mesh.h>
 
+#include "../../Utils/SoLib/SoLib_Timer.h"
+#include "../../Utils/SoLib/SoLib_Traits.h"
+
 class ViewProjection;
 
 struct Material;
@@ -56,6 +59,62 @@ struct ModelNode {
 
 };
 
+namespace Animation {
+
+	struct IKeyFlame {};
+
+	template<SoLib::IsRealType T>
+	struct KeyFlameTemplate : IKeyFlame {
+		T value_;					// キーフレームの時の値
+		SoLib::Time::SecondF time_;	// キーフレームの時刻
+	};
+
+	/// @brief Vector3のキーフレーム
+	using KeyFlameVector3 = KeyFlameTemplate<Vector3>;
+
+	/// @brief Quaternionのキーフレーム
+	using KeyFlameQuaternion = KeyFlameTemplate<Quaternion>;
+
+	template<typename T>
+	concept KeyFlameTypes = SoLib::IsBased<T, IKeyFlame>;
+
+	template<KeyFlameTypes T>
+	struct AnimationCurve {
+		std::vector<T> keyFlames_;
+		auto begin() { return keyFlames_.begin(); }
+		auto begin() const { return keyFlames_.begin(); }
+		auto cbegin() const { return keyFlames_.cbegin(); }
+
+		auto end() { return keyFlames_.end(); }
+		auto end() const { return keyFlames_.end(); }
+		auto cend() const { return keyFlames_.cend(); }
+
+		size_t size() const { return keyFlames_.size(); }
+
+		T &at(size_t i) { return keyFlames_.at(i); }
+		const T &at(size_t i) const { return keyFlames_.at(i); }
+
+		T &operator[](size_t i) { return keyFlames_[i]; }
+		const T &operator[](size_t i) const { return keyFlames_[i]; }
+
+		T *data() { return keyFlames_.data(); }
+		const T *data() const { return keyFlames_.data(); }
+	};
+
+	// ノードごとのアニメーション ( AnimationCurve )
+	struct NodeAnimation {
+
+		AnimationCurve<KeyFlameVector3> scale_;		// スケール要素のAnimationCurve
+		AnimationCurve<KeyFlameQuaternion> rotate_;	// 回転要素のAnimationCurve
+		AnimationCurve<KeyFlameVector3> translate_;	// 平行移動要素のAnimationCurve
+	};
+
+	struct Animaiton {
+		SoLib::Time::SecondF duration_;							// アニメーション全体の尺
+		std::map<std::string, NodeAnimation> nodeAnimaitons_;	// NodeAnimationの集合｡
+	};
+
+}
 class Model {
 public:
 	enum class PipelineType : uint32_t {
