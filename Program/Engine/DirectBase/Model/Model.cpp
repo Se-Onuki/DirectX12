@@ -26,7 +26,30 @@ std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 8u>, 3u> Mode
 std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
 Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 
-std::unique_ptr<CBuffer<Matrix4x4>> ModelNode::kIdentity_;
+std::unique_ptr<CBuffer<Matrix4x4>> ModelNode::kIdentity_ = nullptr;
+
+namespace ModelAnimation {
+
+	Animaiton Animaiton::CreateFromFile(const std::string &directoryPath, const std::string &filename)
+	{
+		Animaiton result{};
+
+		Assimp::Importer importer;
+
+		std::string &&filePath = Model::DefaultDirectory::c_str() + directoryPath + filename;
+
+		const aiScene *scene = importer.ReadFile(filePath.c_str(), 0);
+
+		assert(scene->mNumAnimations != 0 and "アニメーションがありません｡");
+
+		aiAnimation *animationAssimp = scene->mAnimations[0];	// 一旦最初のアニメーションだけ採用する｡ そのうち複数対応するように｡
+
+		result.duration_ = static_cast<float>(animationAssimp->mDuration / animationAssimp->mTicksPerSecond);
+
+		return result;
+	}
+
+}
 
 void Model::StaticInit()
 {
@@ -1276,7 +1299,7 @@ ModelNode ModelNode::Create(aiNode *node)
 			matrixBuffer.m[y][x] = aiLocalMat[y][x];
 		}
 	}
-	
+
 	// 行列を代入
 	result.localMatrix_ = std::make_unique<CBuffer<Matrix4x4>>(matrixBuffer);
 

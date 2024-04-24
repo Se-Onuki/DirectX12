@@ -59,7 +59,7 @@ struct ModelNode {
 
 };
 
-namespace Animation {
+namespace ModelAnimation {
 
 	struct IKeyFlame {};
 
@@ -111,7 +111,9 @@ namespace Animation {
 
 	struct Animaiton {
 		SoLib::Time::SecondF duration_;							// アニメーション全体の尺
-		std::map<std::string, NodeAnimation> nodeAnimaitons_;	// NodeAnimationの集合｡
+		std::map<std::string, NodeAnimation> nodeAnimaitons_;	// NodeAnimationの集合｡Node名で検索ができる｡
+
+		static Animaiton CreateFromFile(const std::string &directoryPath, const std::string &filename);
 	};
 
 }
