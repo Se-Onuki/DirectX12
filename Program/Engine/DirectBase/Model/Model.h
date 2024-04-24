@@ -111,7 +111,7 @@ namespace ModelAnimation {
 
 	struct Animaiton {
 		SoLib::Time::SecondF duration_;							// アニメーション全体の尺
-		std::map<std::string, NodeAnimation> nodeAnimaitons_;	// NodeAnimationの集合｡Node名で検索ができる｡
+		std::map<std::string, NodeAnimation> nodeAnimations_;	// NodeAnimationの集合｡Node名で検索ができる｡
 
 		static Animaiton CreateFromFile(const std::string &directoryPath, const std::string &filename);
 	};
