@@ -1,21 +1,37 @@
 #include "Audio.h"
-#include <cassert>
 #include "../../Utils/SoLib/SoLib.h"
+#include "../String/String.h"
+#include <cassert>
 
 Audio *const Audio::SoundHandle::audio_ = Audio::GetInstance();
 
-void Audio::Finalize() {
+void Audio::Finalize()
+{
 	xAudio2_.Reset();
 	for (auto &sound : soundArray_) {
 		if (sound) {
 			sound->Unload();
 		}
 	}
+
+	MFShutdown();
+
 }
 
-void Audio::StaticInit() {
+void Audio::StaticInit()
+{
 
 	HRESULT hr = S_FALSE;
+
+	//// COMの初期化
+	//hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	//assert(SUCCEEDED(hr));
+
+	// Media Foundationの初期化
+	hr = MFStartup(MF_VERSION, MFSTARTUP_NOSOCKET);
+	assert(SUCCEEDED(hr));
+
+	// xAudioの設定
 
 	hr = XAudio2Create(&xAudio2_, 0u, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(hr));
@@ -25,12 +41,11 @@ void Audio::StaticInit() {
 
 	fileMap_.clear();
 	voices_.clear();
-
 }
 
-Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float volume) {
+Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float volume)
+{
 	HRESULT hr = S_FALSE;
-
 
 	//	auto handle = indexManager_.RequestRange(1u);
 
@@ -46,7 +61,7 @@ Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float vo
 
 	// 再生する波形データの設定
 	XAUDIO2_BUFFER buf{};
-	buf.pAudioData = soundData.pBuffer;
+	buf.pAudioData = soundData.pBuffer.get();
 	buf.pContext = voice.sourceVoice;
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
@@ -60,15 +75,16 @@ Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float vo
 	pSourceVoice->SetVolume(volume);
 	hr = pSourceVoice->Start();
 
-
 	return voice;
 }
 
-Audio::Voice Audio::PlayWave(uint32_t index, bool loopFlag, float volume) {
+Audio::Voice Audio::PlayWave(uint32_t index, bool loopFlag, float volume)
+{
 	return PlayWave(*GetWave(index), loopFlag, volume);
 }
 
-bool Audio::IsPlaying(Voice voiceHandle) {
+bool Audio::IsPlaying(Voice voiceHandle)
+{
 	// 再生中リストから検索
 	auto it = voices_.find(voiceHandle);
 	// 発見。再生終わってるのかどうかを判断
@@ -80,7 +96,8 @@ bool Audio::IsPlaying(Voice voiceHandle) {
 	return false;
 }
 
-void Audio::StopWave(Voice &voiceHandle) {
+void Audio::StopWave(Voice &voiceHandle)
+{
 	// 再生中リストから検索
 	auto it = voices_.find(voiceHandle);
 	// 発見
@@ -88,18 +105,20 @@ void Audio::StopWave(Voice &voiceHandle) {
 		it->sourceVoice->DestroyVoice();
 
 		voices_.erase(it);
-		//voiceHandle.sourceVoice = nullptr;
+		// voiceHandle.sourceVoice = nullptr;
 	}
 }
 
-void Audio::StopAllWave() {
+void Audio::StopAllWave()
+{
 	for (auto voice : voices_) {
 		voice.sourceVoice->DestroyVoice();
 	}
 	voices_.clear();
 }
 
-uint32_t Audio::LoadWave(const char *filename) {
+uint32_t Audio::LoadWave(const char *filename)
+{
 
 	// ファイルが読み込まれているか検知
 	auto soundItr = fileMap_.find(filename);
@@ -112,20 +131,46 @@ uint32_t Audio::LoadWave(const char *filename) {
 	for (uint32_t i = 0u; i < soundArray_.size(); i++) {
 		auto &pSound = soundArray_[i];
 		if (not pSound) {
-			pSound = std::make_unique<SoundData>(SoundLoadWave(filename)); 	// ファイル読み込み
-			fileMap_[filename] = i;	// ファイルを読み込んだときのインデックスを記録
-			return i;	// インデックスを返す
+			pSound = std::make_unique<SoundData>(SoundLoadWave(filename)); // ファイル読み込み
+			fileMap_[filename] = i;                                        // ファイルを読み込んだときのインデックスを記録
+			return i;                                                      // インデックスを返す
 		}
 	}
 	assert(0 && "Soundの追加に失敗しました");
 	return (std::numeric_limits<uint32_t>::max)();
 }
 
-Audio::SoundData *const Audio::GetWave(uint32_t index) {
-	if (index == (std::numeric_limits<uint32_t>::max)()) { return nullptr; }
+uint32_t Audio::LoadMP3(const char *filename)
+{
+	// ファイルが読み込まれているか検知
+	auto soundItr = fileMap_.find(filename);
+	// もしファイルが読み込まれていたらそれを返す
+	if (soundItr != fileMap_.end()) {
+		return soundItr->second;
+	}
+
+	// 読み込まれていなかったら新しく読み込む
+	for (uint32_t i = 0u; i < soundArray_.size(); i++) {
+		auto &pSound = soundArray_[i];
+		if (not pSound) {
+			pSound = std::make_unique<SoundData>(SoundLoadMP3(filename)); // ファイル読み込み
+			fileMap_[filename] = i;                                        // ファイルを読み込んだときのインデックスを記録
+			return i;                                                      // インデックスを返す
+		}
+	}
+	assert(0 && "Soundの追加に失敗しました");
+	return (std::numeric_limits<uint32_t>::max)();
+}
+
+Audio::SoundData *const Audio::GetWave(uint32_t index)
+{
+	if (index == (std::numeric_limits<uint32_t>::max)()) {
+		return nullptr;
+	}
 	return soundArray_[index].get();
 }
-bool Audio::ImGuiWidget() {
+bool Audio::ImGuiWidget()
+{
 
 #ifdef USE_IMGUI
 
@@ -133,11 +178,10 @@ bool Audio::ImGuiWidget() {
 	static auto itr = fileMap_.begin();
 
 	itr = SoLib::ImGuiWidget("AudioList", &fileMap_, itr,
-		[](const decltype(itr) &itemIndex)->std::string
+		[](const decltype(itr) &itemIndex) -> std::string
 		{
 			return "(" + std::to_string(itemIndex->second) + ")" + itemIndex->first;
-		}
-	);
+		});
 
 	if (ImGui::Button("Play")) {
 		if (itr != fileMap_.end()) {
@@ -153,11 +197,12 @@ bool Audio::ImGuiWidget() {
 }
 
 //
-//uint32_t Audio::FindUnusedIndex() const {
+// uint32_t Audio::FindUnusedIndex() const {
 //	return indexManager_.FindUnusedRange(1u);
 //}
 
-Audio::SoundData SoundLoadWave(const char *filename) {
+Audio::SoundData SoundLoadWave(const char *filename)
+{
 
 	// HRESULT hr = S_FALSE;
 
@@ -172,7 +217,7 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 
 #pragma endregion
 
-#pragma region .wavデータ読み込み
+#pragma region.wavデータ読み込み
 
 	// RIFFヘッダの読み込み
 	Audio::RiffHeader riff;
@@ -206,7 +251,7 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 	assert(format.chunk.size <= sizeof(format.fmt));
 	file.read((char *)&format.fmt, format.chunk.size);
 
-	// Dataチャンク読み込み	
+	// Dataチャンク読み込み
 	Audio::ChunkHeader data{};
 	file.read((char *)&data, sizeof(data));
 	// Junkチャンクを検出した場合
@@ -223,8 +268,8 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 	}
 
 	// Dataチャンクのデータ部(波形データ)の読み込み
-	char *const pBuffer = new char[data.size];
-	file.read(pBuffer, data.size);
+	std::unique_ptr<BYTE[]> pBuffer = std::make_unique<BYTE[]>(data.size);
+	file.read(reinterpret_cast<char *>(pBuffer.get()), data.size);
 
 	// waveファイルを閉じる
 	file.close();
@@ -237,7 +282,7 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 	Audio::SoundData soundData{};
 
 	soundData.wfex = format.fmt;
-	soundData.pBuffer = reinterpret_cast<BYTE *const>(pBuffer);
+	soundData.pBuffer = std::move(pBuffer);
 	soundData.bufferSize = data.size;
 
 #pragma endregion
@@ -245,20 +290,125 @@ Audio::SoundData SoundLoadWave(const char *filename) {
 	return soundData;
 }
 
+Audio::SoundData SoundLoadMP3(const char *filename)
+{
+
+	HRESULT hr = S_FALSE;
+
+	// ソースリーダの作成
+	IMFSourceReader *pSourceReader = nullptr;
+	// ファイルパスを入れて読み込む
+	MFCreateSourceReaderFromURL(ConvertString(filename).c_str(), nullptr, &pSourceReader);
+
+	// メディアタイプの設定
+	IMFMediaType *pMediaType = nullptr;
+	hr = MFCreateMediaType(&pMediaType); // メディアタイプを作成して､ポインタを取得
+	assert(SUCCEEDED(hr));
+	// メディアタイプの設定
+	hr = pMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
+	assert(SUCCEEDED(hr));
+	hr = pMediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
+	assert(SUCCEEDED(hr));
+
+	// SourceReaderにメディアタイプを設定
+	hr = pSourceReader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, pMediaType);
+	assert(SUCCEEDED(hr));
+
+	// メディアタイプのデータを破棄
+	pMediaType->Release();
+	pMediaType = nullptr; // 安全の確保
+
+	// メディアタイプのデータの取得
+	pSourceReader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pMediaType);
+
+	// オーディオデータ形式の作成
+	WAVEFORMATEX *waveFormat = nullptr;
+	MFCreateWaveFormatExFromMFMediaType(pMediaType, &waveFormat, nullptr);
+
+	// データの読み込み
+	// ソースリーダから､サンプルを読み込んでvectorに格納していく
+	std::vector<BYTE> mediaData;
+	while (true) {
+		// メディアのデータを取得するサンプラ
+		IMFSample *pMFSample = nullptr;
+		// 読み込みの状態を取得
+		DWORD dwStreamFlag = 0;
+
+		// ソースからサンプルを読み込む
+		pSourceReader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, nullptr, &dwStreamFlag, nullptr, &pMFSample);
+
+		// もし､読み込みが末尾に達したら終了
+		if (dwStreamFlag & MF_SOURCE_READERF_ENDOFSTREAM) {
+			break;
+		}
+
+		// メディアのバッファ
+		IMFMediaBuffer *pMFMediaBuffer = nullptr;
+		// バッファにデータを格納
+		pMFSample->ConvertToContiguousBuffer(&pMFMediaBuffer);
+
+		BYTE *pBuffer = nullptr;
+		DWORD cbCurrentLength = 0;
+
+		// メディアのバッファをロック
+		pMFMediaBuffer->Lock(&pBuffer, nullptr, &cbCurrentLength);
+
+		// メディアデータの長さを読み込んだデータを使って拡張する
+		mediaData.resize(mediaData.size() + cbCurrentLength);
+
+		// メディアデータを格納
+		memcpy(mediaData.data() + mediaData.size() - cbCurrentLength, pBuffer, cbCurrentLength); // メディアデータの終端から､保存するデータの長さ分のデータを上書き
+
+		// メディアデータのロックを解除する
+		pMFMediaBuffer->Unlock();
+
+		// メディアデータの開放
+		pMFMediaBuffer->Release();
+		pMFMediaBuffer = nullptr; // 安全確保
+		// サンプラの開放
+		pMFSample->Release();
+		pMFSample = nullptr; // 安全確保
+
+	}
+
+	// xAudioとして作成する
+	Audio::SoundData result;
+	result.wfex = *waveFormat;
+	result.pBuffer = std::make_unique<BYTE[]>(mediaData.size());
+	result.bufferSize = static_cast<uint32_t>(mediaData.size());
+
+	// データの移動
+	std::move(mediaData.cbegin(), mediaData.cend(), result.pBuffer.get());
+
+	// メディアフォーマットのデータの破棄
+	CoTaskMemFree(waveFormat);
+	waveFormat = nullptr;
+
+	pMediaType->Release();
+	pMediaType = nullptr;
+
+	pSourceReader->Release();
+	pSourceReader = nullptr;
+
+	return result;
+}
+
 void Audio::SoundData::Unload()
 {
 	// バッファのメモリを解放
-	if (pBuffer) delete[] pBuffer;
-
+	if (pBuffer) {
+		pBuffer.reset();
+	}
 	pBuffer = nullptr;
 	bufferSize = 0u;
 	wfex = {};
 }
 //
-//STDMETHODIMP_(void __stdcall) Audio::XAudio2VoiceCallback::OnBufferEnd(void* pBufferContext)
+// STDMETHODIMP_(void __stdcall) Audio::XAudio2VoiceCallback::OnBufferEnd(void* pBufferContext)
 //{
 //}
-void Audio::XAudio2VoiceCallback::OnBufferEnd(void *pBufferContext) {
+void Audio::XAudio2VoiceCallback::OnBufferEnd(void *pBufferContext)
+{
 
 	if (pBufferContext) {
 

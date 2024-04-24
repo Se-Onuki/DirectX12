@@ -158,7 +158,7 @@ void GameScene::OnEnter() {
 
 	//*enemyPrefab_ += ECS::RotateComp{};
 
-	soundA_ = audio_->LoadWave("resources/Audio/SE/Player/startRotate1.wav");
+	soundA_ = audio_->LoadMP3("resources/Audio/SE/Player/startRotate1.mp3");
 
 	boneModel_.Init();
 	auto *bodyPtr = boneModel_.AddBone("Body", boxModel_);
