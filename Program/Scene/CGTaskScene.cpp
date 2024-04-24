@@ -18,6 +18,7 @@ void CGTaskScene::OnEnter()
 
 	// アニメーションを設定
 	animation_.SetAnimation(ModelAnimation::Animation::CreateFromFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
+	animation_.Start(true);
 
 	/*
 	{
@@ -44,6 +45,8 @@ void CGTaskScene::Update()
 	model_->ImGuiWidget();
 	transform_->ImGuiWidget();
 	transform_->UpdateMatrix();
+
+	animation_.Update(deltaTime, model_);
 	//gameObject_->Update(deltaTime);
 
 	CameraManager::GetInstance()->DisplayImGui();

@@ -42,7 +42,7 @@ namespace ModelAnimation {
 
 		assert(scene->mNumAnimations != 0 and "アニメーションがありません｡");
 
-		aiAnimation *animationAssimp = scene->mAnimations[0];	// 一旦最初のアニメーションだけ採用する｡ そのうち複数対応するように｡
+		aiAnimation *animationAssimp = scene->mAnimations[0]; // 一旦最初のアニメーションだけ採用する｡ そのうち複数対応するように｡
 
 		// 時間の単位を秒単位に変更
 		result.duration_ = static_cast<float>(animationAssimp->mDuration / animationAssimp->mTicksPerSecond);
@@ -64,8 +64,8 @@ namespace ModelAnimation {
 
 					// キーフレームの保存先
 					KeyFlameVector3 keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp->mTicksPerSecond);	// 周波数から秒単位に変換
-					keyFlame.value_ = Vector3{ -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };	// 右手から左手に変更
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp->mTicksPerSecond); // 周波数から秒単位に変換
+					keyFlame.value_ = Vector3{ -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };  // 右手から左手に変更
 
 					// データを転送
 					nodeAnimation.translate_.keyFlames_.push_back(std::move(keyFlame));
@@ -78,8 +78,8 @@ namespace ModelAnimation {
 
 					// キーフレームの保存先
 					KeyFlameQuaternion keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp->mTicksPerSecond);	// 周波数から秒単位に変換
-					keyFlame.value_ = Quaternion{ keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w };	// 右手から左手に変更
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp->mTicksPerSecond);                        // 周波数から秒単位に変換
+					keyFlame.value_ = Quaternion{ keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w }; // 右手から左手に変更
 
 					// データを転送
 					nodeAnimation.rotate_.keyFlames_.push_back(std::move(keyFlame));
@@ -92,17 +92,39 @@ namespace ModelAnimation {
 
 					// キーフレームの保存先
 					KeyFlameVector3 keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp->mTicksPerSecond);	// 周波数から秒単位に変換
-					keyFlame.value_ = Vector3{ keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };	// そのまま代入する
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp->mTicksPerSecond); // 周波数から秒単位に変換
+					keyFlame.value_ = Vector3{ keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };   // そのまま代入する
 
 					// データを転送
 					nodeAnimation.scale_.keyFlames_.push_back(std::move(keyFlame));
 				}
-
 			}
 		}
 
 		return result;
+	}
+
+	void AnimationPlayer::Start(bool isLoop)
+	{
+		// アニメーションの初期化
+		animationTimer_.Start(animation_.duration_, isLoop); // 時間を設定する
+	}
+
+	void AnimationPlayer::Update(float deltaTime, Model *model)
+	{
+		// Animationの更新
+		animationTimer_.Update(deltaTime);
+
+		// モデルのノードに紐づいたアニメーションを取得する
+		NodeAnimation &rootNodeAnimation = animation_.nodeAnimations_[model->rootNode_.name_];
+		// ノードのアニメーションのデータを取得する
+		BoneModel::SimpleTransform rootTransform;
+		rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animationTimer_.GetNowFlame());
+		rootTransform.rotate_ = rootNodeAnimation.rotate_.CalcValue(animationTimer_.GetNowFlame());
+		rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animationTimer_.GetNowFlame());
+		
+		(*model->rootNode_.localMatrix_) = rootTransform.CalcTransMat();
+
 	}
 
 }
@@ -112,7 +134,6 @@ void Model::StaticInit()
 	CreatePipeLine();
 
 	ModelNode::kIdentity_ = std::make_unique<CBuffer<Matrix4x4>>(Matrix4x4::Identity());
-
 }
 
 void Model::CreatePipeLine()
@@ -160,9 +181,9 @@ void Model::CreatePipeLine()
 	rootParameters[(uint32_t)Model::RootParameter::kLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[(uint32_t)Model::RootParameter::kLight].Descriptor.ShaderRegister = 1;                    // レジスタ番号1とバインド
 
-	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;    // CBVを使う
+	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  // CBVを使う
 	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; // PixelShaderで使う
-	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].Descriptor.ShaderRegister = 4;                    // レジスタ番号4とバインド
+	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].Descriptor.ShaderRegister = 4;                  // レジスタ番号4とバインド
 
 #pragma region Texture
 

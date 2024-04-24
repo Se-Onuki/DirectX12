@@ -135,6 +135,7 @@ namespace SoLib {
 		isFinish_ = true;
 		isActive_ = false;
 		goalFlame_ = 0u;
+		isLoop_ = false;
 	}
 
 	float DeltaTimer::GetProgress() const {
