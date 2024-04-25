@@ -55,6 +55,7 @@ private:
 
 	Model *model_ = nullptr;
 	Model *boxModel_ = nullptr;
+	Model *playerModel_ = nullptr;
 
 	std::unique_ptr<World> world_ = nullptr;
 	ECS::EntityManager *entityManager_;
@@ -93,4 +94,6 @@ private:
 	SoLib::DeltaTimer playerSpawn_{ 1.f, false };
 
 	std::unique_ptr<Model> assimpModel_ = nullptr;
+
+	ModelAnimation::AnimationPlayer animation_;
 };

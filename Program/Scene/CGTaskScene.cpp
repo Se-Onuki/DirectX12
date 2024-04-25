@@ -8,7 +8,7 @@
 
 void CGTaskScene::OnEnter()
 {
-	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
+	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/", "PlayerAttack.gltf"));
 
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
@@ -17,7 +17,7 @@ void CGTaskScene::OnEnter()
 	offScreen_->Init();
 
 	// アニメーションを設定
-	animation_.SetAnimation(ModelAnimation::Animation::CreateFromFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
+	animation_.SetAnimation(ModelAnimation::Animation::CreateFromFile("Model/", "PlayerAttack.gltf"));
 	animation_.Start(true);
 
 	/*

@@ -42,6 +42,8 @@ void GameScene::OnEnter() {
 
 	//assimpModel_ = Model::LoadAssimpObjFile("", "box.obj");
 
+	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/", "PlayerAttack.gltf"));
+
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
 	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");

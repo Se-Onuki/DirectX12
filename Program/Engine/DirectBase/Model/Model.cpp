@@ -119,11 +119,35 @@ namespace ModelAnimation {
 		NodeAnimation &rootNodeAnimation = animation_.nodeAnimations_[model->rootNode_.name_];
 		// ノードのアニメーションのデータを取得する
 		BoneModel::SimpleTransform rootTransform;
-		rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animationTimer_.GetNowFlame());
-		rootTransform.rotate_ = rootNodeAnimation.rotate_.CalcValue(animationTimer_.GetNowFlame());
-		rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animationTimer_.GetNowFlame());
-		
+		if (rootNodeAnimation.scale_.size()) {
+			rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animationTimer_.GetNowFlame());
+		}
+		if (rootNodeAnimation.rotate_.size()) {
+			rootTransform.rotate_ = rootNodeAnimation.rotate_.CalcValue(animationTimer_.GetNowFlame());
+		}
+		if (rootNodeAnimation.translate_.size()) {
+			rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animationTimer_.GetNowFlame());
+		}
+		// モデルデータの転送
 		(*model->rootNode_.localMatrix_) = rootTransform.CalcTransMat();
+
+		for (auto &child : model->rootNode_.children_) {
+			// モデルのノードに紐づいたアニメーションを取得する
+			NodeAnimation &childNodeAnimation = animation_.nodeAnimations_[child.name_];
+			// ノードのアニメーションのデータを取得する
+			BoneModel::SimpleTransform childRootTransform;
+			if (childNodeAnimation.scale_.size()) {
+				childRootTransform.scale_ = childNodeAnimation.scale_.CalcValue(animationTimer_.GetNowFlame());
+			}
+			if (rootNodeAnimation.rotate_.size()) {
+				childRootTransform.rotate_ = childNodeAnimation.rotate_.CalcValue(animationTimer_.GetNowFlame());
+			}
+			if (rootNodeAnimation.translate_.size()) {
+				childRootTransform.translate_ = childNodeAnimation.translate_.CalcValue(animationTimer_.GetNowFlame());
+			}
+			// モデルデータの転送
+			(*child.localMatrix_) = childRootTransform.CalcTransMat();
+		}
 
 	}
 
@@ -761,7 +785,7 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 
 	// メッシュの読み込み
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
-		std::unique_ptr<Mesh> meshItem = std::make_unique<Mesh>();
+		std::unique_ptr<Mesh> meshResult = std::make_unique<Mesh>();
 
 		// メッシュのポインタ
 		const aiMesh *const mesh = scene->mMeshes[meshIndex];
@@ -797,16 +821,19 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 				vertex.normal.x *= -1.f;
 
 				// 頂点の追加
-				meshItem->AddVertex(vertex);
+				meshResult->AddVertex(vertex);
 			}
 		}
 		// マテリアルのポインタを取得
-		meshItem->material_ = result->materialMap_.at(SoLib::to_string(mesh->mMaterialIndex)).get();
+		meshResult->material_ = result->materialMap_.at(SoLib::to_string(mesh->mMaterialIndex)).get();
 		// 保存されたデータからメッシュを作成
-		meshItem->CreateBuffer();
+		meshResult->CreateBuffer();
+
+		// 名前の設定
+		meshResult->meshName_ = mesh->mName.C_Str();
 
 		// メッシュをコンテナに保存
-		result->meshList_.push_back(std::move(meshItem));
+		result->meshList_.push_back(std::move(meshResult));
 	}
 
 	// ノードの構成
@@ -903,8 +930,8 @@ void Model::Draw(const Transform &transform, const Camera3D &camera) const
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.GetLocalMatrix().GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, std::find_if(rootNode_.children_.begin(), rootNode_.children_.end(), [&mesh](const ModelNode& itr) { return itr.name_ == mesh->meshName_; })->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_);
 	}

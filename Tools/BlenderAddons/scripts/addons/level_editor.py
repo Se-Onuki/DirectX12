@@ -1,6 +1,8 @@
 from typing import Set
 import bpy
 from bpy.types import Context
+import math
+import mathutils
 
 # Blenderに登録するアドオン情報
 bl_info = {
@@ -53,6 +55,7 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
         self.layout.operator("wm.url_open_preset", text="Manual", icon='HELP')
         self.layout.operator(MYADDON_OT_stretch_vertex.bl_idname, text= MYADDON_OT_stretch_vertex.bl_label)
         self.layout.operator(MYADDON_OT_create_ico_sphere.bl_idname, text= MYADDON_OT_create_ico_sphere.bl_label)
+        self.layout.operator(MYADDON_OT_export_scene.bl_idname, text= MYADDON_OT_export_scene.bl_label)
     
     # 既存のメニューにサブメニューを追加
     def submenu(self, context):
@@ -72,6 +75,43 @@ class MYADDON_OT_stretch_vertex(bpy.types.Operator):
     def execute(self, context: Context):
         bpy.data.objects["Cube"].data.vertices[0].co.y += 1.0
         print ("頂点を伸ばしました")
+
+        # オペレータの命令終了を通知
+        return {"FINISHED"}
+
+# オペレータ シーン出力
+class MYADDON_OT_export_scene(bpy.types.Operator):
+    bl_idname = "myaddon.myaddon_ot_export_scene"
+    bl_label = "シーン出力"
+    bl_description = "シーンを出力します"
+
+    # メニューを実行するときに呼ばれるコールバック関数
+    def execute(self, context):
+        # シーンを出力
+        print ("シーン情報をExportします")
+
+        # シーンの中のオブジェクトをすべて走査する｡
+        for object in bpy.context.scene.objects:
+            print (object.type + " - " + object.name)
+            # ローカルのトランスフォームから､平行移動､回転､拡大縮小を取得
+            trans, rot, scale = object.matrix_local.decompose()
+            # 回転をオイラーに変換
+            rot = rot.to_euler()
+            # ラジアンから度数法に変更
+            rot.x = math.degrees(rot.x)
+            rot.y = math.degrees(rot.y)
+            rot.z = math.degrees(rot.z)
+            # トランスフォームを表示
+            print("Trans(%f, %f, %f)" % (trans.x, trans.y, trans.z))
+            print("Rot(%f, %f, %f)" % (rot.x, rot.y, rot.z))
+            print("Scale(%f, %f, %f)" % (scale.x, scale.y, scale.z))
+            # 親オブジェクト名を表示
+            if object.parent:
+                print("Parent: " + object.parent.name)
+            print() # 改行
+
+        print("シーン情報をExportしました")
+        self.report({'INFO'}, "シーン情報をExportしました")
 
         # オペレータの命令終了を通知
         return {"FINISHED"}
@@ -97,6 +137,7 @@ classes = (
     TOPBAR_MT_my_menu,
     MYADDON_OT_stretch_vertex,
     MYADDON_OT_create_ico_sphere,
+    MYADDON_OT_export_scene,
 )
 
 # メニュー項目描画

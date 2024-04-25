@@ -102,6 +102,10 @@ namespace ModelAnimation {
 		T *data() { return keyFlames_.data(); }
 		const T *data() const { return keyFlames_.data(); }
 
+
+		/// @brief キーフレームごとの値を計算する
+		/// @param sec 秒数
+		/// @return キーフレーム間を補完した値
 		T::value_type CalcValue(const SoLib::Time::SecondF sec) const
 		{
 			assert(not keyFlames_.empty() and "キーフレームが存在しません");
@@ -116,7 +120,7 @@ namespace ModelAnimation {
 					// 範囲内を補完する
 					float t = (sec - keyFlames_[index].time_) / (keyFlames_[nextIndex].time_ - keyFlames_[index].time_);
 
-					if constexpr (std::is_same_v<T::value_type, Quaternion>) {
+					if constexpr (std::is_same_v<T::value_type, Quaternion>) {	// クォータニオンである場合はSlerpを使用する
 						return Quaternion::Slerp(keyFlames_[index].value_, keyFlames_[nextIndex].value_, t);
 					}
 					else {
@@ -323,6 +327,8 @@ public:
 	std::list<uint32_t> indexs_;
 
 	Material *material_;
+
+	std::string meshName_;
 
 	std::unordered_map<VertexData, uint32_t, hashVertex> indexMap_; // 頂点追加用一時データ
 
