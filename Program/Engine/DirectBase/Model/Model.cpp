@@ -107,7 +107,7 @@ namespace ModelAnimation {
 	void AnimationPlayer::Start(bool isLoop)
 	{
 		// アニメーションの初期化
-		animationTimer_.Start(animation_.duration_, isLoop); // 時間を設定する
+		animationTimer_.Start(animation_->duration_, isLoop); // 時間を設定する
 	}
 
 	void AnimationPlayer::Update(float deltaTime, Model *model)
@@ -121,22 +121,24 @@ namespace ModelAnimation {
 
 	void AnimationPlayer::CalcTransform(float animateTime, ModelNode &modelNode)
 	{
-		// モデルのノードに紐づいたアニメーションを取得する
-		NodeAnimation &rootNodeAnimation = animation_.nodeAnimations_[modelNode.name_];
-		// ノードのアニメーションのデータを取得する
-		BoneModel::SimpleTransform rootTransform;
-		if (rootNodeAnimation.scale_.size()) {
-			rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
+		// 対応したアニメーションがあれば通す
+		if (animation_->nodeAnimations_.contains(modelNode.name_)) {
+			// モデルのノードに紐づいたアニメーションを取得する
+			const auto &rootNodeAnimation = animation_->nodeAnimations_.at(modelNode.name_);
+			// ノードのアニメーションのデータを取得する
+			BoneModel::SimpleTransform rootTransform;
+			if (rootNodeAnimation.scale_.size()) {
+				rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
+			}
+			if (rootNodeAnimation.rotate_.size()) {
+				rootTransform.rotate_ = rootNodeAnimation.rotate_.CalcValue(animateTime);
+			}
+			if (rootNodeAnimation.translate_.size()) {
+				rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animateTime);
+			}
+			// モデルデータの転送
+			(*modelNode.localMatrix_) = rootTransform.CalcTransMat();
 		}
-		if (rootNodeAnimation.rotate_.size()) {
-			rootTransform.rotate_ = rootNodeAnimation.rotate_.CalcValue(animateTime);
-		}
-		if (rootNodeAnimation.translate_.size()) {
-			rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animateTime);
-		}
-		// モデルデータの転送
-		(*modelNode.localMatrix_) = rootTransform.CalcTransMat();
-
 		for (auto &child : modelNode.children_) {
 			CalcTransform(animateTime, child);
 		}
@@ -832,6 +834,7 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 
 	for (auto &mesh : result->meshList_) {
 		const ModelNode *const node = result->rootNode_.FindNode(mesh->meshName_);
+		assert(node and "名前に一致するノードがありません");
 		if (node) {
 			mesh->pNode_ = node;
 		}

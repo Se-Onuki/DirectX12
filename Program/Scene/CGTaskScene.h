@@ -4,6 +4,7 @@
 #include "../Engine/DirectBase/3D/DirectionLight.h"
 #include "../Header/Entity/Entity.h"
 #include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
+#include "../Engine/DirectBase/Model/Model.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -22,6 +23,7 @@ private:
 
 	PostEffect::OffScreenRenderer *offScreen_ = nullptr;
 
-	ModelAnimation::AnimationPlayer animation_;
+	ModelAnimation::AnimationPlayer animationPlayer_;
+	ModelAnimation::Animation animation_;
 
 };

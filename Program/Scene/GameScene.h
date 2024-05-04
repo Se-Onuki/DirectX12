@@ -95,5 +95,6 @@ private:
 
 	std::unique_ptr<Model> assimpModel_ = nullptr;
 
-	ModelAnimation::AnimationPlayer animation_;
+	ModelAnimation::AnimationPlayer animationPlayer_;
+	ModelAnimation::Animation animation_;
 };

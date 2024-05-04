@@ -44,12 +44,12 @@ struct ModelNode {
 	/// @brief データを解析してノードを作成する
 	/// @param node assimpのノード
 	/// @return 解析結果
-	static ModelNode Create(aiNode* node);
+	static ModelNode Create(aiNode *node);
 	ModelNode() = default;
 
 	static std::unique_ptr<CBuffer<Matrix4x4>> kIdentity_;
 
-	const CBuffer<Matrix4x4>& GetLocalMatrix() const;
+	const CBuffer<Matrix4x4> &GetLocalMatrix() const;
 
 	// 回転の姿勢
 	std::unique_ptr<CBuffer<Matrix4x4>> localMatrix_;
@@ -59,7 +59,7 @@ struct ModelNode {
 	std::vector<ModelNode> children_;
 
 	// 名前の一致したノードを返す
-	const ModelNode* FindNode(const std::string& name) const;
+	const ModelNode *FindNode(const std::string &name) const;
 };
 
 namespace ModelAnimation {
@@ -96,14 +96,14 @@ namespace ModelAnimation {
 
 		size_t size() const { return keyFlames_.size(); }
 
-		T& at(size_t i) { return keyFlames_.at(i); }
-		const T& at(size_t i) const { return keyFlames_.at(i); }
+		T &at(size_t i) { return keyFlames_.at(i); }
+		const T &at(size_t i) const { return keyFlames_.at(i); }
 
-		T& operator[](size_t i) { return keyFlames_[i]; }
-		const T& operator[](size_t i) const { return keyFlames_[i]; }
+		T &operator[](size_t i) { return keyFlames_[i]; }
+		const T &operator[](size_t i) const { return keyFlames_[i]; }
 
-		T* data() { return keyFlames_.data(); }
-		const T* data() const { return keyFlames_.data(); }
+		T *data() { return keyFlames_.data(); }
+		const T *data() const { return keyFlames_.data(); }
 
 
 		/// @brief キーフレームごとの値を計算する
@@ -147,32 +147,30 @@ namespace ModelAnimation {
 		SoLib::Time::SecondF duration_;                       // アニメーション全体の尺
 		std::map<std::string, NodeAnimation> nodeAnimations_; // NodeAnimationの集合｡Node名で検索ができる｡
 
-		static Animation CreateFromFile(const std::string& directoryPath, const std::string& filename);
+		static Animation CreateFromFile(const std::string &directoryPath, const std::string &filename);
 	};
 
 	class AnimationPlayer {
 	public:
 		AnimationPlayer() = default;
-		AnimationPlayer(const Animation& animation) : animation_(animation) {}
-		AnimationPlayer(Animation&& animation) : animation_(std::move(animation)) {}
+		AnimationPlayer(const Animation *animation) : animation_(animation) {}
 
-		inline void SetAnimation(const Animation& animation) { animation_ = animation; }
-		inline void SetAnimation(Animation&& animation) { animation_ = std::move(animation); }
+		inline void SetAnimation(const Animation *animation) { animation_ = animation; }
 
 		void Start(bool isLoop = false);
 
-		void Update(float deltaTime, Model* model);
+		void Update(float deltaTime, Model *model);
 
 	private:
 
 		/// @brief 再起的にモデルの姿勢を取得する
 		/// @param animateTime アニメーションの時間
 		/// @param modelNode モデルのノードの参照
-		void CalcTransform(float animateTime, ModelNode& modelNode);
+		void CalcTransform(float animateTime, ModelNode &modelNode);
 
 		SoLib::Time::DeltaTimer animationTimer_; // アニメーションの時刻
 
-		Animation animation_;
+		const Animation *animation_;
 	};
 
 }
@@ -236,14 +234,14 @@ public:
 
 	ModelNode rootNode_;
 
-	void Draw(const Transform& transform, const Camera3D& camera) const;
-	void Draw(const Transform& transform, const Camera3D& camera, const Material& material) const;
-	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE& transformSRV, uint32_t drawCount, const CBuffer<uint32_t>& drawIndex, const Camera3D& camera) const;
-	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE& transformSRV, uint32_t drawCount, const CBuffer<uint32_t>& drawIndex, const CBuffer<Camera3D::CameraMatrix>& camera) const;
+	void Draw(const Transform &transform, const Camera3D &camera) const;
+	void Draw(const Transform &transform, const Camera3D &camera, const Material &material) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const;
 	template <typename T>
-	void Draw(const StructuredBuffer<T>& structurdBuffer, const Camera3D& camera) const;
+	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
 
-	static void StartDraw(ID3D12GraphicsCommandList* const commandList);
+	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
 
 	/// @brief "resources/"
@@ -257,14 +255,14 @@ public:
 
 	[[nodiscard]] static std::unique_ptr<Model> CreateSphere();
 
-	[[nodiscard]] static std::unique_ptr<Model> LoadObjFile(const std::string& directoryPath, const std::string& fileName);
+	[[nodiscard]] static std::unique_ptr<Model> LoadObjFile(const std::string &directoryPath, const std::string &fileName);
 
-	[[nodiscard]] static std::unique_ptr<Model> LoadAssimpModelFile(const std::string& directoryPath, const std::string& fileName);
+	[[nodiscard]] static std::unique_ptr<Model> LoadAssimpModelFile(const std::string &directoryPath, const std::string &fileName);
 
 private:
-	void LoadMtlFile(const std::string& directoryPath, const std::string& fileName);
+	void LoadMtlFile(const std::string &directoryPath, const std::string &fileName);
 
-	static ID3D12GraphicsCommandList* commandList_;
+	static ID3D12GraphicsCommandList *commandList_;
 };
 
 struct Material {
@@ -275,7 +273,7 @@ private:
 
 public:
 	Material() = default;
-	Material(const std::string& materialName)
+	Material(const std::string &materialName)
 	{
 		name_ = materialName;
 	}
@@ -314,13 +312,13 @@ public:
 		Vector3 normal;   // 法線
 
 		// 比較。すべてが一致した場合のみ真を返す
-		bool operator==(const VertexData& vertex) const
+		bool operator==(const VertexData &vertex) const
 		{
 			return position == vertex.position && texCoord == vertex.texCoord && normal == vertex.normal;
 		}
 	};
 	struct hashVertex {
-		size_t operator()(const Mesh::VertexData& v) const
+		size_t operator()(const Mesh::VertexData &v) const
 		{
 			std::string s =
 				std::to_string(v.position.x) + "/" + std::to_string(v.position.y) + "/" + std::to_string(v.position.z) + "/" + std::to_string(v.position.w) // 頂点
@@ -335,9 +333,9 @@ public:
 	std::list<VertexData> vertices_;
 	std::list<uint32_t> indexs_;
 
-	Material* material_;
+	Material *material_;
 
-	const ModelNode* pNode_;
+	const ModelNode *pNode_;
 
 	std::string meshName_;
 
@@ -345,12 +343,12 @@ public:
 
 	void CreateBuffer();
 
-	void AddVertex(const VertexData& vertex);
+	void AddVertex(const VertexData &vertex);
 
-	void SetMaterial(Material* const material);
-	Material* const GetMaterial() const { return material_; }
+	void SetMaterial(Material *const material);
+	Material *const GetMaterial() const { return material_; }
 
-	void Draw(ID3D12GraphicsCommandList* const commandList, uint32_t drawCount = 1u, const Material* const material = nullptr) const;
+	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const Material *const material = nullptr) const;
 };
 
 class MinecraftModel {
@@ -360,25 +358,25 @@ class MinecraftModel {
 
 	struct Face {
 		Face() = default;
-		Face(const Face&);
+		Face(const Face &);
 		D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
 		D3D12_INDEX_BUFFER_VIEW ibView_ = {};
 
 		ComPtr<ID3D12Resource> vertexBuff_;
 		ComPtr<ID3D12Resource> indexBuff_;
 
-		Mesh::VertexData* vertices_;
-		uint32_t* indexs_;
+		Mesh::VertexData *vertices_;
+		uint32_t *indexs_;
 
 		void CreateBuffer();
 		void Init();
-		void SetVertex(const std::array<Vector3, 4u>& vertex, const Vector3& normal);
-		void Draw(ID3D12GraphicsCommandList* const commandList);
+		void SetVertex(const std::array<Vector3, 4u> &vertex, const Vector3 &normal);
+		void Draw(ID3D12GraphicsCommandList *const commandList);
 	};
 
 	struct Cube {
 		Cube() = default;
-		Cube(const Cube&);
+		Cube(const Cube &);
 		enum class FaceDirection : uint32_t {
 			UP,
 			Down,
@@ -394,9 +392,9 @@ class MinecraftModel {
 		// void UpdateMatrix();
 
 		void Init();
-		void Draw(ID3D12GraphicsCommandList* const commandList);
+		void Draw(ID3D12GraphicsCommandList *const commandList);
 
-		void SetVertex(const Vector3& origin, const Vector3& size);
+		void SetVertex(const Vector3 &origin, const Vector3 &size);
 
 		void ResetTransform();
 	};
@@ -406,17 +404,17 @@ class MinecraftModel {
 		std::vector<Cube> cubes_;
 		std::unordered_map<std::string, Bone> children_;
 
-		Bone* parent_;
+		Bone *parent_;
 
 		Transform transform_;
 
 		void UpdateTransform();
-		void SetParent(Bone* const parent);
+		void SetParent(Bone *const parent);
 		void Init();
 
 		void AddCube();
 
-		void Draw(ID3D12GraphicsCommandList* const commandList);
+		void Draw(ID3D12GraphicsCommandList *const commandList);
 	};
 
 public:
@@ -432,13 +430,13 @@ public:
 	Transform transformOrigin_;
 
 	void Init();
-	void Draw(ID3D12GraphicsCommandList* const commandList);
+	void Draw(ID3D12GraphicsCommandList *const commandList);
 
-	void LoadJson(const std::string& file_path);
+	void LoadJson(const std::string &file_path);
 };
 
 template <typename T>
-inline void Model::Draw(const StructuredBuffer<T>& structurdBuffer, const Camera<Render::CameraType::Projecction>& camera) const
+inline void Model::Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const
 {
 	Model::Draw(structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), structurdBuffer.GetStartIndex(), camera);
 }

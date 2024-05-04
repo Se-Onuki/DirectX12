@@ -17,8 +17,9 @@ void CGTaskScene::OnEnter()
 	offScreen_->Init();
 
 	// アニメーションを設定
-	animation_.SetAnimation(ModelAnimation::Animation::CreateFromFile("Model/", "PlayerAttack.gltf"));
-	animation_.Start(true);
+	animation_ = ModelAnimation::Animation::CreateFromFile("Model/", "PlayerAttack.gltf");
+	animationPlayer_.SetAnimation(&animation_);
+	animationPlayer_.Start(true);
 
 	/*
 	{
@@ -46,7 +47,7 @@ void CGTaskScene::Update()
 	transform_->ImGuiWidget();
 	transform_->UpdateMatrix();
 
-	animation_.Update(deltaTime, model_);
+	animationPlayer_.Update(deltaTime, model_);
 	//gameObject_->Update(deltaTime);
 
 	CameraManager::GetInstance()->DisplayImGui();
