@@ -80,6 +80,14 @@ void ECS::System::AnimateUpdate::OnUpdate(::World *world, [[maybe_unused]] const
 
 }
 
+void ECS::System::ModelAnimatorUpdate::OnUpdate(::World *world, const float deltaTime)
+{
+	for (const auto &[entity, model, animator] : world->view<ECS::ModelComp, ECS::ModelAnimator>()) {
+		animator->animatior_.Update(deltaTime, model->model_);
+	}
+
+}
+
 void ECS::System::ColorLerp::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
 
@@ -399,9 +407,21 @@ void ECS::System::BoneCollision::OnUpdate(::World *world, [[maybe_unused]] const
 	}
 
 }
+
+void ECS::System::ModelDrawer::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+	static BlockManager *const blockManager = BlockManager::GetInstance();
+
+	for (const auto &[entity, transform, model] : world->view<ECS::TransformMatComp, ECS::ModelComp>()) {
+
+
+		blockManager->AddBox(model->model_, { .transMat_ = *transform });
+	}
+
+}
+
 void ECS::System::BoneDrawer::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
-	for (const auto &[entity, bone, weapon] : world->view<ECS::BoneTransformComp, ECS::AttackCollisionComp>()) {
+	for (const auto &[entity, bone] : world->view<ECS::BoneTransformComp>()) {
 		auto matrixArray = boneModel_->CalcTransMat(bone->boneTransform_);
 
 		boneModel_->Draw(matrixArray);

@@ -621,7 +621,7 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, cons
 	Mesh *modelData = nullptr;        // 構築するModelData
 	Material *materialData = nullptr; // マテリアルの共用
 
-	result->meshList_.emplace_back(std::make_unique<Mesh>());
+	result->meshList_.emplace_back(std::make_unique<Mesh>())->pNode_ = &result->rootNode_;
 
 	modelData = result->meshList_.back().get();
 
@@ -693,9 +693,9 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, cons
 			modelData->AddVertex(triangle[2]);
 		}
 		else if (identifier == "o") {
-			if (!modelData->vertices_.empty())
-				result->meshList_.emplace_back(std::make_unique<Mesh>());
-
+			if (!modelData->vertices_.empty()) {
+				result->meshList_.emplace_back(std::make_unique<Mesh>())->pNode_ = &result->rootNode_;
+			}
 			modelData = result->meshList_.back().get(); // 構築するModelData
 
 			if (materialData) { // もしマテリアルが設定されてたら割り当て

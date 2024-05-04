@@ -43,6 +43,7 @@ void GameScene::OnEnter() {
 	//assimpModel_ = Model::LoadAssimpObjFile("", "box.obj");
 
 	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/", "PlayerAttack.gltf"));
+	animation_ = ModelAnimation::Animation::CreateFromFile("Model/", "PlayerAttack.gltf");
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
@@ -113,6 +114,9 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::QuaternionRotComp{};
 	*playerPrefab_ += ECS::PositionComp{};
 	*playerPrefab_ += ECS::InputFlagComp{};
+	*playerPrefab_ += ECS::TransformMatComp{};
+	*playerPrefab_ += ECS::ModelAnimator{ .animatior_ = &animation_ };
+	*playerPrefab_ += ECS::ModelComp{ .model_ = playerModel_ };
 	//*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
@@ -198,6 +202,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::AddCoolTime>();
 	// アニメーションなど
 	systemManager_.AddSystem<ECS::System::AnimateUpdate>();
+	systemManager_.AddSystem<ECS::System::ModelAnimatorUpdate>();
 	systemManager_.AddSystem<ECS::System::ColorLerp>();
 	// 座標などの移動
 	systemManager_.AddSystem<ECS::System::AddGravity>();
@@ -214,9 +219,10 @@ void GameScene::OnEnter() {
 
 	// 汎用的な処理
 	systemManager_.AddSystem<ECS::System::BillboardCalc>();
-	systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
+	//systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
-	systemManager_.AddSystem<ECS::System::BoneDrawer>(&boneModel_);
+	//systemManager_.AddSystem<ECS::System::BoneDrawer>(&boneModel_);
+	systemManager_.AddSystem<ECS::System::ModelDrawer>();
 	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
 	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
