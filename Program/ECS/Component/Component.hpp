@@ -247,6 +247,11 @@ namespace ECS {
 		SoLib::DeltaTimer timer_{};
 	};
 
+	struct ModelAnimator : IComponent {
+
+		ModelAnimation::AnimationPlayer animatior_;
+	};
+
 	struct AttackCollisionComp : IComponent {
 		Sphere collision_;
 		bool isActive_ = false;

@@ -921,6 +921,7 @@ std::unique_ptr<Model> Model::CreatePlane()
 	material->blendMode_ = Model::BlendMode::kNone;
 
 	mesh->SetMaterial(material.get());
+	mesh->pNode_ = &newModel->rootNode_;
 
 	return std::move(newModel);
 }
@@ -944,8 +945,9 @@ void Model::Draw(const Transform &transform, const Camera3D &camera, const Mater
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.GetLocalMatrix().GetGPUVirtualAddress());
+	
 	for (auto &mesh : meshList_) {
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(material.blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, 1u, &material);
 	}
@@ -958,8 +960,9 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.GetLocalMatrix().GetGPUVirtualAddress());
+	
 	for (auto &mesh : meshList_) {
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, drawCount);
 	}
@@ -972,8 +975,9 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
-	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, rootNode_.GetLocalMatrix().GetGPUVirtualAddress());
+	
 	for (auto &mesh : meshList_) {
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, drawCount);
 	}

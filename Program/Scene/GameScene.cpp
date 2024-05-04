@@ -113,7 +113,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::QuaternionRotComp{};
 	*playerPrefab_ += ECS::PositionComp{};
 	*playerPrefab_ += ECS::InputFlagComp{};
-	*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
+	//*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
 	*playerPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
