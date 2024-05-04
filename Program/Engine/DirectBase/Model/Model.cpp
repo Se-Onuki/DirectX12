@@ -115,40 +115,31 @@ namespace ModelAnimation {
 		// Animationの更新
 		animationTimer_.Update(deltaTime);
 
+		CalcTransform(animationTimer_.GetNowFlame(), model->rootNode_);
+
+	}
+
+	void AnimationPlayer::CalcTransform(float animateTime, ModelNode &modelNode)
+	{
 		// モデルのノードに紐づいたアニメーションを取得する
-		NodeAnimation &rootNodeAnimation = animation_.nodeAnimations_[model->rootNode_.name_];
+		NodeAnimation &rootNodeAnimation = animation_.nodeAnimations_[modelNode.name_];
 		// ノードのアニメーションのデータを取得する
 		BoneModel::SimpleTransform rootTransform;
 		if (rootNodeAnimation.scale_.size()) {
-			rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animationTimer_.GetNowFlame());
+			rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
 		}
 		if (rootNodeAnimation.rotate_.size()) {
-			rootTransform.rotate_ = rootNodeAnimation.rotate_.CalcValue(animationTimer_.GetNowFlame());
+			rootTransform.rotate_ = rootNodeAnimation.rotate_.CalcValue(animateTime);
 		}
 		if (rootNodeAnimation.translate_.size()) {
-			rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animationTimer_.GetNowFlame());
+			rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animateTime);
 		}
 		// モデルデータの転送
-		(*model->rootNode_.localMatrix_) = rootTransform.CalcTransMat();
+		(*modelNode.localMatrix_) = rootTransform.CalcTransMat();
 
-		for (auto &child : model->rootNode_.children_) {
-			// モデルのノードに紐づいたアニメーションを取得する
-			NodeAnimation &childNodeAnimation = animation_.nodeAnimations_[child.name_];
-			// ノードのアニメーションのデータを取得する
-			BoneModel::SimpleTransform childRootTransform;
-			if (childNodeAnimation.scale_.size()) {
-				childRootTransform.scale_ = childNodeAnimation.scale_.CalcValue(animationTimer_.GetNowFlame());
-			}
-			if (rootNodeAnimation.rotate_.size()) {
-				childRootTransform.rotate_ = childNodeAnimation.rotate_.CalcValue(animationTimer_.GetNowFlame());
-			}
-			if (rootNodeAnimation.translate_.size()) {
-				childRootTransform.translate_ = childNodeAnimation.translate_.CalcValue(animationTimer_.GetNowFlame());
-			}
-			// モデルデータの転送
-			(*child.localMatrix_) = childRootTransform.CalcTransMat();
+		for (auto &child : modelNode.children_) {
+			CalcTransform(animateTime, child);
 		}
-
 	}
 
 }
@@ -839,6 +830,13 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 	// ノードの構成
 	result->rootNode_ = ModelNode::Create(scene->mRootNode);
 
+	for (auto &mesh : result->meshList_) {
+		const ModelNode *const node = result->rootNode_.FindNode(mesh->meshName_);
+		if (node) {
+			mesh->pNode_ = node;
+		}
+	}
+
 	result->name_ = fileName;
 
 	return std::move(result);
@@ -931,7 +929,7 @@ void Model::Draw(const Transform &transform, const Camera3D &camera) const
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, std::find_if(rootNode_.children_.begin(), rootNode_.children_.end(), [&mesh](const ModelNode& itr) { return itr.name_ == mesh->meshName_; })->GetLocalMatrix().GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_);
 	}
@@ -1430,4 +1428,17 @@ const CBuffer<Matrix4x4> &ModelNode::GetLocalMatrix() const
 	else {
 		return *ModelNode::kIdentity_;
 	}
+}
+
+const ModelNode *ModelNode::FindNode(const std::string &name) const
+{
+	// 名前が一致していたらそれを返す
+	if (name_ == name) { return this; }
+	for (const auto &child : children_) {
+		const auto *ptr = child.FindNode(name);
+		// 名前を検索して、一致したら返す
+		if (ptr) { return ptr; }
+	}
+	// 一致しなかったらnullptrを返す
+	return nullptr;
 }
