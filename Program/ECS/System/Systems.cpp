@@ -296,11 +296,11 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 			quateRot->quateRot_ = Quaternion::LookAt(rInput3d);
 		}
 
-		if (animator->animatior_.GetDeltaTimer().IsFinish()) {
+		//if (animator->animatior_.GetDeltaTimer().IsFinish()) {
 			if (attackCooltime->cooltime_.IsFinish()) {
 				animator->animatior_.Start(false);
 			}
-		}
+		//}
 	}
 }
 

@@ -62,7 +62,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material",
+			"name":"Material.003",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
 					0.800000011920929,
@@ -177,9 +177,9 @@
 		{
 			"bufferView":8,
 			"componentType":5126,
-			"count":61,
+			"count":21,
 			"max":[
-				2.5
+				0.8333333333333334
 			],
 			"min":[
 				0
@@ -189,7 +189,7 @@
 		{
 			"bufferView":9,
 			"componentType":5126,
-			"count":61,
+			"count":21,
 			"type":"VEC4"
 		}
 	],
@@ -244,18 +244,18 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":244,
+			"byteLength":84,
 			"byteOffset":1680
 		},
 		{
 			"buffer":0,
-			"byteLength":976,
-			"byteOffset":1924
+			"byteLength":336,
+			"byteOffset":1764
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":2900,
+			"byteLength":2100,
 			"uri":"PlayerAttack.bin"
 		}
 	]
