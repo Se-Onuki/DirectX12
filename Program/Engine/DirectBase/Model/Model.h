@@ -161,6 +161,10 @@ namespace ModelAnimation {
 
 		void Update(float deltaTime, Model *model);
 
+		const SoLib::DeltaTimer &GetDeltaTimer() const {
+			return animationTimer_;
+		}
+
 	private:
 
 		/// @brief 再起的にモデルの姿勢を取得する

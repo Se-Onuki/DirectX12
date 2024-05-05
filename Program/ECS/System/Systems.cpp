@@ -275,7 +275,7 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 	auto *inputManager = Input::GetInstance();
 
-	for (const auto &[entity, pos, quateRot, acceleration, input, animate, isLanding, attackSt, attackCooltime] : world->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::AnimateParametor, ECS::IsLanding, ECS::AttackStatus, ECS::AttackCooltime>()) {
+	for (const auto &[entity, pos, quateRot, acceleration, input, animator, isLanding, attackSt, attackCooltime] : world->view<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::ModelAnimator, ECS::IsLanding, ECS::AttackStatus, ECS::AttackCooltime>()) {
 		// const auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
 		// 
 		// 左スティックの入力
@@ -296,9 +296,9 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 			quateRot->quateRot_ = Quaternion::LookAt(rInput3d);
 		}
 
-		if (animate->animIndex_ == 0u && animate->timer_.IsFinish()) {
+		if (animator->animatior_.GetDeltaTimer().IsFinish()) {
 			if (attackCooltime->cooltime_.IsFinish()) {
-				animate->timer_.Start(0.25f);
+				animator->animatior_.Start(false);
 			}
 		}
 	}
