@@ -167,12 +167,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		///
 
 		dxCommon->StartDraw();
+		sceneManager->PostEffectSetup();
 
 		textureManager->StartDraw();
 
 		// 一般描画
 		sceneManager->Draw();
 
+		sceneManager->PostEffectEnd();
 
 		// ImGuiの描画
 		ImGuiManager::Draw(commandList);

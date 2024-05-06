@@ -83,33 +83,56 @@ void DirectXCommon::StartDraw()
 	commandList_->ResourceBarrier(1, &barrier);
 
 #pragma endregion
+	//DefaultDrawReset();
+}
+
+void DirectXCommon::DefaultDrawReset()
+{
+	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
 
 	// 描画先のRTVとDSVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetCPUDescriptorHandleForHeapStart();
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvDescHeap_->GetHeap()->GetCPUDescriptorHandleForHeapStart(), backBufferIndex, descriptorSizeRTV);
-	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
-	// 指定した色で画面全体をクリアする
-	const float crearColor[] = { 0.1f, 0.25f, 0.5f, 1.f }; // 青っぽい色。 RGBAの値
-	commandList_->ClearRenderTargetView(rtvHandle, crearColor, 0, nullptr);
 
 #pragma region ViewportとScissor(シザー)
 
 	// ビューポート
-	// クライアント領域のサイズと一緒にして画面全体に表示
-	D3D12_VIEWPORT viewport{ 0.f, 0.f, WinApp::kWindowWidth, WinApp::kWindowHeight, 0.f, 1.f };
-
+	D3D12_VIEWPORT viewport;
 	// シザー短形
 	D3D12_RECT scissorRect{};
-	// 基本的にビューポートと同じ短形が構成されるようにする
-	scissorRect.left = 0;
-	scissorRect.right = WinApp::kWindowWidth;
-	scissorRect.top = 0;
-	scissorRect.bottom = WinApp::kWindowHeight;
+
+	SetFullscreenViewPort(&viewport, &scissorRect);
 
 #pragma endregion
-	commandList_->RSSetViewports(1, &viewport);       // Viewportを設定
+
+	DrawTargetReset(&rtvHandle, &dsvHandle, viewport, scissorRect);
+}
+
+void DirectXCommon::SetFullscreenViewPort(D3D12_VIEWPORT *viewport, D3D12_RECT *scissorRect)
+{
+
+	// クライアント領域のサイズと一緒にして画面全体に表示
+	*viewport = { 0.f, 0.f, WinApp::kWindowWidth, WinApp::kWindowHeight, 0.f, 1.f };
+
+	// 基本的にビューポートと同じ短形が構成されるようにする
+	scissorRect->left = 0;
+	scissorRect->right = WinApp::kWindowWidth;
+	scissorRect->top = 0;
+	scissorRect->bottom = WinApp::kWindowHeight;
+}
+
+void DirectXCommon::DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect)
+{
+	commandList_->OMSetRenderTargets(1, rtvHandle, false, dsvHandle);
+	if (dsvHandle) {
+		commandList_->ClearDepthStencilView(*dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
+	}
+	// 指定した色で画面全体をクリアする
+	const float crearColor[] = { 0.1f, 0.25f, 0.5f, 1.f }; // 青っぽい色。 RGBAの値
+	if (rtvHandle) {
+		commandList_->ClearRenderTargetView(*rtvHandle, crearColor, 0, nullptr);
+	}
+	commandList_->RSSetViewports(1, &vp);       // Viewportを設定
 	commandList_->RSSetScissorRects(1, &scissorRect); // Scirssorを設定
 }
 

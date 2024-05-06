@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include "../Utils/SoLib/SoLib_Timer.h"
+#include "../Engine/DirectBase/Base/DirectXCommon.h"
 //#include "Scene.hpp"
 
 class SceneManager;
@@ -18,6 +19,8 @@ public:
 	virtual void OnExit() = 0;	// シーン退室時に一度走る
 
 	virtual void Update() = 0;	// 更新処理
+	virtual void PostEffectSetup() { DirectXCommon::GetInstance()->DefaultDrawReset(); }	// ポストエフェクトの設定処理
+	virtual void PostEffectEnd() {  }	// ポストエフェクトの終了処理
 	virtual void Draw() = 0;	// 描画処理
 
 	static SceneManager *const sceneManager_;
@@ -85,6 +88,11 @@ public:
 	/// @brief シーンの更新
 	void Update(float deltaTime);
 
+	/// @brief ポストエフェクトの設定処理
+	void PostEffectSetup();
+
+	/// @brief ポストエフェクトの終了処理
+	void PostEffectEnd();
 
 	/// @brief シーンの描画
 	void Draw() const;

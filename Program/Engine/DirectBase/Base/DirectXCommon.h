@@ -105,6 +105,15 @@ public:
 
 	void StartDraw();
 
+	void DefaultDrawReset();
+
+	/// @brief フルスクリーンのビューポート設定を適用する
+	/// @param viewport ビューポート
+	/// @param scissorRect シザー短形
+	void SetFullscreenViewPort(D3D12_VIEWPORT *viewport, D3D12_RECT *scissorRect);
+
+	void DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect);
+
 	void EndDraw();
 
 	void CrearDepthBuffer();

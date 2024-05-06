@@ -22,6 +22,14 @@ namespace PostEffect {
 	public:
 		void Init();
 
+		/// @brief テクスチャの取得
+		/// @return テクスチャリソース
+		ID3D12Resource *GetTexture() { return renderTargetTexture_.Get(); }
+
+		/// @brief RTVのデスクリプタヒープ
+		/// @return rtvヒープのポインタ
+		DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV> *GetRtvDescHeap() { return rtvDescHeap_.get(); }
+
 	private:
 		static ComPtr<ID3D12Resource> CreateRenderTextrueResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor);
 

@@ -97,6 +97,20 @@ void SceneManager::Update(float deltaTime) {
 	}
 }
 
+void SceneManager::PostEffectSetup()
+{
+	if (currentScene_) {
+		currentScene_->PostEffectSetup();
+	}
+}
+
+void SceneManager::PostEffectEnd()
+{
+	if (currentScene_) {
+		currentScene_->PostEffectEnd();
+	}
+}
+
 void SceneManager::Draw() const {
 	if (currentScene_) {
 		currentScene_->Draw();
