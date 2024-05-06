@@ -14,6 +14,12 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	/// @brief ポストエフェクトの設定処理
+	void PostEffectSetup() override;
+
+	/// @brief ポストエフェクトの終了処理
+	void PostEffectEnd() override;
+
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
@@ -25,5 +31,7 @@ private:
 
 	ModelAnimation::AnimationPlayer animationPlayer_;
 	ModelAnimation::Animation animation_;
+
+	DirectXCommon *pDxCommon_ = nullptr;
 
 };

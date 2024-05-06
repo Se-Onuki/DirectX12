@@ -11,6 +11,7 @@
 #include "LeakChecker.h"
 
 #include "../Descriptor/DescriptorManager.h"
+#include "../../Utils/Graphics/Color.h"
 
 class DirectXCommon {
 	DirectXCommon() = default;
@@ -105,18 +106,26 @@ public:
 
 	void StartDraw();
 
-	void DefaultDrawReset();
+	/// @brief 初期設定で描画設定を行う
+	/// @param hasDsv DSVを持っているか
+	void DefaultDrawReset(bool hasDsv = true);
 
 	/// @brief フルスクリーンのビューポート設定を適用する
 	/// @param viewport ビューポート
 	/// @param scissorRect シザー短形
 	void SetFullscreenViewPort(D3D12_VIEWPORT *viewport, D3D12_RECT *scissorRect);
 
-	void DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect);
+	void DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, const SoLib::Color::RGB4& clearColor, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect);
 
 	void EndDraw();
 
 	void CrearDepthBuffer();
+
+	/// @brief バックバッファのindexを取得する
+	/// @return バックバッファのindex
+	uint32_t GetBackIndex() const { return swapChain_->GetCurrentBackBufferIndex(); }
+
+	ID3D12DescriptorHeap *GetDsvDescHeap() { return dsvHeap_.Get(); }
 
 
 private:

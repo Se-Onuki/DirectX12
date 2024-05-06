@@ -5,12 +5,13 @@
 #include <memory>
 #include "../Utils/SoLib/SoLib_Timer.h"
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
+#include "../Engine/DirectBase/Base/EngineObject.h"
 //#include "Scene.hpp"
 
 class SceneManager;
 class GameObject;
 
-class IScene {
+class IScene : public SolEngine::EngineObject {
 public:
 	IScene() = default;
 	virtual ~IScene() = default;
@@ -30,7 +31,7 @@ public:
 	// std::list<std::unique_ptr<Object>> objectList_;
 };
 
-class SceneManager {
+class SceneManager : public SolEngine::EngineObject {
 private:
 
 	SoLib::DeltaTimer transitionTimer_{};

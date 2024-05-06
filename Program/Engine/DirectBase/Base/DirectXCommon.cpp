@@ -86,9 +86,9 @@ void DirectXCommon::StartDraw()
 	//DefaultDrawReset();
 }
 
-void DirectXCommon::DefaultDrawReset()
+void DirectXCommon::DefaultDrawReset(bool hasDsv)
 {
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	UINT backBufferIndex = GetBackIndex();
 
 	// 描画先のRTVとDSVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetCPUDescriptorHandleForHeapStart();
@@ -105,7 +105,11 @@ void DirectXCommon::DefaultDrawReset()
 
 #pragma endregion
 
-	DrawTargetReset(&rtvHandle, &dsvHandle, viewport, scissorRect);
+
+	// 指定した色で画面全体をクリアする
+	const SoLib::Color::RGB4 clearColor = { 0.1f, 0.25f, 0.5f, 1.f }; // 青っぽい色。 RGBAの値
+
+	DrawTargetReset(&rtvHandle, clearColor, hasDsv ? &dsvHandle : nullptr, viewport, scissorRect);
 }
 
 void DirectXCommon::SetFullscreenViewPort(D3D12_VIEWPORT *viewport, D3D12_RECT *scissorRect)
@@ -121,16 +125,14 @@ void DirectXCommon::SetFullscreenViewPort(D3D12_VIEWPORT *viewport, D3D12_RECT *
 	scissorRect->bottom = WinApp::kWindowHeight;
 }
 
-void DirectXCommon::DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect)
+void DirectXCommon::DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, const SoLib::Color::RGB4 &clearColor, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect)
 {
 	commandList_->OMSetRenderTargets(1, rtvHandle, false, dsvHandle);
 	if (dsvHandle) {
 		commandList_->ClearDepthStencilView(*dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 	}
-	// 指定した色で画面全体をクリアする
-	const float crearColor[] = { 0.1f, 0.25f, 0.5f, 1.f }; // 青っぽい色。 RGBAの値
 	if (rtvHandle) {
-		commandList_->ClearRenderTargetView(*rtvHandle, crearColor, 0, nullptr);
+		commandList_->ClearRenderTargetView(*rtvHandle, clearColor, 0, nullptr);
 	}
 	commandList_->RSSetViewports(1, &vp);       // Viewportを設定
 	commandList_->RSSetScissorRects(1, &scissorRect); // Scirssorを設定

@@ -5,10 +5,13 @@
 #include "../Header/Entity/Component/ModelComp.h"
 #include "CGTaskScene.h"
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../externals/DirectXTex/d3dx12.h"
 
 void CGTaskScene::OnEnter()
 {
 	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/", "PlayerAttack.gltf"));
+
+	pDxCommon_ = DirectXCommon::GetInstance();
 
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
@@ -97,4 +100,30 @@ void CGTaskScene::Draw()
 
 #pragma endregion
 
+}
+
+void CGTaskScene::PostEffectSetup()
+{
+
+	// 描画先のRTVとDSVを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = pDxCommon_->GetDsvDescHeap()->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreen_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
+
+#pragma region ViewportとScissor(シザー)
+
+	// ビューポート
+	D3D12_VIEWPORT viewport;
+	// シザー短形
+	D3D12_RECT scissorRect{};
+
+	pDxCommon_->SetFullscreenViewPort(&viewport, &scissorRect);
+
+#pragma endregion
+
+	pDxCommon_->DrawTargetReset(&rtvHandle, offScreen_->GetClearColor(), &dsvHandle, viewport, scissorRect);
+}
+
+void CGTaskScene::PostEffectEnd()
+{
+	pDxCommon_->DefaultDrawReset(false);
 }
