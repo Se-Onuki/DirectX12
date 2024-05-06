@@ -778,6 +778,12 @@
     <FxCompile Include="resources\shader\ShaderParticle.PS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shader\CopyImage.VS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\CopyImage.PS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shader\Object3d.hlsli">
@@ -790,6 +796,9 @@
       <Filter>Engine\Shader</Filter>
     </None>
     <None Include="resources\shader\Math.hlsli">
+      <Filter>Engine\Shader</Filter>
+    </None>
+    <None Include="resources\shader\CopyImage.hlsli">
       <Filter>Engine\Shader</Filter>
     </None>
   </ItemGroup>
