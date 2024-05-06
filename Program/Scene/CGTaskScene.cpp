@@ -36,6 +36,7 @@ void CGTaskScene::OnEnter()
 
 void CGTaskScene::OnExit()
 {
+	offScreen_->Finalize();
 }
 
 void CGTaskScene::Update()

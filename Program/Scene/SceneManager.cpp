@@ -77,8 +77,9 @@ bool SceneManager::ImGuiWidget() {
 }
 
 void SceneManager::Finalize() {
-	nextScene_ = nullptr;
-	currentScene_ = nullptr;
+	nextScene_.reset();
+	if (currentScene_) { currentScene_->OnExit(); }
+	currentScene_.reset();
 	transitionTimer_.Clear();
 }
 

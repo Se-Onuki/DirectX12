@@ -403,6 +403,7 @@ void DirectXCommon::TransfarEngineObject()
 {
 	SolEngine::EngineObject::device_ = device_.Get();
 	SolEngine::EngineObject::srvHeap_ = srvHeap_.get();
+	SolEngine::EngineObject::rtvHeap_ = rtvDescHeap_.get();
 	SolEngine::EngineObject::commandList_ = commandList_.Get();
 
 	SolEngine::EngineObject::descriptorSizeSRV_ = descriptorSizeSRV;
