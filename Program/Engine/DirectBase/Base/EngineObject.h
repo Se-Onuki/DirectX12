@@ -22,7 +22,7 @@ namespace SolEngine {
 		// rtvのヒープを保持するポインタ
 		inline static DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV> *rtvHeap_ = nullptr;
 
-		inline static ID3D12CommandList *commandList_ = nullptr;
+		inline static ID3D12GraphicsCommandList *commandList_ = nullptr;
 
 		inline static uint32_t descriptorSizeSRV_ = 0;
 		inline static uint32_t descriptorSizeRTV_ = 0;
@@ -41,6 +41,8 @@ namespace SolEngine {
 
 		static decltype(srvHeap_) GetDescHeapCbvSrvUav() { return srvHeap_; }
 		static decltype(rtvHeap_) GetDescHeapRtv() { return rtvHeap_; }
+
+		static decltype(commandList_) GetCommandList() { return commandList_; }
 
 		template <D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
 		static uint32_t GetDescSize();

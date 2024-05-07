@@ -28,6 +28,7 @@ private:
 	Transform transform_;
 
 	PostEffect::OffScreenRenderer *offScreen_ = nullptr;
+	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
 	ModelAnimation::AnimationPlayer animationPlayer_;
 	ModelAnimation::Animation animation_;

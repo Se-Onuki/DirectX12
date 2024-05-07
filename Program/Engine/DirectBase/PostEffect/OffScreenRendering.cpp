@@ -39,6 +39,53 @@ namespace PostEffect {
 
 		device->CreateShaderResourceView(renderTargetTexture_.Get(), &renderTexturSrvDesc_, srvHeapRange_.GetHandle(0).cpuHandle_);
 
+	}
+
+	OffScreenRenderer::ComPtr<ID3D12Resource> OffScreenRenderer::CreateRenderTextrueResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor)
+	{
+		// 1. metadataを基にResourceの設定
+		D3D12_RESOURCE_DESC resourceDesc{};
+		resourceDesc.Width = width;                                   // textureの幅
+		resourceDesc.Height = height;                                 // textureの高さ
+		resourceDesc.MipLevels = 1;                                   // mipMapの数
+		resourceDesc.DepthOrArraySize = 1;                            // 奥行き or 配列Textureの配列数
+		resourceDesc.Format = format;                                 // TextureのFormat
+		resourceDesc.SampleDesc.Count = 1;                            // サンプリングカウント
+		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;  // Textureの次元数。普段使っているのは2次元。
+		resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして利用できるようにする
+
+		// 2. 利用するHeapの設定。
+		D3D12_HEAP_PROPERTIES heapProperties{};
+		heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // VRAM上に作成
+
+		// クリアする色の設定
+		D3D12_CLEAR_VALUE clearValue;
+		clearValue.Format = format;
+		for (int i = 0; i < 4; i++) {
+			clearValue.Color[i] = clearColor[i];
+		}
+
+		// 3. Resourceを生成する
+		ComPtr<ID3D12Resource> resource = nullptr;
+		HRESULT hr = S_FALSE;
+		hr = device->CreateCommittedResource(
+			&heapProperties,                    // Heapの設定
+			D3D12_HEAP_FLAG_NONE,               // Heapの特殊な設定。特になし。
+			&resourceDesc,                      // Resourceの設定
+			D3D12_RESOURCE_STATE_RENDER_TARGET, // これから描画することを前提としたTextureなのでRenderTargetとして使うことから始める
+			&clearValue,                        // Clear最適値｡ ClearRenderTargetのClearがこの値で行われる
+			IID_PPV_ARGS(&resource));           // 作成するResourceへのポインタ
+		assert(SUCCEEDED(hr));
+		return std::move(resource);
+	}
+
+
+	void FullScreenRenderer::Init()
+	{
+
+		auto device = GetDevice();
+
+
 		std::array<D3D12_ROOT_PARAMETER, 1u> rootParameters = {};
 
 #pragma region Texture
@@ -109,45 +156,61 @@ namespace PostEffect {
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 		graphicsPipelineStateDesc.BlendState = blendDesc;
 
-		auto hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&pipelineState_));
-		assert(SUCCEEDED(hr));
-	}
-
-	OffScreenRenderer::ComPtr<ID3D12Resource> OffScreenRenderer::CreateRenderTextrueResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor)
-	{
-		// 1. metadataを基にResourceの設定
-		D3D12_RESOURCE_DESC resourceDesc{};
-		resourceDesc.Width = width;                                   // textureの幅
-		resourceDesc.Height = height;                                 // textureの高さ
-		resourceDesc.MipLevels = 1;                                   // mipMapの数
-		resourceDesc.DepthOrArraySize = 1;                            // 奥行き or 配列Textureの配列数
-		resourceDesc.Format = format;                                 // TextureのFormat
-		resourceDesc.SampleDesc.Count = 1;                            // サンプリングカウント
-		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;  // Textureの次元数。普段使っているのは2次元。
-		resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして利用できるようにする
-
-		// 2. 利用するHeapの設定。
-		D3D12_HEAP_PROPERTIES heapProperties{};
-		heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // VRAM上に作成
-
-		// クリアする色の設定
-		D3D12_CLEAR_VALUE clearValue;
-		clearValue.Format = format;
-		for (int i = 0; i < 4; i++) {
-			clearValue.Color[i] = clearColor[i];
-		}
-
-		// 3. Resourceを生成する
-		ComPtr<ID3D12Resource> resource = nullptr;
 		HRESULT hr = S_FALSE;
-		hr = device->CreateCommittedResource(
-			&heapProperties,                    // Heapの設定
-			D3D12_HEAP_FLAG_NONE,               // Heapの特殊な設定。特になし。
-			&resourceDesc,                      // Resourceの設定
-			D3D12_RESOURCE_STATE_RENDER_TARGET, // これから描画することを前提としたTextureなのでRenderTargetとして使うことから始める
-			&clearValue,                        // Clear最適値｡ ClearRenderTargetのClearがこの値で行われる
-			IID_PPV_ARGS(&resource));           // 作成するResourceへのポインタ
+		hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&pipelineState_));
 		assert(SUCCEEDED(hr));
-		return std::move(resource);
+
+	}
+	void FullScreenRenderer::Draw(ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
+	{
+
+		auto command = GetCommandList();
+
+#pragma region TransitionBarrierを張る
+
+		// TransitionBarrierの設定
+		D3D12_RESOURCE_BARRIER barrierF{};
+		// 今回のバリアはTransition
+		barrierF.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		barrierF.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象のリソース。
+		barrierF.Transition.pResource = texture;
+		// 遷移前(現在)のResourceState
+		barrierF.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		// 遷移後のResourceState
+		barrierF.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		// TransitionBurrierを張る
+		command->ResourceBarrier(1, &barrierF);
+
+#pragma endregion
+
+
+		command->SetGraphicsRootSignature(GetRootSignature());
+		command->SetPipelineState(GetPipeLine());
+		command->SetGraphicsRootDescriptorTable(0, gpuHandle);
+
+		command->DrawInstanced(3, 1, 0, 0);
+
+
+#pragma region TransitionBarrierを張る
+
+		// TransitionBarrierの設定
+		D3D12_RESOURCE_BARRIER barrierS{};
+		// 今回のバリアはTransition
+		barrierS.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		barrierS.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象のリソース。
+		barrierS.Transition.pResource = texture;
+		// 遷移前(現在)のResourceState
+		barrierS.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		// 遷移後のResourceState
+		barrierS.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		// TransitionBurrierを張る
+		command->ResourceBarrier(1, &barrierS);
+
+#pragma endregion
+
 	}
 }

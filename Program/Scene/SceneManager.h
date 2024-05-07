@@ -79,7 +79,7 @@ public:
 	template<SoLib::IsBased<IScene> T>
 	void ChangeScene(const float transitionTime);
 
-	void ChangeScene(const std::string &nextScene, const float transitionTime);
+	void ChangeScene(const std::string &nextScene, const float transitionTime = 0.f);
 
 	bool ImGuiWidget();
 

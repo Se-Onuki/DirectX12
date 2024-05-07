@@ -17,14 +17,6 @@ namespace PostEffect {
 		OffScreenRenderer &operator=(const OffScreenRenderer &) = delete;
 		~OffScreenRenderer() = default;
 
-		enum class RootParameter {
-			kTexture,
-
-		};
-
-		/*template <typename T>
-		using ComPtr = Microsoft::WRL::ComPtr<T>;*/
-
 	public:
 		void Init();
 
@@ -38,10 +30,6 @@ namespace PostEffect {
 
 		const SoLib::Color::RGB4 &GetClearColor() const { return clearColor_; }
 
-		ID3D12RootSignature *GetRootSignature() { return rootSignature_.Get(); }
-
-		ID3D12PipelineState *GetPipeLine() { return pipelineState_.Get(); }
-
 		const DescHeapCbvSrvUav::HeapRange *const GetHeapRange() const { return &srvHeapRange_; }
 
 	private:
@@ -50,10 +38,6 @@ namespace PostEffect {
 	private:
 
 		DirectResourceLeakChecker leakChecker_{};
-
-		RootSignature rootSignature_;
-
-		ComPtr<ID3D12PipelineState> pipelineState_ = nullptr;
 
 		// クリア時の色
 		const SoLib::Color::RGB4 &clearColor_ = 0xFF0000FF; // 赤を指定しておく
@@ -65,6 +49,34 @@ namespace PostEffect {
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 
 		DescHeapCbvSrvUav::HeapRange srvHeapRange_;
+
+
+	};
+
+	class FullScreenRenderer : public SoLib::Singleton<FullScreenRenderer>, public SolEngine::EngineObject {
+		friend SoLib::Singleton<FullScreenRenderer>;
+
+		FullScreenRenderer() = default;
+		FullScreenRenderer(const FullScreenRenderer &) = delete;
+		FullScreenRenderer &operator=(const FullScreenRenderer &) = delete;
+		~FullScreenRenderer() = default;
+
+	public:
+
+		void Init();
+
+		void Draw(ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
+
+		ID3D12RootSignature *GetRootSignature() { return rootSignature_.Get(); }
+
+		ID3D12PipelineState *GetPipeLine() { return pipelineState_.Get(); }
+
+	private:
+
+		RootSignature rootSignature_;
+
+		ComPtr<ID3D12PipelineState> pipelineState_ = nullptr;
+
 
 
 	};

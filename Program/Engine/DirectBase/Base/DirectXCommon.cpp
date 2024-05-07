@@ -107,7 +107,7 @@ void DirectXCommon::DefaultDrawReset(bool hasDsv)
 
 
 	// 指定した色で画面全体をクリアする
-	const SoLib::Color::RGB4 clearColor = { 0.1f, 0.25f, 0.5f, 1.f }; // 青っぽい色。 RGBAの値
+	static const SoLib::Color::RGB4 clearColor = { 0.1f, 0.25f, 0.5f, 1.f }; // 青っぽい色。 RGBAの値
 
 	DrawTargetReset(&rtvHandle, clearColor, hasDsv ? &dsvHandle : nullptr, viewport, scissorRect);
 }
