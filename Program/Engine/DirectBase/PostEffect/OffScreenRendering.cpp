@@ -1,4 +1,5 @@
 #include "OffScreenRendering.h"
+#include "../Base/PipelineState.h"
 
 namespace PostEffect {
 
@@ -38,6 +39,78 @@ namespace PostEffect {
 
 		device->CreateShaderResourceView(renderTargetTexture_.Get(), &renderTexturSrvDesc_, srvHeapRange_.GetHandle(0).cpuHandle_);
 
+		std::array<D3D12_ROOT_PARAMETER, 1u> rootParameters = {};
+
+#pragma region Texture
+
+		// DescriptorRangeの設定
+		D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+		descriptorRange[0].BaseShaderRegister = 0;                                                   // 0から始める
+		descriptorRange[0].NumDescriptors = 1;                                                       // 数は1つ
+		descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;                              // SRVを使う
+		descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+
+		rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      // DescriptorTableを使う
+		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                // PixelShaderで使う
+		rootParameters[0].DescriptorTable.pDescriptorRanges = descriptorRange;             // Tableの中身の配列を指定
+		rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); // Tableで使用する数
+
+#pragma endregion
+
+#pragma region RasterizerState(ラスタライザステート)
+
+		// RasterizerStateの設定
+		D3D12_RASTERIZER_DESC rasterizerDesc{};
+		// 裏面(時計回り)を表示しない
+		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+		// 三角形の中を塗りつぶす
+		rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+
+#pragma endregion
+
+		rootSignature_.Init(rootParameters.data(), rootParameters.size());
+
+		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
+		inputLayoutDesc.pInputElementDescs = nullptr;
+		inputLayoutDesc.NumElements = 0u;
+
+		PipelineState::ShaderSet copyShader;
+		copyShader.vertex = Shader::Compile(L"CopyImage.VS.hlsl", L"vs_6_0");
+		copyShader.pixel = Shader::Compile(L"CopyImage.PS.hlsl", L"ps_6_0");
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+		graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature
+		graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
+		graphicsPipelineStateDesc.VS = copyShader.vertex->GetBytecode();	// VertexShader
+		graphicsPipelineStateDesc.PS = copyShader.pixel->GetBytecode();		// PixelShader
+		graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
+
+		// DSVのFormatを設定する
+		graphicsPipelineStateDesc.DepthStencilState = { .DepthEnable = false };
+
+#pragma region PSOを生成する
+
+		graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		// 書き込むRTVの情報
+		graphicsPipelineStateDesc.NumRenderTargets = 1;
+		graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		// 利用するトポロジ(形状)のタイプ。三角形。
+		graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		// どのように画面に色を打ち込むかの設定(気にしなくても良い)
+		graphicsPipelineStateDesc.SampleDesc.Count = 1;
+		graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+
+#pragma endregion
+		// BlendStateの設定
+		D3D12_BLEND_DESC blendDesc{};
+
+		// 全ての色要素を書き込む
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+		graphicsPipelineStateDesc.BlendState = blendDesc;
+
+		auto hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&pipelineState_));
+		assert(SUCCEEDED(hr));
 	}
 
 	OffScreenRenderer::ComPtr<ID3D12Resource> OffScreenRenderer::CreateRenderTextrueResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor)

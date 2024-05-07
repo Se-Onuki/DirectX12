@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "../Base/EngineObject.h"
+#include "../Base/RootSignature.h"
 
 namespace PostEffect {
 
@@ -15,6 +16,11 @@ namespace PostEffect {
 		OffScreenRenderer(const OffScreenRenderer &) = delete;
 		OffScreenRenderer &operator=(const OffScreenRenderer &) = delete;
 		~OffScreenRenderer() = default;
+
+		enum class RootParameter {
+			kTexture,
+
+		};
 
 		/*template <typename T>
 		using ComPtr = Microsoft::WRL::ComPtr<T>;*/
@@ -32,6 +38,12 @@ namespace PostEffect {
 
 		const SoLib::Color::RGB4 &GetClearColor() const { return clearColor_; }
 
+		ID3D12RootSignature *GetRootSignature() { return rootSignature_.Get(); }
+
+		ID3D12PipelineState *GetPipeLine() { return pipelineState_.Get(); }
+
+		const DescHeapCbvSrvUav::HeapRange *const GetHeapRange() const { return &srvHeapRange_; }
+
 	private:
 		static ComPtr<ID3D12Resource> CreateRenderTextrueResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor);
 
@@ -39,10 +51,12 @@ namespace PostEffect {
 
 		DirectResourceLeakChecker leakChecker_{};
 
+		RootSignature rootSignature_;
+
+		ComPtr<ID3D12PipelineState> pipelineState_ = nullptr;
+
 		// クリア時の色
 		const SoLib::Color::RGB4 &clearColor_ = 0xFF0000FF; // 赤を指定しておく
-
-		// DescHeapCbvSrvUav::HeapRange srvHeapRange_;
 
 		ComPtr<ID3D12Resource> renderTargetTexture_;
 

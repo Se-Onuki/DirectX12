@@ -11,7 +11,7 @@ public:
 	RootSignature() = default;
 	~RootSignature() = default;
 
-	void Create(const D3D12_ROOT_PARAMETER *const rootParameter, const size_t parameterSize);
+	void Init(const D3D12_ROOT_PARAMETER *const rootParameter, const size_t parameterSize);
 
 	auto *const Get() const { return rootSignature_.Get(); }
 

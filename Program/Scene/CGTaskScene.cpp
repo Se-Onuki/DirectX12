@@ -125,5 +125,53 @@ void CGTaskScene::PostEffectSetup()
 
 void CGTaskScene::PostEffectEnd()
 {
+	auto *command = pDxCommon_->GetCommandList();
+
 	pDxCommon_->DefaultDrawReset(false);
+
+#pragma region TransitionBarrierを張る
+
+	// TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrierF{};
+	// 今回のバリアはTransition
+	barrierF.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrierF.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象のリソース。
+	barrierF.Transition.pResource = offScreen_->GetTexture();
+	// 遷移前(現在)のResourceState
+	barrierF.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// 遷移後のResourceState
+	barrierF.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	// TransitionBurrierを張る
+	command->ResourceBarrier(1, &barrierF);
+
+#pragma endregion
+
+
+	command->SetGraphicsRootSignature(offScreen_->GetRootSignature());
+	command->SetPipelineState(offScreen_->GetPipeLine());
+	command->SetGraphicsRootDescriptorTable(0, offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+
+	command->DrawInstanced(3, 1, 0, 0);
+
+
+#pragma region TransitionBarrierを張る
+
+	// TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrierS{};
+	// 今回のバリアはTransition
+	barrierS.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrierS.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象のリソース。
+	barrierS.Transition.pResource = offScreen_->GetTexture();
+	// 遷移前(現在)のResourceState
+	barrierS.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	// 遷移後のResourceState
+	barrierS.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// TransitionBurrierを張る
+	command->ResourceBarrier(1, &barrierS);
+
+#pragma endregion
 }

@@ -1,7 +1,7 @@
 #include "RootSignature.h"
 #include "DirectXCommon.h"
 
-void RootSignature::Create(const D3D12_ROOT_PARAMETER *const rootParameter, const size_t parameterSize) {
+void RootSignature::Init(const D3D12_ROOT_PARAMETER *const rootParameter, const size_t parameterSize) {
 
 	HRESULT hr = S_FALSE;
 	auto *const device = DirectXCommon::GetInstance()->GetDevice();

@@ -218,7 +218,7 @@ void Model::CreatePipeLine()
 
 #pragma endregion
 
-	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Create(rootParameters.data(), rootParameters.size());
+	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Init(rootParameters.data(), rootParameters.size());
 
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;     // CBVを使う
 	rootParameters[(uint32_t)Model::RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
@@ -228,7 +228,7 @@ void Model::CreatePipeLine()
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; // VertexShaderで使う
 	rootParameters[(uint32_t)Model::RootParameter::kViewProjection].Descriptor.ShaderRegister = 3;                  // レジスタ番号3とバインド
 
-	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Create(rootParameters.data(), rootParameters.size());
+	rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Init(rootParameters.data(), rootParameters.size());
 
 #pragma endregion
 
