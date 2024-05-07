@@ -39,6 +39,8 @@ void GameScene::OnEnter() {
 	entityManager_ = world_->GetEntityManager();
 	ModelManager::GetInstance()->CreateDefaultModel();
 
+	ModelManager::GetInstance()->GetModel("Plane")->materialMap_.begin()->second->texHandle_ = TextureManager::Load("uvChecker.png");
+
 	spawner_.clear();
 
 	//assimpModel_ = Model::LoadAssimpObjFile("", "box.obj");
@@ -320,9 +322,9 @@ void GameScene::Update() {
 
 	gameObject_.Update(deltaTime);
 
-	for (const auto &[entity, model, translateMat, enemy] : world_->view<const ECS::ModelComp, const ECS::TransformMatComp, const ECS::EnemyTag>()) {
+	/*for (const auto &[entity, model, translateMat, enemy] : world_->view<const ECS::ModelComp, const ECS::TransformMatComp, const ECS::EnemyTag>()) {
 		blockRender_->AddBox(model->model_, IBlock{ .transMat_ = translateMat->transformMat_ });
-	}
+	}*/
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
