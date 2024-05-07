@@ -50,6 +50,8 @@ public:
 
 private:
 
+	int32_t isGrayScale_ = 0;
+
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 	CameraManager *cameraManager_ = nullptr;

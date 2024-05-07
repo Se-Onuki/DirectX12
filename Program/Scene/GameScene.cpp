@@ -104,7 +104,7 @@ void GameScene::OnEnter() {
 	*prefab_ += ECS::RotateComp{};
 	*prefab_ += ECS::ScaleComp{};
 	*prefab_ += ECS::AliveTime{};
-	*prefab_ += ECS::EmitterComp{ .count_ = 5u,.startColor_ = 0xFFFF00FF,.endColor_ = 0xFF000000,.spawnLifeLimit_{0.1f,0.2f},.spawnPower_{0.05f,0.1f},.spawnRange_{90._deg,180._deg,0.f} };
+	*prefab_ += ECS::EmitterComp{.count_ = 5u, .startColor_ = 0xFFFF00FF, .endColor_ = 0xFF000000, .spawnLifeLimit_{0.1f, 0.2f}, .spawnPower_{0.05f, 0.1f}, .spawnRange_{90._deg, 180._deg, 0.f} };
 
 	entityManager_->CreateEntity(*prefab_);
 
@@ -116,24 +116,24 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::PositionComp{};
 	*playerPrefab_ += ECS::InputFlagComp{};
 	*playerPrefab_ += ECS::TransformMatComp{};
-	*playerPrefab_ += ECS::ModelAnimator{ .animatior_ = &animation_ };
-	*playerPrefab_ += ECS::ModelComp{ .model_ = playerModel_ };
+	*playerPrefab_ += ECS::ModelAnimator{.animatior_ = &animation_ };
+	*playerPrefab_ += ECS::ModelComp{.model_ = playerModel_ };
 	//*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
-	*playerPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
-	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor = Vector3::up, .radius = 1.f} };
+	*playerPrefab_ += ECS::GravityComp{.gravity_ = Vector3::up * -9.8f };
+	*playerPrefab_ += ECS::CollisionComp{.collision_ = Sphere{ .centor = Vector3::up, .radius = 1.f } };
 	*playerPrefab_ += ECS::PlayerTag{};
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::AttackCollisionComp{ };
 	*playerPrefab_ += ECS::AnimateParametor{};
 	*playerPrefab_ += ECS::HealthComp::Create(120);
-	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
-	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
-	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
+	*playerPrefab_ += ECS::InvincibleTime{.timer_{ 1.f, false } };
+	*playerPrefab_ += ECS::AirResistance{.resistance = (3.6f / 60.f) };
+	*playerPrefab_ += ECS::CursorComp{.model_ = cursor, .inModel_ = inCursor };
 	*playerPrefab_ += ECS::AttackStatus{ };
-	*playerPrefab_ += ECS::AttackPower{ .power_ = 20 };
-	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.f, false } };
+	*playerPrefab_ += ECS::AttackPower{.power_ = 20 };
+	*playerPrefab_ += ECS::AttackCooltime{.cooltime_ = { 1.f, false } };
 
 	entityManager_->CreateEntity(*playerPrefab_);
 
@@ -141,16 +141,16 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::IsAlive{};
 	*enemyPrefab_ += ECS::ScaleComp{};
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
-	*enemyPrefab_ += ECS::PositionComp{ .position_{0.f, 1.f, 10.f} };
+	*enemyPrefab_ += ECS::PositionComp{.position_{0.f, 1.f, 10.f} };
 	*enemyPrefab_ += ECS::TransformMatComp{};
-	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
-	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
-	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f} };
+	*enemyPrefab_ += ECS::ModelComp{.model_{ModelManager::GetInstance()->GetModel("Block")} };
+	*enemyPrefab_ += ECS::GravityComp{.gravity_ = Vector3::up * -9.8f };
+	*enemyPrefab_ += ECS::CollisionComp{.collision_ = Sphere{ .radius = 1.f } };
 	*enemyPrefab_ += ECS::EnemyTag{};
 	*enemyPrefab_ += ECS::HealthComp::Create(100);
 	*enemyPrefab_ += ECS::HealthBarComp{};
-	*enemyPrefab_ += ECS::AttackPower{ .power_ = 10 };
-	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
+	*enemyPrefab_ += ECS::AttackPower{.power_ = 10 };
+	*enemyPrefab_ += ECS::AttackCooltime{.cooltime_ = { 5.f, false } };
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
@@ -158,7 +158,7 @@ void GameScene::OnEnter() {
 	const Vector3 cameraOffset{ 0.f,1.f,-1.f };
 
 	ECS::Prefab followCamera;
-	followCamera += ECS::FollowCamera{ .rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -40.f} };
+	followCamera += ECS::FollowCamera{.rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -40.f} };
 	followCamera += ECS::PositionComp{};
 
 	entityManager_->CreateEntity(followCamera);
@@ -216,7 +216,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::WeaponCollision>(soundA_, model_);
 	systemManager_.AddSystem<ECS::System::PlayerMove>();
 	systemManager_.AddSystem<ECS::System::PlayerAttack>(attackModel_);
-	systemManager_.AddSystem<ECS::System::EnemyAttack>();
+	systemManager_.AddSystem<ECS::System::EnemyAttack>([this]() { isGrayScale_ = 30; });
 
 	// 汎用的な処理
 	//systemManager_.AddSystem<ECS::System::BillboardCalc>();
@@ -254,6 +254,8 @@ void GameScene::Update() {
 	light_->ImGuiWidget();
 	gameObject_.GetComponent<ModelComp>()->GetBone("Body")->ImGuiWidget();
 
+	isGrayScale_--;
+
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -274,7 +276,7 @@ void GameScene::Update() {
 			{
 				for (uint32_t i = 0; auto & enemy : enemys) {
 					const auto &[pos] = manager->GetComponent<ECS::PositionComp>(enemy);
-					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::PI2 / enemyCount) * i, 0.f }) * 7.5f + pos->position_;
+					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::PI2 / enemyCount) *i, 0.f }) * 7.5f + pos->position_;
 					i++;
 				}
 			});
@@ -324,7 +326,7 @@ void GameScene::Update() {
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
-		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_ ,.color = color->color_ });
+		particleArray_.push_back(Particle::ParticleData{.transform = mat->transformMat_, .color = color->color_ });
 
 	}
 
@@ -404,31 +406,36 @@ void GameScene::Draw() {
 
 void GameScene::PostEffectSetup()
 {
-
-	// 描画先のRTVとDSVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = pDxCommon_->GetDsvDescHeap()->GetCPUDescriptorHandleForHeapStart();
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreen_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
+	if (isGrayScale_ > 0) {
+		// 描画先のRTVとDSVを設定する
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = pDxCommon_->GetDsvDescHeap()->GetCPUDescriptorHandleForHeapStart();
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreen_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
 
 #pragma region ViewportとScissor(シザー)
 
-	// ビューポート
-	D3D12_VIEWPORT viewport;
-	// シザー短形
-	D3D12_RECT scissorRect{};
+		// ビューポート
+		D3D12_VIEWPORT viewport;
+		// シザー短形
+		D3D12_RECT scissorRect{};
 
-	pDxCommon_->SetFullscreenViewPort(&viewport, &scissorRect);
+		pDxCommon_->SetFullscreenViewPort(&viewport, &scissorRect);
 
 #pragma endregion
 
-	pDxCommon_->DrawTargetReset(&rtvHandle, offScreen_->GetClearColor(), &dsvHandle, viewport, scissorRect);
+		pDxCommon_->DrawTargetReset(&rtvHandle, offScreen_->GetClearColor(), &dsvHandle, viewport, scissorRect);
+	}
+	else {
+		pDxCommon_->DefaultDrawReset();
+	}
 }
 
 void GameScene::PostEffectEnd()
 {
+	if (isGrayScale_ > 0) {
 
-	pDxCommon_->DefaultDrawReset(false);
+		pDxCommon_->DefaultDrawReset(false);
 
-	fullScreen_->Draw(offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
-
+		fullScreen_->Draw(offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+	}
 
 }

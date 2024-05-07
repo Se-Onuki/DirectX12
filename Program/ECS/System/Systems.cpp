@@ -190,8 +190,12 @@ void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const f
 
 			// クールタイムを開始
 			attackCT->cooltime_.Start();
-		}
 
+			if (hitFunc_) {
+				hitFunc_();
+			}
+
+		}
 	}
 }
 
@@ -297,9 +301,9 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 		}
 
 		//if (animator->animatior_.GetDeltaTimer().IsFinish()) {
-			if (attackCooltime->cooltime_.IsFinish()) {
-				animator->animatior_.Start(false);
-			}
+		if (attackCooltime->cooltime_.IsFinish()) {
+			animator->animatior_.Start(false);
+		}
 		//}
 	}
 }
@@ -323,7 +327,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 			// 攻撃判定を有効化
 			attColl->isActive_ = true;
 
-			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl->collision_.centor + Vector3{ .y = 0.1f });
+			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl->collision_.centor + Vector3{.y = 0.1f });
 			particle->SetAliveTime(0.5f);
 			particle->transform_.rotate = SoLib::MakeQuaternion({ 90._deg,0,0 });
 			particle->transform_.scale = Vector3::one * (attackSt->radius_ * 2.f);
@@ -517,7 +521,7 @@ void ECS::System::CursorDrawer::OnUpdate(::World *world, [[maybe_unused]] const 
 	for (const auto &[entity, plTag, pos, rot, cursor] : world->view<ECS::PlayerTag, ECS::PositionComp, ECS::QuaternionRotComp, ECS::CursorComp>()) {
 
 		// カーソルの座標
-		Vector3 cursorPos = rot->quateRot_.GetFront() * cursor->offset_ + **pos + Vector3{ .y = 1.f };
+		Vector3 cursorPos = rot->quateRot_.GetFront() * cursor->offset_ + **pos + Vector3{.y = 1.f };
 		// 外枠の表示
 		{
 			// 描画する場所

@@ -42,7 +42,7 @@ namespace ECS {
 			void OnUpdate(::World *world, const float deltaTime) override;
 
 		};
-		
+
 		class ModelAnimatorUpdate : public ISystem {
 
 			bool IsConstSystem() const override { return false; }
@@ -85,6 +85,13 @@ namespace ECS {
 
 		class EnemyAttack : public ISystem {
 		public:
+			// 接触時の関数
+			std::function<void(void)> hitFunc_;
+			static EnemyAttack Create(std::function<void(void)> hitFunc) {
+				EnemyAttack result;
+				result.hitFunc_ = hitFunc;
+				return result;
+			}
 
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;
@@ -180,7 +187,7 @@ namespace ECS {
 			bool IsConstSystem() const override { return false; }
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
-		
+
 		class BoneDrawer : public ISystem {
 		public:
 			BoneModel *boneModel_;
