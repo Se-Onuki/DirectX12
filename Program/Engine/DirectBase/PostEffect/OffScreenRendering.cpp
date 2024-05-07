@@ -122,8 +122,8 @@ namespace PostEffect {
 		inputLayoutDesc.NumElements = 0u;
 
 		PipelineState::ShaderSet copyShader;
-		copyShader.vertex = Shader::Compile(L"CopyImage.VS.hlsl", L"vs_6_0");
-		copyShader.pixel = Shader::Compile(L"CopyImage.PS.hlsl", L"ps_6_0");
+		copyShader.vertex = Shader::Compile(L"FullScreen.VS.hlsl", L"vs_6_0");
+		copyShader.pixel = Shader::Compile(L"FullScreen.PS.hlsl", L"ps_6_0");
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 		graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature

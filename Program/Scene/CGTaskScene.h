@@ -25,6 +25,8 @@ private:
 
 	Model *model_;
 
+	Model *uvModel_;
+
 	Transform transform_;
 
 	PostEffect::OffScreenRenderer *offScreen_ = nullptr;

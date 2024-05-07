@@ -778,10 +778,10 @@
     <FxCompile Include="resources\shader\ShaderParticle.PS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shader\CopyImage.VS.hlsl">
+    <FxCompile Include="resources\shader\FullScreen.VS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shader\CopyImage.PS.hlsl">
+    <FxCompile Include="resources\shader\FullScreen.PS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
   </ItemGroup>

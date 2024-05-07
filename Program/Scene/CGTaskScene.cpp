@@ -11,6 +11,8 @@ void CGTaskScene::OnEnter()
 {
 	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/", "PlayerAttack.gltf"));
 
+	uvModel_ = ModelManager::GetInstance()->AddModel("UvPlane", Model::LoadAssimpModelFile("", "plane.gltf"));
+
 	pDxCommon_ = DirectXCommon::GetInstance();
 
 	light_ = DirectionLight::Create();
@@ -90,6 +92,7 @@ void CGTaskScene::Draw()
 
 	light_->SetLight(commandList);
 	model_->Draw(transform_, camera);
+	uvModel_->Draw(transform_, camera);
 
 	Model::EndDraw();
 
