@@ -48,7 +48,7 @@ Matrix4x4 Matrix4x4::Inverse() const
 Matrix4x4 Matrix4x4::InverseRT() const
 {
 
-	const __m128 &mm3 = _mm_load_ps(m[3].data());
+	const __m128 mm3 = _mm_loadu_ps(m[3].data());
 	return Matrix4x4{
 		{m[0][0], m[1][0], m[2][0], 0.f},
 		{m[0][1], m[1][1], m[2][1], 0.f},

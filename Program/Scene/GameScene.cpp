@@ -28,6 +28,7 @@ GameScene::~GameScene() {
 }
 
 void GameScene::OnEnter() {
+	pDxCommon_ = DirectXCommon::GetInstance();
 
 	light_ = DirectionLight::Create();
 
@@ -218,7 +219,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::EnemyAttack>();
 
 	// 汎用的な処理
-	systemManager_.AddSystem<ECS::System::BillboardCalc>();
+	//systemManager_.AddSystem<ECS::System::BillboardCalc>();
 	//systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
 	//systemManager_.AddSystem<ECS::System::BoneDrawer>(&boneModel_);
@@ -228,10 +229,18 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
 	systemManager_.AddSystem<ECS::System::CursorDrawer>();
 
+	offScreen_ = PostEffect::OffScreenRenderer::GetInstance();
+	offScreen_->Init();
+
+	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
+	fullScreen_->Init();
+
 }
 
 void GameScene::OnExit() {
 	audio_->StopAllWave();
+	offScreen_->Finalize();
+	fullScreen_->Finalize();
 }
 
 void GameScene::Update() {
@@ -390,5 +399,36 @@ void GameScene::Draw() {
 	Sprite::EndDraw();
 
 #pragma endregion
+
+}
+
+void GameScene::PostEffectSetup()
+{
+
+	// 描画先のRTVとDSVを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = pDxCommon_->GetDsvDescHeap()->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreen_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
+
+#pragma region ViewportとScissor(シザー)
+
+	// ビューポート
+	D3D12_VIEWPORT viewport;
+	// シザー短形
+	D3D12_RECT scissorRect{};
+
+	pDxCommon_->SetFullscreenViewPort(&viewport, &scissorRect);
+
+#pragma endregion
+
+	pDxCommon_->DrawTargetReset(&rtvHandle, offScreen_->GetClearColor(), &dsvHandle, viewport, scissorRect);
+}
+
+void GameScene::PostEffectEnd()
+{
+
+	pDxCommon_->DefaultDrawReset(false);
+
+	fullScreen_->Draw(offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+
 
 }

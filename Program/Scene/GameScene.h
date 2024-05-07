@@ -27,6 +27,8 @@
 #include "../Utils/Containers/UnChainVector.h"
 #include "../Header/Object/HealthBar.h"
 #include "../ECS/Entity/Spawner.h"
+#include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
+
 
 class GameScene : public IScene {
 public:
@@ -39,11 +41,20 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	/// @brief ポストエフェクトの設定処理
+	void PostEffectSetup() override;
+
+	/// @brief ポストエフェクトの終了処理
+	void PostEffectEnd() override;
+
+
 private:
 
 	Input *input_ = nullptr;
 	Audio *audio_ = nullptr;
 	CameraManager *cameraManager_ = nullptr;
+
+	DirectXCommon *pDxCommon_ = nullptr;
 
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
@@ -96,4 +107,8 @@ private:
 	std::unique_ptr<Model> assimpModel_ = nullptr;
 
 	ModelAnimation::Animation animation_;
+
+	PostEffect::OffScreenRenderer *offScreen_ = nullptr;
+	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
+
 };
