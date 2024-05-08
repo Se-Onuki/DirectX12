@@ -68,6 +68,34 @@ struct ModelNode {
 	const ModelNode *FindNode(const std::string &name) const;
 };
 
+struct ModelJoint {
+	// transform情報
+	SimpleTransformQuaternion transform_;
+	// ローカルの体勢情報
+	Matrix4x4 localMatrix_;
+	// スケルトン空間での変換行列
+	Matrix4x4 skeletonSpaceMatrix_;
+	// 名前
+	std::string name_;
+	// 子jointへのIndexリスト
+	std::vector<uint32_t> children_;
+	// 自分自身のIndex
+	uint32_t index_;
+	// 自身の親のIndex。存在しない場合はnullopt
+	std::optional<uint32_t> parent_;
+
+};
+
+struct Skeleton {
+	// RootJointのIndex
+	uint32_t root_;
+	// Joint名からIndexを返す辞書
+	std::unordered_map<std::string, uint32_t> jointMap_;
+	// 所属しているJointのデータ
+	std::vector<std::unique_ptr<ModelJoint>> joints_;
+
+};
+
 namespace ModelAnimation {
 
 	struct IKeyFlame {};
