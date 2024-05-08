@@ -1454,3 +1454,36 @@ const ModelNode *ModelNode::FindNode(const std::string &name) const
 	// 一致しなかったらnullptrを返す
 	return nullptr;
 }
+
+Skeleton Skeleton::MakeSkeleton(const ModelNode &rootNode)
+{
+	Skeleton result;
+	result.root_ = ModelJoint::MakeJointIndex(rootNode, {}, result.joints_);
+
+	// 名前とindexを紐づける
+	for (const auto &joint : result.joints_) {
+		result.jointMap_.emplace(joint->name_, joint->index_);
+	}
+
+	return std::move(result);
+}
+
+uint32_t ModelJoint::MakeJointIndex(const ModelNode &node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints)
+{
+	std::unique_ptr<ModelJoint> joint = std::make_unique<ModelJoint>();
+	joint->name_ = node.name_;
+	joint->localMatrix_ = *node.localMatrix_;
+	joint->skeletonSpaceMatrix_ = Matrix4x4::Identity();
+	joint->transform_ = node.transform_;
+	uint32_t selfIndex = joint->index_ = static_cast<uint32_t>(joints.size());
+	joint->parent_ = parent;
+	joints.push_back(std::move(joint));
+
+	for (const ModelNode &child : node.children_) {
+
+		uint32_t childIndex = ModelJoint::MakeJointIndex(child, selfIndex, joints);
+		joints[selfIndex]->children_.push_back(childIndex);
+	}
+
+	return selfIndex;
+}

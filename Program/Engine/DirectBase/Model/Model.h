@@ -69,6 +69,9 @@ struct ModelNode {
 };
 
 struct ModelJoint {
+
+	static uint32_t MakeJointIndex(const ModelNode &node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints);
+
 	// transform情報
 	SimpleTransformQuaternion transform_;
 	// ローカルの体勢情報
@@ -87,6 +90,8 @@ struct ModelJoint {
 };
 
 struct Skeleton {
+	static Skeleton MakeSkeleton(const ModelNode &rootNode);
+
 	// RootJointのIndex
 	uint32_t root_;
 	// Joint名からIndexを返す辞書
