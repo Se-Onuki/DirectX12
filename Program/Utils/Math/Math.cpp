@@ -218,11 +218,11 @@ Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m) {
 //	return result;
 //}
 
-Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &transform) {
-	return Matrix4x4::Affine(scale, rotate, transform);
+Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate) {
+	return Matrix4x4::Affine(scale, rotate, translate);
 }
 
-Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform) {
+Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &translate) {
 	Matrix4x4 result;
 
 	result = quaternion.MakeRotateMatrix();
@@ -231,7 +231,7 @@ Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion
 	for (uint8_t i = 0u; i < 3u; i++) {
 		matItr[i] *= scale.data()[i];
 	}
-	*reinterpret_cast<Vector3 *>(result.m[3].data()) = transform;
+	*reinterpret_cast<Vector3 *>(result.m[3].data()) = translate;
 
 	return result;
 }

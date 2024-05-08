@@ -69,3 +69,12 @@ using Transform = ConstantContainer<BaseTransform>;
 ///		メモリを確保しないTransform構造体。
 ///		StructuredBufferなどで使用する。
 /// 
+
+struct SimpleTransformQuaternion {
+	Vector3 scale_ = Vector3::one;
+	Quaternion rotate_ = Quaternion::Identity;
+	Vector3 translate_ = {};
+
+	Matrix4x4 Affine() const;
+
+};

@@ -1396,24 +1396,19 @@ ModelNode ModelNode::Create(aiNode *node)
 	// 返す値
 	ModelNode result{};
 
-	// nodeのlocalMatを取得
-	aiMatrix4x4 aiLocalMat = node->mTransformation;
+	aiVector3D scale, translate;
+	aiQuaternion rotate;
 
-	// 列ベクトルを行ベクトルに変換
-	aiLocalMat.Transpose();
+	// transformを取得
+	node->mTransformation.Decompose(scale, rotate, translate);
 
-	// 一時保存用の行列
-	Matrix4x4 matrixBuffer;
+	result.transform_.scale_ = { scale.x, scale.y, scale.z };
+	result.transform_.rotate_ = { rotate.x, -rotate.y, -rotate.z, rotate.w };
+	result.transform_.translate_ = { -translate.x, translate.y, translate.z };
 
-	// 4x4行列に代入
-	for (int y = 0; y < 4; y++) {
-		for (int x = 0; x < 4; x++) {
-			matrixBuffer.m[y][x] = aiLocalMat[y][x];
-		}
-	}
 
 	// 行列を代入
-	result.localMatrix_ = std::make_unique<CBuffer<Matrix4x4>>(matrixBuffer);
+	result.localMatrix_ = std::make_unique<CBuffer<Matrix4x4>>(result.transform_.Affine());
 
 	// 名前の設定
 	result.name_ = node->mName.C_Str();
@@ -1437,6 +1432,13 @@ const CBuffer<Matrix4x4> &ModelNode::GetLocalMatrix() const
 	}
 	else {
 		return *ModelNode::kIdentity_;
+	}
+}
+
+void ModelNode::CalcAffine()
+{
+	if (localMatrix_) {
+		*localMatrix_ = transform_.Affine();
 	}
 }
 

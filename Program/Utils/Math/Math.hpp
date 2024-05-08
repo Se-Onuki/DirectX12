@@ -153,8 +153,8 @@ namespace SoLib {
 
 	namespace Math {
 
-		Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &transform);
-		Matrix4x4 Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &transform);
+		Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);
+		Matrix4x4 Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &translate);
 
 		Quaternion MakeQuaternion(const SoLib::Math::Euler &euler);
 

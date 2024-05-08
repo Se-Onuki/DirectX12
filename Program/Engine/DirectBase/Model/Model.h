@@ -51,6 +51,12 @@ struct ModelNode {
 
 	const CBuffer<Matrix4x4> &GetLocalMatrix() const;
 
+	/// @brief アフィン変換の計算を行う
+	void CalcAffine();
+
+	// ノードの状態
+	SimpleTransformQuaternion transform_;
+
 	// 回転の姿勢
 	std::unique_ptr<CBuffer<Matrix4x4>> localMatrix_;
 	// ノード名
