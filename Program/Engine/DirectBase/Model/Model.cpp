@@ -1465,7 +1465,29 @@ Skeleton Skeleton::MakeSkeleton(const ModelNode &rootNode)
 		result.jointMap_.emplace(joint->name_, joint->index_);
 	}
 
-	return std::move(result);
+	return result;
+}
+
+void Skeleton::UpdateMatrix()
+{
+	for (auto &joint : joints_) {
+		joint->CalcAffine();
+		if (joint->parent_) {
+			joint->skeletonSpaceMatrix_ = joint->localMatrix_ * joints_[*joint->parent_]->skeletonSpaceMatrix_;
+		}
+		else {
+			joint->skeletonSpaceMatrix_ = joint->localMatrix_;
+		}
+	}
+
+}
+
+void Skeleton::ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime)
+{
+	for (auto &joint : joints_) {
+
+
+	}
 }
 
 uint32_t ModelJoint::MakeJointIndex(const ModelNode &node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints)

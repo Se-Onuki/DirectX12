@@ -39,6 +39,9 @@ class ViewProjection;
 struct Material;
 struct Mesh;
 class Model;
+namespace ModelAnimation {
+	struct Animation;
+}
 
 struct ModelNode {
 	/// @brief データを解析してノードを作成する
@@ -72,6 +75,8 @@ struct ModelJoint {
 
 	static uint32_t MakeJointIndex(const ModelNode &node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints);
 
+	inline void CalcAffine() { localMatrix_ = transform_.Affine(); }
+
 	// transform情報
 	SimpleTransformQuaternion transform_;
 	// ローカルの体勢情報
@@ -90,10 +95,15 @@ struct ModelJoint {
 };
 
 struct Skeleton {
+
 	static Skeleton MakeSkeleton(const ModelNode &rootNode);
 
+	void UpdateMatrix();
+
+	void ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime);
+
 	// RootJointのIndex
-	uint32_t root_;
+	uint32_t root_ = 0u;
 	// Joint名からIndexを返す辞書
 	std::unordered_map<std::string, uint32_t> jointMap_;
 	// 所属しているJointのデータ
