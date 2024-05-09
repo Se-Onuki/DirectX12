@@ -141,6 +141,9 @@ struct WellForGPU {
 struct SkinClusterData {
 	SkinClusterData(uint32_t jointsCount, uint32_t vertexCount);
 	static SkinClusterData MakeSkinClusterData(const Model &model, const Skeleton &skeleton);
+
+	void Update(const Skeleton &skeleton);
+
 	SkinCluster skinCluster_;
 	std::vector<Matrix4x4> inverseBindPoseMatrixList_;
 

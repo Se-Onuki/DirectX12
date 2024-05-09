@@ -1595,13 +1595,37 @@ SkinClusterData SkinClusterData::MakeSkinClusterData(const Model &model, const S
 	for (const auto &[keyName, jointWeight] : model.skinCluster_.skinClusterData_) {
 		// 一致するジョイントの対象が存在するか探す
 		auto it = skeleton.jointMap_.find(keyName);
-		if (it == jointEndIt) {
+		if (it == jointEndIt) { // 存在しなかったら飛ばす
 			continue;
+		}
+
+		// indexから、逆バインドポーズ行列を代入する
+		result.inverseBindPoseMatrixList_[it->second] = jointWeight.inverseBindPoseMatrix_;
+		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
+			// 該当するinfluence情報を参照しておく
+			auto &currentInfluence = result.influenceSpan_[vertexWeight.vertexIndex_[0]];
+			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
+				// 空いているところにデータを代入
+				if (currentInfluence.vertexInfluence_.weight_[index] == 0.0f) {
+					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_[0];
+					currentInfluence.vertexInfluence_.vertexIndex_[index] = it->second;
+					break;
+				}
+
+			}
 		}
 
 	}
 
-
-
 	return result;
+}
+
+void SkinClusterData::Update(const Skeleton &skeleton)
+{
+	for (size_t jointIndex = 0; jointIndex < skeleton.joints_.size(); jointIndex++) {
+		assert(jointIndex < inverseBindPoseMatrixList_.size() and "範囲外にアクセスしています");
+		auto &palette = paletteSpan_[jointIndex];
+		palette.skeletonSpaceMatrix = inverseBindPoseMatrixList_[jointIndex] * skeleton.joints_[jointIndex]->skeletonSpaceMatrix_;
+		palette.skeletonSpaceInverseTransponeMatrix = palette.skeletonSpaceMatrix.InverseSRT().Transpose();
+	}
 }
