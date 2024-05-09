@@ -1485,7 +1485,15 @@ void Skeleton::UpdateMatrix()
 void Skeleton::ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime)
 {
 	for (auto &joint : joints_) {
+		// 対象のJointのAnimationがあれば、値の適用を行う。下記のif文はC++17から可能になった初期化付きif文。
+		if (auto it = animation.nodeAnimations_.find(joint->name_); it != animation.nodeAnimations_.end()) {
+			const auto &rootNodeAnimation = it->second;
+			// 時間に応じた値を取得して代入する
+			joint->transform_.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
+			joint->transform_.rotate_ = rootNodeAnimation.rotate_.CalcValue(animateTime);
+			joint->transform_.translate_ = rootNodeAnimation.translate_.CalcValue(animateTime);
 
+		}
 
 	}
 }
