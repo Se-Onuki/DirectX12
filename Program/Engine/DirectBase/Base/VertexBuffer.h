@@ -7,7 +7,7 @@
 
 /// @brief 頂点バッファ
 /// @tparam T 頂点データの型 Index 添え字が有効か
-template <SoLib::IsNotPointer T, bool Index = true>
+template <SoLib::IsRealType T, bool Index = true>
 class VertexBuffer final {
 
 	ArrayBuffer<T> vertexData_;
@@ -29,19 +29,15 @@ public:
 	const auto &GetIndexData() const noexcept { return indexData_; }
 	const auto &GetIBView() const noexcept { return ibView_; };
 
-	template <SoLib::IsContainer U>
+	template <SoLib::IsContainsType<T> U>
 	void SetVertexData(const U &source);
-	template <SoLib::IsContainer U>
+	template <SoLib::IsContainsType<uint32_t> U>
 	void SetIndexData(const U &source);
 };
 
-template <SoLib::IsNotPointer T, bool Index>
-template <SoLib::IsContainer U>
+template <SoLib::IsRealType T, bool Index>
+template <SoLib::IsContainsType<T> U>
 void VertexBuffer<T, Index>::SetVertexData(const U &source) {
-	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
-	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
-	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
-
 	vertexData_ = source;
 
 	// 頂点バッファビューを作成する
@@ -54,12 +50,9 @@ void VertexBuffer<T, Index>::SetVertexData(const U &source) {
 
 }
 
-template <SoLib::IsNotPointer T, bool Index>
-template <SoLib::IsContainer U>
+template <SoLib::IsRealType T, bool Index>
+template <SoLib::IsContainsType<uint32_t> U>
 void VertexBuffer<T, Index>::SetIndexData(const U &source) {
-	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
-	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
-	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
 
 	indexData_ = source;
 

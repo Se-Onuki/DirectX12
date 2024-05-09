@@ -111,6 +111,30 @@ struct Skeleton {
 
 };
 
+template<size_t InfluenceCount = 1u>
+struct VertexWeightData {
+	std::array<float, InfluenceCount> weight_;
+	std::array<uint32_t, InfluenceCount> vertexIndex_;
+};
+
+struct JointWeightData {
+	Matrix4x4 inverseBindPoseMatrix_;
+	std::vector<VertexWeightData<1u>> vertexWeightData_;
+};
+
+struct SkinCluster {
+	std::unordered_map<std::string, JointWeightData> skinClusterData_;
+};
+
+struct VertexInfluence {
+	static constexpr uint32_t kNumMaxInfluence_ = 4u;
+	VertexWeightData<kNumMaxInfluence_> vertexInfluence_;
+};
+
+struct SkinClusterData {
+	CBuffer<VertexInfluence> influence_;
+};
+
 namespace ModelAnimation {
 
 	struct IKeyFlame {};
@@ -287,6 +311,8 @@ public:
 
 	ModelNode rootNode_;
 
+	SkinCluster skinCluster_;
+
 	void Draw(const Transform &transform, const Camera3D &camera) const;
 	void Draw(const Transform &transform, const Camera3D &camera, const Material &material) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
@@ -402,6 +428,23 @@ public:
 	Material *const GetMaterial() const { return material_; }
 
 	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const Material *const material = nullptr) const;
+};
+
+struct MeshFactory {
+
+	std::list<Mesh::VertexData> vertices_;
+	std::list<uint32_t> indexs_;
+
+	Material *pMaterial_;
+
+	const ModelNode *pNode_;
+
+	std::string meshName_;
+
+	std::unordered_map<Mesh::VertexData, uint32_t, Mesh::hashVertex> indexMap_; // 頂点追加用一時データ
+
+	Mesh CreateMesh() const;
+
 };
 
 class MinecraftModel {

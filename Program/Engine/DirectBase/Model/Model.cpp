@@ -17,6 +17,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+#include "../../../Utils/Convert/Convert.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 
@@ -819,6 +820,35 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 		}
 		// マテリアルのポインタを取得
 		meshResult->material_ = result->materialMap_.at(SoLib::to_string(mesh->mMaterialIndex)).get();
+
+		// SkinCluster構築用のデータ取得を追加
+		for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
+			aiBone *aiBone = mesh->mBones[boneIndex];
+			std::string jointName = aiBone->mName.C_Str();
+			// 名前をもとにデータを構築
+			JointWeightData &jointWeightData = result->skinCluster_.skinClusterData_[jointName];
+
+			// バインド行列の逆行列を取得
+			aiMatrix4x4 bindPoseMatrixAssimp = aiBone->mOffsetMatrix.Inverse();
+			aiVector3D scale, translate;
+			aiQuaternion rotate;
+			// Transformを取得
+			bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
+			Matrix4x4 bindPoseMatrix = SoLib::Convert(scale, rotate, translate).Affine();
+			// 逆行列を保存
+			jointWeightData.inverseBindPoseMatrix_ = bindPoseMatrix.InverseSRT();
+
+			// 領域を確保しておく
+			jointWeightData.vertexWeightData_.resize(aiBone->mNumWeights);
+			for (uint32_t weightIndex = 0; weightIndex < aiBone->mNumWeights; ++weightIndex) {
+				aiVertexWeight aiWeight = aiBone->mWeights[weightIndex];
+				// ウェイトデータを取得して格納
+				jointWeightData.vertexWeightData_[weightIndex] = { .weight_ = aiWeight.mWeight, .vertexIndex_ = aiWeight.mVertexId };
+			}
+
+
+		}
+
 		// 保存されたデータからメッシュを作成
 		meshResult->CreateBuffer();
 
@@ -841,6 +871,7 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 		else {
 			mesh->pNode_ = &result->rootNode_;
 		}
+
 	}
 
 	result->name_ = fileName;
@@ -1458,6 +1489,7 @@ const ModelNode *ModelNode::FindNode(const std::string &name) const
 Skeleton Skeleton::MakeSkeleton(const ModelNode &rootNode)
 {
 	Skeleton result;
+	// ノードからジョイントを構築し、現在のジョイントのindexを保存する
 	result.root_ = ModelJoint::MakeJointIndex(rootNode, {}, result.joints_);
 
 	// 名前とindexを紐づける
@@ -1516,4 +1548,16 @@ uint32_t ModelJoint::MakeJointIndex(const ModelNode &node, const std::optional<u
 	}
 
 	return selfIndex;
+}
+
+Mesh MeshFactory::CreateMesh() const
+{
+	Mesh result;
+	result.meshName_ = meshName_;
+	result.pNode_ = pNode_;
+	result.material_ = pMaterial_;
+	result.vertexBuffer_.SetIndexData(indexs_);
+	result.vertexBuffer_.SetVertexData(vertices_);
+
+	return result;
 }

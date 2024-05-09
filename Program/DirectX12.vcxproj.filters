@@ -133,6 +133,9 @@
     <Filter Include="Engine\PostEffect">
       <UniqueIdentifier>{cd004645-b61c-4c69-b6d4-5ab977e667f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Convert">
+      <UniqueIdentifier>{b62b4b64-9d89-4d59-a066-c952dd2b03a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -389,6 +392,9 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\PostEffect\OffScreenRendering.cpp">
       <Filter>Engine\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Convert\Convert.cpp">
+      <Filter>Utils\Convert</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -754,6 +760,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Base\EngineObject.h">
       <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Convert\Convert.h">
+      <Filter>Utils\Convert</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
