@@ -87,7 +87,9 @@ private:
 private:
 
 	// 頂点データ
-	VertexBuffer<VertexData, true> vertexData_;
+	VertexBuffer<VertexData> vertexData_;
+	// Indexデータ
+	IndexBuffer<uint32_t> indexData_;
 
 	CBuffer<ConstData> constData_;
 

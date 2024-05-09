@@ -27,6 +27,8 @@ std::array<std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 8u>, 3u> Mode
 std::array<RootSignature, 2u> Model::rootSignatureClass_ = {};
 Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 
+//DescHeapCbvSrvUav::HeapRange Model::srvRange_;
+
 std::unique_ptr<CBuffer<Matrix4x4>> ModelNode::kIdentity_ = nullptr;
 
 namespace ModelAnimation {
@@ -152,6 +154,7 @@ void Model::StaticInit()
 	CreatePipeLine();
 
 	ModelNode::kIdentity_ = std::make_unique<CBuffer<Matrix4x4>>(Matrix4x4::Identity());
+	//srvRange_ = DirectXCommon::GetInstance()->GetSRVHeap()->RequestHeapAllocation(kModelHeapCount_);
 }
 
 void Model::CreatePipeLine()
@@ -925,8 +928,9 @@ std::unique_ptr<Model> Model::CreatePlane()
 	auto &mesh = *newModel->meshList_.begin();
 
 	auto &vertexArray = mesh->vertexBuffer_;
+	auto &indexBuffer = mesh->indexBuffer_;
 	vertexArray.SetVertexData(std::array{ Mesh::VertexData{}, Mesh::VertexData{}, Mesh::VertexData{}, Mesh::VertexData{} });
-	vertexArray.SetIndexData(std::array{ 0u, 1u, 2u, 1u, 3u, 2u });
+	indexBuffer.SetIndexData(std::array{ 0u, 1u, 2u, 1u, 3u, 2u });
 
 	// 左下
 	vertexArray.GetVertexData()[0u].position = { -0.5f, -0.5f, 0.f, 1.f };
@@ -1029,7 +1033,7 @@ void Mesh::CreateBuffer()
 #pragma region インデックスバッファ
 
 	// indexバッファへのデータ転送
-	vertexBuffer_.SetIndexData(indexs_);
+	indexBuffer_.SetIndexData(indexs_);
 
 #pragma endregion
 }
@@ -1067,8 +1071,8 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
 	}
 	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
-	commandList->IASetIndexBuffer(&vertexBuffer_.GetIBView());
-	commandList->DrawIndexedInstanced(static_cast<uint32_t>(vertexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
+	commandList->IASetIndexBuffer(&indexBuffer_.GetIBView());
+	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
 }
 
 void Material::CreateBuffer()
@@ -1556,8 +1560,28 @@ Mesh MeshFactory::CreateMesh() const
 	result.meshName_ = meshName_;
 	result.pNode_ = pNode_;
 	result.material_ = pMaterial_;
-	result.vertexBuffer_.SetIndexData(indexs_);
+	result.indexBuffer_.SetIndexData(indexs_);
 	result.vertexBuffer_.SetVertexData(vertices_);
 
+	return result;
+}
+
+SkinClusterData::SkinClusterData(uint32_t jointsCount, uint32_t vertexCount)
+	:palette_(jointsCount)
+{
+	influence_.Resize(vertexCount);
+
+	// メモリに対するアクセスを定義
+	influenceSpan_ = { influence_.GetVertexData().data(), vertexCount };
+	paletteSpan_ = { palette_.data(), jointsCount };
+}
+
+SkinClusterData SkinClusterData::MakeSkinClusterData(const Model &model, const Skeleton &skeleton)
+{
+	uint32_t vertexCount = 0;
+	for (const auto &mesh : model.meshList_) {
+		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
+	}
+	SkinClusterData result{ static_cast<uint32_t>(skeleton.joints_.size()),vertexCount };
 	return result;
 }

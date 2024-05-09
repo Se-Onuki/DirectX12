@@ -6,38 +6,31 @@
 #pragma region 頂点バッファ
 
 /// @brief 頂点バッファ
-/// @tparam T 頂点データの型 Index 添え字が有効か
-template <SoLib::IsRealType T, bool Index = true>
+/// @tparam T 頂点データの型
+template <SoLib::IsRealType T>
 class VertexBuffer final {
 
 	ArrayBuffer<T> vertexData_;
 	D3D12_VERTEX_BUFFER_VIEW vbView_;
-
-	ArrayBuffer<uint32_t> indexData_;
-	D3D12_INDEX_BUFFER_VIEW ibView_;
 
 public:
 	VertexBuffer() = default;
 	VertexBuffer(const VertexBuffer &) = default;
 	~VertexBuffer() = default;
 
+	void Resize(uint32_t size) { vertexData_.CreateBuffer(size); }
+
 	auto &GetVertexData() noexcept { return vertexData_; }
 	const auto &GetVertexData() const noexcept { return vertexData_; }
 	const auto &GetVBView() const noexcept { return vbView_; };
 
-	auto &GetIndexData() noexcept { return indexData_; }
-	const auto &GetIndexData() const noexcept { return indexData_; }
-	const auto &GetIBView() const noexcept { return ibView_; };
-
 	template <SoLib::IsContainsType<T> U>
 	void SetVertexData(const U &source);
-	template <SoLib::IsContainsType<uint32_t> U>
-	void SetIndexData(const U &source);
 };
 
-template <SoLib::IsRealType T, bool Index>
+template <SoLib::IsRealType T>
 template <SoLib::IsContainsType<T> U>
-void VertexBuffer<T, Index>::SetVertexData(const U &source) {
+void VertexBuffer<T>::SetVertexData(const U &source) {
 	vertexData_ = source;
 
 	// 頂点バッファビューを作成する
@@ -50,15 +43,38 @@ void VertexBuffer<T, Index>::SetVertexData(const U &source) {
 
 }
 
-template <SoLib::IsRealType T, bool Index>
-template <SoLib::IsContainsType<uint32_t> U>
-void VertexBuffer<T, Index>::SetIndexData(const U &source) {
+/// @brief Indexバッファ
+/// @tparam T Indexデータの型
+template <SoLib::IsIntegral T>
+class IndexBuffer final {
+
+	ArrayBuffer<T> indexData_;
+	D3D12_INDEX_BUFFER_VIEW ibView_;
+
+public:
+	IndexBuffer() = default;
+	IndexBuffer(const IndexBuffer &) = default;
+	~IndexBuffer() = default;
+
+	void Resize(uint32_t size) { indexData_.CreateBuffer(size); }
+
+	auto &GetIndexData() noexcept { return indexData_; }
+	const auto &GetIndexData() const noexcept { return indexData_; }
+	const auto &GetIBView() const noexcept { return ibView_; };
+
+	template <SoLib::IsContainsType<T> U>
+	void SetIndexData(const U &source);
+};
+
+template <SoLib::IsIntegral T>
+template <SoLib::IsContainsType<T> U>
+void IndexBuffer<T>::SetIndexData(const U &source) {
 
 	indexData_ = source;
 
 	// インデックスview
 	ibView_.BufferLocation = indexData_.GetGPUVirtualAddress();
-	ibView_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indexData_.size());
+	ibView_.SizeInBytes = static_cast<UINT>(sizeof(T) * indexData_.size());
 	ibView_.Format = DXGI_FORMAT_R32_UINT;
 }
 

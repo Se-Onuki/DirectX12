@@ -336,7 +336,7 @@ void Sprite::Draw() const {
 		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)RootParameter::kTexture, textureHaundle_);
 		// Spriteの描画
 		commandList_->IASetVertexBuffers(0, 1, &vertexData_.GetVBView());	// VBVを設定
-		commandList_->IASetIndexBuffer(&vertexData_.GetIBView());
+		commandList_->IASetIndexBuffer(&indexData_.GetIBView());
 		commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	}
 }
@@ -378,7 +378,7 @@ void Sprite::MapVertex()
 void Sprite::CreateBuffer() {
 
 	vertexData_.SetVertexData(std::array<VertexData, 4u>{ VertexData{}, VertexData{}, VertexData{}, VertexData{} });
-	vertexData_.SetIndexData(std::array<uint32_t, 6u>{ 0u, 1u, 2u, 1u, 3u, 2u });
+	indexData_.SetIndexData(std::array<uint32_t, 6u>{ 0u, 1u, 2u, 1u, 3u, 2u });
 	//auto *const device = DirectXCommon::GetInstance()->GetDevice();
 
 	//vertexData_ = CreateBufferResource(device, sizeof(VertexData) * 4u);

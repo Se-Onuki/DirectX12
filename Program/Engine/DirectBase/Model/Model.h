@@ -9,10 +9,10 @@
 #include <list>
 #include <unordered_map>
 
-#include "../../../Utils/Math/Matrix4x4.h"
-#include "../../../Utils/Math/Vector2.h"
-#include "../../../Utils/Math/Vector3.h"
-#include "../../../Utils/Math/Vector4.h"
+#include "../../Utils/Math/Matrix4x4.h"
+#include "../../Utils/Math/Vector2.h"
+#include "../../Utils/Math/Vector3.h"
+#include "../../Utils/Math/Vector4.h"
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -33,6 +33,9 @@
 
 #include "../../Utils/SoLib/SoLib_Timer.h"
 #include "../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Utils/Containers/Singleton.h"
+
+#include "../Base/EngineObject.h"
 
 class ViewProjection;
 
@@ -130,9 +133,23 @@ struct VertexInfluence {
 	static constexpr uint32_t kNumMaxInfluence_ = 4u;
 	VertexWeightData<kNumMaxInfluence_> vertexInfluence_;
 };
+struct WellForGPU {
+	Matrix4x4 skeletonSpaceMatrix; // 位置用
+	Matrix4x4 skeletonSpaceInverseTransponeMatrix; // 法線用
+};
 
 struct SkinClusterData {
-	CBuffer<VertexInfluence> influence_;
+	SkinClusterData(uint32_t jointsCount, uint32_t vertexCount);
+	static SkinClusterData MakeSkinClusterData(const Model &model, const Skeleton &skeleton);
+	SkinCluster skinCluster_;
+
+	std::span<VertexInfluence> influenceSpan_;
+	std::span<WellForGPU> paletteSpan_;
+
+private:
+
+	VertexBuffer<VertexInfluence> influence_;
+	StructuredBuffer<WellForGPU> palette_;
 };
 
 namespace ModelAnimation {
@@ -251,6 +268,15 @@ namespace ModelAnimation {
 	};
 
 }
+
+class ModelDataManager : public SoLib::Singleton<ModelDataManager>, public SolEngine::EngineObject {
+	friend SoLib::Singleton<ModelDataManager>;
+
+public:
+
+};
+
+
 class Model {
 public:
 	enum class PipelineType : uint32_t {
@@ -298,6 +324,11 @@ private:
 
 	static void CreatePipeLine();
 	static void BuildPipeLine(PipelineType type, D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc);
+
+	//static DescHeapCbvSrvUav::HeapRange srvRange_;
+
+	static constexpr uint32_t kModelHeapCount_ = 32u;
+
 
 public:
 	static void StaticInit();
@@ -408,6 +439,7 @@ public:
 	};
 
 	VertexBuffer<VertexData> vertexBuffer_;
+	IndexBuffer<uint32_t> indexBuffer_;
 
 	std::list<VertexData> vertices_;
 	std::list<uint32_t> indexs_;
