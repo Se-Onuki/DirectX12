@@ -1571,6 +1571,7 @@ SkinClusterData::SkinClusterData(uint32_t jointsCount, uint32_t vertexCount)
 {
 	influence_.Resize(vertexCount);
 
+
 	// メモリに対するアクセスを定義
 	influenceSpan_ = { influence_.GetVertexData().data(), vertexCount };
 	paletteSpan_ = { palette_.data(), jointsCount };
@@ -1583,5 +1584,24 @@ SkinClusterData SkinClusterData::MakeSkinClusterData(const Model &model, const S
 		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
 	}
 	SkinClusterData result{ static_cast<uint32_t>(skeleton.joints_.size()),vertexCount };
+
+	// 初期化
+	result.inverseBindPoseMatrixList_.resize(skeleton.jointMap_.size());
+	std::generate(result.inverseBindPoseMatrixList_.begin(), result.inverseBindPoseMatrixList_.end(), Matrix4x4::Identity);
+
+	const auto jointEndIt = skeleton.jointMap_.end();
+
+	// モデルデータを解析してInfluenceを埋める
+	for (const auto &[keyName, jointWeight] : model.skinCluster_.skinClusterData_) {
+		// 一致するジョイントの対象が存在するか探す
+		auto it = skeleton.jointMap_.find(keyName);
+		if (it == jointEndIt) {
+			continue;
+		}
+
+	}
+
+
+
 	return result;
 }
