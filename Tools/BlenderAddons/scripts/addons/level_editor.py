@@ -189,7 +189,7 @@ class DrawCollider:
         # Indexデータ
         indices = [[0, 1]]
         # ビルトインのシェーダを取得
-        shader = gpu.shader.from_builtin("3D_UNIFORM_COLOR")
+        shader = gpu.shader.from_builtin("UNIFORM_COLOR")
         # バッチを作成(引数 : シェーダ、トポロジー、頂点データ、Indexデータ)
         batch = gpu_extras.batch.batch_for_shader(shader,"LINES", vertices,indices = indices)
 
