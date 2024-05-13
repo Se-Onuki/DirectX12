@@ -113,6 +113,8 @@ struct Skeleton {
 	// 所属しているJointのデータ
 	std::vector<std::unique_ptr<ModelJoint>> joints_;
 
+	void AddDrawBuffer(const Matrix4x4 &transMat) const;
+
 };
 
 template<size_t InfluenceCount = 1u>
@@ -295,6 +297,19 @@ class ModelDataManager : public SoLib::Singleton<ModelDataManager>, public SolEn
 public:
 
 };
+/*
+
+class SkeletonManager : public SoLib::Singleton<SkeletonManager>, public SolEngine::EngineObject {
+	friend SoLib::Singleton<SkeletonManager>;
+
+public:
+
+	Skeleton* GetSkeleton(const Model*)
+
+
+private:
+
+};*/
 
 
 class Model {

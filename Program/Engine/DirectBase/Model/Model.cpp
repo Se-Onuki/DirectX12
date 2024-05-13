@@ -18,6 +18,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include "../../../Utils/Convert/Convert.h"
+#include "../Render/CameraAnimations/CameraManager.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 
@@ -1732,4 +1733,22 @@ void SkinModel::Update(const ModelAnimation::Animation &animation, const float a
 	skeleton_->ApplyAnimation(animation, animateTime);
 	skeleton_->UpdateMatrix();
 	skinCluster_->Update(*skeleton_);
+}
+
+void Skeleton::AddDrawBuffer(const Matrix4x4 &transMat) const
+{
+	auto *blockRender_ = BlockManager::GetInstance();
+	Model *plane = ModelManager::GetInstance()->GetModel("Plane");
+	const Matrix4x4 &cameraInvMat = CameraManager::GetInstance()->GetUseCamera()->matProjection_.InverseRT();
+
+	for (const auto &joint : joints_) {
+
+		Matrix4x4 affineMat = cameraInvMat;
+		for (uint32_t i = 0; i < 12; i++) {
+			affineMat.arr[i] = affineMat.arr[i] * 0.1f;
+		}
+		affineMat.GetTranslate() = joint->skeletonSpaceMatrix_.GetTranslate() * transMat;
+		blockRender_->AddBox(plane, { .transMat_ = affineMat });
+	}
+
 }

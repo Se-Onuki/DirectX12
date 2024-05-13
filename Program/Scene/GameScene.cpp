@@ -48,7 +48,7 @@ void GameScene::OnEnter() {
 	//assimpModel_ = Model::LoadAssimpObjFile("", "box.obj");
 
 	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
-	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "sneakWalk.gltf");
+	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "walk.gltf");
 
 	skinModel_ = SkinModel::MakeSkinModel(playerModel_);
 
@@ -117,7 +117,7 @@ void GameScene::OnEnter() {
 	playerPrefab_ = std::make_unique<ECS::Prefab>();
 
 	*playerPrefab_ += ECS::IsAlive{};
-	*playerPrefab_ += ECS::ScaleComp{};
+	*playerPrefab_ += ECS::ScaleComp{ .scale_ = Vector3::one * 2.5f };
 	*playerPrefab_ += ECS::QuaternionRotComp{};
 	*playerPrefab_ += ECS::PositionComp{};
 	*playerPrefab_ += ECS::InputFlagComp{};
@@ -146,7 +146,7 @@ void GameScene::OnEnter() {
 
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 	*enemyPrefab_ += ECS::IsAlive{};
-	*enemyPrefab_ += ECS::ScaleComp{};
+	*enemyPrefab_ += ECS::ScaleComp{ };
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
 	*enemyPrefab_ += ECS::PositionComp{ .position_{0.f, 1.f, 10.f} };
 	*enemyPrefab_ += ECS::TransformMatComp{};
@@ -322,6 +322,12 @@ void GameScene::Update() {
 	// ここでECSのsystemを呼び出す
 	systemManager_.Update(world_.get(), deltaTime);
 
+
+	for (const auto &[entity, skinModel, mat] : world_->view<const ECS::SkinModel, const ECS::TransformMatComp>()) {
+
+		skinModel->skinModel_->skeleton_->AddDrawBuffer(*mat);
+
+	}
 
 	ground_.Draw();
 
