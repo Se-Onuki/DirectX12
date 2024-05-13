@@ -253,11 +253,15 @@ void GameScene::OnExit() {
 
 void GameScene::Update() {
 
+	static bool skeletonDraw = true;
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	[[maybe_unused]] const float powDeltaTime = deltaTime * deltaTime;
 
 	ImGui::Text("XInput左スティックで移動");
 	ImGui::Text("エンティティ数 / %lu", world_->size());
+	if (ImGui::Button("SkeletonDebug")) {
+		skeletonDraw = not skeletonDraw;
+	}
 
 	light_->ImGuiWidget();
 	gameObject_.GetComponent<ModelComp>()->GetBone("Body")->ImGuiWidget();
@@ -322,11 +326,11 @@ void GameScene::Update() {
 	// ここでECSのsystemを呼び出す
 	systemManager_.Update(world_.get(), deltaTime);
 
+	if (skeletonDraw) {
+		for (const auto &[entity, skinModel, mat] : world_->view<const ECS::SkinModel, const ECS::TransformMatComp>()) {
 
-	for (const auto &[entity, skinModel, mat] : world_->view<const ECS::SkinModel, const ECS::TransformMatComp>()) {
-
-		skinModel->skinModel_->skeleton_->AddDrawBuffer(*mat);
-
+			skinModel->skinModel_->skeleton_->AddDrawBuffer(*mat, { .z = -2.f });
+		}
 	}
 
 	ground_.Draw();

@@ -113,7 +113,7 @@ struct Skeleton {
 	// 所属しているJointのデータ
 	std::vector<std::unique_ptr<ModelJoint>> joints_;
 
-	void AddDrawBuffer(const Matrix4x4 &transMat) const;
+	void AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &drawOffset = {}) const;
 
 };
 
