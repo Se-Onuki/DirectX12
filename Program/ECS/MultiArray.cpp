@@ -29,8 +29,18 @@ void ECS::MultiChunk::erase(uint32_t index) {
 		// 末尾のデータのアドレスをを取得
 		//auto backPtr = GetItemPtr(classData.typeInfo_, size_ - 1u);
 		auto backPtr = GetEntityPtr(size_ - 1u);
+
+
+		auto oldItem = *static_cast<ECS::Entity *>(ptr);
+
+
 		// 破棄するデータを末尾のデータで上書き
 		std::memcpy(ptr, backPtr, entitySize_);
+		auto &newItem = *static_cast<ECS::Entity *>(ptr);
+
+		// 新しいデータを持ってくる
+		newItem = oldItem;
+		newItem.version_++;
 
 		//}
 		// 配列のサイズを短縮

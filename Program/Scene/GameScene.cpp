@@ -277,7 +277,7 @@ void GameScene::Update() {
 	spawner_.clear();
 
 
-	constexpr uint32_t enemyCount = 1u;
+	constexpr uint32_t enemyCount = 5u;
 
 	if (spawnTimer_.IsFinish()) {
 		// スポナーに追加を要求する
