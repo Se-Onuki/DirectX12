@@ -9,7 +9,7 @@
 
 void CGTaskScene::OnEnter()
 {
-	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/", "PlayerAttack.gltf"));
+	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 
 	uvModel_ = ModelManager::GetInstance()->AddModel("UvPlane", Model::LoadAssimpModelFile("", "plane.gltf"));
 
@@ -26,9 +26,12 @@ void CGTaskScene::OnEnter()
 	fullScreen_->Init();
 
 	// アニメーションを設定
-	animation_ = ModelAnimation::Animation::CreateFromFile("Model/", "PlayerAttack.gltf");
+	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "sneakWalk.gltf");
 	animationPlayer_.SetAnimation(&animation_);
 	animationPlayer_.Start(true);
+
+	skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(model_->rootNode_));
+	skinCluster_ = std::make_unique<SkinClusterData>(SkinClusterData::MakeSkinClusterData(*model_, *skeleton_));
 
 	/*
 	{
@@ -61,6 +64,10 @@ void CGTaskScene::Update()
 	animationPlayer_.Update(deltaTime, model_);
 	//gameObject_->Update(deltaTime);
 
+	skeleton_->ApplyAnimation(animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
+	skeleton_->UpdateMatrix();
+	skinCluster_->Update(*skeleton_);
+
 	CameraManager::GetInstance()->DisplayImGui();
 	CameraManager::GetInstance()->Update(deltaTime);
 }
@@ -91,8 +98,8 @@ void CGTaskScene::Draw()
 	Model::SetPipelineType(Model::PipelineType::kModel);
 
 	light_->SetLight(commandList);
-	model_->Draw(transform_, camera);
-	uvModel_->Draw(transform_, camera);
+	model_->Draw(*skinCluster_, transform_, camera);
+	//uvModel_->Draw(transform_, camera);
 
 	Model::EndDraw();
 

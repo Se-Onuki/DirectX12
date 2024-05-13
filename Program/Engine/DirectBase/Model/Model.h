@@ -36,6 +36,7 @@
 #include "../../Utils/Containers/Singleton.h"
 
 #include "../Base/EngineObject.h"
+#include <optional>
 
 class ViewProjection;
 
@@ -93,7 +94,7 @@ struct ModelJoint {
 	// 自分自身のIndex
 	uint32_t index_;
 	// 自身の親のIndex。存在しない場合はnullopt
-	std::optional<uint32_t> parent_;
+	std::optional<uint32_t> parent_ = std::nullopt;
 
 };
 
@@ -149,6 +150,9 @@ struct SkinClusterData {
 
 	std::span<VertexInfluence> influenceSpan_;
 	std::span<WellForGPU> paletteSpan_;
+
+	const VertexBuffer<VertexInfluence> &GetInfluence() const { return influence_; }
+	const StructuredBuffer<WellForGPU> &GetPalette() const { return palette_; }
 
 private:
 
@@ -290,13 +294,14 @@ public:
 	};
 
 	enum class RootParameter : uint32_t {
-		kWorldTransform,   // ワールド変換行列
-		kViewProjection,   // ビュープロジェクション変換行列
-		kMaterial,         // マテリアル
-		kTexture,          // テクスチャ
-		kLight,            // ライト
-		kInstanceLocation, // インスタンス先頭値
-		kModelTransform,   // モデルの回転情報
+		kWorldTransform,	// ワールド変換行列
+		kViewProjection,	// ビュープロジェクション変換行列
+		kMaterial,			// マテリアル
+		kTexture,			// テクスチャ
+		kLight,				// ライト
+		kInstanceLocation,	// インスタンス先頭値
+		kMatrixPalette,		// スキン行列の配列
+		//kModelTransform,   // モデルの回転情報
 
 		kSize, // enumのサイズ
 	};
@@ -349,7 +354,8 @@ public:
 	SkinCluster skinCluster_;
 
 	void Draw(const Transform &transform, const Camera3D &camera) const;
-	void Draw(const Transform &transform, const Camera3D &camera, const Material &material) const;
+	void Draw(const SkinClusterData &skinCluster, const Transform &transform, const Camera3D &camera) const;
+	//void Draw(const Transform &transform, const Camera3D &camera, const Material &material) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const;
 	template <typename T>
@@ -463,7 +469,7 @@ public:
 	void SetMaterial(Material *const material);
 	Material *const GetMaterial() const { return material_; }
 
-	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const Material *const material = nullptr) const;
+	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const D3D12_VERTEX_BUFFER_VIEW *vbv = nullptr) const;
 };
 
 struct MeshFactory {

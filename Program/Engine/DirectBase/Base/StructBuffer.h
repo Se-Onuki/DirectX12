@@ -25,14 +25,14 @@ class ArrayBuffer final {
 
 	uint32_t size_;
 
-	T *mapData_;
+	std::span<T> mapData_ = {};
 
 public:
 
 	using map_matrix = T;
 
 	inline ID3D12Resource *const GetResources() noexcept { return resources_.Get(); }
-	inline const ID3D12Resource *const GetResources() const noexcept { return resources_.Get(); }
+	inline ID3D12Resource *const GetResources() const noexcept { return resources_.Get(); }
 
 	inline const D3D12_SHADER_RESOURCE_VIEW_DESC &GetDesc() const noexcept { return srvDesc_; }
 
@@ -48,9 +48,9 @@ public:
 	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
 
 	uint32_t size() const noexcept { return size_; }
-	T *const data() const noexcept { return mapData_; }
-	T *const begin() const noexcept { return &mapData_[0]; }
-	T *const end() const noexcept { return &mapData_[size_]; }
+	T *const data() const noexcept { return mapData_.data(); }
+	auto begin() const noexcept { return mapData_.begin(); }
+	auto end() const noexcept { return mapData_.end(); }
 
 
 	template <SoLib::IsContainsType<T> U>
@@ -76,7 +76,7 @@ public:
 
 
 	void Copy(T *const begin, T *const end) {
-		std::copy(begin, end, mapData_);
+		std::copy(begin, end, mapData_.begin());
 	}
 
 private:
@@ -92,29 +92,29 @@ inline ArrayBuffer<T>::operator bool() const noexcept {
 
 template<SoLib::IsRealType T>
 inline ArrayBuffer<T>::operator T *() noexcept {
-	return *mapData_;
+	return mapData_.data();
 }
 
 template<SoLib::IsRealType T>
 inline ArrayBuffer<T>::operator const T *() const noexcept {
-	return *mapData_;
+	return mapData_.data();
 }
 
 template<SoLib::IsRealType T>
 inline T *const ArrayBuffer<T>::operator->() noexcept {
-	return *mapData_;
+	return mapData_.data();
 }
 
 template<SoLib::IsRealType T>
 inline const T *const ArrayBuffer<T>::operator->() const noexcept {
-	return *mapData_;
+	return mapData_.data();
 }
 
 template<SoLib::IsRealType T>
 template<SoLib::IsContainsType<T> U>
 inline ArrayBuffer<T> &ArrayBuffer<T>::operator=(const U &source) {
 	CreateBuffer(static_cast<uint32_t>(source.size()));
-	std::copy(source.begin(), source.end(), mapData_);
+	std::copy(source.begin(), source.end(), mapData_.begin());
 	return *this;
 }
 
@@ -131,7 +131,7 @@ inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
 
 	CreateBuffer(static_cast<uint32_t>(source.size()));
-	std::copy(source.begin(), source.end(), mapData_);
+	std::copy(source.begin(), source.end(), mapData_.begin());
 }
 
 //template<SoLib::IsRealType T>
@@ -154,9 +154,13 @@ inline void ArrayBuffer<T>::CreateBuffer(uint32_t size) {
 		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
 
 		srvDesc_ = CreateSrvDesc();
+		T *tmp = nullptr;
 
-		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
+		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&tmp));
 		assert(SUCCEEDED(result));
+
+		mapData_ = { tmp, size_ };
+
 	}
 }
 
@@ -195,7 +199,7 @@ public:
 	inline const ArrayBuffer<T> &GetBuffer() const { return arrayBuffer_; }
 
 	inline ID3D12Resource *const GetResources() noexcept { return arrayBuffer_.GetResources(); }
-	inline const ID3D12Resource *const GetResources() const noexcept { return arrayBuffer_.GetResources(); }
+	inline ID3D12Resource *const GetResources() const noexcept { return arrayBuffer_.GetResources(); }
 
 	inline const D3D12_SHADER_RESOURCE_VIEW_DESC &GetDesc() const noexcept { return arrayBuffer_.GetDesc(); }
 

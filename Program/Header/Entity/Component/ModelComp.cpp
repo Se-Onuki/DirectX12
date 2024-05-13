@@ -71,7 +71,7 @@ void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &v
 }
 
 void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const {
-	this->model_->Draw(transform_, vp, material);
+	this->model_->Draw(transform_, vp);
 
 	for (auto &child : children_) {
 		child->Draw(vp, material);

@@ -27,6 +27,9 @@ private:
 
 	Model *uvModel_;
 
+	std::unique_ptr<SkinClusterData> skinCluster_;
+	std::unique_ptr<Skeleton> skeleton_;
+
 	Transform transform_;
 
 	PostEffect::OffScreenRenderer *offScreen_ = nullptr;

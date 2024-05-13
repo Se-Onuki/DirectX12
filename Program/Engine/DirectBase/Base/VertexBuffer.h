@@ -18,7 +18,17 @@ public:
 	VertexBuffer(const VertexBuffer &) = default;
 	~VertexBuffer() = default;
 
-	void Resize(uint32_t size) { vertexData_.CreateBuffer(size); }
+	void Resize(uint32_t size) {
+		vertexData_.CreateBuffer(size);
+
+		// 頂点バッファビューを作成する
+		// リソースの先頭のアドレスから使う
+		vbView_.BufferLocation = vertexData_.GetGPUVirtualAddress();
+		// 使用するリソースのサイズは頂点3つ分のサイズ
+		vbView_.SizeInBytes = static_cast<UINT>(sizeof(T) * vertexData_.size());
+		// 1頂点あたりのサイズ
+		vbView_.StrideInBytes = sizeof(T);
+	}
 
 	auto &GetVertexData() noexcept { return vertexData_; }
 	const auto &GetVertexData() const noexcept { return vertexData_; }

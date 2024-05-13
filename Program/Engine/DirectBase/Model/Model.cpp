@@ -202,9 +202,22 @@ void Model::CreatePipeLine()
 	rootParameters[(uint32_t)Model::RootParameter::kLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[(uint32_t)Model::RootParameter::kLight].Descriptor.ShaderRegister = 1;                    // レジスタ番号1とバインド
 
-	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  // CBVを使う
-	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; // PixelShaderで使う
-	rootParameters[(uint32_t)Model::RootParameter::kModelTransform].Descriptor.ShaderRegister = 4;                  // レジスタ番号4とバインド
+
+	// DescriptorRangeの設定
+	D3D12_DESCRIPTOR_RANGE paletteDescriptorRange[1] = {};
+	paletteDescriptorRange[0].BaseShaderRegister = 1;                                                   // 0から始める
+	paletteDescriptorRange[0].NumDescriptors = 1;                                                       // 数は1つ
+	paletteDescriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;                              // SRVを使う
+	paletteDescriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+
+	rootParameters[(uint32_t)Model::RootParameter::kMatrixPalette].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;           // DescriptorTableを使う
+	rootParameters[(uint32_t)Model::RootParameter::kMatrixPalette].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;                    // VertexShaderで使う
+	rootParameters[(uint32_t)Model::RootParameter::kMatrixPalette].DescriptorTable.pDescriptorRanges = paletteDescriptorRange;             // Tableの中身の配列を指定
+	rootParameters[(uint32_t)Model::RootParameter::kMatrixPalette].DescriptorTable.NumDescriptorRanges = _countof(paletteDescriptorRange); // Tableで使用する数
+
+	//rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  // CBVを使う
+	//rootParameters[(uint32_t)Model::RootParameter::kModelTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; // PixelShaderで使う
+	//rootParameters[(uint32_t)Model::RootParameter::kModelTransform].Descriptor.ShaderRegister = 4;                  // レジスタ番号4とバインド
 
 #pragma region Texture
 
@@ -239,7 +252,7 @@ void Model::CreatePipeLine()
 #pragma region InputLayout(インプットレイアウト)
 
 	// InputLayout
-	const std::array<D3D12_INPUT_ELEMENT_DESC, 3u> inputElementDescs{
+	const std::array<D3D12_INPUT_ELEMENT_DESC, 5u> inputElementDescs{
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "POSITION",
 			.SemanticIndex = 0,
@@ -257,7 +270,22 @@ void Model::CreatePipeLine()
 			.SemanticIndex = 0,
 			.Format = DXGI_FORMAT_R32G32B32_FLOAT,
 			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
-		} };
+		},
+		{
+			.SemanticName = "WEIGHT",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,	// float4
+			.InputSlot = 1,								// 1番目のSlotのVBVだと伝える
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		},
+		{
+			.SemanticName = "INDEX",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32B32A32_UINT,	// uint4
+			.InputSlot = 1,								// 1番目のSlotのVBVだと伝える
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		},
+	};
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs.data();
 	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs.size());
@@ -279,9 +307,9 @@ void Model::CreatePipeLine()
 
 #pragma region Shader
 
-	PipelineState::ShaderSet particleShader;
-	particleShader.vertex = Shader::Compile(L"Particle.VS.hlsl", L"vs_6_0");
-	particleShader.pixel = Shader::Compile(L"Particle.PS.hlsl", L"ps_6_0");
+	//PipelineState::ShaderSet particleShader;
+	/*particleShader.vertex = Shader::Compile(L"Particle.VS.hlsl", L"vs_6_0");
+	particleShader.pixel = Shader::Compile(L"Particle.PS.hlsl", L"ps_6_0");*/
 
 #pragma endregion
 
@@ -307,8 +335,8 @@ void Model::CreatePipeLine()
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get(); // RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;                                                              // InputLayout
-	graphicsPipelineStateDesc.VS = particleShader.vertex->GetBytecode();                                                  // VertexShader
-	graphicsPipelineStateDesc.PS = particleShader.pixel->GetBytecode();                                                   // PixelShader
+	//graphicsPipelineStateDesc.VS = particleShader.vertex->GetBytecode();                                                  // VertexShader
+	//graphicsPipelineStateDesc.PS = particleShader.pixel->GetBytecode();                                                   // PixelShader
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;                                                           // RasterizeState
 
 	// DSVのFormatを設定する
@@ -332,23 +360,23 @@ void Model::CreatePipeLine()
 	// graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetInputElementDescs(inputElementDescs);
 	// graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].SetShader(particleShader);
 	// graphicsPipelineStateClass_[static_cast<uint32_t>(PipelineType::kParticle)][static_cast<uint32_t>(BlendMode::kNone)].Create(rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)], depthStencilDesc);
-	BuildPipeLine(PipelineType::kParticle, graphicsPipelineStateDesc);
+	//BuildPipeLine(PipelineType::kParticle, graphicsPipelineStateDesc);
 
-	auto shadowPipeline = graphicsPipelineStateDesc;
+	//auto shadowPipeline = graphicsPipelineStateDesc;
 
-	PipelineState::ShaderSet shadowParticleShader;
+	/*PipelineState::ShaderSet shadowParticleShader;
 	shadowParticleShader.vertex = Shader::Compile(L"Particle.VS.hlsl", L"vs_6_0");
 	shadowParticleShader.pixel = Shader::Compile(L"ShaderParticle.PS.hlsl", L"ps_6_0");
 
 	shadowPipeline.VS = shadowParticleShader.vertex->GetBytecode();
-	shadowPipeline.PS = shadowParticleShader.pixel->GetBytecode();
+	shadowPipeline.PS = shadowParticleShader.pixel->GetBytecode();*/
 
-	BuildPipeLine(PipelineType::kShadowParticle, shadowPipeline);
+	//BuildPipeLine(PipelineType::kShadowParticle, shadowPipeline);
 
-	auto modelPipeline = graphicsPipelineStateDesc;
+	auto &modelPipeline = graphicsPipelineStateDesc;
 
 	PipelineState::ShaderSet modelShader;
-	modelShader.vertex = Shader::Compile(L"Object3d.VS.hlsl", L"vs_6_0");
+	modelShader.vertex = Shader::Compile(L"SkinningObject3d.VS.hlsl", L"vs_6_0");
 	modelShader.pixel = Shader::Compile(L"Object3d.PS.hlsl", L"ps_6_0");
 
 	modelPipeline.VS = modelShader.vertex->GetBytecode();
@@ -789,6 +817,28 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 		assert(mesh->HasNormals() and "法線が無いメッシュは今回は非対応");
 		assert(mesh->HasTextureCoords(defaultMaterialIndex) and "Texcoordの無いMeshは今回は非対応");
 
+		meshResult->vertexBuffer_.Resize(mesh->mNumVertices);
+
+		// 頂点として解析する
+		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
+			// 3次元座標
+			const aiVector3D &position = mesh->mVertices[vertexIndex];
+			// 法線
+			const aiVector3D &normal = mesh->mNormals[vertexIndex];
+			// テクスチャ座標
+			const aiVector3D &texcoord = mesh->mTextureCoords[defaultMaterialIndex][vertexIndex];
+
+			// 頂点データ
+			Mesh::VertexData &vertex = meshResult->vertexBuffer_.GetVertexData()[vertexIndex];
+			vertex.position = { position.x, position.y, position.z, 1.f };
+			vertex.normal = { normal.x, normal.y, normal.z };
+			vertex.texCoord = { texcoord.x, texcoord.y };
+
+			// データの補正
+			// aiProcess_MakeLeftHandedは z *= -1 で、右手->左手に変換するので手動で対処
+			vertex.position.x *= -1.f;
+			vertex.normal.x *= -1.f;
+		}
 		// Faceの解析
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
 			// Faceの参照
@@ -796,31 +846,49 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 
 			assert(face.mNumIndices == 3u and "三角形のみサポート");
 
-			// Vertexの解析
-			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
-				// 頂点ID
-				uint32_t vertexIndex = face.mIndices[element];
-				// 3次元座標
-				const aiVector3D &position = mesh->mVertices[vertexIndex];
-				// 法線
-				const aiVector3D &normal = mesh->mNormals[vertexIndex];
-				// テクスチャ座標
-				const aiVector3D &texcoord = mesh->mTextureCoords[defaultMaterialIndex][vertexIndex];
-				// 頂点データ
-				Mesh::VertexData vertex;
-				vertex.position = { position.x, position.y, position.z, 1.f };
-				vertex.normal = { normal.x, normal.y, normal.z };
-				vertex.texCoord = { texcoord.x, texcoord.y };
-
-				// データの補正
-				// aiProcess_MakeLeftHandedは z *= -1 で、右手->左手に変換するので手動で対処
-				vertex.position.x *= -1.f;
-				vertex.normal.x *= -1.f;
-
-				// 頂点の追加
-				meshResult->AddVertex(vertex);
+			std::span<uint32_t> elements{ face.mIndices, face.mNumIndices };
+			for (uint32_t index : elements) {
+				meshResult->indexs_.push_back(index);
 			}
 		}
+
+		//// Faceの解析
+		//for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+		//	// Faceの参照
+		//	const aiFace &face = mesh->mFaces[faceIndex];
+		//
+		//	assert(face.mNumIndices == 3u and "三角形のみサポート");
+		//
+		//	// Vertexの解析
+		//	for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+		//		// 頂点ID
+		//		uint32_t vertexIndex = face.mIndices[element];
+		//		// 3次元座標
+		//		const aiVector3D &position = mesh->mVertices[vertexIndex];
+		//		// 法線
+		//		const aiVector3D &normal = mesh->mNormals[vertexIndex];
+		//		// テクスチャ座標
+		//		const aiVector3D &texcoord = mesh->mTextureCoords[defaultMaterialIndex][vertexIndex];
+		//
+		//		// 頂点データ
+		//		Mesh::VertexData &vertex = meshResult->vertexBuffer_[];
+		//		vertex.position = { position.x, position.y, position.z, 1.f };
+		//		vertex.normal = { normal.x, normal.y, normal.z };
+		//		vertex.texCoord = { texcoord.x, texcoord.y };
+		//
+		//		// データの補正
+		//		// aiProcess_MakeLeftHandedは z *= -1 で、右手->左手に変換するので手動で対処
+		//		vertex.position.x *= -1.f;
+		//		vertex.normal.x *= -1.f;
+		//
+		//	}
+		//
+		//	std::span<uint32_t> elements{ face.mIndices, face.mNumIndices };
+		//	for (uint32_t index : elements) {
+		//		meshResult->indexs_.push_back(index);
+		//	}
+		//}
+
 		// マテリアルのポインタを取得
 		meshResult->material_ = result->materialMap_.at(SoLib::to_string(mesh->mMaterialIndex)).get();
 
@@ -971,23 +1039,24 @@ void Model::Draw(const Transform &transform, const Camera3D &camera) const
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
 	for (auto &mesh : meshList_) {
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_);
 	}
 }
 
-void Model::Draw(const Transform &transform, const Camera3D &camera, const Material &material) const
+
+void Model::Draw(const SkinClusterData &skinCluster, const Transform &transform, const Camera3D &camera) const
 {
 	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
-
+	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle(0).gpuHandle_);
 	for (auto &mesh : meshList_) {
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
-		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(material.blendMode_)].Get()); // PSOを設定
-		mesh->Draw(commandList_, 1u, &material);
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
+		mesh->Draw(commandList_, 1, &skinCluster.GetInfluence().GetVBView());
 	}
 }
 
@@ -1000,7 +1069,7 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 
 	for (auto &mesh : meshList_) {
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, drawCount);
 	}
@@ -1015,7 +1084,7 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 
 	for (auto &mesh : meshList_) {
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
+		//commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, drawCount);
 	}
@@ -1061,16 +1130,18 @@ void Mesh::SetMaterial(Material *const material)
 	material_ = material;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const Material *const material) const
+void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const D3D12_VERTEX_BUFFER_VIEW *vbv) const
 {
+
+	std::array<D3D12_VERTEX_BUFFER_VIEW, 2u> vbvs = { vertexBuffer_.GetVBView() };
+	if (vbv) {
+		vbvs[1] = *vbv;
+	}
+
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, material_->texHandle_);
-	if (material) {
-		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material->materialBuff_.GetGPUVirtualAddress());
-	}
-	else {
-		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
-	}
-	commandList->IASetVertexBuffers(0, 1, &vertexBuffer_.GetVBView());
+
+	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
+	commandList->IASetVertexBuffers(0, vbv ? 2 : 1, vbvs.data());
 	commandList->IASetIndexBuffer(&indexBuffer_.GetIBView());
 	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
 }
@@ -1538,11 +1609,11 @@ uint32_t ModelJoint::MakeJointIndex(const ModelNode &node, const std::optional<u
 {
 	std::unique_ptr<ModelJoint> joint = std::make_unique<ModelJoint>();
 	joint->name_ = node.name_;
-	joint->localMatrix_ = *node.localMatrix_;
+	joint->localMatrix_ = node.GetLocalMatrix();
 	joint->skeletonSpaceMatrix_ = Matrix4x4::Identity();
 	joint->transform_ = node.transform_;
 	uint32_t selfIndex = joint->index_ = static_cast<uint32_t>(joints.size());
-	joint->parent_ = parent;
+	if (parent) { joint->parent_ = parent; }
 	joints.push_back(std::move(joint));
 
 	for (const ModelNode &child : node.children_) {
@@ -1584,6 +1655,8 @@ SkinClusterData SkinClusterData::MakeSkinClusterData(const Model &model, const S
 		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
 	}
 	SkinClusterData result{ static_cast<uint32_t>(skeleton.joints_.size()),vertexCount };
+
+	result.skinCluster_ = model.skinCluster_;
 
 	// 初期化
 	result.inverseBindPoseMatrixList_.resize(skeleton.jointMap_.size());
