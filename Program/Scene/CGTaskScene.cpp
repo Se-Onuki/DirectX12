@@ -95,7 +95,7 @@ void CGTaskScene::Draw()
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
-	Model::SetPipelineType(Model::PipelineType::kModel);
+	Model::SetPipelineType(Model::PipelineType::kSkinModel);
 
 	light_->SetLight(commandList);
 	model_->Draw(*skinCluster_, transform_, camera);

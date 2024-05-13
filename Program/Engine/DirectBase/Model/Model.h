@@ -290,7 +290,11 @@ public:
 	enum class PipelineType : uint32_t {
 		kModel,          // モデル用
 		kParticle,       // パーティクル用
+		kSkinModel,          // モデル用
+		kSkinParticle, // パーティクル用
 		kShadowParticle, // パーティクル用
+
+		kSize,
 	};
 
 	enum class RootParameter : uint32_t {
@@ -301,7 +305,7 @@ public:
 		kLight,				// ライト
 		kInstanceLocation,	// インスタンス先頭値
 		kMatrixPalette,		// スキン行列の配列
-		//kModelTransform,   // モデルの回転情報
+		kModelTransform,   // モデルの回転情報
 
 		kSize, // enumのサイズ
 	};
@@ -324,7 +328,7 @@ private:
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// モデル用パイプライン
-	static std::array<std::array<ComPtr<ID3D12PipelineState>, 8u>, 3u> graphicsPipelineState_;
+	static std::array<std::array<ComPtr<ID3D12PipelineState>, 8u>, static_cast<uint32_t>(PipelineType::kSize)> graphicsPipelineState_;
 	// static std::array<ComPtr<ID3D12RootSignature>, 2u> rootSignature_;
 	static PipelineType sPipelineType_;
 
