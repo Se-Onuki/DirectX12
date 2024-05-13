@@ -88,6 +88,14 @@ void ECS::System::ModelAnimatorUpdate::OnUpdate(::World *world, const float delt
 
 }
 
+void ECS::System::SkinModelUpdate::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
+{
+	for (const auto &[entity, model, animator] : world->view<ECS::SkinModel, ECS::ModelAnimator>()) {
+		model->skinModel_->Update(*animator->animatior_.GetAnimation(), animator->animatior_.GetDeltaTimer().GetNowFlame());
+	}
+
+}
+
 void ECS::System::ColorLerp::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
 
@@ -327,7 +335,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 			// 攻撃判定を有効化
 			attColl->isActive_ = true;
 
-			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl->collision_.centor + Vector3{.y = 0.1f });
+			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl->collision_.centor + Vector3{ .y = 0.1f });
 			particle->SetAliveTime(0.5f);
 			particle->transform_.rotate = SoLib::MakeQuaternion({ 90._deg,0,0 });
 			particle->transform_.scale = Vector3::one * (attackSt->radius_ * 2.f);
@@ -414,11 +422,16 @@ void ECS::System::BoneCollision::OnUpdate(::World *world, [[maybe_unused]] const
 
 void ECS::System::ModelDrawer::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 	static BlockManager *const blockManager = BlockManager::GetInstance();
+	static SkinModelListManager *const skinModelRender_ = SkinModelListManager::GetInstance();
 
 	for (const auto &[entity, transform, model] : world->view<ECS::TransformMatComp, ECS::ModelComp>()) {
-
-
-		blockManager->AddBox(model->model_, { .transMat_ = *transform });
+		auto [skinModel] = world->GetEntityManager()->GetComponent<ECS::SkinModel>(*entity);
+		if (skinModel == nullptr) {	// スキンモデルのデータを持っていない場合は通常描画
+			blockManager->AddBox(model->model_, { .transMat_ = *transform });
+		}
+		else {	// スキンモデルのデータを持っていた場合はスキンモデルの描画
+			skinModelRender_->AddBox({ model->model_, skinModel->skinModel_ }, { .transMat_ = *transform });
+		}
 	}
 
 }
@@ -521,7 +534,7 @@ void ECS::System::CursorDrawer::OnUpdate(::World *world, [[maybe_unused]] const 
 	for (const auto &[entity, plTag, pos, rot, cursor] : world->view<ECS::PlayerTag, ECS::PositionComp, ECS::QuaternionRotComp, ECS::CursorComp>()) {
 
 		// カーソルの座標
-		Vector3 cursorPos = rot->quateRot_.GetFront() * cursor->offset_ + **pos + Vector3{.y = 1.f };
+		Vector3 cursorPos = rot->quateRot_.GetFront() * cursor->offset_ + **pos + Vector3{ .y = 1.f };
 		// 外枠の表示
 		{
 			// 描画する場所

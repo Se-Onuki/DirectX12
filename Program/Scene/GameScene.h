@@ -63,6 +63,7 @@ private:
 	StructuredBuffer<Particle::ParticleData> particleArray_{ 1024u };
 
 	BlockManager *blockRender_;
+	SkinModelListManager *skinModelRender_;
 
 	ECS::SystemManager systemManager_;
 
@@ -101,6 +102,8 @@ private:
 	std::unique_ptr<HealthBar> healthBar_;
 
 	std::array<std::unique_ptr<HealthBar>, 50u> enemyHealthBar_;
+
+	std::unique_ptr<SkinModel> skinModel_;
 
 	Model *attackModel_ = nullptr;
 

@@ -252,6 +252,11 @@ namespace ECS {
 		ModelAnimation::AnimationPlayer animatior_;
 	};
 
+	struct SkinModel : IComponent {
+
+		::SkinModel *skinModel_;
+	};
+
 	struct AttackCollisionComp : IComponent {
 		Sphere collision_;
 		bool isActive_ = false;

@@ -27,8 +27,7 @@ private:
 
 	Model *uvModel_;
 
-	std::unique_ptr<SkinClusterData> skinCluster_;
-	std::unique_ptr<Skeleton> skeleton_;
+	std::unique_ptr<SkinModel> skinModel_;
 
 	Transform transform_;
 

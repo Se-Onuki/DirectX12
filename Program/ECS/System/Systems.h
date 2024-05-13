@@ -50,6 +50,13 @@ namespace ECS {
 
 		};
 
+		class SkinModelUpdate : public ISystem {
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+
+		};
+
 		class ColorLerp : public ISystem {
 
 			bool IsConstSystem() const override { return false; }

@@ -1047,7 +1047,7 @@ void Model::Draw(const Transform &transform, const Camera3D &camera) const
 
 void Model::Draw(const SkinClusterData &skinCluster, const Transform &transform, const Camera3D &camera) const
 {
-	assert(sPipelineType_ == PipelineType::kSkinModel && "設定されたシグネチャがkModelではありません");
+	assert(sPipelineType_ == PipelineType::kSkinModel && "設定されたシグネチャがkSkinModelではありません");
 
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
@@ -1056,6 +1056,20 @@ void Model::Draw(const SkinClusterData &skinCluster, const Transform &transform,
 		// commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, 1, &skinCluster.GetInfluence().GetVBView());
+	}
+}
+
+void Model::Draw(const SkinClusterData &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
+{
+	assert(sPipelineType_ == PipelineType::kSkinParticle && "設定されたシグネチャがkSkinParticleではありません");
+
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
+	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle(0).gpuHandle_);
+	for (auto &mesh : meshList_) {
+		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinParticle)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
+		mesh->Draw(commandList_, drawCount, &skinCluster.GetInfluence().GetVBView());
 	}
 }
 
@@ -1700,4 +1714,22 @@ void SkinClusterData::Update(const Skeleton &skeleton)
 		palette.skeletonSpaceMatrix = inverseBindPoseMatrixList_[jointIndex] * skeleton.joints_[jointIndex]->skeletonSpaceMatrix_;
 		palette.skeletonSpaceInverseTransponeMatrix = palette.skeletonSpaceMatrix.InverseSRT().Transpose();
 	}
+}
+
+std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(Model *model)
+{
+	std::unique_ptr<SkinModel> result = std::make_unique<SkinModel>();
+
+	result->pModel_ = model;
+
+	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(result->pModel_->rootNode_));
+	result->skinCluster_ = std::make_unique<SkinClusterData>(SkinClusterData::MakeSkinClusterData(*result->pModel_, *result->skeleton_));
+	return std::move(result);
+}
+
+void SkinModel::Update(const ModelAnimation::Animation &animation, const float animateTime)
+{
+	skeleton_->ApplyAnimation(animation, animateTime);
+	skeleton_->UpdateMatrix();
+	skinCluster_->Update(*skeleton_);
 }

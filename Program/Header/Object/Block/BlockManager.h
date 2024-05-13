@@ -170,3 +170,86 @@ private: // メンバ変数
 	std::unordered_map<const Model *, std::unique_ptr<BlockList>> blockMap_;
 
 };
+
+/// <summary>
+/// ステージ上のブロックをインスタンシングで描画するマネージャ
+/// </summary>
+class SkinModelListManager : public SoLib::Singleton<SkinModelListManager> {
+private: // コンストラクタ等
+
+	// シングルトンパターンの設定
+	SkinModelListManager() = default;
+	~SkinModelListManager() = default;
+	SkinModelListManager(const SkinModelListManager &) = delete;
+	const SkinModelListManager &operator=(const SkinModelListManager &) = delete;
+
+public: // メンバ関数
+	friend SoLib::Singleton<SkinModelListManager>;
+
+	using SkinModelPair = std::pair<const Model *, const SkinModel *>;
+
+	struct hash {
+		size_t operator()(const SkinModelPair &data) const {
+			size_t result{};
+
+			result = std::hash<decltype(data.first)>{}(data.first) + std::hash<decltype(data.second)>{}(data.second);
+
+			return result;
+		}
+	};
+
+	/*/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns>シングルトンインスタンス</returns>
+	static BlockManager *GetInstance() {
+		static BlockManager instance;
+		return &instance;
+	};*/
+
+	/// <summary>
+	/// 初期化関数
+	/// </summary>
+	/// <param name="maxCount">最大数</param>
+	void Init(uint32_t maxCount);
+
+
+	/// <summary>
+	/// 描画関数
+	/// </summary>
+	/// <param name="camera"></param>
+	void Draw(const Camera3D &camera);
+	void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
+
+	IBlock *const AddBox(const SkinModelPair& model, IBlock &&block) {
+
+		if (not model.first or not model.second) { return nullptr; }
+
+		decltype(blockMap_)::iterator blockListItr = blockMap_.find(model);
+		if (blockListItr == blockMap_.end()) {
+			blockMap_[model] = std::make_unique<BlockList>();
+			blockMap_[model]->SetModel(model.first);
+		}
+		return blockMap_[model]->push_back(std::move(block));
+	}
+
+	/// @brief 破棄関数
+	void clear() {
+		for (auto &blockList : blockMap_) {
+			blockList.second->clear();
+		}
+	}
+
+private: // メンバ変数
+
+	// ブロック配列
+	ArrayBuffer<Particle::ParticleData> blocks_;
+
+	// ヒープレンジ
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
+
+	// ブロックリスト配列
+	std::unordered_map<SkinModelPair, std::unique_ptr<BlockList>, hash> blockMap_;
+
+};
+

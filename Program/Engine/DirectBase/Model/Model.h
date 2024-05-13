@@ -160,6 +160,16 @@ private:
 	StructuredBuffer<WellForGPU> palette_;
 };
 
+struct SkinModel {
+	static std::unique_ptr<SkinModel> MakeSkinModel(Model *model);
+	void Update(const ModelAnimation::Animation &animation, const float animateTime);
+
+	Model *pModel_ = nullptr;
+	std::unique_ptr<SkinClusterData> skinCluster_ = nullptr;
+	std::unique_ptr<Skeleton> skeleton_ = nullptr;
+
+};
+
 namespace ModelAnimation {
 
 	struct IKeyFlame {};
@@ -254,6 +264,8 @@ namespace ModelAnimation {
 		AnimationPlayer(const Animation *animation) : animation_(animation) {}
 
 		inline void SetAnimation(const Animation *animation) { animation_ = animation; }
+
+		const Animation *GetAnimation() const { return animation_; }
 
 		void Start(bool isLoop = false);
 
@@ -360,10 +372,14 @@ public:
 	void Draw(const Transform &transform, const Camera3D &camera) const;
 	void Draw(const SkinClusterData &skinCluster, const Transform &transform, const Camera3D &camera) const;
 	//void Draw(const Transform &transform, const Camera3D &camera, const Material &material) const;
+	void Draw(const SkinClusterData &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const;
 	template <typename T>
 	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
+
+	template <typename T>
+	void Draw(const SkinClusterData &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
@@ -581,4 +597,10 @@ template <typename T>
 inline void Model::Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const
 {
 	Model::Draw(structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), structurdBuffer.GetStartIndex(), camera);
+}
+
+template <typename T>
+inline void Model::Draw(const SkinClusterData &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const
+{
+	Model::Draw(skinCluster, structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), structurdBuffer.GetStartIndex(), camera);
 }

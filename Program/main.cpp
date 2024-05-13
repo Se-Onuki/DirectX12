@@ -53,7 +53,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	WinApp::StaticInit();
 
 	WinApp *const winApp = WinApp::GetInstance();
-	winApp->CreateGameWindow("LE2A_04_オヌキ_セイヤ");
+	winApp->CreateGameWindow("LE3A_03_オヌキ_セイヤ");
 
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
@@ -115,7 +115,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->StaticInit();
 	sceneManager->Init();
-	sceneManager->ChangeScene("CGTaskScene", 0.f);
+	sceneManager->ChangeScene("TitleScene", 0.f);
 
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
@@ -192,6 +192,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//ParticleManager::GetInstance()->
 
 	BlockManager::GetInstance()->Finalize();
+	SkinModelListManager::GetInstance()->Finalize();
 
 	sceneManager->Finalize();
 

@@ -19,6 +19,7 @@ GameScene::GameScene() {
 	audio_ = Audio::GetInstance();
 	cameraManager_ = CameraManager::GetInstance();
 	blockRender_ = BlockManager::GetInstance();
+	skinModelRender_ = SkinModelListManager::GetInstance();
 	particleManager_ = ParticleManager::GetInstance();
 	// collisionManager_ = CollisionManager::GetInstance();
 }
@@ -33,6 +34,7 @@ void GameScene::OnEnter() {
 	light_ = DirectionLight::Create();
 
 	blockRender_->Init(1024u);
+	skinModelRender_->Init(1024u);
 	particleManager_->Init(2048u);
 
 	world_ = std::make_unique<World>();
@@ -45,8 +47,10 @@ void GameScene::OnEnter() {
 
 	//assimpModel_ = Model::LoadAssimpObjFile("", "box.obj");
 
-	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/", "PlayerAttack.gltf"));
-	animation_ = ModelAnimation::Animation::CreateFromFile("Model/", "PlayerAttack.gltf");
+	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
+	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "sneakWalk.gltf");
+
+	skinModel_ = SkinModel::MakeSkinModel(playerModel_);
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
@@ -92,10 +96,10 @@ void GameScene::OnEnter() {
 	emitterArchetype.AddClassData<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 	emitterArray_ = std::make_unique<ECS::MultiArray>(emitterArchetype);*/
 
-	Archetype particleArchetype;
-	particleArchetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>();
+	//Archetype particleArchetype;
+	//particleArchetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>();
 
-	entityManager_->CreateEntity(particleArchetype, 3u);
+	//entityManager_->CreateEntity(particleArchetype, 3u);
 	//auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 
 	prefab_ = std::make_unique<ECS::Prefab>();
@@ -106,7 +110,7 @@ void GameScene::OnEnter() {
 	*prefab_ += ECS::RotateComp{};
 	*prefab_ += ECS::ScaleComp{};
 	*prefab_ += ECS::AliveTime{};
-	*prefab_ += ECS::EmitterComp{.count_ = 5u, .startColor_ = 0xFFFF00FF, .endColor_ = 0xFF000000, .spawnLifeLimit_{0.1f, 0.2f}, .spawnPower_{0.05f, 0.1f}, .spawnRange_{90._deg, 180._deg, 0.f} };
+	*prefab_ += ECS::EmitterComp{ .count_ = 5u, .startColor_ = 0xFFFF00FF, .endColor_ = 0xFF000000, .spawnLifeLimit_{0.1f, 0.2f}, .spawnPower_{0.05f, 0.1f}, .spawnRange_{90._deg, 180._deg, 0.f} };
 
 	entityManager_->CreateEntity(*prefab_);
 
@@ -118,24 +122,25 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::PositionComp{};
 	*playerPrefab_ += ECS::InputFlagComp{};
 	*playerPrefab_ += ECS::TransformMatComp{};
-	*playerPrefab_ += ECS::ModelAnimator{.animatior_ = &animation_ };
-	*playerPrefab_ += ECS::ModelComp{.model_ = playerModel_ };
+	*playerPrefab_ += ECS::ModelAnimator{ .animatior_ = &animation_ };
+	*playerPrefab_ += ECS::SkinModel{ .skinModel_ = skinModel_.get() };
+	*playerPrefab_ += ECS::ModelComp{ .model_ = playerModel_ };
 	//*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
-	*playerPrefab_ += ECS::GravityComp{.gravity_ = Vector3::up * -9.8f };
-	*playerPrefab_ += ECS::CollisionComp{.collision_ = Sphere{ .centor = Vector3::up, .radius = 1.f } };
+	*playerPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
+	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor = Vector3::up, .radius = 1.f } };
 	*playerPrefab_ += ECS::PlayerTag{};
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::AttackCollisionComp{ };
 	*playerPrefab_ += ECS::AnimateParametor{};
 	*playerPrefab_ += ECS::HealthComp::Create(120);
-	*playerPrefab_ += ECS::InvincibleTime{.timer_{ 1.f, false } };
-	*playerPrefab_ += ECS::AirResistance{.resistance = (3.6f / 60.f) };
-	*playerPrefab_ += ECS::CursorComp{.model_ = cursor, .inModel_ = inCursor };
+	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
+	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
+	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
 	*playerPrefab_ += ECS::AttackStatus{ };
-	*playerPrefab_ += ECS::AttackPower{.power_ = 20 };
-	*playerPrefab_ += ECS::AttackCooltime{.cooltime_ = { 1.f, false } };
+	*playerPrefab_ += ECS::AttackPower{ .power_ = 20 };
+	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.f, false } };
 
 	entityManager_->CreateEntity(*playerPrefab_);
 
@@ -143,16 +148,16 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::IsAlive{};
 	*enemyPrefab_ += ECS::ScaleComp{};
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
-	*enemyPrefab_ += ECS::PositionComp{.position_{0.f, 1.f, 10.f} };
+	*enemyPrefab_ += ECS::PositionComp{ .position_{0.f, 1.f, 10.f} };
 	*enemyPrefab_ += ECS::TransformMatComp{};
-	*enemyPrefab_ += ECS::ModelComp{.model_{ModelManager::GetInstance()->GetModel("Block")} };
-	*enemyPrefab_ += ECS::GravityComp{.gravity_ = Vector3::up * -9.8f };
-	*enemyPrefab_ += ECS::CollisionComp{.collision_ = Sphere{ .radius = 1.f } };
+	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
+	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
+	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f } };
 	*enemyPrefab_ += ECS::EnemyTag{};
 	*enemyPrefab_ += ECS::HealthComp::Create(100);
 	*enemyPrefab_ += ECS::HealthBarComp{};
-	*enemyPrefab_ += ECS::AttackPower{.power_ = 10 };
-	*enemyPrefab_ += ECS::AttackCooltime{.cooltime_ = { 5.f, false } };
+	*enemyPrefab_ += ECS::AttackPower{ .power_ = 10 };
+	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
 
 	entityManager_->CreateEntity(*enemyPrefab_);
 
@@ -160,7 +165,7 @@ void GameScene::OnEnter() {
 	const Vector3 cameraOffset{ 0.f,1.f,-1.f };
 
 	ECS::Prefab followCamera;
-	followCamera += ECS::FollowCamera{.rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -40.f} };
+	followCamera += ECS::FollowCamera{ .rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -40.f} };
 	followCamera += ECS::PositionComp{};
 
 	entityManager_->CreateEntity(followCamera);
@@ -206,6 +211,7 @@ void GameScene::OnEnter() {
 	// アニメーションなど
 	systemManager_.AddSystem<ECS::System::AnimateUpdate>();
 	systemManager_.AddSystem<ECS::System::ModelAnimatorUpdate>();
+	systemManager_.AddSystem<ECS::System::SkinModelUpdate>();
 	systemManager_.AddSystem<ECS::System::ColorLerp>();
 	// 座標などの移動
 	systemManager_.AddSystem<ECS::System::AddGravity>();
@@ -225,8 +231,8 @@ void GameScene::OnEnter() {
 	//systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
 	//systemManager_.AddSystem<ECS::System::BoneDrawer>(&boneModel_);
-	systemManager_.AddSystem<ECS::System::ModelDrawer>();
 	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
+	systemManager_.AddSystem<ECS::System::ModelDrawer>();
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
 	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
 	systemManager_.AddSystem<ECS::System::CursorDrawer>();
@@ -261,6 +267,7 @@ void GameScene::Update() {
 	particleArray_.clear();
 
 	blockRender_->clear();
+	skinModelRender_->clear();
 	spawnTimer_.Update(deltaTime);
 	playerSpawn_.Update(deltaTime);
 
@@ -270,7 +277,7 @@ void GameScene::Update() {
 	spawner_.clear();
 
 
-	constexpr uint32_t enemyCount = 5u;
+	constexpr uint32_t enemyCount = 1u;
 
 	if (spawnTimer_.IsFinish()) {
 		// スポナーに追加を要求する
@@ -278,7 +285,7 @@ void GameScene::Update() {
 			{
 				for (uint32_t i = 0; auto & enemy : enemys) {
 					const auto &[pos] = manager->GetComponent<ECS::PositionComp>(enemy);
-					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::PI2 / enemyCount) *i, 0.f }) * 7.5f + pos->position_;
+					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::PI2 / enemyCount) * i, 0.f }) * 7.5f + pos->position_;
 					i++;
 				}
 			});
@@ -322,13 +329,10 @@ void GameScene::Update() {
 
 	gameObject_.Update(deltaTime);
 
-	/*for (const auto &[entity, model, translateMat, enemy] : world_->view<const ECS::ModelComp, const ECS::TransformMatComp, const ECS::EnemyTag>()) {
-		blockRender_->AddBox(model->model_, IBlock{ .transMat_ = translateMat->transformMat_ });
-	}*/
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
-		particleArray_.push_back(Particle::ParticleData{.transform = mat->transformMat_, .color = color->color_ });
+		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });
 
 	}
 
@@ -371,6 +375,11 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	blockRender_->Draw(camera);
+
+	Model::SetPipelineType(Model::PipelineType::kSkinParticle);
+	light_->SetLight(commandList);
+
+	skinModelRender_->Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 

@@ -23,8 +23,6 @@ class ArrayBuffer final {
 	ComPtr<ID3D12Resource> resources_ = nullptr;
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_{};
 
-	uint32_t size_;
-
 	std::span<T> mapData_ = {};
 
 public:
@@ -47,7 +45,7 @@ public:
 	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
 	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
 
-	uint32_t size() const noexcept { return size_; }
+	uint32_t size() const noexcept { return static_cast<uint32_t>(mapData_.size()); }
 	T *const data() const noexcept { return mapData_.data(); }
 	auto begin() const noexcept { return mapData_.begin(); }
 	auto end() const noexcept { return mapData_.end(); }
@@ -146,20 +144,19 @@ inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 template<SoLib::IsRealType T>
 inline void ArrayBuffer<T>::CreateBuffer(uint32_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
-	if (size != 0u && size_ != size) {
-		size_ = size;
+	if (size != 0u && mapData_.size() != size) {
 		HRESULT result = S_FALSE;
 		if (resources_ != nullptr) { resources_->Release(); }
 		// 256バイト単位のアライメント
 		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
 
-		srvDesc_ = CreateSrvDesc();
 		T *tmp = nullptr;
 
 		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&tmp));
 		assert(SUCCEEDED(result));
 
-		mapData_ = { tmp, size_ };
+		mapData_ = { tmp, size };
+		srvDesc_ = CreateSrvDesc();
 
 	}
 }
@@ -175,7 +172,7 @@ inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T>::CreateSrvDesc() const
 	srvDesc.Buffer.FirstElement = 0;
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	srvDesc.Buffer.StructureByteStride = sizeof(T);	// アライメントはC++準拠
-	srvDesc.Buffer.NumElements = size_;
+	srvDesc.Buffer.NumElements = static_cast<uint32_t>(mapData_.size());
 
 	return srvDesc;
 }
@@ -248,14 +245,11 @@ private:
 
 	uint32_t size_;
 
-	uint32_t maxSize_;
-
 };
 
 template<SoLib::IsRealType T>
 inline StructuredBuffer<T>::StructuredBuffer(uint32_t maxSize) {
 	arrayBuffer_.CreateBuffer(maxSize);
-	maxSize_ = maxSize;
 	startIndex_ = 0u;
 
 	static auto *const device = DirectXCommon::GetInstance()->GetDevice();
@@ -268,7 +262,7 @@ inline StructuredBuffer<T>::StructuredBuffer(uint32_t maxSize) {
 template<SoLib::IsRealType T>
 inline void StructuredBuffer<T>::push_back(const T &data) {
 	// もし、最大値の方が大きかったら
-	if (size_ < maxSize_) {
+	if (size_ < arrayBuffer_.size()) {
 		// データを追加して、インクリメント
 		arrayBuffer_[size_++] = data;
 	}
@@ -276,7 +270,7 @@ inline void StructuredBuffer<T>::push_back(const T &data) {
 
 template<SoLib::IsRealType T>
 inline void StructuredBuffer<T>::push_back(T &&data) {
-	if (size_ < maxSize_) {
+	if (size_ < arrayBuffer_.size()) {
 		arrayBuffer_[size_++] = std::move(data);
 	}
 }

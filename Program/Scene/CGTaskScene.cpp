@@ -30,8 +30,7 @@ void CGTaskScene::OnEnter()
 	animationPlayer_.SetAnimation(&animation_);
 	animationPlayer_.Start(true);
 
-	skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(model_->rootNode_));
-	skinCluster_ = std::make_unique<SkinClusterData>(SkinClusterData::MakeSkinClusterData(*model_, *skeleton_));
+	skinModel_ = SkinModel::MakeSkinModel(model_);
 
 	/*
 	{
@@ -64,9 +63,7 @@ void CGTaskScene::Update()
 	animationPlayer_.Update(deltaTime, model_);
 	//gameObject_->Update(deltaTime);
 
-	skeleton_->ApplyAnimation(animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
-	skeleton_->UpdateMatrix();
-	skinCluster_->Update(*skeleton_);
+	skinModel_->Update(animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
 
 	CameraManager::GetInstance()->DisplayImGui();
 	CameraManager::GetInstance()->Update(deltaTime);
@@ -98,7 +95,7 @@ void CGTaskScene::Draw()
 	Model::SetPipelineType(Model::PipelineType::kSkinModel);
 
 	light_->SetLight(commandList);
-	model_->Draw(*skinCluster_, transform_, camera);
+	model_->Draw(*skinModel_->skinCluster_, transform_, camera);
 	//uvModel_->Draw(transform_, camera);
 
 	Model::EndDraw();
