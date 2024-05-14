@@ -242,7 +242,7 @@ void GameScene::OnEnter() {
 	offScreen_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
-	fullScreen_->Init();
+	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" } });
 
 }
 
@@ -428,36 +428,33 @@ void GameScene::Draw() {
 
 void GameScene::PostEffectSetup()
 {
-	if (isGrayScale_ > 0) {
-		// 描画先のRTVとDSVを設定する
-		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = pDxCommon_->GetDsvDescHeap()->GetCPUDescriptorHandleForHeapStart();
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreen_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
+
+	// 描画先のRTVとDSVを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = pDxCommon_->GetDsvDescHeap()->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreen_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
 
 #pragma region ViewportとScissor(シザー)
 
-		// ビューポート
-		D3D12_VIEWPORT viewport;
-		// シザー短形
-		D3D12_RECT scissorRect{};
+	// ビューポート
+	D3D12_VIEWPORT viewport;
+	// シザー短形
+	D3D12_RECT scissorRect{};
 
-		pDxCommon_->SetFullscreenViewPort(&viewport, &scissorRect);
+	pDxCommon_->SetFullscreenViewPort(&viewport, &scissorRect);
 
 #pragma endregion
 
-		pDxCommon_->DrawTargetReset(&rtvHandle, offScreen_->GetClearColor(), &dsvHandle, viewport, scissorRect);
-	}
-	else {
-		pDxCommon_->DefaultDrawReset();
-	}
+	pDxCommon_->DrawTargetReset(&rtvHandle, offScreen_->GetClearColor(), &dsvHandle, viewport, scissorRect);
+
+
 }
 
 void GameScene::PostEffectEnd()
 {
-	if (isGrayScale_ > 0) {
 
-		pDxCommon_->DefaultDrawReset(false);
+	pDxCommon_->DefaultDrawReset(false);
 
-		fullScreen_->Draw(offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
-	}
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+
 
 }

@@ -80,7 +80,7 @@ namespace PostEffect {
 	}
 
 
-	void FullScreenRenderer::Init()
+	void FullScreenRenderer::Init(const std::list< std::pair< std::wstring,  std::wstring> > &key)
 	{
 
 		auto device = GetDevice();
@@ -121,15 +121,9 @@ namespace PostEffect {
 		inputLayoutDesc.pInputElementDescs = nullptr;
 		inputLayoutDesc.NumElements = 0u;
 
-		PipelineState::ShaderSet copyShader;
-		copyShader.vertex = Shader::Compile(L"FullScreen.VS.hlsl", L"vs_6_0");
-		copyShader.pixel = Shader::Compile(L"FullScreen.PS.hlsl", L"ps_6_0");
-
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 		graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature
 		graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
-		graphicsPipelineStateDesc.VS = copyShader.vertex->GetBytecode();	// VertexShader
-		graphicsPipelineStateDesc.PS = copyShader.pixel->GetBytecode();		// PixelShader
 		graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
 
 		// DSVのFormatを設定する
@@ -157,11 +151,24 @@ namespace PostEffect {
 		graphicsPipelineStateDesc.BlendState = blendDesc;
 
 		HRESULT hr = S_FALSE;
-		hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&pipelineState_));
-		assert(SUCCEEDED(hr));
 
+		for (const auto &filePath : key) {
+
+			auto &pileLine = pipelineState_[filePath];
+
+			PipelineState::ShaderSet copyShader;
+			copyShader.vertex = Shader::Compile(filePath.first, L"vs_6_0");
+			copyShader.pixel = Shader::Compile(filePath.second, L"ps_6_0");
+
+			copyShader.SetPipelineDesc(&graphicsPipelineStateDesc);
+
+			hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&pileLine));
+
+			assert(SUCCEEDED(hr));
+		}
 	}
-	void FullScreenRenderer::Draw(ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
+
+	void FullScreenRenderer::Draw(const std::pair<const std::wstring, const std::wstring > &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 	{
 
 		auto command = GetCommandList();
@@ -187,7 +194,7 @@ namespace PostEffect {
 
 
 		command->SetGraphicsRootSignature(GetRootSignature());
-		command->SetPipelineState(GetPipeLine());
+		command->SetPipelineState(GetPipeLine(key));
 		command->SetGraphicsRootDescriptorTable(0, gpuHandle);
 
 		command->DrawInstanced(3, 1, 0, 0);

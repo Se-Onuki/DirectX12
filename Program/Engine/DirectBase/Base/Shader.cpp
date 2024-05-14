@@ -37,6 +37,7 @@ Shader Shader::Compile(const std::wstring &ShaderPath, const wchar_t *profile)
 {
 	Shader result;
 	result.shaderBlob_ = CompileShader(directoryPath_ + ShaderPath, profile, dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get());
+	result.shaderPath_ = ShaderPath;
 	assert(result.shaderBlob_ and "シェーダーを読み込めませんでした");
 	return result;
 }

@@ -32,6 +32,8 @@ class Shader {
 
 	ComPtr<IDxcBlob> shaderBlob_ = nullptr;
 
+	std::wstring shaderPath_;
+
 public:
 
 	inline operator bool() noexcept;
@@ -43,12 +45,24 @@ public:
 
 	static Shader Compile(const std::wstring &ShaderPath, const wchar_t *profile);
 
-	inline IDxcBlob *const GetShaderBlob()const {
+	inline IDxcBlob *const GetShaderBlob() const {
 		return shaderBlob_.Get();
+	}
+	inline const std::wstring &GetShaderPath() const {
+		return shaderPath_;
 	}
 
 	D3D12_SHADER_BYTECODE GetBytecode()const;
 };
+
+namespace std {
+	template<>
+	struct hash<Shader> {
+		size_t operator()(const Shader &data) const {
+			return std::hash<std::wstring>()(data.GetShaderPath());
+		}
+	};
+}
 
 
 Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
