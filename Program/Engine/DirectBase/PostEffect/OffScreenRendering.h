@@ -6,6 +6,7 @@
 #include <wrl.h>
 #include "../Base/EngineObject.h"
 #include "../Base/RootSignature.h"
+#include "../Base/CBuffer.h"
 
 namespace PostEffect {
 
@@ -71,7 +72,11 @@ namespace PostEffect {
 
 		ID3D12PipelineState *GetPipeLine(const std::pair<std::wstring, std::wstring> &key) { return pipelineState_.at(key).Get(); }
 
+		std::pair<float, float> *GetParam() { return param_.get(); }
+
 	private:
+
+		CBuffer<std::pair<float, float>> param_ = { { 16.f, 0.8f} };
 
 		RootSignature rootSignature_;
 

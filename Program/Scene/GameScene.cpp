@@ -341,6 +341,18 @@ void GameScene::Update() {
 	gameObject_.Update(deltaTime);
 
 
+	ImGui::DragFloat2("VignettingParam", &fullScreen_->GetParam()->first);
+
+
+	float health = 0.f;
+
+
+	for (const auto &[entity, healthComp, player] : world_->view<const ECS::HealthComp, const ECS::PlayerTag>()) {
+
+		health = healthComp->CalcPercent();
+	}
+	fullScreen_->GetParam()->first = SoLib::Lerp(0.5f, 16.f, health);
+
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });

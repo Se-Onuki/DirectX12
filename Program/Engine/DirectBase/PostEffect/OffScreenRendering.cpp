@@ -80,13 +80,13 @@ namespace PostEffect {
 	}
 
 
-	void FullScreenRenderer::Init(const std::list< std::pair< std::wstring, std::wstring> > &key)
+	void FullScreenRenderer::Init(const std::list<std::pair<std::wstring, std::wstring>> &key)
 	{
 
 		auto device = GetDevice();
 
 
-		std::array<D3D12_ROOT_PARAMETER, 1u> rootParameters = {};
+		std::array<D3D12_ROOT_PARAMETER, 2u> rootParameters = {};
 
 #pragma region Texture
 
@@ -101,6 +101,10 @@ namespace PostEffect {
 		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                // PixelShaderで使う
 		rootParameters[0].DescriptorTable.pDescriptorRanges = descriptorRange;             // Tableの中身の配列を指定
 		rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); // Tableで使用する数
+
+		rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParameters[1].Descriptor.ShaderRegister = 0;                     // レジスタ番号1とバインド
 
 #pragma endregion
 
@@ -168,7 +172,7 @@ namespace PostEffect {
 		}
 	}
 
-	void FullScreenRenderer::Draw(const std::pair<std::wstring, std::wstring > &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
+	void FullScreenRenderer::Draw(const std::pair<std::wstring, std::wstring> &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 	{
 
 		auto command = GetCommandList();
@@ -196,6 +200,7 @@ namespace PostEffect {
 		command->SetGraphicsRootSignature(GetRootSignature());
 		command->SetPipelineState(GetPipeLine(key));
 		command->SetGraphicsRootDescriptorTable(0, gpuHandle);
+		command->SetGraphicsRootConstantBufferView(1, param_.GetGPUVirtualAddress());
 
 		command->DrawInstanced(3, 1, 0, 0);
 
