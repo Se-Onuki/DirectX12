@@ -63,13 +63,13 @@ namespace PostEffect {
 
 	public:
 
-		void Init(const std::list< std::pair< std::wstring,  std::wstring> > &key);
+		void Init(const std::list<std::pair<std::wstring, std::wstring>> &key);
 
-		void Draw(const std::pair<const std::wstring, const std::wstring > &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
+		void Draw(const std::pair<std::wstring, std::wstring> &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
 
 		ID3D12RootSignature *GetRootSignature() { return rootSignature_.Get(); }
 
-		ID3D12PipelineState *GetPipeLine(const std::pair<const std::wstring, const std::wstring > &key) { return pipelineState_.at(key).Get(); }
+		ID3D12PipelineState *GetPipeLine(const std::pair<std::wstring, std::wstring> &key) { return pipelineState_.at(key).Get(); }
 
 	private:
 

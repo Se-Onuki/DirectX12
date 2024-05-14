@@ -15,9 +15,10 @@
 #include "DirectXCommon.h"
 #include "../String/String.h"
 #include <format>
+#include "EngineObject.h"
 
 
-class Shader {
+class Shader : public SolEngine::IResource {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 

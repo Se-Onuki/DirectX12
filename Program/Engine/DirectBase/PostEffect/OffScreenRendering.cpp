@@ -80,7 +80,7 @@ namespace PostEffect {
 	}
 
 
-	void FullScreenRenderer::Init(const std::list< std::pair< std::wstring,  std::wstring> > &key)
+	void FullScreenRenderer::Init(const std::list< std::pair< std::wstring, std::wstring> > &key)
 	{
 
 		auto device = GetDevice();
@@ -168,7 +168,7 @@ namespace PostEffect {
 		}
 	}
 
-	void FullScreenRenderer::Draw(const std::pair<const std::wstring, const std::wstring > &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
+	void FullScreenRenderer::Draw(const std::pair<std::wstring, std::wstring > &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 	{
 
 		auto command = GetCommandList();

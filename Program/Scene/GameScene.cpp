@@ -242,7 +242,7 @@ void GameScene::OnEnter() {
 	offScreen_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
-	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" } });
+	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" } });
 
 }
 
@@ -454,7 +454,7 @@ void GameScene::PostEffectEnd()
 
 	pDxCommon_->DefaultDrawReset(false);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" }, offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
 
 
 }
