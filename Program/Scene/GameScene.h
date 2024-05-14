@@ -112,6 +112,7 @@ private:
 	std::unique_ptr<Model> assimpModel_ = nullptr;
 
 	ModelAnimation::Animation animation_;
+	ModelAnimation::Animation attackAnimation_;
 
 	PostEffect::OffScreenRenderer *offScreen_ = nullptr;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;

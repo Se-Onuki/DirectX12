@@ -49,6 +49,7 @@ void GameScene::OnEnter() {
 
 	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "walk.gltf");
+	attackAnimation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "sneakWalk.gltf");
 
 	skinModel_ = SkinModel::MakeSkinModel(playerModel_);
 
@@ -122,7 +123,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::PositionComp{};
 	*playerPrefab_ += ECS::InputFlagComp{};
 	*playerPrefab_ += ECS::TransformMatComp{};
-	*playerPrefab_ += ECS::ModelAnimator{ .animatior_ = &animation_ };
+	*playerPrefab_ += ECS::ModelAnimator{ .animateList_{{ &animation_, &animation_, &attackAnimation_, &attackAnimation_}},.animatior_ = &animation_ };
 	*playerPrefab_ += ECS::SkinModel{ .skinModel_ = skinModel_.get() };
 	*playerPrefab_ += ECS::ModelComp{ .model_ = playerModel_ };
 	//*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
@@ -133,7 +134,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::PlayerTag{};
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::AttackCollisionComp{ };
-	*playerPrefab_ += ECS::AnimateParametor{};
+	*playerPrefab_ += ECS::EntityState{};
 	*playerPrefab_ += ECS::HealthComp::Create(120);
 	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };

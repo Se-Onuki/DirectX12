@@ -27,3 +27,9 @@ void  ECS::FollowCamera::TransferData(Camera3D &camera, const Vector3 &translate
 	camera.farZ = this->farZ;
 
 }
+
+void ECS::EntityState::ChangeState(uint32_t nextState)
+{
+	stateIndex_ = nextState;
+	stateTimer_ = 0.f;
+}

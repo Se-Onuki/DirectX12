@@ -56,26 +56,9 @@ void ECS::System::AddCoolTime::OnUpdate(::World *world, const float deltaTime)
 
 void ECS::System::AnimateUpdate::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
-	for (const auto &[entity, animate] : world->view<ECS::AnimateParametor>()) {
-		auto &timer = animate->timer_;
-
-		// 動作パラメータを追加
-		timer.Update(deltaTime);
-
-		if (timer.IsActive() && timer.IsFinish()) {
-			// 次のアニメーションの情報を格納
-
-			// 仮実装なので、マジックナンバーで行う
-			if (animate->animIndex_ == 0u) {
-				animate->animIndex_ = 1u;
-				timer.Start();
-			}
-			else {
-				animate->animIndex_ = 0u;
-			}
-
-
-		}
+	for (auto [entity, state] : world->view<ECS::EntityState>()) {
+		// 現在の状態のタイマーを進める
+		state->stateTimer_ += deltaTime;
 	}
 
 }
@@ -83,6 +66,10 @@ void ECS::System::AnimateUpdate::OnUpdate(::World *world, [[maybe_unused]] const
 void ECS::System::ModelAnimatorUpdate::OnUpdate(::World *world, const float deltaTime)
 {
 	for (const auto &[entity, model, animator] : world->view<ECS::ModelComp, ECS::ModelAnimator>()) {
+		if (animator->animatior_.GetDeltaTimer().IsFinish()) {
+			animator->animatior_.SetAnimation(animator->animateList_[0]);
+			animator->animatior_.Start(true);
+		}
 		animator->animatior_.Update(deltaTime, model->model_);
 	}
 
@@ -310,7 +297,7 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 
 		//if (animator->animatior_.GetDeltaTimer().IsFinish()) {
 		if (attackCooltime->cooltime_.IsFinish()) {
-			animator->animatior_.Start(false);
+			// animator->animatior_.Start(false);
 		}
 		//}
 	}
@@ -321,7 +308,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 {
 	static ParticleManager *const particleManager = ParticleManager::GetInstance();
 
-	for (const auto &[entity, pos, quateRot, attackSt, attCT, attColl, cursor] : world->view<const ECS::PositionComp, const ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp>()) {
+	for (const auto &[entity, pos, quateRot, attackSt, attCT, attColl, cursor, modelAnimator, state] : world->view<const ECS::PositionComp, const ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp, ECS::ModelAnimator, ECS::EntityState>()) {
 		// クールタイムが終わってたら
 		if (attCT->cooltime_.IsFinish()) {
 			// 再度開始
@@ -340,6 +327,10 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 			particle->transform_.rotate = SoLib::MakeQuaternion({ 90._deg,0,0 });
 			particle->transform_.scale = Vector3::one * (attackSt->radius_ * 2.f);
 			particle->color_ = 0xFF5555FF;
+
+			state->ChangeState(static_cast<uint32_t>(EntityState::PlayerState::kAttack));
+			modelAnimator->animatior_.SetAnimation(modelAnimator->animateList_[static_cast<uint32_t>(EntityState::PlayerState::kAttack)]);
+			modelAnimator->animatior_.Start();
 
 		}
 		// 終わってなかったら
@@ -367,7 +358,7 @@ void ECS::System::BillboardCalc::OnUpdate(::World *world, [[maybe_unused]] const
 }
 
 void ECS::System::BoneAnimationCalc::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
-	for (const auto &[entity, scale, quate, pos, bone, animate] : world->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::AnimateParametor>()) {
+	for (const auto &[entity, scale, quate, pos, bone, animate] : world->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::BoneTransformComp, ECS::EntityState>()) {
 
 		bone->boneTransform_[0] = { *scale, quate->quateRot_.Normalize(), *pos };
 
@@ -394,16 +385,16 @@ void ECS::System::BoneAnimationCalc::OnUpdate(::World *world, [[maybe_unused]] c
 			swordModel.scale_ = { 0.25f,1.f,0.25f };
 
 
-			auto &sword = bone->boneTransform_[boneModel_->GetIndex("Sword")];
+			//auto &sword = bone->boneTransform_[boneModel_->GetIndex("Sword")];
 
-			if (not animate->timer_.IsFinish()) {
+			/*if (not animate->timer_.IsFinish()) {
 				if (animate->animIndex_ == 0u) {
 					sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(animate->timer_.GetProgress()));
 				}
 				else {
 					sword.rotate_ = Quaternion::AnyAxisRotation(Vector3::right, 90._deg * SoLib::easeInOutSine(1.f - animate->timer_.GetProgress()));
 				}
-			}
+			}*/
 		}
 
 

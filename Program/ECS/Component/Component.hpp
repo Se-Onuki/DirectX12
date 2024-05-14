@@ -239,15 +239,25 @@ namespace ECS {
 		std::array<BoneModel::SimpleTransform, 7u> boneTransform_{};
 	};
 
-	struct AnimateParametor : IComponent {
-		// アニメーションの情報
-		uint32_t animIndex_{};
+	struct EntityState : IComponent {
+		enum class PlayerState : uint32_t {
+			kIdle,
+			kWalk,
+			kAttack,
+		};
 
-		// アニメーションの進行度
-		SoLib::DeltaTimer timer_{};
+		// 遷移状態の情報
+		uint32_t stateIndex_{};
+
+		// 状態の
+		float stateTimer_ = 0.f;
+
+		void ChangeState(uint32_t nextState);
 	};
 
 	struct ModelAnimator : IComponent {
+
+		std::array<ModelAnimation::Animation *, 4u> animateList_;
 
 		ModelAnimation::AnimationPlayer animatior_;
 	};
