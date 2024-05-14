@@ -49,7 +49,7 @@ void GameScene::OnEnter() {
 
 	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "walk.gltf");
-	attackAnimation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "sneakWalk.gltf");
+	attackAnimation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "Attack.gltf", 1);
 
 	skinModel_ = SkinModel::MakeSkinModel(playerModel_);
 
@@ -141,7 +141,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
 	*playerPrefab_ += ECS::AttackStatus{ };
 	*playerPrefab_ += ECS::AttackPower{ .power_ = 20 };
-	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.f, false } };
+	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
 
 	entityManager_->CreateEntity(*playerPrefab_);
 

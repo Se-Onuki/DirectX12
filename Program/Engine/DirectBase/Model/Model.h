@@ -257,7 +257,7 @@ namespace ModelAnimation {
 		SoLib::Time::SecondF duration_;                       // アニメーション全体の尺
 		std::map<std::string, NodeAnimation> nodeAnimations_; // NodeAnimationの集合｡Node名で検索ができる｡
 
-		static Animation CreateFromFile(const std::string &directoryPath, const std::string &filename);
+		static Animation CreateFromFile(const std::string &directoryPath, const std::string &filename, uint32_t index = 0);
 	};
 
 	class AnimationPlayer {

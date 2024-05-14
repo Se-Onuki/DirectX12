@@ -34,7 +34,7 @@ std::unique_ptr<CBuffer<Matrix4x4>> ModelNode::kIdentity_ = nullptr;
 
 namespace ModelAnimation {
 
-	Animation Animation::CreateFromFile(const std::string &directoryPath, const std::string &filename)
+	Animation Animation::CreateFromFile(const std::string &directoryPath, const std::string &filename, uint32_t index)
 	{
 		Animation result{};
 
@@ -49,15 +49,15 @@ namespace ModelAnimation {
 		std::span<aiAnimation *>animationAssimp{ scene->mAnimations, scene->mNumAnimations }; // 一旦最初のアニメーションだけ採用する｡ そのうち複数対応するように｡
 
 		// 時間の単位を秒単位に変更
-		result.duration_ = static_cast<float>(animationAssimp[0]->mDuration / animationAssimp[0]->mTicksPerSecond);
+		result.duration_ = static_cast<float>(animationAssimp[index]->mDuration / animationAssimp[index]->mTicksPerSecond);
 		// mTicksPerSecond	: 周波数｡ 単位はHz｡
 		// mDuration		: mTicksPerSecondで指定された周波数における長さ
 
 		// assimpでは個々のAnimationをchannelと呼んでいるので､channelを回してNodeAnimationの情報を取ってくる｡
 		{
-			for (uint32_t channelIndex = 0u; channelIndex < animationAssimp[0]->mNumChannels; channelIndex++) {
+			for (uint32_t channelIndex = 0u; channelIndex < animationAssimp[index]->mNumChannels; channelIndex++) {
 				// アニメーションのデータのポインタ
-				aiNodeAnim *nodeAnimationAssimp = animationAssimp[0]->mChannels[channelIndex];
+				aiNodeAnim *nodeAnimationAssimp = animationAssimp[index]->mChannels[channelIndex];
 				// アニメーションの名前から､紐づいた保存先を作成
 				NodeAnimation &nodeAnimation = result.nodeAnimations_[nodeAnimationAssimp->mNodeName.C_Str()];
 
@@ -68,7 +68,7 @@ namespace ModelAnimation {
 
 					// キーフレームの保存先
 					KeyFlameVector3 keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[0]->mTicksPerSecond); // 周波数から秒単位に変換
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
 					keyFlame.value_ = Vector3{ -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };  // 右手から左手に変更
 
 					// データを転送
@@ -82,7 +82,7 @@ namespace ModelAnimation {
 
 					// キーフレームの保存先
 					KeyFlameQuaternion keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[0]->mTicksPerSecond);                        // 周波数から秒単位に変換
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond);                        // 周波数から秒単位に変換
 					keyFlame.value_ = Quaternion{ keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w }; // 右手から左手に変更
 
 					// データを転送
@@ -96,7 +96,7 @@ namespace ModelAnimation {
 
 					// キーフレームの保存先
 					KeyFlameVector3 keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[0]->mTicksPerSecond); // 周波数から秒単位に変換
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
 					keyFlame.value_ = Vector3{ keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };   // そのまま代入する
 
 					// データを転送
