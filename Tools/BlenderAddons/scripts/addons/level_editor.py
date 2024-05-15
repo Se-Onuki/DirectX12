@@ -127,6 +127,14 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
 		# カスタムプロパティ['file_name']
 		if "file_name" in object:
 			self.write_and_print (file, indent + "N %s" % object["file_name"])
+		# カスタムプロパティ['collider']
+		if "collider" in object:
+			self.write_and_print(file, indent + "C %s" % object["collider"])
+			temp_str = indent + "CC %f %f %f" % (object["collider_center"][0], object["collider_center"][1], object["collider_center"][2])
+			self.write_and_print(file, temp_str)
+			temp_str = indent + "CS %f %f %f" % (object["collider_size"][0], object["collider_size"][1], object["collider_size"][2])
+			self.write_and_print(file, temp_str)
+
 		self.write_and_print (file,indent + "END")
 		self.write_and_print (file,'')
 
@@ -199,9 +207,7 @@ class OBJECT_PT_file_name(bpy.types.Panel):
 		else:
 			self.layout.operator(MYADDON_OT_add_filename.bl_idname)
 
-		# self.layout.operator(MYADDON_OT_stretch_vertex.bl_idname, text = MYADDON_OT_stretch_vertex.bl_label)
-		# self.layout.operator(MYADDON_OT_create_ico_sphere.bl_idname, text = MYADDON_OT_create_ico_sphere.bl_label)
-		# self.layout.operator(MYADDON_OT_export_scene.bl_idname, text = MYADDON_OT_export_scene.bl_label)
+	
 # コライダ描画
 class DrawCollider:
 	# 描画ハンドル
@@ -229,17 +235,36 @@ class DrawCollider:
 		
 		# 現在シーンのオブジェクトリストを走査
 		for object in bpy.context.scene.objects:
+			
+			# もしコライダプロパティがなければ描画をスキップ
+			if not "collider" in object:
+				continue
+
+			# オブジェクトの座標データ
+			center = mathutils.Vector((0,0,0))
+			size = mathutils.Vector((2,2,2))
+
+			# プロパティからデータを取得
+			center[0] = object["collider_center"][0]
+			center[1] = object["collider_center"][1]
+			center[2] = object["collider_center"][2]
+			size[0] = object["collider_size"][0]
+			size[1] = object["collider_size"][1]
+			size[2] = object["collider_size"][2]
+
 			# 追加前の頂点数
 			start = len(vertices['pos'])
 			
 			# Boxの8頂点分回す
 			for offset in offsets:
 				# オブジェクトの中心座標をコピー
-				pos = copy.copy(object.location)
+				pos = copy.copy(center)
 				# 中心点を基準に各頂点ごとにずらす
 				pos[0] += offset[0] * size[0]
 				pos[1] += offset[1] * size[1]
 				pos[2] += offset[2] * size[2]
+				# グローバル座標に変換
+				pos = object.matrix_world @ pos
 				# 頂点リストに座標を追加
 				vertices['pos'].append(pos)
 
@@ -285,6 +310,27 @@ class MYADDON_OT_add_collider(bpy.types.Operator):
 		context.object["collider_size"] = mathutils.Vector((2,2,2))
 
 		return {"FINISHED"}
+	
+
+# パネル ファイル名
+class OBJECT_PT_collider(bpy.types.Panel):
+	"""オブジェクトのファイルネームパネル"""
+	bl_idname = "OBJECT_PT_collider"
+	bl_label = "Collider"
+	bl_space_type = "PROPERTIES"
+	bl_region_type = "WINDOW"
+	bl_context = "object"
+
+	def draw(self, context):
+		# パネルに項目を追加
+		if "collider" in context.object:
+			# すでにプロパティがあれば､プロパティを表示
+			self.layout.prop(context.object, '["collider"]', text ="Type")
+			self.layout.prop(context.object, '["collider_center"]', text ="Center")
+			self.layout.prop(context.object, '["collider_size"]', text ="Size")
+		else:
+			self.layout.operator(MYADDON_OT_add_collider.bl_idname)
+
 # オペレータ カスタムプロパティ['file_name']を追加
 class MYADDON_OT_add_filename(bpy.types.Operator):
 	bl_idname = "myaddon.myaddon_ot_add_filename"
@@ -309,6 +355,7 @@ classes = (
 	MYADDON_OT_add_filename,
 	OBJECT_PT_file_name,
 	MYADDON_OT_add_collider,
+	OBJECT_PT_collider,
 )
 
 # メニュー項目描画
