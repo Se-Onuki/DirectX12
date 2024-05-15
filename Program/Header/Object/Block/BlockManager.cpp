@@ -124,7 +124,7 @@ void SkinModelListManager::Init(uint32_t maxCount)
 	auto *srvHeap = DirectXCommon::GetInstance()->GetSRVHeap();
 
 	if (not heapRange_) {
-		heapRange_ = srvHeap->RequestHeapAllocation(1);
+		heapRange_ = std::move(srvHeap->RequestHeapAllocation(1));
 		device->CreateShaderResourceView(blocks_.GetResources(), &blocks_.GetDesc(), heapRange_.GetHandle(0).cpuHandle_);
 	}
 }

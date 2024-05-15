@@ -256,15 +256,15 @@ void Model::CreatePipeLine()
 	const std::array<D3D12_INPUT_ELEMENT_DESC, 5u> inputElementDescs{
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "POSITION",
-			.SemanticIndex = 0,
-			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
-			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+				.SemanticIndex = 0,
+				.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
-		D3D12_INPUT_ELEMENT_DESC{
-			.SemanticName = "TEXCOORD",
-			.SemanticIndex = 0,
-			.Format = DXGI_FORMAT_R32G32_FLOAT,
-			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_ELEMENT_DESC{
+				.SemanticName = "TEXCOORD",
+				.SemanticIndex = 0,
+				.Format = DXGI_FORMAT_R32G32_FLOAT,
+				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "NORMAL",
@@ -1276,14 +1276,14 @@ void MinecraftModel::Cube::SetVertex(const Vector3 &origin, const Vector3 &size)
 	const Vector3 centor = origin + size / 2.f;
 	std::array<Vector3, 8u> vertices{
 		centor + Vector3{-size.x, size.y, size.z},  // 左遠
-		centor + Vector3{size.x, size.y, size.z},   // 右遠
-		centor + Vector3{-size.x, size.y, -size.z}, // 左近
-		centor + Vector3{size.x, size.y, -size.z},  // 右近
+			centor + Vector3{size.x, size.y, size.z},   // 右遠
+			centor + Vector3{-size.x, size.y, -size.z}, // 左近
+			centor + Vector3{size.x, size.y, -size.z},  // 右近
 
-		centor + Vector3{-size.x, -size.y, size.z},  // 左遠
-		centor + Vector3{size.x, -size.y, size.z},   // 右遠
-		centor + Vector3{-size.x, -size.y, -size.z}, // 左近,
-		centor + Vector3{size.x, -size.y, -size.z},  // 右近
+			centor + Vector3{-size.x, -size.y, size.z},  // 左遠
+			centor + Vector3{size.x, -size.y, size.z},   // 右遠
+			centor + Vector3{-size.x, -size.y, -size.z}, // 左近,
+			centor + Vector3{size.x, -size.y, -size.z},  // 右近
 	};
 
 	faces_[(uint32_t)FaceDirection::UP].SetVertex(
@@ -1662,19 +1662,19 @@ SkinClusterData::SkinClusterData(uint32_t jointsCount, uint32_t vertexCount)
 	paletteSpan_ = { palette_.data(), jointsCount };
 }
 
-SkinClusterData SkinClusterData::MakeSkinClusterData(const Model &model, const Skeleton &skeleton)
+std::unique_ptr<SkinClusterData> SkinClusterData::MakeSkinClusterData(const Model &model, const Skeleton &skeleton)
 {
 	uint32_t vertexCount = 0;
 	for (const auto &mesh : model.meshList_) {
 		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
 	}
-	SkinClusterData result{ static_cast<uint32_t>(skeleton.joints_.size()),vertexCount };
+	std::unique_ptr<SkinClusterData> result = std::make_unique<SkinClusterData>(static_cast<uint32_t>(skeleton.joints_.size()), vertexCount);
 
-	result.skinCluster_ = model.skinCluster_;
+	result->skinCluster_ = model.skinCluster_;
 
 	// 初期化
-	result.inverseBindPoseMatrixList_.resize(skeleton.jointMap_.size());
-	std::generate(result.inverseBindPoseMatrixList_.begin(), result.inverseBindPoseMatrixList_.end(), Matrix4x4::Identity);
+	result->inverseBindPoseMatrixList_.resize(skeleton.jointMap_.size());
+	std::generate(result->inverseBindPoseMatrixList_.begin(), result->inverseBindPoseMatrixList_.end(), Matrix4x4::Identity);
 
 	const auto jointEndIt = skeleton.jointMap_.end();
 
@@ -1687,10 +1687,10 @@ SkinClusterData SkinClusterData::MakeSkinClusterData(const Model &model, const S
 		}
 
 		// indexから、逆バインドポーズ行列を代入する
-		result.inverseBindPoseMatrixList_[it->second] = jointWeight.inverseBindPoseMatrix_;
+		result->inverseBindPoseMatrixList_[it->second] = jointWeight.inverseBindPoseMatrix_;
 		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
 			// 該当するinfluence情報を参照しておく
-			auto &currentInfluence = result.influenceSpan_[vertexWeight.vertexIndex_[0]];
+			auto &currentInfluence = result->influenceSpan_[vertexWeight.vertexIndex_[0]];
 			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
 				// 空いているところにデータを代入
 				if (currentInfluence.vertexInfluence_.weight_[index] == 0.0f) {
@@ -1704,7 +1704,7 @@ SkinClusterData SkinClusterData::MakeSkinClusterData(const Model &model, const S
 
 	}
 
-	return result;
+	return std::move(result);
 }
 
 void SkinClusterData::Update(const Skeleton &skeleton)
@@ -1724,7 +1724,7 @@ std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(Model *model)
 	result->pModel_ = model;
 
 	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(result->pModel_->rootNode_));
-	result->skinCluster_ = std::make_unique<SkinClusterData>(SkinClusterData::MakeSkinClusterData(*result->pModel_, *result->skeleton_));
+	result->skinCluster_ = SkinClusterData::MakeSkinClusterData(*result->pModel_, *result->skeleton_);
 	return std::move(result);
 }
 
@@ -1735,7 +1735,7 @@ void SkinModel::Update(const ModelAnimation::Animation &animation, const float a
 	skinCluster_->Update(*skeleton_);
 }
 
-void Skeleton::AddDrawBuffer(const Matrix4x4 &transMat, const Vector3&drawOffset) const
+void Skeleton::AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &drawOffset) const
 {
 	auto *blockRender_ = BlockManager::GetInstance();
 	Model *plane = ModelManager::GetInstance()->GetModel("Plane");
