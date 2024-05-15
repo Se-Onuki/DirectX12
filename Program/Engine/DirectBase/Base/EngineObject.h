@@ -52,8 +52,4 @@ namespace SolEngine {
 		static uint32_t GetDescriptorSizeDSV() { return descriptorSizeDSV_; }
 	};
 
-	class IResource {
-
-	};
-
 }

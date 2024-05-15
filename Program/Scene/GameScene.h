@@ -28,6 +28,7 @@
 #include "../Header/Object/HealthBar.h"
 #include "../ECS/Entity/Spawner.h"
 #include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
+#include "../Engine/ResourceObject/ResourceObjectManager.h"
 
 
 class GameScene : public IScene {
@@ -49,6 +50,8 @@ public:
 
 
 private:
+
+	SolEngine::ResourceObjectManager *pShaderManager_;
 
 	int32_t isGrayScale_ = 0;
 
