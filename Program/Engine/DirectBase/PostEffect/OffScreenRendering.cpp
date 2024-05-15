@@ -167,8 +167,8 @@ namespace PostEffect {
 			auto psShader = pShaderManager_->Load({ filePath.second, L"ps_6_0" });
 
 			PipelineState::ShaderSet copyShader;
-			copyShader.vertex = vsShader;
-			copyShader.pixel = psShader;
+			copyShader.vertex = *vsShader;
+			copyShader.pixel = *psShader;
 
 			copyShader.SetPipelineDesc(&graphicsPipelineStateDesc);
 

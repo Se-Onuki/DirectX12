@@ -36,13 +36,17 @@ namespace SolEngine {
 
 			uint32_t GetHandle() const { return handle_; }
 
-			Shader *GetShader() const { return instance_ ? instance_->resources_.at(handle_).get() : nullptr; }
+			Shader *GetShader() { return instance_ ? instance_->resources_.at(handle_).get() : nullptr; }
+			const Shader *GetShader() const { return instance_ ? instance_->resources_.at(handle_).get() : nullptr; }
 
-			inline operator Shader &() const { return *instance_->resources_.at(handle_); }
+			inline Shader &operator*() { return *instance_->resources_.at(handle_); }
+			inline const Shader &operator*() const { return *instance_->resources_.at(handle_); }
+
+			// inline operator Shader &() const { return *instance_->resources_.at(handle_); }
 
 			/// @brief このデータが有効であるか
 			explicit inline operator bool() const {
-				return 
+				return
 					handle_ != (std::numeric_limits<uint32_t>::max)()	// データが最大値(無効値)に設定されていないか
 					and instance_										// マネージャーが存在するか
 					and handle_ < instance_->resources_.size()			// 参照ができる状態か
