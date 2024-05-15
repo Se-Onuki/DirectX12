@@ -143,7 +143,7 @@ struct WellForGPU {
 
 struct SkinClusterData {
 	SkinClusterData(uint32_t jointsCount, uint32_t vertexCount);
-	static SkinClusterData MakeSkinClusterData(const Model &model, const Skeleton &skeleton);
+	static std::unique_ptr<SkinClusterData> MakeSkinClusterData(const Model &model, const Skeleton &skeleton);
 
 	void Update(const Skeleton &skeleton);
 

@@ -136,6 +136,9 @@
     <Filter Include="Utils\Convert">
       <UniqueIdentifier>{b62b4b64-9d89-4d59-a066-c952dd2b03a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\ResourceObject">
+      <UniqueIdentifier>{9f131733-8ed5-4d79-b65f-c256cc53ca4c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -395,6 +398,9 @@
     </ClCompile>
     <ClCompile Include="Utils\Convert\Convert.cpp">
       <Filter>Utils\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ResourceObject\ResourceObjectManager.cpp">
+      <Filter>Engine\ResourceObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -763,6 +769,12 @@
     </ClInclude>
     <ClInclude Include="Utils\Convert\Convert.h">
       <Filter>Utils\Convert</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ResourceObject\ResourceObjectManager.h">
+      <Filter>Engine\ResourceObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ResourceObject\ResourecObject.h">
+      <Filter>Engine\ResourceObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

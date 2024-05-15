@@ -28,7 +28,7 @@ public:
 
 	void SetShader(const ShaderSet &shaderSet);
 
-	template <SoLib::IsContainer T>
+	template <SoLib::IsContainsType<D3D12_INPUT_ELEMENT_DESC> T>
 	void SetInputElementDescs(const T &inputElementDescs);
 
 private:
@@ -45,7 +45,18 @@ private:
 
 };
 
-template<SoLib::IsContainer T>
+template<SoLib::IsContainsType<D3D12_INPUT_ELEMENT_DESC> T>
 inline void PipelineState::SetInputElementDescs(const T &inputElementDescs) {
 	inputElementDescs_.assign(inputElementDescs.begin(), inputElementDescs.end());
 }
+
+class PipelineCreater {
+public:
+
+	PipelineState Output();
+
+
+private:
+	std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs_;
+
+};

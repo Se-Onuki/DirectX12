@@ -25,7 +25,7 @@ public:
 	/// @brief 指定された長さの連続した未使用領域の先頭インデックスを返す
 	/// @param length 使用する領域
 	/// @return 先頭インデックス
-	std::shared_ptr<MemoryUsageManager::MemoryRange> RequestRange(uint32_t length);
+	std::unique_ptr<MemoryUsageManager::MemoryRange> RequestRange(uint32_t length);
 
 	/// @brief メモリの解放
 	/// @param memory メモリ範囲

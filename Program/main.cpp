@@ -191,8 +191,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//ParticleManager::GetInstance()->
 
-	BlockManager::GetInstance()->Finalize();
-	SkinModelListManager::GetInstance()->Finalize();
+	BlockManager::Finalize();
+	SkinModelListManager::Finalize();
+	SolEngine::ResourceObjectManager::Finalize();
 
 	sceneManager->Finalize();
 

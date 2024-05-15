@@ -70,12 +70,8 @@ void PipelineState::Create(const RootSignature &rootSignature, const D3D12_DEPTH
 #pragma endregion
 
 	graphicsPipelineStateDesc_.pRootSignature = rootSignature.Get();		// RootSignature
-	if (shaderSet_.vertex) {
-		graphicsPipelineStateDesc_.VS = shaderSet_.vertex->GetBytecode();
-	}
-	if (shaderSet_.pixel) {
-		graphicsPipelineStateDesc_.PS = shaderSet_.pixel->GetBytecode();
-	}
+
+	shaderSet_.SetPipelineDesc(&graphicsPipelineStateDesc_);
 	graphicsPipelineStateDesc_.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc_.RasterizerState = rasterizerDesc;			// RasterizeState
 

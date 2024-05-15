@@ -1,5 +1,6 @@
 #include "OffScreenRendering.h"
 #include "../Base/PipelineState.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
 
 namespace PostEffect {
 
@@ -156,13 +157,18 @@ namespace PostEffect {
 
 		HRESULT hr = S_FALSE;
 
+		SolEngine::ResourceObjectManager *pShaderManager_ = SolEngine::ResourceObjectManager::GetInstance();
+
 		for (const auto &filePath : key) {
 
 			auto &pileLine = pipelineState_[filePath];
 
+			auto vsShader = pShaderManager_->Load({ filePath.first, L"vs_6_0" });
+			auto psShader = pShaderManager_->Load({ filePath.second, L"ps_6_0" });
+
 			PipelineState::ShaderSet copyShader;
-			copyShader.vertex = Shader::Compile(filePath.first, L"vs_6_0");
-			copyShader.pixel = Shader::Compile(filePath.second, L"ps_6_0");
+			copyShader.vertex = *vsShader;
+			copyShader.pixel = *psShader;
 
 			copyShader.SetPipelineDesc(&graphicsPipelineStateDesc);
 

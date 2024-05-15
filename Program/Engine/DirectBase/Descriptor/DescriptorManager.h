@@ -26,9 +26,12 @@ public:
 	struct HeapRange {
 		HeapRange() = default;
 		//HeapRange(uint32_t offset, uint32_t width, DescHeap *descHeap) : offset_(offset), width_(width), descHeap_(descHeap) {}
-		HeapRange(std::shared_ptr<MemoryUsageManager::MemoryRange> &memoryRange, DescHeap *descHeap) : memoryRange_(memoryRange), descHeap_(descHeap) {}
+		HeapRange(std::unique_ptr<MemoryUsageManager::MemoryRange> &&memoryRange, DescHeap *descHeap) : memoryRange_(std::move(memoryRange)), descHeap_(descHeap) {}
 		~HeapRange() = default;
-		std::shared_ptr<MemoryUsageManager::MemoryRange> memoryRange_;
+		HeapRange(HeapRange &&other) = default;
+		HeapRange &operator=(HeapRange &&other) = default;
+
+		std::unique_ptr<MemoryUsageManager::MemoryRange> memoryRange_;
 
 		operator bool() const { return static_cast<bool>(memoryRange_); }
 
@@ -107,7 +110,7 @@ inline DescHeap<HeapType>::HeapRange DescHeap<HeapType>::RequestHeapAllocation(u
 	if (not memoryRange) {
 		return HeapRange{};
 	}
-	HeapRange output{ memoryRange, this };
+	HeapRange output{ std::move(memoryRange), this };
 	return output;
 }
 

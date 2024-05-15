@@ -16,9 +16,9 @@
 #include "../String/String.h"
 #include <format>
 #include "EngineObject.h"
+#include "../../ResourceObject/ResourecObject.h"
 
-
-class Shader : public SolEngine::IResource {
+class Shader : public SolEngine::IResourceObject {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -56,11 +56,29 @@ public:
 	D3D12_SHADER_BYTECODE GetBytecode()const;
 };
 
+class ShaderName {
+public:
+
+	std::wstring name;
+	std::wstring profile;
+
+
+	bool operator==(const ShaderName &other) const = default;
+};
+
 namespace std {
+
 	template<>
 	struct hash<Shader> {
 		size_t operator()(const Shader &data) const {
 			return std::hash<std::wstring>()(data.GetShaderPath());
+		}
+	};
+
+	template<>
+	struct hash<ShaderName> {
+		size_t operator()(const ShaderName &data) const {
+			return std::hash<std::wstring>()(data.name + data.profile);
 		}
 	};
 }
