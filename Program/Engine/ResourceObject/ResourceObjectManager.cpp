@@ -2,7 +2,7 @@
 
 namespace SolEngine {
 
-	ResourceObjectManager::Handle ResourceObjectManager::Load(const ShaderName &file_path)
+	ResourceObjectManager::Handle ResourceObjectManager::Load(const CreateSource &file_path)
 	{
 		// データを格納する
 		Handle result = Find(file_path);
@@ -24,7 +24,7 @@ namespace SolEngine {
 		return result;
 	}
 
-	ResourceObjectManager::Handle ResourceObjectManager::Find(const ShaderName &file_path)
+	ResourceObjectManager::Handle ResourceObjectManager::Find(const CreateSource &file_path)
 	{
 		// 検索を行う
 		auto itr = findMap_.find(file_path);

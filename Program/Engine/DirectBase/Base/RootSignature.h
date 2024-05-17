@@ -3,7 +3,9 @@
 #include <wrl.h>
 #include <vector>
 
-class RootSignature final {
+#include "../../ResourceObject/ResourceObject.h"
+
+class RootSignature final : public SolEngine::IResourceObject {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -18,5 +20,9 @@ public:
 private:
 
 	ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
+
+};
+
+class RootSignatureCreater {
 
 };

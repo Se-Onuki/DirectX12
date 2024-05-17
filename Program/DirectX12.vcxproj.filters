@@ -776,7 +776,7 @@
     <ClInclude Include="Engine\ResourceObject\ResourceObjectManager.h">
       <Filter>Engine\ResourceObject</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\ResourceObject\ResourecObject.h">
+    <ClInclude Include="Engine\ResourceObject\ResourceObject.h">
       <Filter>Engine\ResourceObject</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\SkyBox\SkyBox.h">

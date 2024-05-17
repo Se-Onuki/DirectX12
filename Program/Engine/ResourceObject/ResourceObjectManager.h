@@ -1,7 +1,7 @@
 #pragma once
 #include "../../Utils/Containers/Singleton.h"
 
-#include "ResourecObject.h"
+#include "ResourceObject.h"
 #include "../DirectBase/Base/Shader.h"
 
 namespace SolEngine {
@@ -15,6 +15,9 @@ namespace SolEngine {
 		~ResourceObjectManager() = default;
 
 	public:
+
+		//using CreateSource = T::CreateSource;
+		using CreateSource = ShaderName;
 
 
 		struct Handle {
@@ -58,18 +61,15 @@ namespace SolEngine {
 			//inline static ResourceObjectManager *const manager_ = ResourceObjectManager::GetInstance();
 		};
 
-		Handle Load(const ShaderName &file_path);
+		Handle Load(const CreateSource &cleate_source);
 
-		Handle Find(const ShaderName &file_path);
-
-
-
+		Handle Find(const CreateSource &cleate_source);
 
 	private:
 		friend Handle;
 
 		std::vector<std::unique_ptr<Shader>> resources_;
-		std::unordered_map<ShaderName, Handle> findMap_;
+		std::unordered_map<CreateSource, Handle> findMap_;
 
 
 	};

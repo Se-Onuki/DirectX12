@@ -16,7 +16,7 @@
 #include "../String/String.h"
 #include <format>
 #include "EngineObject.h"
-#include "../../ResourceObject/ResourecObject.h"
+#include "../../ResourceObject/ResourceObject.h"
 
 class Shader : public SolEngine::IResourceObject {
 
