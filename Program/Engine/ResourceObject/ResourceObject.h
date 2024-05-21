@@ -18,4 +18,9 @@ namespace SolEngine {
 		//static_assert(0, "特殊化が行われていないリソースオブジェクトです");
 	};
 
+	template <typename T>
+	concept IsResourceSource = requires(T a) {
+		{ a.CreateObject() } -> std::same_as<std::unique_ptr<typename T::Resource>>;
+	};
+
 }

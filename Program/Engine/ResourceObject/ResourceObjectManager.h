@@ -6,7 +6,7 @@
 
 namespace SolEngine {
 
-	template <IsResourceObject T, SoLib::IsRealType CreateSource = IResourceSource<T>>
+	template <IsResourceObject T, IsResourceSource CreateSource = IResourceSource<T>>
 	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, CreateSource>> {
 		friend SoLib::Singleton<ResourceObjectManager>;
 		using Singleton = SoLib::Singleton<ResourceObjectManager<T, CreateSource>>;
@@ -51,10 +51,10 @@ namespace SolEngine {
 			/// @brief このデータが有効であるか
 			explicit inline operator bool() const {
 				return
-					handle_ != (std::numeric_limits<uint32_t>::max)()	// データが最大値(無効値)に設定されていないか
-					and Singleton::instance_										// マネージャーが存在するか
-					and handle_ < Singleton::instance_->resources_.size()			// 参照ができる状態か
-					and Singleton::instance_->resources_.at(handle_);			// データが存在するか
+					handle_ != (std::numeric_limits<uint32_t>::max)()		// データが最大値(無効値)に設定されていないか
+					and Singleton::instance_								// マネージャーが存在するか
+					and handle_ < Singleton::instance_->resources_.size()	// 参照ができる状態か
+					and Singleton::instance_->resources_.at(handle_);		// データが存在するか
 			}
 
 		private:
@@ -75,7 +75,7 @@ namespace SolEngine {
 
 	};
 
-	template <IsResourceObject T, SoLib::IsRealType CreateSource>
+	template <IsResourceObject T, IsResourceSource CreateSource>
 	ResourceObjectManager<T, CreateSource>::Handle ResourceObjectManager<T, CreateSource>::Load(const CreateSource &createSource)
 	{
 		// データを格納する
@@ -98,7 +98,7 @@ namespace SolEngine {
 		return result;
 	}
 
-	template <IsResourceObject T, SoLib::IsRealType CreateSource>
+	template <IsResourceObject T, IsResourceSource CreateSource>
 	ResourceObjectManager<T, CreateSource>::Handle ResourceObjectManager<T, CreateSource>::Find(const CreateSource &createSource)
 	{
 		// 検索を行う

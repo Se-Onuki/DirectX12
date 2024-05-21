@@ -59,6 +59,7 @@ class SolEngine::IResourceSource<Shader> {
 
 
 public:
+	using Resource = Shader;
 
 	static void StaticInit();
 
