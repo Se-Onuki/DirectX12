@@ -66,7 +66,13 @@ public:
 	IndexBuffer(const IndexBuffer &) = default;
 	~IndexBuffer() = default;
 
-	void Resize(uint32_t size) { indexData_.CreateBuffer(size); }
+	void Resize(uint32_t size) {
+		indexData_.CreateBuffer(size);
+		// インデックスview
+		ibView_.BufferLocation = indexData_.GetGPUVirtualAddress();
+		ibView_.SizeInBytes = static_cast<UINT>(sizeof(T) * indexData_.size());
+		ibView_.Format = DXGI_FORMAT_R32_UINT;
+	}
 
 	auto &GetIndexData() noexcept { return indexData_; }
 	const auto &GetIndexData() const noexcept { return indexData_; }

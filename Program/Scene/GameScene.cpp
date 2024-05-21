@@ -30,7 +30,7 @@ GameScene::~GameScene() {
 
 void GameScene::OnEnter() {
 	pDxCommon_ = DirectXCommon::GetInstance();
-	pShaderManager_ = SolEngine::ResourceObjectManager::GetInstance();
+	pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
 
 	light_ = DirectionLight::Create();
 

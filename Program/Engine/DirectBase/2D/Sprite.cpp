@@ -6,6 +6,7 @@
 #include "../Create/Create.h"
 #include "../Render/Render.h"
 #include "../Base/Shader.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
 DirectResourceLeakChecker Sprite::leakChecker{};
 
 Matrix4x4 Sprite::matProjection_{};
@@ -143,9 +144,11 @@ void Sprite::CreatePipeLine() {
 #pragma endregion
 
 #pragma region ShaderをCompileする
+	auto *pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
 
-	Shader vertexShader = Shader::Compile(L"Sprite.VS.hlsl", L"vs_6_0");
-	Shader pixelShader = Shader::Compile(L"Sprite.PS.hlsl", L"ps_6_0");
+
+	Shader* vertexShader = *pShaderManager_->Load({ L"Sprite.VS.hlsl", L"vs_6_0" });
+	Shader *pixelShader = *pShaderManager_->Load({ L"Sprite.PS.hlsl", L"ps_6_0" });
 
 #pragma endregion
 
@@ -172,8 +175,8 @@ void Sprite::CreatePipeLine() {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
-	graphicsPipelineStateDesc.VS = vertexShader.GetBytecode();			// VertexShader
-	graphicsPipelineStateDesc.PS = pixelShader.GetBytecode();			// PixelShader
+	graphicsPipelineStateDesc.VS = vertexShader->GetBytecode();			// VertexShader
+	graphicsPipelineStateDesc.PS = pixelShader->GetBytecode();			// PixelShader
 	graphicsPipelineStateDesc.BlendState = blendDesc;					// BlendState
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
 

@@ -15,8 +15,8 @@ class PipelineState {
 public:
 
 	struct ShaderSet {
-		std::optional <Shader> vertex = std::nullopt;
-		std::optional<Shader> pixel = std::nullopt;
+		Shader *vertex = nullptr;
+		Shader *pixel = nullptr;
 
 		void SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc);
 	};
