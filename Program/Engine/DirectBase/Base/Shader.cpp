@@ -1,10 +1,4 @@
 #include "Shader.h"
-
-Microsoft::WRL::ComPtr<IDxcUtils> ShaderSource::dxcUtils_;
-Microsoft::WRL::ComPtr<IDxcCompiler3> ShaderSource::dxcCompiler_;
-
-Microsoft::WRL::ComPtr<IDxcIncludeHandler> ShaderSource::includeHandler_;
-
 inline Shader::operator bool() noexcept {
 	return shaderBlob_ != nullptr;
 }
@@ -13,13 +7,13 @@ D3D12_SHADER_BYTECODE Shader::GetBytecode() const {
 	return D3D12_SHADER_BYTECODE{ shaderBlob_->GetBufferPointer(),shaderBlob_->GetBufferSize() };
 }
 
-Shader SolEngine::IResourceSource<Shader>::Compile(const std::wstring &shaderPath, const wchar_t *profile)
+std::unique_ptr<Shader> SolEngine::IResourceCreater<Shader>::Compile(const std::wstring &shaderPath, const wchar_t *profile) const
 {
-	Shader result;
-	result.SetIDxcBlob(std::move(CompileShader(directoryPath_ + shaderPath, profile, dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get())));
-	result.SetShaderPath(shaderPath);
-	assert(result.GetShaderBlob() and "シェーダーを読み込めませんでした");
-	return result;
+	std::unique_ptr<Shader> result = std::make_unique<Shader>();
+	result->SetIDxcBlob(std::move(CompileShader(directoryPath_ + shaderPath, profile, dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get())));
+	result->SetShaderPath(shaderPath);
+	assert(result->GetShaderBlob() and "シェーダーを読み込めませんでした");
+	return std::move(result);
 }
 
 Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(

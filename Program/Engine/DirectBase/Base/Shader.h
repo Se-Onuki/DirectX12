@@ -49,56 +49,58 @@ public:
 template<>
 class SolEngine::IResourceSource<Shader> {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-	// dxcCompilerを初期化
-	static ComPtr<IDxcUtils>dxcUtils_;
-	static ComPtr<IDxcCompiler3> dxcCompiler_;
-
-	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
-	static ComPtr<IDxcIncludeHandler> includeHandler_;
-
-
 public:
+
 	using Resource = Shader;
-
-	static void StaticInit();
-
 
 	std::wstring name_;
 	std::wstring profile_;
-
-	inline static const std::wstring directoryPath_ = L"resources/shader/";
-
-	static Shader Compile(const std::wstring &shaderPath, const wchar_t *profile);
-	std::unique_ptr<Shader> CreateObject() const { return std::make_unique<Shader>(Compile(name_, profile_.c_str())); }
-
 
 	bool operator==(const SolEngine::IResourceSource<Shader> &other) const = default;
 };
 
 
-using ShaderSource = SolEngine::IResourceSource<Shader>;
+template <>
+class SolEngine::IResourceCreater<Shader> {
+public:
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	IResourceCreater() {
+
+		HRESULT hr = S_FALSE;
+		// dxcCompilerを初期化
+		dxcUtils_ = nullptr;
+		dxcCompiler_ = nullptr;
+		hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
+		assert(SUCCEEDED(hr));
+		hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
+		assert(SUCCEEDED(hr));
+
+		// 現時点でincludeはしないが、includeに対応するための設定を行っておく
+		includeHandler_ = nullptr;
+		hr = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
+		assert(SUCCEEDED(hr));
+	}
+
+	inline static const std::wstring directoryPath_ = L"resources/shader/";
+
+	std::unique_ptr<Shader> Compile(const std::wstring &shaderPath, const wchar_t *profile) const;
+
+	std::unique_ptr<Shader> CreateObject(const SolEngine::IResourceSource<Shader> &source) const { return std::move(Compile(source.name_, source.profile_.c_str())); }
 
 
-inline void ShaderSource::StaticInit()
-{
-	HRESULT hr = S_FALSE;
+private:
 	// dxcCompilerを初期化
-	dxcUtils_ = nullptr;
-	dxcCompiler_ = nullptr;
-	hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
-	assert(SUCCEEDED(hr));
-	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
-	assert(SUCCEEDED(hr));
+	ComPtr<IDxcUtils> dxcUtils_;
+	ComPtr<IDxcCompiler3> dxcCompiler_;
 
 	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
-	includeHandler_ = nullptr;
-	hr = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
-	assert(SUCCEEDED(hr));
+	ComPtr<IDxcIncludeHandler> includeHandler_;
+
+};
 
 
-}
-
+using ShaderSource = SolEngine::IResourceSource<Shader>;
 
 namespace std {
 
