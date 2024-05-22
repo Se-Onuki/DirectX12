@@ -76,7 +76,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), dxCommon->backBufferCount_, dxCommon->GetSRVHeap());
 
-	Shader::StaticInit();
+	ShaderSource::StaticInit();
 	Model::StaticInit();
 	Sprite::StaticInit();
 	audio->StaticInit();
@@ -193,7 +193,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	BlockManager::Finalize();
 	SkinModelListManager::Finalize();
-	SolEngine::ResourceObjectManager::Finalize();
+	SolEngine::ResourceObjectManager<Shader, ShaderSource>::Finalize();
 
 	sceneManager->Finalize();
 

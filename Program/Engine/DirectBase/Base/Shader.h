@@ -16,20 +16,10 @@
 #include "../String/String.h"
 #include <format>
 #include "EngineObject.h"
-#include "../../ResourceObject/ResourecObject.h"
+#include "../../ResourceObject/ResourceObject.h"
 
 class Shader : public SolEngine::IResourceObject {
-
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-	// dxcCompilerを初期化
-	static ComPtr<IDxcUtils>dxcUtils_;
-	static ComPtr<IDxcCompiler3> dxcCompiler_;
-
-	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
-	static ComPtr<IDxcIncludeHandler> includeHandler_;
-
-	static const std::wstring directoryPath_;
 
 	ComPtr<IDxcBlob> shaderBlob_ = nullptr;
 
@@ -42,13 +32,13 @@ public:
 	Shader() = default;
 	~Shader() = default;
 
-	static void StaticInit();
-
-	static Shader Compile(const std::wstring &ShaderPath, const wchar_t *profile);
-
 	inline IDxcBlob *const GetShaderBlob() const {
 		return shaderBlob_.Get();
 	}
+
+	void SetIDxcBlob(ComPtr<IDxcBlob> &&shaderBlob) { shaderBlob_ = std::move(shaderBlob); }
+	void SetShaderPath(const std::wstring &str) { shaderPath_ = str; }
+
 	inline const std::wstring &GetShaderPath() const {
 		return shaderPath_;
 	}
@@ -56,15 +46,61 @@ public:
 	D3D12_SHADER_BYTECODE GetBytecode()const;
 };
 
-class ShaderName {
+template<>
+class SolEngine::IResourceSource<Shader> {
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 
-	std::wstring name;
-	std::wstring profile;
+	using Resource = Shader;
 
+	std::wstring name_;
+	std::wstring profile_;
 
-	bool operator==(const ShaderName &other) const = default;
+	bool operator==(const SolEngine::IResourceSource<Shader> &other) const = default;
 };
+
+
+template <>
+class SolEngine::IResourceCreater<Shader> {
+public:
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	IResourceCreater() {
+
+		HRESULT hr = S_FALSE;
+		// dxcCompilerを初期化
+		dxcUtils_ = nullptr;
+		dxcCompiler_ = nullptr;
+		hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
+		assert(SUCCEEDED(hr));
+		hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
+		assert(SUCCEEDED(hr));
+
+		// 現時点でincludeはしないが、includeに対応するための設定を行っておく
+		includeHandler_ = nullptr;
+		hr = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
+		assert(SUCCEEDED(hr));
+	}
+
+	inline static const std::wstring directoryPath_ = L"resources/shader/";
+
+	std::unique_ptr<Shader> Compile(const std::wstring &shaderPath, const wchar_t *profile) const;
+
+	std::unique_ptr<Shader> CreateObject(const SolEngine::IResourceSource<Shader> &source) const { return std::move(Compile(source.name_, source.profile_.c_str())); }
+
+
+private:
+	// dxcCompilerを初期化
+	ComPtr<IDxcUtils> dxcUtils_;
+	ComPtr<IDxcCompiler3> dxcCompiler_;
+
+	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
+	ComPtr<IDxcIncludeHandler> includeHandler_;
+
+};
+
+
+using ShaderSource = SolEngine::IResourceSource<Shader>;
 
 namespace std {
 
@@ -76,15 +112,15 @@ namespace std {
 	};
 
 	template<>
-	struct hash<ShaderName> {
-		size_t operator()(const ShaderName &data) const {
-			return std::hash<std::wstring>()(data.name + data.profile);
+	struct hash<ShaderSource> {
+		size_t operator()(const ShaderSource &data) const {
+			return std::hash<std::wstring>()(data.name_ + data.profile_);
 		}
 	};
 }
 
 
-Microsoft::WRL::ComPtr<IDxcBlob> const CompileShader(
+Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 	// CompilerするShaderファイルへのパス
 	const std::wstring &file_path,
 	// Compilerに使用するProfile

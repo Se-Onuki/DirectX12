@@ -157,7 +157,7 @@ namespace PostEffect {
 
 		HRESULT hr = S_FALSE;
 
-		SolEngine::ResourceObjectManager *pShaderManager_ = SolEngine::ResourceObjectManager::GetInstance();
+		auto *pShaderManager_ = SolEngine::ResourceObjectManager<Shader>::GetInstance();
 
 		for (const auto &filePath : key) {
 
@@ -167,8 +167,8 @@ namespace PostEffect {
 			auto psShader = pShaderManager_->Load({ filePath.second, L"ps_6_0" });
 
 			PipelineState::ShaderSet copyShader;
-			copyShader.vertex = *vsShader;
-			copyShader.pixel = *psShader;
+			copyShader.vertex = vsShader.GetShader();
+			copyShader.pixel = psShader.GetShader();
 
 			copyShader.SetPipelineDesc(&graphicsPipelineStateDesc);
 

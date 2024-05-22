@@ -297,7 +297,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Texture\Texture.h" />
     <ClInclude Include="Engine\DirectBase\Thread\ThreadPool.h" />
     <ClInclude Include="Engine\ResourceObject\ResourceObjectManager.h" />
-    <ClInclude Include="Engine\ResourceObject\ResourecObject.h" />
+    <ClInclude Include="Engine\ResourceObject\ResourceObject.h" />
     <ClInclude Include="Engine\SolEngine.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
@@ -324,6 +324,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Particle\StarParticle.h" />
     <ClInclude Include="Header\Object\Particle\TestParticle.h" />
     <ClInclude Include="Header\Object\Player.h" />
+    <ClInclude Include="Header\Object\SkyBox\SkyBox.h" />
     <ClInclude Include="Header\Object\SkyDome\SkyDome.h" />
     <ClInclude Include="Scene\CGTaskScene.h" />
     <ClInclude Include="Scene\GameScene.h" />

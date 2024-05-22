@@ -13,15 +13,27 @@ namespace TextureFunc
 	/// @param file_path ファイルパス
 	/// @return ミップマップ付きのデータ
 	inline DirectX::ScratchImage Load(const std::string &file_path) {
+		HRESULT hr = S_FALSE;
 		// テクスチャファイルを呼んでプログラムで扱えるようにする
 		DirectX::ScratchImage image{};
 		std::wstring file_pathW = ConvertString(file_path);
-		HRESULT hr = DirectX::LoadFromWICFile(file_pathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+		if (file_pathW.ends_with(L".dds")) {	// dds形式であるなら、dds形式として読み込む。
+			hr = DirectX::LoadFromDDSFile(file_pathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+		}
+		else {
+			hr = DirectX::LoadFromWICFile(file_pathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+		}
 		assert(SUCCEEDED(hr));
 
 		// ミップマップの作成
 		DirectX::ScratchImage mipImages{};
-		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		// 圧縮フォーマットであるかを調べる。
+		if (DirectX::IsCompressed(image.GetMetadata().format)) {
+			mipImages = std::move(image);		// 圧縮フォーマットである場合はそのまま使用する。
+		}
+		else {
+			hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		}
 		assert(SUCCEEDED(hr));
 
 		// ミップマップ付きのデータを返す

@@ -1,20 +1,23 @@
 #pragma once
 #include "../../Utils/Containers/Singleton.h"
 
-#include "ResourecObject.h"
-#include "../DirectBase/Base/Shader.h"
+#include "ResourceObject.h"
 
 namespace SolEngine {
 
-	//template <IsResourceObject T>
-	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager> {
+	template <IsResourceObject T, IsResourceSource Source = IResourceSource<T>, SoLib::IsRealType Creater = IResourceCreater<T>>
+	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, Source, Creater>> {
 		friend SoLib::Singleton<ResourceObjectManager>;
+		using Singleton = SoLib::Singleton<ResourceObjectManager<T, Source, Creater>>;
 		ResourceObjectManager() = default;
 		ResourceObjectManager(const ResourceObjectManager &) = delete;
 		ResourceObjectManager &operator= (const ResourceObjectManager &) = delete;
 		~ResourceObjectManager() = default;
 
 	public:
+
+		//using CreateSource = T::CreateSource;
+		//using CreateSource = ShaderCreater;
 
 
 		struct Handle {
@@ -36,21 +39,21 @@ namespace SolEngine {
 
 			uint32_t GetHandle() const { return handle_; }
 
-			Shader *GetShader() { return instance_ ? instance_->resources_.at(handle_).get() : nullptr; }
-			const Shader *GetShader() const { return instance_ ? instance_->resources_.at(handle_).get() : nullptr; }
+			Shader *GetShader() { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
+			const Shader *GetShader() const { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
 
-			inline Shader &operator*() { return *instance_->resources_.at(handle_); }
-			inline const Shader &operator*() const { return *instance_->resources_.at(handle_); }
+			inline Shader *operator*() { return GetShader(); }
+			inline const Shader *operator*() const { return GetShader(); }
 
 			// inline operator Shader &() const { return *instance_->resources_.at(handle_); }
 
 			/// @brief このデータが有効であるか
 			explicit inline operator bool() const {
 				return
-					handle_ != (std::numeric_limits<uint32_t>::max)()	// データが最大値(無効値)に設定されていないか
-					and instance_										// マネージャーが存在するか
-					and handle_ < instance_->resources_.size()			// 参照ができる状態か
-					and instance_->resources_.at(handle_);			// データが存在するか
+					handle_ != (std::numeric_limits<uint32_t>::max)()		// データが最大値(無効値)に設定されていないか
+					and Singleton::instance_								// マネージャーが存在するか
+					and handle_ < Singleton::instance_->resources_.size()	// 参照ができる状態か
+					and Singleton::instance_->resources_.at(handle_);		// データが存在するか
 			}
 
 		private:
@@ -58,25 +61,57 @@ namespace SolEngine {
 			//inline static ResourceObjectManager *const manager_ = ResourceObjectManager::GetInstance();
 		};
 
-		Handle Load(const ShaderName &file_path);
+		Handle Load(const Source &cleate_source);
 
-		Handle Find(const ShaderName &file_path);
-
-
-
+		Handle Find(const Source &cleate_source);
 
 	private:
 		friend Handle;
 
 		std::vector<std::unique_ptr<Shader>> resources_;
-		std::unordered_map<ShaderName, Handle> findMap_;
+		std::unordered_map<Source, Handle> findMap_;
+
+		Creater creater_;
 
 
 	};
 
+	template <IsResourceObject T, IsResourceSource Source, SoLib::IsRealType Creater>
+	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Load(const Source &createSource)
+	{
+		// データを格納する
+		Handle result = Find(createSource);
+		// すでにデータが存在する場合はそれを返す
+		if (result) { return result; }
 
-	/*template <IsResourceObject T>
-	ResourceObjectManager<T> *const ResourceObjectManager<T>::Handle::manager_ = ResourceObjectManager<T>::GetInstance();
-*/
+		// 引数からシェーダを構築
+		std::unique_ptr<Shader> shader = creater_.CreateObject(createSource);
 
+		// 構築したデータを格納
+		resources_.push_back(std::move(shader));
+
+		// 添え字を代入
+		result = static_cast<uint32_t>(resources_.size() - 1);
+
+		// 検索用に保存
+		findMap_.insert({ createSource, result });
+
+		return result;
+	}
+
+	template <IsResourceObject T, IsResourceSource Source, SoLib::IsRealType Creater>
+	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &createSource)
+	{
+		// 検索を行う
+		auto itr = findMap_.find(createSource);
+		// 見つかったらそれを返す
+		if (itr != findMap_.end()) {
+
+			return itr->second;
+		}
+		else {
+			// 見つからなかったら、不正なデータを返す。
+			return Handle{ (std::numeric_limits<uint32_t>::max)() };
+		}
+	}
 }
