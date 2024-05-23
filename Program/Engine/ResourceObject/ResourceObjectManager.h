@@ -39,11 +39,11 @@ namespace SolEngine {
 
 			uint32_t GetHandle() const { return handle_; }
 
-			T *GetShader() { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
-			const T *GetShader() const { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
+			T *GetResource() { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
+			const T *GetResource() const { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
 
-			inline T *operator*() { return GetShader(); }
-			inline const T *operator*() const { return GetShader(); }
+			inline T *operator*() { return GetResource(); }
+			inline const T *operator*() const { return GetResource(); }
 
 			// inline operator Shader &() const { return *instance_->resources_.at(handle_); }
 

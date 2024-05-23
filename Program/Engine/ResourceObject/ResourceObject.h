@@ -24,7 +24,12 @@ namespace SolEngine {
 
 	template <IsResourceObject T>
 	class IResourceCreater {
-		
+
+	};
+
+	template <typename T, typename Resource, typename Source>
+	concept IsResourceCreater = requires(T t, Source source) {
+		{t.CreateObject(t)} -> std::same_as<std::unique_ptr<Resource>>;
 	};
 
 
