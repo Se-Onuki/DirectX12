@@ -61,9 +61,9 @@ namespace SolEngine {
 			//inline static ResourceObjectManager *const manager_ = ResourceObjectManager::GetInstance();
 		};
 
-		Handle Load(const Source &cleate_source);
+		Handle Load(const Source &source);
 
-		Handle Find(const Source &cleate_source);
+		Handle Find(const Source &source);
 
 	private:
 		friend Handle;
@@ -76,15 +76,15 @@ namespace SolEngine {
 	};
 
 	template <IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
-	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Load(const Source &createSource)
+	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Load(const Source &source)
 	{
 		// データを格納する
-		Handle result = Find(createSource);
+		Handle result = Find(source);
 		// すでにデータが存在する場合はそれを返す
 		if (result) { return result; }
 
 		// 引数からシェーダを構築
-		std::unique_ptr<T> shader = creater_.CreateObject(createSource);
+		std::unique_ptr<T> shader = creater_.CreateObject(source);
 
 		// 構築したデータを格納
 		resources_.push_back(std::move(shader));
@@ -93,16 +93,16 @@ namespace SolEngine {
 		result = static_cast<uint32_t>(resources_.size() - 1);
 
 		// 検索用に保存
-		findMap_.insert({ createSource, result });
+		findMap_.insert({ source, result });
 
 		return result;
 	}
 
 	template <IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
-	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &createSource)
+	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &source)
 	{
 		// 検索を行う
-		auto itr = findMap_.find(createSource);
+		auto itr = findMap_.find(source);
 		// 見つかったらそれを返す
 		if (itr != findMap_.end()) {
 
