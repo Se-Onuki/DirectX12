@@ -17,6 +17,7 @@
 #include <format>
 #include "EngineObject.h"
 #include "../../ResourceObject/ResourceObject.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
 
 class Shader : public SolEngine::IResourceObject {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -130,3 +131,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 	IDxcCompiler3 *dxcCompiler,
 	IDxcIncludeHandler *includeHandler
 );
+
+namespace SolEngine {
+	using ShaderManager = ResourceObjectManager<Shader>;
+}

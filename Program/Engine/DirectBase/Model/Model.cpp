@@ -312,7 +312,7 @@ void Model::CreatePipeLine()
 
 #pragma region Shader
 
-	auto *pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
+	auto *pShaderManager_ = SolEngine::ShaderManager::GetInstance();
 
 
 	PipelineState::ShaderSet particleShader;
