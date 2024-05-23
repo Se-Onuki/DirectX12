@@ -76,7 +76,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), dxCommon->backBufferCount_, dxCommon->GetSRVHeap());
 
-	ShaderSource::StaticInit();
 	Model::StaticInit();
 	Sprite::StaticInit();
 	audio->StaticInit();

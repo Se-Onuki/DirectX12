@@ -5,7 +5,7 @@
 
 namespace SolEngine {
 
-	template <IsResourceObject T, IsResourceSource Source = IResourceSource<T>, SoLib::IsRealType Creater = IResourceCreater<T>>
+	template <IsResourceObject T, SoLib::IsRealType Source = IResourceSource<T>, SoLib::IsRealType Creater = IResourceCreater<T>>
 	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, Source, Creater>> {
 		friend SoLib::Singleton<ResourceObjectManager>;
 		using Singleton = SoLib::Singleton<ResourceObjectManager<T, Source, Creater>>;
@@ -39,11 +39,11 @@ namespace SolEngine {
 
 			uint32_t GetHandle() const { return handle_; }
 
-			Shader *GetShader() { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
-			const Shader *GetShader() const { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
+			T *GetShader() { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
+			const T *GetShader() const { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
 
-			inline Shader *operator*() { return GetShader(); }
-			inline const Shader *operator*() const { return GetShader(); }
+			inline T *operator*() { return GetShader(); }
+			inline const T *operator*() const { return GetShader(); }
 
 			// inline operator Shader &() const { return *instance_->resources_.at(handle_); }
 
@@ -68,15 +68,14 @@ namespace SolEngine {
 	private:
 		friend Handle;
 
-		std::vector<std::unique_ptr<Shader>> resources_;
+		std::vector<std::unique_ptr<T>> resources_;
 		std::unordered_map<Source, Handle> findMap_;
 
 		Creater creater_;
 
-
 	};
 
-	template <IsResourceObject T, IsResourceSource Source, SoLib::IsRealType Creater>
+	template <IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
 	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Load(const Source &createSource)
 	{
 		// データを格納する
@@ -85,7 +84,7 @@ namespace SolEngine {
 		if (result) { return result; }
 
 		// 引数からシェーダを構築
-		std::unique_ptr<Shader> shader = creater_.CreateObject(createSource);
+		std::unique_ptr<T> shader = creater_.CreateObject(createSource);
 
 		// 構築したデータを格納
 		resources_.push_back(std::move(shader));
@@ -99,7 +98,7 @@ namespace SolEngine {
 		return result;
 	}
 
-	template <IsResourceObject T, IsResourceSource Source, SoLib::IsRealType Creater>
+	template <IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
 	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &createSource)
 	{
 		// 検索を行う
