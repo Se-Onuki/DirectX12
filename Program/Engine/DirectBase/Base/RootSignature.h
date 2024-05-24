@@ -24,8 +24,19 @@ private:
 
 };
 
+struct IRootParameter
+{
+
+
+	virtual ~IRootParameter() = 0;
+};
+template <SoLib::IsRealType T>
+struct RootParameterTexture {
+	
+};
+
 template <>
-class SolEngine::IResourceSource<RootSignature> {
+class SolEngine::ResourceSource<RootSignature> {
 public:
 	std::vector<D3D12_ROOT_PARAMETER> rootParameter_;
 	std::vector<D3D12_STATIC_SAMPLER_DESC> sampler_;
@@ -34,21 +45,21 @@ public:
 
 	static D3D12_STATIC_SAMPLER_DESC DefaultSampler();
 
-	bool operator==(const SolEngine::IResourceSource<RootSignature> &r) const {
+	bool operator==(const SolEngine::ResourceSource<RootSignature> &r) const {
 		return rootParameter_.size() == r.rootParameter_.size();
 
 	}
 };
 
 template <>
-class SolEngine::IResourceCreater<RootSignature> {
+class SolEngine::ResourceCreater<RootSignature> {
 public:
 
-	std::unique_ptr<RootSignature> CreateObject(const SolEngine::IResourceSource<RootSignature> &source);
+	std::unique_ptr<RootSignature> CreateObject(const SolEngine::ResourceSource<RootSignature> &source);
 
 };
 
-inline D3D12_STATIC_SAMPLER_DESC SolEngine::IResourceSource<RootSignature>::DefaultSampler()
+inline D3D12_STATIC_SAMPLER_DESC SolEngine::ResourceSource<RootSignature>::DefaultSampler()
 {
 	return D3D12_STATIC_SAMPLER_DESC{
 		.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR,			// バイナリフィルタ
@@ -65,8 +76,8 @@ inline D3D12_STATIC_SAMPLER_DESC SolEngine::IResourceSource<RootSignature>::Defa
 namespace std {
 
 	template<>
-	struct hash<SolEngine::IResourceSource<RootSignature>> {
-		size_t operator()(const SolEngine::IResourceSource<RootSignature> &data) const {
+	struct hash<SolEngine::ResourceSource<RootSignature>> {
+		size_t operator()(const SolEngine::ResourceSource<RootSignature> &data) const {
 			// 一旦0を返すことにする
 			return data.rootParameter_.size() + data.sampler_.size() /*std::hash<std::wstring>()(data.rootParameter_)*/;
 		}

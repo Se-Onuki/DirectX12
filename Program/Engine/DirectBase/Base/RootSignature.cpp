@@ -56,7 +56,7 @@ void RootSignature::Init(const D3D12_ROOT_PARAMETER *const rootParameter, const 
 }
 
 
-std::unique_ptr<RootSignature> SolEngine::IResourceCreater<RootSignature>::CreateObject(const SolEngine::IResourceSource<RootSignature> &source) {
+std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::CreateObject(const SolEngine::ResourceSource<RootSignature> &source) {
 	HRESULT hr = S_FALSE;
 	auto *const device = DirectXCommon::GetInstance()->GetDevice();
 

@@ -121,7 +121,7 @@ namespace PostEffect {
 #pragma endregion
 
 		auto *const rootSignatureManager = SolEngine::ResourceObjectManager<RootSignature>::GetInstance();
-		SolEngine::IResourceSource<RootSignature> rootSignatureSource{ .rootParameter_ = std::vector(rootParameters.cbegin(), rootParameters.cend()), .sampler_ = { SolEngine::IResourceSource<RootSignature>::DefaultSampler()} };
+		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .rootParameter_ = std::vector(rootParameters.cbegin(), rootParameters.cend()), .sampler_ = { SolEngine::ResourceSource<RootSignature>::DefaultSampler()} };
 
 		rootSignature_ = rootSignatureManager->Load(rootSignatureSource);
 

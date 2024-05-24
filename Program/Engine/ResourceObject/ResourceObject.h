@@ -14,7 +14,7 @@ namespace SolEngine {
 	concept IsResourceObject = SoLib::IsBased<T, IResourceObject>;
 
 	template <IsResourceObject T>
-	class IResourceSource {
+	class ResourceSource {
 	};
 
 	//template <typename T>
@@ -23,7 +23,7 @@ namespace SolEngine {
 	////};
 
 	template <IsResourceObject T>
-	class IResourceCreater {
+	class ResourceCreater {
 
 	};
 
