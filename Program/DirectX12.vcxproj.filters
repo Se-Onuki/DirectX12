@@ -782,6 +782,9 @@
     <ClInclude Include="Header\Object\SkyBox\SkyBox.h">
       <Filter>Header\Object\SkyBox</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Containers\AlignasWrapper.h">
+      <Filter>Utils\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

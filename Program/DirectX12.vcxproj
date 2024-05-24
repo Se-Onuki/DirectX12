@@ -330,6 +330,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="Utils\Containers\AlignasWrapper.h" />
     <ClInclude Include="Utils\Containers\Array2D.h" />
     <ClInclude Include="Utils\Containers\ConstVector.h" />
     <ClInclude Include="Utils\Containers\CustomVectors.h" />

@@ -26,9 +26,9 @@ private:
 
 struct IRootParameter
 {
+	char16_t paramType_;
 
-
-	virtual ~IRootParameter() = 0;
+	//virtual ~IRootParameter() = 0;
 };
 template <SoLib::IsRealType T>
 struct RootParameterTexture {

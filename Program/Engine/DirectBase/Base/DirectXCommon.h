@@ -95,6 +95,20 @@ public:
 		return srvHeap_.get();
 	}
 
+	template <D3D12_DESCRIPTOR_HEAP_TYPE type>
+	uint32_t GetHeapSize() {
+		if constexpr (type == D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) {
+			return descriptorSizeSRV;
+		}
+		if constexpr (type == D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV) {
+			return descriptorSizeRTV;
+		}
+		if constexpr (type == D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_DSV) {
+			return descriptorSizeDSV;
+		}
+		return 0;
+	}
+
 	/// @brief 各種破棄
 	void Finalize();
 
@@ -115,7 +129,7 @@ public:
 	/// @param scissorRect シザー短形
 	void SetFullscreenViewPort(D3D12_VIEWPORT *viewport, D3D12_RECT *scissorRect);
 
-	void DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, const SoLib::Color::RGB4& clearColor, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect);
+	void DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, const SoLib::Color::RGB4 &clearColor, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect);
 
 	void EndDraw();
 

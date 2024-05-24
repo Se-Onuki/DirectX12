@@ -5,6 +5,7 @@
 #include "../Header/Entity/Entity.h"
 #include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
 #include "../Engine/DirectBase/Model/Model.h"
+#include "../Utils/Containers/AlignasWrapper.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -28,6 +29,8 @@ private:
 	Model *uvModel_;
 
 	std::unique_ptr<SkinModel> skinModel_;
+
+	std::unique_ptr<AlignasWrapper<Vector2>> vec2_;
 
 	Transform transform_;
 
