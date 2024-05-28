@@ -74,6 +74,7 @@ public:
 	~Sprite() = default;
 
 	static void StaticInit();
+	static void Finalize();
 private:
 	// バッファを生成
 	void CreateBuffer();
@@ -89,7 +90,7 @@ private:
 	// 頂点データ
 	VertexBuffer<VertexData> vertexData_;
 	// Indexデータ
-	IndexBuffer<uint32_t> indexData_;
+	inline static std::unique_ptr<IndexBuffer<uint32_t>> indexData_;
 
 	CBuffer<ConstData> constData_;
 
