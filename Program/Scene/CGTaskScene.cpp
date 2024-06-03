@@ -34,7 +34,7 @@ void CGTaskScene::OnEnter()
 
 	vec2_ = std::make_unique<AlignasWrapper<Vector2>>();
 
-	AlignasWrapper<Vector2> test{ 53, 14 };
+	AlignasWrapper<Vector2,8> test{ 53, 14 };
 
 	*vec2_ = Vector2{ 10,10 };
 
