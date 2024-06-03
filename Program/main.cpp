@@ -194,6 +194,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SkinModelListManager::Finalize();
 	SolEngine::ResourceObjectManager<Shader>::Finalize();
 	SolEngine::ResourceObjectManager<RootSignature>::Finalize();
+	Sprite::Finalize();
 
 	sceneManager->Finalize();
 

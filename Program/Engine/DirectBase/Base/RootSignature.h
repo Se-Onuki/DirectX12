@@ -26,13 +26,26 @@ private:
 
 struct IRootParameter
 {
-	char16_t paramType_;
+	//char16_t paramType_;
+
 
 	//virtual ~IRootParameter() = 0;
 };
 template <SoLib::IsRealType T>
-struct RootParameterTexture {
-	
+struct RootParametorCBV : IRootParameter {
+	D3D12_ROOT_PARAMETER rootParametor{
+		.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV,
+		.Descriptor.ShaderRegister = 0,
+	};
+
+
+
+	D3D12_ROOT_PARAMETER Create() const;
+};
+
+template <SoLib::IsRealType T>
+struct RootParameterTexture : IRootParameter {
+
 };
 
 template <>
