@@ -61,8 +61,7 @@ void CGTaskScene::Update()
 {
 	const float deltaTime = ImGui::GetIO().DeltaTime;
 
-	static SolEngine::ResourceObjectManager<Shader>::Handle handle{  };
-	handle = SolEngine::ResourceObjectManager<Shader>::GetInstance()->ImGuiWidget("ShaderManager", handle);
+	SolEngine::ResourceObjectManager<Shader>::GetInstance()->ImGuiWidget("ShaderManager");
 
 	light_->ImGuiWidget();
 	model_->ImGuiWidget();

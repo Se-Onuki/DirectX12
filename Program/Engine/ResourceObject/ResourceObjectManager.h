@@ -66,12 +66,16 @@ namespace SolEngine {
 
 		Handle Find(const Source &source);
 
-
 		/// @brief ImGuiのウィジェットを表示する
 		/// @param label 表示するラベル名
 		/// @param handle ハンドルID
 		/// @return Handle : 選択されたハンドルID 
 		Handle ImGuiWidget(const char *const label, const Handle handle) const;
+
+		/// @brief ImGuiのウィジェットを表示する
+		/// @param label 表示するラベル名
+		/// @return Handle : 選択されたハンドルID 
+		Handle ImGuiWidget(const char *const label) const;
 
 	private:
 		friend Handle;
@@ -150,5 +154,14 @@ namespace SolEngine {
 		);
 
 		return Handle{ result };
+	}
+	template<IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
+	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label) const
+	{
+		static Handle result;
+
+		result = ImGuiWidget(label, result);
+
+		return result;
 	}
 }
