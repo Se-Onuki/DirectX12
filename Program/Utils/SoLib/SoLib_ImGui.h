@@ -100,6 +100,9 @@ uint32_t SoLib::ImGuiWidget(const char *const label, C *const value, const uint3
 	//T *selectItem = nullptr;
 	uint32_t result = index;
 
+#ifdef USE_IMGUI
+
+
 	if (ImGui::BeginCombo(label, displayChar(index).c_str())) {
 		for (uint32_t i = 0u; i < value->size(); i++) {
 			bool is_selected = (index == i);
@@ -120,11 +123,10 @@ uint32_t SoLib::ImGuiWidget(const char *const label, C *const value, const uint3
 		ImGui::EndCombo();
 	}
 
-	/*auto selectItem = std::next(value->begin(), index);
+#else
+	label; value; displayChar;
 
-	if (*selectItem) {
-		isChanged |= SoLib::ImGuiWidget(label, &*selectItem);
-	}*/
+#endif // USE_IMGUI
 
 	return result;
 }
