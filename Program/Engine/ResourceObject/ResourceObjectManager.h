@@ -66,10 +66,12 @@ namespace SolEngine {
 
 		Handle Find(const Source &source);
 
-		Handle ImGuiWidget(const char *const name, const Handle index) const;
+		Handle ImGuiWidget(const char *const name, const Handle handle) const;
 
 	private:
 		friend Handle;
+
+		Handle AddData(const Source &source, std::unique_ptr<T> resource);
 
 		std::vector<std::unique_ptr<T>> resources_;
 		std::unordered_map<Source, Handle> findMap_;
@@ -89,14 +91,7 @@ namespace SolEngine {
 		// 引数からリソースを構築
 		std::unique_ptr<T> resource = creater_.CreateObject(source);
 
-		// 構築したデータを格納
-		resources_.push_back(std::move(resource));
-
-		// 添え字を代入
-		result = static_cast<uint32_t>(resources_.size() - 1);
-
-		// 検索用に保存
-		findMap_.insert({ source, result });
+		result = AddData(source, std::move(resource));
 
 		return result;
 	}
@@ -116,16 +111,33 @@ namespace SolEngine {
 			return Handle{ (std::numeric_limits<uint32_t>::max)() };
 		}
 	}
+
+	template<IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
+	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::AddData(const Source &source, std::unique_ptr<T> resource)
+	{
+		// 構築したデータを格納
+		resources_.push_back(std::move(resource));
+
+		// 添え字を代入
+		uint32_t result = static_cast<uint32_t>(resources_.size() - 1);
+
+		// 検索用に保存
+		findMap_.insert({ source, result });
+
+		return result;
+	}
+
 	template<IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
 	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label, const Handle handle) const
 	{
 		uint32_t result = SoLib::ImGuiWidget(label, &resources_, handle.GetHandle(),
-			static_cast<std::function<std::string(uint32_t)>>([this](uint32_t index)->std::string {
+			[this](uint32_t index)->std::string
+			{
 				auto findItr = std::find_if(findMap_.begin(), findMap_.end(),
-				[this, index](auto itr) { return itr->second.GetHandle() == index; });
-		return findItr->second ? findItr->first.ToStr() : "";
-					}
-		));
+				[this, index](auto itr) { return itr.second.GetHandle() == index; });
+		return findItr != findMap_.end() and findItr->second ? findItr->first.ToStr() : "";
+			}
+		);
 
 		return Handle{ result };
 	}

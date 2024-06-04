@@ -34,7 +34,7 @@ void CGTaskScene::OnEnter()
 
 	vec2_ = std::make_unique<AlignasWrapper<Vector2>>();
 
-	AlignasWrapper<Vector2,8> test{ 53, 14 };
+	AlignasWrapper<Vector2, 8> test{ 53, 14 };
 
 	*vec2_ = Vector2{ 10,10 };
 
@@ -60,6 +60,9 @@ void CGTaskScene::OnExit()
 void CGTaskScene::Update()
 {
 	const float deltaTime = ImGui::GetIO().DeltaTime;
+
+	static SolEngine::ResourceObjectManager<Shader>::Handle handle{  };
+	handle = SolEngine::ResourceObjectManager<Shader>::GetInstance()->ImGuiWidget("ShaderManager", handle);
 
 	light_->ImGuiWidget();
 	model_->ImGuiWidget();

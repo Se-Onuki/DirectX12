@@ -57,6 +57,10 @@ public:
 	std::wstring name_;
 	std::wstring profile_;
 
+	std::string ToStr() const {
+		return ConvertString(name_) + '/' + ConvertString(profile_);
+	}
+
 	bool operator==(const SolEngine::ResourceSource<Shader> &other) const = default;
 };
 
