@@ -2,6 +2,7 @@
 #include "../../Utils/Containers/Singleton.h"
 
 #include "ResourceObject.h"
+#include "../../Utils/SoLib/SoLib_ImGui.h"
 
 namespace SolEngine {
 
@@ -39,11 +40,11 @@ namespace SolEngine {
 
 			uint32_t GetHandle() const { return handle_; }
 
-			Shader *GetShader() { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
-			const Shader *GetShader() const { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
+			T *GetResource() { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
+			const T *GetResource() const { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
 
-			inline Shader *operator*() { return GetShader(); }
-			inline const Shader *operator*() const { return GetShader(); }
+			inline T *operator*() { return GetResource(); }
+			inline const T *operator*() const { return GetResource(); }
 
 			// inline operator Shader &() const { return *instance_->resources_.at(handle_); }
 
@@ -65,10 +66,12 @@ namespace SolEngine {
 
 		Handle Find(const Source &cleate_source);
 
+		Handle ImGuiWidget(const char *const name, const Handle index) const;
+
 	private:
 		friend Handle;
 
-		std::vector<std::unique_ptr<Shader>> resources_;
+		std::vector<std::unique_ptr<T>> resources_;
 		std::unordered_map<Source, Handle> findMap_;
 
 		Creater creater_;
@@ -84,11 +87,11 @@ namespace SolEngine {
 		// すでにデータが存在する場合はそれを返す
 		if (result) { return result; }
 
-		// 引数からシェーダを構築
-		std::unique_ptr<Shader> shader = creater_.CreateObject(createSource);
+		// 引数からリソースを構築
+		std::unique_ptr<T> resource = creater_.CreateObject(createSource);
 
 		// 構築したデータを格納
-		resources_.push_back(std::move(shader));
+		resources_.push_back(std::move(resource));
 
 		// 添え字を代入
 		result = static_cast<uint32_t>(resources_.size() - 1);
@@ -113,5 +116,12 @@ namespace SolEngine {
 			// 見つからなかったら、不正なデータを返す。
 			return Handle{ (std::numeric_limits<uint32_t>::max)() };
 		}
+	}
+	template<IsResourceObject T, IsResourceSource Source, SoLib::IsRealType Creater>
+	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label, const Handle handle) const
+	{
+		uint32_t result = SoLib::ImGuiWidget(label, &resources_, handle.GetHandle(), [this](uint32_t index)->std::string { decltype(findMap_)::iterator findItr = std::find_if(findMap_.begin(), findMap_.end(), [this](decltype(findMap_)::iterator itr) { return itr->second.GetHandle() == index; }; return findItr->second ? findItr->first.ToStr() : ""; });
+
+		return Handle{ result };
 	}
 }

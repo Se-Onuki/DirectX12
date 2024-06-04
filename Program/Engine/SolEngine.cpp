@@ -40,7 +40,6 @@ void Engine::StaticInit(const char *title, UINT windowStyle, int32_t clientWidth
 
 	ImGuiManager::StaticInit(winApp->GetHWND(), instance->dxCommon_->GetDevice(), instance->dxCommon_->backBufferCount_, instance->dxCommon_->GetSRVHeap());
 
-	ShaderSource::StaticInit();
 	Model::StaticInit();
 	Sprite::StaticInit();
 	audio->StaticInit();

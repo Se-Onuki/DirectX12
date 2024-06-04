@@ -316,8 +316,8 @@ void Model::CreatePipeLine()
 
 
 	PipelineState::ShaderSet particleShader;
-	particleShader.vertex = pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" }).GetShader();
-	particleShader.pixel = pShaderManager_->Load({ L"Particle.PS.hlsl", L"ps_6_0" }).GetShader();
+	particleShader.vertex = pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" }).GetResource();
+	particleShader.pixel = pShaderManager_->Load({ L"Particle.PS.hlsl", L"ps_6_0" }).GetResource();
 
 #pragma endregion
 
@@ -373,8 +373,8 @@ void Model::CreatePipeLine()
 		auto shadowPipeline = graphicsPipelineStateDesc;
 
 		PipelineState::ShaderSet shadowParticleShader;
-		shadowParticleShader.vertex = pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" }).GetShader();
-		shadowParticleShader.pixel = pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" }).GetShader();
+		shadowParticleShader.vertex = pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" }).GetResource();
+		shadowParticleShader.pixel = pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" }).GetResource();
 
 		shadowPipeline.VS = shadowParticleShader.vertex->GetBytecode();
 		shadowPipeline.PS = shadowParticleShader.pixel->GetBytecode();
@@ -386,8 +386,8 @@ void Model::CreatePipeLine()
 		auto modelPipeline = graphicsPipelineStateDesc;
 
 		PipelineState::ShaderSet modelShader;
-		modelShader.vertex = pShaderManager_->Load({ L"Object3d.VS.hlsl", L"vs_6_0" }).GetShader();
-		modelShader.pixel = pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" }).GetShader();
+		modelShader.vertex = pShaderManager_->Load({ L"Object3d.VS.hlsl", L"vs_6_0" }).GetResource();
+		modelShader.pixel = pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" }).GetResource();
 
 		modelPipeline.VS = modelShader.vertex->GetBytecode();
 		modelPipeline.PS = modelShader.pixel->GetBytecode();
@@ -402,8 +402,8 @@ void Model::CreatePipeLine()
 		auto skinParticlePipeline = graphicsPipelineStateDesc;
 
 		PipelineState::ShaderSet shadowParticleShader;
-		shadowParticleShader.vertex = pShaderManager_->Load({ L"SkinningParticle.VS.hlsl", L"vs_6_0" }).GetShader();
-		shadowParticleShader.pixel = pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" }).GetShader();
+		shadowParticleShader.vertex = pShaderManager_->Load({ L"SkinningParticle.VS.hlsl", L"vs_6_0" }).GetResource();
+		shadowParticleShader.pixel = pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" }).GetResource();
 
 		skinParticlePipeline.InputLayout = skinInputLayoutDesc;
 
@@ -417,8 +417,8 @@ void Model::CreatePipeLine()
 		auto skinModelPipeline = graphicsPipelineStateDesc;
 
 		PipelineState::ShaderSet modelShader;
-		modelShader.vertex = pShaderManager_->Load({ L"SkinningObject3d.VS.hlsl", L"vs_6_0" }).GetShader();
-		modelShader.pixel = pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" }).GetShader();
+		modelShader.vertex = pShaderManager_->Load({ L"SkinningObject3d.VS.hlsl", L"vs_6_0" }).GetResource();
+		modelShader.pixel = pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" }).GetResource();
 
 		skinModelPipeline.InputLayout = skinInputLayoutDesc;
 
