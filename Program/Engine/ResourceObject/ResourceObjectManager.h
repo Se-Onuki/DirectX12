@@ -6,7 +6,7 @@
 
 namespace SolEngine {
 
-	template <IsResourceObject T, SoLib::IsRealType Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T>>
+	template <IsResourceObject T, SoLib::IsRealType Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T, Source>>
 	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, Source, Creater>> {
 		friend SoLib::Singleton<ResourceObjectManager>;
 		using Singleton = SoLib::Singleton<ResourceObjectManager<T, Source, Creater>>;

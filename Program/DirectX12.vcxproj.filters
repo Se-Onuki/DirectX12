@@ -785,6 +785,12 @@
     <ClInclude Include="Utils\Containers\AlignasWrapper.h">
       <Filter>Utils\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\Mesh.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\AssimpDatas.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

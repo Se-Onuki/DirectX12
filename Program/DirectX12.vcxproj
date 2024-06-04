@@ -282,7 +282,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\File\GlobalVariables.h" />
     <ClInclude Include="Engine\DirectBase\File\VariantItem.h" />
     <ClInclude Include="Engine\DirectBase\Input\Input.h" />
+    <ClInclude Include="Engine\DirectBase\Model\AssimpDatas.h" />
     <ClInclude Include="Engine\DirectBase\Model\BoneModel.h" />
+    <ClInclude Include="Engine\DirectBase\Model\Mesh.h" />
     <ClInclude Include="Engine\DirectBase\Model\MinecraftModel.h" />
     <ClInclude Include="Engine\DirectBase\Model\Model.h" />
     <ClInclude Include="Engine\DirectBase\Model\ModelManager.h" />

@@ -66,7 +66,7 @@ public:
 
 
 template <>
-class SolEngine::ResourceCreater<Shader> {
+class SolEngine::ResourceCreater<Shader, SolEngine::ResourceSource<Shader>> {
 public:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -137,5 +137,5 @@ Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 );
 
 namespace SolEngine {
-	using ShaderManager = ResourceObjectManager<Shader, ResourceSource<Shader>, ResourceCreater<Shader>>;
+	using ShaderManager = ResourceObjectManager<Shader, ResourceSource<Shader>, ResourceCreater<Shader, SolEngine::ResourceSource<Shader>>>;
 }

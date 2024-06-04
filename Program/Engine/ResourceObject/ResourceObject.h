@@ -22,14 +22,16 @@ namespace SolEngine {
 	//	//{ a.CreateObject() } -> std::same_as<std::unique_ptr<typename T::Resource>>;
 	////};
 
-	template <IsResourceObject T>
+	template <IsResourceObject T, SoLib::IsRealType Source = ResourceSource<T>>
 	class ResourceCreater {
+		using SourceType = Source;
 
 	};
 
 	template <typename T, typename Resource, typename Source>
 	concept IsResourceCreater = requires(const T t, const Source source) {
 		{t.CreateObject(source)} -> std::same_as<typename std::unique_ptr<Resource>>;
+		//requires std::same_as<typename T::SourceType, Source>;
 	};
 
 
