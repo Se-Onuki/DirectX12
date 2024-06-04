@@ -120,14 +120,17 @@ namespace PostEffect {
 
 #pragma endregion
 
-		rootSignature_.Init(rootParameters.data(), rootParameters.size());
+		auto *const rootSignatureManager = SolEngine::ResourceObjectManager<RootSignature>::GetInstance();
+		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .rootParameter_ = std::vector(rootParameters.cbegin(), rootParameters.cend()), .sampler_ = { SolEngine::ResourceSource<RootSignature>::DefaultSampler()} };
+
+		rootSignature_ = rootSignatureManager->Load(rootSignatureSource);
 
 		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 		inputLayoutDesc.pInputElementDescs = nullptr;
 		inputLayoutDesc.NumElements = 0u;
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-		graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();	// RootSignature
+		graphicsPipelineStateDesc.pRootSignature = rootSignature_.GetResource()->Get();	// RootSignature
 		graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 		graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
 

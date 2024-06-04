@@ -17,6 +17,7 @@
 #include <format>
 #include "EngineObject.h"
 #include "../../ResourceObject/ResourceObject.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
 
 class Shader : public SolEngine::IResourceObject {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -47,7 +48,7 @@ public:
 };
 
 template<>
-class SolEngine::IResourceSource<Shader> {
+class SolEngine::ResourceSource<Shader> {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 
@@ -56,16 +57,16 @@ public:
 	std::wstring name_;
 	std::wstring profile_;
 
-	bool operator==(const SolEngine::IResourceSource<Shader> &other) const = default;
+	bool operator==(const SolEngine::ResourceSource<Shader> &other) const = default;
 };
 
 
 template <>
-class SolEngine::IResourceCreater<Shader> {
+class SolEngine::ResourceCreater<Shader> {
 public:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	IResourceCreater() {
+	ResourceCreater() {
 
 		HRESULT hr = S_FALSE;
 		// dxcCompilerを初期化
@@ -86,7 +87,7 @@ public:
 
 	std::unique_ptr<Shader> Compile(const std::wstring &shaderPath, const wchar_t *profile) const;
 
-	std::unique_ptr<Shader> CreateObject(const SolEngine::IResourceSource<Shader> &source) const { return std::move(Compile(source.name_, source.profile_.c_str())); }
+	std::unique_ptr<Shader> CreateObject(const SolEngine::ResourceSource<Shader> &source) const { return std::move(Compile(source.name_, source.profile_.c_str())); }
 
 
 private:
@@ -100,7 +101,7 @@ private:
 };
 
 
-using ShaderSource = SolEngine::IResourceSource<Shader>;
+using ShaderSource = SolEngine::ResourceSource<Shader>;
 
 namespace std {
 
@@ -130,3 +131,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 	IDxcCompiler3 *dxcCompiler,
 	IDxcIncludeHandler *includeHandler
 );
+
+namespace SolEngine {
+	using ShaderManager = ResourceObjectManager<Shader>;
+}

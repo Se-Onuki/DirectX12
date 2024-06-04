@@ -7,7 +7,7 @@ D3D12_SHADER_BYTECODE Shader::GetBytecode() const {
 	return D3D12_SHADER_BYTECODE{ shaderBlob_->GetBufferPointer(),shaderBlob_->GetBufferSize() };
 }
 
-std::unique_ptr<Shader> SolEngine::IResourceCreater<Shader>::Compile(const std::wstring &shaderPath, const wchar_t *profile) const
+std::unique_ptr<Shader> SolEngine::ResourceCreater<Shader>::Compile(const std::wstring &shaderPath, const wchar_t *profile) const
 {
 	std::unique_ptr<Shader> result = std::make_unique<Shader>();
 	result->SetIDxcBlob(std::move(CompileShader(directoryPath_ + shaderPath, profile, dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get())));

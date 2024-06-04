@@ -14,17 +14,22 @@ namespace SolEngine {
 	concept IsResourceObject = SoLib::IsBased<T, IResourceObject>;
 
 	template <IsResourceObject T>
-	class IResourceSource {
+	class ResourceSource {
 	};
 
-	template <typename T>
-	concept IsResourceSource = requires(T a) {
-		//{ a.CreateObject() } -> std::same_as<std::unique_ptr<typename T::Resource>>;
-	};
+	//template <typename T>
+	//concept IsResourceSource =  //requires(T a) {
+	//	//{ a.CreateObject() } -> std::same_as<std::unique_ptr<typename T::Resource>>;
+	////};
 
 	template <IsResourceObject T>
-	class IResourceCreater {
-		
+	class ResourceCreater {
+
+	};
+
+	template <typename T, typename Resource, typename Source>
+	concept IsResourceCreater = requires(T t, Source source) {
+		{t.CreateObject(t)} -> std::same_as<std::unique_ptr<Resource>>;
 	};
 
 

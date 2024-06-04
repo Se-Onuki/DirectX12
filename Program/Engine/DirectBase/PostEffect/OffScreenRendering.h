@@ -7,6 +7,7 @@
 #include "../Base/EngineObject.h"
 #include "../Base/RootSignature.h"
 #include "../Base/CBuffer.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
 
 namespace PostEffect {
 
@@ -68,7 +69,7 @@ namespace PostEffect {
 
 		void Draw(const std::pair<std::wstring, std::wstring> &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
 
-		ID3D12RootSignature *GetRootSignature() { return rootSignature_.Get(); }
+		ID3D12RootSignature *GetRootSignature() { return rootSignature_.GetResource()->Get(); }
 
 		ID3D12PipelineState *GetPipeLine(const std::pair<std::wstring, std::wstring> &key) { return pipelineState_.at(key).Get(); }
 
@@ -78,7 +79,7 @@ namespace PostEffect {
 
 		CBuffer<std::pair<float, float>> param_ = { { 16.f, 0.8f} };
 
-		RootSignature rootSignature_;
+		SolEngine::ResourceObjectManager<RootSignature>::Handle rootSignature_;
 
 		std::map<std::pair<std::wstring, std::wstring>, ComPtr<ID3D12PipelineState>> pipelineState_;
 

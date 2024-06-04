@@ -6,7 +6,7 @@
 
 namespace SolEngine {
 
-	template <IsResourceObject T, IsResourceSource Source = IResourceSource<T>, SoLib::IsRealType Creater = IResourceCreater<T>>
+	template <IsResourceObject T, SoLib::IsRealType Source = ResourceSource<T>, SoLib::IsRealType Creater = ResourceCreater<T>>
 	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, Source, Creater>> {
 		friend SoLib::Singleton<ResourceObjectManager>;
 		using Singleton = SoLib::Singleton<ResourceObjectManager<T, Source, Creater>>;
@@ -62,9 +62,9 @@ namespace SolEngine {
 			//inline static ResourceObjectManager *const manager_ = ResourceObjectManager::GetInstance();
 		};
 
-		Handle Load(const Source &cleate_source);
+		Handle Load(const Source &source);
 
-		Handle Find(const Source &cleate_source);
+		Handle Find(const Source &source);
 
 		Handle ImGuiWidget(const char *const name, const Handle index) const;
 
@@ -76,19 +76,18 @@ namespace SolEngine {
 
 		Creater creater_;
 
-
 	};
 
-	template <IsResourceObject T, IsResourceSource Source, SoLib::IsRealType Creater>
-	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Load(const Source &createSource)
+	template <IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
+	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Load(const Source &source)
 	{
 		// データを格納する
-		Handle result = Find(createSource);
+		Handle result = Find(source);
 		// すでにデータが存在する場合はそれを返す
 		if (result) { return result; }
 
 		// 引数からリソースを構築
-		std::unique_ptr<T> resource = creater_.CreateObject(createSource);
+		std::unique_ptr<T> resource = creater_.CreateObject(source);
 
 		// 構築したデータを格納
 		resources_.push_back(std::move(resource));
@@ -97,16 +96,16 @@ namespace SolEngine {
 		result = static_cast<uint32_t>(resources_.size() - 1);
 
 		// 検索用に保存
-		findMap_.insert({ createSource, result });
+		findMap_.insert({ source, result });
 
 		return result;
 	}
 
-	template <IsResourceObject T, IsResourceSource Source, SoLib::IsRealType Creater>
-	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &createSource)
+	template <IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
+	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &source)
 	{
 		// 検索を行う
-		auto itr = findMap_.find(createSource);
+		auto itr = findMap_.find(source);
 		// 見つかったらそれを返す
 		if (itr != findMap_.end()) {
 
@@ -117,10 +116,16 @@ namespace SolEngine {
 			return Handle{ (std::numeric_limits<uint32_t>::max)() };
 		}
 	}
-	template<IsResourceObject T, IsResourceSource Source, SoLib::IsRealType Creater>
+	template<IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
 	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label, const Handle handle) const
 	{
-		uint32_t result = SoLib::ImGuiWidget(label, &resources_, handle.GetHandle(), [this](uint32_t index)->std::string { decltype(findMap_)::iterator findItr = std::find_if(findMap_.begin(), findMap_.end(), [this](decltype(findMap_)::iterator itr) { return itr->second.GetHandle() == index; }; return findItr->second ? findItr->first.ToStr() : ""; });
+		uint32_t result = SoLib::ImGuiWidget(label, &resources_, handle.GetHandle(),
+			static_cast<std::function<std::string(uint32_t)>>([this](uint32_t index)->std::string {
+				auto findItr = std::find_if(findMap_.begin(), findMap_.end(),
+				[this, index](auto itr) { return itr->second.GetHandle() == index; });
+		return findItr->second ? findItr->first.ToStr() : "";
+					}
+		));
 
 		return Handle{ result };
 	}

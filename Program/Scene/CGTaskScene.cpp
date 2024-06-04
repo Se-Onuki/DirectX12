@@ -32,6 +32,12 @@ void CGTaskScene::OnEnter()
 
 	skinModel_ = SkinModel::MakeSkinModel(model_);
 
+	vec2_ = std::make_unique<AlignasWrapper<Vector2>>();
+
+	AlignasWrapper<Vector2,8> test{ 53, 14 };
+
+	*vec2_ = Vector2{ 10,10 };
+
 	/*
 	{
 		gameObject_ = std::make_unique<GameObject>();
