@@ -68,7 +68,7 @@ template <>
 class SolEngine::ResourceCreater<RootSignature> {
 public:
 
-	std::unique_ptr<RootSignature> CreateObject(const SolEngine::ResourceSource<RootSignature> &source);
+	std::unique_ptr<RootSignature> CreateObject(const SolEngine::ResourceSource<RootSignature> &source) const;
 
 };
 

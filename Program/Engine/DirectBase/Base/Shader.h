@@ -137,5 +137,5 @@ Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 );
 
 namespace SolEngine {
-	using ShaderManager = ResourceObjectManager<Shader>;
+	using ShaderManager = ResourceObjectManager<Shader, ResourceSource<Shader>, ResourceCreater<Shader>>;
 }

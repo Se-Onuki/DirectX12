@@ -144,7 +144,7 @@ void Sprite::CreatePipeLine() {
 #pragma endregion
 
 #pragma region ShaderをCompileする
-	auto *pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
+	auto *pShaderManager_ = SolEngine::ResourceObjectManager<Shader>::GetInstance();
 
 
 	Shader *vertexShader = *pShaderManager_->Load({ L"Sprite.VS.hlsl", L"vs_6_0" });

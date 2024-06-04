@@ -28,8 +28,8 @@ namespace SolEngine {
 	};
 
 	template <typename T, typename Resource, typename Source>
-	concept IsResourceCreater = requires(T t, Source source) {
-		{t.CreateObject(t)} -> std::same_as<std::unique_ptr<Resource>>;
+	concept IsResourceCreater = requires(const T t, const Source source) {
+		{t.CreateObject(source)} -> std::same_as<typename std::unique_ptr<Resource>>;
 	};
 
 
