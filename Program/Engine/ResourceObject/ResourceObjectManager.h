@@ -17,10 +17,6 @@ namespace SolEngine {
 
 	public:
 
-		//using CreateSource = T::CreateSource;
-		//using CreateSource = ShaderCreater;
-
-
 		struct Handle {
 
 			Handle() = default;
@@ -46,20 +42,17 @@ namespace SolEngine {
 			inline T *operator*() { return GetResource(); }
 			inline const T *operator*() const { return GetResource(); }
 
-			// inline operator Shader &() const { return *instance_->resources_.at(handle_); }
-
 			/// @brief このデータが有効であるか
 			explicit inline operator bool() const {
 				return
-					handle_ != (std::numeric_limits<uint32_t>::max)()		// データが最大値(無効値)に設定されていないか
-					and Singleton::instance_								// マネージャーが存在するか
+					handle_ != (std::numeric_limits<uint32_t>::max)()			// データが最大値(無効値)に設定されていないか
+					and Singleton::instance_									// マネージャーが存在するか
 					and handle_ < Singleton::instance_->resourceList_.size()	// 参照ができる状態か
-					and Singleton::instance_->resourceList_.at(handle_).second;		// データが存在するか
+					and Singleton::instance_->resourceList_.at(handle_).second;	// データが存在するか
 			}
 
 		private:
 			uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
-			//inline static ResourceObjectManager *const manager_ = ResourceObjectManager::GetInstance();
 		};
 
 		Handle Load(const Source &source);
