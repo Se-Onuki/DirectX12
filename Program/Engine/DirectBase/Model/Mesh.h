@@ -40,7 +40,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::Mesh>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::Mesh> &data) const {
-			return std::hash<std::string>()(std::to_string(data.fileName_.GetHandle()) + std::to_string(data.index_));
+			return size_t{ static_cast<size_t>(data.fileName_.GetHandle()) << 32 | static_cast<size_t>(data.index_) };
 		}
 	};
 }
