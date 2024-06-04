@@ -405,6 +405,9 @@
     <ClCompile Include="Engine\ResourceObject\ResourceObjectManager.cpp">
       <Filter>Engine\ResourceObject</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\AssimpData.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -788,7 +791,7 @@
     <ClInclude Include="Engine\DirectBase\Model\Mesh.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Model\AssimpDatas.h">
+    <ClInclude Include="Engine\DirectBase\Model\AssimpData.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
