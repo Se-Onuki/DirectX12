@@ -40,8 +40,8 @@ namespace SolEngine {
 
 			uint32_t GetHandle() const { return handle_; }
 
-			T *GetResource() { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
-			const T *GetResource() const { return Singleton::instance_ ? Singleton::instance_->resources_.at(handle_).get() : nullptr; }
+			T *GetResource() { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.get() : nullptr; }
+			const T *GetResource() const { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.get() : nullptr; }
 
 			inline T *operator*() { return GetResource(); }
 			inline const T *operator*() const { return GetResource(); }
@@ -53,8 +53,8 @@ namespace SolEngine {
 				return
 					handle_ != (std::numeric_limits<uint32_t>::max)()		// データが最大値(無効値)に設定されていないか
 					and Singleton::instance_								// マネージャーが存在するか
-					and handle_ < Singleton::instance_->resources_.size()	// 参照ができる状態か
-					and Singleton::instance_->resources_.at(handle_);		// データが存在するか
+					and handle_ < Singleton::instance_->resourceList_.size()	// 参照ができる状態か
+					and Singleton::instance_->resourceList_.at(handle_).second;		// データが存在するか
 			}
 
 		private:
@@ -73,8 +73,8 @@ namespace SolEngine {
 
 		Handle AddData(const Source &source, std::unique_ptr<T> resource);
 
-		std::vector<std::unique_ptr<T>> resources_;
 		std::unordered_map<Source, Handle> findMap_;
+		std::vector<std::pair<typename const decltype(findMap_)::const_iterator, std::unique_ptr<T>>> resourceList_;
 
 		Creater creater_;
 
@@ -115,14 +115,15 @@ namespace SolEngine {
 	template<IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
 	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::AddData(const Source &source, std::unique_ptr<T> resource)
 	{
-		// 構築したデータを格納
-		resources_.push_back(std::move(resource));
 
 		// 添え字を代入
-		uint32_t result = static_cast<uint32_t>(resources_.size() - 1);
+		uint32_t result = static_cast<uint32_t>(resourceList_.size());
 
 		// 検索用に保存
 		findMap_.insert({ source, result });
+
+		// 構築したデータを格納
+		resourceList_.push_back({ findMap_.find(source), std::move(resource) });
 
 		return result;
 	}
@@ -130,12 +131,14 @@ namespace SolEngine {
 	template<IsResourceObject T, SoLib::IsRealType Source, SoLib::IsRealType Creater>
 	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label, const Handle handle) const
 	{
-		uint32_t result = SoLib::ImGuiWidget(label, &resources_, handle.GetHandle(),
+		uint32_t result = SoLib::ImGuiWidget(label, &resourceList_, handle.GetHandle(),
 			[this](uint32_t index)->std::string
 			{
-				auto findItr = std::find_if(findMap_.begin(), findMap_.end(),
-				[this, index](auto itr) { return itr.second.GetHandle() == index; });
-		return findItr != findMap_.end() and findItr->second ? findItr->first.ToStr() : "";
+				return Handle{ index } ? resourceList_.at(index).first->first.ToStr() : "";
+
+				//auto findItr = std::find_if(findMap_.begin(), findMap_.end(),
+				//	[this, index](auto itr) { return itr.second.GetHandle() == index; });
+				//return findItr != findMap_.end() and findItr->second ? findItr->first.ToStr() : "";
 			}
 		);
 
