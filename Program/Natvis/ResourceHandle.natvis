@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
   <Type Name="SolEngine::ResourceObjectManager&lt;*,*,*&gt;::Handle">
-    <DisplayString>{{ handle_ = {handle_} }}</DisplayString>
+    <DisplayString>{{ handle_ = {handle_}, version_ = {version_}, {*Singleton::instance_->resourceList_.at(handle_).second.second} }}</DisplayString>
     <Expand>
-      <Item Name="handle_">handle_</Item>
+      <Item Name="[handle]">handle_</Item>
+      <Item Name="[version]">version_</Item>
+      <Item Name="[resource]">*Singleton::instance_->resourceList_.at(handle_).second.second</Item>
     </Expand>
   </Type>
 </AutoVisualizer>
