@@ -145,6 +145,9 @@
     <Filter Include="Engine\LevelEditor">
       <UniqueIdentifier>{5e0096df-e5e2-42a3-bc06-4b15755e82fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Natvis">
+      <UniqueIdentifier>{a4773ae0-b1ac-46d8-89e4-32665fd8ee6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -873,5 +876,10 @@
     <None Include="resources\shader\FullScreen.hlsli">
       <Filter>Engine\Shader</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Natvis\ResourceHandle.natvis">
+      <Filter>Natvis</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>
