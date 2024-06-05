@@ -32,7 +32,7 @@ const float LineBase::Clamp(const float &t) const {
 		break;
 	}
 }
-const char *LineBase::typeList[3] = { "Line", "Ray", "Segment" };
+
 
 void LineBase::ImGuiDebug(const std::string &group) {
 	if (ImGui::TreeNode(group.c_str())) {

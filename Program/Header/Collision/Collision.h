@@ -81,11 +81,11 @@ struct Triangle {
 
 	Triangle() {}
 	/// @param LocalVertices 頂点リスト(時計回り)
-	Triangle(const Vector3 Vertices[3]);
+	Triangle(const std::array<Vector3, 3u> Vertices);
 	Triangle(const Vector3 &Vertice0, const Vector3 &Vertice1, const Vector3 &Vertice2)
 		: vertices_{ Vertice0, Vertice1, Vertice2 } {}
 
-	Triangle(const Triangle &other) { memcpy_s(this, sizeof(Triangle), &other, sizeof(Triangle)); }
+	Triangle(const Triangle &) = default;
 	~Triangle();
 
 	[[nodiscard]] const Triangle operator*(const Matrix4x4 &matrix) const {
@@ -117,7 +117,6 @@ struct Sphere {
 
 struct LineBase final {
 	enum class LineType : uint32_t { Line, Ray, Segment };
-	// LineBase(const Vector3& Origin, const Vector3& Diff) : origin(Origin), diff(Diff) {}
 	Vector3 origin; // 始点
 	Vector3 diff;   // 終点へのベクトル
 	LineType lineType = LineType::Segment;
@@ -134,7 +133,7 @@ struct LineBase final {
 
 private:
 	[[nodiscard]] float ClosestProgress(const Vector3 &point) const;
-	static const char *typeList[3];
+	inline static std::array<const char *const, 3u> typeList = { "Line", "Ray", "Segment" };
 };
 
 struct AABB {
