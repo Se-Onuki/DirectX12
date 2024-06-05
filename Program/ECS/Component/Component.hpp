@@ -21,6 +21,8 @@
 
 #include "../../Engine/DirectBase/Model/BoneModel.h"
 #include "../../Header/Collision/Collision.h"
+#include "../../Engine/LevelEditor/LevelData.h"
+
 
 // class SpriteManager {
 // public:
@@ -321,6 +323,11 @@ namespace ECS {
 	struct AttackStatus : IComponent {
 		float offset_ = 4.5f;
 		float radius_ = 4.5f;
+	};
+
+	/// @brief レベルデータから構築されたという証明書
+	struct CreateByLevelData : IComponent {
+		SolEngine::ResourceObjectManager<SolEngine::LevelData>::Handle handle_;
 	};
 
 	struct InputFlagComp : IComponent {};

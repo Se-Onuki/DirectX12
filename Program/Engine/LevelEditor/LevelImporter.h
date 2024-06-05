@@ -7,7 +7,9 @@ namespace SolEngine {
 	public:
 
 
-		bool Import(const LevelData *const levelData, World *const world) const;
+		bool Import(const ResourceObjectManager<LevelData>::Handle levelData, World *const world) const;
+
+		bool Export(ResourceObjectManager<LevelData>::Handle levelData, const World *const world) const;
 
 
 	private:

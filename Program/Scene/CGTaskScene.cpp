@@ -23,7 +23,7 @@ void CGTaskScene::OnEnter()
 	entityManager_ = world_->GetEntityManager();
 
 	SolEngine::LevelImporter levelImporter;
-	levelImporter.Import(*levelData, world_.get());
+	levelImporter.Import(levelData, world_.get());
 
 	model_ = ModelManager::GetInstance()->AddModel("HumanModel", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 

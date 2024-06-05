@@ -418,7 +418,7 @@
       <Filter>Engine\LevelEditor</Filter>
     </ClCompile>
     <ClCompile Include="Engine\LevelEditor\LevelImporter.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\LevelEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

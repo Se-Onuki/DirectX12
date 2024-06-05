@@ -55,12 +55,15 @@ namespace SolEngine {
 			}
 
 		private:
+			//uint32_t version_ = 0;
 			uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
 		};
 
 		Handle Load(const Source &source);
 
-		Handle Find(const Source &source);
+		Handle Find(const Source &source) const;
+
+		bool Destory(const Handle &handle);
 
 		/// @brief ImGuiのウィジェットを表示する
 		/// @param label 表示するラベル名
@@ -102,7 +105,7 @@ namespace SolEngine {
 	}
 
 	template <IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
-	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &source)
+	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &source) const
 	{
 		// 検索を行う
 		auto itr = findMap_.find(source);
@@ -115,6 +118,25 @@ namespace SolEngine {
 			// 見つからなかったら、不正なデータを返す。
 			return Handle{ (std::numeric_limits<uint32_t>::max)() };
 		}
+	}
+
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
+	inline bool ResourceObjectManager<T, Source, Creater>::Destory(const Handle &handle)
+	{
+		// indexから検索
+		auto &[itr, resource] = resourceList_.at(handle.GetHandle());
+		// バージョン検知
+		if (itr->second != handle) { return false; }
+
+		// バージョンが一致していた場合
+		// イテレータを破棄
+		findMap_.erase(itr);
+
+		// リソースも破棄
+		resource.reset();
+
+
+		return true;
 	}
 
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
