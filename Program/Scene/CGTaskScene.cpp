@@ -11,6 +11,7 @@
 #include "../../ECS/Entity/EntityManager.hpp"
 #include "../Engine/DirectBase/Model/AssimpData.h"
 #include "../Engine/DirectBase/Model/Mesh.h"
+#include "../Engine/DirectBase/Model/ModelData.h"
 
 void CGTaskScene::OnEnter()
 {
@@ -28,21 +29,24 @@ void CGTaskScene::OnEnter()
 	levelImporter.Import(levelData, world_.get());
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
-	auto boxHandle = assimpManager->Load({ "", "box.obj" });
+	auto assimpHandle = assimpManager->Load({ "", "box.obj" });
 
-	SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
+	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
+	auto boxHandle = modelDataManager->Load({ assimpHandle });
 
-	// ↓ユーザが読み込みを行うとかいう最悪なコード
-	for (uint32_t i = 0; i < boxHandle->importer_->GetScene()->mNumMaterials; i++) {
-		materialManager->Load({ boxHandle, i });
-	}
-	
-	SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
+	//SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
 
-	// ↓ユーザが読み込みを行うとかいう最悪なコード
-	for (uint32_t i = 0; i < boxHandle->importer_->GetScene()->mNumMeshes; i++) {
-		meshManager->Load({ boxHandle, i });
-	}
+	//// ↓ユーザが読み込みを行うとかいう最悪なコード
+	//for (uint32_t i = 0; i < boxHandle->importer_->GetScene()->mNumMaterials; i++) {
+	//	materialManager->Load({ boxHandle, i });
+	//}
+	//
+	//SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
+
+	//// ↓ユーザが読み込みを行うとかいう最悪なコード
+	//for (uint32_t i = 0; i < boxHandle->importer_->GetScene()->mNumMeshes; i++) {
+	//	meshManager->Load({ boxHandle, i });
+	//}
 
 
 

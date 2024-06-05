@@ -19,6 +19,8 @@ namespace SolEngine {
 		IndexBuffer<uint32_t> indexBuffer_;
 
 		ResourceObjectManager<Material>::Handle materialhandle_;
+
+		void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const D3D12_VERTEX_BUFFER_VIEW *vbv = nullptr) const;
 	};
 
 	template <>

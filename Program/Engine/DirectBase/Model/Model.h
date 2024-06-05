@@ -405,6 +405,9 @@ public:
 	bool ImGuiWidget();
 
 	static void SetPipelineType(const PipelineType pipelineType);
+	static const PipelineType GetPipelineType() { return sPipelineType_; };
+
+	static const auto &GetGraphicsPipelineState() { return graphicsPipelineState_; }
 
 	[[nodiscard]] static std::unique_ptr<Model> CreatePlane();
 

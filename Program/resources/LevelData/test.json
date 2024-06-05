@@ -61,9 +61,9 @@
                     1.0,
                     1.0,
                     1.0
-                ],
-                "file_name": "test"
+                ]
             },
+            "file_name": "Sphere",
             "children": [
                 {
                     "type": "MESH",
@@ -85,7 +85,7 @@
                             1.0
                         ]
                     },
-                    "file_name": "test"
+                    "file_name": "Sphere"
                 }
             ]
         }

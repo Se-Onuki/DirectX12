@@ -41,8 +41,10 @@ namespace SolEngine {
 	void LevelImporter::RecursiveLoad(const std::list<LevelData::ObjectData> &objectDataList, World *const world, ECS::Entity *parent) const
 	{
 
-		// モデルは全てBOXであるとする
-		Model *const defaultModel = ModelManager::GetInstance()->GetModel("Block");
+		auto *modelManager = ModelManager::GetInstance();
+
+		// モデルは初期値は"box.obj"であるとする
+		Model *const defaultModel = modelManager->GetModel("Block");
 
 		// エンティティマネージャを取得
 		auto *const entityManager = world->GetEntityManager();
@@ -51,7 +53,14 @@ namespace SolEngine {
 		for (const auto &object : objectDataList) {
 
 			ECS::Prefab prefab;
-			prefab += ECS::ModelComp{ .model_ = defaultModel };
+			// マネージャからモデルを取得する
+			Model *model = modelManager->GetModel(object.fileName_);
+			// モデルが存在しない場合は
+			if (not model) {
+				// デフォルトモデルを渡す
+				model = defaultModel;
+			}
+			prefab += ECS::ModelComp{ .model_ = model };
 			{
 				prefab += ECS::PositionComp{ .position_ = object.transform_.translate_ };
 				prefab += ECS::RotateComp{ .rotate_ = object.transform_.rotate_ };

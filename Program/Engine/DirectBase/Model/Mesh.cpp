@@ -1,6 +1,23 @@
 #include "Mesh.h"
+#include "../Base/TextureManager.h"
 
 namespace SolEngine {
+
+	void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const D3D12_VERTEX_BUFFER_VIEW *vbv) const {
+
+		std::array<D3D12_VERTEX_BUFFER_VIEW, 2u> vbvs = { vertexBuffer_.GetVBView() };
+		if (vbv) {
+			vbvs[1] = *vbv;
+		}
+
+		commandList->SetPipelineState(Model::GetGraphicsPipelineState()[static_cast<uint32_t>(Model::GetPipelineType())][static_cast<uint32_t>(materialhandle_->blendMode_)].Get()); // PSOを設定
+		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, materialhandle_->texHandle_);
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, materialhandle_->materialData_.GetGPUVirtualAddress());
+		commandList->IASetVertexBuffers(0, vbv ? 2 : 1, vbvs.data());
+		commandList->IASetIndexBuffer(&indexBuffer_.GetIBView());
+		commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
+	}
+
 	std::unique_ptr<Mesh> ResourceCreater<Mesh>::CreateObject(const ResourceSource<Mesh> &source) const {
 
 		static constexpr uint32_t kDefaultMaterialIndex = 0;
@@ -53,44 +70,6 @@ namespace SolEngine {
 		// マテリアルのハンドルを取得
 		meshResult->materialhandle_ = ResourceObjectManager<Material>::GetInstance()->Find({ .assimpHandle = source.assimpHandle, .index_ = mesh->mMaterialIndex });
 
-		// SkinCluster構築用のデータ取得を追加
-		//for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
-		//	aiBone *aiBone = mesh->mBones[boneIndex];
-		//	std::string jointName = aiBone->mName.C_Str();
-		//	// 名前をもとにデータを構築
-		//	JointWeightData &jointWeightData = result->skinCluster_.skinClusterData_[jointName];
-
-		//	// バインド行列の逆行列を取得
-		//	aiMatrix4x4 bindPoseMatrixAssimp = aiBone->mOffsetMatrix.Inverse();
-		//	aiVector3D scale, translate;
-		//	aiQuaternion rotate;
-		//	// Transformを取得
-		//	bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
-		//	Matrix4x4 bindPoseMatrix = SoLib::Convert(scale, rotate, translate).Affine();
-		//	// 逆行列を保存
-		//	jointWeightData.inverseBindPoseMatrix_ = bindPoseMatrix.InverseSRT();
-
-		//	// 領域を確保しておく
-		//	jointWeightData.vertexWeightData_.resize(aiBone->mNumWeights);
-		//	for (uint32_t weightIndex = 0; weightIndex < aiBone->mNumWeights; ++weightIndex) {
-		//		aiVertexWeight aiWeight = aiBone->mWeights[weightIndex];
-		//		// ウェイトデータを取得して格納
-		//		jointWeightData.vertexWeightData_[weightIndex] = { .weight_ = aiWeight.mWeight, .vertexIndex_ = aiWeight.mVertexId };
-		//	}
-
-
-		//}
-
-		//// 保存されたデータからメッシュを作成
-		//meshResult->CreateBuffer();
-
-		//// 名前の設定
-		//meshResult->meshName_ = mesh->mName.C_Str();
-
-		//// メッシュをコンテナに保存
-		//result->meshList_.push_back(std::move(meshResult));
-	//}
-
-	return std::move(meshResult);
-}
+		return std::move(meshResult);
+	}
 }

@@ -426,6 +426,9 @@
     <ClCompile Include="Engine\DirectBase\Model\Material.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\ModelData.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -819,6 +822,9 @@
       <Filter>Engine\LevelEditor</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\Material.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\ModelData.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
