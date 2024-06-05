@@ -36,7 +36,7 @@ namespace Collision {
 
 	const bool IsHit(const Capsule &cupsele, const Plane &plane);
 
-	const bool IsHitAxis(const Vector3 &axis, const Vector3 vertexA[8], const Vector3 vertexB[8]);
+	const bool IsHitAxis(const Vector3 &axis, const std::array<Vector3,8u> vertexA, const  std::array<Vector3, 8u> vertexB);
 
 	const float HitProgress(const LineBase &line, const Plane &plane);
 	const float HitProgress(const LineBase &line, const AABB &aabb);
@@ -47,7 +47,11 @@ namespace Collision {
 
 } // namespace Collision
 
-struct OBB {
+struct IShape {
+
+};
+
+struct OBB : public IShape {
 	Vector3 centor; // 中心点
 	Quaternion orientations = Quaternion::Identity; // ローカル座標
 	Vector3 size;                                           // 中心点からの各軸の半径
@@ -60,7 +64,7 @@ struct OBB {
 	void ImGuiDebug(const std::string &group, Vector3 &rotate);
 };
 
-struct Plane {
+struct Plane : public IShape {
 	Vector3 normal;
 	float distance;
 
@@ -75,7 +79,7 @@ struct Plane {
 };
 
 /// @brief 3角ポリゴン
-struct Triangle {
+struct Triangle : public IShape {
 	// 頂点リスト(時計回り)
 	Vector3 vertices_[3] = {};
 
@@ -105,7 +109,7 @@ struct Triangle {
 	void ImGuiDebug(const std::string &group);
 };
 
-struct Sphere {
+struct Sphere : public IShape {
 	Vector3 centor;
 	float radius;
 
@@ -115,7 +119,7 @@ struct Sphere {
 	void ImGuiDebug(const std::string &group);
 };
 
-struct LineBase final {
+struct LineBase final : public IShape {
 	enum class LineType : uint32_t { Line, Ray, Segment };
 	Vector3 origin; // 始点
 	Vector3 diff;   // 終点へのベクトル
@@ -136,7 +140,7 @@ private:
 	inline static std::array<const char *const, 3u> typeList = { "Line", "Ray", "Segment" };
 };
 
-struct AABB {
+struct AABB : public IShape {
 	Vector3 min;
 	Vector3 max;
 
@@ -206,7 +210,7 @@ struct ConicalPendulum {
 	Vector3 GetPos();
 };
 
-struct Capsule {
+struct Capsule : public IShape {
 	LineBase segment{ .lineType = LineBase::LineType::Segment };
 	float radius;
 

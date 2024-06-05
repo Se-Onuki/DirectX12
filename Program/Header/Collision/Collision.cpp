@@ -170,34 +170,38 @@ const bool Collision::IsHit(const OBB &obb, const LineBase &line) {
 }
 
 const bool Collision::IsHit(const OBB &obbA, const OBB &obbB) {
-	Vector3 objA[8]{
-		// lower
-			  {-obbA.size.x, -obbA.size.y, -obbA.size.z},
-			  {-obbA.size.x, -obbA.size.y, +obbA.size.z},
-			  {+obbA.size.x, -obbA.size.y, +obbA.size.z},
-			  {+obbA.size.x, -obbA.size.y, -obbA.size.z},
-			  // higher
-					 {-obbA.size.x, +obbA.size.y, -obbA.size.z},
-					 {-obbA.size.x, +obbA.size.y, +obbA.size.z},
-					 {+obbA.size.x, +obbA.size.y, +obbA.size.z},
-					 {+obbA.size.x, +obbA.size.y, -obbA.size.z},
+	std::array<Vector3, 8u> objA{
+		{
+			// lower
+			{-obbA.size.x, -obbA.size.y, -obbA.size.z},
+			{-obbA.size.x, -obbA.size.y, +obbA.size.z},
+			{+obbA.size.x, -obbA.size.y, +obbA.size.z},
+			{+obbA.size.x, -obbA.size.y, -obbA.size.z},
+			// higher
+			{-obbA.size.x, +obbA.size.y, -obbA.size.z},
+			{-obbA.size.x, +obbA.size.y, +obbA.size.z},
+			{+obbA.size.x, +obbA.size.y, +obbA.size.z},
+			{+obbA.size.x, +obbA.size.y, -obbA.size.z},
+		}
 	};
 	const Matrix4x4 &worldA = obbA.GetWorldMatrix();
 	for (uint8_t i = 0; i < 8u; i++) {
 		objA[i] *= worldA;
 	}
 
-	Vector3 objB[8]{
-		// lower
-			  {-obbB.size.x, -obbB.size.y, -obbB.size.z},
-			  {-obbB.size.x, -obbB.size.y, +obbB.size.z},
-			  {+obbB.size.x, -obbB.size.y, +obbB.size.z},
-			  {+obbB.size.x, -obbB.size.y, -obbB.size.z},
-			  // higher
-					 {-obbB.size.x, +obbB.size.y, -obbB.size.z},
-					 {-obbB.size.x, +obbB.size.y, +obbB.size.z},
-					 {+obbB.size.x, +obbB.size.y, +obbB.size.z},
-					 {+obbB.size.x, +obbB.size.y, -obbB.size.z},
+	std::array<Vector3, 8u> objB{
+		{
+			// lower
+			{-obbB.size.x, -obbB.size.y, -obbB.size.z},
+			{-obbB.size.x, -obbB.size.y, +obbB.size.z},
+			{+obbB.size.x, -obbB.size.y, +obbB.size.z},
+			{+obbB.size.x, -obbB.size.y, -obbB.size.z},
+			// higher
+			{-obbB.size.x, +obbB.size.y, -obbB.size.z},
+			{-obbB.size.x, +obbB.size.y, +obbB.size.z},
+			{+obbB.size.x, +obbB.size.y, +obbB.size.z},
+			{+obbB.size.x, +obbB.size.y, -obbB.size.z},
+		}
 	};
 	const Matrix4x4 &worldB = obbB.GetWorldMatrix();
 	for (uint8_t i = 0; i < 8u; i++) {
@@ -242,7 +246,7 @@ const bool Collision::IsHit(const Capsule &cupsele, const Plane &plane) {
 }
 
 const bool
-Collision::IsHitAxis(const Vector3 &axis, const Vector3 vertexA[8], const Vector3 vertexB[8]) {
+Collision::IsHitAxis(const Vector3 &axis, const  std::array<Vector3, 8u> vertexA, const  std::array<Vector3, 8u> vertexB) {
 
 	float minA = 0.f, maxA = 0.f;
 	float minB = 0.f, maxB = 0.f;
@@ -537,7 +541,7 @@ void Ball::Update(const Plane &plane, const float deltaTime, const float elastic
 	velocity += acceleration * deltaTime;
 	if (velocity * plane.normal < 0.f) {
 		Capsule capsule{};
-		capsule.segment = { position, velocity, LineBase::LineType::Segment };
+		capsule.segment = LineBase{ .origin = position, .diff = velocity, .lineType = LineBase::LineType::Segment };
 		capsule.radius = radius;
 		if (Collision::IsHit(capsule, plane)) {
 			const Vector3 hitPos = capsule.GetHitPoint(plane);
