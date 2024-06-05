@@ -23,40 +23,11 @@
 #include "../../Header/Collision/Collision.h"
 #include "../../Engine/LevelEditor/LevelData.h"
 
-
-// class SpriteManager {
-// public:
-//	static SpriteManager& getInstance() {
-//		static SpriteManager instance;
-//		return instance;
-//	}
-//
-//	~SpriteManager() {
-//		for (auto& pair : sprites) {
-//			delete pair.second;
-//		}
-//	}
-//
-//	Sprite* getSprite(const std::string& key) {
-//		auto it = sprites.find(key);
-//		if (it != sprites.end()) {
-//			return it->second;
-//		}
-//		return nullptr;
-//	}
-//
-//	void addSprite(const std::string& key, Sprite* sprite) { sprites[key] = sprite; }
-//
-// private:
-//	SpriteManager() {}
-//	std::unordered_map<std::string, Sprite*> sprites;
-// };
-
 namespace ECS {
 
 	struct IComponent {};
 
-	template <SoLib::IsNotPointer T>
+	template <SoLib::IsRealType T>
 	struct IClassData {
 
 		static const std::type_index &GetTypeid() {
@@ -323,6 +294,9 @@ namespace ECS {
 	struct AttackStatus : IComponent {
 		float offset_ = 4.5f;
 		float radius_ = 4.5f;
+	};
+	struct Parent : IComponent {
+		Entity parent_;
 	};
 
 	/// @brief レベルデータから構築されたという証明書
