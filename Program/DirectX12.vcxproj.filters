@@ -408,6 +408,9 @@
     <ClCompile Include="Engine\DirectBase\Model\AssimpData.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\Mesh.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">

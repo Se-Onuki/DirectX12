@@ -6,6 +6,7 @@
 namespace SolEngine {
 
 	class Mesh : public IResourceObject {
+	public:
 		struct VertexData {
 			Vector4 position; // 頂点位置
 			Vector2 texCoord; // UV座標系
@@ -20,7 +21,7 @@ namespace SolEngine {
 	class ResourceSource<Mesh> {
 	public:
 		// ファイルの名前
-		AssimpDataManager::Handle fileName_;
+		AssimpDataManager::Handle assimpHandle;
 		// meshのIndex
 		uint32_t index_;
 	};
@@ -40,7 +41,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::Mesh>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::Mesh> &data) const {
-			return size_t{ static_cast<size_t>(data.fileName_.GetHandle()) << 32 | static_cast<size_t>(data.index_) };
+			return size_t{ static_cast<size_t>(data.assimpHandle.GetHandle()) << 32u | static_cast<size_t>(data.index_) };
 		}
 	};
 }
