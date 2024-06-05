@@ -42,7 +42,17 @@ namespace SolEngine {
 		std::unique_ptr<LevelData> levelData = std::make_unique<LevelData>();
 
 		// "objects"の全オブジェクトを走査
-		for (const auto &jsonObject : deserialized["objects"]) {
+		const auto &jsonObjectList = deserialized["objects"];
+
+		RecursiveLoad(jsonObjectList, levelData->objectList_);
+
+
+		return std::move(levelData);
+	}
+
+	void ResourceCreater<LevelData>::RecursiveLoad(const nlohmann::json &jsonObjectList, std::list<LevelData::ObjectData> &objectDataList) const
+	{
+		for (const auto &jsonObject : jsonObjectList) {
 			assert(jsonObject.contains("type") and "typeコンテナが存在しません");
 
 			// 種類を取得
@@ -51,7 +61,7 @@ namespace SolEngine {
 			// MESHである場合
 			if (type.compare("MESH") == 0) {
 				// オブジェクトを末尾に構築
-				auto &objectData = levelData->objectList_.emplace_back();
+				auto &objectData = objectDataList.emplace_back();
 
 				// ファイル名があるならそれを保存する
 				if (jsonObject.contains("file_name")) {
@@ -81,15 +91,13 @@ namespace SolEngine {
 					}
 				}
 
-				// 再起関数で走査する : TODO
+				// 再起関数で走査する
 				if (jsonObject.contains("children")) {
+					RecursiveLoad(jsonObject["children"], objectData.children_);
 
 				}
 			}
 
 		}
-
-
-		return std::move(levelData);
 	}
 }

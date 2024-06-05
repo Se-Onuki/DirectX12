@@ -40,6 +40,10 @@ namespace SolEngine {
 
 		std::unique_ptr<LevelData> CreateObject(const ResourceSource<LevelData> &source) const;
 
+	private:
+
+		void RecursiveLoad(const nlohmann::json &jsonObjectList, std::list<LevelData::ObjectData> & objectDataList) const;
+
 	};
 
 }

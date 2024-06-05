@@ -30,6 +30,13 @@ void CGTaskScene::OnEnter()
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
 	auto boxHandle = assimpManager->Load({ "", "box.obj" });
 
+	SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
+
+	// ↓ユーザが読み込みを行うとかいう最悪なコード
+	for (uint32_t i = 0; i < boxHandle->importer_->GetScene()->mNumMaterials; i++) {
+		materialManager->Load({ boxHandle, i });
+	}
+	
 	SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
 
 	// ↓ユーザが読み込みを行うとかいう最悪なコード

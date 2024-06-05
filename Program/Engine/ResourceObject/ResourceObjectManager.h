@@ -62,11 +62,15 @@ namespace SolEngine {
 			uint32_t version_ = (std::numeric_limits<uint32_t>::max)();;
 		};
 
+	public:
+
 		Handle Load(const Source &source);
 
 		Handle Find(const Source &source) const;
 
 		bool Destory(const Handle &handle);
+
+		const Source *GetSource(const Handle &handle) const;
 
 		/// @brief ImGuiのウィジェットを表示する
 		/// @param label 表示するラベル名
@@ -85,7 +89,9 @@ namespace SolEngine {
 		Handle AddData(const Source &source, std::unique_ptr<T> resource);
 
 		std::unordered_map<Source, Handle> findMap_;
-		using ItrAndData = std::pair<typename const decltype(findMap_)::const_iterator, std::unique_ptr<T>>;
+
+		using ItrAndData = std::pair<typename decltype(findMap_)::const_iterator, std::unique_ptr<T>>;
+
 		std::vector<std::pair<uint32_t, ItrAndData>> resourceList_;
 
 		Creater creater_;
@@ -131,7 +137,7 @@ namespace SolEngine {
 		auto &[version, itrAndData] = resourceList_.at(handle.GetHandle());
 		auto &[itr, data] = itrAndData;
 		// バージョン検知
-		if (version == handle.GetVersion()) { return false; }
+		if (version != handle.GetVersion()) { return false; }
 
 		// バージョンが一致していた場合
 		// イテレータを破棄
@@ -145,6 +151,18 @@ namespace SolEngine {
 		version++;
 
 		return true;
+	}
+
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
+	inline const Source *ResourceObjectManager<T, Source, Creater>::GetSource(const Handle &handle) const
+	{
+		// indexから検索
+		auto &[version, itrAndData] = resourceList_.at(handle.GetHandle());
+		// バージョン検知
+		if (version != handle.GetVersion()) { return nullptr; }
+		auto &[itr, data] = itrAndData;
+
+		return &itr->first;
 	}
 
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>

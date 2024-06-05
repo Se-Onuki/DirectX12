@@ -21,6 +21,7 @@ namespace SolEngine {
 		CBuffer<MaterialData> materialData_;
 		Model::BlendMode blendMode_ = Model::BlendMode::kNone;
 
+		uint32_t texHandle_;
 	};
 
 	template <>
