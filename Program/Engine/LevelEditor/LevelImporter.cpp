@@ -59,6 +59,11 @@ namespace SolEngine {
 				prefab += ECS::TransformMatComp{};
 			}
 			prefab += ECS::CreateByLevelData{};
+
+			// 当たり判定があったら入れる
+			if (object.collider_.second != Vector3::zero) {
+				prefab += ECS::CollisionComp{ .collision_ = {.centor = object.collider_.first, .radius = object.collider_.second.x} };
+			}
 			// 親の情報があったら渡す
 			if (parent) {
 				prefab += ECS::Parent{ .parent_ = *parent };

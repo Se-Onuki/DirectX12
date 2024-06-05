@@ -68,6 +68,30 @@ namespace SolEngine {
 					objectData.fileName_ = jsonObject["file_name"];
 				}
 
+				// ファイル名があるならそれを保存する
+				if (jsonObject.contains("collider")) {
+					const auto &collider = jsonObject["collider"];
+					const std::string &colliderType = collider["type"];
+
+					// コライダの形がBoxであった場合
+					if (colliderType.compare("BOX")) {
+						// コライダのデータを入れ込む
+						{
+							const Vector3 scale = collider["scale"].get<Vector3>();
+
+							objectData.collider_.second = Vector3{ scale[0], scale[2], scale[1] } / 2.f;
+						}
+						{
+							const Vector3 center = collider["center"].get<Vector3>();
+
+
+							objectData.collider_.first = { center[0], center[2], center[1] };
+						}
+
+					}
+
+				}
+
 				// transformの保存
 				{
 					const auto &transform = jsonObject["transform"];

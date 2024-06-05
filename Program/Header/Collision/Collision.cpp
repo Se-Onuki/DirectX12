@@ -204,25 +204,28 @@ const bool Collision::IsHit(const OBB &obbA, const OBB &obbB) {
 		objB[i] *= worldB;
 	}
 
-	return IsHitAxis(obbA.orientations[0].Nomalize(), objA, objB) &&
-		IsHitAxis(obbA.orientations[1].Nomalize(), objA, objB) &&
-		IsHitAxis(obbA.orientations[2].Nomalize(), objA, objB) &&
+	const std::array<Vector3, 3u> &aOrientation = { obbA.orientations.GetRight(), obbA.orientations.GetUp(), obbA.orientations.GetFront() };
+	const std::array<Vector3, 3u> &bOrientation = { obbB.orientations.GetRight(), obbB.orientations.GetUp(), obbB.orientations.GetFront() };
 
-		IsHitAxis(obbB.orientations[0].Nomalize(), objA, objB) &&
-		IsHitAxis(obbB.orientations[1].Nomalize(), objA, objB) &&
-		IsHitAxis(obbB.orientations[2].Nomalize(), objA, objB) &&
+	return IsHitAxis(aOrientation[0], objA, objB) &&
+		IsHitAxis(aOrientation[1], objA, objB) &&
+		IsHitAxis(aOrientation[2], objA, objB) &&
 
-		IsHitAxis(obbA.orientations[0].cross(obbB.orientations[0]).Nomalize(), objA, objB) &&
-		IsHitAxis(obbA.orientations[0].cross(obbB.orientations[1]).Nomalize(), objA, objB) &&
-		IsHitAxis(obbA.orientations[0].cross(obbB.orientations[2]).Nomalize(), objA, objB) &&
+		IsHitAxis(bOrientation[0], objA, objB) &&
+		IsHitAxis(bOrientation[1], objA, objB) &&
+		IsHitAxis(bOrientation[2], objA, objB) &&
 
-		IsHitAxis(obbA.orientations[1].cross(obbB.orientations[0]).Nomalize(), objA, objB) &&
-		IsHitAxis(obbA.orientations[1].cross(obbB.orientations[1]).Nomalize(), objA, objB) &&
-		IsHitAxis(obbA.orientations[1].cross(obbB.orientations[2]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[0].cross(bOrientation[0]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[0].cross(bOrientation[1]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[0].cross(bOrientation[2]).Nomalize(), objA, objB) &&
 
-		IsHitAxis(obbA.orientations[2].cross(obbB.orientations[0]).Nomalize(), objA, objB) &&
-		IsHitAxis(obbA.orientations[2].cross(obbB.orientations[1]).Nomalize(), objA, objB) &&
-		IsHitAxis(obbA.orientations[2].cross(obbB.orientations[2]).Nomalize(), objA, objB);
+		IsHitAxis(aOrientation[1].cross(bOrientation[0]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[1].cross(bOrientation[1]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[1].cross(bOrientation[2]).Nomalize(), objA, objB) &&
+
+		IsHitAxis(aOrientation[2].cross(bOrientation[0]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[2].cross(bOrientation[1]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[2].cross(bOrientation[2]).Nomalize(), objA, objB);
 }
 
 const bool Collision::IsHit(const Capsule &cupsele, const Plane &plane) {
@@ -467,12 +470,9 @@ void Sphere::ImGuiDebug(const std::string &group) {
 }
 
 const Matrix4x4 OBB::GetWorldMatrix() const {
-	return Matrix4x4{
-		{orientations[0].x, orientations[0].y, orientations[0].z, 0.f},
-		{orientations[1].x, orientations[1].y, orientations[1].z, 0.f},
-		{orientations[2].x, orientations[2].y, orientations[2].z, 0.f},
-		{centor.x,          centor.y,          centor.z,          1.f}
-	};
+	Matrix4x4 result = orientations.MakeRotateMatrix();
+	result.GetTranslate() = centor;
+	return result;
 }
 
 const Matrix4x4 OBB::GetInverseMatrix() const { return GetWorldMatrix().InverseRT(); }
@@ -493,10 +493,8 @@ void OBB::ImGuiDebug(const std::string &group, Vector3 &rotate) {
 }
 
 void OBB::SetRotate(const Vector3 &euler) {
-	const Matrix4x4 &rotateMat = Matrix4x4::EulerRotate(euler);
-	std::memcpy(&orientations[0], &rotateMat.m[0], sizeof(Vector3));
-	std::memcpy(&orientations[1], &rotateMat.m[1], sizeof(Vector3));
-	std::memcpy(&orientations[2], &rotateMat.m[2], sizeof(Vector3));
+	orientations = Quaternion::Create(euler);
+
 }
 
 Vector3 Spring::GetAcceleration(const Ball &ball) {

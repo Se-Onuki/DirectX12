@@ -2,6 +2,7 @@
 #include "../ResourceObject/ResourceObject.h"
 #include "../ResourceObject/ResourceObjectManager.h"
 #include "../../Utils/Math/Transform.h"
+#include "../../Header/Collision/Collision.h"
 
 
 namespace SolEngine {
@@ -15,6 +16,7 @@ namespace SolEngine {
 			std::string fileName_;
 			std::string name_;
 			SimpleTransformEuler transform_;
+			std::pair<Vector3, Vector3> collider_;
 			std::list<ObjectData> children_;
 		};
 
@@ -34,7 +36,7 @@ namespace SolEngine {
 	template <>
 	class ResourceCreater<LevelData> {
 
-		inline  static const char *const kDefaultDirectory_ = "resources/LevelData/";
+		inline static const char *const kDefaultDirectory_ = "resources/LevelData/";
 
 	public:
 
@@ -42,7 +44,7 @@ namespace SolEngine {
 
 	private:
 
-		void RecursiveLoad(const nlohmann::json &jsonObjectList, std::list<LevelData::ObjectData> & objectDataList) const;
+		void RecursiveLoad(const nlohmann::json &jsonObjectList, std::list<LevelData::ObjectData> &objectDataList) const;
 
 	};
 

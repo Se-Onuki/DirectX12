@@ -49,7 +49,7 @@ namespace Collision {
 
 struct OBB {
 	Vector3 centor; // 中心点
-	Vector3 orientations[3u] = { Vector3::right, Vector3::up, Vector3::front }; // ローカル座標軸。正規化、直交必須
+	Quaternion orientations = Quaternion::Identity; // ローカル座標
 	Vector3 size;                                           // 中心点からの各軸の半径
 
 	void SetRotate(const Vector3 &euler);
@@ -116,7 +116,7 @@ struct Sphere {
 };
 
 struct LineBase final {
-	enum class LineType : uint32_t{ Line, Ray, Segment };
+	enum class LineType : uint32_t { Line, Ray, Segment };
 	// LineBase(const Vector3& Origin, const Vector3& Diff) : origin(Origin), diff(Diff) {}
 	Vector3 origin; // 始点
 	Vector3 diff;   // 終点へのベクトル
