@@ -6,6 +6,8 @@
 #include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
 #include "../Engine/DirectBase/Model/Model.h"
 #include "../Utils/Containers/AlignasWrapper.h"
+#include "../ECS/World/World.hpp"
+#include "../ECS/System/SystemManager.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -23,6 +25,11 @@ public:
 
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
+
+	std::unique_ptr<World> world_ = nullptr;
+	ECS::EntityManager *entityManager_;
+
+	ECS::SystemManager systemManager_;
 
 	Model *model_;
 

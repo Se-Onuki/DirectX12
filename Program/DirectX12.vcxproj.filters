@@ -417,6 +417,9 @@
     <ClCompile Include="Engine\LevelEditor\LevelData.cpp">
       <Filter>Engine\LevelEditor</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\LevelEditor\LevelImporter.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -804,6 +807,9 @@
       <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="Engine\LevelEditor\LevelData.h">
+      <Filter>Engine\LevelEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\LevelEditor\LevelImporter.h">
       <Filter>Engine\LevelEditor</Filter>
     </ClInclude>
   </ItemGroup>

@@ -51,7 +51,7 @@ namespace SolEngine {
 			// MESHである場合
 			if (type.compare("MESH") == 0) {
 				// オブジェクトを末尾に構築
-				auto &objectData = levelData->objects_.emplace_back();
+				auto &objectData = levelData->objectList_.emplace_back();
 
 				// ファイル名があるならそれを保存する
 				if (jsonObject.contains("file_name")) {

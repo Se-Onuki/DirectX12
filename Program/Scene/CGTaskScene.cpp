@@ -7,14 +7,25 @@
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../../externals/DirectXTex/d3dx12.h"
 #include "../Engine/LevelEditor/LevelData.h"
+#include "../Engine/LevelEditor/LevelImporter.h"
+#include "../../ECS/Entity/EntityManager.hpp"
 
 void CGTaskScene::OnEnter()
 {
+	ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
+
 	SolEngine::ResourceObjectManager<SolEngine::LevelData> *const levelDataManager = SolEngine::ResourceObjectManager<SolEngine::LevelData>::GetInstance();
 
-	levelDataManager->Load({ .fileName_ = "test.json" });
+	auto levelData = levelDataManager->Load({ .fileName_ = "test.json" });
 
-	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
+
+	world_ = std::make_unique<World>();
+	entityManager_ = world_->GetEntityManager();
+
+	SolEngine::LevelImporter levelImporter;
+	levelImporter.Import(*levelData, world_.get());
+
+	model_ = ModelManager::GetInstance()->AddModel("HumanModel", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 
 	uvModel_ = ModelManager::GetInstance()->AddModel("UvPlane", Model::LoadAssimpModelFile("", "plane.gltf"));
 

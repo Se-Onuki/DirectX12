@@ -17,7 +17,7 @@ namespace SolEngine {
 			std::list<ObjectData> children_;
 		};
 
-		std::list<ObjectData> objects_;
+		std::list<ObjectData> objectList_;
 
 	};
 
@@ -40,8 +40,6 @@ namespace SolEngine {
 		std::unique_ptr<LevelData> CreateObject(const ResourceSource<LevelData> &source) const;
 
 	};
-
-	//using LevelDataManager = ResourceObjectManager<LevelData>;
 
 }
 

@@ -13,6 +13,8 @@
 #include "../Header/Entity/Component/ModelComp.h"
 #include "../../Utils/Math/Angle.h"
 #include "../ECS/System/Systems.h"
+#include "../Engine/LevelEditor/LevelData.h"
+#include "../Engine/LevelEditor/LevelImporter.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -244,6 +246,16 @@ void GameScene::OnEnter() {
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
 	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" } });
+
+	ModelManager::GetInstance()->AddModel("Box", Model::LoadAssimpModelFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
+
+	SolEngine::ResourceObjectManager<SolEngine::LevelData> *const levelDataManager = SolEngine::ResourceObjectManager<SolEngine::LevelData>::GetInstance();
+
+	auto levelData = levelDataManager->Load({ .fileName_ = "test.json" });
+
+	SolEngine::LevelImporter levelImporter;
+	levelImporter.Import(*levelData, world_.get());
+
 
 }
 

@@ -469,10 +469,15 @@ void ECS::System::SlideFollowCameraUpdate::OnUpdate(::World *world, [[maybe_unus
 
 void ECS::System::MakeTransMatrix::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
-	for (const auto &[entity, scale, quate, pos, mat] : world->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>()) {
+	for (const auto &[entity, scale, pos, mat] : world->view<const ECS::ScaleComp, const ECS::PositionComp, ECS::TransformMatComp>()) {
+		const auto [quateRot, eulerRot] = world->GetEntityManager()->GetComponent<const ECS::QuaternionRotComp, const ECS::RotateComp>(*entity);
+		if (quateRot) {
 
-		mat->transformMat_ = SoLib::Math::Affine(*scale, quate->quateRot_.Normalize(), *pos);
-
+			mat->transformMat_ = SoLib::Math::Affine(*scale, quateRot->quateRot_.Normalize(), *pos);
+		}
+		else if (eulerRot) {
+			mat->transformMat_ = SoLib::Math::Affine(*scale, eulerRot->rotate_, *pos);
+		}
 	}
 
 }
