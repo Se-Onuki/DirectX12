@@ -1,6 +1,5 @@
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
-#include "../../ResourceObject/ResourceObjectManager.h"
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 
@@ -41,9 +40,6 @@ namespace SolEngine {
 
 
 	};
-
-	using AssimpDataManager = ResourceObjectManager<AssimpData>;
-
 }
 
 namespace std {

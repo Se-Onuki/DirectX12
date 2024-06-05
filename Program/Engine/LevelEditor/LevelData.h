@@ -41,7 +41,7 @@ namespace SolEngine {
 
 	};
 
-	using LevelDataManager = ResourceObjectManager<LevelData>;
+	//using LevelDataManager = ResourceObjectManager<LevelData>;
 
 }
 

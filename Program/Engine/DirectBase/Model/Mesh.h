@@ -1,5 +1,6 @@
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
 #include "AssimpData.h"
 #include "../Base/VertexBuffer.h"
 
@@ -21,9 +22,11 @@ namespace SolEngine {
 	class ResourceSource<Mesh> {
 	public:
 		// ファイルの名前
-		AssimpDataManager::Handle assimpHandle;
+		ResourceObjectManager<AssimpData>::Handle assimpHandle;
 		// meshのIndex
 		uint32_t index_;
+
+		bool operator==(const ResourceSource<Mesh> &) const = default;
 	};
 
 	template <>

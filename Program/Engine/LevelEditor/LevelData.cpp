@@ -3,7 +3,7 @@
 
 namespace SolEngine {
 	/// @brief レベルデータを構築する関数
-	/// @param source レベルデータのソースデータファイル 
+	/// @param source レベルデータのソースデータファイル { 文字列型でファイル名が入る }
 	/// @return 構築されたレベルデータ
 	std::unique_ptr<LevelData> ResourceCreater<LevelData>::CreateObject(const ResourceSource<LevelData> &source) const {
 

@@ -10,7 +10,7 @@
 
 void CGTaskScene::OnEnter()
 {
-	SolEngine::LevelDataManager *const levelDataManager = SolEngine::LevelDataManager::GetInstance();
+	SolEngine::ResourceObjectManager<SolEngine::LevelData> *const levelDataManager = SolEngine::ResourceObjectManager<SolEngine::LevelData>::GetInstance();
 
 	levelDataManager->Load({ .fileName_ = "test.json" });
 

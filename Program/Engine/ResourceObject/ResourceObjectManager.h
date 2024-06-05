@@ -6,7 +6,7 @@
 
 namespace SolEngine {
 
-	template <IsResourceObject T, SoLib::IsRealType Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T, Source>>
+	template <IsResourceObject T, IsResourceSource Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T, Source>>
 	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, Source, Creater>> {
 		friend SoLib::Singleton<ResourceObjectManager>;
 		using Singleton = SoLib::Singleton<ResourceObjectManager<T, Source, Creater>>;
@@ -85,7 +85,7 @@ namespace SolEngine {
 
 	};
 
-	template <IsResourceObject T, SoLib::IsRealType Source, SolEngine::IsResourceCreater<T, Source> Creater>
+	template <IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
 	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Load(const Source &source)
 	{
 		// データを格納する
@@ -101,7 +101,7 @@ namespace SolEngine {
 		return result;
 	}
 
-	template <IsResourceObject T, SoLib::IsRealType Source, SolEngine::IsResourceCreater<T, Source> Creater>
+	template <IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
 	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &source)
 	{
 		// 検索を行う
@@ -117,7 +117,7 @@ namespace SolEngine {
 		}
 	}
 
-	template<IsResourceObject T, SoLib::IsRealType Source, SolEngine::IsResourceCreater<T, Source> Creater>
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
 	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::AddData(const Source &source, std::unique_ptr<T> resource)
 	{
 
@@ -133,7 +133,7 @@ namespace SolEngine {
 		return result;
 	}
 
-	template<IsResourceObject T, SoLib::IsRealType Source, SolEngine::IsResourceCreater<T, Source> Creater>
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
 	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label, const Handle handle) const
 	{
 
@@ -151,7 +151,7 @@ namespace SolEngine {
 
 		return Handle{ result };
 	}
-	template<IsResourceObject T, SoLib::IsRealType Source, SolEngine::IsResourceCreater<T, Source> Creater>
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
 	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label) const
 	{
 		static Handle result;
