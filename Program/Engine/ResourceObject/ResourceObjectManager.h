@@ -25,7 +25,7 @@ namespace SolEngine {
 			Handle &operator=(const Handle &) = default;
 			Handle &operator=(Handle &&) = default;
 
-			Handle(const uint32_t handle) : handle_(handle) {};
+			Handle(const uint32_t handle, const uint32_t version = 0) : handle_(handle), version_(version) {};
 			Handle &operator=(const uint32_t handle)
 			{
 				handle_ = handle;
@@ -35,9 +35,12 @@ namespace SolEngine {
 			// inline operator uint32_t() const { return handle_; }
 
 			uint32_t GetHandle() const { return handle_; }
+			uint32_t GetVersion() const { return version_; }
 
-			T *GetResource() { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.get() : nullptr; }
-			const T *GetResource() const { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.get() : nullptr; }
+			T *GetResource() {
+				return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.second.get() : nullptr;
+			}
+			const T *GetResource() const { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.second.get() : nullptr; }
 
 			inline T *operator*() { return GetResource(); }
 			inline const T *operator*() const { return GetResource(); }
@@ -48,14 +51,15 @@ namespace SolEngine {
 			/// @brief このデータが有効であるか
 			explicit inline operator bool() const {
 				return
-					handle_ != (std::numeric_limits<uint32_t>::max)()			// データが最大値(無効値)に設定されていないか
-					and Singleton::instance_									// マネージャーが存在するか
-					and handle_ < Singleton::instance_->resourceList_.size()	// 参照ができる状態か
-					and Singleton::instance_->resourceList_.at(handle_).second;	// データが存在するか
+					handle_ != (std::numeric_limits<uint32_t>::max)()						// データが最大値(無効値)に設定されていないか
+					and Singleton::instance_												// マネージャーが存在するか
+					and handle_ < Singleton::instance_->resourceList_.size()				// 参照ができる状態か
+					and Singleton::instance_->resourceList_.at(handle_).first == version_	// バージョンが一致するか
+					and Singleton::instance_->resourceList_.at(handle_).second.second;		// データが存在するか
 			}
 
 		private:
-			//uint32_t version_ = 0;
+			uint32_t version_ = 0;
 			uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
 		};
 
@@ -82,7 +86,8 @@ namespace SolEngine {
 		Handle AddData(const Source &source, std::unique_ptr<T> resource);
 
 		std::unordered_map<Source, Handle> findMap_;
-		std::vector<std::pair<typename const decltype(findMap_)::const_iterator, std::unique_ptr<T>>> resourceList_;
+		using ItrAndData = std::pair<typename const decltype(findMap_)::const_iterator, std::unique_ptr<T>>;
+		std::vector<std::pair<uint32_t, ItrAndData>> resourceList_;
 
 		Creater creater_;
 
@@ -124,17 +129,21 @@ namespace SolEngine {
 	inline bool ResourceObjectManager<T, Source, Creater>::Destory(const Handle &handle)
 	{
 		// indexから検索
-		auto &[itr, resource] = resourceList_.at(handle.GetHandle());
+		auto &[version, itrAndData] = resourceList_.at(handle.GetHandle());
+		auto &[itr, data] = itrAndData;
 		// バージョン検知
-		if (itr->second != handle) { return false; }
+		if (version == handle.GetVersion()) { return false; }
+		//if (itr->second != handle) { return false; }
 
 		// バージョンが一致していた場合
 		// イテレータを破棄
 		findMap_.erase(itr);
 
 		// リソースも破棄
-		resource.reset();
+		data.reset();
 
+		// バージョンを1つ上げる
+		version++;
 
 		return true;
 	}
@@ -147,10 +156,10 @@ namespace SolEngine {
 		uint32_t result = static_cast<uint32_t>(resourceList_.size());
 
 		// 検索用に保存
-		findMap_.insert({ source, result });
+		findMap_.insert({ source, {result, 0} });
 
 		// 構築したデータを格納
-		resourceList_.push_back({ findMap_.find(source), std::move(resource) });
+		resourceList_.push_back({ 0, std::make_pair(findMap_.find(source), std::move(resource)) });
 
 		return result;
 	}
@@ -163,7 +172,9 @@ namespace SolEngine {
 		uint32_t result = SoLib::ImGuiWidget(label, &resourceList_, handle.GetHandle(),
 			[this](uint32_t index)->std::string
 			{
-				return Handle{ index } ? resourceList_.at(index).first->first.ToStr() : "";
+				if (resourceList_.size() <= index) { return ""; }
+				const auto &itrAndData = resourceList_.at(index).second;
+				return itrAndData.second ? itrAndData.first->first.ToStr() : "";
 
 				//auto findItr = std::find_if(findMap_.begin(), findMap_.end(),
 				//	[this, index](auto itr) { return itr.second.GetHandle() == index; });

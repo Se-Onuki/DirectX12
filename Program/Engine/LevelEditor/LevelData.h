@@ -10,6 +10,7 @@ namespace SolEngine {
 	public:
 		struct ObjectData {
 			// すべてキューブ型であるとする
+			//Model *model_; // いったん無視
 
 			std::string fileName_;
 			std::string name_;
