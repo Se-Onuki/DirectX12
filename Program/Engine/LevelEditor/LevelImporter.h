@@ -14,6 +14,7 @@ namespace SolEngine {
 
 	private:
 
+		void RecursiveLoad(const std::list<LevelData::ObjectData> &objectDataList, World *const world, ECS::Entity *parent = nullptr) const;
 
 	};
 }

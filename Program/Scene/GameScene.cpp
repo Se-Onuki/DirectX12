@@ -235,7 +235,8 @@ void GameScene::OnEnter() {
 	//systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
 	//systemManager_.AddSystem<ECS::System::BoneDrawer>(&boneModel_);
-	systemManager_.AddSystem<ECS::System::MakeTransMatrix>();
+	systemManager_.AddSystem<ECS::System::CalcTransMatrix>();
+	systemManager_.AddSystem<ECS::System::CalcParentTransform>();
 	systemManager_.AddSystem<ECS::System::ModelDrawer>();
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
 	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);

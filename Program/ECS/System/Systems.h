@@ -223,7 +223,7 @@ namespace ECS {
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
 
-		class MakeTransMatrix : public ISystem {
+		class CalcTransMatrix : public ISystem {
 		public:
 
 			bool IsConstSystem() const override { return false; }
@@ -260,6 +260,13 @@ namespace ECS {
 		};
 
 		class CursorDrawer : public ISystem {
+		public:
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
+		class CalcParentTransform : public ISystem {
 		public:
 
 			bool IsConstSystem() const override { return false; }

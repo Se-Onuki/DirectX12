@@ -8,29 +8,8 @@ namespace SolEngine {
 
 		// 正しくデータにアクセスできた場合
 
-		// モデルは全てBOXであるとする
-		Model *const defaultModel = ModelManager::GetInstance()->GetModel("Block");
-
-		// エンティティマネージャを取得
-		auto *const entityManager = world->GetEntityManager();
-
 		//Archetype archeType
-
-		// すべてのentityを走査する
-		for (const auto &object : levelData->objectList_) {
-
-			ECS::Prefab prefab;
-			prefab += ECS::ModelComp{ .model_ = defaultModel };
-			prefab += ECS::PositionComp{ .position_ = object.transform_.translate_ };
-			prefab += ECS::RotateComp{ .rotate_ = object.transform_.rotate_ };
-			prefab += ECS::ScaleComp{ .scale_ = object.transform_.scale_ };
-			prefab += ECS::TransformMatComp{};
-			prefab += ECS::CreateByLevelData{ .handle_ = levelData };
-
-			// エンティティを追加
-			entityManager->CreateEntity(prefab);
-
-		}
+		RecursiveLoad(levelData->objectList_, world);
 
 		return true;
 
@@ -57,5 +36,40 @@ namespace SolEngine {
 		}
 
 		return true;
+	}
+
+	void LevelImporter::RecursiveLoad(const std::list<LevelData::ObjectData> &objectDataList, World *const world, ECS::Entity *parent) const
+	{
+
+		// モデルは全てBOXであるとする
+		Model *const defaultModel = ModelManager::GetInstance()->GetModel("Block");
+
+		// エンティティマネージャを取得
+		auto *const entityManager = world->GetEntityManager();
+
+		// すべてのentityを走査する
+		for (const auto &object : objectDataList) {
+
+			ECS::Prefab prefab;
+			prefab += ECS::ModelComp{ .model_ = defaultModel };
+			{
+				prefab += ECS::PositionComp{ .position_ = object.transform_.translate_ };
+				prefab += ECS::RotateComp{ .rotate_ = object.transform_.rotate_ };
+				prefab += ECS::ScaleComp{ .scale_ = object.transform_.scale_ };
+				prefab += ECS::TransformMatComp{};
+			}
+			prefab += ECS::CreateByLevelData{};
+			// 親の情報があったら渡す
+			if (parent) {
+				prefab += ECS::Parent{ .parent_ = *parent };
+			}
+
+			// エンティティを追加
+			ECS::Entity entity = entityManager->CreateEntity(prefab).front();
+
+			// 追加したオブジェクトの子供を作成する
+			RecursiveLoad(object.children_, world, &entity);
+
+		}
 	}
 }

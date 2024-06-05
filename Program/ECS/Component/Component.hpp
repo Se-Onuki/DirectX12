@@ -22,6 +22,7 @@
 #include "../../Engine/DirectBase/Model/BoneModel.h"
 #include "../../Header/Collision/Collision.h"
 #include "../../Engine/LevelEditor/LevelData.h"
+#include "../Entity/Entity.hpp"
 
 namespace ECS {
 
@@ -296,7 +297,7 @@ namespace ECS {
 		float radius_ = 4.5f;
 	};
 	struct Parent : IComponent {
-		//Entity parent_;
+		Entity parent_;
 	};
 
 	/// @brief レベルデータから構築されたという証明書

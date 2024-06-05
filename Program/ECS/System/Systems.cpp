@@ -467,7 +467,7 @@ void ECS::System::SlideFollowCameraUpdate::OnUpdate(::World *world, [[maybe_unus
 	}
 }
 
-void ECS::System::MakeTransMatrix::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+void ECS::System::CalcTransMatrix::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
 	for (const auto &[entity, scale, pos, mat] : world->view<const ECS::ScaleComp, const ECS::PositionComp, ECS::TransformMatComp>()) {
 		const auto [quateRot, eulerRot] = world->GetEntityManager()->GetComponent<const ECS::QuaternionRotComp, const ECS::RotateComp>(*entity);
@@ -569,4 +569,16 @@ void ECS::System::CursorDrawer::OnUpdate(::World *world, [[maybe_unused]] const 
 	}
 
 
+}
+
+void ECS::System::CalcParentTransform::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
+{
+	auto *const entityManager = world->GetEntityManager();
+	for (const auto &[entity, transMat, parent] : world->view<ECS::TransformMatComp, ECS::Parent>()) {
+		auto [parentTransMat] = entityManager->GetComponent<ECS::TransformMatComp>(parent->parent_);
+		if (parentTransMat) {
+
+			transMat->transformMat_ *= parentTransMat->transformMat_;
+		}
+	}
 }
