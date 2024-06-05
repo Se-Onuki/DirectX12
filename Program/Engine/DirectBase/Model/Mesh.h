@@ -21,7 +21,7 @@ namespace SolEngine {
 	template <>
 	class ResourceSource<Mesh> {
 	public:
-		// ファイルの名前
+		// ファイルのハンドル
 		ResourceObjectManager<AssimpData>::Handle assimpHandle;
 		// meshのIndex
 		uint32_t index_;

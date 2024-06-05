@@ -31,6 +31,7 @@ namespace SolEngine {
 				handle_ = handle;
 				return *this;
 			}
+			bool operator==(const Handle &) const = default;
 
 			// inline operator uint32_t() const { return handle_; }
 
@@ -57,8 +58,8 @@ namespace SolEngine {
 			}
 
 		private:
-			uint32_t version_ = 0;
 			uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
+			uint32_t version_ = (std::numeric_limits<uint32_t>::max)();;
 		};
 
 		Handle Load(const Source &source);

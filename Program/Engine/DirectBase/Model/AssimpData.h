@@ -10,6 +10,7 @@ namespace SolEngine {
 
 		// assimpのローダ
 		std::unique_ptr<Assimp::Importer> importer_;	// こいつが存在する = シーンデータが保存される
+		//aiScene *scene_;
 
 		void Destroy() {
 			importer_.reset();

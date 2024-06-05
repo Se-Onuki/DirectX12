@@ -9,6 +9,8 @@
 #include "../Engine/LevelEditor/LevelData.h"
 #include "../Engine/LevelEditor/LevelImporter.h"
 #include "../../ECS/Entity/EntityManager.hpp"
+#include "../Engine/DirectBase/Model/AssimpData.h"
+#include "../Engine/DirectBase/Model/Mesh.h"
 
 void CGTaskScene::OnEnter()
 {
@@ -24,6 +26,13 @@ void CGTaskScene::OnEnter()
 
 	SolEngine::LevelImporter levelImporter;
 	levelImporter.Import(levelData, world_.get());
+
+	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
+	auto boxHandle = assimpManager->Load({ "", "box.obj" });
+
+	SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
+	meshManager->Load({ boxHandle, 0 });
+
 
 	model_ = ModelManager::GetInstance()->AddModel("HumanModel", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 
