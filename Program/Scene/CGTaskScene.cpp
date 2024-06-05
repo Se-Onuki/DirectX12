@@ -6,9 +6,14 @@
 #include "CGTaskScene.h"
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../../externals/DirectXTex/d3dx12.h"
+#include "../Engine/LevelEditor/LevelData.h"
 
 void CGTaskScene::OnEnter()
 {
+	SolEngine::LevelDataManager *const levelDataManager = SolEngine::LevelDataManager::GetInstance();
+
+	levelDataManager->Load({ .fileName_ = "test.json" });
+
 	model_ = ModelManager::GetInstance()->AddModel("AnimatedCube", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 
 	uvModel_ = ModelManager::GetInstance()->AddModel("UvPlane", Model::LoadAssimpModelFile("", "plane.gltf"));

@@ -3,7 +3,7 @@
 
 namespace SolEngine {
 	/// @brief レベルデータを構築する関数
-	/// @param source レベルデータのソースデータファイル
+	/// @param source レベルデータのソースデータファイル 
 	/// @return 構築されたレベルデータ
 	std::unique_ptr<LevelData> ResourceCreater<LevelData>::CreateObject(const ResourceSource<LevelData> &source) const {
 
@@ -59,26 +59,32 @@ namespace SolEngine {
 				}
 
 				// transformの保存
-				const auto &transform = jsonObject["transform"];
 				{
-					const Vector3 scale = transform["scale"].get<Vector3>();
+					const auto &transform = jsonObject["transform"];
+					{
+						const Vector3 scale = transform["scale"].get<Vector3>();
 
-					objectData.transform_.scale_ =
-					{ scale[0], scale[2], scale[1] };
+						objectData.transform_.scale_ =
+						{ scale[0], scale[2], scale[1] };
+					}
+					{
+						const Vector3 rotate = transform["rotation"].get<Vector3>();
+
+						objectData.transform_.rotate_ =
+							-Vector3{ rotate[0], rotate[2], rotate[1] };
+					}
+					{
+						const Vector3 translate = transform["translation"].get<Vector3>();
+
+						objectData.transform_.translate_ =
+						{ translate[0], translate[2], translate[1] };
+					}
 				}
-				{
-					const Vector3 rotate = transform["rotation"].get<Vector3>();
 
-					objectData.transform_.rotate_ =
-						-Vector3{ rotate[0], rotate[2], rotate[1] };
+				// 再起関数で走査する : TODO
+				if (jsonObject.contains("children")) {
+
 				}
-				{
-					const Vector3 translate = transform["translation"].get<Vector3>();
-
-					objectData.transform_.translate_ =
-					{ translate[0], translate[2], translate[1] };
-				}
-
 			}
 
 		}

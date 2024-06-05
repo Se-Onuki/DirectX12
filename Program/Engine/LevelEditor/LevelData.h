@@ -1,5 +1,6 @@
 #pragma once
 #include "../ResourceObject/ResourceObject.h"
+#include "../ResourceObject/ResourceObjectManager.h"
 #include "../../Utils/Math/Transform.h"
 
 
@@ -25,6 +26,8 @@ namespace SolEngine {
 	public:
 		// ファイルの名前
 		std::string fileName_;
+
+		bool operator==(const ResourceSource<LevelData> &) const = default;
 	};
 
 	template <>
@@ -37,6 +40,8 @@ namespace SolEngine {
 		std::unique_ptr<LevelData> CreateObject(const ResourceSource<LevelData> &source) const;
 
 	};
+
+	using LevelDataManager = ResourceObjectManager<LevelData>;
 
 }
 
