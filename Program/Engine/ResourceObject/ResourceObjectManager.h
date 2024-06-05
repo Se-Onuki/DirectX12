@@ -37,9 +37,7 @@ namespace SolEngine {
 			uint32_t GetHandle() const { return handle_; }
 			uint32_t GetVersion() const { return version_; }
 
-			T *GetResource() {
-				return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.second.get() : nullptr;
-			}
+			T *GetResource() { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.second.get() : nullptr; }
 			const T *GetResource() const { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.second.get() : nullptr; }
 
 			inline T *operator*() { return GetResource(); }
@@ -133,11 +131,11 @@ namespace SolEngine {
 		auto &[itr, data] = itrAndData;
 		// バージョン検知
 		if (version == handle.GetVersion()) { return false; }
-		//if (itr->second != handle) { return false; }
 
 		// バージョンが一致していた場合
 		// イテレータを破棄
 		findMap_.erase(itr);
+		itr = findMap_.end();
 
 		// リソースも破棄
 		data.reset();
