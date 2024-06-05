@@ -246,8 +246,12 @@ namespace ECS {
 		bool isActive_ = false;
 	};
 
-	struct CollisionComp : IComponent {
+	struct SphereCollisionComp : IComponent {
 		Sphere collision_;
+	};
+
+	struct OBBCollisionComp : IComponent {
+		OBB collision_;
 	};
 
 	struct HealthComp : IComponent {

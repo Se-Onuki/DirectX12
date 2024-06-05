@@ -36,7 +36,7 @@ namespace Collision {
 
 	const bool IsHit(const Capsule &cupsele, const Plane &plane);
 
-	const bool IsHitAxis(const Vector3 &axis, const std::array<Vector3,8u> vertexA, const  std::array<Vector3, 8u> vertexB);
+	const bool IsHitAxis(const Vector3 &axis, const std::array<Vector3, 8u> vertexA, const  std::array<Vector3, 8u> vertexB);
 
 	const float HitProgress(const LineBase &line, const Plane &plane);
 	const float HitProgress(const LineBase &line, const AABB &aabb);
@@ -52,9 +52,9 @@ struct IShape {
 };
 
 struct OBB : public IShape {
-	Vector3 centor; // 中心点
+	Vector3 centor;									// 中心点
 	Quaternion orientations = Quaternion::Identity; // ローカル座標
-	Vector3 size;                                           // 中心点からの各軸の半径
+	Vector3 size;                                   // 中心点からの各軸の半径
 
 	void SetRotate(const Vector3 &euler);
 

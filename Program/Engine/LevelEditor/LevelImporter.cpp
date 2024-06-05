@@ -62,7 +62,7 @@ namespace SolEngine {
 
 			// 当たり判定があったら入れる
 			if (object.collider_.second != Vector3::zero) {
-				prefab += ECS::CollisionComp{ .collision_ = {.centor = object.collider_.first, .radius = object.collider_.second.x} };
+				prefab += ECS::OBBCollisionComp{ .collision_ = {.centor = object.collider_.first, .size = object.collider_.second} };
 			}
 			// 親の情報があったら渡す
 			if (parent) {

@@ -155,7 +155,7 @@ void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const f
 	ECS::HealthComp *plHealth = nullptr;
 	Sphere plColl{};
 	const ECS::Entity *player = nullptr;
-	for (const auto &[entity, playerTag, playerPos, playerHealth, playerCollision, playerAcceleration] : world->view<const ECS::PlayerTag, const ECS::PositionComp, ECS::HealthComp, const ECS::CollisionComp, ECS::AccelerationComp>()) {
+	for (const auto &[entity, playerTag, playerPos, playerHealth, playerCollision, playerAcceleration] : world->view<const ECS::PlayerTag, const ECS::PositionComp, ECS::HealthComp, const ECS::SphereCollisionComp, ECS::AccelerationComp>()) {
 		// 体力のポインタを取得
 		plHealth = playerHealth;
 		// 加速度のポインタを取得
@@ -172,7 +172,7 @@ void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const f
 	// プレイヤが存在しない場合そこで終了
 	if (not player) { return; }
 
-	for (const auto &[entity, enemy, pos, coll, attackPow, attackCT] : world->view<const ECS::EnemyTag, const ECS::PositionComp, const ECS::CollisionComp, ECS::AttackPower, ECS::AttackCooltime>()) {
+	for (const auto &[entity, enemy, pos, coll, attackPow, attackCT] : world->view<const ECS::EnemyTag, const ECS::PositionComp, const ECS::SphereCollisionComp, ECS::AttackPower, ECS::AttackCooltime>()) {
 		Sphere enColl = coll->collision_;
 		enColl.centor += *pos;
 
@@ -197,7 +197,7 @@ void ECS::System::EnemyAttack::OnUpdate(::World *world, [[maybe_unused]] const f
 
 void ECS::System::FallCollision::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
-	for (const auto &[entity, collision, pos, velocity] : world->view<ECS::CollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
+	for (const auto &[entity, collision, pos, velocity] : world->view<ECS::SphereCollisionComp, ECS::PositionComp, ECS::VelocityComp>()) {
 		const auto &[isLanding] = world->GetEntityManager()->GetComponent<ECS::IsLanding>(*entity);
 
 		// 地面より座標が下なら
@@ -243,7 +243,7 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 			}
 		}
 
-		for (const auto &[entity, enemy, pos, collision, health] : world->view<ECS::EnemyTag, ECS::PositionComp, ECS::CollisionComp, ECS::HealthComp>()) {
+		for (const auto &[entity, enemy, pos, collision, health] : world->view<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::HealthComp>()) {
 
 			Sphere sphere = collision->collision_;
 			sphere.centor += *pos;

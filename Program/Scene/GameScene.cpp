@@ -133,7 +133,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
 	*playerPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
-	*playerPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.centor = Vector3::up, .radius = 1.f } };
+	*playerPrefab_ += ECS::SphereCollisionComp{ .collision_ = Sphere{.centor = Vector3::up, .radius = 1.f } };
 	*playerPrefab_ += ECS::PlayerTag{};
 	*playerPrefab_ += ECS::IsLanding{};
 	*playerPrefab_ += ECS::AttackCollisionComp{ };
@@ -156,7 +156,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::TransformMatComp{};
 	*enemyPrefab_ += ECS::ModelComp{ .model_{ModelManager::GetInstance()->GetModel("Block")} };
 	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
-	*enemyPrefab_ += ECS::CollisionComp{ .collision_ = Sphere{.radius = 1.f } };
+	*enemyPrefab_ += ECS::SphereCollisionComp{ .collision_ = Sphere{.radius = 1.f } };
 	*enemyPrefab_ += ECS::EnemyTag{};
 	*enemyPrefab_ += ECS::HealthComp::Create(100);
 	*enemyPrefab_ += ECS::HealthBarComp{};
