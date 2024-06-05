@@ -50,8 +50,8 @@ namespace SolEngine {
 			meshResult->indexBuffer_.SetIndexData(elements);
 		}
 
-		// マテリアルのポインタを取得
-		//meshResult->material_ = result->materialMap_.at(SoLib::to_string(mesh->mMaterialIndex)).get();
+		// マテリアルのハンドルを取得
+		meshResult->materialhandle_ = ResourceObjectManager<Material>::GetInstance()->Find({ .assimpHandle = source.assimpHandle, .index_ = mesh->mMaterialIndex });
 
 		// SkinCluster構築用のデータ取得を追加
 		//for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
@@ -81,16 +81,16 @@ namespace SolEngine {
 
 		//}
 
-		// 保存されたデータからメッシュを作成
+		//// 保存されたデータからメッシュを作成
 		//meshResult->CreateBuffer();
 
-		// 名前の設定
+		//// 名前の設定
 		//meshResult->meshName_ = mesh->mName.C_Str();
 
-		// メッシュをコンテナに保存
+		//// メッシュをコンテナに保存
 		//result->meshList_.push_back(std::move(meshResult));
-		//}
+	//}
 
-		return std::move(meshResult);
-	}
+	return std::move(meshResult);
+}
 }

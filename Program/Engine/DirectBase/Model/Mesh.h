@@ -3,6 +3,7 @@
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include "AssimpData.h"
 #include "../Base/VertexBuffer.h"
+#include "Material.h"
 
 namespace SolEngine {
 
@@ -16,6 +17,8 @@ namespace SolEngine {
 
 		VertexBuffer<VertexData> vertexBuffer_;
 		IndexBuffer<uint32_t> indexBuffer_;
+
+		ResourceObjectManager<Material>::Handle materialhandle_;
 	};
 
 	template <>
