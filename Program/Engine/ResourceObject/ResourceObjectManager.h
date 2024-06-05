@@ -51,7 +51,7 @@ namespace SolEngine {
 				return
 					handle_ != (std::numeric_limits<uint32_t>::max)()						// データが最大値(無効値)に設定されていないか
 					and Singleton::instance_												// マネージャーが存在するか
-					and handle_ < Singleton::instance_->resourceList_.size()				// 参照ができる状態か
+					and Singleton::instance_->resourceList_.size() > handle_				// 参照ができる状態か
 					and Singleton::instance_->resourceList_.at(handle_).first == version_	// バージョンが一致するか
 					and Singleton::instance_->resourceList_.at(handle_).second.second;		// データが存在するか
 			}
