@@ -43,8 +43,18 @@ namespace SolEngine {
 
 		// 正しくデータにアクセスできた場合
 
+		// レベルデータを破棄
+		levelData->objectList_.clear();
 
+		for (const auto [entity, scale, rotate, position, createByData] : world->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::CreateByLevelData>()) {
 
+			// 保存先のデータを決める
+			LevelData::ObjectData &objectData = levelData->objectList_.emplace_back();
+
+			// 座標を設定する
+			objectData.transform_ = { .scale_ = *scale, .rotate_ = *rotate, .translate_ = *position };
+
+		}
 
 		return true;
 	}

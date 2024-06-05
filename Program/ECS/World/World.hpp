@@ -267,6 +267,24 @@ public:
 		}
 		return result;
 	}
+	template<typename T, typename... Ts>
+		//requires (SoLib::IsConst<T> && ... && SoLib::IsConst<Ts>)
+	ECS::ConstView<T, Ts...> view() const {
+		ECS::ConstView<T, Ts...> result;
+		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
+
+		Archetype checkArche;
+		checkArche.AddClassData<T, Ts...>();
+
+		for (const auto &[archetype, mArray] : chunkList_) {
+			if (checkArche <= archetype) {
+				if (not mArray->empty()) {
+					result.mArrayList_->push_back(mArray.get());
+				}
+			}
+		}
+		return result;
+	}
 
 	template<typename T, typename...Ts>
 	void erase_if(const std::function <bool(T *, Ts *...)> &func) {
