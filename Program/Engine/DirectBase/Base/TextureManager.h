@@ -8,6 +8,8 @@
 #include <list>
 
 #include "../Descriptor/DescriptorManager.h"
+#include "../../ResourceObject/ResourceObject.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
 
 class TextureManager
 {
@@ -80,3 +82,70 @@ private:
 	// 画像転送用一時テクスチャリソース
 	std::list<ComPtr<ID3D12Resource>>intermediateData_;
 };
+
+
+namespace SolEngine {
+
+	class Texture : public IResourceObject {
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	public:
+
+		struct TextureData {
+			ComPtr<ID3D12Resource> textureResource;
+			D3D12_CPU_DESCRIPTOR_HANDLE cpuHandleSRV;
+			D3D12_GPU_DESCRIPTOR_HANDLE gpuHandleSRV;
+			std::string name;
+		};
+
+
+
+	};
+
+	template <>
+	class ResourceSource<Texture> {
+	public:
+		std::string filePath_;
+
+		const std::string &ToStr() const { return filePath_; }
+
+		bool operator==(const ResourceSource<Texture> &) const = default;
+	};
+
+	template <>
+	class ResourceCreater<Texture> {
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	public:
+
+		std::unique_ptr<Texture> CreateObject(const ResourceSource<Texture> &source) const;
+
+	private:
+		// デバイス(借用)
+		ID3D12Device *device_ = nullptr;
+		// コマンドリスト(借用)
+		ID3D12GraphicsCommandList *commandList_ = nullptr;
+		// デスクリプタヒープ(借用)
+		DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *pSrvHeap_;
+		// ヒープの使用位置
+		DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
+
+
+		// 画像転送用一時テクスチャリソース
+		std::list<ComPtr<ID3D12Resource>>intermediateData_;
+
+	};
+
+}
+
+namespace std {
+
+	template<>
+	struct hash<SolEngine::ResourceSource<SolEngine::Texture>> {
+		size_t operator()(const SolEngine::ResourceSource<SolEngine::Texture> &data) const {
+			return std::hash<std::string>{}(data.filePath_);
+		}
+	};
+}
+
+namespace SolEngine {
+	using TextureManager = ResourceObjectManager<Texture, ResourceSource<Texture>, ResourceCreater<Texture>, 256>;
+}

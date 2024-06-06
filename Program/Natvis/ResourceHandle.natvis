@@ -8,4 +8,13 @@
       <Item Name="[version]">version_</Item>
     </Expand>
   </Type>
+  <Type Name="SoLib::Color::RGB4">
+    <DisplayString>{{{static_cast&lt;unsigned&gt;(r*0xFF) &lt;&lt; 24 | static_cast&lt;unsigned&gt;(g*0xFF) &lt;&lt; 16 | static_cast&lt;unsigned&gt;(b*0xFF) &lt;&lt; 8 | static_cast&lt;unsigned&gt;(a*0xFF),x}}}</DisplayString>
+    <Expand>
+      <Item Name="r">r</Item>
+      <Item Name="g">g</Item>
+      <Item Name="b">b</Item>
+      <Item Name="a">a</Item>
+    </Expand>
+  </Type>
 </AutoVisualizer>

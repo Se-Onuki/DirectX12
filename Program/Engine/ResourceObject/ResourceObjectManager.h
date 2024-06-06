@@ -149,6 +149,10 @@ namespace SolEngine {
 		// リソースも破棄
 		data.reset();
 
+		if constexpr (requires(Creater crafter, uint32_t index) { crafter.Destroy(index); }) {
+			creater_.Destroy(handle.GetHandle());
+		}
+
 		// バージョンを1つ上げる
 		version++;
 

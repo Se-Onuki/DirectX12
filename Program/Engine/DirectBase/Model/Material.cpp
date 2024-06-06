@@ -28,7 +28,7 @@ namespace SolEngine {
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 
 			// テクスチャの読み込み
-			materialResult->texHandle_ = TextureManager::Load(directoryPath + textureFilePath.C_Str());
+			materialResult->texHandle_ = ::TextureManager::Load(directoryPath + textureFilePath.C_Str());
 		}
 
 		// マテリアル名の設定
