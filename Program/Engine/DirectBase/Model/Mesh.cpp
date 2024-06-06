@@ -22,7 +22,7 @@ namespace SolEngine {
 
 		static constexpr uint32_t kDefaultMaterialIndex = 0;
 
-		const aiScene *const scene = source.assimpHandle->importer_->GetScene();
+		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 
 		const std::span<aiMesh *> sceneArr = { scene->mMeshes, scene->mNumMeshes };
 
@@ -68,7 +68,7 @@ namespace SolEngine {
 		}
 
 		// マテリアルのハンドルを取得
-		meshResult->materialhandle_ = ResourceObjectManager<Material>::GetInstance()->Find({ .assimpHandle = source.assimpHandle, .index_ = mesh->mMaterialIndex });
+		meshResult->materialhandle_ = ResourceObjectManager<Material>::GetInstance()->Find({ .assimpHandle_ = source.assimpHandle_, .index_ = mesh->mMaterialIndex });
 
 		return std::move(meshResult);
 	}

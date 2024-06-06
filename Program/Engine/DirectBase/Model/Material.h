@@ -28,7 +28,7 @@ namespace SolEngine {
 	class ResourceSource<Material> {
 	public:
 		// ファイルのハンドル
-		ResourceObjectManager<AssimpData>::Handle assimpHandle;
+		ResourceObjectManager<AssimpData>::Handle assimpHandle_;
 		// materialのmodel内Index
 		uint32_t index_;
 
@@ -50,7 +50,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::Material>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::Material> &data) const {
-			return size_t{ static_cast<size_t>(data.assimpHandle.GetHandle()) << 32u | static_cast<size_t>(data.index_) };
+			return size_t{ static_cast<size_t>(data.assimpHandle_.GetHandle()) << 32u | static_cast<size_t>(data.index_) };
 		}
 	};
 }

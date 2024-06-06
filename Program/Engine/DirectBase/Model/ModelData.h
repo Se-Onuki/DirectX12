@@ -22,7 +22,7 @@ namespace SolEngine {
 	class ResourceSource<ModelData> {
 	public:
 		// ファイルのハンドル
-		ResourceObjectManager<AssimpData>::Handle assimpHandle;
+		ResourceObjectManager<AssimpData>::Handle assimpHandle_;
 
 		bool operator==(const ResourceSource<ModelData> &) const = default;
 	};
@@ -42,7 +42,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::ModelData>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::ModelData> &data) const {
-			return size_t{ static_cast<size_t>(data.assimpHandle.GetHandle()) << 32u | static_cast<size_t>(data.assimpHandle.GetVersion()) };
+			return size_t{ static_cast<size_t>(data.assimpHandle_.GetHandle()) << 32u | static_cast<size_t>(data.assimpHandle_.GetVersion()) };
 		}
 	};
 }

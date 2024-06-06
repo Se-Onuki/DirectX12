@@ -5,7 +5,7 @@
 namespace SolEngine {
 	std::unique_ptr<ModelData> ResourceCreater<ModelData>::CreateObject(const ResourceSource<ModelData> &source) const {
 
-		const aiScene *const scene = source.assimpHandle->importer_->GetScene();
+		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 
 		const std::span<aiMesh *> sceneArr = { scene->mMeshes, scene->mNumMeshes };
 
@@ -14,7 +14,7 @@ namespace SolEngine {
 		SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
 
 		for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
-			materialManager->Load({ source.assimpHandle, i });
+			materialManager->Load({ source.assimpHandle_, i });
 		}
 
 		SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
@@ -22,7 +22,7 @@ namespace SolEngine {
 		meshResult->meshHandleList_.reserve(scene->mNumMeshes);
 
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
-			meshResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle, i }));
+			meshResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
 		}
 
 		return std::move(meshResult);

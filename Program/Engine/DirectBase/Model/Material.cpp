@@ -6,10 +6,10 @@ namespace SolEngine {
 
 		static constexpr uint32_t kDefaultMaterialIndex = 0;
 
-		const aiScene *const scene = source.assimpHandle->importer_->GetScene();
+		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 		const std::span<aiMaterial *> materialArray = { scene->mMaterials, scene->mNumMaterials };
 
-		const auto *assimpSource = ResourceObjectManager<AssimpData>::GetInstance()->GetSource(source.assimpHandle);
+		const auto *assimpSource = ResourceObjectManager<AssimpData>::GetInstance()->GetSource(source.assimpHandle_);
 
 		assert(assimpSource and "Assimpのデータが存在しません");
 

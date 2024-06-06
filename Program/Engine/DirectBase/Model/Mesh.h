@@ -27,7 +27,7 @@ namespace SolEngine {
 	class ResourceSource<Mesh> {
 	public:
 		// ファイルのハンドル
-		ResourceObjectManager<AssimpData>::Handle assimpHandle;
+		ResourceObjectManager<AssimpData>::Handle assimpHandle_;
 		// meshのIndex
 		uint32_t index_;
 
@@ -49,7 +49,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::Mesh>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::Mesh> &data) const {
-			return size_t{ static_cast<size_t>(data.assimpHandle.GetHandle()) << 32u | static_cast<size_t>(data.index_) };
+			return size_t{ static_cast<size_t>(data.assimpHandle_.GetHandle()) << 32u | static_cast<size_t>(data.index_) };
 		}
 	};
 }
