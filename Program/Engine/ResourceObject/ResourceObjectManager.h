@@ -6,7 +6,7 @@
 
 namespace SolEngine {
 
-	template <IsResourceObject T, IsResourceSource Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T, Source>>
+	template <IsResourceObject T, IsResourceSource Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T, Source>, size_t ContainerSize = 0u>
 	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, Source, Creater>> {
 		friend SoLib::Singleton<ResourceObjectManager>;
 		using Singleton = SoLib::Singleton<ResourceObjectManager<T, Source, Creater>>;
@@ -94,14 +94,14 @@ namespace SolEngine {
 
 		using ItrAndData = std::pair<typename decltype(findMap_)::const_iterator, std::unique_ptr<T>>;
 
-		std::vector<std::pair<uint32_t, ItrAndData>> resourceList_;
+		std::conditional<ContainerSize == 0u, std::vector<std::pair<uint32_t, ItrAndData>>, std::array<std::pair<uint32_t, ItrAndData>, ContainerSize>>::type resourceList_;
 
 		Creater creater_;
 
 	};
 
-	template <IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
-	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Load(const Source &source)
+	template <IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::Load(const Source &source)
 	{
 		// データを格納する
 		Handle result = Find(source);
@@ -116,8 +116,8 @@ namespace SolEngine {
 		return result;
 	}
 
-	template <IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
-	ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::Find(const Source &source) const
+	template <IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::Find(const Source &source) const
 	{
 		// 検索を行う
 		auto itr = findMap_.find(source);
@@ -132,8 +132,8 @@ namespace SolEngine {
 		}
 	}
 
-	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
-	inline bool ResourceObjectManager<T, Source, Creater>::Destory(const Handle &handle)
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	inline bool ResourceObjectManager<T, Source, Creater, ContainerSize>::Destory(const Handle &handle)
 	{
 		// indexから検索
 		auto &[version, itrAndData] = resourceList_.at(handle.GetHandle());
@@ -155,8 +155,8 @@ namespace SolEngine {
 		return true;
 	}
 
-	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
-	inline const Source *ResourceObjectManager<T, Source, Creater>::GetSource(const Handle &handle) const
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	inline const Source *ResourceObjectManager<T, Source, Creater, ContainerSize>::GetSource(const Handle &handle) const
 	{
 		// indexから検索
 		auto &[version, itrAndData] = resourceList_.at(handle.GetHandle());
@@ -167,24 +167,49 @@ namespace SolEngine {
 		return &itr->first;
 	}
 
-	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
-	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::AddData(const Source &source, std::unique_ptr<T> resource)
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::AddData(const Source &source, std::unique_ptr<T> resource)
 	{
 
-		// 添え字を代入
-		uint32_t result = static_cast<uint32_t>(resourceList_.size());
+		typename decltype(resourceList_)::iterator itr;
+		if (resourceList_.size() == findMap_.size()) {
+			itr = resourceList_.end();
+		}
+		else {
+			itr = std::find_if(resourceList_.begin(), resourceList_.end(), [](const auto &item) ->bool {return item.second.second == nullptr; });
+		}
+
+		uint32_t index = 0;
+		uint32_t version = 0;
+
+		if (itr != resourceList_.end()) {
+			index = static_cast<uint32_t>(std::distance(resourceList_.begin(), itr));
+		}
+		else {
+			if constexpr (ContainerSize == 0) {
+				index = static_cast<uint32_t>(resourceList_.size());
+				resourceList_.push_back({});
+				itr = std::prev(resourceList_.end());
+			}
+			else {
+				assert("保存領域を超えました。");
+				return 0;
+			}
+		}
+		version = itr->first;
+
 
 		// 検索用に保存
-		findMap_.insert({ source, {result, 0} });
+		findMap_.insert({ source, {index, version} });
 
 		// 構築したデータを格納
-		resourceList_.push_back({ 0, std::make_pair(findMap_.find(source), std::move(resource)) });
+		*itr = { 0, std::make_pair(findMap_.find(source), std::move(resource)) };
 
-		return result;
+		return index;
 	}
 
-	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
-	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label, const Handle handle) const
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::ImGuiWidget(const char *const label, const Handle handle) const
 	{
 
 
@@ -203,8 +228,8 @@ namespace SolEngine {
 
 		return Handle{ result };
 	}
-	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater>
-	inline ResourceObjectManager<T, Source, Creater>::Handle ResourceObjectManager<T, Source, Creater>::ImGuiWidget(const char *const label) const
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::ImGuiWidget(const char *const label) const
 	{
 		static Handle result;
 

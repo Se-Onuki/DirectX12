@@ -827,6 +827,9 @@
     <ClInclude Include="Engine\DirectBase\Model\ModelData.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\ModelRender.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">
