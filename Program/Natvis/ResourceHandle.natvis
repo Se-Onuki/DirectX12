@@ -3,7 +3,7 @@
   <Type Name="SolEngine::ResourceObjectManager&lt;*,*,*&gt;::Handle">
     <DisplayString>{{ handle_ = {handle_}, version_ = {version_} }}</DisplayString>
     <Expand>
-      <Item Name="[resource]" Optional="true">*Singleton::instance_->resourceList_.at(handle_).second.second</Item>
+      <Item Name="[resource]" Optional="true">*Singleton::instance_->resourceList_[handle_].second.second</Item>
       <Item Name="[handle]">handle_</Item>
       <Item Name="[version]">version_</Item>
     </Expand>
