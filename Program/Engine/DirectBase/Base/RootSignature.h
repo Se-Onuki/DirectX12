@@ -91,7 +91,7 @@ public:
 	const char *item_ = nullptr;
 
 	//std::vector<RootParameters> types_;
-
+	SolEngine::RootParameters types_;
 
 	static D3D12_STATIC_SAMPLER_DESC DefaultSampler();
 
