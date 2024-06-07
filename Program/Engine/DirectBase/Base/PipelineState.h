@@ -15,8 +15,8 @@ class PipelineState {
 public:
 
 	struct ShaderSet {
-		Shader *vertex = nullptr;
-		Shader *pixel = nullptr;
+		SolEngine::ResourceObjectManager<Shader>::Handle vertex_;
+		SolEngine::ResourceObjectManager<Shader>::Handle pixel_;
 
 		void SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc);
 	};

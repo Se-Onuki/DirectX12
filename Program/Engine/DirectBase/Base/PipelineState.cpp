@@ -115,10 +115,10 @@ void PipelineState::SetShader(const ShaderSet &shaderSet) {
 }
 
 void PipelineState::ShaderSet::SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc) {
-	if (vertex) {
-		pipelineDesc->VS = vertex->GetBytecode();
+	if (vertex_) {
+		pipelineDesc->VS = vertex_->GetBytecode();
 	}
-	if (pixel) {
-		pipelineDesc->PS = pixel->GetBytecode();
+	if (pixel_) {
+		pipelineDesc->PS = pixel_->GetBytecode();
 	}
 }

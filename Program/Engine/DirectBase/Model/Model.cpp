@@ -316,8 +316,8 @@ void Model::CreatePipeLine()
 
 
 	PipelineState::ShaderSet particleShader;
-	particleShader.vertex = *pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" });
-	particleShader.pixel = *pShaderManager_->Load({ L"Particle.PS.hlsl", L"ps_6_0" });
+	particleShader.vertex_ = pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" });
+	particleShader.pixel_ = pShaderManager_->Load({ L"Particle.PS.hlsl", L"ps_6_0" });
 
 #pragma endregion
 
@@ -343,8 +343,8 @@ void Model::CreatePipeLine()
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kParticle)].Get(); // RootSignature
 	graphicsPipelineStateDesc.InputLayout = defaultInputLayoutDesc;                                                       // InputLayout
-	graphicsPipelineStateDesc.VS = particleShader.vertex->GetBytecode();                                                  // VertexShader
-	graphicsPipelineStateDesc.PS = particleShader.pixel->GetBytecode();                                                   // PixelShader
+	graphicsPipelineStateDesc.VS = particleShader.vertex_->GetBytecode();                                                  // VertexShader
+	graphicsPipelineStateDesc.PS = particleShader.pixel_->GetBytecode();                                                   // PixelShader
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;                                                           // RasterizeState
 
 	// DSVのFormatを設定する
@@ -373,11 +373,11 @@ void Model::CreatePipeLine()
 		auto shadowPipeline = graphicsPipelineStateDesc;
 
 		PipelineState::ShaderSet shadowParticleShader;
-		shadowParticleShader.vertex = *pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" });
-		shadowParticleShader.pixel = *pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" });
+		shadowParticleShader.vertex_ = pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" });
+		shadowParticleShader.pixel_ = pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" });
 
-		shadowPipeline.VS = shadowParticleShader.vertex->GetBytecode();
-		shadowPipeline.PS = shadowParticleShader.pixel->GetBytecode();
+		shadowPipeline.VS = shadowParticleShader.vertex_->GetBytecode();
+		shadowPipeline.PS = shadowParticleShader.pixel_->GetBytecode();
 
 		BuildPipeLine(PipelineType::kShadowParticle, shadowPipeline);
 	}
@@ -386,11 +386,11 @@ void Model::CreatePipeLine()
 		auto modelPipeline = graphicsPipelineStateDesc;
 
 		PipelineState::ShaderSet modelShader;
-		modelShader.vertex = *pShaderManager_->Load({ L"Object3d.VS.hlsl", L"vs_6_0" });
-		modelShader.pixel = *pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" });
+		modelShader.vertex_ = pShaderManager_->Load({ L"Object3d.VS.hlsl", L"vs_6_0" });
+		modelShader.pixel_ = pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" });
 
-		modelPipeline.VS = modelShader.vertex->GetBytecode();
-		modelPipeline.PS = modelShader.pixel->GetBytecode();
+		modelPipeline.VS = modelShader.vertex_->GetBytecode();
+		modelPipeline.PS = modelShader.pixel_->GetBytecode();
 
 		modelPipeline.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get(); // RootSignature
 		modelPipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
@@ -402,13 +402,13 @@ void Model::CreatePipeLine()
 		auto skinParticlePipeline = graphicsPipelineStateDesc;
 
 		PipelineState::ShaderSet shadowParticleShader;
-		shadowParticleShader.vertex = *pShaderManager_->Load({ L"SkinningParticle.VS.hlsl", L"vs_6_0" });
-		shadowParticleShader.pixel = *pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" });
+		shadowParticleShader.vertex_ = pShaderManager_->Load({ L"SkinningParticle.VS.hlsl", L"vs_6_0" });
+		shadowParticleShader.pixel_ = pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" });
 
 		skinParticlePipeline.InputLayout = skinInputLayoutDesc;
 
-		skinParticlePipeline.VS = shadowParticleShader.vertex->GetBytecode();
-		skinParticlePipeline.PS = shadowParticleShader.pixel->GetBytecode();
+		skinParticlePipeline.VS = shadowParticleShader.vertex_->GetBytecode();
+		skinParticlePipeline.PS = shadowParticleShader.pixel_->GetBytecode();
 
 		BuildPipeLine(PipelineType::kSkinParticle, skinParticlePipeline);
 	}
@@ -417,13 +417,13 @@ void Model::CreatePipeLine()
 		auto skinModelPipeline = graphicsPipelineStateDesc;
 
 		PipelineState::ShaderSet modelShader;
-		modelShader.vertex = *pShaderManager_->Load({ L"SkinningObject3d.VS.hlsl", L"vs_6_0" });
-		modelShader.pixel = *pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" });
+		modelShader.vertex_ = pShaderManager_->Load({ L"SkinningObject3d.VS.hlsl", L"vs_6_0" });
+		modelShader.pixel_ = pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" });
 
 		skinModelPipeline.InputLayout = skinInputLayoutDesc;
 
-		skinModelPipeline.VS = modelShader.vertex->GetBytecode();
-		skinModelPipeline.PS = modelShader.pixel->GetBytecode();
+		skinModelPipeline.VS = modelShader.vertex_->GetBytecode();
+		skinModelPipeline.PS = modelShader.pixel_->GetBytecode();
 
 		skinModelPipeline.pRootSignature = rootSignatureClass_[static_cast<uint32_t>(PipelineType::kModel)].Get(); // RootSignature
 		skinModelPipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
