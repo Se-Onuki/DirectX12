@@ -357,7 +357,6 @@ void GameScene::Update() {
 
 	ImGui::DragFloat2("VignettingParam", &fullScreen_->GetFParam()->first);
 
-
 	float health = 0.f;
 
 
