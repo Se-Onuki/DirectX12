@@ -65,6 +65,14 @@ void CGTaskScene::OnEnter()
 
 	*vec2_ = Vector2{ 10,10 };
 
+	SolEngine::RootParameters rootParameters = {
+		{
+			rootParameters.MakePair<int>('a'),
+			rootParameters.MakePair<int>('b'),
+			rootParameters.MakePair<float>('b'),
+		}
+	};
+
 	/*
 	{
 		gameObject_ = std::make_unique<GameObject>();

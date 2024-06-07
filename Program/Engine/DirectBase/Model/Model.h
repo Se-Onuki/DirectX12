@@ -178,7 +178,7 @@ namespace ModelAnimation {
 
 	template <SoLib::IsRealType T>
 	struct KeyFlameTemplate : IKeyFlame {
-		T value_;                   // キーフレームの時の値
+		T kValue_;                   // キーフレームの時の値
 		SoLib::Time::SecondF time_; // キーフレームの時刻
 
 		using value_type = T;
@@ -223,7 +223,7 @@ namespace ModelAnimation {
 		{
 			assert(not keyFlames_.empty() and "キーフレームが存在しません");
 			if (keyFlames_.size() == 1 || sec < keyFlames_.at(0).time_) { // キーが1個か､時刻がキーフレーム前なら最初の値とする
-				return keyFlames_.at(0).value_;
+				return keyFlames_.at(0).kValue_;
 			}
 
 			for (size_t index = 0; index < keyFlames_.size() - 1; index++) {
@@ -234,15 +234,15 @@ namespace ModelAnimation {
 					float t = (sec - keyFlames_[index].time_) / (keyFlames_[nextIndex].time_ - keyFlames_[index].time_);
 
 					if constexpr (std::is_same_v<T::value_type, Quaternion>) {	// クォータニオンである場合はSlerpを使用する
-						return Quaternion::Slerp(keyFlames_[index].value_, keyFlames_[nextIndex].value_, t);
+						return Quaternion::Slerp(keyFlames_[index].kValue_, keyFlames_[nextIndex].kValue_, t);
 					}
 					else {
-						return SoLib::Lerp(keyFlames_[index].value_, keyFlames_[nextIndex].value_, t);
+						return SoLib::Lerp(keyFlames_[index].kValue_, keyFlames_[nextIndex].kValue_, t);
 					}
 				}
 			}
 			// ここまで来たら､一番最後の時刻より後ろなので､最後の時刻を返す｡
-			return (*keyFlames_.rbegin()).value_;
+			return (*keyFlames_.rbegin()).kValue_;
 		}
 	};
 	// ノードごとのアニメーション ( AnimationCurve )

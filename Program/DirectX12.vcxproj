@@ -384,6 +384,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\SoLib\SoLib_Traits.h" />
     <ClInclude Include="Utils\Text\ConstString.h" />
     <ClInclude Include="Utils\Text\StaticString.h" />
+    <ClInclude Include="Utils\Types\TypeID.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

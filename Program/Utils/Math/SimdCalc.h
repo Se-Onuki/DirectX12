@@ -9,11 +9,11 @@ namespace SoLib {
 
 		struct SIMD128 {
 			SIMD128() = default;
-			SIMD128(const __m128 &other) : value_(other) {};
-			SIMD128(__m128 &&other) : value_(other) {};
+			SIMD128(const __m128 &other) : kValue_(other) {};
+			SIMD128(__m128 &&other) : kValue_(other) {};
 
-			inline operator __m128 &() noexcept { return value_; }
-			inline operator const __m128 &() const noexcept { return value_; }
+			inline operator __m128 &() noexcept { return kValue_; }
+			inline operator const __m128 &() const noexcept { return kValue_; }
 
 			template<uint8_t Length>
 			static inline float Dot(const __m128 &vecA, const __m128 &vecB);
@@ -38,7 +38,7 @@ namespace SoLib {
 				static constexpr int32_t value = (1 << (Num + 4)) - 1;
 			};
 
-			__m128 value_;
+			__m128 kValue_;
 		};
 	}
 	using namespace Math;

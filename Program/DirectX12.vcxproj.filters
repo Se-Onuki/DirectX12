@@ -148,6 +148,9 @@
     <Filter Include="Natvis">
       <UniqueIdentifier>{a4773ae0-b1ac-46d8-89e4-32665fd8ee6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Types">
+      <UniqueIdentifier>{3081b939-dfe2-4b1d-97f6-644deac1a732}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -829,6 +832,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\ModelRender.h">
       <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Types\TypeID.h">
+      <Filter>Utils\Types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

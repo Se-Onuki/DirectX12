@@ -70,7 +70,7 @@ namespace ModelAnimation {
 					// キーフレームの保存先
 					KeyFlameVector3 keyFlame;
 					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
-					keyFlame.value_ = Vector3{ -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };  // 右手から左手に変更
+					keyFlame.kValue_ = Vector3{ -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };  // 右手から左手に変更
 
 					// データを転送
 					nodeAnimation.translate_.keyFlames_.push_back(std::move(keyFlame));
@@ -84,7 +84,7 @@ namespace ModelAnimation {
 					// キーフレームの保存先
 					KeyFlameQuaternion keyFlame;
 					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond);                        // 周波数から秒単位に変換
-					keyFlame.value_ = Quaternion{ keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w }; // 右手から左手に変更
+					keyFlame.kValue_ = Quaternion{ keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w }; // 右手から左手に変更
 
 					// データを転送
 					nodeAnimation.rotate_.keyFlames_.push_back(std::move(keyFlame));
@@ -98,7 +98,7 @@ namespace ModelAnimation {
 					// キーフレームの保存先
 					KeyFlameVector3 keyFlame;
 					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
-					keyFlame.value_ = Vector3{ keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };   // そのまま代入する
+					keyFlame.kValue_ = Vector3{ keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };   // そのまま代入する
 
 					// データを転送
 					nodeAnimation.scale_.keyFlames_.push_back(std::move(keyFlame));

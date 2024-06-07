@@ -3,7 +3,61 @@
 #include <wrl.h>
 #include <vector>
 
+#include "../../../Utils/Text/StaticString.h"
 #include "../../ResourceObject/ResourceObject.h"
+#include <typeindex>
+#include "../../../Utils/Types/TypeID.h"
+
+namespace SolEngine {
+
+	/// @brief ルートパラメータの保存クラス
+	struct RootParameters
+	{
+		/*template<SoLib::IsRealType... Ts>
+		constexpr RootParameters(std::tuple<std::pair<Ts, char>...> &&data) {
+			parameters_.reserve(sizeof...(Ts));
+
+			for (int32_t i = 0; i < sizeof...(Ts); i++) {
+				parameters_.push_back({ SoLib::TypeID<Ts>::kValue_, data.get<i>().second });
+			}
+
+		}*/
+		constexpr RootParameters(std::vector<std::pair<size_t, uint8_t>> data) : parameters_{ data } {}
+
+		RootParameters() = default;
+		~RootParameters() = default;
+
+		bool operator==(const RootParameters &other) const = default;
+
+		template<SoLib::IsRealType T>
+		constexpr std::pair<size_t, uint8_t> MakePair(uint8_t p) {
+			return std::pair<size_t, uint8_t>{ SoLib::TypeID<T>::kValue_, p};
+		}
+
+		// uint32_t GetIndex(const std::type_index &typeId) const;
+
+		//std::array<> value_;
+
+		std::vector<std::pair<size_t, uint8_t>> parameters_;
+
+	};
+
+	//template <SoLib::IsRealType... Ts>
+	//struct RootParameters : IRootParameters {
+	//public:
+	//	RootParameters() = default;
+	//	bool operator==(const RootParameters &other) const = default;
+	//
+	//	uint32_t GetIndex(const std::type_index &typeId) const override {
+	//
+	//	}
+	//
+	//private:
+	//
+	//	std::tuple<std::pair<Ts, char>...> types_;
+	//
+	//};
+}
 
 class RootSignature final : public SolEngine::IResourceObject {
 
@@ -18,33 +72,11 @@ public:
 	auto *const Get() const { return rootSignature_.Get(); }
 	void Set(ComPtr<ID3D12RootSignature> &&rootSignature) { rootSignature_ = rootSignature; }
 
+	std::unique_ptr<SolEngine::RootParameters> rootParameters_;
+
 private:
 
 	ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
-
-};
-
-struct IRootParameter
-{
-	//char16_t paramType_;
-
-
-	//virtual ~IRootParameter() = 0;
-};
-template <SoLib::IsRealType T>
-struct RootParametorCBV : IRootParameter {
-	/*D3D12_ROOT_PARAMETER rootParametor{
-		.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV,
-		.Descriptor.ShaderRegister = 0,
-	};*/
-
-
-
-	D3D12_ROOT_PARAMETER Create() const;
-};
-
-template <SoLib::IsRealType T>
-struct RootParameterTexture : IRootParameter {
 
 };
 
@@ -55,6 +87,11 @@ public:
 	std::vector<D3D12_STATIC_SAMPLER_DESC> sampler_;
 
 	//std::string 
+
+	const char *item_ = nullptr;
+
+	//std::vector<RootParameters> types_;
+
 
 	static D3D12_STATIC_SAMPLER_DESC DefaultSampler();
 
