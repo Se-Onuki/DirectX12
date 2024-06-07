@@ -30,7 +30,7 @@ namespace PostEffect {
 		/// @return rtvヒープのポインタ
 		DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV> *GetRtvDescHeap() { return rtvDescHeap_.get(); }
 
-		const SoLib::Color::RGB4 &GetClearColor() const { return clearColor_; }
+		static inline const SoLib::Color::RGB4 &GetClearColor() { return clearColor_; }
 
 		const DescHeapCbvSrvUav::HeapRange *const GetHeapRange() const { return &srvHeapRange_; }
 
@@ -42,7 +42,7 @@ namespace PostEffect {
 		DirectResourceLeakChecker leakChecker_{};
 
 		// クリア時の色
-		const SoLib::Color::RGB4 &clearColor_ = 0xFF0000FF; // 赤を指定しておく
+		static inline const SoLib::Color::RGB4 &clearColor_ = 0xFF0000FF; // 赤を指定しておく
 
 		ComPtr<ID3D12Resource> renderTargetTexture_;
 
@@ -73,11 +73,16 @@ namespace PostEffect {
 
 		ID3D12PipelineState *GetPipeLine(const std::pair<std::wstring, std::wstring> &key) { return pipelineState_.at(key).Get(); }
 
-		std::pair<float, float> *GetParam() { return param_.get(); }
+		std::pair<float, float> *GetFParam() { return &param_->fValue_; }
+		std::pair<int32_t, int32_t> *GetIParam() { return &param_->iValue_; }
 
 	private:
+		union ValuePair {
+			std::pair<float, float> fValue_;
+			std::pair<int32_t, int32_t> iValue_;
+		};
 
-		CBuffer<std::pair<float, float>> param_ = { { 16.f, 0.8f} };
+		CBuffer<ValuePair> param_;
 
 		SolEngine::ResourceObjectManager<RootSignature>::Handle rootSignature_;
 

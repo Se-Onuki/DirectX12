@@ -84,6 +84,7 @@ namespace PostEffect {
 	void FullScreenRenderer::Init(const std::list<std::pair<std::wstring, std::wstring>> &key)
 	{
 
+		param_->fValue_ = { 16.f, 0.8f };
 		auto device = GetDevice();
 
 

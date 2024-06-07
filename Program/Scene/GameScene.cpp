@@ -246,7 +246,7 @@ void GameScene::OnEnter() {
 	offScreen_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
-	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" } });
+	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" } , { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" } });
 
 	ModelManager::GetInstance()->AddModel("Box", Model::LoadAssimpModelFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
 
@@ -355,7 +355,7 @@ void GameScene::Update() {
 	gameObject_.Update(deltaTime);
 
 
-	ImGui::DragFloat2("VignettingParam", &fullScreen_->GetParam()->first);
+	ImGui::DragFloat2("VignettingParam", &fullScreen_->GetFParam()->first);
 
 
 	float health = 0.f;
@@ -365,7 +365,7 @@ void GameScene::Update() {
 
 		health = healthComp->CalcPercent();
 	}
-	fullScreen_->GetParam()->first = SoLib::Lerp(0.5f, 16.f, health);
+	fullScreen_->GetFParam()->first = SoLib::Lerp(0.5f, 16.f, health);
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 

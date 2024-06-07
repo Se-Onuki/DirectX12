@@ -34,21 +34,6 @@ void CGTaskScene::OnEnter()
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	auto boxHandle = modelDataManager->Load({ assimpHandle });
 
-	//SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
-
-	//// ↓ユーザが読み込みを行うとかいう最悪なコード
-	//for (uint32_t i = 0; i < boxHandle->importer_->GetScene()->mNumMaterials; i++) {
-	//	materialManager->Load({ boxHandle, i });
-	//}
-	//
-	//SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
-
-	//// ↓ユーザが読み込みを行うとかいう最悪なコード
-	//for (uint32_t i = 0; i < boxHandle->importer_->GetScene()->mNumMeshes; i++) {
-	//	meshManager->Load({ boxHandle, i });
-	//}
-
-
 
 
 	model_ = ModelManager::GetInstance()->AddModel("HumanModel", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
