@@ -22,7 +22,7 @@ namespace SolEngine {
 			}
 
 		}*/
-		constexpr RootParameters(std::vector<std::pair<size_t, uint8_t>> data) : parameters_{ data } {}
+		RootParameters(std::vector<std::pair<std::type_index, uint8_t>> &&data) : parameters_{ data } {}
 
 		RootParameters() = default;
 		~RootParameters() = default;
@@ -30,15 +30,15 @@ namespace SolEngine {
 		bool operator==(const RootParameters &other) const = default;
 
 		template<SoLib::IsRealType T>
-		constexpr std::pair<size_t, uint8_t> MakePair(uint8_t p) {
-			return std::pair<size_t, uint8_t>{ SoLib::TypeID<T>::kValue_, p};
+		std::pair<std::type_index, uint8_t> MakePair(uint8_t p) {
+			return std::pair<std::type_index, uint8_t>{ typeid(T), p};
 		}
 
 		// uint32_t GetIndex(const std::type_index &typeId) const;
 
 		//std::array<> value_;
 
-		std::vector<std::pair<size_t, uint8_t>> parameters_;
+		std::vector<std::pair<std::type_index, uint8_t>> parameters_;
 
 	};
 
