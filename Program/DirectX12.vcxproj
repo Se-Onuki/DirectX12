@@ -255,6 +255,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ECS\Chunk\Chunk.hpp" />
     <ClInclude Include="ECS\ClassData.h" />
     <ClInclude Include="ECS\Component\Component.hpp" />
+    <ClInclude Include="ECS\Component\ComponentRegistry.h" />
     <ClInclude Include="ECS\Entity\Entity.hpp" />
     <ClInclude Include="ECS\Entity\EntityManager.hpp" />
     <ClInclude Include="ECS\Entity\Prefab.h" />

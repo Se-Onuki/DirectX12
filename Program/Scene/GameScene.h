@@ -29,6 +29,7 @@
 #include "../ECS/Entity/Spawner.h"
 #include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
 #include "../Engine/ResourceObject/ResourceObjectManager.h"
+#include "../ECS/Component/ComponentRegistry.h"
 
 
 class GameScene : public IScene {
@@ -77,6 +78,8 @@ private:
 	std::unique_ptr<World> world_ = nullptr;
 	ECS::EntityManager *entityManager_;
 	ECS::Spawner spawner_;
+
+	ECS::ComponentRegistry *compRegistry_;
 
 	std::unique_ptr<ECS::Prefab> prefab_;
 

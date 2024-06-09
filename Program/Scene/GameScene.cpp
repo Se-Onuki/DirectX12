@@ -34,6 +34,12 @@ void GameScene::OnEnter() {
 	pDxCommon_ = DirectXCommon::GetInstance();
 	pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
 
+	compRegistry_ = ECS::ComponentRegistry::GetInstance();
+
+	const auto compFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp>();
+
+
+
 	light_ = DirectionLight::Create();
 
 	blockRender_->Init(1024u);

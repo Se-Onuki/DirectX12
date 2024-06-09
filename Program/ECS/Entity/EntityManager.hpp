@@ -31,13 +31,13 @@ namespace ECS {
 			return entity;
 		}*/
 
-		template<typename... Ts>
+		template<typename... TComps>
 		const std::list<ECS::Entity> CreateEntity(uint32_t count = 1u) {
 			if (not count) {
 				return {};
 			}
-			Archetype archetype;
-			archetype.AddClassData<Ts...>();
+			ComponentFlag archetype;
+			archetype.AddClassData<TComps...>();
 
 			return CreateEntity(archetype, count);
 		}
@@ -64,7 +64,7 @@ namespace ECS {
 			return entityList;
 		}
 
-		const std::list<ECS::Entity> CreateEntity(const Archetype &archetype, uint32_t count = 1u) {
+		const std::list<ECS::Entity> CreateEntity(const ComponentFlag &archetype, uint32_t count = 1u) {
 			std::list<ECS::Entity> entityList{};
 			if (not count) {
 				return entityList;
@@ -101,10 +101,10 @@ namespace ECS {
 			return world_->GetChunk(entity.chunkId_)->GetArray<T>()[entity.chunkIndex_];
 		}*/
 
-		template<typename T, typename... Ts>
-		std::tuple<T *const, Ts *const...> GetComponent(const ECS::Entity &entity) {
+		template<typename T, typename... TComps>
+		std::tuple<T *const, TComps *const...> GetComponent(const ECS::Entity &entity) {
 
-			return entity.arrayPtr_->GetItem<T, Ts...>(entity.totalIndex_);
+			return entity.arrayPtr_->GetItem<T, TComps...>(entity.totalIndex_);
 		}
 
 		template<typename T>

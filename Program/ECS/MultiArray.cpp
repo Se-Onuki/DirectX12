@@ -4,7 +4,7 @@
 
 ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archetype_(&parent_->GetArchetype()) {
 	// メモリの確保
-	memoryPtr_.reset(operator new(Archetype::OneChunkCapacity));
+	memoryPtr_.reset(operator new(ComponentFlag::OneChunkCapacity));
 
 	//size_t capacity = archetype_->GetChunkCapacity();
 	//size_t offset = capacity / sizeof(memoryType);

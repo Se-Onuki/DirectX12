@@ -13,15 +13,20 @@ namespace SolEngine {
 	/// @brief ルートパラメータの保存クラス
 	struct RootParameters
 	{
-		/*template<SoLib::IsRealType... Ts>
-		constexpr RootParameters(std::tuple<std::pair<Ts, char>...> &&data) {
-			parameters_.reserve(sizeof...(Ts));
+		enum class BufferType {
+			kCBV,
+			kSRV,
+			kUAV,
+		};
 
-			for (int32_t i = 0; i < sizeof...(Ts); i++) {
-				parameters_.push_back({ SoLib::TypeID<Ts>::kValue_, data.get<i>().second });
-			}
+		struct BufferData {
+			BufferType type_;
+			uint32_t index_;
+			D3D12_SHADER_VISIBILITY shaderVisibility_;
 
-		}*/
+			bool operator==(const BufferData &) const = default;
+		};
+
 		RootParameters(std::vector<std::pair<std::type_index, uint8_t>> &&data) : parameters_{ data } {}
 
 		RootParameters() = default;
@@ -30,13 +35,9 @@ namespace SolEngine {
 		bool operator==(const RootParameters &other) const = default;
 
 		template<SoLib::IsRealType T>
-		std::pair<std::type_index, uint8_t> MakePair(uint8_t p) {
+		static std::pair<std::type_index, uint8_t> MakePair(uint8_t p) {
 			return std::pair<std::type_index, uint8_t>{ typeid(T), p};
 		}
-
-		// uint32_t GetIndex(const std::type_index &typeId) const;
-
-		//std::array<> value_;
 
 		std::vector<std::pair<std::type_index, uint8_t>> parameters_;
 
@@ -59,6 +60,7 @@ namespace SolEngine {
 	//};
 }
 
+
 class RootSignature final : public SolEngine::IResourceObject {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -72,7 +74,7 @@ public:
 	auto *const Get() const { return rootSignature_.Get(); }
 	void Set(ComPtr<ID3D12RootSignature> &&rootSignature) { rootSignature_ = rootSignature; }
 
-	std::unique_ptr<SolEngine::RootParameters> rootParameters_;
+	//SolEngine::RootParameters rootParameters_;
 
 private:
 
@@ -88,16 +90,15 @@ public:
 
 	//std::string 
 
-	const char *item_ = nullptr;
+	std::vector<SolEngine::RootParameters::BufferData> item_;
 
 	//std::vector<RootParameters> types_;
-	SolEngine::RootParameters types_;
+	//SolEngine::RootParameters types_;
 
 	static D3D12_STATIC_SAMPLER_DESC DefaultSampler();
 
 	bool operator==(const SolEngine::ResourceSource<RootSignature> &r) const {
-		return rootParameter_.size() == r.rootParameter_.size();
-
+		return item_ == r.item_;
 	}
 };
 
@@ -128,8 +129,11 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<RootSignature>> {
 		size_t operator()(const SolEngine::ResourceSource<RootSignature> &data) const {
-			// 一旦0を返すことにする
-			return data.rootParameter_.size() + data.sampler_.size() /*std::hash<std::wstring>()(data.rootParameter_)*/;
+			std::string result;
+			for (const auto &item : data.item_) {
+				result += std::to_string(static_cast<uint32_t>(item.type_)) + '/' + std::to_string(item.index_) + '/' + std::to_string(item.shaderVisibility_) + '/';
+			}
+			return std::hash<std::string>{}(result);
 		}
 	};
 }

@@ -6,7 +6,7 @@
 namespace ECS {
 	class EntityManager;
 
-	template<typename... Ts>
+	template<typename... TComps>
 	class View {
 	public:
 		View() = default;
@@ -19,10 +19,10 @@ namespace ECS {
 			std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
 			std::list<ECS::MultiArray *>::iterator mArrayListItr_;
 
-			ECS::MultiArray::MultiCompArray<Ts...> mDataArray_;
-			ECS::MultiArray::MultiCompArray<Ts...>::iterator mDataArrayItr_;
+			ECS::MultiArray::MultiCompArray<TComps...> mDataArray_;
+			ECS::MultiArray::MultiCompArray<TComps...>::iterator mDataArrayItr_;
 
-			std::tuple<ECS::Entity *, Ts *const...> operator*() {
+			std::tuple<ECS::Entity *, TComps *const...> operator*() {
 				return *mDataArrayItr_;
 			}
 
@@ -34,7 +34,7 @@ namespace ECS {
 					++mArrayListItr_;
 
 					if (mArrayListItr_ != mArrayList_->end()) {
-						mDataArray_ = (*mArrayListItr_)->get<Ts...>();
+						mDataArray_ = (*mArrayListItr_)->get<TComps...>();
 						mDataArrayItr_ = mDataArray_.begin();
 					}
 					else {
@@ -69,7 +69,7 @@ namespace ECS {
 			iterator result{ this };
 			result.mArrayListItr_ = result.mArrayList_->begin();
 			if (result.mArrayList_->size()) {
-				result.mDataArray_ = (*result.mArrayListItr_)->get<Ts...>();
+				result.mDataArray_ = (*result.mArrayListItr_)->get<TComps...>();
 				result.mDataArrayItr_ = result.mDataArray_.begin();
 			}
 			return result;
@@ -89,7 +89,7 @@ namespace ECS {
 		std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
 	};
 
-	template<typename... Ts>
+	template<typename... TComps>
 	class ConstView {
 	public:
 		ConstView() = default;
@@ -102,10 +102,10 @@ namespace ECS {
 			std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
 			std::list<ECS::MultiArray *>::iterator mArrayListItr_;
 
-			ECS::MultiArray::MultiCompArray<Ts...> mDataArray_;
-			ECS::MultiArray::MultiCompArray<Ts...>::iterator mDataArrayItr_;
+			ECS::MultiArray::MultiCompArray<TComps...> mDataArray_;
+			ECS::MultiArray::MultiCompArray<TComps...>::iterator mDataArrayItr_;
 
-			std::tuple<const ECS::Entity *const, const Ts *const...> operator*() {
+			std::tuple<const ECS::Entity *const, const TComps *const...> operator*() {
 				return *mDataArrayItr_;
 			}
 
@@ -117,7 +117,7 @@ namespace ECS {
 					++mArrayListItr_;
 
 					if (mArrayListItr_ != mArrayList_->end()) {
-						mDataArray_ = (*mArrayListItr_)->get<Ts...>();
+						mDataArray_ = (*mArrayListItr_)->get<TComps...>();
 						mDataArrayItr_ = mDataArray_.begin();
 					}
 					else {
@@ -156,7 +156,7 @@ namespace ECS {
 			iterator result{ this };
 			result.mArrayListItr_ = result.mArrayList_->begin();
 			if (result.mArrayList_->size()) {
-				result.mDataArray_ = (*result.mArrayListItr_)->get<Ts...>();
+				result.mDataArray_ = (*result.mArrayListItr_)->get<TComps...>();
 				result.mDataArrayItr_ = result.mDataArray_.begin();
 			}
 			return result;
@@ -188,16 +188,16 @@ public:
 
 	ECS::EntityManager *GetEntityManager() { return entityManager_.get(); }
 
-	bool IsHasChank(const Archetype &archetype) {
+	bool IsHasChank(const ComponentFlag &archetype) {
 		return chunkList_.contains(archetype);
 	}
 
-	ECS::MultiArray *CreateChunk(const Archetype &archetype) {
+	ECS::MultiArray *CreateChunk(const ComponentFlag &archetype) {
 		chunkList_[archetype] = std::make_unique<ECS::MultiArray>(archetype);
 		return chunkList_.at(archetype).get();
 	}
 
-	ECS::MultiArray *GetChunk(const Archetype &archetype) {
+	ECS::MultiArray *GetChunk(const ComponentFlag &archetype) {
 		const auto &item = chunkList_.find(archetype);
 		if (item == chunkList_.end()) {
 			return nullptr;
@@ -230,14 +230,14 @@ public:
 		return result;
 	}*/
 
-	template<typename T, typename... Ts>
+	template<typename T, typename... TComps>
 	//requires (not SoLib::IsConst<T> && ... && not SoLib::IsConst<Ts>)
-	ECS::View<T, Ts...> view() {
-		ECS::View<T, Ts...> result;
+	ECS::View<T, TComps...> view() {
+		ECS::View<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 
-		Archetype checkArche;
-		checkArche.AddClassData<T, Ts...>();
+		ComponentFlag checkArche;
+		checkArche.AddClassData<T, TComps...>();
 
 		for (const auto &[archetype, mArray] : chunkList_) {
 			if (checkArche <= archetype) {
@@ -249,14 +249,14 @@ public:
 		return result;
 	}
 
-	template<typename T, typename... Ts>
-		requires (SoLib::IsConst<T> && ... && SoLib::IsConst<Ts>)
-	ECS::ConstView<T, Ts...> view() {
-		ECS::ConstView<T, Ts...> result;
+	template<typename T, typename... TComps>
+		requires (SoLib::IsConst<T> && ... && SoLib::IsConst<TComps>)
+	ECS::ConstView<T, TComps...> view() {
+		ECS::ConstView<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 
-		Archetype checkArche;
-		checkArche.AddClassData<T, Ts...>();
+		ComponentFlag checkArche;
+		checkArche.AddClassData<T, TComps...>();
 
 		for (const auto &[archetype, mArray] : chunkList_) {
 			if (checkArche <= archetype) {
@@ -267,14 +267,14 @@ public:
 		}
 		return result;
 	}
-	template<typename T, typename... Ts>
+	template<typename T, typename... TComps>
 		//requires (SoLib::IsConst<T> && ... && SoLib::IsConst<Ts>)
-	ECS::ConstView<T, Ts...> view() const {
-		ECS::ConstView<T, Ts...> result;
+	ECS::ConstView<T, TComps...> view() const {
+		ECS::ConstView<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 
-		Archetype checkArche;
-		checkArche.AddClassData<T, Ts...>();
+		ComponentFlag checkArche;
+		checkArche.AddClassData<T, TComps...>();
 
 		for (const auto &[archetype, mArray] : chunkList_) {
 			if (checkArche <= archetype) {
@@ -286,8 +286,8 @@ public:
 		return result;
 	}
 
-	template<typename T, typename...Ts>
-	void erase_if(const std::function <bool(T *, Ts *...)> &func) {
+	template<typename T, typename...TComps>
+	void erase_if(const std::function <bool(T *, TComps *...)> &func) {
 		for (const auto &[archetype, chunk] : chunkList_) {
 			chunk->erase_if(func);
 		}
@@ -307,7 +307,7 @@ public:
 	template<typename A, typename B, typename C> void ForEach(std::function<void(A &, B &, C &)> func);*/
 
 private:
-	std::unordered_map<Archetype, std::unique_ptr<ECS::MultiArray>> chunkList_ = {};
+	std::unordered_map<ComponentFlag, std::unique_ptr<ECS::MultiArray>> chunkList_ = {};
 	std::unique_ptr<ECS::EntityManager> entityManager_;
 };
 //

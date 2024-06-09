@@ -312,8 +312,5 @@ namespace ECS {
 	struct InputFlagComp : IComponent {};
 
 	template<class T>
-	constexpr bool cIsComponentData = std::is_base_of_v<IComponent, T> &&std::is_trivially_copyable_v<T> &&std::is_trivially_destructible_v<T>;
-
-	template<class T>
-	concept BasedIComponent = cIsComponentData<T>;
+	concept IsComponent = SoLib::IsBased<T, IComponent>;
 }

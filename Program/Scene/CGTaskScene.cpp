@@ -67,10 +67,14 @@ void CGTaskScene::OnEnter()
 
 	SolEngine::RootParameters rootParameters = {
 		{
-			rootParameters.MakePair<int>('a'),
-			rootParameters.MakePair<int>('b'),
-			rootParameters.MakePair<float>('b'),
+			SolEngine::RootParameters::MakePair<int>('a'),
+			SolEngine::RootParameters::MakePair<int>('b'),
+			SolEngine::RootParameters::MakePair<float>('b'),
 		}
+	};
+
+	SolEngine::ResourceSource<RootSignature> rootSource{
+		.item_ = {{SolEngine::RootParameters::BufferType::kCBV, 0, D3D12_SHADER_VISIBILITY_ALL }}
 	};
 
 	/*

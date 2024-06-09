@@ -12,14 +12,14 @@ namespace ECS {
 		Prefab() = default;
 		~Prefab() = default;
 
-		template<BasedIComponent T>
+		template<IsComponent T>
 		T &AddComponent();
 
 		const auto &GetComponentMap() const { return componentData_; }
 
-		const Archetype &GetArchetype() const { return archetype_; }
+		const ComponentFlag &GetArchetype() const { return archetype_; }
 
-		template<BasedIComponent T>
+		template<IsComponent T>
 		Prefab &operator+= (const T &comp) {
 			this->AddComponent<T>() = comp;
 			return *this;
@@ -27,12 +27,12 @@ namespace ECS {
 
 	private:
 		std::unordered_map<std::type_index, std::unique_ptr<ECS::IComponent>> componentData_;
-		Archetype archetype_;
+		ComponentFlag archetype_;
 	};
 
 
 
-	template<BasedIComponent T>
+	template<IsComponent T>
 	inline T &Prefab::AddComponent() {
 		// typeindexを作成
 		const std::type_index type = typeid(T);
