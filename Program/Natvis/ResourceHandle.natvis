@@ -33,4 +33,14 @@
       </CustomListItems>
     </Expand>
   </Type>
+
+  <Type Name="ECS::TypeData">
+    <DisplayString>{{ typename = {typeIndex_._Tptr->_Data._UndecoratedName,s}, size = {typeSize_}, alignas = {typeAlignas_} }}</DisplayString>
+    <Expand>
+      <Item Name ="typename">typeIndex_._Tptr->_Data._UndecoratedName</Item>
+      <Item Name ="size">typeSize_</Item>
+      <Item Name ="alignas">typeAlignas_</Item>
+
+    </Expand>
+  </Type>
 </AutoVisualizer>
