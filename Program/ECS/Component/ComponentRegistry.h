@@ -37,10 +37,12 @@ namespace ECS {
 	template <IsComponent... TComps>
 	class BaseComponentRegistry : public SoLib::Singleton<BaseComponentRegistry<TComps...>> {
 		friend SoLib::Singleton<BaseComponentRegistry<TComps...>>;
+		using Singleton = SoLib::Singleton<BaseComponentRegistry<TComps...>>;
 	public:
 
 
 	public:
+		inline static constexpr size_t kSize = sizeof...(TComps);
 
 		using kTypes_ = std::tuple<TComps...>;
 		std::array<TypeData, sizeof...(TComps)> typeDatas_{ TypeData::CreateTypeData<TComps>()... };
@@ -49,6 +51,8 @@ namespace ECS {
 		public:
 			friend class DebuggerVisualizer;
 			using BitData = std::bitset<sizeof...(TComps)>;
+
+			inline static constexpr size_t kSize = sizeof...(TComps);
 
 		private:
 			// メンバ変数としてのbitset
@@ -127,6 +131,13 @@ namespace ECS {
 			result.AddComp<TComps...>();
 			return result;
 		}
+
+	private:
+		struct ComponentFlagViewer {
+			ComponentFlag *flag_;
+			size_t index_;
+		};
+
 	};
 
 
@@ -147,4 +158,34 @@ inline static constexpr ECS::BaseComponentRegistry<TComps...>::ComponentFlag::Bi
 
 namespace ECS {
 	using ComponentRegistry = BaseComponentRegistry<IsAlive, AccelerationComp, GravityComp, PlayerTag, IsLanding, EnemyTag, ParticleComp, EmitterComp, ColorLarp, Identifier, BillboardRotate, AliveTime, LifeLimit, Color, PositionComp, VelocityComp, ScaleComp, RotateComp, QuaternionRotComp, TransformMatComp, ModelComp, FollowCamera, BoneTransformComp, EntityState, ModelAnimator, SkinModel, AttackCollisionComp, SphereCollisionComp, OBBCollisionComp, HealthComp, HealthBarComp, InvincibleTime, AttackPower, AttackCooltime, AirResistance, CursorComp, AttackStatus, Parent, CreateByLevelData, InputFlagComp>;
+}
+
+namespace ECS::DebugHelper {
+
+	template <size_t i>
+	struct NatvisCompFlagView;
+
+	struct CompFlagAccessor
+	{
+		ComponentFlag *compFlag_;
+
+		// Used by natvis to cast `this`
+		using NatvisView = NatvisCompFlagView<0>;
+
+		// Force the compiler to instantiate the template or it won't be available to natvis
+		CompFlagAccessor() { reinterpret_cast<NatvisView *>(this); }
+	};
+
+	// End the template recursion. Inherit from TableAccessor so that tableStorage can be used
+	template <size_t i>
+		requires (i == ComponentRegistry::kSize)
+	struct NatvisCompFlagView<i> : CompFlagAccessor {};
+
+	// Recursive template to peel off column types one-by-one
+	template <size_t i>
+		requires (i != ComponentRegistry::kSize)
+	struct NatvisCompFlagView<i> : NatvisCompFlagView<i + 1>
+	{
+		using base = typename NatvisCompFlagView<i + 1>;
+	};
 }
