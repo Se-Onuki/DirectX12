@@ -10,14 +10,12 @@
 
 namespace ECS {
 
-
-
 	// 型の情報
 	struct TypeData {
 		template <IsComponent T>
 		inline static TypeData CreateTypeData() {
 			TypeData result{
-				//.typeIndex_ = typeid(T),
+				.typeIndex_ = typeid(T),
 				.typeSize_ = sizeof(T),
 				.typeAlignas_ = alignof(T)
 			};
@@ -26,11 +24,13 @@ namespace ECS {
 
 
 		// 型情報
-		//std::type_index typeIndex_;
+		std::type_index typeIndex_;
 		// 型のサイズ
 		size_t typeSize_;
 		// 型のアライメントサイズ
 		size_t typeAlignas_;
+
+
 
 	};
 
@@ -47,8 +47,8 @@ namespace ECS {
 
 		class ComponentFlag {
 		public:
+			friend class DebuggerVisualizer;
 			using BitData = std::bitset<sizeof...(TComps)>;
-
 
 		private:
 			// メンバ変数としてのbitset
@@ -59,16 +59,11 @@ namespace ECS {
 			// Archetypeのコンストラクタ
 			ComponentFlag() : bitset_{} {}
 
-			const BitData &Get() const {
+			uint32_t GetCompCount() const { return static_cast<uint32_t>(bitset_.count()); }
+
+			BitData Get() const {
 				return bitset_;
 			}
-
-			//// 型に対応するビットをセットする関数
-			//template <IsComponent T>
-			//void AddComp() {
-			//	constexpr std::size_t index = GetIndex<T, TComps...>();
-			//	bitset_.set(index);
-			//}
 
 			template <IsComponent T, IsComponent... Ts>
 			void AddComp() {
@@ -82,10 +77,13 @@ namespace ECS {
 			}
 
 			// 型に対応するビットをリセットする関数
-			template <IsComponent T>
+			template <IsComponent T, IsComponent... Ts>
 			void RemoveComp() {
 				constexpr std::size_t index = GetIndex<T, TComps...>();
 				bitset_.reset(index);
+				if constexpr (sizeof...(Ts)) {
+					RemoveComp<Ts...>();
+				}
 			}
 
 			// 型に対応するビットがセットされているかを確認する関数
@@ -94,6 +92,8 @@ namespace ECS {
 				constexpr std::size_t index = GetIndex<T, TComps...>();
 				return bitset_.test(index);
 			}
+
+
 
 		private:
 

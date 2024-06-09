@@ -36,8 +36,8 @@ void GameScene::OnEnter() {
 
 	compRegistry_ = ECS::ComponentRegistry::GetInstance();
 
-	const auto compFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp>();
-
+	ECS::ComponentRegistry::ComponentFlag compFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp>();
+	//compFlag.bitset_.count();
 
 
 	light_ = DirectionLight::Create();

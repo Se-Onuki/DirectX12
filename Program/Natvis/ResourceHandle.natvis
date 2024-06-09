@@ -17,4 +17,10 @@
       <Item Name="a">a</Item>
     </Expand>
   </Type>
+  <Type Name="ECS::BaseComponentRegistry&lt;*&gt;::ComponentFlag">
+    <DisplayString>{{ bitset_ = {bitset_} }}</DisplayString>
+    <Expand>
+      <Item Name="bitset_">bitset_</Item>
+    </Expand>
+  </Type>
 </AutoVisualizer>
