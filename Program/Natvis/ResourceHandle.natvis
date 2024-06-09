@@ -18,64 +18,19 @@
     </Expand>
   </Type>
 
-  <!--<Type Name="ECS::DebugHelper::CompFlagAccessor">
-    <DisplayString>Table</DisplayString>
-    <Expand>
-      -->
-  <!-- Cast `this` to the view type and use the for visualization -->
-  <!--
-      <ExpandedItem>*(NatvisView*) this</ExpandedItem>
-    </Expand>
-  </Type>
-
-  -->
-  <!-- Display the first column then recurse -->
-  <!--
-  <Type Name="ECS::DebugHelper::NatvisCompFlagView&lt;*&gt;">
-    <DisplayString>NatvisColumnView</DisplayString>
-    <Expand>
-      <Synthetic Name="CompData">
-        <Expand>
-          <Item Name="TypeData">Singleton::instance_->typeDatas_[$T1]</Item>
-        </Expand>
-      </Synthetic>
-      <ExpandedItem Condition="$T1 != Singleton::instance_->kSize_">*(base*) this</ExpandedItem>
-    </Expand>
-  </Type>-->
-
-  <!--<Type Name="ECS::BaseComponentRegistry&lt;*&gt;::ComponentFlagViewer">
-    <DisplayString>{{ a }}</DisplayString>
-    <Expand>
-      -->
-  <!--<Item Name="TypeData">reinterpret_cast&lt;CompFlagAccessor&gt;(this)</Item>-->
-  <!--
-    </Expand>
-  </Type>-->
-
   <Type Name="ECS::BaseComponentRegistry&lt;*&gt;::ComponentFlag">
     <DisplayString>{{ bitset_ = {bitset_} }}</DisplayString>
     <Expand>
 
-      <CustomListItems MaxItemsPerView="5000" ExcludeView="Test">
+      <CustomListItems MaxItemsPerView="100">
         <Variable Name="iBucket" InitialValue="0" />
-        <Variable Name="pBucket" InitialValue="bitset_[0]" />
 
         <Size>kSize</Size>
         <Loop>
-          <Break Condition="iBucket == kSize" />
-          <If Condition="pBucket == true">
-            <Item>Singleton::instance_->typeDatas_[iBucket]</Item>
-          </If>
+          <Item Condition="bitset_[iBucket] == true">Singleton::instance_->typeDatas_[iBucket]</Item>
           <Exec>iBucket++</Exec>
-          <Exec>pBucket = bitset_[iBucket]</Exec>
         </Loop>
       </CustomListItems>
-
-      <!--<IndexListItems>
-        <Size>40</Size>
-        <ValueNode Condition="bitset_[$i]">Singleton::instance_->typeDatas_[$i]</ValueNode>
-      </IndexListItems>
-      <Item Name="TypeData">(this)</Item>-->
     </Expand>
   </Type>
 </AutoVisualizer>
