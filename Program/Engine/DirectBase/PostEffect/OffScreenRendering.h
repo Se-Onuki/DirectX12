@@ -11,15 +11,15 @@
 
 namespace PostEffect {
 
-	class OffScreenRenderer : public SoLib::Singleton<OffScreenRenderer>, public SolEngine::EngineObject {
-		friend SoLib::Singleton<OffScreenRenderer>;
-
-		OffScreenRenderer() = default;
-		OffScreenRenderer(const OffScreenRenderer &) = delete;
-		OffScreenRenderer &operator=(const OffScreenRenderer &) = delete;
-		~OffScreenRenderer() = default;
+	class OffScreenRenderer : public SolEngine::EngineObject {
+		//friend SoLib::Singleton<OffScreenRenderer>;
 
 	public:
+		OffScreenRenderer() = default;
+		/*OffScreenRenderer(const OffScreenRenderer &) = delete;
+		OffScreenRenderer &operator=(const OffScreenRenderer &) = delete;*/
+		~OffScreenRenderer() = default;
+
 		void Init();
 
 		/// @brief テクスチャの取得

@@ -247,7 +247,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
 	systemManager_.AddSystem<ECS::System::CursorDrawer>();
 
-	offScreen_ = PostEffect::OffScreenRenderer::GetInstance();
+	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
@@ -267,7 +267,6 @@ void GameScene::OnEnter() {
 
 void GameScene::OnExit() {
 	audio_->StopAllWave();
-	offScreen_->Finalize();
 	fullScreen_->Finalize();
 }
 

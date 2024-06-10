@@ -41,7 +41,7 @@ private:
 
 	Transform transform_;
 
-	PostEffect::OffScreenRenderer *offScreen_ = nullptr;
+	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
 	ModelAnimation::AnimationPlayer animationPlayer_;

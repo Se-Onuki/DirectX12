@@ -46,7 +46,7 @@ void CGTaskScene::OnEnter()
 	CameraManager::GetInstance()->Init();
 	CameraManager::GetInstance()->GetUseCamera()->translation_.z = -15.f;
 
-	offScreen_ = PostEffect::OffScreenRenderer::GetInstance();
+	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
@@ -92,7 +92,6 @@ void CGTaskScene::OnEnter()
 
 void CGTaskScene::OnExit()
 {
-	offScreen_->Finalize();
 	fullScreen_->Finalize();
 }
 

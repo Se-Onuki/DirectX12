@@ -120,7 +120,7 @@ private:
 	ModelAnimation::Animation animation_;
 	ModelAnimation::Animation attackAnimation_;
 
-	PostEffect::OffScreenRenderer *offScreen_ = nullptr;
+	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
 };
