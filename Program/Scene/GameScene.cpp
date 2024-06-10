@@ -39,7 +39,7 @@ void GameScene::OnEnter() {
 	ECS::ComponentRegistry::ComponentFlag compFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp>();
 	ECS::ComponentRegistry::ComponentFlag compBigFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp, ECS::PositionComp>();
 
-	if ((compFlag.Get() & compBigFlag.Get()) == compFlag.Get()) {
+	if ((compFlag & compBigFlag) == compFlag) {
 		compFlag = compBigFlag;
 	}
 

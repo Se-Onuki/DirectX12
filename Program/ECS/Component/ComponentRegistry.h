@@ -52,8 +52,8 @@ namespace ECS {
 			using BitData = std::bitset<sizeof...(TComps)>;
 
 			inline static constexpr size_t kSize = sizeof...(TComps);
-			/*	friend static ComponentFlag operator&(const ComponentFlag &, const ComponentFlag &) noexcept;
-				friend static ComponentFlag operator|(const ComponentFlag &, const ComponentFlag &) noexcept;*/
+			/*friend static ComponentFlag BaseComponentRegistry<TComps...>::operator&(const ComponentFlag &, const ComponentFlag &) noexcept;
+			friend static ComponentFlag BaseComponentRegistry<TComps...>::operator|(const ComponentFlag &, const ComponentFlag &) noexcept;*/
 
 
 		private:
@@ -105,6 +105,15 @@ namespace ECS {
 
 			constexpr bool operator==(const ComponentFlag &) const noexcept = default;
 
+
+			ComponentFlag operator&( const ComponentFlag &r) noexcept {
+				return { bitset_ & r.bitset_ };
+			}
+
+			ComponentFlag operator|( const ComponentFlag &r) noexcept {
+				return { bitset_ | r.bitset_ };
+			}
+
 		private:
 
 			// 型Tのインデックスを取得するメタ関数
@@ -126,6 +135,8 @@ namespace ECS {
 				return TypeIndex<T, Types...>::value;
 			}
 		};
+
+
 
 		static ComponentFlag CreateFlag() {
 			return ComponentFlag{};
