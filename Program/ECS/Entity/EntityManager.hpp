@@ -36,7 +36,7 @@ namespace ECS {
 			if (not count) {
 				return {};
 			}
-			ComponentFlag archetype;
+			Archetype archetype;
 			archetype.AddClassData<TComps...>();
 
 			return CreateEntity(archetype, count);
@@ -64,7 +64,7 @@ namespace ECS {
 			return entityList;
 		}
 
-		const std::list<ECS::Entity> CreateEntity(const ComponentFlag &archetype, uint32_t count = 1u) {
+		const std::list<ECS::Entity> CreateEntity(const Archetype &archetype, uint32_t count = 1u) {
 			std::list<ECS::Entity> entityList{};
 			if (not count) {
 				return entityList;

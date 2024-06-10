@@ -17,7 +17,7 @@ namespace ECS {
 
 		const auto &GetComponentMap() const { return componentData_; }
 
-		const ComponentFlag &GetArchetype() const { return archetype_; }
+		const Archetype &GetArchetype() const { return archetype_; }
 
 		template<IsComponent T>
 		Prefab &operator+= (const T &comp) {
@@ -27,7 +27,7 @@ namespace ECS {
 
 	private:
 		std::unordered_map<std::type_index, std::unique_ptr<ECS::IComponent>> componentData_;
-		ComponentFlag archetype_;
+		Archetype archetype_;
 	};
 
 

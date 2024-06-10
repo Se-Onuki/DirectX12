@@ -49,10 +49,12 @@ namespace ECS {
 
 		class ComponentFlag {
 		public:
-			friend class DebuggerVisualizer;
 			using BitData = std::bitset<sizeof...(TComps)>;
 
 			inline static constexpr size_t kSize = sizeof...(TComps);
+			/*	friend static ComponentFlag operator&(const ComponentFlag &, const ComponentFlag &) noexcept;
+				friend static ComponentFlag operator|(const ComponentFlag &, const ComponentFlag &) noexcept;*/
+
 
 		private:
 			// メンバ変数としてのbitset
@@ -61,11 +63,15 @@ namespace ECS {
 		public:
 
 			// Archetypeのコンストラクタ
-			ComponentFlag() : bitset_{} {}
+			ComponentFlag() = default;
+			ComponentFlag(BitData &&bitset) :bitset_(bitset) {}
 
 			uint32_t GetCompCount() const { return static_cast<uint32_t>(bitset_.count()); }
 
-			BitData Get() const {
+			operator const BitData() { return bitset_; }
+			operator const BitData &() const { return bitset_; }
+
+			const BitData &Get() const {
 				return bitset_;
 			}
 
@@ -97,7 +103,7 @@ namespace ECS {
 				return bitset_.test(index);
 			}
 
-
+			constexpr bool operator==(const ComponentFlag &) const noexcept = default;
 
 		private:
 
@@ -135,17 +141,18 @@ namespace ECS {
 
 }
 
-
-template <ECS::IsComponent... TComps>
-inline static constexpr ECS::BaseComponentRegistry<TComps...>::ComponentFlag::BitData operator&(const typename ECS::BaseComponentRegistry<TComps...>::ComponentFlag::BitData &l, const typename ECS::BaseComponentRegistry<TComps...>::ComponentFlag::BitData &r) noexcept {
-	return l & r;
-}
-
-template <ECS::IsComponent... TComps>
-inline static constexpr ECS::BaseComponentRegistry<TComps...>::ComponentFlag::BitData operator|(const typename ECS::BaseComponentRegistry<TComps...>::ComponentFlag::BitData &l, const typename ECS::BaseComponentRegistry<TComps...>::ComponentFlag::BitData &r) noexcept {
-	return l | r;
-}
-
 namespace ECS {
+
+	//template <IsComponent... TComps>
+	//const typename BaseComponentRegistry<TComps...>::ComponentFlag &operator&(const typename BaseComponentRegistry<TComps...>::ComponentFlag &l, const typename BaseComponentRegistry< TComps...>::ComponentFlag &r) {
+	//	return { l.Get() & r.Get() };
+	//}
+
+	//template <ECS::IsComponent... TComps>
+	//ECS::BaseComponentRegistry<TComps...>::ComponentFlag operator|(const class ECS::BaseComponentRegistry<TComps...>::ComponentFlag &l, const class ECS::BaseComponentRegistry<TComps...>::ComponentFlag &r) noexcept {
+	//	return typename BaseComponentRegistry<TComps...>::ComponentFlag{ l.bitset_ | r.bitset_ };
+	//}
+
+
 	using ComponentRegistry = BaseComponentRegistry<IsAlive, AccelerationComp, GravityComp, PlayerTag, IsLanding, EnemyTag, ParticleComp, EmitterComp, ColorLarp, Identifier, BillboardRotate, AliveTime, LifeLimit, Color, PositionComp, VelocityComp, ScaleComp, RotateComp, QuaternionRotComp, TransformMatComp, ModelComp, FollowCamera, BoneTransformComp, EntityState, ModelAnimator, SkinModel, AttackCollisionComp, SphereCollisionComp, OBBCollisionComp, HealthComp, HealthBarComp, InvincibleTime, AttackPower, AttackCooltime, AirResistance, CursorComp, AttackStatus, Parent, CreateByLevelData, InputFlagComp>;
 }

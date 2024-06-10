@@ -208,7 +208,7 @@ private:
 
 class Chunk {
 public:
-	Chunk(const ComponentFlag &archetype, const uint32_t &maxSize = 16) { CreateArray(archetype, maxSize); }
+	Chunk(const Archetype &archetype, const uint32_t &maxSize = 16) { CreateArray(archetype, maxSize); }
 	Chunk(const Chunk &otherChunk, const uint32_t &maxSize) : archetype_(otherChunk.archetype_), maxCount_(maxSize) {
 		//std::unordered_map<std::type_index, CustomArray> componentArray_;
 	}
@@ -222,7 +222,7 @@ public:
 		// for ()
 	}
 
-	void CreateArray(const ComponentFlag &archetype, const uint32_t &maxSize = 16) {
+	void CreateArray(const Archetype &archetype, const uint32_t &maxSize = 16) {
 		for (const auto &element : archetype.data_) {
 			componentList_[element.typeIndex_].Init(*element.GetClassData(), maxSize);
 		}
@@ -239,14 +239,14 @@ public:
 
 	void ChankDelete() {}
 
-	const ComponentFlag &GetArchetype() { return archetype_; }
+	const Archetype &GetArchetype() { return archetype_; }
 
 	const uint32_t &size() { return entityCount_; }
 	uint32_t entityCount_ = 0;
 	const uint32_t maxCount_ = 1;
 
 private:
-	ComponentFlag archetype_;
+	Archetype archetype_;
 	std::unordered_map<std::type_index, CustomArray> componentList_ = {};
 };
 

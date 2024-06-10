@@ -188,16 +188,16 @@ public:
 
 	ECS::EntityManager *GetEntityManager() { return entityManager_.get(); }
 
-	bool IsHasChank(const ComponentFlag &archetype) {
+	bool IsHasChank(const Archetype &archetype) {
 		return chunkList_.contains(archetype);
 	}
 
-	ECS::MultiArray *CreateChunk(const ComponentFlag &archetype) {
+	ECS::MultiArray *CreateChunk(const Archetype &archetype) {
 		chunkList_[archetype] = std::make_unique<ECS::MultiArray>(archetype);
 		return chunkList_.at(archetype).get();
 	}
 
-	ECS::MultiArray *GetChunk(const ComponentFlag &archetype) {
+	ECS::MultiArray *GetChunk(const Archetype &archetype) {
 		const auto &item = chunkList_.find(archetype);
 		if (item == chunkList_.end()) {
 			return nullptr;
@@ -236,7 +236,7 @@ public:
 		ECS::View<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 
-		ComponentFlag checkArche;
+		Archetype checkArche;
 		checkArche.AddClassData<T, TComps...>();
 
 		for (const auto &[archetype, mArray] : chunkList_) {
@@ -255,7 +255,7 @@ public:
 		ECS::ConstView<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 
-		ComponentFlag checkArche;
+		Archetype checkArche;
 		checkArche.AddClassData<T, TComps...>();
 
 		for (const auto &[archetype, mArray] : chunkList_) {
@@ -273,7 +273,7 @@ public:
 		ECS::ConstView<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 
-		ComponentFlag checkArche;
+		Archetype checkArche;
 		checkArche.AddClassData<T, TComps...>();
 
 		for (const auto &[archetype, mArray] : chunkList_) {
@@ -307,7 +307,7 @@ public:
 	template<typename A, typename B, typename C> void ForEach(std::function<void(A &, B &, C &)> func);*/
 
 private:
-	std::unordered_map<ComponentFlag, std::unique_ptr<ECS::MultiArray>> chunkList_ = {};
+	std::unordered_map<Archetype, std::unique_ptr<ECS::MultiArray>> chunkList_ = {};
 	std::unique_ptr<ECS::EntityManager> entityManager_;
 };
 //

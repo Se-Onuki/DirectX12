@@ -8,13 +8,13 @@
 #include <set>
 #include "ClassData.h"
 
-class ComponentFlag {
+class Archetype {
 public:
 	std::set<ClassDataManager::KeyType> data_;
 
 	static constexpr size_t OneChunkCapacity = 16u * 1024u;
 
-	ComponentFlag() = default;
+	Archetype() = default;
 
 	template<typename T, typename... TComps>
 	void AddClassData() {
@@ -35,9 +35,9 @@ public:
 
 		//InnerAddClassData<T, Ts...>();
 	}
-	bool operator==(const ComponentFlag &other) const { return other.data_ == data_; }
+	bool operator==(const Archetype &other) const { return other.data_ == data_; }
 
-	bool operator<=(const ComponentFlag &other) const {
+	bool operator<=(const Archetype &other) const {
 		if (data_.size() > other.data_.size()) {
 			return false;
 		}
@@ -85,8 +85,8 @@ private:
 
 namespace std {
 	template<>
-	struct hash<ComponentFlag> {
-		std::size_t operator()(const ComponentFlag &obj) const {
+	struct hash<Archetype> {
+		std::size_t operator()(const Archetype &obj) const {
 			std::string typeNames;
 
 			for (const auto &type : obj.data_) {

@@ -228,7 +228,7 @@ namespace ECS {
 		uint32_t entitySize_{};
 
 		MultiArray *const parent_ = nullptr;
-		const ComponentFlag *const archetype_;
+		const Archetype *const archetype_;
 
 		std::unique_ptr<void, ChunkDeleter> memoryPtr_;
 
@@ -238,7 +238,7 @@ namespace ECS {
 
 	class MultiArray {
 	public:
-		MultiArray(const ComponentFlag &archetype) : archetype_(archetype) { }
+		MultiArray(const Archetype &archetype) : archetype_(archetype) { }
 		~MultiArray() = default;
 		using MultiChunkClass = std::vector<std::unique_ptr<MultiChunk>>;
 
@@ -311,7 +311,7 @@ namespace ECS {
 		};
 
 
-		const ComponentFlag &GetArchetype() const { return archetype_; }
+		const Archetype &GetArchetype() const { return archetype_; }
 
 		MultiChunk *AddChunk();
 
@@ -319,7 +319,7 @@ namespace ECS {
 
 		template<typename T, typename...TComps>
 		void erase_if(const std::function <bool(ECS::Entity *, T *, TComps *...)> &func) {
-			ComponentFlag archetype{};
+			Archetype archetype{};
 			archetype.AddClassData<T, TComps...>();
 			// もし、対応した型があったら実行
 			if (archetype <= this->archetype_) {
@@ -378,7 +378,7 @@ namespace ECS {
 		size_t emplace_back();
 
 	private:
-		ComponentFlag archetype_;
+		Archetype archetype_;
 		MultiChunkClass multiChunk_;
 	};
 

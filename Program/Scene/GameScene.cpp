@@ -37,8 +37,11 @@ void GameScene::OnEnter() {
 	compRegistry_ = ECS::ComponentRegistry::GetInstance();
 
 	ECS::ComponentRegistry::ComponentFlag compFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp>();
-	//compFlag.bitset_.count();
+	ECS::ComponentRegistry::ComponentFlag compBigFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp, ECS::PositionComp>();
 
+	if ((compFlag.Get() & compBigFlag.Get()) == compFlag.Get()) {
+		compFlag = compBigFlag;
+	}
 
 	light_ = DirectionLight::Create();
 
