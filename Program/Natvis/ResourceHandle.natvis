@@ -19,14 +19,11 @@
   </Type>
 
   <Type Name="ECS::BaseComponentRegistry&lt;*&gt;::ComponentFlag">
-    <!--<Intrinsic Name="Count" Expression="(size_t)(_Mypair._Myval2._Mylast - _Mypair._Myval2._Myfirst)" />-->
     <DisplayString>{{ bitset_ = {bitset_} }}</DisplayString>
     <Expand>
 
       <CustomListItems MaxItemsPerView="100">
-        <Variable Name="iBucket" InitialValue="0" />
-
-        <Size>kSize</Size>
+        <Variable Name="iBucket" InitialValue="0" />        
         <Loop>
           <Item Condition="bitset_[iBucket] == true">Singleton::instance_->typeDatas_[iBucket]</Item>
           <Exec>iBucket++</Exec>
