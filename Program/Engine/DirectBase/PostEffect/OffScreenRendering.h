@@ -30,7 +30,7 @@ namespace PostEffect {
 		/// @return rtvヒープのポインタ
 		DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV> *GetRtvDescHeap() { return rtvDescHeap_.get(); }
 
-		static inline const SoLib::Color::RGB4 &GetClearColor() { return clearColor_; }
+		inline const SoLib::Color::RGB4 &GetClearColor() { return clearColor_; }
 
 		const DescHeapCbvSrvUav::HeapRange *const GetHeapRange() const { return &srvHeapRange_; }
 
@@ -42,7 +42,7 @@ namespace PostEffect {
 		DirectResourceLeakChecker leakChecker_{};
 
 		// クリア時の色
-		static inline const SoLib::Color::RGB4 &clearColor_ = 0xFF0000FF; // 赤を指定しておく
+		SoLib::Color::RGB4 clearColor_ = 0xFF0000FF; // 赤を指定しておく
 
 		ComPtr<ID3D12Resource> renderTargetTexture_;
 

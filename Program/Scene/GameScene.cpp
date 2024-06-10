@@ -249,9 +249,11 @@ void GameScene::OnEnter() {
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
+	texBuffer_ = std::make_unique<PostEffect::OffScreenRenderer>();
+	texBuffer_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
-	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" } , { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }  , { L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" } });
+	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" } });
 
 	ModelManager::GetInstance()->AddModel("Box", Model::LoadAssimpModelFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
 
@@ -359,22 +361,25 @@ void GameScene::Update() {
 	gameObject_.Update(deltaTime);
 
 
-	ImGui::DragFloat2("VignettingParam", &fullScreen_->GetFParam()->first);
+	//ImGui::DragFloat2("VignettingParam", &fullScreen_->GetFParam()->first);
 
-	float health = 0.f;
+	/*float health = 0.f;
 
 
 	for (const auto &[entity, healthComp, player] : world_->view<const ECS::HealthComp, const ECS::PlayerTag>()) {
 
 		health = healthComp->CalcPercent();
-	}
-	fullScreen_->GetFParam()->first = SoLib::Lerp(0.5f, 16.f, health);
+	}*/
+	//fullScreen_->GetFParam()->first = SoLib::Lerp(0.5f, 16.f, health);
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });
 
 	}
+
+	fullScreen_->GetIParam()->first = WinApp::kWindowWidth;
+	fullScreen_->GetIParam()->second = WinApp::kWindowHeight;
 
 	particleManager_->Update(deltaTime);
 }
@@ -481,9 +486,29 @@ void GameScene::PostEffectSetup()
 void GameScene::PostEffectEnd()
 {
 
+
+	// 描画先のRTVとDSVを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = texBuffer_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
+
+#pragma region ViewportとScissor(シザー)
+
+	// ビューポート
+	D3D12_VIEWPORT viewport;
+	// シザー短形
+	D3D12_RECT scissorRect{};
+
+	pDxCommon_->SetFullscreenViewPort(&viewport, &scissorRect);
+
+#pragma endregion
+
+	pDxCommon_->DrawTargetReset(&rtvHandle, texBuffer_->GetClearColor(), nullptr, viewport, scissorRect);
+
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+
+
 	pDxCommon_->DefaultDrawReset(false);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, texBuffer_->GetTexture(), texBuffer_->GetHeapRange()->GetHandle(0).gpuHandle_);
 
 
 }
