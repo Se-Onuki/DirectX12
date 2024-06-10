@@ -17,7 +17,8 @@ namespace ECS {
 			TypeData result{
 				.typeIndex_ = typeid(T),
 				.typeSize_ = sizeof(T),
-				.typeAlignas_ = alignof(T)
+				.typeAlignas_ = alignof(T),
+				.constructor_ = [](void *ptr) { new(ptr) T{}; }
 			};
 			return result;
 		}
@@ -26,10 +27,11 @@ namespace ECS {
 		// 型情報
 		std::type_index typeIndex_;
 		// 型のサイズ
-		size_t typeSize_;
+		uint32_t typeSize_;
 		// 型のアライメントサイズ
-		size_t typeAlignas_;
-
+		uint32_t typeAlignas_;
+		// デフォルトコンストラクタ
+		void (*constructor_)(void *) = nullptr;
 
 
 	};
@@ -42,16 +44,16 @@ namespace ECS {
 
 
 	public:
-		inline static constexpr size_t kSize = sizeof...(TComps);
+		inline static constexpr uint32_t kSize = sizeof...(TComps);
 
 		using kTypes_ = std::tuple<TComps...>;
-		std::array<TypeData, sizeof...(TComps)> typeDatas_{ TypeData::CreateTypeData<TComps>()... };
+		std::array<TypeData, kSize> typeDatas_{ TypeData::CreateTypeData<TComps>()... };
 
 		class ComponentFlag {
 		public:
 			using BitData = std::bitset<sizeof...(TComps)>;
 
-			inline static constexpr size_t kSize = sizeof...(TComps);
+			inline static constexpr uint32_t kSize = sizeof...(TComps);
 			/*friend static ComponentFlag BaseComponentRegistry<TComps...>::operator&(const ComponentFlag &, const ComponentFlag &) noexcept;
 			friend static ComponentFlag BaseComponentRegistry<TComps...>::operator|(const ComponentFlag &, const ComponentFlag &) noexcept;*/
 
@@ -106,11 +108,11 @@ namespace ECS {
 			constexpr bool operator==(const ComponentFlag &) const noexcept = default;
 
 
-			ComponentFlag operator&( const ComponentFlag &r) noexcept {
+			ComponentFlag operator&(const ComponentFlag &r) noexcept {
 				return { bitset_ & r.bitset_ };
 			}
 
-			ComponentFlag operator|( const ComponentFlag &r) noexcept {
+			ComponentFlag operator|(const ComponentFlag &r) noexcept {
 				return { bitset_ | r.bitset_ };
 			}
 
