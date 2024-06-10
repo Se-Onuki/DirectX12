@@ -19,6 +19,7 @@
   </Type>
 
   <Type Name="ECS::BaseComponentRegistry&lt;*&gt;::ComponentFlag">
+    <!--<Intrinsic Name="Count" Expression="(size_t)(_Mypair._Myval2._Mylast - _Mypair._Myval2._Myfirst)" />-->
     <DisplayString>{{ bitset_ = {bitset_} }}</DisplayString>
     <Expand>
 
@@ -35,7 +36,7 @@
   </Type>
 
   <Type Name="ECS::TypeData">
-    <DisplayString>{{ typename = {typeIndex_._Tptr->_Data._UndecoratedName,s}, size = {typeSize_}, alignas = {typeAlignas_} }}</DisplayString>
+    <DisplayString>{{ typename = {typeIndex_.name(),s}, size = {typeSize_}, alignas = {typeAlignas_} }}</DisplayString>
     <Expand>
       <Item Name ="typename">typeIndex_._Tptr->_Data._UndecoratedName</Item>
       <Item Name ="size">typeSize_</Item>
