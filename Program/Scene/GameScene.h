@@ -52,6 +52,10 @@ public:
 
 private:
 
+	SoLib::DeltaTimer menuTimer_;
+
+	bool isMenuOpen_;
+
 	SolEngine::ResourceObjectManager<Shader, ShaderSource> *pShaderManager_;
 
 	int32_t isGrayScale_ = 0;

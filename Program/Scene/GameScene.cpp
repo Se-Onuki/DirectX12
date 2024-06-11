@@ -265,8 +265,10 @@ void GameScene::OnEnter() {
 	levelImporter.Import(levelData, world_.get());
 
 
-	fullScreen_->GetGaussianParam()->first = 0.01f;
-	fullScreen_->GetGaussianParam()->second = 32;
+	fullScreen_->GetGaussianParam()->first = 32.f;
+	fullScreen_->GetGaussianParam()->second = 1;
+	menuTimer_.Start(0.01f);
+
 
 }
 
@@ -279,7 +281,8 @@ void GameScene::Update() {
 
 	static bool skeletonDraw = true;
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
-	[[maybe_unused]] const float powDeltaTime = deltaTime * deltaTime;
+	[[maybe_unused]] const float fixDeltaTime = not isMenuOpen_ ? deltaTime : 0.f;
+	[[maybe_unused]] const float powDeltaTime = fixDeltaTime * fixDeltaTime;
 
 	ImGui::Text("XInput左スティックで移動");
 	ImGui::Text("エンティティ数 / %lu", world_->size());
@@ -296,8 +299,8 @@ void GameScene::Update() {
 
 	blockRender_->clear();
 	skinModelRender_->clear();
-	spawnTimer_.Update(deltaTime);
-	playerSpawn_.Update(deltaTime);
+	spawnTimer_.Update(fixDeltaTime);
+	playerSpawn_.Update(fixDeltaTime);
 
 	// エンティティの追加
 	spawner_.ActivateSpawn(entityManager_);
@@ -347,8 +350,10 @@ void GameScene::Update() {
 			return not a->isAlive_;
 		}
 	));
+
 	// ここでECSのsystemを呼び出す
-	systemManager_.Update(world_.get(), deltaTime);
+	systemManager_.Update(world_.get(), fixDeltaTime);
+
 
 	if (skeletonDraw) {
 		for (const auto &[entity, skinModel, mat] : world_->view<const ECS::SkinModel, const ECS::TransformMatComp>()) {
@@ -359,9 +364,9 @@ void GameScene::Update() {
 
 	ground_.Draw();
 
-	cameraManager_->Update(deltaTime);
+	cameraManager_->Update(fixDeltaTime);
 
-	gameObject_.Update(deltaTime);
+	gameObject_.Update(fixDeltaTime);
 
 
 	//ImGui::DragFloat2("VignettingParam", &fullScreen_->GetFParam()->first);
@@ -383,7 +388,16 @@ void GameScene::Update() {
 	ImGui::DragFloat("Sigma", &fullScreen_->GetGaussianParam()->first);
 	ImGui::DragInt("Size", &fullScreen_->GetGaussianParam()->second);
 
-	particleManager_->Update(deltaTime);
+	menuTimer_.Update(deltaTime);
+	if (menuTimer_.IsFinish() and input_->GetDirectInput()->IsTrigger(DIK_ESCAPE)) {
+		menuTimer_.Start(0.1f);
+
+		isMenuOpen_ = !isMenuOpen_;
+	}
+
+	fullScreen_->GetGaussianParam()->second = SoLib::Lerp(1, 32, isMenuOpen_ ? menuTimer_.GetProgress() : 1.f - menuTimer_.GetProgress());
+
+	particleManager_->Update(fixDeltaTime);
 }
 
 void GameScene::Draw() {
