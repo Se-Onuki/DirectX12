@@ -306,6 +306,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h" />
     <ClInclude Include="Engine\DirectBase\Render\Render.h" />
     <ClInclude Include="Engine\DirectBase\String\String.h" />
+    <ClInclude Include="Engine\DirectBase\Texture\FullScreenTextureStrage.h" />
     <ClInclude Include="Engine\DirectBase\Texture\Texture.h" />
     <ClInclude Include="Engine\DirectBase\Thread\ThreadPool.h" />
     <ClInclude Include="Engine\LevelEditor\LevelData.h" />

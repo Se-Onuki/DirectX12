@@ -12,7 +12,7 @@ float gauss(const float x, const float y, const float sigma)
 }
 float gauss(const float x, const float sigma)
 {
-    return rcp(sqrt(2.0f * M_PI) * sigma) * exp(-(x * x) * rcp (2.0f * sigma * sigma));
+    return rcp(sqrt(2.0f * M_PI) * sigma) * exp(-(x * x) * rcp(2.0f * sigma * sigma));
 }
 
 //struct pixel_info
@@ -45,12 +45,12 @@ float gauss(const float x, const float sigma)
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
-struct WindowSize
+struct GaussianParam
 {
-    int x;
-    int y;
+    float sigma_;
+    int kernelSize_;
 };
-ConstantBuffer<WindowSize> gWindowSize : register(b0);
+ConstantBuffer<GaussianParam> gGaussianParam : register(b0);
 
 static const float2 kIndex3x3[3][3] =
 {
@@ -69,14 +69,20 @@ PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput result;
     
+    uint width, height;
+    
+    gTexture.GetDimensions(width, height);
+    
     float3 o = 0.f;
     float sum = 0.f;
     
-    float rcpSize = rcp((float) gWindowSize.x);
+    const float rcpSize = rcp((float) width);
     
-    float sigma = 10.f;
+    const float sigma = gGaussianParam.sigma_;
+    
+    const int karnelHarf = gGaussianParam.kernelSize_ / 2;
 
-    for (int kernelStep = -KERNEL_SIZE / 2; kernelStep <= KERNEL_SIZE / 2; kernelStep++)
+    for (int kernelStep = -karnelHarf; kernelStep <= karnelHarf; kernelStep++)
     {
         float2 uvOffset = input.texCoord_;
         uvOffset.y += (kernelStep * rcpSize);

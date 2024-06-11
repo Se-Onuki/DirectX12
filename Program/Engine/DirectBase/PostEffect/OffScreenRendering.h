@@ -74,12 +74,12 @@ namespace PostEffect {
 		ID3D12PipelineState *GetPipeLine(const std::pair<std::wstring, std::wstring> &key) { return pipelineState_.at(key).Get(); }
 
 		std::pair<float, float> *GetFParam() { return &param_->fValue_; }
-		std::pair<int32_t, int32_t> *GetIParam() { return &param_->iValue_; }
+		std::pair<float, int32_t> *GetGaussianParam() { return &param_->iValue_; }
 
 	private:
 		union ValuePair {
 			std::pair<float, float> fValue_;
-			std::pair<int32_t, int32_t> iValue_;
+			std::pair<float, int32_t> iValue_;
 		};
 
 		CBuffer<ValuePair> param_;

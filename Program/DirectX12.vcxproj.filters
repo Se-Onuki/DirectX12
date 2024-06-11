@@ -839,6 +839,9 @@
     <ClInclude Include="ECS\Component\ComponentRegistry.h">
       <Filter>ECS</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Texture\FullScreenTextureStrage.h">
+      <Filter>Engine\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

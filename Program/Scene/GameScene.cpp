@@ -265,6 +265,9 @@ void GameScene::OnEnter() {
 	levelImporter.Import(levelData, world_.get());
 
 
+	fullScreen_->GetGaussianParam()->first = 0.01f;
+	fullScreen_->GetGaussianParam()->second = 32;
+
 }
 
 void GameScene::OnExit() {
@@ -377,9 +380,8 @@ void GameScene::Update() {
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });
 
 	}
-
-	fullScreen_->GetIParam()->first = WinApp::kWindowWidth;
-	fullScreen_->GetIParam()->second = WinApp::kWindowHeight;
+	ImGui::DragFloat("Sigma", &fullScreen_->GetGaussianParam()->first);
+	ImGui::DragInt("Size", &fullScreen_->GetGaussianParam()->second);
 
 	particleManager_->Update(deltaTime);
 }

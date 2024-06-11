@@ -114,7 +114,7 @@ void CGTaskScene::Update()
 	CameraManager::GetInstance()->DisplayImGui();
 	CameraManager::GetInstance()->Update(deltaTime);
 
-	*fullScreen_->GetIParam() = { WinApp::kWindowWidth,WinApp::kWindowHeight };
+	//*fullScreen_->GetGaussianParam() = { WinApp::kWindowWidth,WinApp::kWindowHeight };
 }
 
 void CGTaskScene::Draw()
