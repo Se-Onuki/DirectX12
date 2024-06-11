@@ -508,7 +508,7 @@ void GameScene::PostEffectEnd()
 
 	pDxCommon_->DefaultDrawReset(false);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, texBuffer_->GetTexture(), texBuffer_->GetHeapRange()->GetHandle(0).gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, texBuffer_->GetTexture(), texBuffer_->GetHeapRange()->GetHandle(0).gpuHandle_);
 
 
 }
