@@ -1,7 +1,7 @@
 #include "FullScreen.hlsli"
 
 static const float M_PI = 3.14159265358f;
-static const uint KERNEL_SIZE = 5u;
+static const int KERNEL_SIZE = 128;
 
 float gauss(const float x, const float y, const float sigma)
 {
@@ -12,7 +12,7 @@ float gauss(const float x, const float y, const float sigma)
 }
 float gauss(const float x, const float sigma)
 {
-    return 1.0f / (sqrt(2.0f * M_PI) * sigma) * exp(-(x * x) / (2.0f * sigma * sigma));
+    return rcp(sqrt(2.0f * M_PI) * sigma) * exp(-(x * x) * rcp (2.0f * sigma * sigma));
 }
 
 //struct pixel_info
@@ -69,12 +69,29 @@ PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput result;
     
-    const float2 uvStepSize = float2(rcp((float) gWindowSize.x),
-    rcp((float) gWindowSize.y));
+    float3 o = 0.f;
+    float sum = 0.f;
     
-    float weight = 0.f;
-    float kernel3x3[3][3];
+    float rcpSize = rcp((float) gWindowSize.x);
     
+    float sigma = 10.f;
+
+    for (int kernelStep = -KERNEL_SIZE / 2; kernelStep <= KERNEL_SIZE / 2; kernelStep++)
+    {
+        float2 uvOffset = input.texCoord_;
+        uvOffset.y += (kernelStep * rcpSize);
+        
+        float weight = gauss(kernelStep, sigma);
+        o += gTexture.Sample(gSampler, uvOffset).rgb * weight;
+        sum += weight;
+    }
+    o *= rcp(sum);
+    
+    result.color_ = float4(o, 1.f);
+
+    return result;
+/*
+    const float2 uvStepSize = float2(rcp((float) gWindowSize.x),    rcp((float) gWindowSize.y));        float weight = 0.f;   float kernel3x3[3][3]    
     result.color_.rgb = float3(0.f, 0.f, 0.f);    
    
     for (int xi = 0; xi < 3; xi++)
@@ -105,4 +122,5 @@ PixelShaderOutput main(VertexShaderOutput input)
     result.color_.rgb *= rcp(weight);
    
     return result;
+    */
 }

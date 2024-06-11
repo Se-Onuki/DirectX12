@@ -12,7 +12,7 @@ float gauss(const float x, const float y, const float sigma)
 }
 float gauss(const float x, const float sigma)
 {
-    return 1.0f / (sqrt(2.0f * M_PI) * sigma) * exp(-(x * x) / (2.0f * sigma * sigma));
+    return rcp (sqrt(2.0f * M_PI) * sigma) * exp(-(x * x) * rcp (2.0f * sigma * sigma));
 }
 
 //struct pixel_info
