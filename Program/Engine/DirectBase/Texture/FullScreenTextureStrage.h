@@ -13,9 +13,9 @@ namespace SolEngine {
 
 		static std::unique_ptr<FullScreenTexture> Create(const DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>::Handle &rtvHandle, const DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::Handle &srvHandle);
 
-	private:
+		//private:
 
-		// クリア時の色
+			// クリア時の色
 		SoLib::Color::RGB4 clearColor_ = 0xFF0000FF; // 赤を指定しておく
 
 		ComPtr<ID3D12Resource> renderTargetTexture_;

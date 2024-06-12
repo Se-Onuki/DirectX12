@@ -30,6 +30,7 @@
 #include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
 #include "../Engine/ResourceObject/ResourceObjectManager.h"
 #include "../ECS/Component/ComponentRegistry.h"
+#include "../Engine/DirectBase/Texture/FullScreenTextureStrage.h"
 
 
 class GameScene : public IScene {
@@ -126,6 +127,9 @@ private:
 
 	std::unique_ptr<PostEffect::OffScreenRenderer> texBuffer_ = nullptr;
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
+
+	SolEngine::FullScreenTextureStrage *texStrage_;
+	SolEngine::FullScreenTextureStrage::Handle offScreenTex_;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
 };

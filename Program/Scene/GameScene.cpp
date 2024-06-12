@@ -33,6 +33,7 @@ GameScene::~GameScene() {
 void GameScene::OnEnter() {
 	pDxCommon_ = DirectXCommon::GetInstance();
 	pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
+	texStrage_ = SolEngine::FullScreenTextureStrage::GetInstance();
 
 	compRegistry_ = ECS::ComponentRegistry::GetInstance();
 
@@ -478,7 +479,6 @@ void GameScene::Draw() {
 
 void GameScene::PostEffectSetup()
 {
-
 	// 描画先のRTVとDSVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = pDxCommon_->GetDsvDescHeap()->GetCPUDescriptorHandleForHeapStart();
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreen_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
@@ -502,9 +502,10 @@ void GameScene::PostEffectSetup()
 void GameScene::PostEffectEnd()
 {
 
+	offScreenTex_ = texStrage_->Allocate();
 
 	// 描画先のRTVとDSVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = texBuffer_->GetRtvDescHeap()->GetHeap()->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreenTex_->rtvHandle_.cpuHandle_;
 
 #pragma region ViewportとScissor(シザー)
 
@@ -517,14 +518,15 @@ void GameScene::PostEffectEnd()
 
 #pragma endregion
 
-	pDxCommon_->DrawTargetReset(&rtvHandle, texBuffer_->GetClearColor(), nullptr, viewport, scissorRect);
+	pDxCommon_->DrawTargetReset(&rtvHandle, 0xFF0000FF, nullptr, viewport, scissorRect);
 
 	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
 
 
 	pDxCommon_->DefaultDrawReset(false);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, texBuffer_->GetTexture(), texBuffer_->GetHeapRange()->GetHandle(0).gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, offScreenTex_->renderTargetTexture_.Get(), offScreenTex_->srvHandle_.gpuHandle_);
 
+	texStrage_->Destory(offScreenTex_);
 
 }
