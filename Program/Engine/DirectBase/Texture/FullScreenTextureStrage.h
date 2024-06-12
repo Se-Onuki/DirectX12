@@ -1,5 +1,7 @@
 #pragma once
 #include "../../Utils/Containers/Singleton.h"
+#include "../../ResourceObject/ResourceObject.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
 
 namespace SolEngine {
 

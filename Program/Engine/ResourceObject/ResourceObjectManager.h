@@ -7,15 +7,17 @@
 namespace SolEngine {
 
 	template <IsResourceObject T, IsResourceSource Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T, Source>, size_t ContainerSize = 0u>
-	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, Source, Creater>> {
+	class ResourceObjectManager : public SoLib::Singleton<ResourceObjectManager<T, Source, Creater, ContainerSize>> {
 		friend SoLib::Singleton<ResourceObjectManager>;
-		using Singleton = SoLib::Singleton<ResourceObjectManager<T, Source, Creater>>;
+		using Singleton = SoLib::Singleton<ResourceObjectManager<T, Source, Creater, ContainerSize>>;
 		ResourceObjectManager() = default;
 		ResourceObjectManager(const ResourceObjectManager &) = delete;
 		ResourceObjectManager &operator= (const ResourceObjectManager &) = delete;
 		~ResourceObjectManager() = default;
 
 	public:
+
+		using DataType = std::unique_ptr<T>;
 
 		struct Handle {
 
@@ -88,15 +90,15 @@ namespace SolEngine {
 	private:
 		friend Handle;
 
-		Handle AddData(const Source &source, std::unique_ptr<T> resource);
+		Handle AddData(const Source &source, DataType && resource);
 
 		std::unordered_map<Source, Handle> findMap_;
 
-		using ItrAndData = std::pair<typename decltype(findMap_)::const_iterator, std::unique_ptr<T>>;
+		using ItrAndData = std::pair<typename decltype(findMap_)::const_iterator, DataType>;
 
 		std::conditional<ContainerSize == 0u, std::vector<std::pair<uint32_t, ItrAndData>>, std::array<std::pair<uint32_t, ItrAndData>, ContainerSize>>::type resourceList_;
 
-		Creater creater_;
+		Creater creater_{};
 
 	};
 
@@ -109,7 +111,7 @@ namespace SolEngine {
 		if (result) { return result; }
 
 		// 引数からリソースを構築
-		std::unique_ptr<T> resource = creater_.CreateObject(source);
+		DataType resource = creater_.CreateObject(source);
 
 		result = AddData(source, std::move(resource));
 
@@ -172,7 +174,7 @@ namespace SolEngine {
 	}
 
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
-	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::AddData(const Source &source, std::unique_ptr<T> resource)
+	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::AddData(const Source &source, DataType && resource)
 	{
 
 		typename decltype(resourceList_)::iterator itr;
