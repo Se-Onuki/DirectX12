@@ -48,10 +48,10 @@ void TextureManager::Reset() {
 	//srvHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, maxTextureCount, true);
 
 	for (size_t i = 0u; i < maxTextureCount; i++) {
-		textureArray_[i].textureResource.Reset();
-		textureArray_[i].cpuHandleSRV.ptr = 0;
-		textureArray_[i].gpuHandleSRV.ptr = 0;
-		textureArray_[i].name.clear();
+		textureArray_[i].textureResource_.Reset();
+		textureArray_[i].handle_.cpuHandle_.ptr = 0;
+		textureArray_[i].handle_.gpuHandle_.ptr = 0;
+		textureArray_[i].name_.clear();
 	}
 }
 
@@ -74,16 +74,16 @@ uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
 	index = SoLib::ImGuiWidget("TextureList", &textureArray_, index,
 		[this](const decltype(index) &itemIndex)->std::string
 		{
-			if (textureArray_[itemIndex].name.empty()) { return ""; }
-			return textureArray_[itemIndex].name + "[" + std::to_string(itemIndex) + "]";
+			if (textureArray_[itemIndex].name_.empty()) { return ""; }
+			return textureArray_[itemIndex].name_ + "[" + std::to_string(itemIndex) + "]";
 		}
 	);
 
 
-	if (textureArray_[index].gpuHandleSRV.ptr) {
-		const auto &resourceDesc = textureArray_[index].textureResource->GetDesc();
+	if (textureArray_[index].handle_.gpuHandle_.ptr) {
+		const auto &resourceDesc = textureArray_[index].textureResource_->GetDesc();
 		const Vector2 &texSize = Vector2{ (float)resourceDesc.Width,(float)resourceDesc.Height } / (float)resourceDesc.Width * 100.f;
-		ImGui::Image((ImTextureID)textureArray_[index].gpuHandleSRV.ptr, ImVec2{ texSize.x,texSize.y });
+		ImGui::Image((ImTextureID)textureArray_[index].handle_.gpuHandle_.ptr, ImVec2{ texSize.x,texSize.y });
 		ImGui::SameLine();
 		ImGui::Text("Width: %d\nHeight: %d", resourceDesc.Width, resourceDesc.Height);
 	}
@@ -92,7 +92,7 @@ uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
 }
 
 void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const {
-	commandList_->SetGraphicsRootDescriptorTable(rootParamIndex, textureArray_[textureHandle].gpuHandleSRV);		// TextureのSRVテーブル情報を設定
+	commandList_->SetGraphicsRootDescriptorTable(rootParamIndex, textureArray_[textureHandle].handle_.gpuHandle_);		// TextureのSRVテーブル情報を設定
 }
 
 void TextureManager::EndFlame()
@@ -106,7 +106,7 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 
 	auto it = std::find_if(textureArray_.begin(), textureArray_.end(), [&](const auto &texture)
 		{
-			return texture.name == file_name;
+			return texture.name_ == file_name;
 		}
 	);
 	if (it != textureArray_.end()) {
@@ -130,8 +130,8 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 
 
 	const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-	texture.textureResource = TextureFunc::CreateResource(device_, metadata);
-	intermediateData_.push_back(TextureFunc::UpdateData(texture.textureResource.Get(), mipImage, device_, commandList_));
+	texture.textureResource_ = TextureFunc::CreateResource(device_, metadata);
+	intermediateData_.push_back(TextureFunc::UpdateData(texture.textureResource_.Get(), mipImage, device_, commandList_));
 
 
 #pragma endregion
@@ -145,13 +145,11 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
-	texture.name = file_name;
-	const auto &heapHandle = srvHeap_->GetHandle(heapRange_.memoryRange_->offset, handle);
-	texture.cpuHandleSRV = heapHandle.cpuHandle_;
-	texture.gpuHandleSRV = heapHandle.gpuHandle_;
+	texture.name_ = file_name;
+	texture.handle_ = heapRange_.GetHandle(handle);
 
 	// SRVの作成
-	device_->CreateShaderResourceView(texture.textureResource.Get(), &srvDesc, texture.cpuHandleSRV);
+	device_->CreateShaderResourceView(texture.textureResource_.Get(), &srvDesc, texture.handle_.cpuHandle_);
 
 #pragma endregion
 

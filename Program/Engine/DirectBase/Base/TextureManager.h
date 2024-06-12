@@ -25,10 +25,9 @@ public:
 	static const uint32_t maxTextureCount = 128u;
 
 	struct Texture {
-		ComPtr<ID3D12Resource> textureResource;
-		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandleSRV;
-		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandleSRV;
-		std::string name;
+		ComPtr<ID3D12Resource> textureResource_;
+		DescHeapCbvSrvUav::Handle handle_;
+		std::string name_;
 	};
 
 	static inline TextureManager *const GetInstance() {
@@ -50,10 +49,10 @@ public:
 	uint32_t ImGuiTextureSelecter(uint32_t index);
 
 	inline D3D12_RESOURCE_DESC GetResourceDesc(uint32_t index) {
-		return textureArray_.at(index).textureResource->GetDesc();
+		return textureArray_.at(index).textureResource_->GetDesc();
 	}
 	inline const D3D12_GPU_DESCRIPTOR_HANDLE &GetGpuSrvHandle(uint32_t index) {
-		return textureArray_.at(index).gpuHandleSRV;
+		return textureArray_.at(index).handle_.gpuHandle_;
 	}
 
 	void SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const;
