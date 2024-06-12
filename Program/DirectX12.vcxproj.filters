@@ -432,6 +432,9 @@
     <ClCompile Include="Engine\DirectBase\Model\ModelData.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Texture\FullScreenTextureStrage.cpp">
+      <Filter>Engine\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">

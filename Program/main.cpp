@@ -38,6 +38,7 @@
 #include "Scene/GameScene.h"
 #include "Engine/DirectBase/Input/Input.h"
 #include "Engine/DirectBase/Base/Audio.h"
+#include "Engine/DirectBase/Texture/FullScreenTextureStrage.h"
 
 #include "Engine/DirectBase/File/GlobalVariables.h"
 #include "Header/Object/Particle/ParticleManager.h"
@@ -79,6 +80,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Model::StaticInit();
 	Sprite::StaticInit();
 	audio->StaticInit();
+	SolEngine::FullScreenTextureStrage::GetInstance()->Init();
 
 	input->Init();
 
@@ -194,6 +196,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SkinModelListManager::Finalize();
 	SolEngine::ResourceObjectManager<Shader>::Finalize();
 	SolEngine::ResourceObjectManager<RootSignature>::Finalize();
+	SolEngine::FullScreenTextureStrage::Finalize();
 	Sprite::Finalize();
 
 	sceneManager->Finalize();

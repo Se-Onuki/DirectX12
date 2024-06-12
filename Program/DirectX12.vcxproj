@@ -192,6 +192,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Render.cpp" />
+    <ClCompile Include="Engine\DirectBase\Texture\FullScreenTextureStrage.cpp" />
     <ClCompile Include="Engine\DirectBase\Texture\Texture.cpp" />
     <ClCompile Include="Engine\LevelEditor\LevelData.cpp" />
     <ClCompile Include="Engine\LevelEditor\LevelImporter.cpp" />
