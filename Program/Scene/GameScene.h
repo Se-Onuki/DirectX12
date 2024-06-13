@@ -128,7 +128,7 @@ private:
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 
 	SolEngine::FullScreenTextureStrage *texStrage_;
-	SolEngine::FullScreenTextureStrage::Handle offScreenTex_;
+	SolEngine::FullScreenTextureStrage::UniqueHandle offScreenTex_;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
 };

@@ -38,32 +38,32 @@ namespace SolEngine {
 		using DataType = FullScreenTexture;
 		inline static constexpr uint32_t kContainerSize_ = 8u;
 
-		struct Handle {
+		struct UniqueHandle {
 
-			Handle() = default;
-			Handle(const Handle &) = delete;
-			Handle(Handle &&r) noexcept {
+			UniqueHandle() = default;
+			UniqueHandle(const UniqueHandle &) = delete;
+			UniqueHandle(UniqueHandle &&r) noexcept {
 				this->handle_ = r.handle_; this->version_ = r.version_;
 				r.handle_ = (std::numeric_limits<uint32_t>::max)();
 				r.version_ = (std::numeric_limits<uint32_t>::max)();
 			}
-			Handle &operator=(const Handle &) = delete;
-			Handle &operator=(Handle &&r) noexcept {
+			UniqueHandle &operator=(const UniqueHandle &) = delete;
+			UniqueHandle &operator=(UniqueHandle &&r) noexcept {
 				this->handle_ = r.handle_; this->version_ = r.version_;
 				r.handle_ = (std::numeric_limits<uint32_t>::max)();
 				r.version_ = (std::numeric_limits<uint32_t>::max)();
 				return *this;
 			}
 
-			Handle(const uint32_t handle, const uint32_t version = 0) : handle_(handle), version_(version) {};
-			Handle &operator=(const uint32_t handle)
+			UniqueHandle(const uint32_t handle, const uint32_t version = 0) : handle_(handle), version_(version) {};
+			UniqueHandle &operator=(const uint32_t handle)
 			{
 				handle_ = handle;
 				return *this;
 			}
-			~Handle() { if (*this) { Singleton::instance_->Destroy(*this); } }
+			~UniqueHandle() { if (*this) { Singleton::instance_->Destroy(*this); } }
 
-			bool operator==(const Handle &) const = default;
+			bool operator==(const UniqueHandle &) const = default;
 
 			uint32_t GetHandle() const { return handle_; }
 			uint32_t GetVersion() const { return version_; }
@@ -98,12 +98,12 @@ namespace SolEngine {
 
 		void Init();
 
-		Handle Allocate();
+		UniqueHandle Allocate();
 
-		bool Destroy(const Handle &handle);
+		bool Destroy(const UniqueHandle &handle);
 
 	private:
-		friend Handle;
+		friend UniqueHandle;
 
 		std::array<std::pair<uint32_t, std::pair<bool, std::unique_ptr<DataType>>>, kContainerSize_> resourceList_;
 
@@ -124,7 +124,7 @@ namespace SolEngine {
 		}
 	}
 
-	inline FullScreenTextureStrage::Handle FullScreenTextureStrage::Allocate()
+	inline FullScreenTextureStrage::UniqueHandle FullScreenTextureStrage::Allocate()
 	{
 
 		typename decltype(resourceList_)::iterator itr;
@@ -139,7 +139,7 @@ namespace SolEngine {
 			index = static_cast<uint32_t>(std::distance(resourceList_.begin(), itr));
 		}
 		else {
-			return Handle{};
+			return UniqueHandle{};
 		}
 
 		// バージョンを検出
@@ -148,10 +148,10 @@ namespace SolEngine {
 		// 構築したデータを格納
 		itr->second.first = true;
 
-		return Handle{ index, version };
+		return UniqueHandle{ index, version };
 	}
 
-	inline bool FullScreenTextureStrage::Destroy(const Handle &handle)
+	inline bool FullScreenTextureStrage::Destroy(const UniqueHandle &handle)
 	{
 		// indexから検索
 		auto &[version, flagAndData] = resourceList_.at(handle.GetHandle());
