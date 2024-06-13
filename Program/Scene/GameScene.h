@@ -125,7 +125,6 @@ private:
 	ModelAnimation::Animation animation_;
 	ModelAnimation::Animation attackAnimation_;
 
-	std::unique_ptr<PostEffect::OffScreenRenderer> texBuffer_ = nullptr;
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 
 	SolEngine::FullScreenTextureStrage *texStrage_;

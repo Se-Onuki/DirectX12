@@ -250,8 +250,6 @@ void GameScene::OnEnter() {
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
-	texBuffer_ = std::make_unique<PostEffect::OffScreenRenderer>();
-	texBuffer_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
 	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" } });
@@ -502,10 +500,10 @@ void GameScene::PostEffectSetup()
 void GameScene::PostEffectEnd()
 {
 
-	offScreenTex_ = texStrage_->Allocate();
+	auto backTex = texStrage_->Allocate();
 
 	// 描画先のRTVとDSVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = offScreenTex_->rtvHandle_.cpuHandle_;
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = backTex->rtvHandle_.cpuHandle_;
 
 #pragma region ViewportとScissor(シザー)
 
@@ -525,8 +523,8 @@ void GameScene::PostEffectEnd()
 
 	pDxCommon_->DefaultDrawReset(false);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, offScreenTex_->renderTargetTexture_.Get(), offScreenTex_->srvHandle_.gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, backTex->renderTargetTexture_.Get(), backTex->srvHandle_.gpuHandle_);
 
-	texStrage_->Destory(offScreenTex_);
+	//texStrage_->Destroy(offScreenTex_);
 
 }

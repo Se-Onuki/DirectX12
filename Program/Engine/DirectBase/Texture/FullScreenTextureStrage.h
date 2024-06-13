@@ -41,10 +41,19 @@ namespace SolEngine {
 		struct Handle {
 
 			Handle() = default;
-			Handle(const Handle &) = default;
-			Handle(Handle &&) = default;
-			Handle &operator=(const Handle &) = default;
-			Handle &operator=(Handle &&) = default;
+			Handle(const Handle &) = delete;
+			Handle(Handle &&r) noexcept {
+				this->handle_ = r.handle_; this->version_ = r.version_;
+				r.handle_ = (std::numeric_limits<uint32_t>::max)();
+				r.version_ = (std::numeric_limits<uint32_t>::max)();
+			}
+			Handle &operator=(const Handle &) = delete;
+			Handle &operator=(Handle &&r) noexcept {
+				this->handle_ = r.handle_; this->version_ = r.version_;
+				r.handle_ = (std::numeric_limits<uint32_t>::max)();
+				r.version_ = (std::numeric_limits<uint32_t>::max)();
+				return *this;
+			}
 
 			Handle(const uint32_t handle, const uint32_t version = 0) : handle_(handle), version_(version) {};
 			Handle &operator=(const uint32_t handle)
@@ -52,9 +61,9 @@ namespace SolEngine {
 				handle_ = handle;
 				return *this;
 			}
-			bool operator==(const Handle &) const = default;
+			~Handle() { if (*this) { Singleton::instance_->Destroy(*this); } }
 
-			// inline operator uint32_t() const { return handle_; }
+			bool operator==(const Handle &) const = default;
 
 			uint32_t GetHandle() const { return handle_; }
 			uint32_t GetVersion() const { return version_; }
@@ -82,7 +91,7 @@ namespace SolEngine {
 
 		private:
 			uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
-			uint32_t version_ = (std::numeric_limits<uint32_t>::max)();;
+			uint32_t version_ = (std::numeric_limits<uint32_t>::max)();
 		};
 
 	public:
@@ -91,7 +100,7 @@ namespace SolEngine {
 
 		Handle Allocate();
 
-		bool Destory(const Handle handle);
+		bool Destroy(const Handle &handle);
 
 	private:
 		friend Handle;
@@ -142,7 +151,7 @@ namespace SolEngine {
 		return Handle{ index, version };
 	}
 
-	inline bool FullScreenTextureStrage::Destory(const Handle handle)
+	inline bool FullScreenTextureStrage::Destroy(const Handle &handle)
 	{
 		// indexから検索
 		auto &[version, flagAndData] = resourceList_.at(handle.GetHandle());
