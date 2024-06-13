@@ -43,4 +43,11 @@ namespace ECS {
 		virtual void OnUpdate(const float deltaTime) = 0;
 	};
 
+
+	class IJobEntity {
+	public:
+
+		virtual void Execute(const float deltaTime) = 0;
+	};
+
 }

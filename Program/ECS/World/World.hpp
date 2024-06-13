@@ -13,7 +13,22 @@ namespace ECS {
 
 		class iterator {
 		public:
+
+			using value_type = std::tuple<ECS::Entity *, TComps *const...>;
+			using iterator_concept = std::bidirectional_iterator_tag;
+			using iterator_category = std::forward_iterator_tag;
+			using difference_type = int32_t;
+
+			//using difference_type = std::tuple<ECS::Entity *, TComps *const...>;
+			//using value_type = std::tuple<ECS::Entity *, TComps *const...>;
+			//using iterator_concept = std::forward_iterator_tag;
+
+			iterator() = default;
 			iterator(View *const view) { mArrayList_ = view->mArrayList_; }
+			iterator(const iterator &) = default;
+			iterator &operator=(const iterator &) = default;
+			iterator(iterator &&) = default;
+			iterator &operator=(iterator &&) = default;
 
 			//private:
 			std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
@@ -23,6 +38,10 @@ namespace ECS {
 			ECS::MultiArray::MultiCompArray<TComps...>::iterator mDataArrayItr_;
 
 			std::tuple<ECS::Entity *, TComps *const...> operator*() {
+				return *mDataArrayItr_;
+			}
+
+			std::tuple<ECS::Entity *, TComps *const...> operator->() {
 				return *mDataArrayItr_;
 			}
 
@@ -49,7 +68,12 @@ namespace ECS {
 				return *this;
 			}
 
-			bool operator!=(const iterator &other) {
+			iterator operator++(int) &{
+				iterator itr = *this;
+				return ++itr;
+			}
+
+			bool operator!=(const iterator &other)const {
 				if (/*this->mArrayList_ != other.mArrayList_ ||*/ this->mArrayListItr_ != other.mArrayListItr_) {
 					return true;
 				}
@@ -60,6 +84,10 @@ namespace ECS {
 					return true;
 				}
 				return false;
+			}
+
+			bool operator==(const iterator &other)const {
+				return not(*this != other);
 			}
 
 
@@ -178,7 +206,6 @@ namespace ECS {
 
 }
 
-
 class SystemBase;
 class World {
 
@@ -268,7 +295,7 @@ public:
 		return result;
 	}
 	template<typename T, typename... TComps>
-		//requires (SoLib::IsConst<T> && ... && SoLib::IsConst<Ts>)
+	//requires (SoLib::IsConst<T> && ... && SoLib::IsConst<Ts>)
 	ECS::ConstView<T, TComps...> view() const {
 		ECS::ConstView<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();

@@ -18,7 +18,8 @@ namespace ECS {
 				.typeIndex_ = typeid(T),
 				.typeSize_ = sizeof(T),
 				.typeAlignas_ = alignof(T),
-				.constructor_ = [](void *ptr) { new(ptr) T{}; }
+				.constructor_ = [](void *ptr) { new(ptr) T{}; },
+				.isEmptyClass_ = std::is_empty_v<T>
 			};
 			return result;
 		}
@@ -32,7 +33,8 @@ namespace ECS {
 		uint32_t typeAlignas_;
 		// デフォルトコンストラクタ
 		void (*constructor_)(void *) = nullptr;
-
+		// 空の型か
+		bool isEmptyClass_;
 
 	};
 

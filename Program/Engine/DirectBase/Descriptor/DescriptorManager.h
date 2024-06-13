@@ -72,7 +72,7 @@ public:
 private:
 	ComPtr<ID3D12DescriptorHeap> descriptorHeap_ = nullptr;
 	const uint32_t heapSize_;
-	uint32_t itemSize_;
+	const uint32_t itemSize_;
 
 	MemoryUsageManager memoryManager_;
 
@@ -80,8 +80,7 @@ private:
 };
 
 template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
-DescHeap<HeapType>::DescHeap(ID3D12Device *const device, uint32_t size, bool shaderVisible) : heapSize_(size), memoryManager_(size) {
-	itemSize_ = device->GetDescriptorHandleIncrementSize(HeapType);
+DescHeap<HeapType>::DescHeap(ID3D12Device *const device, uint32_t size, bool shaderVisible) : heapSize_(size), memoryManager_(size), itemSize_(device->GetDescriptorHandleIncrementSize(HeapType)) {
 	isShaderVisible_ = shaderVisible;
 
 	descriptorHeap_ = CreateDescriptorHeap(device, HeapType, heapSize_, shaderVisible);

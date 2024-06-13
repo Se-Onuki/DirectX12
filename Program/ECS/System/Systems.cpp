@@ -6,10 +6,26 @@
 #include "../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../../Header/Object/Particle/SimpleParticle.h"
 
+#include <execution>
+
 void ECS::System::CheckAliveTime::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
 
+	//auto worldView = world->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>();
+
+	//std::for_each(std::execution::par_unseq, std::begin(worldView), worldView.end(), [&worldView](auto tuple) {	// もし寿命が定められていたら
+
+	//	auto [ent, aliveTime, lifeLimit, isAlive] = tuple;
+	//	if (lifeLimit->lifeLimit_ >= 0.f) {
+	//		// 寿命を超過していたら
+	//		if (lifeLimit->lifeLimit_ < aliveTime->aliveTime_) {
+	//			// 死ぬ
+	//			isAlive->isAlive_ = false;
+	//		}
+	//	}
+	//	}
+	//);
+
 	for (const auto &[entity, aliveTime, lifeLimit, isAlive] : world->view<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>()) {
-		// もし寿命が定められていたら
 		if (lifeLimit->lifeLimit_ >= 0.f) {
 			// 寿命を超過していたら
 			if (lifeLimit->lifeLimit_ < aliveTime->aliveTime_) {
@@ -22,6 +38,8 @@ void ECS::System::CheckAliveTime::OnUpdate(::World *world, [[maybe_unused]] cons
 }
 
 void ECS::System::CheckHealthDie::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
+
+	//auto worldView = world->view<ECS::HealthComp, ECS::IsAlive>();
 
 	for (const auto &[entity, health, isAlive] : world->view<ECS::HealthComp, ECS::IsAlive>()) {
 		// もし体力が0以下なら
