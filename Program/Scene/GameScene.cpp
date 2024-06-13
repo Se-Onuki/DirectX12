@@ -525,6 +525,4 @@ void GameScene::PostEffectEnd()
 
 	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, backTex->renderTargetTexture_.Get(), backTex->srvHandle_.gpuHandle_);
 
-	//texStrage_->Destroy(offScreenTex_);
-
 }

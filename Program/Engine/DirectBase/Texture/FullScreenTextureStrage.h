@@ -100,7 +100,7 @@ namespace SolEngine {
 
 		UniqueHandle Allocate();
 
-		bool Destroy(const UniqueHandle &handle);
+		bool Destroy(UniqueHandle &handle);
 
 	private:
 		friend UniqueHandle;
@@ -151,7 +151,7 @@ namespace SolEngine {
 		return UniqueHandle{ index, version };
 	}
 
-	inline bool FullScreenTextureStrage::Destroy(const UniqueHandle &handle)
+	inline bool FullScreenTextureStrage::Destroy(UniqueHandle &handle)
 	{
 		// indexから検索
 		auto &[version, flagAndData] = resourceList_.at(handle.GetHandle());
@@ -164,6 +164,9 @@ namespace SolEngine {
 
 		// flagを折る
 		flag = false;
+
+		// ハンドルを破棄
+		handle = {};
 
 		return true;
 	}

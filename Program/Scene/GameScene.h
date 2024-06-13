@@ -57,7 +57,7 @@ private:
 
 	bool isMenuOpen_;
 
-	SolEngine::ResourceObjectManager<Shader, ShaderSource> *pShaderManager_;
+	SolEngine::ResourceObjectManager<Shader> *pShaderManager_;
 
 	int32_t isGrayScale_ = 0;
 
