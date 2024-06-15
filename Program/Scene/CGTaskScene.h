@@ -8,6 +8,7 @@
 #include "../Utils/Containers/AlignasWrapper.h"
 #include "../ECS/World/World.hpp"
 #include "../ECS/System/SystemManager.h"
+#include "../Engine/DirectBase/Model/ModelData.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -46,6 +47,8 @@ private:
 
 	ModelAnimation::AnimationPlayer animationPlayer_;
 	ModelAnimation::Animation animation_;
+
+	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle boxModel_;
 
 	DirectXCommon *pDxCommon_ = nullptr;
 

@@ -21,14 +21,28 @@ namespace SolEngine {
 
 		//meshResult->meshHandleList_.reserve(scene->mNumMeshes);
 
-		meshResult->materialCount_ = scene->mNumMeshes;
-
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
-			meshResult->meshHandleList_[i] = meshManager->Load({ source.assimpHandle_, i });
+			meshResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
 		}
 
 		return std::move(meshResult);
 	}
+
+	void ModelData::Draw(const Transform &transform, const Camera3D &camera) const
+	{
+		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+		assert(Model::GetPipelineType() == Model::PipelineType::kModel && "設定されたシグネチャがkModelではありません");
+
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
+		for (auto &mesh : meshHandleList_) {
+			commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, ::ModelNode::kIdentity_->GetGPUVirtualAddress());
+
+			mesh->Draw(commandList);
+		}
+	}
+
 	void ModelData::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
 	{
 		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();

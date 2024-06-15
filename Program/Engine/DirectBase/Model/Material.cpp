@@ -28,7 +28,18 @@ namespace SolEngine {
 
 			// テクスチャの読み込み
 			materialResult->texHandle_ = ::TextureManager::Load(directoryPath + textureFilePath.C_Str());
+
+			//material->Get
 		}
+
+		materialResult->blendMode_ = Model::BlendMode::kNone;
+
+		materialResult->materialData_ = Material::MaterialData{
+			.color = Vector4{1.f, 1.f, 1.f, 1.f},
+			.emissive = {},
+			.uvTransform = Matrix4x4::Identity(),
+			.shininess = 1.f,
+		};
 
 		// マテリアル名の設定
 		// materialResult->name_ = material->GetName().C_Str();

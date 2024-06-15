@@ -21,11 +21,14 @@ namespace SolEngine {
 			requires(materialSize != 0 and materialSize < 8)
 		struct VertexTexcoord {
 			std::array<Vector2, materialSize> texCoord; // UV座標系
-		};
 
+		};
 		VertexBuffer<VertexData> vertexBuffer_;
-		VertexBuffer<VertexTexcoord<1>> texcoordBuffer_;
+		VertexBuffer<VertexTexcoord<4>> texcoordBuffer_;
 		IndexBuffer<uint32_t> indexBuffer_;
+
+		decltype(texcoordBuffer_) *GetTexcoordBuffer() { return &texcoordBuffer_; }
+		const decltype(texcoordBuffer_) *GetTexcoordBuffer() const { return &texcoordBuffer_; }
 
 		ResourceObjectManager<Material>::Handle materialhandle_;
 

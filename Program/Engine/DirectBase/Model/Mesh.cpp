@@ -15,7 +15,7 @@ namespace SolEngine {
 		commandList->SetPipelineState(Model::GetGraphicsPipelineState()[static_cast<uint32_t>(Model::GetPipelineType())][static_cast<uint32_t>(materialhandle_->blendMode_)].Get()); // PSOを設定
 		::TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, materialhandle_->texHandle_);
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, materialhandle_->materialData_.GetGPUVirtualAddress());
-		commandList->IASetVertexBuffers(0, vbv ? 2 : 1, vbvs.data());
+		commandList->IASetVertexBuffers(0, vbv ? 3 : 2, vbvs.data());
 		commandList->IASetIndexBuffer(&indexBuffer_.GetIBView());
 		commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
 	}
@@ -60,7 +60,7 @@ namespace SolEngine {
 
 			}
 
-			for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 1; materialIndex++) {
+			for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 4; materialIndex++) {
 
 				// テクスチャ座標へのポインタ
 				const auto *const texPtr = mesh->mTextureCoords[materialIndex];
@@ -71,6 +71,9 @@ namespace SolEngine {
 			}
 
 		}
+
+		meshResult->indexBuffer_.Resize(mesh->mNumFaces * 3u);
+
 		// Faceの解析
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
 			// Faceの参照
@@ -78,8 +81,10 @@ namespace SolEngine {
 
 			assert(face.mNumIndices == 3u and "三角形のみサポート");
 
-			std::span<uint32_t> elements{ face.mIndices, face.mNumIndices };
-			meshResult->indexBuffer_.SetIndexData(elements);
+			const std::span<uint32_t> elements{ face.mIndices, face.mNumIndices };
+			for (uint32_t i = 0u; i < 3u; i++) {
+				meshResult->indexBuffer_.GetIndexData()[faceIndex * 3u + i] = elements[i];
+			}
 		}
 
 		// マテリアルのハンドルを取得

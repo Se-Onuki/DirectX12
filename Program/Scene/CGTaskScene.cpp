@@ -29,10 +29,10 @@ void CGTaskScene::OnEnter()
 	levelImporter.Import(levelData, world_.get());
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
-	auto assimpHandle = assimpManager->Load({ "", "box.obj" });
+	auto assimpHandle = assimpManager->Load({ "Model/human/", "sneakWalk.gltf" });
 
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
-	auto boxHandle = modelDataManager->Load({ assimpHandle });
+	boxModel_ = modelDataManager->Load({ assimpHandle });
 
 
 
@@ -140,10 +140,13 @@ void CGTaskScene::Draw()
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
-	Model::SetPipelineType(Model::PipelineType::kSkinModel);
+	Model::SetPipelineType(Model::PipelineType::kModel);
 
 	light_->SetLight(commandList);
-	model_->Draw(*skinModel_->skinCluster_, transform_, camera);
+
+	boxModel_->Draw(transform_, camera);
+
+	//model_->Draw(*skinModel_->skinCluster_, transform_, camera);
 	//uvModel_->Draw(transform_, camera);
 
 	Model::EndDraw();
