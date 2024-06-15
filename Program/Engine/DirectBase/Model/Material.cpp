@@ -39,7 +39,7 @@ namespace SolEngine {
 			};
 			aiVector3D color;
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-			materialResult->materialData_->color = { color.x, color.y, color.z, 1.f };
+			materialResult->materialData_->color = { color.x, color.y, color.z };
 
 			ai_real shininess;
 			material->Get(AI_MATKEY_SHININESS, shininess);
