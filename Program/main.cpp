@@ -194,6 +194,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	BlockManager::Finalize();
 	SkinModelListManager::Finalize();
+	ModelHandleListManager::Finalize();
+	SkinModelHandleListManager::Finalize();
+	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Finalize();
+	SolEngine::ResourceObjectManager<SolEngine::AssimpData>::Finalize();
+	SolEngine::ResourceObjectManager<SolEngine::Mesh>::Finalize();
+	SolEngine::ResourceObjectManager<SolEngine::Material>::Finalize();
 	SolEngine::ResourceObjectManager<Shader>::Finalize();
 	SolEngine::ResourceObjectManager<RootSignature>::Finalize();
 	SolEngine::FullScreenTextureStrage::Finalize();

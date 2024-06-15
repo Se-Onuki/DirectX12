@@ -174,10 +174,8 @@ namespace ECS {
 	};
 
 	struct ModelComp : IComponent {
-		void Init(const std::string &key) {
-			model_ = ModelManager::GetInstance()->GetModel(key);
-		}
-		Model *model_;
+		
+		SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle model_;
 
 	};
 

@@ -27,6 +27,9 @@ namespace SolEngine {
 			Handle &operator=(const Handle &) = default;
 			Handle &operator=(Handle &&) = default;
 
+			Handle(const Source &source);
+			Handle &operator=(const Source &source) { return *this = Handle(source); }
+
 			Handle(const uint32_t handle, const uint32_t version = 0) : handle_(handle), version_(version) {};
 			Handle &operator=(const uint32_t handle)
 			{
@@ -90,7 +93,7 @@ namespace SolEngine {
 	private:
 		friend Handle;
 
-		Handle AddData(const Source &source, DataType && resource);
+		Handle AddData(const Source &source, DataType &&resource);
 
 		std::unordered_map<Source, Handle> findMap_;
 
@@ -174,7 +177,7 @@ namespace SolEngine {
 	}
 
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
-	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::AddData(const Source &source, DataType && resource)
+	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::AddData(const Source &source, DataType &&resource)
 	{
 
 		typename decltype(resourceList_)::iterator itr;
@@ -243,4 +246,24 @@ namespace SolEngine {
 
 		return result;
 	}
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle::Handle(const Source &source)
+	{
+		Singleton::instance_ ? *this = Singleton::instance_->Load(source) : Handle{};
+	}
 }
+
+//namespace std {
+//	template<>
+//	struct hash<SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle> {
+//		size_t operator()(const SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle data) const {
+//			size_t result{};
+//
+//			result = data.GetVersion();
+//			result <<= 32;
+//			result += data.GetHandle();
+//
+//			return result;
+//		}
+//	};
+//}

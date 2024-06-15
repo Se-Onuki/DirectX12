@@ -81,14 +81,14 @@ void ECS::System::AnimateUpdate::OnUpdate(::World *world, [[maybe_unused]] const
 
 }
 
-void ECS::System::ModelAnimatorUpdate::OnUpdate(::World *world, const float deltaTime)
+void ECS::System::ModelAnimatorUpdate::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
 {
 	for (const auto &[entity, model, animator] : world->view<ECS::ModelComp, ECS::ModelAnimator>()) {
 		if (animator->animatior_.GetDeltaTimer().IsFinish()) {
 			animator->animatior_.SetAnimation(animator->animateList_[0]);
 			animator->animatior_.Start(true);
 		}
-		animator->animatior_.Update(deltaTime, model->model_);
+		//animator->animatior_.Update(deltaTime, model->model_);
 	}
 
 }
@@ -430,8 +430,8 @@ void ECS::System::BoneCollision::OnUpdate(::World *world, [[maybe_unused]] const
 }
 
 void ECS::System::ModelDrawer::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
-	static BlockManager *const blockManager = BlockManager::GetInstance();
-	static SkinModelListManager *const skinModelRender_ = SkinModelListManager::GetInstance();
+	static ModelHandleListManager *const blockManager = ModelHandleListManager::GetInstance();
+	static SkinModelHandleListManager *const skinModelRender_ = SkinModelHandleListManager::GetInstance();
 
 	for (const auto &[entity, transform, model] : world->view<ECS::TransformMatComp, ECS::ModelComp>()) {
 		auto [skinModel] = world->GetEntityManager()->GetComponent<ECS::SkinModel>(*entity);

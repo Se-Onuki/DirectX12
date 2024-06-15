@@ -22,6 +22,10 @@ namespace SolEngine {
 	template <>
 	class ResourceSource<ModelData> {
 	public:
+		ResourceSource<ModelData>() = default;
+		ResourceSource<ModelData>(const ResourceSource<ModelData>&) = default;
+		ResourceSource<ModelData>(const ResourceObjectManager<AssimpData>::Handle & data) :assimpHandle_(data) {}
+
 		// ファイルのハンドル
 		ResourceObjectManager<AssimpData>::Handle assimpHandle_;
 
