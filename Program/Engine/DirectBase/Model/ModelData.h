@@ -13,7 +13,8 @@ namespace SolEngine {
 
 	class ModelData : public IResourceObject {
 	public:
-		std::vector<ResourceObjectManager<Mesh>::Handle> meshHandleList_;
+		std::array<ResourceObjectManager<Mesh>::Handle, AssimpData::kMaterialCountByVertex_> meshHandleList_;
+		uint32_t materialCount_ = 0;
 
 		void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	};

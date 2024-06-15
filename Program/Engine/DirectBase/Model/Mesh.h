@@ -1,6 +1,8 @@
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
+#include <bitset>
+
 #include "AssimpData.h"
 #include "../Base/VertexBuffer.h"
 #include "Material.h"
@@ -13,6 +15,7 @@ namespace SolEngine {
 			Vector4 position; // 頂点位置
 			Vector2 texCoord; // UV座標系
 			Vector3 normal;   // 法線
+			std::bitset<AssimpData::kMaterialCountByVertex_> materialBitSet_;
 		};
 
 		VertexBuffer<VertexData> vertexBuffer_;

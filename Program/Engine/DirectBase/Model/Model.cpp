@@ -261,11 +261,11 @@ void Model::CreatePipeLine()
 				.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
 				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
-			D3D12_INPUT_ELEMENT_DESC{
-				.SemanticName = "TEXCOORD",
-				.SemanticIndex = 0,
-				.Format = DXGI_FORMAT_R32G32_FLOAT,
-				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		D3D12_INPUT_ELEMENT_DESC{
+			.SemanticName = "TEXCOORD",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32_FLOAT,
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
 		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "NORMAL",

@@ -19,10 +19,12 @@ namespace SolEngine {
 
 		SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
 
-		meshResult->meshHandleList_.reserve(scene->mNumMeshes);
+		//meshResult->meshHandleList_.reserve(scene->mNumMeshes);
+
+		meshResult->materialCount_ = scene->mNumMeshes;
 
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
-			meshResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
+			meshResult->meshHandleList_[i] = meshManager->Load({ source.assimpHandle_, i });
 		}
 
 		return std::move(meshResult);

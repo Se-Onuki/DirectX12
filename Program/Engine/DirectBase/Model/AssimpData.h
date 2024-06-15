@@ -8,6 +8,8 @@ namespace SolEngine {
 	class AssimpData : public IResourceObject {
 	public:
 
+		inline static constexpr uint32_t kMaterialCountByVertex_ = 8u;
+
 		// assimpのローダ
 		std::unique_ptr<Assimp::Importer> importer_;	// こいつが存在する = シーンデータが保存される
 		//aiScene *scene_;
