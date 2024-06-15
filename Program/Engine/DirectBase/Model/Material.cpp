@@ -4,7 +4,6 @@
 namespace SolEngine {
 	std::unique_ptr<Material> ResourceCreater<Material>::CreateObject(const ResourceSource<Material> &source) const {
 
-		static constexpr uint32_t kDefaultMaterialIndex = 0;
 
 		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 		const std::span<aiMaterial *> materialArray = { scene->mMaterials, scene->mNumMaterials };

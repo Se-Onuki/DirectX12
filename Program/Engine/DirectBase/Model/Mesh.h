@@ -11,14 +11,20 @@ namespace SolEngine {
 
 	class Mesh : public IResourceObject {
 	public:
+		
 		struct VertexData {
 			Vector4 position; // 頂点位置
-			Vector2 texCoord; // UV座標系
 			Vector3 normal;   // 法線
-			std::bitset<AssimpData::kMaterialCountByVertex_> materialBitSet_;
+		};
+
+		template <uint32_t materialSize>
+			requires(materialSize != 0 and materialSize < 8)
+		struct VertexTexcoord {
+			std::array<Vector2, materialSize> texCoord; // UV座標系
 		};
 
 		VertexBuffer<VertexData> vertexBuffer_;
+		VertexBuffer<VertexTexcoord<1>> texcoordBuffer_;
 		IndexBuffer<uint32_t> indexBuffer_;
 
 		ResourceObjectManager<Material>::Handle materialhandle_;

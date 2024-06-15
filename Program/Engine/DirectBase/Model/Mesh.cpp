@@ -5,9 +5,11 @@ namespace SolEngine {
 
 	void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const D3D12_VERTEX_BUFFER_VIEW *vbv) const {
 
-		std::array<D3D12_VERTEX_BUFFER_VIEW, 2u> vbvs = { vertexBuffer_.GetVBView() };
+		std::array<D3D12_VERTEX_BUFFER_VIEW, 3u> vbvs = {  };
+		vbvs[0] = vertexBuffer_.GetVBView();
+		vbvs[1] = texcoordBuffer_.GetVBView();
 		if (vbv) {
-			vbvs[1] = *vbv;
+			vbvs[2] = *vbv;
 		}
 
 		commandList->SetPipelineState(Model::GetGraphicsPipelineState()[static_cast<uint32_t>(Model::GetPipelineType())][static_cast<uint32_t>(materialhandle_->blendMode_)].Get()); // PSOを設定
@@ -24,37 +26,50 @@ namespace SolEngine {
 
 		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 
-		const std::span<aiMesh *> sceneArr = { scene->mMeshes, scene->mNumMeshes };
+		const uint32_t materialCount = scene->mNumMaterials;
 
-		//for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		const std::span<aiMesh *> meshes = { scene->mMeshes, scene->mNumMeshes };
+
 		std::unique_ptr<Mesh> meshResult = std::make_unique<Mesh>();
 
 		// メッシュのポインタ
-		const aiMesh *const mesh = sceneArr[source.index_];
+		const aiMesh *const mesh = meshes[source.index_];
 		assert(mesh->HasNormals() and "法線が無いメッシュは今回は非対応");
 		assert(mesh->HasTextureCoords(kDefaultMaterialIndex) and "Texcoordの無いMeshは今回は非対応");
 
 		meshResult->vertexBuffer_.Resize(mesh->mNumVertices);
+		meshResult->texcoordBuffer_.Resize(mesh->mNumVertices);
 
 		// 頂点として解析する
 		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
-			// 3次元座標
-			const aiVector3D &position = mesh->mVertices[vertexIndex];
-			// 法線
-			const aiVector3D &normal = mesh->mNormals[vertexIndex];
-			// テクスチャ座標
-			const aiVector3D &texcoord = mesh->mTextureCoords[kDefaultMaterialIndex][vertexIndex];
 
-			// 頂点データ
-			Mesh::VertexData &vertex = meshResult->vertexBuffer_.GetVertexData()[vertexIndex];
-			vertex.position = { position.x, position.y, position.z, 1.f };
-			vertex.normal = { normal.x, normal.y, normal.z };
-			vertex.texCoord = { texcoord.x, texcoord.y };
+			{
+				// 3次元座標
+				const aiVector3D &position = mesh->mVertices[vertexIndex];
+				// 法線
+				const aiVector3D &normal = mesh->mNormals[vertexIndex];
 
-			// データの補正
-			// aiProcess_MakeLeftHandedは z *= -1 で、右手->左手に変換するので手動で対処
-			vertex.position.x *= -1.f;
-			vertex.normal.x *= -1.f;
+				// 頂点データ
+				auto &vertex = meshResult->vertexBuffer_.GetVertexData()[vertexIndex];
+				vertex.position = { position.x, position.y, position.z, 1.f };
+				vertex.normal = { normal.x, normal.y, normal.z };
+				// データの補正
+				// aiProcess_MakeLeftHandedは z *= -1 で、右手->左手に変換するので手動で対処
+				vertex.position.x *= -1.f;
+				vertex.normal.x *= -1.f;
+
+			}
+
+			for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 1; materialIndex++) {
+
+				// テクスチャ座標へのポインタ
+				const auto *const texPtr = mesh->mTextureCoords[materialIndex];
+				// テクスチャ座標
+				const aiVector3D &texcoord = texPtr ? texPtr[vertexIndex] : aiVector3D{};
+
+				meshResult->texcoordBuffer_.GetVertexData()[vertexIndex].texCoord = { { texcoord.x, texcoord.y} };
+			}
+
 		}
 		// Faceの解析
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
