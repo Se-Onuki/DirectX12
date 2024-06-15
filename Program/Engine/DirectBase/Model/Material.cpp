@@ -37,7 +37,13 @@ namespace SolEngine {
 				.uvTransform = Matrix4x4::Identity(),
 				.shininess = 1.f,
 			};
+			ai_real shininess;
+			material->Get(AI_MATKEY_SHININESS, shininess);
+			materialResult->materialData_->shininess = shininess;
 
+			aiVector3D emissive;
+			material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
+			materialResult->materialData_->emissive = { emissive.x, emissive.y, emissive.z };
 		}
 
 		// マテリアル名の設定

@@ -84,7 +84,7 @@ void GameScene::OnEnter() {
 
 	}
 
-	auto sphere = ModelManager::GetInstance()->AddModel("Sphere", Model::LoadObjFile("", "Sphere.obj"));
+	// auto sphere = ModelManager::GetInstance()->AddModel("Sphere", Model::LoadObjFile("", "Sphere.obj"));
 
 	// カーソルのモデル
 	auto cursor = ModelManager::GetInstance()->AddModel("Cursor", Model::CreatePlane());
@@ -205,13 +205,13 @@ void GameScene::OnEnter() {
 	spawnTimer_.Start();
 	Fade::GetInstance()->Start(Vector2{}, 0x00000000, 1.f);
 
-	{
-		gameObject_.Init();
-		auto modelComp = gameObject_.AddComponent<ModelComp>();
-		modelComp->AddBone("Body", sphere);
+	//{
+	//	gameObject_.Init();
+	//	auto modelComp = gameObject_.AddComponent<ModelComp>();
+	//	modelComp->AddBone("Body", sphere);
 
-		gameObject_.transform_.translate = { 0.f,3.f,0.f };
-	}
+	//	gameObject_.transform_.translate = { 0.f,3.f,0.f };
+	//}
 
 	healthBar_ = std::make_unique<HealthBar>();
 	healthBar_->Init();
@@ -299,7 +299,7 @@ void GameScene::Update() {
 	}
 
 	light_->ImGuiWidget();
-	gameObject_.GetComponent<ModelComp>()->GetBone("Body")->ImGuiWidget();
+	//gameObject_.GetComponent<ModelComp>()->GetBone("Body")->ImGuiWidget();
 
 	isGrayScale_--;
 
@@ -374,7 +374,7 @@ void GameScene::Update() {
 
 	cameraManager_->Update(fixDeltaTime);
 
-	gameObject_.Update(fixDeltaTime);
+	//gameObject_.Update(fixDeltaTime);
 
 
 	//ImGui::DragFloat2("VignettingParam", &fullScreen_->GetFParam()->first);
