@@ -466,8 +466,8 @@ private:
 public:
 	struct VertexData {
 		Vector4 position; // 頂点位置
-		Vector2 texCoord; // UV座標系
 		Vector3 normal;   // 法線
+		Vector2 texCoord; // UV座標系
 
 		// 比較。すべてが一致した場合のみ真を返す
 		bool operator==(const VertexData &vertex) const

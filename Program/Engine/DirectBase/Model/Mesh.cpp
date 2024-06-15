@@ -67,7 +67,7 @@ namespace SolEngine {
 				// テクスチャ座標
 				const aiVector3D &texcoord = texPtr ? texPtr[vertexIndex] : aiVector3D{};
 
-				meshResult->texcoordBuffer_.GetVertexData()[vertexIndex].texCoord = { { texcoord.x, texcoord.y} };
+				meshResult->texcoordBuffer_.GetVertexData()[vertexIndex].texCoord[materialIndex] = { texcoord.x, texcoord.y };
 			}
 
 		}

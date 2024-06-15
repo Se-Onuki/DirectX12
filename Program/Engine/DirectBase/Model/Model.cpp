@@ -262,15 +262,15 @@ void Model::CreatePipeLine()
 				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
 		D3D12_INPUT_ELEMENT_DESC{
-			.SemanticName = "TEXCOORD",
-			.SemanticIndex = 0,
-			.Format = DXGI_FORMAT_R32G32_FLOAT,
-			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
-		},
-		D3D12_INPUT_ELEMENT_DESC{
 			.SemanticName = "NORMAL",
 			.SemanticIndex = 0,
 			.Format = DXGI_FORMAT_R32G32B32_FLOAT,
+			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		},
+		D3D12_INPUT_ELEMENT_DESC{
+			.SemanticName = "TEXCOORD",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32_FLOAT,
 			.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
 		},
 		{
@@ -764,7 +764,7 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, cons
 					texCoord = texCoordList[elementIndices[1] - 1];
 				}
 				// 末尾から順に(法線の逆転)
-				triangle[2u - faceVertex] = Mesh::VertexData{ position, texCoord, normal };
+				triangle[2u - faceVertex] = Mesh::VertexData{ position, normal, texCoord };
 			}
 			// イテレータを用いた末尾への直接構築
 			modelData->AddVertex(triangle[0]);
