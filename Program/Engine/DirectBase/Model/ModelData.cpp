@@ -7,20 +7,20 @@ namespace SolEngine {
 
 		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 
-		const std::span<aiMesh *> sceneArr = { scene->mMeshes, scene->mNumMeshes };
-
 		std::unique_ptr<ModelData> meshResult = std::make_unique<ModelData>();
 
+		// マテリアルマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
 
+		// マテリアルをロード
 		for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
 			materialManager->Load({ source.assimpHandle_, i });
 		}
 
+		// モデルデータマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
 
-		//meshResult->meshHandleList_.reserve(scene->mNumMeshes);
-
+		// モデルデータのロードと保存
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
 			meshResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
 		}
