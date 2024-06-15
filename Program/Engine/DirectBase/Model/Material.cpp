@@ -37,6 +37,10 @@ namespace SolEngine {
 				.uvTransform = Matrix4x4::Identity(),
 				.shininess = 1.f,
 			};
+			aiVector3D color;
+			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+			materialResult->materialData_->color = { color.x, color.y, color.z, 1.f };
+
 			ai_real shininess;
 			material->Get(AI_MATKEY_SHININESS, shininess);
 			materialResult->materialData_->shininess = shininess;
