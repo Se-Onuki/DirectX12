@@ -65,17 +65,17 @@ void CGTaskScene::OnEnter()
 
 	*vec2_ = Vector2{ 10,10 };
 
-	SolEngine::RootParameters rootParameters = {
+	/*SolEngine::RootParameter rootParameters = {
 		{
-			SolEngine::RootParameters::MakePair<int>('a'),
-			SolEngine::RootParameters::MakePair<int>('b'),
-			SolEngine::RootParameters::MakePair<float>('b'),
+			SolEngine::RootParameter::MakePair<int, 'a'>(),
+			SolEngine::RootParameter::MakePair<int, 'b'>(),
+			SolEngine::RootParameter::MakePair<float, 'b'>(),
 		}
 	};
 
 	SolEngine::ResourceSource<RootSignature> rootSource{
-		.item_ = {{SolEngine::RootParameters::BufferType::kCBV, 0, D3D12_SHADER_VISIBILITY_ALL }}
-	};
+		.item_ = {{SolEngine::RootParameter::BufferType::kCBV, 0, D3D12_SHADER_VISIBILITY_ALL }}
+	};*/
 
 	/*
 	{
@@ -191,7 +191,7 @@ void CGTaskScene::PostEffectEnd()
 
 	pDxCommon_->DefaultDrawReset(false);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, offScreen_->GetResource(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
 
 
 }

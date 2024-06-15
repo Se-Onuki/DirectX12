@@ -26,6 +26,7 @@ namespace SolEngine {
 		VertexBuffer<VertexData> vertexBuffer_;
 		VertexBuffer<VertexTexcoord<4>> texcoordBuffer_;
 		IndexBuffer<uint32_t> indexBuffer_;
+		std::vector<ResourceObjectManager<Material>::Handle> materials_;
 
 		decltype(texcoordBuffer_) *GetTexcoordBuffer() { return &texcoordBuffer_; }
 		const decltype(texcoordBuffer_) *GetTexcoordBuffer() const { return &texcoordBuffer_; }

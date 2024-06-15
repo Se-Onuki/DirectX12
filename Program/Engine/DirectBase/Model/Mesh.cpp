@@ -22,7 +22,7 @@ namespace SolEngine {
 
 	std::unique_ptr<Mesh> ResourceCreater<Mesh>::CreateObject(const ResourceSource<Mesh> &source) const {
 
-		static constexpr uint32_t kDefaultMaterialIndex = 0;
+		//static constexpr uint32_t kDefaultMaterialIndex = 0;
 
 		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 
@@ -35,7 +35,6 @@ namespace SolEngine {
 		// メッシュのポインタ
 		const aiMesh *const mesh = meshes[source.index_];
 		assert(mesh->HasNormals() and "法線が無いメッシュは今回は非対応");
-		assert(mesh->HasTextureCoords(kDefaultMaterialIndex) and "Texcoordの無いMeshは今回は非対応");
 
 		meshResult->vertexBuffer_.Resize(mesh->mNumVertices);
 		meshResult->texcoordBuffer_.Resize(mesh->mNumVertices);
@@ -61,6 +60,7 @@ namespace SolEngine {
 			}
 
 			for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 4; materialIndex++) {
+				//assert(mesh->HasTextureCoords(materialIndex) and "Texcoordの無いMeshは今回は非対応");
 
 				// テクスチャ座標へのポインタ
 				const auto *const texPtr = mesh->mTextureCoords[materialIndex];

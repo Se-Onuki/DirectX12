@@ -518,7 +518,7 @@ void GameScene::PostEffectEnd()
 
 	pDxCommon_->DrawTargetReset(&rtvHandle, 0xFF0000FF, nullptr, viewport, scissorRect);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetTexture(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetResource(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
 
 
 	pDxCommon_->DefaultDrawReset(false);

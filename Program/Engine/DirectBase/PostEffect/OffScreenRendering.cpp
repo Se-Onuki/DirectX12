@@ -1,6 +1,7 @@
 #include "OffScreenRendering.h"
 #include "../Base/PipelineState.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
+#include "../../../Utils/Math/Transform.h"
 
 namespace PostEffect {
 
@@ -88,25 +89,27 @@ namespace PostEffect {
 		auto device = GetDevice();
 
 
-		std::array<D3D12_ROOT_PARAMETER, 2u> rootParameters = {};
+		//std::array<D3D12_ROOT_PARAMETER, 2u> rootParameters = {};
 
 #pragma region Texture
 
-		// DescriptorRangeの設定
-		D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-		descriptorRange[0].BaseShaderRegister = 0;                                                   // 0から始める
-		descriptorRange[0].NumDescriptors = 1;                                                       // 数は1つ
-		descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;                              // SRVを使う
-		descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+		//// DescriptorRangeの設定
+		//D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+		//descriptorRange[0].BaseShaderRegister = 0;                                                   // 0から始める
+		//descriptorRange[0].NumDescriptors = 1;                                                       // 数は1つ
+		//descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;                              // SRVを使う
+		//descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
-		rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      // DescriptorTableを使う
-		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                // PixelShaderで使う
-		rootParameters[0].DescriptorTable.pDescriptorRanges = descriptorRange;             // Tableの中身の配列を指定
-		rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); // Tableで使用する数
+		//rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;      // DescriptorTableを使う
+		//rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                // PixelShaderで使う
+		//rootParameters[0].DescriptorTable.pDescriptorRanges = descriptorRange;             // Tableの中身の配列を指定
+		//rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); // Tableで使用する数
 
-		rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-		rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-		rootParameters[1].Descriptor.ShaderRegister = 0;                     // レジスタ番号1とバインド
+		//rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		//rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		//rootParameters[1].Descriptor.ShaderRegister = 0;                     // レジスタ番号1とバインド
+
+		//SolEngine::RootParameters<>{};
 
 #pragma endregion
 
@@ -127,7 +130,7 @@ namespace PostEffect {
 		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 
 		auto *const rootSignatureManager = SolEngine::ResourceObjectManager<RootSignature>::GetInstance();
-		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .rootParameter_ = std::vector(rootParameters.cbegin(), rootParameters.cend()), .sampler_ = {sampler},.item_ = {{SolEngine::RootParameters::BufferType::kSRV, 0, D3D12_SHADER_VISIBILITY_PIXEL },{SolEngine::RootParameters::BufferType::kCBV, 0, D3D12_SHADER_VISIBILITY_PIXEL }} };
+		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = {sampler},.item_ = {"t0b0"}};
 
 		rootSignature_ = rootSignatureManager->Load(rootSignatureSource);
 

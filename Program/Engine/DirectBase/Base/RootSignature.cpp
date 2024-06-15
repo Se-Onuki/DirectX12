@@ -69,17 +69,56 @@ std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::Create
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	std::vector<D3D12_ROOT_PARAMETER> parameters;
+	parameters.reserve(source.item_.parameters_.size());
+	std::vector<D3D12_DESCRIPTOR_RANGE> descRanges{};
+	std::array<uint32_t, static_cast<uint32_t>(RootParameter::BufferType::kMaxCount)> bufferCount{};
+
+	for (const auto &item : source.item_.parameters_) {
+
+		D3D12_ROOT_PARAMETER parameter{};
+		parameter.ShaderVisibility = item.shaderVisibility_;
+
+		switch (item.type_)
+		{
+		case RootParameter::BufferType::kCBV:
+			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+			parameter.Descriptor.ShaderRegister = bufferCount[static_cast<uint32_t>(RootParameter::BufferType::kCBV)]++;
+			break;
+		case RootParameter::BufferType::kSRV:
+			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+
+			// DescriptorRangeの設定
+			D3D12_DESCRIPTOR_RANGE &descriptorRange = descRanges.emplace_back();
+			descriptorRange.BaseShaderRegister = bufferCount[static_cast<uint32_t>(RootParameter::BufferType::kSRV)]++;                                                   // 0から始める
+			descriptorRange.NumDescriptors = 1;                                                       // 数は1つ
+			descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;                              // SRVを使う
+			descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+
+			parameter.DescriptorTable.pDescriptorRanges = &descriptorRange;
+			parameter.DescriptorTable.NumDescriptorRanges = 1;
+
+			break;
+		/*case RootParameters::BufferType::kUAV:
+			break;
+		default:
+			break;*/
+		}
+
+		parameters.push_back(parameter);
+	}
+
 #pragma region RootParameter
 
-	descriptionRootSignature.pParameters = source.rootParameter_.data();		// ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = static_cast<UINT>(source.rootParameter_.size());		// 配列の長さ
+	descriptionRootSignature.pParameters = parameters.data();		// ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = static_cast<UINT>(parameters.size());		// 配列の長さ
 
 #pragma endregion
 
 #pragma region Samplerの設定
 
-	descriptionRootSignature.pStaticSamplers = source.sampler_.data();
-	descriptionRootSignature.NumStaticSamplers = static_cast<UINT>(source.sampler_.size());
+	descriptionRootSignature.pStaticSamplers = &source.sampler_;
+	descriptionRootSignature.NumStaticSamplers = 1;
 
 #pragma endregion
 

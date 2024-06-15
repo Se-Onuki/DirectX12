@@ -24,7 +24,7 @@ namespace PostEffect {
 
 		/// @brief テクスチャの取得
 		/// @return テクスチャリソース
-		ID3D12Resource *GetTexture() { return renderTargetTexture_.Get(); }
+		ID3D12Resource *GetResource() { return renderTargetTexture_.Get(); }
 
 		/// @brief RTVのデスクリプタヒープ
 		/// @return rtvヒープのポインタ

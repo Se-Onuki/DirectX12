@@ -11,53 +11,87 @@
 namespace SolEngine {
 
 	/// @brief ルートパラメータの保存クラス
-	struct RootParameters
+	struct RootParameter
 	{
-		enum class BufferType {
+		enum class BufferType : uint8_t {
 			kCBV,
 			kSRV,
 			kUAV,
+
+			kMaxCount
 		};
 
 		struct BufferData {
 			BufferType type_;
-			uint32_t index_;
-			D3D12_SHADER_VISIBILITY shaderVisibility_;
+			D3D12_SHADER_VISIBILITY shaderVisibility_ = D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_ALL;
 
 			bool operator==(const BufferData &) const = default;
 		};
 
-		RootParameters(std::vector<std::pair<std::type_index, uint8_t>> &&data) : parameters_{ data } {}
+		//RootParameter(std::vector<std::pair<std::type_index, uint8_t>> &&data) : parameters_{ data } {}
 
-		RootParameters() = default;
-		~RootParameters() = default;
+		RootParameter() = default;
+		~RootParameter() = default;
 
-		bool operator==(const RootParameters &other) const = default;
+		bool operator==(const RootParameter &other) const = default;
 
-		template<SoLib::IsRealType T>
-		static std::pair<std::type_index, uint8_t> MakePair(uint8_t p) {
-			return std::pair<std::type_index, uint8_t>{ typeid(T), p};
+		/*template<SoLib::IsRealType T, uint8_t type>
+		static std::pair<std::type_index, uint8_t> MakePair() {
+			return std::pair<std::type_index, uint8_t>{ typeid(T), type};
+		}*/
+
+		inline static constexpr uint32_t kParamSize_ = 2u;
+
+		std::vector<BufferData> parameters_;
+		RootParameter(const std::string &params) {
+			for (uint32_t i = 0u; i < params.size(); i += kParamSize_) {
+				const std::span<const char, kParamSize_> span{ &params[i], kParamSize_ };
+
+				BufferData &data = parameters_.emplace_back();
+				switch (span[0])
+				{
+				case 'b':
+					data.type_ = BufferType::kCBV;
+					break;
+				case 't':
+					data.type_ = BufferType::kSRV;
+					break;
+				default:
+					break;
+				}
+
+			}
 		}
 
-		std::vector<std::pair<std::type_index, uint8_t>> parameters_;
 
 	};
 
-	//template <SoLib::IsRealType... Ts>
-	//struct RootParameters : IRootParameters {
-	//public:
-	//	RootParameters() = default;
-	//	bool operator==(const RootParameters &other) const = default;
-	//
-	//	uint32_t GetIndex(const std::type_index &typeId) const override {
-	//
-	//	}
-	//
-	//private:
-	//
-	//	std::tuple<std::pair<Ts, char>...> types_;
-	//
-	//};
+	template <SoLib::IsRealType... Ts>
+	struct RootParameters {
+
+		RootParameters() : parameters_{ RootParameter::BufferData{.type_ = CheckType<Ts>()}... } {}
+
+		const std::array<RootParameter::BufferData, sizeof...(Ts)> parameters_;
+
+	private:
+
+		using tuple = std::tuple<Ts...>;
+
+		template<SoLib::IsRealType T>
+		inline static constexpr RootParameter::BufferType CheckType() {
+			if constexpr (requires(T a) {
+				{ a.GetView() } -> std::same_as<const D3D12_CONSTANT_BUFFER_VIEW_DESC &>;
+			}) {
+				return RootParameter::BufferType::kCBV;
+			}
+			else {
+				return RootParameter::BufferType::kSRV;
+			}
+		}
+
+
+	};
+
 }
 
 
@@ -74,7 +108,6 @@ public:
 	auto *const Get() const { return rootSignature_.Get(); }
 	void Set(ComPtr<ID3D12RootSignature> &&rootSignature) { rootSignature_ = rootSignature; }
 
-	//SolEngine::RootParameters rootParameters_;
 
 private:
 
@@ -85,12 +118,11 @@ private:
 template <>
 class SolEngine::ResourceSource<RootSignature> {
 public:
-	std::vector<D3D12_ROOT_PARAMETER> rootParameter_;
-	std::vector<D3D12_STATIC_SAMPLER_DESC> sampler_;
+	D3D12_STATIC_SAMPLER_DESC sampler_;
 
 	//std::string 
 
-	std::vector<SolEngine::RootParameters::BufferData> item_;
+	SolEngine::RootParameter item_;
 
 	//std::vector<RootParameters> types_;
 	//SolEngine::RootParameters types_;
@@ -130,8 +162,8 @@ namespace std {
 	struct hash<SolEngine::ResourceSource<RootSignature>> {
 		size_t operator()(const SolEngine::ResourceSource<RootSignature> &data) const {
 			std::string result;
-			for (const auto &item : data.item_) {
-				result += std::to_string(static_cast<uint32_t>(item.type_)) + '/' + std::to_string(item.index_) + '/' + std::to_string(item.shaderVisibility_) + '/';
+			for (const auto &item : data.item_.parameters_) {
+				result += std::to_string(static_cast<uint32_t>(item.type_)) + '/' + std::to_string(item.shaderVisibility_) + '/';
 			}
 			return std::hash<std::string>{}(result);
 		}
