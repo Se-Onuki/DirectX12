@@ -109,6 +109,8 @@ void CGTaskScene::Update()
 	animationPlayer_.Update(deltaTime, model_);
 	//gameObject_->Update(deltaTime);
 
+	SoLib::ImGuiWidget("BoxMaterial", *boxModel_->meshHandleList_[0]->materialhandle_);
+
 	skinModel_->Update(animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
 
 	CameraManager::GetInstance()->DisplayImGui();

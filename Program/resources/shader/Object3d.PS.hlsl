@@ -8,6 +8,7 @@ struct Material
 
     float4x4 uvTransform;
     float shininess;
+    float shininessStrength;
 };
 
 
@@ -78,9 +79,9 @@ PixelShaderOutput main(VertexShaderOutput input)
     {
         float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
         float3 diffuse = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity; // 拡散反射
-        float3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float3(1.0f, 1.0f, 1.0f);
+        float3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float3(1.0f, 1.0f, 1.0f) * gMaterial.shininessStrength;
         
-        output.color.rgb = saturate(diffuse + specular);
+        output.color.rgb = saturate(diffuse + saturate(specular));
         
         //output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
         output.color.a = gMaterial.color.a * textureColor.a; // α値

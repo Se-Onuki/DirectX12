@@ -16,6 +16,7 @@ namespace SolEngine {
 			Matrix4x4 uvTransform;
 
 			float shininess = { 1.f };
+			float shininessStrength = { 1.f };
 		};
 
 		CBuffer<MaterialData> materialData_;
@@ -53,4 +54,10 @@ namespace std {
 			return size_t{ static_cast<size_t>(data.assimpHandle_.GetHandle()) << 32u | static_cast<size_t>(data.index_) };
 		}
 	};
+}
+
+namespace SoLib {
+	template <>
+	bool ImGuiWidget<SolEngine::Material>(const char *const label, SolEngine::Material *const value);
+	
 }
