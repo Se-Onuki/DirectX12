@@ -46,7 +46,7 @@ private:
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
 	ModelAnimation::AnimationPlayer animationPlayer_;
-	ModelAnimation::Animation animation_;
+	std::unique_ptr<ModelAnimation::Animation> animation_;
 
 	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle boxModel_;
 

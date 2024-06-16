@@ -124,8 +124,8 @@ private:
 
 	std::unique_ptr<Model> assimpModel_ = nullptr;
 
-	ModelAnimation::Animation animation_;
-	ModelAnimation::Animation attackAnimation_;
+	std::unique_ptr<ModelAnimation::Animation> animation_;
+	std::unique_ptr<ModelAnimation::Animation> attackAnimation_;
 
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 

@@ -34,9 +34,7 @@ void CGTaskScene::OnEnter()
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	boxModel_ = modelDataManager->Load({ assimpHandle });
 
-
-
-	model_ = ModelManager::GetInstance()->AddModel("HumanModel", Model::LoadAssimpModelFile("Model/human/", "BrainStem.glb"));
+	skinModel_ = SkinModel::MakeSkinModel(*boxModel_);
 
 	uvModel_ = ModelManager::GetInstance()->AddModel("UvPlane", Model::LoadAssimpModelFile("", "plane.gltf"));
 
@@ -44,7 +42,9 @@ void CGTaskScene::OnEnter()
 
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
-	CameraManager::GetInstance()->GetUseCamera()->translation_.z = -15.f;
+	auto * nowCamera = CameraManager::GetInstance()->GetUseCamera();
+	nowCamera->translation_ = { 0.f, 6.f,-3.f };
+	nowCamera->rotation_.x = 34._deg;
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
@@ -53,11 +53,11 @@ void CGTaskScene::OnEnter()
 	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" } });
 
 	// アニメーションを設定
-	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "sneakWalk.gltf");
-	animationPlayer_.SetAnimation(&animation_);
+	animation_ = ModelAnimation::Animation::Create(*assimpHandle);
+	animationPlayer_.SetAnimation(animation_.get());
 	animationPlayer_.Start(true);
 
-	skinModel_ = SkinModel::MakeSkinModel(model_);
+	//skinModel_ = SkinModel::MakeSkinModel(model_);
 
 	vec2_ = std::make_unique<AlignasWrapper<Vector2>>();
 
@@ -102,11 +102,11 @@ void CGTaskScene::Update()
 	SolEngine::ResourceObjectManager<Shader>::GetInstance()->ImGuiWidget("ShaderManager");
 
 	light_->ImGuiWidget();
-	model_->ImGuiWidget();
+	//model_->ImGuiWidget();
 	transform_->ImGuiWidget();
 	transform_->UpdateMatrix();
 
-	animationPlayer_.Update(deltaTime, model_);
+	//animationPlayer_.Update(deltaTime, *boxModel_);
 	//gameObject_->Update(deltaTime);
 
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
@@ -115,7 +115,7 @@ void CGTaskScene::Update()
 	}
 
 
-	skinModel_->Update(animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
+	//skinModel_->Update(*animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
 
 	CameraManager::GetInstance()->DisplayImGui();
 	CameraManager::GetInstance()->Update(deltaTime);

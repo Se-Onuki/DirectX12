@@ -10,6 +10,7 @@ namespace SolEngine {
 		std::unique_ptr<ModelData> modelResult = std::make_unique<ModelData>();
 
 		modelResult->rootNode_ = ModelNode::Create(scene->mRootNode);
+		modelResult->skinCluster_ = ResourceObjectManager<SkinClusterBase>::GetInstance()->Load({ source.assimpHandle_ });
 
 		// マテリアルマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
@@ -42,6 +43,24 @@ namespace SolEngine {
 			commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, ::ModelNode::kIdentity_->GetGPUVirtualAddress());
 
 			mesh->Draw(commandList);
+		}
+	}
+
+	void ModelData::Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const
+	{
+
+		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+
+		assert(Model::GetPipelineType() == Model::PipelineType::kSkinModel && "設定されたシグネチャがkSkinModelではありません");
+
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle(0).gpuHandle_);
+		for (auto &mesh : meshHandleList_) {
+			// commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
+			//commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
+			mesh->Draw(commandList, 1, &skinCluster.GetInfluence().GetVBView());
 		}
 	}
 

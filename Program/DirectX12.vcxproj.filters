@@ -438,6 +438,9 @@
     <ClCompile Include="Engine\DirectBase\Model\ModelRender.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\SkinClusterBase.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -847,6 +850,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Texture\FullScreenTextureStrage.h">
       <Filter>Engine\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\SkinClusterBase.h">
+      <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

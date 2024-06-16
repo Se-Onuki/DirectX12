@@ -35,9 +35,9 @@ std::unique_ptr<CBuffer<Matrix4x4>> ModelNode::kIdentity_ = nullptr;
 
 namespace ModelAnimation {
 
-	Animation Animation::CreateFromFile(const std::string &directoryPath, const std::string &filename, uint32_t index)
+	std::unique_ptr<Animation> Animation::CreateFromFile(const std::string &directoryPath, const std::string &filename, uint32_t index)
 	{
-		Animation result{};
+		std::unique_ptr<Animation> result = std::make_unique<Animation>();
 
 		Assimp::Importer importer;
 
@@ -50,7 +50,7 @@ namespace ModelAnimation {
 		std::span<aiAnimation *>animationAssimp{ scene->mAnimations, scene->mNumAnimations }; // 一旦最初のアニメーションだけ採用する｡ そのうち複数対応するように｡
 
 		// 時間の単位を秒単位に変更
-		result.duration_ = static_cast<float>(animationAssimp[index]->mDuration / animationAssimp[index]->mTicksPerSecond);
+		result->duration_ = static_cast<float>(animationAssimp[index]->mDuration / animationAssimp[index]->mTicksPerSecond);
 		// mTicksPerSecond	: 周波数｡ 単位はHz｡
 		// mDuration		: mTicksPerSecondで指定された周波数における長さ
 
@@ -60,7 +60,7 @@ namespace ModelAnimation {
 				// アニメーションのデータのポインタ
 				aiNodeAnim *nodeAnimationAssimp = animationAssimp[index]->mChannels[channelIndex];
 				// アニメーションの名前から､紐づいた保存先を作成
-				NodeAnimation &nodeAnimation = result.nodeAnimations_[nodeAnimationAssimp->mNodeName.C_Str()];
+				NodeAnimation &nodeAnimation = result->nodeAnimations_[nodeAnimationAssimp->mNodeName.C_Str()];
 
 				// 座標データを取得していく
 				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumPositionKeys; keyIndex++) {
@@ -106,7 +106,77 @@ namespace ModelAnimation {
 			}
 		}
 
-		return result;
+		return std::move(result);
+	}
+
+	std::unique_ptr<Animation> Animation::Create(const SolEngine::AssimpData *assimpData, uint32_t index)
+	{
+		std::unique_ptr<Animation> result = std::make_unique<Animation>();
+
+		const aiScene *scene = assimpData->importer_->GetScene();
+
+		assert(scene->mNumAnimations != 0 and "アニメーションがありません｡");
+
+		std::span<aiAnimation *>animationAssimp{ scene->mAnimations, scene->mNumAnimations }; // 一旦最初のアニメーションだけ採用する｡ そのうち複数対応するように｡
+
+		// 時間の単位を秒単位に変更
+		result->duration_ = static_cast<float>(animationAssimp[index]->mDuration / animationAssimp[index]->mTicksPerSecond);
+		// mTicksPerSecond	: 周波数｡ 単位はHz｡
+		// mDuration		: mTicksPerSecondで指定された周波数における長さ
+
+		// assimpでは個々のAnimationをchannelと呼んでいるので､channelを回してNodeAnimationの情報を取ってくる｡
+		{
+			for (uint32_t channelIndex = 0u; channelIndex < animationAssimp[index]->mNumChannels; channelIndex++) {
+				// アニメーションのデータのポインタ
+				aiNodeAnim *nodeAnimationAssimp = animationAssimp[index]->mChannels[channelIndex];
+				// アニメーションの名前から､紐づいた保存先を作成
+				NodeAnimation &nodeAnimation = result->nodeAnimations_[nodeAnimationAssimp->mNodeName.C_Str()];
+
+				// 座標データを取得していく
+				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumPositionKeys; keyIndex++) {
+					// assimp側の座標データ
+					aiVectorKey &keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
+
+					// キーフレームの保存先
+					KeyFlameVector3 keyFlame;
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
+					keyFlame.kValue_ = Vector3{ -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };  // 右手から左手に変更
+
+					// データを転送
+					nodeAnimation.translate_.keyFlames_.push_back(std::move(keyFlame));
+				}
+
+				// 姿勢データを取得していく
+				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumRotationKeys; keyIndex++) {
+					// assimp側の姿勢データ
+					aiQuatKey &keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
+
+					// キーフレームの保存先
+					KeyFlameQuaternion keyFlame;
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond);                        // 周波数から秒単位に変換
+					keyFlame.kValue_ = Quaternion{ keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w }; // 右手から左手に変更
+
+					// データを転送
+					nodeAnimation.rotate_.keyFlames_.push_back(std::move(keyFlame));
+				}
+
+				// スケールのデータを取得していく
+				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumScalingKeys; keyIndex++) {
+					// assimp側の姿勢データ
+					aiVectorKey &keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
+
+					// キーフレームの保存先
+					KeyFlameVector3 keyFlame;
+					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
+					keyFlame.kValue_ = Vector3{ keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };   // そのまま代入する
+
+					// データを転送
+					nodeAnimation.scale_.keyFlames_.push_back(std::move(keyFlame));
+				}
+			}
+		}
+
+		return std::move(result);
 	}
 
 	void AnimationPlayer::Start(bool isLoop)
@@ -1677,15 +1747,15 @@ SkinCluster::SkinCluster(uint32_t jointsCount, uint32_t vertexCount)
 	paletteSpan_ = { palette_.data(), jointsCount };
 }
 
-std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model &model, const Skeleton &skeleton)
+std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model *model, const Skeleton &skeleton)
 {
 	uint32_t vertexCount = 0;
-	for (const auto &mesh : model.meshList_) {
+	for (const auto &mesh : model->meshList_) {
 		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
 	}
 	std::unique_ptr<SkinCluster> result = std::make_unique<SkinCluster>(static_cast<uint32_t>(skeleton.joints_.size()), vertexCount);
 
-	result->skinCluster_ = model.skinCluster_;
+	result->skinCluster_ = model->skinCluster_;
 
 	// 初期化
 	result->inverseBindPoseMatrixList_.resize(skeleton.jointMap_.size());
@@ -1694,7 +1764,53 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model &model, co
 	const auto jointEndIt = skeleton.jointMap_.end();
 
 	// モデルデータを解析してInfluenceを埋める
-	for (const auto &[keyName, jointWeight] : model.skinCluster_.skinClusterData_) {
+	for (const auto &[keyName, jointWeight] : model->skinCluster_.skinClusterData_) {
+		// 一致するジョイントの対象が存在するか探す
+		auto it = skeleton.jointMap_.find(keyName);
+		if (it == jointEndIt) { // 存在しなかったら飛ばす
+			continue;
+		}
+
+		// indexから、逆バインドポーズ行列を代入する
+		result->inverseBindPoseMatrixList_[it->second] = jointWeight.inverseBindPoseMatrix_;
+		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
+			// 該当するinfluence情報を参照しておく
+			auto &currentInfluence = result->influenceSpan_[vertexWeight.vertexIndex_[0]];
+			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
+				// 空いているところにデータを代入
+				if (currentInfluence.vertexInfluence_.weight_[index] == 0.0f) {
+					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_[0];
+					currentInfluence.vertexInfluence_.vertexIndex_[index] = it->second;
+					break;
+				}
+
+			}
+		}
+
+	}
+
+	return std::move(result);
+
+}
+
+std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::ModelData *model, const Skeleton &skeleton)
+{
+	uint32_t vertexCount = 0;
+	for (const auto &mesh : model->meshHandleList_) {
+		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
+	}
+	std::unique_ptr<SkinCluster> result = std::make_unique<SkinCluster>(static_cast<uint32_t>(skeleton.joints_.size()), vertexCount);
+
+	result->skinCluster_ = *model->skinCluster_->skinCluster_;
+
+	// 初期化
+	result->inverseBindPoseMatrixList_.resize(skeleton.jointMap_.size());
+	std::generate(result->inverseBindPoseMatrixList_.begin(), result->inverseBindPoseMatrixList_.end(), Matrix4x4::Identity);
+
+	const auto jointEndIt = skeleton.jointMap_.end();
+
+	// モデルデータを解析してInfluenceを埋める
+	for (const auto &[keyName, jointWeight] : model->skinCluster_->skinCluster_->skinClusterData_) {
 		// 一致するジョイントの対象が存在するか探す
 		auto it = skeleton.jointMap_.find(keyName);
 		if (it == jointEndIt) { // 存在しなかったら飛ばす
@@ -1736,10 +1852,18 @@ std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(Model *model)
 {
 	std::unique_ptr<SkinModel> result = std::make_unique<SkinModel>();
 
-	result->pModel_ = model;
 
-	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(result->pModel_->rootNode_.get()));
-	result->skinCluster_ = SkinCluster::MakeSkinCluster(*result->pModel_, *result->skeleton_);
+	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(model->rootNode_.get()));
+	result->skinCluster_ = SkinCluster::MakeSkinCluster(model, *result->skeleton_);
+	return std::move(result);
+}
+
+std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(SolEngine::ModelData *model)
+{
+	std::unique_ptr<SkinModel> result = std::make_unique<SkinModel>();
+
+	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(model->rootNode_.get()));
+	result->skinCluster_ = SkinCluster::MakeSkinCluster(model, *result->skeleton_);
 	return std::move(result);
 }
 

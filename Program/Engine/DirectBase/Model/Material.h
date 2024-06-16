@@ -35,7 +35,7 @@ namespace SolEngine {
 		uint32_t index_;
 
 		std::string ToStr() const {
-			const auto &assimpSource = ResourceObjectManager<AssimpData>::GetInstance()->GetSource(assimpHandle_);
+			const auto *const assimpSource = assimpHandle_.GetSource();
 			return assimpSource->directoryPath_ + assimpSource->fileName_ + '[' + std::to_string(index_) + ']';
 		}
 

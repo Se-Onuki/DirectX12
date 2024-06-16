@@ -9,6 +9,7 @@
 #include <d3d12.h>
 #include "../Base/CBuffer.h"
 #include "../Render/Camera.h"
+#include "SkinClusterBase.h"
 
 namespace SolEngine {
 
@@ -16,8 +17,10 @@ namespace SolEngine {
 	public:
 		std::vector<ResourceObjectManager<Mesh>::Handle> meshHandleList_;
 		std::unique_ptr<ModelNode> rootNode_;
+		ResourceObjectManager<SkinClusterBase>::Handle skinCluster_;
 
 		void Draw(const Transform &transform, const Camera3D &camera) const;
+		void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;
 		void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 		void Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	};

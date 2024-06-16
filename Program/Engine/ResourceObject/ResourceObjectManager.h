@@ -38,6 +38,10 @@ namespace SolEngine {
 			}
 			bool operator==(const Handle &) const = default;
 
+			const Source *GetSource() const {
+				return Singleton::instance_->GetSource(*this);
+			}
+
 			// inline operator uint32_t() const { return handle_; }
 
 			uint32_t GetHandle() const { return handle_; }

@@ -186,6 +186,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Model\ModelData.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelRender.cpp" />
+    <ClCompile Include="Engine\DirectBase\Model\SkinClusterBase.cpp" />
     <ClCompile Include="Engine\DirectBase\PostEffect\OffScreenRendering.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Camera.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.cpp" />
@@ -300,6 +301,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Model\ModelData.h" />
     <ClInclude Include="Engine\DirectBase\Model\ModelManager.h" />
     <ClInclude Include="Engine\DirectBase\Model\ModelRender.h" />
+    <ClInclude Include="Engine\DirectBase\Model\SkinClusterBase.h" />
     <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h" />
     <ClInclude Include="Engine\DirectBase\Render\Camera.h" />
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.h" />

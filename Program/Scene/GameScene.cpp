@@ -67,8 +67,6 @@ void GameScene::OnEnter() {
 
 	spawner_.clear();
 
-	//assimpModel_ = Model::LoadAssimpObjFile("", "box.obj");
-
 	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "walk.gltf");
 	attackAnimation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "Attack.gltf", 1);
@@ -145,7 +143,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::PositionComp{};
 	*playerPrefab_ += ECS::InputFlagComp{};
 	*playerPrefab_ += ECS::TransformMatComp{};
-	*playerPrefab_ += ECS::ModelAnimator{ .animateList_{{ &animation_, &animation_, &attackAnimation_, &attackAnimation_}},.animatior_ = &animation_ };
+	*playerPrefab_ += ECS::ModelAnimator{ .animateList_{{ animation_.get(), animation_.get(), attackAnimation_.get(), attackAnimation_.get()}},.animatior_ = animation_.get() };
 	*playerPrefab_ += ECS::SkinModel{ .skinModel_ = skinModel_.get() };
 	*playerPrefab_ += ECS::ModelComp{ .model_ = {playerAssimp} };
 	//*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };

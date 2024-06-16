@@ -49,6 +49,7 @@ namespace ModelAnimation {
 
 namespace SolEngine {
 	class ModelData;
+	class AssimpData;
 }
 
 struct ModelNode {
@@ -147,7 +148,8 @@ struct WellForGPU {
 
 struct SkinCluster {
 	SkinCluster(uint32_t jointsCount, uint32_t vertexCount);
-	static std::unique_ptr<SkinCluster> MakeSkinCluster(const Model &model, const Skeleton &skeleton);
+	static std::unique_ptr<SkinCluster> MakeSkinCluster(const Model *model, const Skeleton &skeleton);
+	static std::unique_ptr<SkinCluster> MakeSkinCluster(const SolEngine::ModelData *model, const Skeleton &skeleton);
 
 	void Update(const Skeleton &skeleton);
 
@@ -168,9 +170,10 @@ private:
 
 struct SkinModel {
 	static std::unique_ptr<SkinModel> MakeSkinModel(Model *model);
+	static std::unique_ptr<SkinModel> MakeSkinModel(SolEngine::ModelData *model);
 	void Update(const ModelAnimation::Animation &animation, const float animateTime);
 
-	Model *pModel_ = nullptr;
+	//Model *pModel_ = nullptr;
 	std::unique_ptr<SkinCluster> skinCluster_ = nullptr;
 	std::unique_ptr<Skeleton> skeleton_ = nullptr;
 
@@ -259,9 +262,10 @@ namespace ModelAnimation {
 
 	struct Animation {
 		SoLib::Time::SecondF duration_;                       // アニメーション全体の尺
-		std::map<std::string, NodeAnimation> nodeAnimations_; // NodeAnimationの集合｡Node名で検索ができる｡
+		std::unordered_map<std::string, NodeAnimation> nodeAnimations_; // NodeAnimationの集合｡Node名で検索ができる｡
 
-		static Animation CreateFromFile(const std::string &directoryPath, const std::string &filename, uint32_t index = 0);
+		static std::unique_ptr<Animation> CreateFromFile(const std::string &directoryPath, const std::string &filename, uint32_t index = 0);
+		static std::unique_ptr<Animation> Create(const SolEngine::AssimpData *assimpData, uint32_t index = 0);
 	};
 
 	class AnimationPlayer {
