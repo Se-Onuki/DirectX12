@@ -29,14 +29,14 @@ void CGTaskScene::OnEnter()
 	levelImporter.Import(levelData, world_.get());
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
-	auto assimpHandle = assimpManager->Load({ "Model/human/", "sneakWalk.gltf" });
+	auto assimpHandle = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
 
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	boxModel_ = modelDataManager->Load({ assimpHandle });
 
 
 
-	model_ = ModelManager::GetInstance()->AddModel("HumanModel", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
+	model_ = ModelManager::GetInstance()->AddModel("HumanModel", Model::LoadAssimpModelFile("Model/human/", "BrainStem.glb"));
 
 	uvModel_ = ModelManager::GetInstance()->AddModel("UvPlane", Model::LoadAssimpModelFile("", "plane.gltf"));
 

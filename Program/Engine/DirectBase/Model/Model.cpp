@@ -857,7 +857,7 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 		// メッシュのポインタ
 		const aiMesh *const mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals() and "法線が無いメッシュは今回は非対応");
-		assert(mesh->HasTextureCoords(defaultMaterialIndex) and "Texcoordの無いMeshは今回は非対応");
+		//assert(mesh->HasTextureCoords(defaultMaterialIndex) and "Texcoordの無いMeshは今回は非対応");
 
 		meshResult->vertexBuffer_.Resize(mesh->mNumVertices);
 
@@ -867,14 +867,15 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 			const aiVector3D &position = mesh->mVertices[vertexIndex];
 			// 法線
 			const aiVector3D &normal = mesh->mNormals[vertexIndex];
-			// テクスチャ座標
-			const aiVector3D &texcoord = mesh->mTextureCoords[defaultMaterialIndex][vertexIndex];
-
 			// 頂点データ
 			Mesh::VertexData &vertex = meshResult->vertexBuffer_.GetVertexData()[vertexIndex];
 			vertex.position = { position.x, position.y, position.z, 1.f };
 			vertex.normal = { normal.x, normal.y, normal.z };
-			vertex.texCoord = { texcoord.x, texcoord.y };
+
+			// テクスチャ座標
+			const aiVector3D *texcoord = mesh->mTextureCoords[defaultMaterialIndex];
+
+			if (texcoord) { vertex.texCoord = { texcoord[vertexIndex].x, texcoord[vertexIndex].y }; }
 
 			// データの補正
 			// aiProcess_MakeLeftHandedは z *= -1 で、右手->左手に変換するので手動で対処

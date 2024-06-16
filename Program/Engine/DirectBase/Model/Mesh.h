@@ -29,6 +29,8 @@ namespace SolEngine {
 		IndexBuffer<uint32_t> indexBuffer_;
 		std::vector<ResourceObjectManager<Material>::Handle> materials_;
 
+		bool hasTexcoord_ = true;
+
 		/*decltype(texcoordBuffer_) *GetTexcoordBuffer() { return &texcoordBuffer_; }
 		const decltype(texcoordBuffer_) *GetTexcoordBuffer() const { return &texcoordBuffer_; }*/
 

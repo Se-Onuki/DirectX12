@@ -17,7 +17,7 @@ namespace SolEngine {
 		// 保存先のマテリアル
 		std::unique_ptr<Material> materialResult = std::make_unique<Material>();
 		// シーン内のマテリアル
-		aiMaterial *material = materialArray[source.index_];
+		const aiMaterial *material = materialArray[source.index_];
 		// ディフューズのテクスチャが存在するか
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 
@@ -39,6 +39,9 @@ namespace SolEngine {
 			.uvTransform = Matrix4x4::Identity(),
 			.shininess = 1.f,
 		};
+
+		aiBlendMode blendMode;
+		material->Get(AI_MATKEY_BLEND_FUNC, blendMode);
 
 		ai_real alfa;
 		material->Get(AI_MATKEY_OPACITY, alfa);
@@ -76,13 +79,23 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 #ifdef USE_IMGUI
 	bool result = false;
 	if (ImGui::TreeNode(label)) {
-		static BaseTransform transform;
-		transform.MatToSRT(value->materialData_->uvTransform);
+		//static BaseTransform transform;
 
-		if (transform.ImGuiWidget2D()) {
-			value->materialData_->uvTransform = transform.Affine();
+		Vector2 scale{ value->materialData_->uvTransform.GetRight().Length(),  value->materialData_->uvTransform.GetUp().Length() };
+		float rotate = std::acos(value->materialData_->uvTransform.m[0][0] / scale.x);
+		Vector2 translate = value->materialData_->uvTransform.GetTranslate().ToVec2();
+
+		//transform.MatToSRT(value->materialData_->uvTransform);
+
+		result |= ImGui::DragFloat2("Scale", &scale.x, 0.01f, 0.001f, 2048.f);
+		result |= ImGui::DragFloat("Rotate", &rotate, Angle::Dig2Rad);
+		result |= ImGui::DragFloat2("Transform", &translate.x, 0.01f, -100.f, 100.f);
+
+		if (result) {
+			value->materialData_->uvTransform = SoLib::Affine(Vector3{ scale.x, scale.y }, Vector3{ .z = rotate }, Vector3{ translate.x, translate.y });
 		}
 		if (ImGui::Button("ResetTransform")) {
+			result = true;
 			value->materialData_->uvTransform = Matrix4x4::Identity();
 		}
 

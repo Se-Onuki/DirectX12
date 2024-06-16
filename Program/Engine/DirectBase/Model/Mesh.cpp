@@ -62,13 +62,15 @@ namespace SolEngine {
 				//for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 4; materialIndex++) {
 					//assert(mesh->HasTextureCoords(materialIndex) and "Texcoordの無いMeshは今回は非対応");
 
-					// テクスチャ座標へのポインタ
-				const auto *const texPtr = mesh->mTextureCoords[0];
-				// テクスチャ座標
-				const aiVector3D &texcoord = texPtr ? texPtr[vertexIndex] : aiVector3D{};
+				if (mesh->HasTextureCoords(0)) {
+					// テクスチャ座標
+					const aiVector3D &texcoord = mesh->mTextureCoords[0][vertexIndex];
 
-				vertex.texCoord = { texcoord.x, texcoord.y };
-				//}
+					vertex.texCoord = { texcoord.x, texcoord.y };
+				}
+				else {
+					meshResult->hasTexcoord_ = false;
+				}
 			}
 		}
 
