@@ -444,9 +444,11 @@ public:
 	struct MaterialData {
 		SoLib::Color::RGB4 color; // 色(RGBA)
 		Vector4 emissive;         // 自己発光色(RGBA)
+		Vector4 ambient;         // 自己発光色(RGBA)
 		Matrix4x4 uvTransform;
 
 		float shininess = { 1.f };
+		float shininessStrength = { 1.f };
 	};
 
 	Model::BlendMode blendMode_ = Model::BlendMode::kNone;

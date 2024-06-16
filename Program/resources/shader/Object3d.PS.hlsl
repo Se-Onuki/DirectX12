@@ -5,6 +5,7 @@ struct Material
 {
     float4 color;
     float4 emissive;
+    float4 ambient;
 
     float4x4 uvTransform;
     float shininess;
@@ -55,7 +56,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     float3 toEye = normalize(gViewProjectionMatrix.cameraPos - input.worldPos);
     float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
     float NDotH = dot(normalize(input.normal), halfVector);
-    float specularPow = pow(saturate(NDotH), gMaterial.shininess);
+    float specularPow = saturate(pow(NDotH, gMaterial.shininess));
     
     //float3 reflectLight = reflect(normalize(gDirectionalLight.direction), normalize(input.normal));
     

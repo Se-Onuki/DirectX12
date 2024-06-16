@@ -109,7 +109,11 @@ void CGTaskScene::Update()
 	animationPlayer_.Update(deltaTime, model_);
 	//gameObject_->Update(deltaTime);
 
-	SoLib::ImGuiWidget("BoxMaterial", *boxModel_->meshHandleList_[0]->materialhandle_);
+	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
+	if (material) {
+		SoLib::ImGuiWidget("Material", *material);
+	}
+
 
 	skinModel_->Update(animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
 

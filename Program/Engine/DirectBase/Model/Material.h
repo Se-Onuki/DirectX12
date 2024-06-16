@@ -13,10 +13,11 @@ namespace SolEngine {
 		struct MaterialData {
 			SoLib::Color::RGB4 color;		// 色(RGBA)
 			SoLib::Color::RGB4 emissive;    // 自己発光色(RGBA)
+			SoLib::Color::RGB4 ambient;    // アンビエントカラー(RGBA)
 			Matrix4x4 uvTransform;
 
 			float shininess = { 1.f };
-			float shininessStrength = { 1.f };
+			float shininessStrength = 0.f;
 		};
 
 		CBuffer<MaterialData> materialData_;

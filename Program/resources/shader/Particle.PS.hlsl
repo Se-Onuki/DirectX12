@@ -3,9 +3,11 @@ struct Material
 {
     float4 color;
     float4 emissive;
+    float4 ambient;
 
     float4x4 uvTransform;
     float shininess;
+    float shininessStrength;
 };
 
 

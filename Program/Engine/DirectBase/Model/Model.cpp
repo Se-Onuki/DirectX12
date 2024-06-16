@@ -1233,8 +1233,10 @@ void Material::Create()
 	materialBuff_ = Material::MaterialData{
 		.color = Vector4{1.f, 1.f, 1.f, 1.f},
 		.emissive = {},
+		.ambient = {},
 		.uvTransform = Matrix4x4::Identity(),
 		.shininess = 1.f,
+		.shininessStrength = 0.f,
 	};
 }
 

@@ -64,19 +64,27 @@ namespace SolEngine {
 
 		}
 
+		materialResult->blendMode_ = Model::BlendMode::kNone;
+
 		materialResult->materialData_ = Material::MaterialData{
 			.color = Vector4{1.f, 1.f, 1.f, 1.f},
 			.emissive = {},
+			.ambient = {},
 			.uvTransform = Matrix4x4::Identity(),
 			.shininess = 1.f,
 		};
-		aiBlendMode blendMode;
-		material->Get(AI_MATKEY_BLEND_FUNC, blendMode);
+		/*aiBlendMode blendMode;
+		material->Get(AI_MATKEY_BLEND_FUNC, blendMode);*/
 
 		ai_real alfa;
 		material->Get(AI_MATKEY_OPACITY, alfa);
+
+		aiVector3D ambient;
+		material->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
+		materialResult->materialData_->ambient = { ambient.x, ambient.y, ambient.z , 1.f };
+
 		aiVector3D color;
-		material->Get(AI_MATKEY_COLOR_AMBIENT, color);
+		material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 		if (color.x == 0.f and color.y == 0.f and color.z == 0.f) { color = { 1.f,1.f,1.f }; }
 		materialResult->materialData_->color = { color.x, color.y, color.z , alfa };
 
@@ -127,7 +135,7 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 		if (ImGui::Button("ResetTransform")) {
 			result = true;
 			value->materialData_->uvTransform = Matrix4x4::Identity();
-	}
+		}
 
 		result |= ImGui::ColorEdit4("BaseColor", &value->materialData_->color.r);
 		result |= ImGui::ColorEdit3("EmissiveColor", &value->materialData_->emissive.r);
@@ -155,9 +163,9 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 		result |= ImGui::SliderFloat("ShininessStrength", &value->materialData_->shininessStrength, 0.f, 1.f);
 
 		ImGui::TreePop();
-}
+		}
 	return result;
 #else
 	return false;
 #endif // USE_IMGUI
-}
+	}
