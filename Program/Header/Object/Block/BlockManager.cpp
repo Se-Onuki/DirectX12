@@ -288,7 +288,7 @@ void SkinModelHandleListManager::Draw([[maybe_unused]] const Camera3D &camera) {
 	// 量と先頭位置のリストのイテレータ
 	std::list<std::pair<uint32_t, uint32_t>>::const_iterator indexItr = sizeAndIndex.cbegin();
 	// GPUアドレスを取得
-	//const auto &gpuAddress = heapRange_.GetHandle(0u).gpuHandle_;
+	const auto &gpuAddress = heapRange_.GetHandle(0u).gpuHandle_;
 
 	// 構造体のサイズ
 	//const uint32_t matrixSize = sizeof(decltype(particles_)::map_matrix);
@@ -299,7 +299,7 @@ void SkinModelHandleListManager::Draw([[maybe_unused]] const Camera3D &camera) {
 		// もし、サイズが0なら飛ばす
 		if (particleList->GetBlockList().size() == 0u) { continue; }
 		// インスタンシングで描画。
-		//model->Draw(gpuAddress, indexItr->first, particleList->GetLoaction(), camera);
+		model.first->Draw(*(model.second->skinCluster_), gpuAddress, indexItr->first, particleList->GetLoaction(), camera);
 		// 次の先頭位置に更新
 		indexItr++;
 	}

@@ -17,6 +17,7 @@ namespace SolEngine {
 
 		void Draw(const Transform &transform, const Camera3D &camera) const;
 		void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
+		void Draw(const SkinClusterData &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	};
 
 	template <>

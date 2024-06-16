@@ -48,7 +48,7 @@ namespace SolEngine {
 		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
-		assert((Model::GetPipelineType() == Model::PipelineType::kParticle || Model::GetPipelineType() == Model::PipelineType::kShadowParticle) && "設定されたシグネチャがkParticleではありません");
+		assert((Model::GetPipelineType() == Model::PipelineType::kParticle or Model::GetPipelineType() == Model::PipelineType::kShadowParticle) && "設定されたシグネチャがkParticleではありません");
 
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
@@ -58,6 +58,22 @@ namespace SolEngine {
 			commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, ModelNode::kIdentity_->GetGPUVirtualAddress());
 
 			mesh->Draw(commandList, drawCount);
+		}
+	}
+
+
+	void ModelData::Draw(const SkinClusterData &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
+	{
+		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+		assert(Model::GetPipelineType() == Model::PipelineType::kSkinParticle && "設定されたシグネチャがkSkinParticleではありません");
+
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
+		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle(0).gpuHandle_);
+		for (auto &mesh : meshHandleList_) {
+			mesh->Draw(commandList, drawCount, &skinCluster.GetInfluence().GetVBView());
 		}
 	}
 }

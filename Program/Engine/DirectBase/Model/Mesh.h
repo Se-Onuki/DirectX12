@@ -15,6 +15,7 @@ namespace SolEngine {
 		struct VertexData {
 			Vector4 position; // 頂点位置
 			Vector3 normal;   // 法線
+			Vector2 texCoord; // UV座標系
 		};
 
 		template <uint32_t materialSize>
@@ -24,12 +25,12 @@ namespace SolEngine {
 
 		};
 		VertexBuffer<VertexData> vertexBuffer_;
-		VertexBuffer<VertexTexcoord<1>> texcoordBuffer_;
+		//VertexBuffer<VertexTexcoord<2>> texcoordBuffer_;
 		IndexBuffer<uint32_t> indexBuffer_;
 		std::vector<ResourceObjectManager<Material>::Handle> materials_;
 
-		decltype(texcoordBuffer_) *GetTexcoordBuffer() { return &texcoordBuffer_; }
-		const decltype(texcoordBuffer_) *GetTexcoordBuffer() const { return &texcoordBuffer_; }
+		/*decltype(texcoordBuffer_) *GetTexcoordBuffer() { return &texcoordBuffer_; }
+		const decltype(texcoordBuffer_) *GetTexcoordBuffer() const { return &texcoordBuffer_; }*/
 
 		ResourceObjectManager<Material>::Handle materialhandle_;
 

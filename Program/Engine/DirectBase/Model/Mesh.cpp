@@ -5,17 +5,17 @@ namespace SolEngine {
 
 	void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const D3D12_VERTEX_BUFFER_VIEW *vbv) const {
 
-		std::array<D3D12_VERTEX_BUFFER_VIEW, 3u> vbvs = {  };
+		std::array<D3D12_VERTEX_BUFFER_VIEW, 2u> vbvs = {  };
 		vbvs[0] = vertexBuffer_.GetVBView();
-		vbvs[1] = texcoordBuffer_.GetVBView();
+		//vbvs[1] = texcoordBuffer_.GetVBView();
 		if (vbv) {
-			vbvs[2] = *vbv;
+			vbvs[1] = *vbv;
 		}
 
 		commandList->SetPipelineState(Model::GetGraphicsPipelineState()[static_cast<uint32_t>(Model::GetPipelineType())][static_cast<uint32_t>(materialhandle_->blendMode_)].Get()); // PSOを設定
 		::TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, materialhandle_->texHandle_);
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, materialhandle_->materialData_.GetGPUVirtualAddress());
-		commandList->IASetVertexBuffers(0, vbv ? 3 : 2, vbvs.data());
+		commandList->IASetVertexBuffers(0, vbv ? 2 : 1, vbvs.data());
 		commandList->IASetIndexBuffer(&indexBuffer_.GetIBView());
 		commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
 	}
@@ -37,7 +37,7 @@ namespace SolEngine {
 		assert(mesh->HasNormals() and "法線が無いメッシュは今回は非対応");
 
 		meshResult->vertexBuffer_.Resize(mesh->mNumVertices);
-		meshResult->texcoordBuffer_.Resize(mesh->mNumVertices);
+		//meshResult->texcoordBuffer_.Resize(mesh->mNumVertices);
 
 		// 頂点として解析する
 		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
@@ -57,19 +57,19 @@ namespace SolEngine {
 				vertex.position.x *= -1.f;
 				vertex.normal.x *= -1.f;
 
-			}
-			
-			//for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 4; materialIndex++) {
-				//assert(mesh->HasTextureCoords(materialIndex) and "Texcoordの無いMeshは今回は非対応");
 
-				// テクスチャ座標へのポインタ
-				const auto *const texPtr = mesh->mTextureCoords[mesh->mMaterialIndex];
+
+				//for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 4; materialIndex++) {
+					//assert(mesh->HasTextureCoords(materialIndex) and "Texcoordの無いMeshは今回は非対応");
+
+					// テクスチャ座標へのポインタ
+				const auto *const texPtr = mesh->mTextureCoords[0];
 				// テクスチャ座標
 				const aiVector3D &texcoord = texPtr ? texPtr[vertexIndex] : aiVector3D{};
 
-				meshResult->texcoordBuffer_.GetVertexData()[vertexIndex].texCoord[0] = {texcoord.x, texcoord.y};
-			//}
-
+				vertex.texCoord = { texcoord.x, texcoord.y };
+				//}
+			}
 		}
 
 		meshResult->indexBuffer_.Resize(mesh->mNumFaces * 3u);

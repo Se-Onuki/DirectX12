@@ -133,7 +133,7 @@ namespace SolEngine {
 		}
 		else {
 			// 見つからなかったら、不正なデータを返す。
-			return Handle{ (std::numeric_limits<uint32_t>::max)() };
+			return Handle{};
 		}
 	}
 
