@@ -26,10 +26,41 @@ namespace SolEngine {
 			// マテリアルからテクスチャ名を取得
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 
+			//const aiTexture *texturePtr = scene->GetEmbeddedTexture(textureFilePath.C_Str());
+			//if (texturePtr) {
+			//	int a;
+			//	a = 0;
+			//}
+
 			// テクスチャの読み込み
 			materialResult->texHandle_ = ::TextureManager::Load(directoryPath + textureFilePath.C_Str());
+			aiTextureOp  texOp;
+			material->Get(AI_MATKEY_TEXOP(aiTextureType_DIFFUSE, 0), texOp);
 
-			materialResult->blendMode_ = Model::BlendMode::kNone;
+			//switch (texOp)
+			//{
+			//case aiTextureOp_Multiply:
+			//	materialResult->blendMode_ = Model::BlendMode::kMultily;
+			//	break;
+			//case aiTextureOp_Add:
+			//	materialResult->blendMode_ = Model::BlendMode::kAdd;
+			//	break;
+			//case aiTextureOp_Subtract:
+			//	materialResult->blendMode_ = Model::BlendMode::kSubtract;
+			//	break;
+			///*case aiTextureOp_Divide:
+			//	break;
+			//case aiTextureOp_SmoothAdd:
+			//	break;
+			//case aiTextureOp_SignedAdd:
+			//	break;
+			//case _aiTextureOp_Force32Bit:
+			//	break;*/
+			//default:
+			//	materialResult->blendMode_ = Model::BlendMode::kNone;
+			//	break;
+			//}
+
 
 		}
 
@@ -39,7 +70,6 @@ namespace SolEngine {
 			.uvTransform = Matrix4x4::Identity(),
 			.shininess = 1.f,
 		};
-
 		aiBlendMode blendMode;
 		material->Get(AI_MATKEY_BLEND_FUNC, blendMode);
 
@@ -97,10 +127,10 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 		if (ImGui::Button("ResetTransform")) {
 			result = true;
 			value->materialData_->uvTransform = Matrix4x4::Identity();
-		}
+	}
 
-		ImGui::ColorEdit4("BaseColor", &value->materialData_->color.r);
-		ImGui::ColorEdit3("EmissiveColor", &value->materialData_->emissive.r);
+		result |= ImGui::ColorEdit4("BaseColor", &value->materialData_->color.r);
+		result |= ImGui::ColorEdit3("EmissiveColor", &value->materialData_->emissive.r);
 
 		const static std::array<std::string, 6u> blendStr{ "kNone", "kNormal", "kAdd", "kSubtract", "kMultily", "kScreen" };
 
@@ -109,6 +139,7 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 			for (uint32_t i = 0; i < blendStr.size(); i++) {
 				if (ImGui::Selectable(blendStr[i].c_str())) {
 					value->blendMode_ = static_cast<Model::BlendMode>(i);
+					result = true;
 					break;
 				}
 			}
@@ -117,13 +148,14 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 
 		if (ImGui::TreeNode("Texture")) {
 			value->texHandle_ = TextureManager::GetInstance()->ImGuiTextureSelecter(value->texHandle_);
+			result = true;
 			ImGui::TreePop();
 		}
 		result |= ImGui::SliderFloat("Shininess", &value->materialData_->shininess, 0.f, 1000.f);
 		result |= ImGui::SliderFloat("ShininessStrength", &value->materialData_->shininessStrength, 0.f, 1.f);
 
 		ImGui::TreePop();
-	}
+}
 	return result;
 #else
 	return false;

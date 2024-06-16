@@ -116,7 +116,10 @@ namespace SolEngine {
 		// 引数からリソースを構築
 		DataType resource = creater_.CreateObject(source);
 
-		result = AddData(source, std::move(resource));
+		// 有効な値が帰ってきたら保存する
+		if (resource) {
+			result = AddData(source, std::move(resource));
+		}
 
 		return result;
 	}
