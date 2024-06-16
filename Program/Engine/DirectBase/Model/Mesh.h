@@ -24,7 +24,7 @@ namespace SolEngine {
 
 		};
 		VertexBuffer<VertexData> vertexBuffer_;
-		VertexBuffer<VertexTexcoord<4>> texcoordBuffer_;
+		VertexBuffer<VertexTexcoord<1>> texcoordBuffer_;
 		IndexBuffer<uint32_t> indexBuffer_;
 		std::vector<ResourceObjectManager<Material>::Handle> materials_;
 

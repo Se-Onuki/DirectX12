@@ -85,7 +85,6 @@ PixelShaderOutput main(VertexShaderOutput input)
         
         output.color.rgb = saturate(saturate(diffuse) + saturate(emissive) + saturate(specular));
         
-        //output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
         output.color.a = gMaterial.color.a * textureColor.a; // α値
     }
     

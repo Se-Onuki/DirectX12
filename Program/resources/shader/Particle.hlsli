@@ -5,4 +5,5 @@ struct VertexShaderOutput
     float2 texCoord : TEXCOORD0;
     float3 normal : NORMAL0;
     float4 color : COLOR0;
+    float3 worldPos : POSITION0;
 };

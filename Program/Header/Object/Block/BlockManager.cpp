@@ -259,7 +259,7 @@ void SkinModelHandleListManager::Init(uint32_t maxCount)
 	}
 }
 
-void SkinModelHandleListManager::Draw([[maybe_unused]] const CBuffer<Camera3D::CameraMatrix> &camera) {
+void SkinModelHandleListManager::Draw([[maybe_unused]] const Camera3D &camera) {
 	// 始点となる添え字
 	uint32_t index = 0u;
 	// サイズと始点を設定

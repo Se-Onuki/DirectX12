@@ -73,6 +73,8 @@ private:
 
 	BlockManager *blockRender_;
 	SkinModelListManager *skinModelRender_;
+	ModelHandleListManager *modelHandleRender_;
+	SkinModelHandleListManager *skinModelHandleRender_;
 
 	ECS::SystemManager systemManager_;
 

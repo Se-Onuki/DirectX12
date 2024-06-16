@@ -33,6 +33,11 @@ namespace SolEngine {
 		// materialのmodel内Index
 		uint32_t index_;
 
+		std::string ToStr() const {
+			const auto &assimpSource = ResourceObjectManager<AssimpData>::GetInstance()->GetSource(assimpHandle_);
+			return assimpSource->directoryPath_ + assimpSource->fileName_ + '[' + std::to_string(index_) + ']';
+		}
+
 		bool operator==(const ResourceSource<Material> &) const = default;
 	};
 
@@ -59,5 +64,5 @@ namespace std {
 namespace SoLib {
 	template <>
 	bool ImGuiWidget<SolEngine::Material>(const char *const label, SolEngine::Material *const value);
-	
+
 }

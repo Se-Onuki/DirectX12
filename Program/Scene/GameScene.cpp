@@ -22,6 +22,8 @@ GameScene::GameScene() {
 	cameraManager_ = CameraManager::GetInstance();
 	blockRender_ = BlockManager::GetInstance();
 	skinModelRender_ = SkinModelListManager::GetInstance();
+	modelHandleRender_ = ModelHandleListManager::GetInstance();
+	skinModelHandleRender_ = SkinModelHandleListManager::GetInstance();
 	particleManager_ = ParticleManager::GetInstance();
 	// collisionManager_ = CollisionManager::GetInstance();
 }
@@ -53,6 +55,8 @@ void GameScene::OnEnter() {
 
 	blockRender_->Init(1024u);
 	skinModelRender_->Init(1024u);
+	modelHandleRender_->Init(1024u);
+	skinModelHandleRender_->Init(1024u);
 	particleManager_->Init(2048u);
 
 	world_ = std::make_unique<World>();
@@ -307,6 +311,9 @@ void GameScene::Update() {
 
 	blockRender_->clear();
 	skinModelRender_->clear();
+	modelHandleRender_->clear();
+	skinModelHandleRender_->clear();
+
 	spawnTimer_.Update(fixDeltaTime);
 	playerSpawn_.Update(fixDeltaTime);
 
@@ -405,6 +412,13 @@ void GameScene::Update() {
 
 	fullScreen_->GetGaussianParam()->second = SoLib::Lerp(1, 32, isMenuOpen_ ? menuTimer_.GetProgress() : 1.f - menuTimer_.GetProgress());
 
+	//SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()
+
+	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
+	if (material) {
+		SoLib::ImGuiWidget("Material", *material);
+	}
+
 	particleManager_->Update(fixDeltaTime);
 }
 
@@ -444,11 +458,13 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	blockRender_->Draw(camera);
+	modelHandleRender_->Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kSkinParticle);
 	light_->SetLight(commandList);
 
 	skinModelRender_->Draw(camera);
+	skinModelHandleRender_->Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 

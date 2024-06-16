@@ -33,7 +33,7 @@ struct Well
 StructuredBuffer<ParticleMatrix> gParticleMatrix : register(t0);
 StructuredBuffer<Well> gMatrixPalette : register(t1);
 
-ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
+ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b3);
 
 ConstantBuffer<InstanceLocation> gInstanceLocation : register(b2);
 ConstantBuffer<ModelTransfomMatrix> gModelTransMat : register(b4);
@@ -94,5 +94,6 @@ VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID
     output.texCoord = input.texCoord;
     output.normal = normalize(mul(skinned.normal, InverseTranspone((float3x3) matWorld)));
     output.color = gParticleMatrix[targetLocation].color;
+    output.worldPos = mul(input.position, matWorld).xyz;
     return output;
 }
