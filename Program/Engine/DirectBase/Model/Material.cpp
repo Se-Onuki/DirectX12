@@ -18,6 +18,10 @@ namespace SolEngine {
 		std::unique_ptr<Material> materialResult = std::make_unique<Material>();
 		// シーン内のマテリアル
 		const aiMaterial *material = materialArray[source.index_];
+
+		aiString baseColor;
+
+
 		// ディフューズのテクスチャが存在するか
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 
@@ -34,8 +38,8 @@ namespace SolEngine {
 
 			// テクスチャの読み込み
 			materialResult->texHandle_ = ::TextureManager::Load(directoryPath + textureFilePath.C_Str());
-			aiTextureOp  texOp;
-			material->Get(AI_MATKEY_TEXOP(aiTextureType_DIFFUSE, 0), texOp);
+			/*aiTextureOp  texOp;
+			material->Get(AI_MATKEY_TEXOP(aiTextureType_DIFFUSE, 0), texOp);*/
 
 			//switch (texOp)
 			//{
@@ -73,20 +77,18 @@ namespace SolEngine {
 			.uvTransform = Matrix4x4::Identity(),
 			.shininess = 1.f,
 		};
-		/*aiBlendMode blendMode;
-		material->Get(AI_MATKEY_BLEND_FUNC, blendMode);*/
 
 		ai_real alfa;
 		material->Get(AI_MATKEY_OPACITY, alfa);
 
-		aiVector3D ambient;
+		aiColor3D ambient;
 		material->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
-		materialResult->materialData_->ambient = { ambient.x, ambient.y, ambient.z , 1.f };
+		materialResult->materialData_->ambient = { ambient.r, ambient.g, ambient.b , 1.f };
 
-		aiVector3D color;
-		material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-		if (color.x == 0.f and color.y == 0.f and color.z == 0.f) { color = { 1.f,1.f,1.f }; }
-		materialResult->materialData_->color = { color.x, color.y, color.z , alfa };
+		aiColor3D color;
+		if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
+			materialResult->materialData_->color = { color.r, color.g, color.b , alfa };
+		}
 
 		ai_real shininess;
 		material->Get(AI_MATKEY_SHININESS, shininess);
@@ -96,9 +98,9 @@ namespace SolEngine {
 		//material->Get(AI_MATKEY_SHININESS_STRENGTH, shininessStrength);
 		//materialResult->materialData_->shininessStrength = shininessStrength;
 
-		aiVector3D emissive;
+		aiColor3D emissive;
 		material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
-		materialResult->materialData_->emissive = { emissive.x, emissive.y, emissive.z };
+		materialResult->materialData_->emissive = { emissive.r, emissive.g, emissive.b };
 
 		// マテリアル名の設定
 		// materialResult->name_ = material->GetName().C_Str();
@@ -163,9 +165,9 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 		result |= ImGui::SliderFloat("ShininessStrength", &value->materialData_->shininessStrength, 0.f, 1.f);
 
 		ImGui::TreePop();
-		}
+	}
 	return result;
 #else
 	return false;
 #endif // USE_IMGUI
-	}
+}
