@@ -31,24 +31,29 @@ namespace SolEngine {
 
 			materialResult->blendMode_ = Model::BlendMode::kNone;
 
-			materialResult->materialData_ = Material::MaterialData{
-				.color = Vector4{1.f, 1.f, 1.f, 1.f},
-				.emissive = {},
-				.uvTransform = Matrix4x4::Identity(),
-				.shininess = 1.f,
-			};
-			aiVector3D color;
-			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-			materialResult->materialData_->color = { color.x, color.y, color.z };
-
-			ai_real shininess;
-			material->Get(AI_MATKEY_SHININESS, shininess);
-			materialResult->materialData_->shininess = shininess;
-
-			aiVector3D emissive;
-			material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
-			materialResult->materialData_->emissive = { emissive.x, emissive.y, emissive.z };
 		}
+
+		materialResult->materialData_ = Material::MaterialData{
+			.color = Vector4{1.f, 1.f, 1.f, 1.f},
+			.emissive = {},
+			.uvTransform = Matrix4x4::Identity(),
+			.shininess = 1.f,
+		};
+
+		ai_real alfa;
+		material->Get(AI_MATKEY_OPACITY, alfa);
+		aiVector3D color;
+		material->Get(AI_MATKEY_COLOR_AMBIENT, color);
+		if (color.x == 0.f and color.y == 0.f and color.z == 0.f) { color = {1.f,1.f,1.f}; }
+		materialResult->materialData_->color = { color.x, color.y, color.z , alfa };
+
+		ai_real shininess;
+		material->Get(AI_MATKEY_SHININESS, shininess);
+		materialResult->materialData_->shininess = shininess;
+
+		aiVector3D emissive;
+		material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
+		materialResult->materialData_->emissive = { emissive.x, emissive.y, emissive.z };
 
 		// マテリアル名の設定
 		// materialResult->name_ = material->GetName().C_Str();

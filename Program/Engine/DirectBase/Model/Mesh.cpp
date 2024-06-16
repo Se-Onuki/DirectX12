@@ -26,7 +26,7 @@ namespace SolEngine {
 
 		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 
-		const uint32_t materialCount = scene->mNumMaterials;
+		//const uint32_t materialCount = scene->mNumMaterials;
 
 		const std::span<aiMesh *> meshes = { scene->mMeshes, scene->mNumMeshes };
 
@@ -58,17 +58,17 @@ namespace SolEngine {
 				vertex.normal.x *= -1.f;
 
 			}
-
-			for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 4; materialIndex++) {
+			
+			//for (uint32_t materialIndex = 0u; materialIndex < materialCount and materialIndex < 4; materialIndex++) {
 				//assert(mesh->HasTextureCoords(materialIndex) and "Texcoordの無いMeshは今回は非対応");
 
 				// テクスチャ座標へのポインタ
-				const auto *const texPtr = mesh->mTextureCoords[materialIndex];
+				const auto *const texPtr = mesh->mTextureCoords[mesh->mMaterialIndex];
 				// テクスチャ座標
 				const aiVector3D &texcoord = texPtr ? texPtr[vertexIndex] : aiVector3D{};
 
-				meshResult->texcoordBuffer_.GetVertexData()[vertexIndex].texCoord[materialIndex] = { texcoord.x, texcoord.y };
-			}
+				meshResult->texcoordBuffer_.GetVertexData()[vertexIndex].texCoord[0] = {texcoord.x, texcoord.y};
+			//}
 
 		}
 
