@@ -120,16 +120,24 @@ namespace ModelAnimation {
 		// Animationの更新
 		animationTimer_.Update(deltaTime);
 
-		CalcTransform(animationTimer_.GetNowFlame(), model->rootNode_);
+		CalcTransform(animationTimer_.GetNowFlame(), model->rootNode_.get());
 
 	}
 
-	void AnimationPlayer::CalcTransform(float animateTime, ModelNode &modelNode)
+	void AnimationPlayer::Update(float deltaTime, SolEngine::ModelData *model)
+	{
+		// Animationの更新
+		animationTimer_.Update(deltaTime);
+
+		CalcTransform(animationTimer_.GetNowFlame(), model->rootNode_.get());
+	}
+
+	void AnimationPlayer::CalcTransform(float animateTime, ModelNode *const modelNode)
 	{
 		// 対応したアニメーションがあれば通す
-		if (animation_->nodeAnimations_.contains(modelNode.name_)) {
+		if (animation_->nodeAnimations_.contains(modelNode->name_)) {
 			// モデルのノードに紐づいたアニメーションを取得する
-			const auto &rootNodeAnimation = animation_->nodeAnimations_.at(modelNode.name_);
+			const auto &rootNodeAnimation = animation_->nodeAnimations_.at(modelNode->name_);
 			// ノードのアニメーションのデータを取得する
 			BoneModel::SimpleTransform rootTransform;
 			if (rootNodeAnimation.scale_.size()) {
@@ -142,10 +150,10 @@ namespace ModelAnimation {
 				rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animateTime);
 			}
 			// モデルデータの転送
-			(*modelNode.localMatrix_) = rootTransform.CalcTransMat();
+			(*modelNode->localMatrix_) = rootTransform.CalcTransMat();
 		}
-		for (auto &child : modelNode.children_) {
-			CalcTransform(animateTime, child);
+		for (auto &child : modelNode->children_) {
+			CalcTransform(animateTime, child.get());
 		}
 	}
 
@@ -695,7 +703,7 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, cons
 	Mesh *modelData = nullptr;        // 構築するModelData
 	Material *materialData = nullptr; // マテリアルの共用
 
-	result->meshList_.emplace_back(std::make_unique<Mesh>())->pNode_ = &result->rootNode_;
+	result->meshList_.emplace_back(std::make_unique<Mesh>())->pNode_ = result->rootNode_.get();
 
 	modelData = result->meshList_.back().get();
 
@@ -768,7 +776,7 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, cons
 		}
 		else if (identifier == "o") {
 			if (!modelData->vertices_.empty()) {
-				result->meshList_.emplace_back(std::make_unique<Mesh>())->pNode_ = &result->rootNode_;
+				result->meshList_.emplace_back(std::make_unique<Mesh>())->pNode_ = result->rootNode_.get();
 			}
 			modelData = result->meshList_.back().get(); // 構築するModelData
 
@@ -940,13 +948,13 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 	result->rootNode_ = ModelNode::Create(scene->mRootNode);
 
 	for (auto &mesh : result->meshList_) {
-		const ModelNode *const node = result->rootNode_.FindNode(mesh->meshName_);
+		const ModelNode *const node = result->rootNode_->FindNode(mesh->meshName_);
 		//assert(node and "名前に一致するノードがありません");
 		if (node) {
 			mesh->pNode_ = node;
 		}
 		else {
-			mesh->pNode_ = &result->rootNode_;
+			mesh->pNode_ = result->rootNode_.get();
 		}
 
 	}
@@ -1027,7 +1035,7 @@ std::unique_ptr<Model> Model::CreatePlane()
 	material->blendMode_ = Model::BlendMode::kNone;
 
 	mesh->SetMaterial(material.get());
-	mesh->pNode_ = &newModel->rootNode_;
+	mesh->pNode_ = newModel->rootNode_.get();
 
 	return std::move(newModel);
 }
@@ -1046,7 +1054,7 @@ void Model::Draw(const Transform &transform, const Camera3D &camera) const
 }
 
 
-void Model::Draw(const SkinClusterData &skinCluster, const Transform &transform, const Camera3D &camera) const
+void Model::Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const
 {
 	assert(sPipelineType_ == PipelineType::kSkinModel && "設定されたシグネチャがkSkinModelではありません");
 
@@ -1060,7 +1068,7 @@ void Model::Draw(const SkinClusterData &skinCluster, const Transform &transform,
 	}
 }
 
-void Model::Draw(const SkinClusterData &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
+void Model::Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
 {
 	assert(sPipelineType_ == PipelineType::kSkinParticle && "設定されたシグネチャがkSkinParticleではありません");
 
@@ -1083,7 +1091,12 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	commandList_->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 
 	for (auto &mesh : meshList_) {
-		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
+		const CBuffer<Matrix4x4> *node = nullptr;
+		if (mesh->pNode_) { node = &mesh->pNode_->GetLocalMatrix(); }
+		else {
+			node = ModelNode::kIdentity_.get();
+		}
+		commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, node->GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(sPipelineType_)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
 		mesh->Draw(commandList_, drawCount);
 	}
@@ -1511,10 +1524,10 @@ void MinecraftModel::Face::SetVertex(const std::array<Vector3, 4u> &vertex, cons
 	}
 }
 
-ModelNode ModelNode::Create(aiNode *node)
+std::unique_ptr<ModelNode> ModelNode::Create(aiNode *node)
 {
 	// 返す値
-	ModelNode result{};
+	std::unique_ptr<ModelNode> result = std::make_unique<ModelNode>();
 
 	aiVector3D scale, translate;
 	aiQuaternion rotate;
@@ -1522,27 +1535,27 @@ ModelNode ModelNode::Create(aiNode *node)
 	// transformを取得
 	node->mTransformation.Decompose(scale, rotate, translate);
 
-	result.transform_.scale_ = { scale.x, scale.y, scale.z };
-	result.transform_.rotate_ = { rotate.x, -rotate.y, -rotate.z, rotate.w };
-	result.transform_.translate_ = { -translate.x, translate.y, translate.z };
+	result->transform_.scale_ = { scale.x, scale.y, scale.z };
+	result->transform_.rotate_ = { rotate.x, -rotate.y, -rotate.z, rotate.w };
+	result->transform_.translate_ = { -translate.x, translate.y, translate.z };
 
 
 	// 行列を代入
-	result.localMatrix_ = std::make_unique<CBuffer<Matrix4x4>>(result.transform_.Affine());
+	result->localMatrix_ = std::make_unique<CBuffer<Matrix4x4>>(result->transform_.Affine());
 
 	// 名前の設定
-	result.name_ = node->mName.C_Str();
+	result->name_ = node->mName.C_Str();
 
 	// 子ノードの数だけ領域を確保
-	result.children_.resize(node->mNumChildren);
+	result->children_.resize(node->mNumChildren);
 
 	// 子ノードの設定
 	for (uint32_t i = 0; i < node->mNumChildren; i++) {
 		// 再起的に読み込む
-		result.children_[i] = ModelNode::Create(node->mChildren[i]);
+		result->children_[i] = ModelNode::Create(node->mChildren[i]);
 	}
 
-	return result;
+	return std::move(result);
 }
 
 const CBuffer<Matrix4x4> &ModelNode::GetLocalMatrix() const
@@ -1567,7 +1580,7 @@ const ModelNode *ModelNode::FindNode(const std::string &name) const
 	// 名前が一致していたらそれを返す
 	if (name_ == name) { return this; }
 	for (const auto &child : children_) {
-		const auto *ptr = child.FindNode(name);
+		const ModelNode *ptr = child->FindNode(name);
 		// 名前を検索して、一致したら返す
 		if (ptr) { return ptr; }
 	}
@@ -1575,7 +1588,7 @@ const ModelNode *ModelNode::FindNode(const std::string &name) const
 	return nullptr;
 }
 
-Skeleton Skeleton::MakeSkeleton(const ModelNode &rootNode)
+Skeleton Skeleton::MakeSkeleton(const ModelNode *rootNode)
 {
 	Skeleton result;
 	// ノードからジョイントを構築し、現在のジョイントのindexを保存する
@@ -1619,20 +1632,20 @@ void Skeleton::ApplyAnimation(const ModelAnimation::Animation &animation, const 
 	}
 }
 
-uint32_t ModelJoint::MakeJointIndex(const ModelNode &node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints)
+uint32_t ModelJoint::MakeJointIndex(const ModelNode *node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints)
 {
 	std::unique_ptr<ModelJoint> joint = std::make_unique<ModelJoint>();
-	joint->name_ = node.name_;
-	joint->localMatrix_ = node.GetLocalMatrix();
+	joint->name_ = node->name_;
+	joint->localMatrix_ = node->GetLocalMatrix();
 	joint->skeletonSpaceMatrix_ = Matrix4x4::Identity();
-	joint->transform_ = node.transform_;
+	joint->transform_ = node->transform_;
 	uint32_t selfIndex = joint->index_ = static_cast<uint32_t>(joints.size());
 	if (parent) { joint->parent_ = parent; }
 	joints.push_back(std::move(joint));
 
-	for (const ModelNode &child : node.children_) {
+	for (const auto &child : node->children_) {
 
-		uint32_t childIndex = ModelJoint::MakeJointIndex(child, selfIndex, joints);
+		uint32_t childIndex = ModelJoint::MakeJointIndex(child.get(), selfIndex, joints);
 		joints[selfIndex]->children_.push_back(childIndex);
 	}
 
@@ -1651,7 +1664,7 @@ Mesh MeshFactory::CreateMesh() const
 	return result;
 }
 
-SkinClusterData::SkinClusterData(uint32_t jointsCount, uint32_t vertexCount)
+SkinCluster::SkinCluster(uint32_t jointsCount, uint32_t vertexCount)
 	:palette_(jointsCount)
 {
 	influence_.Resize(vertexCount);
@@ -1662,13 +1675,13 @@ SkinClusterData::SkinClusterData(uint32_t jointsCount, uint32_t vertexCount)
 	paletteSpan_ = { palette_.data(), jointsCount };
 }
 
-std::unique_ptr<SkinClusterData> SkinClusterData::MakeSkinClusterData(const Model &model, const Skeleton &skeleton)
+std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model &model, const Skeleton &skeleton)
 {
 	uint32_t vertexCount = 0;
 	for (const auto &mesh : model.meshList_) {
 		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
 	}
-	std::unique_ptr<SkinClusterData> result = std::make_unique<SkinClusterData>(static_cast<uint32_t>(skeleton.joints_.size()), vertexCount);
+	std::unique_ptr<SkinCluster> result = std::make_unique<SkinCluster>(static_cast<uint32_t>(skeleton.joints_.size()), vertexCount);
 
 	result->skinCluster_ = model.skinCluster_;
 
@@ -1707,7 +1720,7 @@ std::unique_ptr<SkinClusterData> SkinClusterData::MakeSkinClusterData(const Mode
 	return std::move(result);
 }
 
-void SkinClusterData::Update(const Skeleton &skeleton)
+void SkinCluster::Update(const Skeleton &skeleton)
 {
 	for (size_t jointIndex = 0; jointIndex < skeleton.joints_.size(); jointIndex++) {
 		assert(jointIndex < inverseBindPoseMatrixList_.size() and "範囲外にアクセスしています");
@@ -1723,8 +1736,8 @@ std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(Model *model)
 
 	result->pModel_ = model;
 
-	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(result->pModel_->rootNode_));
-	result->skinCluster_ = SkinClusterData::MakeSkinClusterData(*result->pModel_, *result->skeleton_);
+	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(result->pModel_->rootNode_.get()));
+	result->skinCluster_ = SkinCluster::MakeSkinCluster(*result->pModel_, *result->skeleton_);
 	return std::move(result);
 }
 

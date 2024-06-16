@@ -47,11 +47,15 @@ namespace ModelAnimation {
 	struct Animation;
 }
 
+namespace SolEngine {
+	class ModelData;
+}
+
 struct ModelNode {
 	/// @brief データを解析してノードを作成する
 	/// @param node assimpのノード
 	/// @return 解析結果
-	static ModelNode Create(aiNode *node);
+	static std::unique_ptr<ModelNode> Create(aiNode *node);
 	ModelNode() = default;
 
 	static std::unique_ptr<CBuffer<Matrix4x4>> kIdentity_;
@@ -69,7 +73,7 @@ struct ModelNode {
 	// ノード名
 	std::string name_;
 	// 子供ノード
-	std::vector<ModelNode> children_;
+	std::vector<std::unique_ptr<ModelNode>> children_;
 
 	// 名前の一致したノードを返す
 	const ModelNode *FindNode(const std::string &name) const;
@@ -77,7 +81,7 @@ struct ModelNode {
 
 struct ModelJoint {
 
-	static uint32_t MakeJointIndex(const ModelNode &node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints);
+	static uint32_t MakeJointIndex(const ModelNode *node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints);
 
 	inline void CalcAffine() { localMatrix_ = transform_.Affine(); }
 
@@ -100,7 +104,7 @@ struct ModelJoint {
 
 struct Skeleton {
 
-	static Skeleton MakeSkeleton(const ModelNode &rootNode);
+	static Skeleton MakeSkeleton(const ModelNode *rootNode);
 
 	void UpdateMatrix();
 
@@ -128,7 +132,7 @@ struct JointWeightData {
 	std::vector<VertexWeightData<1u>> vertexWeightData_;
 };
 
-struct SkinCluster {
+struct SkinClusterBaseData {
 	std::unordered_map<std::string, JointWeightData> skinClusterData_;
 };
 
@@ -141,13 +145,13 @@ struct WellForGPU {
 	Matrix4x4 skeletonSpaceInverseTransponeMatrix; // 法線用
 };
 
-struct SkinClusterData {
-	SkinClusterData(uint32_t jointsCount, uint32_t vertexCount);
-	static std::unique_ptr<SkinClusterData> MakeSkinClusterData(const Model &model, const Skeleton &skeleton);
+struct SkinCluster {
+	SkinCluster(uint32_t jointsCount, uint32_t vertexCount);
+	static std::unique_ptr<SkinCluster> MakeSkinCluster(const Model &model, const Skeleton &skeleton);
 
 	void Update(const Skeleton &skeleton);
 
-	SkinCluster skinCluster_;
+	SkinClusterBaseData skinCluster_;
 	std::vector<Matrix4x4> inverseBindPoseMatrixList_;
 
 	std::span<VertexInfluence> influenceSpan_;
@@ -167,7 +171,7 @@ struct SkinModel {
 	void Update(const ModelAnimation::Animation &animation, const float animateTime);
 
 	Model *pModel_ = nullptr;
-	std::unique_ptr<SkinClusterData> skinCluster_ = nullptr;
+	std::unique_ptr<SkinCluster> skinCluster_ = nullptr;
 	std::unique_ptr<Skeleton> skeleton_ = nullptr;
 
 };
@@ -272,6 +276,7 @@ namespace ModelAnimation {
 		void Start(bool isLoop = false);
 
 		void Update(float deltaTime, Model *model);
+		void Update(float deltaTime, SolEngine::ModelData *model);
 
 		const SoLib::DeltaTimer &GetDeltaTimer() const {
 			return animationTimer_;
@@ -282,7 +287,7 @@ namespace ModelAnimation {
 		/// @brief 再起的にモデルの姿勢を取得する
 		/// @param animateTime アニメーションの時間
 		/// @param modelNode モデルのノードの参照
-		void CalcTransform(float animateTime, ModelNode &modelNode);
+		void CalcTransform(float animateTime, ModelNode *const modelNode);
 
 		SoLib::Time::DeltaTimer animationTimer_; // アニメーションの時刻
 
@@ -380,21 +385,21 @@ public:
 	std::vector<std::unique_ptr<Mesh>> meshList_;
 	std::unordered_map<std::string, std::unique_ptr<Material>> materialMap_;
 
-	ModelNode rootNode_;
+	std::unique_ptr<ModelNode> rootNode_;
 
-	SkinCluster skinCluster_;
+	SkinClusterBaseData skinCluster_;
 
 	void Draw(const Transform &transform, const Camera3D &camera) const;
-	void Draw(const SkinClusterData &skinCluster, const Transform &transform, const Camera3D &camera) const;
+	void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;
 	//void Draw(const Transform &transform, const Camera3D &camera, const Material &material) const;
-	void Draw(const SkinClusterData &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
+	void Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const;
 	template <typename T>
 	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
 
 	template <typename T>
-	void Draw(const SkinClusterData &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
+	void Draw(const SkinCluster &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();
@@ -618,7 +623,7 @@ inline void Model::Draw(const StructuredBuffer<T> &structurdBuffer, const Camera
 }
 
 template <typename T>
-inline void Model::Draw(const SkinClusterData &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const
+inline void Model::Draw(const SkinCluster &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const
 {
 	Model::Draw(skinCluster, structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), structurdBuffer.GetStartIndex(), camera);
 }

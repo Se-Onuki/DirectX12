@@ -7,7 +7,9 @@ namespace SolEngine {
 
 		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 
-		std::unique_ptr<ModelData> meshResult = std::make_unique<ModelData>();
+		std::unique_ptr<ModelData> modelResult = std::make_unique<ModelData>();
+
+		modelResult->rootNode_ = ModelNode::Create(scene->mRootNode);
 
 		// マテリアルマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
@@ -22,10 +24,10 @@ namespace SolEngine {
 
 		// モデルデータのロードと保存
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
-			meshResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
+			modelResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
 		}
 
-		return std::move(meshResult);
+		return std::move(modelResult);
 	}
 
 	void ModelData::Draw(const Transform &transform, const Camera3D &camera) const
@@ -62,7 +64,7 @@ namespace SolEngine {
 	}
 
 
-	void ModelData::Draw(const SkinClusterData &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
+	void ModelData::Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
 	{
 		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();

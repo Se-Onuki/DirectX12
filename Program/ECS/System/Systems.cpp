@@ -88,7 +88,7 @@ void ECS::System::ModelAnimatorUpdate::OnUpdate(::World *world, [[maybe_unused]]
 			animator->animatior_.SetAnimation(animator->animateList_[0]);
 			animator->animatior_.Start(true);
 		}
-		//animator->animatior_.Update(deltaTime, model->model_);
+		animator->animatior_.Update(deltaTime, *model->model_);
 	}
 
 }
