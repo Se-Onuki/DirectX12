@@ -76,6 +76,7 @@ namespace SolEngine {
 			.ambient = {},
 			.uvTransform = Matrix4x4::Identity(),
 			.shininess = 1.f,
+			.shininessStrength = 0.25f,
 		};
 
 		ai_real alfa;

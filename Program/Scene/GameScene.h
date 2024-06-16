@@ -129,6 +129,9 @@ private:
 
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 
+	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle brainStem_;
+	Transform brainStemTrans_;
+
 	SolEngine::FullScreenTextureStrage *texStrage_;
 	SolEngine::FullScreenTextureStrage::UniqueHandle offScreenTex_;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;

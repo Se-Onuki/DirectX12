@@ -48,6 +48,9 @@ void GameScene::OnEnter() {
 	auto boxAssimp = assimpManager->Load({ "", "box.obj" });
 	modelDataManager->Load(boxAssimp);
 
+	auto brainStemAssimp = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
+	brainStem_ = modelDataManager->Load(brainStemAssimp);
+
 	ECS::ComponentRegistry::ComponentFlag compFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp>();
 	ECS::ComponentRegistry::ComponentFlag compBigFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp, ECS::PositionComp>();
 
@@ -279,6 +282,9 @@ void GameScene::OnEnter() {
 	fullScreen_->GetGaussianParam()->second = 1;
 	menuTimer_.Start(0.01f);
 
+	brainStemTrans_->scale = Vector3::one * 5.f;
+	brainStemTrans_->translate.z = -30.f;
+	brainStemTrans_->UpdateMatrix();
 
 }
 
@@ -463,6 +469,10 @@ void GameScene::Draw() {
 
 	skinModelRender_->Draw(camera);
 	skinModelHandleRender_->Draw(camera);
+
+	Model::SetPipelineType(Model::PipelineType::kModel);
+	light_->SetLight(commandList);
+	brainStem_->Draw(brainStemTrans_, camera);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 
