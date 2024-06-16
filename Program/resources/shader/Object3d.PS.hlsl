@@ -79,9 +79,11 @@ PixelShaderOutput main(VertexShaderOutput input)
     {
         float cos = pow(NdotL * 0.5f + 0.5f, 2.f);
         float3 diffuse = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity; // 拡散反射
+        
+        float3 emissive = saturate(gMaterial.emissive.rgb); // 自己発光
         float3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float3(1.0f, 1.0f, 1.0f) * gMaterial.shininessStrength;
         
-        output.color.rgb = saturate(diffuse + saturate(specular));
+        output.color.rgb = saturate(saturate(diffuse) + saturate(emissive) + saturate(specular));
         
         //output.color.rgb = saturate(output.color.rgb + gMaterial.emissive.rgb) * textureColor.rgb; // 自己発光
         output.color.a = gMaterial.color.a * textureColor.a; // α値
