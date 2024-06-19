@@ -19,8 +19,6 @@ namespace SolEngine {
 		// シーン内のマテリアル
 		const aiMaterial *material = materialArray[source.index_];
 
-		aiString baseColor;
-
 
 		// ディフューズのテクスチャが存在するか
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
@@ -30,41 +28,9 @@ namespace SolEngine {
 			// マテリアルからテクスチャ名を取得
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 
-			//const aiTexture *texturePtr = scene->GetEmbeddedTexture(textureFilePath.C_Str());
-			//if (texturePtr) {
-			//	int a;
-			//	a = 0;
-			//}
-
 			// テクスチャの読み込み
 			materialResult->texHandle_ = ::TextureManager::Load(directoryPath + textureFilePath.C_Str());
-			/*aiTextureOp  texOp;
-			material->Get(AI_MATKEY_TEXOP(aiTextureType_DIFFUSE, 0), texOp);*/
-
-			//switch (texOp)
-			//{
-			//case aiTextureOp_Multiply:
-			//	materialResult->blendMode_ = Model::BlendMode::kMultily;
-			//	break;
-			//case aiTextureOp_Add:
-			//	materialResult->blendMode_ = Model::BlendMode::kAdd;
-			//	break;
-			//case aiTextureOp_Subtract:
-			//	materialResult->blendMode_ = Model::BlendMode::kSubtract;
-			//	break;
-			///*case aiTextureOp_Divide:
-			//	break;
-			//case aiTextureOp_SmoothAdd:
-			//	break;
-			//case aiTextureOp_SignedAdd:
-			//	break;
-			//case _aiTextureOp_Force32Bit:
-			//	break;*/
-			//default:
-			//	materialResult->blendMode_ = Model::BlendMode::kNone;
-			//	break;
-			//}
-
+			
 
 		}
 

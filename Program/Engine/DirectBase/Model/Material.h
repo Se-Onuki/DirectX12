@@ -10,6 +10,18 @@ namespace SolEngine {
 
 	class Material : public IResourceObject {
 	public:
+
+		enum class BlendMode : uint32_t {
+			kNone,		// ブレンド無し
+			kNormal,	// αブレンド
+			kAdd,		// 加算合成
+			kSubtract,	// 減算合成
+			kMultily,	// 乗算合成
+			kScreen,	// スクリーン合成
+
+			kMaxSize,
+		};
+
 		struct MaterialData {
 			SoLib::Color::RGB4 color;		// 色(RGBA)
 			SoLib::Color::RGB4 emissive;    // 自己発光色(RGBA)

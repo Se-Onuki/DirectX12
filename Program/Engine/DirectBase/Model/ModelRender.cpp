@@ -21,3 +21,18 @@ void SolEngine::ModelRender::AddData(ModelManager::Handle model, const Transform
 	}
 
 }
+
+void SolEngine::ModelRender::Draw(const Camera3D &camera)
+{
+
+	{
+		for (auto &[transform, meshs] : modelsBuffer_[static_cast<uint32_t>(Model::BlendMode::kNone)]) {
+			std::sort(meshs.begin(), meshs.end());
+			for (auto &mesh : meshs) {
+				//mesh->Draw()
+			}
+
+		}
+	}
+
+}

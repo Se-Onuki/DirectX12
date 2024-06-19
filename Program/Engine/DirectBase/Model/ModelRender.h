@@ -31,6 +31,8 @@ namespace SolEngine {
 
 		void AddData(ModelManager::Handle model, const Transform &transform);
 
+		void Draw(const Camera3D &camera);
+
 	private:
 
 		ResourceManager<RootSignature>::Handle rootSignature_;
