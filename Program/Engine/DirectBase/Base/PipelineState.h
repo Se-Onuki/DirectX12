@@ -9,7 +9,9 @@
 
 #include "../../../Utils/SoLib/SoLib_Traits.h"
 
-class PipelineState {
+#include "../../ResourceObject/ResourceObject.h"
+
+class PipelineState : SolEngine::IResourceObject {
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
@@ -24,7 +26,7 @@ public:
 	PipelineState() = default;
 	~PipelineState() = default;
 
-	void Create(const RootSignature &rootSignature, const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc);
+	void Create(const RootSignature *rootSignature, const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc);
 
 	void SetShader(const ShaderSet &shaderSet);
 
@@ -49,6 +51,39 @@ template<SoLib::IsContainsType<D3D12_INPUT_ELEMENT_DESC> T>
 inline void PipelineState::SetInputElementDescs(const T &inputElementDescs) {
 	inputElementDescs_.assign(inputElementDescs.begin(), inputElementDescs.end());
 }
+
+namespace SolEngine {
+
+	template<>
+	class ResourceSource<PipelineState> {
+	public:
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs_;
+
+		bool operator==(const ResourceSource<PipelineState> &) const = default;
+
+	};
+
+
+	template<>
+	class ResourceCreater<PipelineState> {
+	public:
+		std::unique_ptr<PipelineState> CreateObject(const ResourceSource<PipelineState> &source) const;
+	};
+
+
+}
+
+template<>
+struct std::hash<SolEngine::ResourceSource<PipelineState>> {
+	size_t operator()(const SolEngine::ResourceSource<PipelineState> &data) const {
+		std::string str;
+		for (const auto &item : data.inputElementDescs_) {
+			str += item.SemanticName + std::to_string(item.SemanticIndex) + std::to_string(item.Format) + std::to_string(item.InputSlot);
+		}
+		return std::hash<std::string>{}(str);
+	}
+};
 
 class PipelineCreater {
 public:

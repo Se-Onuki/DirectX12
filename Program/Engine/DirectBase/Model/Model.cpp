@@ -1496,7 +1496,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 			bone.SetParent(&bones_[parentName]);
 		}
 		else {
-			bone.transform_->parent_ = &transformOrigin_;
+			bone.transform_->parent_ = *transformOrigin_;
 		}
 
 		// 座標構築

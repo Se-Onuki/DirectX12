@@ -41,12 +41,12 @@
 //
 //}
 
-void PipelineState::Create(const RootSignature &rootSignature, const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc) {
+void PipelineState::Create(const RootSignature *rootSignature, const D3D12_DEPTH_STENCIL_DESC &depthStencilDesc) {
 
 	HRESULT hr = S_FALSE;
 	//ID3D12Device *const device = DirectXCommon::GetInstance()->GetDevice();
 
-	rootSignature_ = &rootSignature;
+	rootSignature_ = rootSignature;
 
 #pragma region PSO(Pipeline State Object)
 
@@ -69,7 +69,7 @@ void PipelineState::Create(const RootSignature &rootSignature, const D3D12_DEPTH
 
 #pragma endregion
 
-	graphicsPipelineStateDesc_.pRootSignature = rootSignature.Get();		// RootSignature
+	graphicsPipelineStateDesc_.pRootSignature = rootSignature_->Get();		// RootSignature
 
 	shaderSet_.SetPipelineDesc(&graphicsPipelineStateDesc_);
 	graphicsPipelineStateDesc_.InputLayout = inputLayoutDesc;			// InputLayout

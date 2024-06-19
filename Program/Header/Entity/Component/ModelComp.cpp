@@ -49,7 +49,7 @@ void ModelComp::ModelBone::AddChild(ModelBone *const child) {
 
 void ModelComp::ModelBone::SetParent(ModelBone *const parent) {
 	parent_ = parent;
-	transform_->parent_ = &parent->transform_;
+	transform_->parent_ = *parent->transform_;
 }
 
 void ModelComp::ModelBone::Update() {

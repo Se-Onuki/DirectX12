@@ -276,8 +276,8 @@ public:
 	inline T *const operator->() noexcept { return &data_; }				// dataのメンバへのアクセス
 	inline const T *const operator->() const noexcept { return &data_; }	// dataのメンバへのアクセス(const)
 
-	inline T *const operator&() noexcept { return &data_; }					// dataのメンバへのアクセス
-	inline const T *const operator&() const noexcept { return &data_; }		// dataのメンバへのアクセス(const)
+	inline T *const operator*() noexcept { return &data_; }					// dataのメンバへのアクセス
+	inline const T *const operator*() const noexcept { return &data_; }		// dataのメンバへのアクセス(const)
 
 
 	inline T &operator=(const T &other) {	// コピー演算子

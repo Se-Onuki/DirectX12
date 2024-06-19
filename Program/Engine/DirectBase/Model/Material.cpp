@@ -79,29 +79,33 @@ namespace SolEngine {
 			.shininessStrength = 0.25f,
 		};
 
-		ai_real alfa;
-		material->Get(AI_MATKEY_OPACITY, alfa);
-
 		aiColor3D ambient;
-		material->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
-		materialResult->materialData_->ambient = { ambient.r, ambient.g, ambient.b , 1.f };
+		if (material->Get(AI_MATKEY_COLOR_AMBIENT, ambient) == AI_SUCCESS) {
+			materialResult->materialData_->ambient = { ambient.r, ambient.g, ambient.b , 1.f };
+		}
+
+		ai_real alfa;
+		bool isAlfa = material->Get(AI_MATKEY_OPACITY, alfa) == AI_SUCCESS;
 
 		aiColor3D color;
 		if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
-			materialResult->materialData_->color = { color.r, color.g, color.b , alfa };
+			materialResult->materialData_->color = { color.r, color.g, color.b , isAlfa ? alfa : 1.f };
 		}
 
 		ai_real shininess;
-		material->Get(AI_MATKEY_SHININESS, shininess);
-		materialResult->materialData_->shininess = shininess;
+		if (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) {
+			materialResult->materialData_->shininess = shininess;
+		}
 
-		//ai_real shininessStrength;
-		//material->Get(AI_MATKEY_SHININESS_STRENGTH, shininessStrength);
-		//materialResult->materialData_->shininessStrength = shininessStrength;
+		ai_real shininessStrength;
+		if (material->Get(AI_MATKEY_SHININESS_STRENGTH, shininessStrength) == AI_SUCCESS) {
+			materialResult->materialData_->shininessStrength = shininessStrength;
+		}
 
 		aiColor3D emissive;
-		material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
-		materialResult->materialData_->emissive = { emissive.r, emissive.g, emissive.b };
+		if (material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive) == AI_SUCCESS) {
+			materialResult->materialData_->emissive = { emissive.r, emissive.g, emissive.b };
+		}
 
 		// マテリアル名の設定
 		// materialResult->name_ = material->GetName().C_Str();

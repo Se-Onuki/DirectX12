@@ -144,13 +144,13 @@ void Player::Init(const std::unordered_map<std::string, Model *> &model) {
 	// メモリ確保
 
 	// 親子関係
-	transformBody_->parent_ = &transformOrigin_;
+	transformBody_->parent_ = *transformOrigin_;
 
-	transformHead_->parent_ = &transformBody_;
-	transformLeft_->parent_ = &transformBody_;
-	transformRight_->parent_ = &transformBody_;
+	transformHead_->parent_ = *transformBody_;
+	transformLeft_->parent_ = *transformBody_;
+	transformRight_->parent_ = *transformBody_;
 
-	transformWeapon_->parent_ = &transformBody_;
+	transformWeapon_->parent_ = *transformBody_;
 
 	transformHead_->translate = { 0.f, 2.1f, 0.f };
 	transformRight_->translate = { +0.75f, 1.5f, 0.f };

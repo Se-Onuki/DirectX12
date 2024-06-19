@@ -3,6 +3,8 @@
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include "ModelData.h"
 #include "../../Utils/Math/Transform.h"
+#include "../Base/RootSignature.h"
+#include "../Base/PipelineState.h"
 
 namespace SolEngine {
 
@@ -15,17 +17,27 @@ namespace SolEngine {
 		template <SoLib::IsRealType T>
 		using ResourceManager = ResourceObjectManager<T>;
 
+		using ModelManager = ResourceObjectManager<ModelData>;
+		using MeshManager = ResourceObjectManager<Mesh>;
+		using MaterialManager = ResourceObjectManager<Material>;
+
 	public:
 
 
 		void Init();
 
-		void SetData();
+		void clear();
 
 
-		void Draw(ResourceManager<ModelData>::Handle model, const Transform &transform) const;
+		void AddData(ModelManager::Handle model, const Transform &transform);
 
 	private:
+
+		ResourceManager<RootSignature>::Handle rootSignature_;
+
+		std::array<ResourceManager<PipelineState>::Handle, static_cast<uint32_t>(Model::BlendMode::kTotal)> pipeline_;
+
+		std::array<std::unordered_map<const Transform *, std::vector<MeshManager::Handle>>, static_cast<uint32_t>(Model::BlendMode::kTotal)> modelsBuffer_;
 
 	};
 
