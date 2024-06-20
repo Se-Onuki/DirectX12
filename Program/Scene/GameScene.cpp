@@ -373,6 +373,8 @@ void GameScene::Update() {
 	// ここでECSのsystemを呼び出す
 	systemManager_.Update(world_.get(), fixDeltaTime);
 
+	cameraManager_->Update(fixDeltaTime);
+
 
 	if (skeletonDraw) {
 		for (const auto &[entity, skinModel, mat] : world_->view<const ECS::SkinModel, const ECS::TransformMatComp>()) {
@@ -382,8 +384,6 @@ void GameScene::Update() {
 	}
 
 	ground_.Draw();
-
-	cameraManager_->Update(fixDeltaTime);
 
 	//gameObject_.Update(fixDeltaTime);
 

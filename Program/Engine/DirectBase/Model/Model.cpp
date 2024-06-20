@@ -1878,7 +1878,7 @@ void Skeleton::AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &drawOffse
 {
 	auto *blockRender_ = BlockManager::GetInstance();
 	Model *plane = ModelManager::GetInstance()->GetModel("Plane");
-	const Matrix4x4 &cameraInvMat = CameraManager::GetInstance()->GetUseCamera()->matProjection_.InverseRT();
+	const Matrix4x4 &cameraInvMat = CameraManager::GetInstance()->GetUseCamera()->matProjection_.InverseSRT();
 
 	for (const auto &joint : joints_) {
 

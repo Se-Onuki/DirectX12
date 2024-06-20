@@ -131,10 +131,15 @@ namespace SolEngine {
 	struct MonoParameter {
 		RootParameters::BufferData bufferData_;
 
+		static constexpr bool kIsHasVAddress_ = requires(T t) { { t.GetGPUVirtualAddress() } -> std::same_as<D3D12_GPU_VIRTUAL_ADDRESS>; };
 
-		auto GetGPUParam(const T &item) const -> D3D12_GPU_VIRTUAL_ADDRESS {
-			if constexpr (requires(T t) { { t.GetGPUVirtualAddress() } -> std::same_as<D3D12_GPU_VIRTUAL_ADDRESS>; }) {
+
+		auto GetGPUParam(const T &item) const -> std::conditional<kIsHasVAddress_, D3D12_GPU_VIRTUAL_ADDRESS, D3D12_GPU_DESCRIPTOR_HANDLE> {
+			if constexpr (kIsHasVAddress_) {
 				return item.GetGPUVirtualAddress();
+			}
+			else {
+				return D3D12_GPU_DESCRIPTOR_HANDLE{};
 			}
 		}
 
