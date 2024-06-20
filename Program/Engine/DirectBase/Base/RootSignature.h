@@ -130,11 +130,16 @@ namespace SolEngine {
 	template<SoLib::IsRealType T>
 	struct MonoParameter {
 		RootParameters::BufferData bufferData_;
-		std::variant<D3D12_GPU_VIRTUAL_ADDRESS(*)(const T &), D3D12_GPU_DESCRIPTOR_HANDLE(*)(const T &)> accesseFunc_;
+
+
+		auto GetGPUParam(const T &item) const -> D3D12_GPU_VIRTUAL_ADDRESS {
+			if constexpr (requires(T t) { { t.GetGPUVirtualAddress() } -> std::same_as<D3D12_GPU_VIRTUAL_ADDRESS>; }) {
+				return item.GetGPUVirtualAddress();
+			}
+		}
 
 		MonoParameter() = default;
-		//MonoParameter(RootParameters::BufferData &&bufferData) : bufferData_(bufferData) {}
-		MonoParameter(RootParameters::BufferData &&bufferData, std::variant<D3D12_GPU_VIRTUAL_ADDRESS(*)(const T &), D3D12_GPU_DESCRIPTOR_HANDLE(*)(const T &)> accesseFunc = {}) : bufferData_(bufferData), accesseFunc_(accesseFunc) {}
+		MonoParameter(RootParameters::BufferData &&bufferData) : bufferData_(bufferData) {}
 	};
 
 	template<SoLib::IsRealType... Ts>
@@ -148,7 +153,7 @@ namespace SolEngine {
 	const RootParametersAccesser<Args...> MakeRootParametersAccesser(MonoParameter<Args>&&... args)
 	{
 		RootParametersAccesser<Args...> result;
-		result.parameters_ = { MonoParameter<Args>{std::forward<MonoParameter<Args>>(args).bufferData_, std::forward<MonoParameter<Args>>(args).accesseFunc_}... };
+		result.parameters_ = { MonoParameter<Args>{ std::forward<MonoParameter<Args>>(args).bufferData_ }... };
 
 		return result;
 	}

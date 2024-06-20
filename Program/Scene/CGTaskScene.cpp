@@ -22,9 +22,11 @@ void CGTaskScene::OnEnter()
 	auto levelData = levelDataManager->Load({ .fileName_ = "test.json" });
 
 	const auto accessor = SolEngine::MakeRootParametersAccesser(
-		SignParam<CBuffer<Matrix4x4>>{ "t0PS", [](const CBuffer<Matrix4x4> &buff) { return buff.GetGPUVirtualAddress();  }	},
+		SignParam<CBuffer<Matrix4x4>>{ "t0PS" },
 		SignParam<CBuffer<TransformMatrix>>{ "b0PS" }
 	);
+
+	//auto gpuAddress = SignParam<CBuffer<Matrix4x4>>{ "t0PS" }.GetGPUParam(CBuffer<Matrix4x4>{});
 
 	world_ = std::make_unique<World>();
 	entityManager_ = world_->GetEntityManager();
