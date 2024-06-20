@@ -2,6 +2,22 @@
 #include "Shader.h"
 //#include "DirectXCommon.h"
 
+namespace SolEngine {
+
+	std::unique_ptr<PipelineState> ResourceCreater<PipelineState>::CreateObject(const ResourceSource<PipelineState> &source) const {
+		// エラー検知
+		//HRESULT hr = S_FALSE;
+
+		std::unique_ptr<PipelineState> result = std::make_unique<PipelineState>();
+
+
+		source;
+
+		return std::move(result);
+
+	}
+}
+
 //void PipelineState::SetRootSignature()
 //{
 //	HRESULT hr = S_FALSE;
@@ -24,7 +40,7 @@
 //
 //
 //}
-
+//
 //void PipelineState::CreatePipeline()
 //{
 //	HRESULT hr = S_FALSE;
@@ -114,11 +130,10 @@ void PipelineState::SetShader(const ShaderSet &shaderSet) {
 	shaderSet_ = shaderSet;
 }
 
-void PipelineState::ShaderSet::SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc) {
-	if (vertex_) {
-		pipelineDesc->VS = vertex_->GetBytecode();
-	}
-	if (pixel_) {
-		pipelineDesc->PS = pixel_->GetBytecode();
-	}
+void PipelineState::ShaderSet::SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc) const {
+	if (vertex_) { pipelineDesc->VS = vertex_->GetBytecode(); }
+	if (pixel_) { pipelineDesc->PS = pixel_->GetBytecode(); }
+	if (domain_) { pipelineDesc->DS = domain_->GetBytecode(); }
+	if (hull_) { pipelineDesc->HS = hull_->GetBytecode(); }
+	if (geometry_) { pipelineDesc->GS = geometry_->GetBytecode(); }
 }

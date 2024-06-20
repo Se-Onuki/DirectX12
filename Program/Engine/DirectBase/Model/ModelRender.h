@@ -28,16 +28,21 @@ namespace SolEngine {
 
 		void clear();
 
-
 		void AddData(ModelManager::Handle model, const Transform &transform);
 
+		void Sort();
+
 		void Draw(const Camera3D &camera);
+
+	private:
+		DirectXCommon *dxCommon_;
+		ID3D12GraphicsCommandList *commandList_;
 
 	private:
 
 		ResourceManager<RootSignature>::Handle rootSignature_;
 
-		std::array<ResourceManager<PipelineState>::Handle, static_cast<uint32_t>(Model::BlendMode::kTotal)> pipeline_;
+		std::array<ResourceObjectManager<PipelineState>::Handle, static_cast<uint32_t>(Model::BlendMode::kTotal)> pipeline_;
 
 		std::array<std::unordered_map<const Transform *, std::vector<MeshManager::Handle>>, static_cast<uint32_t>(Model::BlendMode::kTotal)> modelsBuffer_;
 

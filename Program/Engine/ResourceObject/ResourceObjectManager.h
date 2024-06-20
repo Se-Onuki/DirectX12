@@ -24,19 +24,29 @@ namespace SolEngine {
 			Handle() = default;
 			Handle(const Handle &) = default;
 			Handle(Handle &&) = default;
-			Handle &operator=(const Handle &) = default;
-			Handle &operator=(Handle &&) = default;
+			Handle &operator=(const Handle &r) { handle_ = r.handle_; version_ = r.version_; return *this; }
+			//Handle &operator=(Handle &&) = default;
 
 			Handle(const Source &source);
-			Handle &operator=(const Source &source) { return *this = Handle(source); }
+			Handle &operator=(const Source &source) { return *this = Handle{ source }; }
 
-			Handle(const uint32_t handle, const uint32_t version = 0) : handle_(handle), version_(version) {};
-			Handle &operator=(const uint32_t handle)
-			{
-				handle_ = handle;
-				return *this;
-			}
+			Handle(const uint32_t handle, const uint32_t version) : handle_(handle), version_(version) {};
 			bool operator==(const Handle &) const = default;
+
+			auto operator<=>(const Handle &that) const -> std::weak_ordering {
+
+				const uint32_t aHandle = this->handle_;
+				const uint32_t bHandle = that.handle_;
+
+				// ハンドルが一致していない場合
+				if (aHandle != bHandle) {
+					return aHandle <=> bHandle;
+				}
+				// 一致していた場合
+				else {
+					return this->version_ <=> that.version_;
+				}
+			}
 
 			const Source *GetSource() const {
 				return Singleton::instance_->GetSource(*this);
@@ -70,7 +80,7 @@ namespace SolEngine {
 
 		private:
 			uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
-			uint32_t version_ = (std::numeric_limits<uint32_t>::max)();;
+			uint32_t version_ = (std::numeric_limits<uint32_t>::max)();
 		};
 
 	public:
@@ -216,12 +226,12 @@ namespace SolEngine {
 
 
 		// 検索用に保存
-		findMap_.insert({ source, {index, version} });
+		findMap_.insert({ source, Handle{index, version} });
 
 		// 構築したデータを格納
 		*itr = { 0, std::make_pair(findMap_.find(source), std::move(resource)) };
 
-		return index;
+		return Handle{ index,0 };
 	}
 
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
@@ -242,7 +252,7 @@ namespace SolEngine {
 			}
 		);
 
-		return Handle{ result };
+		return Handle{ result, 0 };
 	}
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
 	inline ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::ImGuiWidget(const char *const label) const

@@ -19,8 +19,13 @@ public:
 	struct ShaderSet {
 		SolEngine::ResourceObjectManager<Shader>::Handle vertex_;
 		SolEngine::ResourceObjectManager<Shader>::Handle pixel_;
+		SolEngine::ResourceObjectManager<Shader>::Handle domain_;
+		SolEngine::ResourceObjectManager<Shader>::Handle hull_;
+		SolEngine::ResourceObjectManager<Shader>::Handle geometry_;
 
-		void SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc);
+		bool operator==(const ShaderSet &) const = default;
+
+		void SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc) const;
 	};
 
 	PipelineState() = default;
@@ -58,7 +63,14 @@ namespace SolEngine {
 	class ResourceSource<PipelineState> {
 	public:
 
+		ResourceObjectManager<RootSignature>::Handle rootSignature_;
+
+		PipelineState::ShaderSet shaderSet_;
+
 		std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs_;
+
+
+
 
 		bool operator==(const ResourceSource<PipelineState> &) const = default;
 
