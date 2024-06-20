@@ -28,7 +28,7 @@ void SolEngine::ModelRender::AddData(ModelManager::Handle model, const Transform
 void SolEngine::ModelRender::Sort()
 {
 	for (auto &buffs : modelsBuffer_) {
-		for ( auto &[transform, meshs] : buffs) {
+		for (auto [transform, meshs] : buffs) {
 			std::sort(meshs.begin(), meshs.end());
 		}
 	}
@@ -41,8 +41,8 @@ void SolEngine::ModelRender::Draw(const Camera3D &camera)
 	commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 
 	{
-		for ( auto &[transform, meshs] : modelsBuffer_[static_cast<uint32_t>(Model::BlendMode::kNone)]) {
-			std::sort(meshs.begin(), meshs.end());
+		for (auto [transform, meshs] : modelsBuffer_[static_cast<uint32_t>(Model::BlendMode::kNone)]) {
+			// std::sort(meshs.begin(), meshs.end());
 
 			commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform->GetGPUVirtualAddress());
 			for (auto &mesh : meshs) {
