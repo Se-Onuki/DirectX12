@@ -8,6 +8,9 @@ namespace SolEngine {
 		commandList_ = dxCommon_->GetCommandList();
 
 		ResourceObjectManager<RootSignature> *const rootSignatureManager = ResourceObjectManager<RootSignature>::GetInstance();
+		
+		const auto accesser = MakeRootParametersAccesser(SignParam<CBuffer<TransformMatrix>>{"b0VS"});
+
 		rootSignature_ = rootSignatureManager->Load({ .item_ { "b0VS,b1AL,b0PS" } });
 
 //		ResourceObjectManager<PipelineState> *const pipelineManager = ResourceObjectManager<PipelineState>::GetInstance();
