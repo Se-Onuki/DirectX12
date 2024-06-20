@@ -23,6 +23,7 @@ namespace SolEngine {
 
 		struct BufferData {
 			BufferType type_;
+			uint32_t index_;
 			D3D12_SHADER_VISIBILITY shaderVisibility_ = D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_ALL;
 
 			bool operator==(const BufferData &) const = default;
@@ -40,7 +41,7 @@ namespace SolEngine {
 			return std::pair<std::type_index, uint8_t>{ typeid(T), type};
 		}*/
 
-		inline static constexpr uint32_t kParamStrSize_ = 2u;
+		inline static constexpr uint32_t kParamStrSize_ = 5u;
 
 		std::vector<BufferData> parameters_;
 		RootParameter(const std::string &params) {
@@ -59,6 +60,36 @@ namespace SolEngine {
 				default:
 					break;
 				}
+				// 文字列の変更
+				data.index_ = static_cast<uint32_t>(span[1] - '0');
+
+				const std::string_view shaderType = std::string_view{ &params[2],2u };
+
+				if (shaderType == "AL") {
+					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_ALL;
+				}
+				else if (shaderType == "VS") {
+					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_VERTEX;
+				}
+				else if (shaderType == "PS") {
+					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_PIXEL;
+				}
+				else if (shaderType == "HS") {
+					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_HULL;
+				}
+				else if (shaderType == "DS") {
+					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_DOMAIN;
+				}
+				else if (shaderType == "GS") {
+					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_GEOMETRY;
+				}
+				else if (shaderType == "AS") {
+					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_AMPLIFICATION;
+				}
+				else if (shaderType == "MS") {
+					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_MESH;
+				}
+
 
 			}
 		}
@@ -118,7 +149,7 @@ private:
 template <>
 class SolEngine::ResourceSource<RootSignature> {
 public:
-	D3D12_STATIC_SAMPLER_DESC sampler_;
+	D3D12_STATIC_SAMPLER_DESC sampler_ = DefaultSampler();
 
 	//std::string 
 

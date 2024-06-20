@@ -130,7 +130,7 @@ namespace PostEffect {
 		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 
 		auto *const rootSignatureManager = SolEngine::ResourceObjectManager<RootSignature>::GetInstance();
-		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = {sampler},.item_ = {"t0b0"}};
+		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = {sampler},.item_ = {"t0PS,b0PS"}};
 
 		rootSignature_ = rootSignatureManager->Load(rootSignatureSource);
 

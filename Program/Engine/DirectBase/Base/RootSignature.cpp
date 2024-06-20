@@ -71,8 +71,8 @@ std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::Create
 
 	std::vector<D3D12_ROOT_PARAMETER> parameters;
 	parameters.reserve(source.item_.parameters_.size());
-	std::vector<D3D12_DESCRIPTOR_RANGE> descRanges{};
-	std::array<uint32_t, static_cast<uint32_t>(RootParameter::BufferType::kMaxCount)> bufferCount{};
+	// 一時保存用のデータ
+	std::list<D3D12_DESCRIPTOR_RANGE> descRanges{};
 
 	for (const auto &item : source.item_.parameters_) {
 
@@ -83,14 +83,14 @@ std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::Create
 		{
 		case RootParameter::BufferType::kCBV:
 			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-			parameter.Descriptor.ShaderRegister = bufferCount[static_cast<uint32_t>(RootParameter::BufferType::kCBV)]++;
+			parameter.Descriptor.ShaderRegister = item.index_;
 			break;
 		case RootParameter::BufferType::kSRV:
 			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 
 			// DescriptorRangeの設定
 			D3D12_DESCRIPTOR_RANGE &descriptorRange = descRanges.emplace_back();
-			descriptorRange.BaseShaderRegister = bufferCount[static_cast<uint32_t>(RootParameter::BufferType::kSRV)]++;                                                   // 0から始める
+			descriptorRange.BaseShaderRegister = item.index_;
 			descriptorRange.NumDescriptors = 1;                                                       // 数は1つ
 			descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;                              // SRVを使う
 			descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算

@@ -12,7 +12,9 @@ namespace SoLib {
 		using iterator = T *;
 		using const_iterator = const T *;
 
+		// 外部に表示される型
 		using ArrayType = std::array<T, MaxSize>;
+		// 内部的に管理する型
 		using InnerArrayType = std::array<char, sizeof(T) *MaxSize>;
 
 		/// @brief デストラクタを持っているか
