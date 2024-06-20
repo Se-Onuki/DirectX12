@@ -40,12 +40,12 @@ namespace SolEngine {
 			return std::pair<std::type_index, uint8_t>{ typeid(T), type};
 		}*/
 
-		inline static constexpr uint32_t kParamSize_ = 2u;
+		inline static constexpr uint32_t kParamStrSize_ = 2u;
 
 		std::vector<BufferData> parameters_;
 		RootParameter(const std::string &params) {
-			for (uint32_t i = 0u; i < params.size(); i += kParamSize_) {
-				const std::span<const char, kParamSize_> span{ &params[i], kParamSize_ };
+			for (uint32_t i = 0u; i < params.size(); i += kParamStrSize_) {
+				const std::span<const char, kParamStrSize_> span{ &params[i], kParamStrSize_ };
 
 				BufferData &data = parameters_.emplace_back();
 				switch (span[0])
