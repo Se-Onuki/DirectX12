@@ -21,6 +21,7 @@ void CGTaskScene::OnEnter()
 
 	auto levelData = levelDataManager->Load({ .fileName_ = "test.json" });
 
+	const auto accessor = SolEngine::MakeRootParametersAccesser(SolEngine::MonoParameter<int>{{ "t0PS" }},SolEngine::MonoParameter<int>{{ "b0PS" }});
 
 	world_ = std::make_unique<World>();
 	entityManager_ = world_->GetEntityManager();

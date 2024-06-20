@@ -81,11 +81,11 @@ std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::Create
 
 		switch (item.type_)
 		{
-		case RootParameter::BufferType::kCBV:
+		case RootParameters::BufferType::kCBV:
 			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 			parameter.Descriptor.ShaderRegister = item.index_;
 			break;
-		case RootParameter::BufferType::kSRV:
+		case RootParameters::BufferType::kSRV:
 			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 
 			// DescriptorRangeの設定

@@ -11,8 +11,11 @@
 namespace SolEngine {
 
 	/// @brief ルートパラメータの保存クラス
-	struct RootParameter
+	struct RootParameters
 	{
+
+		inline static constexpr uint32_t kParamStrSize_ = 5u;
+
 		enum class BufferType : uint8_t {
 			kCBV,
 			kSRV,
@@ -26,50 +29,75 @@ namespace SolEngine {
 			uint32_t index_;
 			D3D12_SHADER_VISIBILITY shaderVisibility_ = D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_ALL;
 
+
+			BufferData() = default;
+			BufferData(const BufferData &) = default;
+			BufferData &operator=(const BufferData &) = default;
+
+			BufferData(const char str[kParamStrSize_ - 1]) {
+				switch (str[0])
+				{
+				case 'b':
+					type_ = BufferType::kCBV;
+					break;
+				case 't':
+					type_ = BufferType::kSRV;
+					break;
+				default:
+					type_ = BufferType::kCBV;
+					break;
+				}
+				// 文字列の変更
+				index_ = static_cast<uint32_t>(str[1] - '0');
+
+				shaderVisibility_ = ShaderVisibility(&str[2]);
+			}
+
+			template <SoLib::Text::ConstExprString CStr, SoLib::Text::StaticString<CStr> Str>
+			consteval BufferData() {
+				const char *const str = Str.c_str();
+
+				switch (str[0])
+				{
+				case 'b':
+					type_ = BufferType::kCBV;
+					break;
+				case 't':
+					type_ = BufferType::kSRV;
+					break;
+				default:
+					type_ = BufferType::kCBV;
+					break;
+				}
+				// 文字列の変更
+				index_ = static_cast<uint32_t>(str[1] - '0');
+
+				shaderVisibility_ = ShaderVisibility(&str[2]);
+			}
+
 			bool operator==(const BufferData &) const = default;
 		};
 
 		//RootParameter(std::vector<std::pair<std::type_index, uint8_t>> &&data) : parameters_{ data } {}
 
-		RootParameter() = default;
-		~RootParameter() = default;
+		RootParameters() = default;
+		~RootParameters() = default;
 
-		bool operator==(const RootParameter &other) const = default;
-
-		/*template<SoLib::IsRealType T, uint8_t type>
-		static std::pair<std::type_index, uint8_t> MakePair() {
-			return std::pair<std::type_index, uint8_t>{ typeid(T), type};
-		}*/
-
-		inline static constexpr uint32_t kParamStrSize_ = 5u;
+		bool operator==(const RootParameters &other) const = default;
 
 		std::vector<BufferData> parameters_;
-		RootParameter(const std::string &params) {
+		RootParameters(const std::string &params) {
 			for (uint32_t i = 0u; i < params.size(); i += kParamStrSize_) {
 				const std::span<const char, kParamStrSize_> span{ &params[i], kParamStrSize_ };
+				// 文字列からデータを構築する
+				parameters_.push_back(BufferData{ span.data() });
 
-				BufferData &data = parameters_.emplace_back();
-				switch (span[0])
-				{
-				case 'b':
-					data.type_ = BufferType::kCBV;
-					break;
-				case 't':
-					data.type_ = BufferType::kSRV;
-					break;
-				default:
-					break;
-				}
-				// 文字列の変更
-				data.index_ = static_cast<uint32_t>(span[1] - '0');
-
-				data.shaderVisibility_ = ShaderType(&params[2]);
 			}
 
 		}
 
 
-		static D3D12_SHADER_VISIBILITY ShaderType(const char shaderType[2]) {
+		constexpr static D3D12_SHADER_VISIBILITY ShaderVisibility(const char shaderType[2]) {
 
 			if (shaderType[1] == 'S') {
 				switch (shaderType[0])
@@ -98,10 +126,31 @@ namespace SolEngine {
 
 	};
 
-	struct RootParameterHelper {
+	template<SoLib::IsRealType T>
+	struct MonoParameter {
+		RootParameters::BufferData bufferData_;
+		//std::variant<D3D12_GPU_VIRTUAL_ADDRESS(*)(const T &), D3D12_GPU_DESCRIPTOR_HANDLE(*)(const T &)> gpuAccesser_;
+
+		MonoParameter() = default;
+		//MonoParameter(RootParameters::BufferData &&bufferData) : bufferData_(bufferData) {}
+		MonoParameter(RootParameters::BufferData &&bufferData) : bufferData_(bufferData) {}
+	};
+
+	template<SoLib::IsRealType... Ts>
+	struct RootParametersAccesser {
+
+		std::tuple<MonoParameter<Ts>...> parameters_;
 
 	};
 
+	template<SoLib::IsRealType... Args>
+	const RootParametersAccesser<Args...> MakeRootParametersAccesser(MonoParameter<Args>&&... args)
+	{
+		RootParametersAccesser<Args...> result;
+		result.parameters_ = { MonoParameter<Args>{std::forward<MonoParameter<Args>>(args).bufferData_}... };
+
+		return result;
+	}
 
 
 }
@@ -134,7 +183,7 @@ public:
 
 	//std::string 
 
-	SolEngine::RootParameter item_;
+	SolEngine::RootParameters item_;
 
 	//std::vector<RootParameters> types_;
 	//SolEngine::RootParameters types_;
