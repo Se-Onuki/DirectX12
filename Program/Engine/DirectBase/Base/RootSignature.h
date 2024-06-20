@@ -152,6 +152,9 @@ namespace SolEngine {
 
 		std::tuple<MonoParameter<Ts>...> parameters_;
 
+		template<SoLib::IsRealType T>
+		static constexpr uint32_t GetIndex() { return SoLib::IndexOfV<MonoParameter<T>, decltype(parameters_)>; }
+
 	};
 
 	template<SoLib::IsRealType... Args>

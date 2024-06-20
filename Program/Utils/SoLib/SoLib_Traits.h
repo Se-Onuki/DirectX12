@@ -138,6 +138,32 @@ namespace SoLib {
 		auto cend() const { return Self().endImpl(); }
 	};
 
+	// 型Tがタプルの何番目の要素かを取得するメタ関数
+	template<typename T, typename Tuple>
+	struct IndexOf;
+
+	// ベースケース：型Tが見つからなかった場合
+	template<typename T>
+	struct IndexOf<T, std::tuple<>> {
+		static constexpr std::size_t value = -1; // 見つからなかった場合は-1
+	};
+
+	// 再帰ケース：最初の要素が型Tである場合
+	template<typename T, typename... Rest>
+	struct IndexOf<T, std::tuple<T, Rest...>> {
+		static constexpr std::size_t value = 0;
+	};
+
+	// 再帰ケース：最初の要素が型Tでない場合
+	template<typename T, typename U, typename... Rest>
+	struct IndexOf<T, std::tuple<U, Rest...>> {
+		static constexpr std::size_t value = 1 + IndexOf<T, std::tuple<Rest...>>::value;
+	};
+
+	// 与えられた型Tがタプルの何番目の要素かを取得する関数
+	template<typename T, typename Tuple>
+	constexpr std::size_t IndexOfV = IndexOf<T, Tuple>::value;
+
 	template <typename T>
 	struct Traits {
 		using Type = void;
