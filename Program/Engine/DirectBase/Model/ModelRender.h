@@ -32,7 +32,7 @@ namespace SolEngine {
 
 		void Sort();
 
-		void Draw(const Camera3D &camera);
+		void Draw(const Camera3D &camera) const;
 
 	private:
 		DirectXCommon *dxCommon_;

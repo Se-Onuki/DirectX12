@@ -6,14 +6,14 @@
 
 namespace SoLib {
 
-	template <SoLib::IsNotPointer T, uint32_t maxSize>
-	class ConstVector : public ContainerBeginEnd<ConstVector<T, maxSize>> {
+	template <SoLib::IsRealType T, uint32_t MaxSize>
+	class ConstVector : public ContainerBeginEnd<ConstVector<T, MaxSize>> {
 	public:
 		using iterator = T *;
 		using const_iterator = const T *;
 
-		using ArrayType = std::array<T, maxSize>;
-		using InnerArrayType = std::array<char, sizeof(T) *maxSize>;
+		using ArrayType = std::array<T, MaxSize>;
+		using InnerArrayType = std::array<char, sizeof(T) *MaxSize>;
 
 		/// @brief デストラクタを持っているか
 		static constexpr bool kIsHasDestructor = !std::is_trivially_destructible_v<T>;
@@ -27,9 +27,12 @@ namespace SoLib {
 		template <SoLib::IsContainsType<T> U>
 		ConstVector(const U &cont) { *this = cont; }
 
+		ConstVector(ConstVector &&move) :itemData_(move.itemData_), size_(move.size_) {}
+		ConstVector &operator=(ConstVector &&move) { itemData_ = move.itemData_; size_ = move.size_; return *this; }
+
 		template <SoLib::IsContainsType<T> U>
 		inline ConstVector &operator=(const U &container) {
-			uint32_t copyCount = (std::min)(maxSize, static_cast<uint32_t>(container.size()));
+			uint32_t copyCount = (std::min)(MaxSize, static_cast<uint32_t>(container.size()));
 			std::copy_n(container.begin(), copyCount, this->begin());
 
 			size_ = copyCount;
@@ -37,8 +40,30 @@ namespace SoLib {
 			return *this;
 		}
 
-		T &operator[](const uint32_t index) { GetArray()[index]; }
-		const T &operator[](const uint32_t index) const { GetArray()[index]; }
+		template <SoLib::IsRealType U, uint32_t ThatSize>
+			requires(std::same_as<T, U>)
+		bool operator==(const ConstVector<U, ThatSize> &that) const {
+			// 保存されている量が異なったら違う
+			if (this->size() != that.size()) {
+				return false;
+			}
+			//const std::span<T> aArr = std::span<T>{ this->GetArray().data(), this->size_};
+			//const std::span<T> bArr = std::span<T>{ that.GetArray().data(), that.size_};
+
+			//return aArr == bArr;
+
+			// どれか一つでも違ったら異なる
+			for (uint32_t i = 0; i < size(); i++) {
+				if ((*this)[i] != that[i]) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		T &operator[](const uint32_t index) { return GetArray()[index]; }
+		const T &operator[](const uint32_t index) const { return GetArray()[index]; }
 
 		bool ImGuiWidget(const char *const label);
 
@@ -54,21 +79,24 @@ namespace SoLib {
 		}
 
 		bool IsMax()const {
-			return size_ == maxSize;
+			return size_ == MaxSize;
 		}
 
 		void push_back(const T &other);
 		void push_back(T &&other);
+
+		T &at(uint32_t index) { return GetArray()[index]; }
+		const T &at(uint32_t index) const { return GetArray()[index]; }
+
+	private:
+
+		friend ContainerBeginEnd<ConstVector<T, MaxSize>>;
 
 		iterator beginImpl() { return GetArray().data(); }
 		const_iterator beginImpl() const { return GetArray().data(); }
 
 		iterator endImpl() { return GetArray().data() + size_; }
 		const_iterator endImpl() const { return GetArray().data() + size_; }
-
-		T &at(uint32_t index) { return GetArray()[index]; }
-		const T &at(uint32_t index) const { return GetArray()[index]; }
-
 
 	private:
 
@@ -79,8 +107,8 @@ namespace SoLib {
 		uint32_t size_;
 	};
 
-	template <SoLib::IsNotPointer T, uint32_t maxSize>
-	inline bool ConstVector<T, maxSize>::ImGuiWidget(const char *const label)
+	template <SoLib::IsRealType T, uint32_t MaxSize>
+	inline bool ConstVector<T, MaxSize>::ImGuiWidget(const char *const label)
 	{
 #ifdef USE_IMGUI
 
@@ -99,9 +127,9 @@ namespace SoLib {
 #endif // USE_IMGUI
 	}
 
-	template<SoLib::IsNotPointer T, uint32_t maxSize>
-	inline void ConstVector<T, maxSize>::push_back(const T &other) {
-		if (maxSize > size_) {
+	template<SoLib::IsRealType T, uint32_t MaxSize>
+	inline void ConstVector<T, MaxSize>::push_back(const T &other) {
+		if (MaxSize > size_) {
 			// 対象となるアドレス
 			T *itemPtr = &GetArray()[size_++];
 			// 配置new
@@ -110,9 +138,9 @@ namespace SoLib {
 		}
 	}
 
-	template<SoLib::IsNotPointer T, uint32_t maxSize>
-	inline void ConstVector<T, maxSize>::push_back(T &&other) {
-		if (maxSize > size_) {
+	template<SoLib::IsRealType T, uint32_t MaxSize>
+	inline void ConstVector<T, MaxSize>::push_back(T &&other) {
+		if (MaxSize > size_) {
 
 			// 対象となるアドレス
 			T *itemPtr = &GetArray()[size_++];
@@ -122,8 +150,8 @@ namespace SoLib {
 		}
 	}
 
-	template <SoLib::IsNotPointer T, uint32_t maxSize>
-	void from_json(const nlohmann::json &json, ConstVector<T, maxSize> &value) {
+	template <SoLib::IsRealType T, uint32_t MaxSize>
+	void from_json(const nlohmann::json &json, ConstVector<T, MaxSize> &value) {
 		value = json.get<std::vector<T>>();
 	}
 

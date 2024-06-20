@@ -34,7 +34,7 @@ void SolEngine::ModelRender::Sort()
 	}
 }
 
-void SolEngine::ModelRender::Draw(const Camera3D &camera)
+void SolEngine::ModelRender::Draw(const Camera3D &camera) const
 {
 	assert(Model::GetPipelineType() == Model::PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
@@ -42,7 +42,6 @@ void SolEngine::ModelRender::Draw(const Camera3D &camera)
 
 	{
 		for (auto [transform, meshs] : modelsBuffer_[static_cast<uint32_t>(Model::BlendMode::kNone)]) {
-			// std::sort(meshs.begin(), meshs.end());
 
 			commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform->GetGPUVirtualAddress());
 			for (auto &mesh : meshs) {
