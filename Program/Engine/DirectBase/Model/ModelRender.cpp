@@ -8,7 +8,7 @@ namespace SolEngine {
 		commandList_ = dxCommon_->GetCommandList();
 
 		ResourceObjectManager<RootSignature> *const rootSignatureManager = ResourceObjectManager<RootSignature>::GetInstance();
-		rootSignature_ = rootSignatureManager->Load({ .item_ { "b0b1b2" } });
+		rootSignature_ = rootSignatureManager->Load({ .item_ { "b0VS,b1AL,b0PS" } });
 
 //		ResourceObjectManager<PipelineState> *const pipelineManager = ResourceObjectManager<PipelineState>::GetInstance();
 //

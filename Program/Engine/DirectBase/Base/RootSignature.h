@@ -63,65 +63,46 @@ namespace SolEngine {
 				// 文字列の変更
 				data.index_ = static_cast<uint32_t>(span[1] - '0');
 
-				const std::string_view shaderType = std::string_view{ &params[2],2u };
-
-				if (shaderType == "AL") {
-					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_ALL;
-				}
-				else if (shaderType == "VS") {
-					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_VERTEX;
-				}
-				else if (shaderType == "PS") {
-					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_PIXEL;
-				}
-				else if (shaderType == "HS") {
-					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_HULL;
-				}
-				else if (shaderType == "DS") {
-					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_DOMAIN;
-				}
-				else if (shaderType == "GS") {
-					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_GEOMETRY;
-				}
-				else if (shaderType == "AS") {
-					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_AMPLIFICATION;
-				}
-				else if (shaderType == "MS") {
-					data.shaderVisibility_ = D3D12_SHADER_VISIBILITY_MESH;
-				}
-
-
+				data.shaderVisibility_ = ShaderType(&params[2]);
 			}
+
 		}
 
 
-	};
+		static D3D12_SHADER_VISIBILITY ShaderType(const char shaderType[2]) {
 
-	template <SoLib::IsRealType... Ts>
-	struct RootParameters {
+			if (shaderType[1] == 'S') {
+				switch (shaderType[0])
+				{
+				case 'V':
+					return D3D12_SHADER_VISIBILITY_VERTEX;
+				case 'P':
+					return D3D12_SHADER_VISIBILITY_PIXEL;
+				case 'H':
+					return D3D12_SHADER_VISIBILITY_HULL;
+				case 'D':
+					return D3D12_SHADER_VISIBILITY_DOMAIN;
+				case 'G':
+					return D3D12_SHADER_VISIBILITY_GEOMETRY;
+				case 'A':
+					return D3D12_SHADER_VISIBILITY_AMPLIFICATION;
+				case 'M':
+					return D3D12_SHADER_VISIBILITY_MESH;
+				default:
+					return D3D12_SHADER_VISIBILITY_ALL;
+				}
 
-		RootParameters() : parameters_{ RootParameter::BufferData{.type_ = CheckType<Ts>()}... } {}
-
-		const std::array<RootParameter::BufferData, sizeof...(Ts)> parameters_;
-
-	private:
-
-		using tuple = std::tuple<Ts...>;
-
-		template<SoLib::IsRealType T>
-		inline static constexpr RootParameter::BufferType CheckType() {
-			if constexpr (requires(T a) {
-				{ a.GetView() } -> std::same_as<const D3D12_CONSTANT_BUFFER_VIEW_DESC &>;
-			}) {
-				return RootParameter::BufferType::kCBV;
 			}
-			else {
-				return RootParameter::BufferType::kSRV;
-			}
+			return D3D12_SHADER_VISIBILITY_ALL;
 		}
 
+	};
+
+	struct RootParameterHelper {
 
 	};
+
+
 
 }
 
