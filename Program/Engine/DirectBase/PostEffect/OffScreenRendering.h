@@ -82,6 +82,11 @@ namespace PostEffect {
 			std::pair<float, int32_t> iValue_;
 		};
 
+		const SolEngine::RootParametersAccesser<DescHeapCbvSrvUav::Handle, CBuffer<ValuePair>> accesser_ = SolEngine::MakeRootParametersAccesser(
+			SignParam<DescHeapCbvSrvUav::Handle>{ "t0PS" },
+			SignParam<CBuffer<ValuePair>>{ "b0PS" }
+		);
+
 		CBuffer<ValuePair> param_;
 
 		SolEngine::ResourceObjectManager<RootSignature>::Handle rootSignature_;

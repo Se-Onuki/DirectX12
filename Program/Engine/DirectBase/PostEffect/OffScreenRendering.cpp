@@ -130,7 +130,7 @@ namespace PostEffect {
 		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 
 		auto *const rootSignatureManager = SolEngine::ResourceObjectManager<RootSignature>::GetInstance();
-		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = {sampler},.item_ = {"t0PS,b0PS"}};
+		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = {sampler},.item_ = accesser_ .MakeRootParameters()};
 
 		rootSignature_ = rootSignatureManager->Load(rootSignatureSource);
 
@@ -218,7 +218,7 @@ namespace PostEffect {
 		command->SetGraphicsRootSignature(GetRootSignature());
 		command->SetPipelineState(GetPipeLine(key));
 		command->SetGraphicsRootDescriptorTable(0, gpuHandle);
-		command->SetGraphicsRootConstantBufferView(1, param_.GetGPUVirtualAddress());
+		command->SetGraphicsRootConstantBufferView(accesser_.GetIndex<CBuffer<ValuePair>>(), param_.GetGPUVirtualAddress());
 
 		command->DrawInstanced(3, 1, 0, 0);
 

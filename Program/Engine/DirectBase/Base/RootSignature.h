@@ -134,14 +134,14 @@ namespace SolEngine {
 		static constexpr bool kIsHasVAddress_ = requires(T t) { { t.GetGPUVirtualAddress() } -> std::same_as<D3D12_GPU_VIRTUAL_ADDRESS>; };
 
 
-		auto GetGPUParam(const T &item) const -> std::conditional<kIsHasVAddress_, D3D12_GPU_VIRTUAL_ADDRESS, D3D12_GPU_DESCRIPTOR_HANDLE> {
-			if constexpr (kIsHasVAddress_) {
-				return item.GetGPUVirtualAddress();
-			}
-			else {
-				return D3D12_GPU_DESCRIPTOR_HANDLE{};
-			}
-		}
+		//auto GetGPUParam(const T &item) const -> std::conditional<kIsHasVAddress_, D3D12_GPU_VIRTUAL_ADDRESS, D3D12_GPU_DESCRIPTOR_HANDLE> {
+		//	if constexpr (kIsHasVAddress_) {
+		//		return item.GetGPUVirtualAddress();
+		//	}
+		//	else {
+		//		return D3D12_GPU_DESCRIPTOR_HANDLE{};
+		//	}
+		//}
 
 		MonoParameter() = default;
 		MonoParameter(RootParameters::BufferData &&bufferData) : bufferData_(bufferData) {}
@@ -154,6 +154,16 @@ namespace SolEngine {
 
 		template<SoLib::IsRealType T>
 		static constexpr uint32_t GetIndex() { return SoLib::IndexOfV<MonoParameter<T>, decltype(parameters_)>; }
+
+
+		RootParameters MakeRootParameters() const {
+			RootParameters result;
+
+			result.parameters_.reserve(sizeof...(Ts));
+			result.parameters_ = { { std::get<MonoParameter<Ts>>(parameters_).bufferData_}... };
+
+			return result;
+		}
 
 	};
 
