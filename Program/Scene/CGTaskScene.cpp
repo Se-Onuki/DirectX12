@@ -33,7 +33,7 @@ void CGTaskScene::OnEnter()
 	levelImporter.Import(levelData, world_.get());
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
-	auto assimpHandle = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
+	auto assimpHandle = assimpManager->Load({ "Model/human/", "walk.gltf" });
 
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	boxModel_ = modelDataManager->Load({ assimpHandle });
@@ -69,7 +69,7 @@ void CGTaskScene::OnEnter()
 
 	*vec2_ = Vector2{ 10,10 };
 
-	computeShader_.Init();
+	computeShader_.Init(boxModel_->meshHandleList_[0]->vertexBuffer_.GetVertexData().size());
 
 	/*SolEngine::RootParameter rootParameters = {
 		{

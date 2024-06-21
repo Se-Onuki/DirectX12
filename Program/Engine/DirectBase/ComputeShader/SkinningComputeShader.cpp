@@ -4,9 +4,10 @@
 
 namespace SolEngine {
 
-	void SkinningComputeShader::Init()
+	void SkinningComputeShader::Init(const uint32_t vertexCount)
 	{
 		auto device = GetDevice();
+		auto srvHeap = GetDescHeapCbvSrvUav();
 
 		D3D12_COMPUTE_PIPELINE_STATE_DESC computePipelineStateDesc{};
 
@@ -24,6 +25,21 @@ namespace SolEngine {
 		hr = device->CreateComputePipelineState(&computePipelineStateDesc, IID_PPV_ARGS(&computePipelineState_));
 
 		assert(SUCCEEDED(hr));
+
+		uavView_ = {
+			.Format = DXGI_FORMAT_UNKNOWN,
+			.ViewDimension = D3D12_UAV_DIMENSION_BUFFER,
+			.Buffer = {
+				.FirstElement = 0,
+				.NumElements = vertexCount,			// 頂点数で計算を行う
+				.StructureByteStride = sizeof(Mesh::VertexData),
+				.CounterOffsetInBytes = 0,
+				.Flags = D3D12_BUFFER_UAV_FLAG_NONE,
+			},
+		};
+
+		heapRange_ = srvHeap->RequestHeapAllocation(1u);
+		device->CreateUnorderedAccessView(outPutData_.GetResources(), nullptr, &uavView_, heapRange_.GetHandle(0u).cpuHandle_);
 
 	}
 }

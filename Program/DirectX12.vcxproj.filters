@@ -154,6 +154,9 @@
     <Filter Include="Engine\ComputeShader">
       <UniqueIdentifier>{fb813de0-fe90-4ae3-be62-c22d19c89866}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\DxResource">
+      <UniqueIdentifier>{d8a1e398-8a6a-4e49-b3c2-4609c8bf62e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -862,6 +865,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.h">
       <Filter>Engine\ComputeShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\DxResource\DxResource.h">
+      <Filter>Engine\DxResource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

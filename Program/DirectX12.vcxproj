@@ -291,6 +291,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Create\Create.h" />
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandle.h" />
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h" />
+    <ClInclude Include="Engine\DirectBase\DxResource\DxResource.h" />
     <ClInclude Include="Engine\DirectBase\File\GlobalVariables.h" />
     <ClInclude Include="Engine\DirectBase\File\VariantItem.h" />
     <ClInclude Include="Engine\DirectBase\Input\Input.h" />
