@@ -44,6 +44,9 @@ namespace SolEngine {
 				case 't':
 					type_ = BufferType::kSRV;
 					break;
+				case 'u':
+					type_ = BufferType::kUAV;
+					break;
 				default:
 					type_ = BufferType::kCBV;
 					break;
@@ -54,9 +57,8 @@ namespace SolEngine {
 				shaderVisibility_ = ShaderVisibility(&str[2]);
 			}
 
-			template <SoLib::Text::ConstExprString CStr, SoLib::Text::StaticString<CStr> Str>
-			consteval BufferData() {
-				const char *const str = Str.c_str();
+			template <size_t Size>
+			consteval BufferData(const char(&str)[Size]) {
 
 				switch (str[0])
 				{
@@ -65,6 +67,9 @@ namespace SolEngine {
 					break;
 				case 't':
 					type_ = BufferType::kSRV;
+					break;
+				case 'u':
+					type_ = BufferType::kUAV;
 					break;
 				default:
 					type_ = BufferType::kCBV;
@@ -205,7 +210,7 @@ private:
 template <>
 class SolEngine::ResourceSource<RootSignature> {
 public:
-	D3D12_STATIC_SAMPLER_DESC sampler_ = DefaultSampler();
+	std::optional<D3D12_STATIC_SAMPLER_DESC> sampler_;
 
 	//std::string 
 

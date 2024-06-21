@@ -8,46 +8,46 @@ namespace SolEngine {
 		commandList_ = dxCommon_->GetCommandList();
 
 		ResourceObjectManager<RootSignature> *const rootSignatureManager = ResourceObjectManager<RootSignature>::GetInstance();
-		
+
 		const auto accesser = MakeRootParametersAccesser(SignParam<CBuffer<TransformMatrix>>{"b0VS"});
 
-		rootSignature_ = rootSignatureManager->Load({ .item_ { "b0VS,b1AL,b0PS" } });
+		rootSignature_ = rootSignatureManager->Load({ .sampler_ = ResourceSource<RootSignature>::DefaultSampler(), .item_ { "b0VS,b1AL,b0PS" } });
 
-//		ResourceObjectManager<PipelineState> *const pipelineManager = ResourceObjectManager<PipelineState>::GetInstance();
-//
-//		ResourceSource<PipelineState> noneSource;
-//
-//		// ルートシグネチャの代入
-//		noneSource.rootSignature_ = rootSignature_;
-//
-//#pragma region InputLayout(インプットレイアウト)
-//
-//		// InputLayout
-//		const std::array<D3D12_INPUT_ELEMENT_DESC, 3u> inputElementDescs{
-//			D3D12_INPUT_ELEMENT_DESC{
-//				.SemanticName = "POSITION",
-//					.SemanticIndex = 0,
-//					.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
-//					.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
-//			},
-//			D3D12_INPUT_ELEMENT_DESC{
-//				.SemanticName = "NORMAL",
-//				.SemanticIndex = 0,
-//				.Format = DXGI_FORMAT_R32G32B32_FLOAT,
-//				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
-//			},
-//			D3D12_INPUT_ELEMENT_DESC{
-//				.SemanticName = "TEXCOORD",
-//				.SemanticIndex = 0,
-//				.Format = DXGI_FORMAT_R32G32_FLOAT,
-//				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
-//			},
-//		};
-//		noneSource.inputElementDescs_.assign(inputElementDescs.begin(), inputElementDescs.end());
-//
-//#pragma endregion
-//
-//		pipeline_[0] = pipelineManager->Load(noneSource);
+		//		ResourceObjectManager<PipelineState> *const pipelineManager = ResourceObjectManager<PipelineState>::GetInstance();
+		//
+		//		ResourceSource<PipelineState> noneSource;
+		//
+		//		// ルートシグネチャの代入
+		//		noneSource.rootSignature_ = rootSignature_;
+		//
+		//#pragma region InputLayout(インプットレイアウト)
+		//
+		//		// InputLayout
+		//		const std::array<D3D12_INPUT_ELEMENT_DESC, 3u> inputElementDescs{
+		//			D3D12_INPUT_ELEMENT_DESC{
+		//				.SemanticName = "POSITION",
+		//					.SemanticIndex = 0,
+		//					.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+		//					.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		//			},
+		//			D3D12_INPUT_ELEMENT_DESC{
+		//				.SemanticName = "NORMAL",
+		//				.SemanticIndex = 0,
+		//				.Format = DXGI_FORMAT_R32G32B32_FLOAT,
+		//				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		//			},
+		//			D3D12_INPUT_ELEMENT_DESC{
+		//				.SemanticName = "TEXCOORD",
+		//				.SemanticIndex = 0,
+		//				.Format = DXGI_FORMAT_R32G32_FLOAT,
+		//				.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT,
+		//			},
+		//		};
+		//		noneSource.inputElementDescs_.assign(inputElementDescs.begin(), inputElementDescs.end());
+		//
+		//#pragma endregion
+		//
+		//		pipeline_[0] = pipelineManager->Load(noneSource);
 
 	}
 

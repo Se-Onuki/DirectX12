@@ -175,6 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Base\Shader.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\TextureManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\WinApp.cpp" />
+    <ClCompile Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.cpp" />
     <ClCompile Include="Engine\DirectBase\Create\Create.cpp" />
     <ClCompile Include="Engine\DirectBase\File\GlobalVariables.cpp" />
     <ClCompile Include="Engine\DirectBase\Input\Input.cpp" />
@@ -286,6 +287,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Base\TextureManager.h" />
     <ClInclude Include="Engine\DirectBase\Base\VertexBuffer.h" />
     <ClInclude Include="Engine\DirectBase\Base\WinApp.h" />
+    <ClInclude Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.h" />
     <ClInclude Include="Engine\DirectBase\Create\Create.h" />
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandle.h" />
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h" />
@@ -491,6 +493,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\shader\Skinning.CS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="resources\shader\SkinningObject3d.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

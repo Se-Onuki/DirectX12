@@ -9,6 +9,7 @@
 #include "../ECS/World/World.hpp"
 #include "../ECS/System/SystemManager.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
+#include "../Engine/DirectBase/ComputeShader/SkinningComputeShader.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -51,5 +52,7 @@ private:
 	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle boxModel_;
 
 	DirectXCommon *pDxCommon_ = nullptr;
+
+	SolEngine::SkinningComputeShader computeShader_;
 
 };

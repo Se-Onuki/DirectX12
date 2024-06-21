@@ -69,6 +69,8 @@ void CGTaskScene::OnEnter()
 
 	*vec2_ = Vector2{ 10,10 };
 
+	computeShader_.Init();
+
 	/*SolEngine::RootParameter rootParameters = {
 		{
 			SolEngine::RootParameter::MakePair<int, 'a'>(),

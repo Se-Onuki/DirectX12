@@ -82,10 +82,13 @@ std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::Create
 		switch (item.type_)
 		{
 		case RootParameters::BufferType::kCBV:
+		{
 			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 			parameter.Descriptor.ShaderRegister = item.index_;
+		}
 			break;
 		case RootParameters::BufferType::kSRV:
+		{
 			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 
 			// DescriptorRangeの設定
@@ -97,12 +100,26 @@ std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::Create
 
 			parameter.DescriptorTable.pDescriptorRanges = &descriptorRange;
 			parameter.DescriptorTable.NumDescriptorRanges = 1;
+		}
 
 			break;
-		/*case RootParameters::BufferType::kUAV:
+		case RootParameters::BufferType::kUAV:
+		{
+			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+
+			// DescriptorRangeの設定
+			D3D12_DESCRIPTOR_RANGE &descriptorRange = descRanges.emplace_back();
+			descriptorRange.BaseShaderRegister = item.index_;
+			descriptorRange.NumDescriptors = 1;                                                       // 数は1つ
+			descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;                              // UAVを使う
+			descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+
+			parameter.DescriptorTable.pDescriptorRanges = &descriptorRange;
+			parameter.DescriptorTable.NumDescriptorRanges = 1;
+		}
 			break;
-		default:
-			break;*/
+			/*default:
+				break;*/
 		}
 
 		parameters.push_back(parameter);
@@ -117,8 +134,10 @@ std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::Create
 
 #pragma region Samplerの設定
 
-	descriptionRootSignature.pStaticSamplers = &source.sampler_;
-	descriptionRootSignature.NumStaticSamplers = 1;
+	if (source.sampler_) {
+		descriptionRootSignature.pStaticSamplers = &source.sampler_.value();
+		descriptionRootSignature.NumStaticSamplers = 1;
+	}
 
 #pragma endregion
 

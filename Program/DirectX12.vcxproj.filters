@@ -151,6 +151,9 @@
     <Filter Include="Utils\Types">
       <UniqueIdentifier>{3081b939-dfe2-4b1d-97f6-644deac1a732}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\ComputeShader">
+      <UniqueIdentifier>{fb813de0-fe90-4ae3-be62-c22d19c89866}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -440,6 +443,9 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\SkinClusterBase.cpp">
       <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -854,6 +860,9 @@
     <ClInclude Include="Engine\DirectBase\Model\SkinClusterBase.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.h">
+      <Filter>Engine\ComputeShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">
@@ -899,6 +908,9 @@
       <Filter>Engine\Shader</Filter>
     </FxCompile>
     <FxCompile Include="resources\shader\GaussianFilterLiner.PS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\Skinning.CS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
   </ItemGroup>

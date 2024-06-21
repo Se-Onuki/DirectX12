@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <d3d12.h>
 #include <wrl.h>
+#include "../Descriptor/DescriptorManager.h"
 
 ///
 ///	DirectXCommonとの結合度を下げるための基底クラス
