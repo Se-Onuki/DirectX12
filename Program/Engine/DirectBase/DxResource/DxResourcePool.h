@@ -192,7 +192,7 @@ namespace SolEngine {
 		// 要素が足りなかったら延長する
 		if (resources_.size() < size_ + diff) { // 既存の領域より､追加後の領域の長さが大きかったら延長処理を行う
 			resources_.resize(size_ + diff);
-			std::for_each_n(resources_.begin() + size_, diff, [](DxResourceItem &item) { item = DxResourceBuffer::Create(); });
+			std::generate_n(resources_.begin() + size_, diff, DxResourceBuffer::Create);
 		}
 
 		// メモリコピー

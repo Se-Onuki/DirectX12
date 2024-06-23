@@ -41,14 +41,15 @@ namespace SoLib {
 
 	template<SoLib::IsRealType T>
 	inline T *const Singleton<T>::GetInstance() {
-		// マルチスレッドのロックを掛ける
-		std::unique_lock lock{ mutex_ };
-		// 実体がない場合
-		if (not instance_) {
-			// 生成
-			instance_.reset(new T);
+		{
+			// マルチスレッドのロックを掛ける
+			std::lock_guard<std::mutex> lock(mutex_);
+			// 実体がない場合
+			if (not instance_) {
+				// 生成
+				instance_.reset(new T);
+			}
 		}
-		lock.unlock();
 		// ポインタを返す
 		return instance_.get();
 	}

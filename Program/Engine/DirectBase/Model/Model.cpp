@@ -1660,26 +1660,45 @@ const ModelNode *ModelNode::FindNode(const std::string &name) const
 	return nullptr;
 }
 
-Skeleton Skeleton::MakeSkeleton(const ModelNode *rootNode)
+SkeletonState SkeletonState::MakeSkeleton(const ModelNode *rootNode)
 {
-	Skeleton result;
+	SkeletonState result;
 	// ノードからジョイントを構築し、現在のジョイントのindexを保存する
-	result.root_ = ModelJoint::MakeJointIndex(rootNode, {}, result.joints_);
+	ModelJointState::MakeJointIndex(rootNode, result.joints_);
 
-	// 名前とindexを紐づける
-	for (const auto &joint : result.joints_) {
-		result.jointMap_.emplace(joint->name_, joint->index_);
-	}
+	result.reference_ = SkeletonReference::MakeSkeleton(rootNode);
 
 	return result;
 }
-
-void Skeleton::UpdateMatrix()
+std::unique_ptr<SkeletonReference> SkeletonReference::MakeSkeleton(const ModelNode *rootNode)
 {
-	for (auto &joint : joints_) {
+	auto result = std::make_unique<SkeletonReference>();
+	// ノードからジョイントを構築し、現在のジョイントのindexを保存する
+	result->root_ = ModelJointReference::MakeJointIndex(rootNode, {}, result->joints_);
+
+	// 領域の確保
+	result->jointMap_.reserve(result->joints_.size());
+
+	// 名前とindexを紐づける
+	std::transform(result->joints_.cbegin(), result->joints_.cend(), std::inserter(result->jointMap_, result->jointMap_.end()), [](auto &item) {return std::make_pair(item->name_, item->index_); });
+
+	//// 名前とindexを紐づける
+	//for (const auto &joint : result->joints_) {
+	//	result->jointMap_.emplace(std::make_pair(joint->name_, joint->index_));
+	//}
+
+	return std::move(result);
+}
+
+
+void SkeletonState::UpdateMatrix()
+{
+	for (uint32_t i = 0; i < joints_.size(); i++) {
+		const auto &ref = reference_->joints_[i];
+		auto &joint = joints_[i];
 		joint->CalcAffine();
-		if (joint->parent_) {
-			joint->skeletonSpaceMatrix_ = joint->localMatrix_ * joints_[*joint->parent_]->skeletonSpaceMatrix_;
+		if (ref->parent_) {
+			joint->skeletonSpaceMatrix_ = joint->localMatrix_ * joints_[*ref->parent_]->skeletonSpaceMatrix_;
 		}
 		else {
 			joint->skeletonSpaceMatrix_ = joint->localMatrix_;
@@ -1688,11 +1707,13 @@ void Skeleton::UpdateMatrix()
 
 }
 
-void Skeleton::ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime)
+void SkeletonState::ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime)
 {
-	for (auto &joint : joints_) {
+	for (uint32_t i = 0; i < joints_.size(); i++) {
+		const auto &ref = reference_->joints_[i];
+		auto &joint = joints_[i];
 		// 対象のJointのAnimationがあれば、値の適用を行う。下記のif文はC++17から可能になった初期化付きif文。
-		if (auto it = animation.nodeAnimations_.find(joint->name_); it != animation.nodeAnimations_.end()) {
+		if (auto it = animation.nodeAnimations_.find(ref->name_); it != animation.nodeAnimations_.end()) {
 			const auto &rootNodeAnimation = it->second;
 			// 時間に応じた値を取得して代入する
 			joint->transform_.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
@@ -1703,22 +1724,42 @@ void Skeleton::ApplyAnimation(const ModelAnimation::Animation &animation, const 
 
 	}
 }
-
-uint32_t ModelJoint::MakeJointIndex(const ModelNode *node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints)
+uint32_t ModelJointReference::MakeJointIndex(const ModelNode *node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJointReference>> &joints)
 {
-	std::unique_ptr<ModelJoint> joint = std::make_unique<ModelJoint>();
+	// 領域の確保回数を減らす
+	joints.reserve(joints.size() + 1 + node->children_.size());
+
+	auto joint = std::make_unique<ModelJointReference>();
 	joint->name_ = node->name_;
-	joint->localMatrix_ = node->GetLocalMatrix();
-	joint->skeletonSpaceMatrix_ = Matrix4x4::Identity();
-	joint->transform_ = node->transform_;
 	uint32_t selfIndex = joint->index_ = static_cast<uint32_t>(joints.size());
 	if (parent) { joint->parent_ = parent; }
 	joints.push_back(std::move(joint));
 
 	for (const auto &child : node->children_) {
 
-		uint32_t childIndex = ModelJoint::MakeJointIndex(child.get(), selfIndex, joints);
+		uint32_t childIndex = ModelJointReference::MakeJointIndex(child.get(), selfIndex, joints);
 		joints[selfIndex]->children_.push_back(childIndex);
+	}
+
+	return selfIndex;
+}
+
+
+uint32_t ModelJointState::MakeJointIndex(const ModelNode *node, std::vector<std::unique_ptr<ModelJointState>> &joints)
+{
+	// 領域の確保回数を減らす
+	joints.reserve(joints.size() + 1 + node->children_.size());
+
+	std::unique_ptr<ModelJointState> joint = std::make_unique<ModelJointState>();
+	joint->localMatrix_ = node->GetLocalMatrix();
+	joint->skeletonSpaceMatrix_ = Matrix4x4::Identity();
+	joint->transform_ = node->transform_;
+	const uint32_t selfIndex = static_cast<uint32_t>(joints.size());
+	joints.push_back(std::move(joint));
+
+	for (const auto &child : node->children_) {
+
+		ModelJointState::MakeJointIndex(child.get(), joints);
 	}
 
 	return selfIndex;
@@ -1747,7 +1788,7 @@ SkinCluster::SkinCluster(uint32_t jointsCount, uint32_t vertexCount)
 	paletteSpan_ = { palette_.data(), jointsCount };
 }
 
-std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model *model, const Skeleton &skeleton)
+std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model *model, const SkeletonState &skeleton)
 {
 	uint32_t vertexCount = 0;
 	for (const auto &mesh : model->meshList_) {
@@ -1755,18 +1796,16 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model *model, co
 	}
 	std::unique_ptr<SkinCluster> result = std::make_unique<SkinCluster>(static_cast<uint32_t>(skeleton.joints_.size()), vertexCount);
 
-	result->skinCluster_ = model->skinCluster_;
-
 	// 初期化
-	result->inverseBindPoseMatrixList_.resize(skeleton.jointMap_.size());
+	result->inverseBindPoseMatrixList_.resize(skeleton.reference_->jointMap_.size());
 	std::generate(result->inverseBindPoseMatrixList_.begin(), result->inverseBindPoseMatrixList_.end(), Matrix4x4::Identity);
 
-	const auto jointEndIt = skeleton.jointMap_.end();
+	const auto jointEndIt = skeleton.reference_->jointMap_.end();
 
 	// モデルデータを解析してInfluenceを埋める
 	for (const auto &[keyName, jointWeight] : model->skinCluster_.skinClusterData_) {
 		// 一致するジョイントの対象が存在するか探す
-		auto it = skeleton.jointMap_.find(keyName);
+		auto it = skeleton.reference_->jointMap_.find(keyName);
 		if (it == jointEndIt) { // 存在しなかったら飛ばす
 			continue;
 		}
@@ -1775,11 +1814,11 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model *model, co
 		result->inverseBindPoseMatrixList_[it->second] = jointWeight.inverseBindPoseMatrix_;
 		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
 			// 該当するinfluence情報を参照しておく
-			auto &currentInfluence = result->influenceSpan_[vertexWeight.vertexIndex_[0]];
+			auto &currentInfluence = result->influenceSpan_[vertexWeight.vertexIndex_];
 			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
 				// 空いているところにデータを代入
 				if (currentInfluence.vertexInfluence_.weight_[index] == 0.0f) {
-					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_[0];
+					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_;
 					currentInfluence.vertexInfluence_.vertexIndex_[index] = it->second;
 					break;
 				}
@@ -1793,7 +1832,7 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model *model, co
 
 }
 
-std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::ModelData *model, const Skeleton &skeleton)
+std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::ModelData *model, const SkeletonState &skeleton)
 {
 	uint32_t vertexCount = 0;
 	for (const auto &mesh : model->meshHandleList_) {
@@ -1801,18 +1840,16 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 	}
 	std::unique_ptr<SkinCluster> result = std::make_unique<SkinCluster>(static_cast<uint32_t>(skeleton.joints_.size()), vertexCount);
 
-	result->skinCluster_ = *model->skinCluster_->skinCluster_;
-
 	// 初期化
-	result->inverseBindPoseMatrixList_.resize(skeleton.jointMap_.size());
+	result->inverseBindPoseMatrixList_.resize(skeleton.reference_->jointMap_.size());
 	std::generate(result->inverseBindPoseMatrixList_.begin(), result->inverseBindPoseMatrixList_.end(), Matrix4x4::Identity);
 
-	const auto jointEndIt = skeleton.jointMap_.end();
+	const auto jointEndIt = skeleton.reference_->jointMap_.end();
 
 	// モデルデータを解析してInfluenceを埋める
 	for (const auto &[keyName, jointWeight] : model->skinCluster_->skinCluster_->skinClusterData_) {
 		// 一致するジョイントの対象が存在するか探す
-		auto it = skeleton.jointMap_.find(keyName);
+		auto it = skeleton.reference_->jointMap_.find(keyName);
 		if (it == jointEndIt) { // 存在しなかったら飛ばす
 			continue;
 		}
@@ -1821,11 +1858,11 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 		result->inverseBindPoseMatrixList_[it->second] = jointWeight.inverseBindPoseMatrix_;
 		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
 			// 該当するinfluence情報を参照しておく
-			auto &currentInfluence = result->influenceSpan_[vertexWeight.vertexIndex_[0]];
+			auto &currentInfluence = result->influenceSpan_[vertexWeight.vertexIndex_];
 			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
 				// 空いているところにデータを代入
 				if (currentInfluence.vertexInfluence_.weight_[index] == 0.0f) {
-					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_[0];
+					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_;
 					currentInfluence.vertexInfluence_.vertexIndex_[index] = it->second;
 					break;
 				}
@@ -1838,7 +1875,7 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 	return std::move(result);
 }
 
-void SkinCluster::Update(const Skeleton &skeleton)
+void SkinCluster::Update(const SkeletonState &skeleton)
 {
 	for (size_t jointIndex = 0; jointIndex < skeleton.joints_.size(); jointIndex++) {
 		assert(jointIndex < inverseBindPoseMatrixList_.size() and "範囲外にアクセスしています");
@@ -1852,8 +1889,7 @@ std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(Model *model)
 {
 	std::unique_ptr<SkinModel> result = std::make_unique<SkinModel>();
 
-
-	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(model->rootNode_.get()));
+	result->skeleton_ = std::make_unique<SkeletonState>(SkeletonState::MakeSkeleton(model->rootNode_.get()));
 	result->skinCluster_ = SkinCluster::MakeSkinCluster(model, *result->skeleton_);
 	return std::move(result);
 }
@@ -1862,7 +1898,7 @@ std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(SolEngine::ModelData *model)
 {
 	std::unique_ptr<SkinModel> result = std::make_unique<SkinModel>();
 
-	result->skeleton_ = std::make_unique<Skeleton>(Skeleton::MakeSkeleton(model->rootNode_.get()));
+	result->skeleton_ = std::make_unique<SkeletonState>(SkeletonState::MakeSkeleton(model->rootNode_.get()));
 	result->skinCluster_ = SkinCluster::MakeSkinCluster(model, *result->skeleton_);
 	return std::move(result);
 }
@@ -1874,7 +1910,7 @@ void SkinModel::Update(const ModelAnimation::Animation &animation, const float a
 	skinCluster_->Update(*skeleton_);
 }
 
-void Skeleton::AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &drawOffset) const
+void SkeletonState::AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &drawOffset) const
 {
 	auto *blockRender_ = BlockManager::GetInstance();
 	Model *plane = ModelManager::GetInstance()->GetModel("Plane");

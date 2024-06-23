@@ -80,18 +80,10 @@ struct ModelNode {
 	const ModelNode *FindNode(const std::string &name) const;
 };
 
-struct ModelJoint {
+struct ModelJointReference {
 
-	static uint32_t MakeJointIndex(const ModelNode *node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJoint>> &joints);
+	static uint32_t MakeJointIndex(const ModelNode *node, const std::optional<uint32_t> parent, std::vector<std::unique_ptr<ModelJointReference>> &joints);
 
-	inline void CalcAffine() { localMatrix_ = transform_.Affine(); }
-
-	// transform情報
-	SimpleTransformQuaternion transform_;
-	// ローカルの体勢情報
-	Matrix4x4 localMatrix_;
-	// スケルトン空間での変換行列
-	Matrix4x4 skeletonSpaceMatrix_;
 	// 名前
 	std::string name_;
 	// 子jointへのIndexリスト
@@ -103,29 +95,56 @@ struct ModelJoint {
 
 };
 
-struct Skeleton {
+struct ModelJointState {
 
-	static Skeleton MakeSkeleton(const ModelNode *rootNode);
+	static uint32_t MakeJointIndex(const ModelNode *node, std::vector<std::unique_ptr<ModelJointState>> &joints);
 
-	void UpdateMatrix();
+	inline void CalcAffine() { localMatrix_ = transform_.Affine(); }
 
-	void ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime);
+	// transform情報
+	SimpleTransformQuaternion transform_;
+	// ローカルの体勢情報
+	Matrix4x4 localMatrix_;
+	// スケルトン空間での変換行列
+	Matrix4x4 skeletonSpaceMatrix_;
+
+};
+
+struct SkeletonReference {
+
+	static std::unique_ptr<SkeletonReference> MakeSkeleton(const ModelNode *rootNode);
 
 	// RootJointのIndex
 	uint32_t root_ = 0u;
 	// Joint名からIndexを返す辞書
 	std::unordered_map<std::string, uint32_t> jointMap_;
+
+	std::vector<std::unique_ptr<ModelJointReference>> joints_;
+};
+
+struct SkeletonState {
+
+	static SkeletonState MakeSkeleton(const ModelNode *rootNode);
+
+	void UpdateMatrix();
+
+	void ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime);
+
 	// 所属しているJointのデータ
-	std::vector<std::unique_ptr<ModelJoint>> joints_;
+	std::vector<std::unique_ptr<ModelJointState>> joints_;
+
+	// データの参照
+	std::unique_ptr<SkeletonReference> reference_;
 
 	void AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &drawOffset = {}) const;
 
 };
 
+
 template<size_t InfluenceCount = 1u>
 struct VertexWeightData {
-	std::array<float, InfluenceCount> weight_;
-	std::array<uint32_t, InfluenceCount> vertexIndex_;
+	std::conditional_t<InfluenceCount != 1, std::array<float, InfluenceCount>, float> weight_;
+	std::conditional_t<InfluenceCount != 1, std::array<uint32_t, InfluenceCount>, uint32_t> vertexIndex_;
 };
 
 struct JointWeightData {
@@ -148,12 +167,11 @@ struct WellForGPU {
 
 struct SkinCluster {
 	SkinCluster(uint32_t jointsCount, uint32_t vertexCount);
-	static std::unique_ptr<SkinCluster> MakeSkinCluster(const Model *model, const Skeleton &skeleton);
-	static std::unique_ptr<SkinCluster> MakeSkinCluster(const SolEngine::ModelData *model, const Skeleton &skeleton);
+	static std::unique_ptr<SkinCluster> MakeSkinCluster(const Model *model, const SkeletonState &skeleton);
+	static std::unique_ptr<SkinCluster> MakeSkinCluster(const SolEngine::ModelData *model, const SkeletonState &skeleton);
 
-	void Update(const Skeleton &skeleton);
+	void Update(const SkeletonState &skeleton);
 
-	SkinClusterBaseData skinCluster_;
 	std::vector<Matrix4x4> inverseBindPoseMatrixList_;
 
 	std::span<VertexInfluence> influenceSpan_;
@@ -175,7 +193,7 @@ struct SkinModel {
 
 	//Model *pModel_ = nullptr;
 	std::unique_ptr<SkinCluster> skinCluster_ = nullptr;
-	std::unique_ptr<Skeleton> skeleton_ = nullptr;
+	std::unique_ptr<SkeletonState> skeleton_ = nullptr;
 
 };
 
