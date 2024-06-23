@@ -18,9 +18,13 @@ void CGTaskScene::OnEnter()
 {
 	ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
 
-	auto* matBuffer = SolEngine::DxResourcePoolList<Matrix4x4>::GetInstance();
+	auto *matBuffer = SolEngine::DxResourcePoolList<Matrix4x4>::GetInstance();
 
-	matBuffer->PushBack(Matrix4x4{});
+	std::array<Matrix4x4, 2> item{ Matrix4x4::Identity(), Matrix4x4::Identity() * 10.f };
+	auto matHandle = matBuffer->PushBack(item.begin(), item.end());
+	auto matPtr = matHandle[0].GetResource<Matrix4x4>();
+	if (matPtr) {
+	}
 
 	//constexpr size_t size = (~0xffllu & (sizeof(std::array<Matrix4x4, 4>) + 0xffllu));
 

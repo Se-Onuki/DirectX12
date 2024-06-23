@@ -4,6 +4,8 @@
 #include "../Base/EngineObject.h"
 #include <vector>
 #include <d3d12.h>
+#include <memory>
+#include <wrl.h>
 
 namespace SolEngine {
 
@@ -15,6 +17,65 @@ namespace SolEngine {
 		DxResourcePool(const DxResourcePool &) = delete;
 		DxResourcePool &operator=(const DxResourcePool &) = delete;
 		~DxResourcePool() = default;
+
+		using Singleton = SoLib::Singleton<DxResourcePool<ElementSize>>;
+	public:
+		struct Handle {
+
+			using ContainType = std::array<char, 0x100 * ElementSize>;
+
+			Handle() = default;
+			Handle(const Handle &) = default;
+			Handle(Handle &&) = default;
+			Handle &operator=(const Handle &r) { index_ = r.index_; version_ = r.version_; return *this; }
+
+			Handle(const size_t index, const size_t version) : index_(index), version_(version) {};
+			bool operator==(const Handle &) const = default;
+
+			auto operator<=>(const Handle &that) const -> std::weak_ordering {
+
+				const size_t aIndex = this->index_;
+				const size_t bIndex = that.index_;
+
+				// ハンドルが一致していない場合
+				if (aIndex != bIndex) {
+					return aIndex <=> bIndex;
+				}
+				// 一致していた場合
+				else {
+					return this->version_ <=> that.version_;
+				}
+			}
+
+			size_t GetIndex() const { return index_; }
+			size_t GetVersion() const { return version_; }
+			ContainType *GetResource() { return IsActive() ? static_cast<ContainType *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
+			const ContainType *GetResource() const { return IsActive() ? static_cast<const ContainType *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
+
+			template <SoLib::IsRealType T>
+			T *GetResource() { return IsActive() ? static_cast<T *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
+			template <SoLib::IsRealType T>
+			const T *GetResource() const { return IsActive() ? static_cast<const T *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
+
+			inline ContainType *operator*() { return GetResource(); }
+			inline const ContainType *operator*() const { return GetResource(); }
+
+			bool IsActive() const { return static_cast<bool>(*this); }
+
+			/// @brief このデータが有効であるか
+			explicit inline operator bool() const {
+				return
+					index_ != (std::numeric_limits<size_t>::max)() and 		// データが最大値(無効値)に設定されていないか
+					Singleton::instance_ and 								// マネージャーが存在するか
+					Singleton::instance_->version_ == version_ and 			// バージョンが同じか
+					Singleton::instance_->size_ > index_ and 				// 参照ができる状態か
+					Singleton::instance_->resources_.at(index_)->mapPtr_;	// データが存在するか
+			}
+
+		private:
+			size_t index_ = (std::numeric_limits<size_t>::max)();
+			size_t version_ = (std::numeric_limits<size_t>::max)();
+		};
 	public:
 
 		void Init();
@@ -22,10 +83,10 @@ namespace SolEngine {
 		void Clear();
 
 		template <SoLib::IsRealType T>
-		void PushBack(const T &data = {});
+		Handle PushBack(const T &data = {});
 
-		template <SoLib::IsRealType T, SoLib::IsContainsType<T> C>
-		void PushBack(const C &data);
+		template<typename Itr>
+		std::vector<Handle> PushBack(Itr begin, Itr end);
 
 	private:
 
@@ -34,9 +95,8 @@ namespace SolEngine {
 
 			static std::unique_ptr<DxResourceElement> Create();
 
-			//private:
-			void *mapPtr_;
-			ComPtr<ID3D12Resource> resource_;
+			void *mapPtr_ = nullptr;
+			ComPtr<ID3D12Resource> resource_ = nullptr;
 		};
 
 		class DxResourceItem {
@@ -46,18 +106,18 @@ namespace SolEngine {
 			DxResourceItem &operator=(std::unique_ptr<DxResourceElement> element) { item_ = std::move(element); return *this; }
 
 			template<SoLib::IsRealType T>
-			DxResourceItem &operator=(T *element) { std::memcpy(item_->memPtr, element, sizeof(T)); return *this; }
+			DxResourceItem &operator=(T *element) { std::memcpy(item_->mapPtr_, element, sizeof(T)); return *this; }
 
 			DxResourceElement *const operator->() { return item_.get(); }
 			const DxResourceElement *const operator->() const { return item_.get(); }
 
-			std::unique_ptr<DxResourceElement> item_;
+			std::unique_ptr<DxResourceElement> item_ = nullptr;
 		};
 
 		size_t version_ = 0;
 		size_t size_ = 0;
 
-		std::vector<DxResourceItem> items_;
+		std::vector<DxResourceItem> resources_;
 
 	};
 	template<size_t ElementSize>
@@ -70,7 +130,7 @@ namespace SolEngine {
 		auto *const device = EngineObject::GetDevice();
 
 		// 256バイト単位のアライメント
-		result->resource_ = CreateBufferResource(device, 0xFF * ElementSize);
+		result->resource_ = CreateBufferResource(device, 0x100 * ElementSize);
 
 		hr = result->resource_->Map(0, nullptr, reinterpret_cast<void **>(&result->mapPtr_));
 		assert(SUCCEEDED(hr));
@@ -101,36 +161,51 @@ namespace SolEngine {
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
 	template<SoLib::IsRealType T>
-	inline void DxResourcePool<ElementSize>::PushBack(const T &data)
+	inline DxResourcePool<ElementSize>::Handle DxResourcePool<ElementSize>::PushBack(const T &data)
 	{
 		// 要素が足りなかったら延長する
-		if (items_.size() < size_ + 1) {
-			items_.push_back(DxResourceElement::Create());
+		if (resources_.size() < size_ + 1) {
+			resources_.push_back(DxResourceElement::Create());
 		}
 
 		// アドレスを代入する
-		DxResourceItem &target = items_[size_];
+		DxResourceItem &target = resources_[size_];
 
 		// メモリコピー
 		std::memcpy(target->mapPtr_, &data, sizeof(T));
 
+		Handle result{ size_, version_ };
+
 		// サイズを拡張
 		size_++;
+
+		return result;
 	}
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
-	template<SoLib::IsRealType T, SoLib::IsContainsType<T> C>
-	inline void DxResourcePool<ElementSize>::PushBack(const C &datas)
+	template<typename Itr>
+	inline std::vector<typename DxResourcePool<ElementSize>::Handle> DxResourcePool<ElementSize>::PushBack(Itr begin, Itr end)
 	{
+		// イテレータの差分
+		const size_t diff = std::distance(begin, end);
+
 		// 要素が足りなかったら延長する
-		if (items_.size() < size_ + datas.size()) { // 既存の領域より､追加後の領域の長さが大きかったら延長処理を行う
-			items_.resize(size_ + datas.size());
-			std::for_each_n(items_.begin() + size_, datas.size(), [](DxResourceItem &item) { item = DxResourceElement::Create(); });
+		if (resources_.size() < size_ + diff) { // 既存の領域より､追加後の領域の長さが大きかったら延長処理を行う
+			resources_.resize(size_ + diff);
+			std::for_each_n(resources_.begin() + size_, diff, [](DxResourceItem &item) { item = DxResourceElement::Create(); });
 		}
 
 		// メモリコピー
-		std::transform(datas.begin(), datas.end(), &items_[size_], [](const T &data)->const T *{ return &data; });
+		std::transform(begin, end, &resources_[size_], [](const typename Itr::value_type &data)->const typename Itr::value_type *{ return &data; });
 
+		std::vector<Handle> result{ diff };
+		for (size_t i = 0; i < diff; i++) {
+			result[i] = Handle{ i + size_, version_ };
+		}
+
+		// 領域を延長
+		size_ += diff;
+		return result;
 	}
 
 	template<SoLib::IsRealType T>
