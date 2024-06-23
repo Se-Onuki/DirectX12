@@ -165,8 +165,18 @@ struct WellForGPU {
 	Matrix4x4 skeletonSpaceInverseTransponeMatrix; // 法線用
 };
 
+struct SkinClusterReference {
+
+	SkinClusterReference(uint32_t vertexCount);
+	static std::unique_ptr<SkinClusterReference> MakeSkinCluster(const Model *model);
+	static std::unique_ptr<SkinClusterReference> MakeSkinCluster(const SolEngine::ModelData *model);
+
+	std::span<VertexInfluence> influenceSpan_;
+	VertexBuffer<VertexInfluence> influence_;
+};
+
 struct SkinCluster {
-	SkinCluster(uint32_t jointsCount, uint32_t vertexCount);
+	SkinCluster(uint32_t jointsCount);
 	static std::unique_ptr<SkinCluster> MakeSkinCluster(const Model *model, const SkeletonState &skeleton);
 	static std::unique_ptr<SkinCluster> MakeSkinCluster(const SolEngine::ModelData *model, const SkeletonState &skeleton);
 
@@ -174,15 +184,14 @@ struct SkinCluster {
 
 	std::vector<Matrix4x4> inverseBindPoseMatrixList_;
 
-	std::span<VertexInfluence> influenceSpan_;
 	std::span<WellForGPU> paletteSpan_;
 
-	const VertexBuffer<VertexInfluence> &GetInfluence() const { return influence_; }
+	const VertexBuffer<VertexInfluence> &GetInfluence() const { return reference_->influence_; }
 	const StructuredBuffer<WellForGPU> &GetPalette() const { return palette_; }
 
 private:
+	std::unique_ptr<SkinClusterReference> reference_;
 
-	VertexBuffer<VertexInfluence> influence_;
 	StructuredBuffer<WellForGPU> palette_;
 };
 
