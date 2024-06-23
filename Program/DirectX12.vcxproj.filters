@@ -450,6 +450,9 @@
     <ClCompile Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\DxResource\DxResource.cpp">
+      <Filter>Engine\DxResource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -867,6 +870,9 @@
       <Filter>Engine\ComputeShader</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\DxResource\DxResource.h">
+      <Filter>Engine\DxResource</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\DxResource\DxResourcePool.h">
       <Filter>Engine\DxResource</Filter>
     </ClInclude>
   </ItemGroup>

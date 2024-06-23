@@ -177,6 +177,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Base\WinApp.cpp" />
     <ClCompile Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.cpp" />
     <ClCompile Include="Engine\DirectBase\Create\Create.cpp" />
+    <ClCompile Include="Engine\DirectBase\DxResource\DxResource.cpp" />
     <ClCompile Include="Engine\DirectBase\File\GlobalVariables.cpp" />
     <ClCompile Include="Engine\DirectBase\Input\Input.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\AssimpData.cpp" />
@@ -292,6 +293,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorHandle.h" />
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h" />
     <ClInclude Include="Engine\DirectBase\DxResource\DxResource.h" />
+    <ClInclude Include="Engine\DirectBase\DxResource\DxResourcePool.h" />
     <ClInclude Include="Engine\DirectBase\File\GlobalVariables.h" />
     <ClInclude Include="Engine\DirectBase\File\VariantItem.h" />
     <ClInclude Include="Engine\DirectBase\Input\Input.h" />

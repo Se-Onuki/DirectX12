@@ -147,11 +147,11 @@ inline void CBuffer<T, IsActive>::CreateBuffer() {
 	result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
 	assert(SUCCEEDED(result));
 
-#ifdef USE_IMGUI
+#ifdef _DEBUG
 
 	this->SetName();
 
-#endif // USE_IMGUI
+#endif // _DEBUG
 
 }
 

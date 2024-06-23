@@ -12,10 +12,17 @@
 #include "../Engine/DirectBase/Model/AssimpData.h"
 #include "../Engine/DirectBase/Model/Mesh.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
+#include "../Engine/DirectBase/DxResource/DxResourcePool.h"
 
 void CGTaskScene::OnEnter()
 {
 	ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
+
+	auto* matBuffer = SolEngine::DxResourcePoolList<Matrix4x4>::GetInstance();
+
+	matBuffer->PushBack(Matrix4x4{});
+
+	//constexpr size_t size = (~0xffllu & (sizeof(std::array<Matrix4x4, 4>) + 0xffllu));
 
 	SolEngine::ResourceObjectManager<SolEngine::LevelData> *const levelDataManager = SolEngine::ResourceObjectManager<SolEngine::LevelData>::GetInstance();
 
