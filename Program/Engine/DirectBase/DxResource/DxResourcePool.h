@@ -90,10 +90,10 @@ namespace SolEngine {
 
 	private:
 
-		class DxResourceElement {
+		class DxResourceBuffer {
 		public:
 
-			static std::unique_ptr<DxResourceElement> Create();
+			static std::unique_ptr<DxResourceBuffer> Create();
 
 			void *mapPtr_ = nullptr;
 			ComPtr<ID3D12Resource> resource_ = nullptr;
@@ -102,16 +102,16 @@ namespace SolEngine {
 		class DxResourceItem {
 		public:
 			DxResourceItem() = default;
-			DxResourceItem(std::unique_ptr<DxResourceElement> element) : item_(std::move(element)) {}
-			DxResourceItem &operator=(std::unique_ptr<DxResourceElement> element) { item_ = std::move(element); return *this; }
+			DxResourceItem(std::unique_ptr<DxResourceBuffer> element) : item_(std::move(element)) {}
+			DxResourceItem &operator=(std::unique_ptr<DxResourceBuffer> element) { item_ = std::move(element); return *this; }
 
 			template<SoLib::IsRealType T>
 			DxResourceItem &operator=(T *element) { std::memcpy(item_->mapPtr_, element, sizeof(T)); return *this; }
 
-			DxResourceElement *const operator->() { return item_.get(); }
-			const DxResourceElement *const operator->() const { return item_.get(); }
+			DxResourceBuffer *const operator->() { return item_.get(); }
+			const DxResourceBuffer *const operator->() const { return item_.get(); }
 
-			std::unique_ptr<DxResourceElement> item_ = nullptr;
+			std::unique_ptr<DxResourceBuffer> item_ = nullptr;
 		};
 
 		size_t version_ = 0;
@@ -122,9 +122,9 @@ namespace SolEngine {
 	};
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
-	inline std::unique_ptr<typename DxResourcePool<ElementSize>::DxResourceElement> DxResourcePool<ElementSize>::DxResourceElement::Create()
+	inline std::unique_ptr<typename DxResourcePool<ElementSize>::DxResourceBuffer> DxResourcePool<ElementSize>::DxResourceBuffer::Create()
 	{
-		std::unique_ptr<DxResourceElement> result = std::make_unique<DxResourceElement>();
+		std::unique_ptr<DxResourceBuffer> result = std::make_unique<DxResourceBuffer>();
 		HRESULT hr = S_FALSE;
 
 		auto *const device = EngineObject::GetDevice();
@@ -165,7 +165,7 @@ namespace SolEngine {
 	{
 		// 要素が足りなかったら延長する
 		if (resources_.size() < size_ + 1) {
-			resources_.push_back(DxResourceElement::Create());
+			resources_.push_back(DxResourceBuffer::Create());
 		}
 
 		// アドレスを代入する
@@ -192,7 +192,7 @@ namespace SolEngine {
 		// 要素が足りなかったら延長する
 		if (resources_.size() < size_ + diff) { // 既存の領域より､追加後の領域の長さが大きかったら延長処理を行う
 			resources_.resize(size_ + diff);
-			std::for_each_n(resources_.begin() + size_, diff, [](DxResourceItem &item) { item = DxResourceElement::Create(); });
+			std::for_each_n(resources_.begin() + size_, diff, [](DxResourceItem &item) { item = DxResourceBuffer::Create(); });
 		}
 
 		// メモリコピー

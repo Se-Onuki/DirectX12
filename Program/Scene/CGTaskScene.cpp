@@ -22,9 +22,8 @@ void CGTaskScene::OnEnter()
 
 	std::array<Matrix4x4, 2> item{ Matrix4x4::Identity(), Matrix4x4::Identity() * 10.f };
 	auto matHandle = matBuffer->PushBack(item.begin(), item.end());
-	auto matPtr = matHandle[0].GetResource<Matrix4x4>();
-	if (matPtr) {
-	}
+	std::vector<Matrix4x4 *> matPtr;
+	std::transform(matHandle.begin(), matHandle.end(), std::back_inserter(matPtr), [](auto itr) { return itr.GetResource<Matrix4x4>(); });
 
 	//constexpr size_t size = (~0xffllu & (sizeof(std::array<Matrix4x4, 4>) + 0xffllu));
 
