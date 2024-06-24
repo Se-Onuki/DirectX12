@@ -23,6 +23,8 @@ namespace SolEngine {
 		// モデルデータマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
 
+		// メモリ確保
+		modelResult->meshHandleList_.reserve(scene->mNumMeshes);
 		// モデルデータのロードと保存
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
 			modelResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
