@@ -10,12 +10,13 @@ namespace SolEngine {
 		// 各領域にデータを追加
 		for (const auto &mesh : source.modelHandle_->meshHandleList_) {
 			// データを末尾に構築
-			auto back = result->influenceList_.emplace_back();
+			auto &back = result->influenceList_.emplace_back();
 			// メッシュを保存
 			back.first = mesh;
 			// 頂点データの領域を確保
 			back.second.Resize(mesh->vertexBuffer_.GetVertexData().size());
 		}
+		/*std::transform(source.modelHandle_->meshHandleList_.begin(), source.modelHandle_->meshHandleList_.end(), std::back_inserter(result->influenceList_), [](auto mesh) {return std::make_pair(mesh, ); });*/
 
 		// スケルトンのベースデータの構築
 		result->skeletonReference_ = SkeletonReference::MakeSkeleton(source.modelHandle_->rootNode_.get());

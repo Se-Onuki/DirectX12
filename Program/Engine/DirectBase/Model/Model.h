@@ -149,7 +149,7 @@ struct VertexWeightData {
 
 struct JointWeightData {
 	Matrix4x4 inverseBindPoseMatrix_;
-	std::vector<VertexWeightData<1u>> vertexWeightData_;
+	std::vector<VertexWeightData<>> vertexWeightData_;
 };
 
 struct SkinClusterBaseData {
