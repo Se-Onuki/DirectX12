@@ -30,6 +30,9 @@ public:
 		vbView_.StrideInBytes = sizeof(T);
 	}
 
+	T &operator[](const uint32_t i) { return vertexData_.data()[i]; }
+	const T &operator[](const uint32_t i) const { return vertexData_.data()[i]; }
+
 	auto &GetVertexData() noexcept { return vertexData_; }
 	const auto &GetVertexData() const noexcept { return vertexData_; }
 	const auto &GetVBView() const noexcept { return vbView_; };

@@ -1785,7 +1785,7 @@ SkinClusterReference::SkinClusterReference(uint32_t vertexCount)
 	influenceSpan_ = { influence_.GetVertexData().data(), vertexCount };
 }
 
-std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(const SolEngine::ModelData *model)
+std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(const SolEngine::ModelData *model, const SkeletonState &skeleton)
 {
 	uint32_t vertexCount = 0;
 	for (const auto &mesh : model->meshHandleList_) {
@@ -1793,16 +1793,70 @@ std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(cons
 	}
 	std::unique_ptr<SkinClusterReference> result = std::make_unique<SkinClusterReference>(vertexCount);
 
+	// 番兵を取る
+	const auto jointEndIt = skeleton.reference_->jointMap_.end();
+
+	// モデルデータを解析してInfluenceを埋める
+	for (const auto &[keyName, jointWeight] : model->skinCluster_->skinClusterData_) {
+		// 一致するジョイントの対象が存在するか探す
+		auto it = skeleton.reference_->jointMap_.find(keyName);
+		if (it == jointEndIt) { // 存在しなかったら飛ばす
+			continue;
+		}
+
+		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
+			// 該当するinfluence情報を参照しておく
+			auto &currentInfluence = result->influenceSpan_[vertexWeight.vertexIndex_];
+			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
+				// 空いているところにデータを代入
+				if (currentInfluence.vertexInfluence_.weight_[index] == 0.0f) {
+					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_;
+					currentInfluence.vertexInfluence_.vertexIndex_[index] = it->second;
+					break;
+				}
+
+			}
+		}
+
+	}
+
 	return result;
 }
 
-std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(const Model *model)
+std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(const Model *model, const SkeletonState &skeleton)
 {
 	uint32_t vertexCount = 0;
 	for (const auto &mesh : model->meshList_) {
 		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
 	}
 	std::unique_ptr<SkinClusterReference> result = std::make_unique<SkinClusterReference>(vertexCount);
+
+	// 番兵を取る
+	const auto jointEndIt = skeleton.reference_->jointMap_.end();
+
+	// モデルデータを解析してInfluenceを埋める
+	for (const auto &[keyName, jointWeight] : model->skinCluster_.skinClusterData_) {
+		// 一致するジョイントの対象が存在するか探す
+		auto it = skeleton.reference_->jointMap_.find(keyName);
+		if (it == jointEndIt) { // 存在しなかったら飛ばす
+			continue;
+		}
+
+		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
+			// 該当するinfluence情報を参照しておく
+			auto &currentInfluence = result->influenceSpan_[vertexWeight.vertexIndex_].vertexInfluence_;
+			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
+				// 空いているところにデータを代入
+				if (currentInfluence.weight_[index] == 0.0f) {
+					currentInfluence.weight_[index] = vertexWeight.weight_;
+					currentInfluence.vertexIndex_[index] = it->second;
+					break;
+				}
+
+			}
+		}
+
+	}
 
 	return result;
 }
@@ -1818,7 +1872,7 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model *model, co
 {
 	std::unique_ptr<SkinCluster> result = std::make_unique<SkinCluster>(static_cast<uint32_t>(skeleton.joints_.size()));
 
-	result->reference_ = SkinClusterReference::MakeSkinCluster(model);
+	result->reference_ = SkinClusterReference::MakeSkinCluster(model, skeleton);
 
 	// 初期化
 	result->inverseBindPoseMatrixList_.resize(skeleton.reference_->jointMap_.size());
@@ -1836,19 +1890,6 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const Model *model, co
 
 		// indexから、逆バインドポーズ行列を代入する
 		result->inverseBindPoseMatrixList_[it->second] = jointWeight.inverseBindPoseMatrix_;
-		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
-			// 該当するinfluence情報を参照しておく
-			auto &currentInfluence = result->reference_->influenceSpan_[vertexWeight.vertexIndex_];
-			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
-				// 空いているところにデータを代入
-				if (currentInfluence.vertexInfluence_.weight_[index] == 0.0f) {
-					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_;
-					currentInfluence.vertexInfluence_.vertexIndex_[index] = it->second;
-					break;
-				}
-
-			}
-		}
 
 	}
 
@@ -1860,7 +1901,7 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 {
 	std::unique_ptr<SkinCluster> result = std::make_unique<SkinCluster>(static_cast<uint32_t>(skeleton.joints_.size()));
 
-	result->reference_ = SkinClusterReference::MakeSkinCluster(model);
+	result->reference_ = SkinClusterReference::MakeSkinCluster(model, skeleton);
 
 	// 初期化
 	result->inverseBindPoseMatrixList_.resize(skeleton.reference_->jointMap_.size());
@@ -1869,7 +1910,7 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 	const auto jointEndIt = skeleton.reference_->jointMap_.end();
 
 	// モデルデータを解析してInfluenceを埋める
-	for (const auto &[keyName, jointWeight] : model->skinCluster_->skinCluster_->skinClusterData_) {
+	for (const auto &[keyName, jointWeight] : model->skinCluster_->skinClusterData_) {
 		// 一致するジョイントの対象が存在するか探す
 		auto it = skeleton.reference_->jointMap_.find(keyName);
 		if (it == jointEndIt) { // 存在しなかったら飛ばす
@@ -1878,19 +1919,6 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 
 		// indexから、逆バインドポーズ行列を代入する
 		result->inverseBindPoseMatrixList_[it->second] = jointWeight.inverseBindPoseMatrix_;
-		for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
-			// 該当するinfluence情報を参照しておく
-			auto &currentInfluence = result->reference_->influenceSpan_[vertexWeight.vertexIndex_];
-			for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
-				// 空いているところにデータを代入
-				if (currentInfluence.vertexInfluence_.weight_[index] == 0.0f) {
-					currentInfluence.vertexInfluence_.weight_[index] = vertexWeight.weight_;
-					currentInfluence.vertexInfluence_.vertexIndex_[index] = it->second;
-					break;
-				}
-
-			}
-		}
 
 	}
 

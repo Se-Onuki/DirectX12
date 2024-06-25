@@ -11,8 +11,6 @@ namespace SolEngine {
 		// シーンの読み込みに成功したら
 		if (scene) {
 
-			result->skinCluster_ = std::make_unique<SkinClusterBaseData>();
-
 			std::span<aiMesh *> meshList = { scene->mMeshes, scene->mNumMeshes };
 
 			for (const aiMesh *const mesh : meshList) {
@@ -22,7 +20,7 @@ namespace SolEngine {
 					aiBone *aiBone = mesh->mBones[boneIndex];
 					std::string jointName = aiBone->mName.C_Str();
 					// 名前をもとにデータを構築
-					JointWeightData &jointWeightData = result->skinCluster_->skinClusterData_[jointName];
+					JointWeightData &jointWeightData = result->skinClusterData_[jointName];
 
 					// バインド行列の逆行列を取得
 					aiMatrix4x4 bindPoseMatrixAssimp = aiBone->mOffsetMatrix.Inverse();

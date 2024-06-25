@@ -5,13 +5,13 @@
 #include "../../Utils/Graphics/Color.h"
 #include "../Base/CBuffer.h"
 
-struct SkinClusterBaseData;
+struct JointWeightData;
 
 namespace SolEngine {
 
 	class SkinClusterBase : public IResourceObject {
 	public:
-		std::unique_ptr<SkinClusterBaseData> skinCluster_;
+		std::unordered_map<std::string, JointWeightData> skinClusterData_;
 	};
 
 	template <>

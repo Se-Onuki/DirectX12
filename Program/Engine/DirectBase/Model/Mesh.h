@@ -11,7 +11,7 @@ namespace SolEngine {
 
 	class Mesh : public IResourceObject {
 	public:
-		
+
 		struct VertexData {
 			Vector4 position; // 頂点位置
 			Vector3 normal;   // 法線
@@ -24,16 +24,14 @@ namespace SolEngine {
 			std::array<Vector2, materialSize> texCoord; // UV座標系
 
 		};
+		// 頂点データ
 		VertexBuffer<VertexData> vertexBuffer_;
-		//VertexBuffer<VertexTexcoord<2>> texcoordBuffer_;
+		// index情報
 		IndexBuffer<uint32_t> indexBuffer_;
-		std::vector<ResourceObjectManager<Material>::Handle> materials_;
-
+		// uv座標があるか
 		bool hasTexcoord_ = true;
 
-		/*decltype(texcoordBuffer_) *GetTexcoordBuffer() { return &texcoordBuffer_; }
-		const decltype(texcoordBuffer_) *GetTexcoordBuffer() const { return &texcoordBuffer_; }*/
-
+		// マテリアルハンドル
 		ResourceObjectManager<Material>::Handle materialhandle_;
 
 		void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const D3D12_VERTEX_BUFFER_VIEW *vbv = nullptr) const;

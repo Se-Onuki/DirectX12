@@ -168,8 +168,8 @@ struct WellForGPU {
 struct SkinClusterReference {
 
 	SkinClusterReference(uint32_t vertexCount);
-	static std::unique_ptr<SkinClusterReference> MakeSkinCluster(const Model *model);
-	static std::unique_ptr<SkinClusterReference> MakeSkinCluster(const SolEngine::ModelData *model);
+	static std::unique_ptr<SkinClusterReference> MakeSkinCluster(const Model *model, const SkeletonState &skeleton);
+	static std::unique_ptr<SkinClusterReference> MakeSkinCluster(const SolEngine::ModelData *model, const SkeletonState &skeleton);
 
 	std::span<VertexInfluence> influenceSpan_;
 	VertexBuffer<VertexInfluence> influence_;

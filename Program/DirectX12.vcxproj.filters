@@ -447,11 +447,14 @@
     <ClCompile Include="Engine\DirectBase\Model\SkinClusterBase.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\DirectBase\DxResource\DxResource.cpp">
       <Filter>Engine\DxResource</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.cpp">
+      <Filter>Engine\ComputeShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\SkinningReference.cpp">
+      <Filter>Engine\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -874,6 +877,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\DxResource\DxResourcePool.h">
       <Filter>Engine\DxResource</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\SkinningReference.h">
+      <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
