@@ -1621,11 +1621,18 @@ std::unique_ptr<ModelNode> ModelNode::Create(aiNode *node)
 	// 子ノードの数だけ領域を確保
 	result->children_.resize(node->mNumChildren);
 
+	// 子ノードの配列
+	const std::span<aiNode *> nodeChildren{ node->mChildren, node->mNumChildren };
+
 	// 子ノードの設定
-	for (uint32_t i = 0; i < node->mNumChildren; i++) {
-		// 再起的に読み込む
-		result->children_[i] = ModelNode::Create(node->mChildren[i]);
-	}
+	// 再帰的に読み込む
+	std::transform(nodeChildren.begin(), nodeChildren.end(), result->children_.begin(), [](aiNode *child) {return ModelNode::Create(child); });
+
+	//// 子ノードの設定
+	//for (uint32_t i = 0; i < node->mNumChildren; i++) {
+	//	// 再起的に読み込む
+	//	result->children_[i] = ModelNode::Create(node->mChildren[i]);
+	//}
 
 	return std::move(result);
 }
@@ -1927,12 +1934,23 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 
 void SkinCluster::Update(const SkeletonState &skeleton)
 {
-	for (size_t jointIndex = 0; jointIndex < skeleton.joints_.size(); jointIndex++) {
+	/*for (size_t jointIndex = 0; jointIndex < skeleton.joints_.size(); jointIndex++) {
 		assert(jointIndex < inverseBindPoseMatrixList_.size() and "範囲外にアクセスしています");
 		auto &palette = paletteSpan_[jointIndex];
 		palette.skeletonSpaceMatrix = inverseBindPoseMatrixList_[jointIndex] * skeleton.joints_[jointIndex]->skeletonSpaceMatrix_;
 		palette.skeletonSpaceInverseTransponeMatrix = palette.skeletonSpaceMatrix.InverseSRT().Transpose();
-	}
+	}*/
+
+	std::transform(skeleton.joints_.cbegin(), skeleton.joints_.cend(), inverseBindPoseMatrixList_.cbegin(), paletteSpan_.begin(), [](const auto &joint, const auto &ibpMat)
+		{
+			WellForGPU result{};
+
+			result.skeletonSpaceMatrix = ibpMat * joint->skeletonSpaceMatrix_;
+			result.skeletonSpaceInverseTransponeMatrix = result.skeletonSpaceMatrix.InverseSRT().Transpose();
+
+			return result;
+		}
+	);
 }
 
 std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(Model *model)

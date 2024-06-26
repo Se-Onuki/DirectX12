@@ -43,7 +43,7 @@ void CGTaskScene::OnEnter()
 	levelImporter.Import(levelData, world_.get());
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
-	auto assimpHandle = assimpManager->Load({ "Model/human/", "walk.gltf" });
+	auto assimpHandle = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
 
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	boxModel_ = modelDataManager->Load({ assimpHandle });
@@ -71,7 +71,7 @@ void CGTaskScene::OnEnter()
 	animationPlayer_.SetAnimation(animation_.get());
 	animationPlayer_.Start(true);
 
-	//skinModel_ = SkinModel::MakeSkinModel(model_);
+	skinModel_ = SkinModel::MakeSkinModel(*boxModel_);
 
 	vec2_ = std::make_unique<AlignasWrapper<Vector2>>();
 
@@ -122,7 +122,7 @@ void CGTaskScene::Update()
 	transform_->ImGuiWidget();
 	transform_->UpdateMatrix();
 
-	//animationPlayer_.Update(deltaTime, *boxModel_);
+	animationPlayer_.Update(deltaTime, *boxModel_);
 	//gameObject_->Update(deltaTime);
 
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
@@ -131,7 +131,7 @@ void CGTaskScene::Update()
 	}
 
 
-	//skinModel_->Update(*animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
+	skinModel_->Update(*animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
 
 	CameraManager::GetInstance()->DisplayImGui();
 	CameraManager::GetInstance()->Update(deltaTime);

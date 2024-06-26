@@ -13,13 +13,13 @@ namespace SolEngine {
 		if (scene) {
 
 			// メッシュの配列を生成する
-			std::span<aiMesh *> meshList = { scene->mMeshes, scene->mNumMeshes };
+			const std::span<aiMesh *> meshList = { scene->mMeshes, scene->mNumMeshes };
 
 			// メッシュの配列からボーンデータを抽出する｡
 			for (const aiMesh *const mesh : meshList) {
 
 				// メッシュに含まれたボーンデータの配列
-				std::span<aiBone *> aiBones = { mesh->mBones, mesh->mNumBones };
+				const std::span<aiBone *> aiBones = { mesh->mBones, mesh->mNumBones };
 
 				// SkinCluster構築用のデータ取得を追加
 				for (const aiBone *const aiBone : aiBones) {
@@ -38,6 +38,7 @@ namespace SolEngine {
 					// 逆行列を保存
 					jointWeightData.inverseBindPoseMatrix_ = bindPoseMatrix.InverseSRT();
 
+					// すでに存在しているデータの数
 					const size_t jointWeightSize = jointWeightData.vertexWeightData_.size();
 
 					// 領域を確保しておく
