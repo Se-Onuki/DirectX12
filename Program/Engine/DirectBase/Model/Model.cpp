@@ -20,6 +20,7 @@
 #include "../../../Utils/Convert/Convert.h"
 #include "../Render/CameraAnimations/CameraManager.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
+#include <execution>
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 
@@ -1941,7 +1942,7 @@ void SkinCluster::Update(const SkeletonState &skeleton)
 		palette.skeletonSpaceInverseTransponeMatrix = palette.skeletonSpaceMatrix.InverseSRT().Transpose();
 	}*/
 
-	std::transform(skeleton.joints_.cbegin(), skeleton.joints_.cend(), inverseBindPoseMatrixList_.cbegin(), paletteSpan_.begin(), [](const auto &joint, const auto &ibpMat)
+	std::transform(std::execution::par_unseq, skeleton.joints_.cbegin(), skeleton.joints_.cend(), inverseBindPoseMatrixList_.cbegin(), paletteSpan_.begin(), [](const auto &joint, const auto &ibpMat)
 		{
 			WellForGPU result{};
 
