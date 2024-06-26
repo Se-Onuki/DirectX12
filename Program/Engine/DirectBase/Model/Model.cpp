@@ -986,11 +986,7 @@ std::unique_ptr<Model> Model::LoadAssimpModelFile(const std::string &directoryPa
 
 			// バインド行列の逆行列を取得
 			aiMatrix4x4 bindPoseMatrixAssimp = aiBone->mOffsetMatrix.Inverse();
-			aiVector3D scale, translate;
-			aiQuaternion rotate;
-			// Transformを取得
-			bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
-			Matrix4x4 bindPoseMatrix = SoLib::Convert(scale, rotate, translate).Affine();
+			Matrix4x4 bindPoseMatrix = SoLib::Convert<Matrix4x4>(bindPoseMatrixAssimp);
 			// 逆行列を保存
 			jointWeightData.inverseBindPoseMatrix_ = bindPoseMatrix.InverseSRT();
 

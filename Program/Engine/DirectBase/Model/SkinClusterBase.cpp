@@ -30,11 +30,9 @@ namespace SolEngine {
 
 					// バインド行列の逆行列を取得
 					const aiMatrix4x4 bindPoseMatrixAssimp = aiMatrix4x4{ aiBone->mOffsetMatrix }.Inverse();
-					aiVector3D scale, translate;
-					aiQuaternion rotate;
-					// Transformを取得
-					bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
-					const Matrix4x4 bindPoseMatrix = SoLib::Convert(scale, rotate, translate).Affine();
+
+					// 座標系などを変換
+					const Matrix4x4 bindPoseMatrix = SoLib::Convert<Matrix4x4>(bindPoseMatrixAssimp);
 					// 逆行列を保存
 					jointWeightData.inverseBindPoseMatrix_ = bindPoseMatrix.InverseSRT();
 

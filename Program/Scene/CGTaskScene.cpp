@@ -57,8 +57,7 @@ void CGTaskScene::OnEnter()
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
 	auto *nowCamera = CameraManager::GetInstance()->GetUseCamera();
-	nowCamera->translation_ = { 0.f, 6.f,-3.f };
-	nowCamera->rotation_.x = 34._deg;
+	nowCamera->translation_ = { 0.f, 3.f,-15.f };
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
@@ -162,11 +161,11 @@ void CGTaskScene::Draw()
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
-	Model::SetPipelineType(Model::PipelineType::kModel);
+	Model::SetPipelineType(Model::PipelineType::kSkinModel);
 
 	light_->SetLight(commandList);
 
-	boxModel_->Draw(transform_, camera);
+	boxModel_->Draw(*skinModel_->skinCluster_, transform_, camera);
 
 	//model_->Draw(*skinModel_->skinCluster_, transform_, camera);
 	//uvModel_->Draw(transform_, camera);
