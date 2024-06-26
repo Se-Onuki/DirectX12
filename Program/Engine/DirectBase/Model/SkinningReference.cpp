@@ -7,6 +7,9 @@ namespace SolEngine {
 		// 生成したデータ
 		std::unique_ptr<SkinningReference> result = std::make_unique<SkinningReference>();
 
+		// スケルトンのベースデータの構築
+		result->skeletonReference_ = SkeletonReference::MakeSkeleton(source.modelHandle_->rootNode_.get());
+
 		// 各領域にデータを追加
 		for (const auto &mesh : source.modelHandle_->meshHandleList_) {
 			// データを末尾に構築
@@ -18,22 +21,19 @@ namespace SolEngine {
 		}
 		/*std::transform(source.modelHandle_->meshHandleList_.begin(), source.modelHandle_->meshHandleList_.end(), std::back_inserter(result->influenceList_), [](auto mesh) {return std::make_pair(mesh, ); });*/
 
-		// スケルトンのベースデータの構築
-		result->skeletonReference_ = SkeletonReference::MakeSkeleton(source.modelHandle_->rootNode_.get());
-
 		// 番兵を取る
 		const auto jointEndIt = result->skeletonReference_->jointMap_.end();
 
-		//const auto &mesh = source.modelHandle_->meshHandleList_[meshIndex];
 		for (uint32_t meshIndex = 0; meshIndex < source.modelHandle_->meshHandleList_.size(); meshIndex++) {
 
 			// そのメッシュにデータが格納されているか
-			const auto clusterItr = source.modelHandle_->skinCluster_->skinClusterData_.find(meshIndex);
-			if (clusterItr == source.modelHandle_->skinCluster_->skinClusterData_.end()) { continue; }
+			const auto &clusterItr = source.modelHandle_->skinCluster_->skinClusterData_.at(meshIndex);
+			if (not clusterItr) { continue; }
+
 			// モデルデータを解析してInfluenceを埋める
 			for (const auto &[keyName,  // ジョイント名
 				jointWeight	// 各頂点のジョイントに対する重さ
-			] : clusterItr->second) {
+			] : *clusterItr) {
 				// 一致するジョイントの対象が存在するか探す
 				auto it = result->skeletonReference_->jointMap_.find(keyName);
 				if (it == jointEndIt) { // 存在しなかったら飛ばす

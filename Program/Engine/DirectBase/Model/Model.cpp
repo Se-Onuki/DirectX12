@@ -1802,10 +1802,10 @@ std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(cons
 	for (uint32_t i = 0; i < model->meshHandleList_.size(); i++) {
 
 		// そのメッシュにデータが格納されているか
-		const auto clusterItr = model->skinCluster_->skinClusterData_.find(i);
-		if (clusterItr == model->skinCluster_->skinClusterData_.end()) { continue; }
+		const auto& clusterItr = model->skinCluster_->skinClusterData_.at(i);
+		if (not clusterItr ) { continue; }
 		// モデルデータを解析してInfluenceを埋める
-		for (const auto &[keyName, jointWeight] : clusterItr->second) {
+		for (const auto &[keyName, jointWeight] : *clusterItr) {
 			// 一致するジョイントの対象が存在するか探す
 			auto it = skeleton.reference_->jointMap_.find(keyName);
 			if (it == jointEndIt) { // 存在しなかったら飛ばす
@@ -1921,10 +1921,10 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 	for (uint32_t i = 0; i < model->meshHandleList_.size(); i++) {
 
 		// そのメッシュにデータが格納されているか
-		const auto clusterItr = model->skinCluster_->skinClusterData_.find(i);
-		if (clusterItr == model->skinCluster_->skinClusterData_.end()) { continue; }
+		const auto& clusterItr = model->skinCluster_->skinClusterData_.at(i);
+		if (not clusterItr) { continue; }
 		// モデルデータを解析してInfluenceを埋める
-		for (const auto &[keyName, jointWeight] : clusterItr->second) {
+		for (const auto &[keyName, jointWeight] : *clusterItr) {
 			// 一致するジョイントの対象が存在するか探す
 			auto it = skeleton.reference_->jointMap_.find(keyName);
 			if (it == jointEndIt) { // 存在しなかったら飛ばす

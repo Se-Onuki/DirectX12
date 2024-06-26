@@ -12,11 +12,22 @@ namespace SolEngine {
 		// シーンの読み込みに成功したら
 		if (scene) {
 
+			// メッシュの数と同じ長さの配列を確保
+			result->skinClusterData_.resize(scene->mNumMeshes);
+
 			// メッシュの配列を生成する
 			const std::span<aiMesh *> meshList = { scene->mMeshes, scene->mNumMeshes };
 
 			// メッシュの配列からボーンデータを抽出する｡
 			for (uint32_t meshIndex = 0; const aiMesh *const mesh : meshList) {
+
+				// ボーンデータが含まれていない場合飛ばす
+				if (not mesh->mBones) { continue; }
+
+				// データを追加
+				result->skinClusterData_[meshIndex] = std::unordered_map<std::string, JointWeightData>{};
+				// ボーンの数と同じ量のキャパを確保
+				result->skinClusterData_[meshIndex]->reserve(mesh->mNumBones);
 
 				// メッシュに含まれたボーンデータの配列
 				const std::span<aiBone *> aiBones = { mesh->mBones, mesh->mNumBones };
@@ -26,7 +37,7 @@ namespace SolEngine {
 					// ボーンの名前を保存
 					std::string jointName = aiBone->mName.C_Str();
 					// 名前をもとにデータを構築
-					JointWeightData &jointWeightData = result->skinClusterData_[meshIndex][jointName];
+					JointWeightData &jointWeightData = (*result->skinClusterData_[meshIndex])[jointName];
 
 					// バインド行列の逆行列を取得
 					const aiMatrix4x4 bindPoseMatrixAssimp = aiMatrix4x4{ aiBone->mOffsetMatrix }.Inverse();
