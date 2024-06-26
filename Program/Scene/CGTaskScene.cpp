@@ -13,6 +13,7 @@
 #include "../Engine/DirectBase/Model/Mesh.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
 #include "../Engine/DirectBase/DxResource/DxResourcePool.h"
+#include "../Engine/DirectBase/Model/SkinningReference.h"
 
 void CGTaskScene::OnEnter()
 {
@@ -48,6 +49,9 @@ void CGTaskScene::OnEnter()
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	boxModel_ = modelDataManager->Load({ assimpHandle });
 
+	SolEngine::ResourceObjectManager<SolEngine::SkinningReference> *const skinningRefManager = SolEngine::ResourceObjectManager<SolEngine::SkinningReference>::GetInstance();
+	/*auto skinningRef =*/ skinningRefManager->Load({ boxModel_ });
+
 	skinModel_ = SkinModel::MakeSkinModel(*boxModel_);
 
 	uvModel_ = ModelManager::GetInstance()->AddModel("UvPlane", Model::LoadAssimpModelFile("", "plane.gltf"));
@@ -69,8 +73,6 @@ void CGTaskScene::OnEnter()
 	animation_ = ModelAnimation::Animation::Create(*assimpHandle);
 	animationPlayer_.SetAnimation(animation_.get());
 	animationPlayer_.Start(true);
-
-	skinModel_ = SkinModel::MakeSkinModel(*boxModel_);
 
 	vec2_ = std::make_unique<AlignasWrapper<Vector2>>();
 

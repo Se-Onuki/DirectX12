@@ -45,6 +45,7 @@
 
 #include "Header/Object/Fade.h"
 #include "Scene/CGTaskScene.h"
+#include "Engine/DirectBase/Model/SkinningReference.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -197,6 +198,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ModelHandleListManager::Finalize();
 	SkinModelHandleListManager::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Finalize();
+	SolEngine::ResourceObjectManager<SolEngine::SkinningReference>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::Mesh>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::Material>::Finalize();

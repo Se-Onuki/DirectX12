@@ -24,27 +24,34 @@ namespace SolEngine {
 		// 番兵を取る
 		const auto jointEndIt = result->skeletonReference_->jointMap_.end();
 
-		const uint32_t meshIndex = 0;
+		//const auto &mesh = source.modelHandle_->meshHandleList_[meshIndex];
+		for (uint32_t meshIndex = 0; meshIndex < source.modelHandle_->meshHandleList_.size(); meshIndex++) {
 
-		// モデルデータを解析してInfluenceを埋める
-		for (const auto &[keyName, jointWeight] : source.modelHandle_->skinCluster_->skinClusterData_) {
-			// 一致するジョイントの対象が存在するか探す
-			auto it = result->skeletonReference_->jointMap_.find(keyName);
-			if (it == jointEndIt) { // 存在しなかったら飛ばす
-				continue;
-			}
+			// そのメッシュにデータが格納されているか
+			const auto clusterItr = source.modelHandle_->skinCluster_->skinClusterData_.find(meshIndex);
+			if (clusterItr == source.modelHandle_->skinCluster_->skinClusterData_.end()) { continue; }
+			// モデルデータを解析してInfluenceを埋める
+			for (const auto &[keyName,  // ジョイント名
+				jointWeight	// 各頂点のジョイントに対する重さ
+			] : clusterItr->second) {
+				// 一致するジョイントの対象が存在するか探す
+				auto it = result->skeletonReference_->jointMap_.find(keyName);
+				if (it == jointEndIt) { // 存在しなかったら飛ばす
+					continue;
+				}
 
-			for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
-				// 該当するinfluence情報を参照しておく
-				auto &currentInfluence = result->influenceList_[meshIndex].second[vertexWeight.vertexIndex_].vertexInfluence_;
-				for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
-					// 空いているところにデータを代入
-					if (currentInfluence.weight_[index] == 0.0f) {
-						currentInfluence.weight_[index] = vertexWeight.weight_;
-						currentInfluence.vertexIndex_[index] = it->second;
-						break;
+				for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
+					// 該当するinfluence情報を参照しておく
+					auto &currentInfluence = result->influenceList_[meshIndex].second[vertexWeight.vertexIndex_].vertexInfluence_;
+					for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
+						// 空いているところにデータを代入
+						if (currentInfluence.weight_[index] == 0.0f) {
+							currentInfluence.weight_[index] = vertexWeight.weight_;
+							currentInfluence.vertexIndex_[index] = it->second;
+							break;
+						}
+
 					}
-
 				}
 			}
 
