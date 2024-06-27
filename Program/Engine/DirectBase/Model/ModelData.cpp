@@ -11,6 +11,7 @@ namespace SolEngine {
 
 		modelResult->rootNode_ = ModelNode::Create(scene->mRootNode);
 		modelResult->skinCluster_ = ResourceObjectManager<SkinClusterBase>::GetInstance()->Load({ source.assimpHandle_ });
+		modelResult->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load(ResourceSource<SkeletonReference>{ modelResult->rootNode_.get() });
 
 		// マテリアルマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
@@ -29,6 +30,15 @@ namespace SolEngine {
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
 			modelResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
 		}
+
+		// メッシュ影響度のマネージャ
+		ResourceObjectManager<MeshInfluence> *const meshInfluenceManager = ResourceObjectManager<MeshInfluence>::GetInstance();
+		// 影響度の配列を確保
+		modelResult->meshInfluenceList_.resize(scene->mNumMeshes);
+		// メッシュからデータを取得する
+		std::transform(modelResult->meshHandleList_.begin(), modelResult->meshHandleList_.end(), modelResult->meshInfluenceList_.begin(), [&](const ResourceObjectManager<Mesh>::Handle mesh)->ResourceObjectManager<MeshInfluence>::Handle {return meshInfluenceManager->Load(
+			ResourceSource<MeshInfluence>{ mesh, modelResult->skinCluster_, modelResult->skeletonReference_ }
+		); });
 
 		return std::move(modelResult);
 	}

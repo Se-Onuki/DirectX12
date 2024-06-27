@@ -1224,7 +1224,7 @@ void Mesh::SetMaterial(Material *const material)
 	material_ = material;
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const D3D12_VERTEX_BUFFER_VIEW *vbv) const
+void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const D3D12_VERTEX_BUFFER_VIEW *vbv, uint32_t vertexOffset) const
 {
 
 	std::array<D3D12_VERTEX_BUFFER_VIEW, 2u> vbvs = { vertexBuffer_.GetVBView() };
@@ -1237,7 +1237,7 @@ void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, material_->materialBuff_.GetGPUVirtualAddress());
 	commandList->IASetVertexBuffers(0, vbv ? 2 : 1, vbvs.data());
 	commandList->IASetIndexBuffer(&indexBuffer_.GetIBView());
-	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexBuffer_.GetIndexData().size()), drawCount, 0, 0, 0);
+	commandList->DrawIndexedInstanced(static_cast<uint32_t>(indexBuffer_.GetIndexData().size()), drawCount, 0, vertexOffset, 0);
 }
 
 void Material::CreateBuffer()
@@ -1664,15 +1664,15 @@ const ModelNode *ModelNode::FindNode(const std::string &name) const
 	return nullptr;
 }
 
-SkeletonState SkeletonState::MakeSkeleton(const ModelNode *rootNode)
+std::unique_ptr<SkeletonState> SkeletonState::MakeSkeleton(const ModelNode *rootNode)
 {
-	SkeletonState result;
+	std::unique_ptr<SkeletonState> result = std::make_unique<SkeletonState>();
 	// ノードからジョイントを構築し、現在のジョイントのindexを保存する
-	ModelJointState::MakeJointIndex(rootNode, result.joints_);
+	ModelJointState::MakeJointIndex(rootNode, result->joints_);
 
-	result.reference_ = SkeletonReference::MakeSkeleton(rootNode);
+	result->reference_ = SkeletonReference::MakeSkeleton(rootNode);
 
-	return result;
+	return std::move(result);
 }
 std::unique_ptr<SkeletonReference> SkeletonReference::MakeSkeleton(const ModelNode *rootNode)
 {
@@ -1802,8 +1802,8 @@ std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(cons
 	for (uint32_t i = 0; i < model->meshHandleList_.size(); i++) {
 
 		// そのメッシュにデータが格納されているか
-		const auto& clusterItr = model->skinCluster_->skinClusterData_.at(i);
-		if (not clusterItr ) { continue; }
+		const auto &clusterItr = model->skinCluster_->skinClusterData_.at(i);
+		if (not clusterItr) { continue; }
 		// モデルデータを解析してInfluenceを埋める
 		for (const auto &[keyName, jointWeight] : *clusterItr) {
 			// 一致するジョイントの対象が存在するか探す
@@ -1834,6 +1834,7 @@ std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(cons
 std::unique_ptr<SkinClusterReference> SkinClusterReference::MakeSkinCluster(const Model *model, const SkeletonState &skeleton)
 {
 	uint32_t vertexCount = 0;
+	std::vector<uint32_t> vertexOffset;
 	for (const auto &mesh : model->meshList_) {
 		vertexCount += mesh->vertexBuffer_.GetVertexData().size();
 	}
@@ -1921,7 +1922,7 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 	for (uint32_t i = 0; i < model->meshHandleList_.size(); i++) {
 
 		// そのメッシュにデータが格納されているか
-		const auto& clusterItr = model->skinCluster_->skinClusterData_.at(i);
+		const auto &clusterItr = model->skinCluster_->skinClusterData_.at(i);
 		if (not clusterItr) { continue; }
 		// モデルデータを解析してInfluenceを埋める
 		for (const auto &[keyName, jointWeight] : *clusterItr) {
@@ -1965,7 +1966,7 @@ std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(Model *model)
 {
 	std::unique_ptr<SkinModel> result = std::make_unique<SkinModel>();
 
-	result->skeleton_ = std::make_unique<SkeletonState>(SkeletonState::MakeSkeleton(model->rootNode_.get()));
+	result->skeleton_ = SkeletonState::MakeSkeleton(model->rootNode_.get());
 	result->skinCluster_ = SkinCluster::MakeSkinCluster(model, *result->skeleton_);
 	return std::move(result);
 }
@@ -1974,7 +1975,7 @@ std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(SolEngine::ModelData *model)
 {
 	std::unique_ptr<SkinModel> result = std::make_unique<SkinModel>();
 
-	result->skeleton_ = std::make_unique<SkeletonState>(SkeletonState::MakeSkeleton(model->rootNode_.get()));
+	result->skeleton_ = SkeletonState::MakeSkeleton(model->rootNode_.get());
 	result->skinCluster_ = SkinCluster::MakeSkinCluster(model, *result->skeleton_);
 	return std::move(result);
 }

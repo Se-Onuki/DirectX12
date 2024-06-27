@@ -456,6 +456,12 @@
     <ClCompile Include="Engine\DirectBase\Model\SkinningReference.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\MeshInfluence.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonReference.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -879,6 +885,15 @@
       <Filter>Engine\DxResource</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\SkinningReference.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\SkinCluster.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\MeshInfluence.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\SkeletonReference.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>

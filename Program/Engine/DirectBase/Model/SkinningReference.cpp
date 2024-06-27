@@ -8,7 +8,7 @@ namespace SolEngine {
 		std::unique_ptr<SkinningReference> result = std::make_unique<SkinningReference>();
 
 		// スケルトンのベースデータの構築
-		result->skeletonReference_ = SkeletonReference::MakeSkeleton(source.modelHandle_->rootNode_.get());
+		result->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load(source.modelHandle_->rootNode_.get());
 
 		// 各領域にデータを追加
 		for (const auto &mesh : source.modelHandle_->meshHandleList_) {
@@ -24,10 +24,12 @@ namespace SolEngine {
 		// 番兵を取る
 		const auto jointEndIt = result->skeletonReference_->jointMap_.end();
 
+		// メッシュのIndexを回す
 		for (uint32_t meshIndex = 0; meshIndex < source.modelHandle_->meshHandleList_.size(); meshIndex++) {
 
 			// そのメッシュにデータが格納されているか
 			const auto &clusterItr = source.modelHandle_->skinCluster_->skinClusterData_.at(meshIndex);
+			// メッシュにデータが保存されてなかったら飛ばす
 			if (not clusterItr) { continue; }
 
 			// モデルデータを解析してInfluenceを埋める
@@ -43,6 +45,7 @@ namespace SolEngine {
 				for (const auto &vertexWeight : jointWeight.vertexWeightData_) {
 					// 該当するinfluence情報を参照しておく
 					auto &currentInfluence = result->influenceList_[meshIndex].second[vertexWeight.vertexIndex_].vertexInfluence_;
+					// 挿入できる領域を検索する
 					for (uint32_t index = 0; index < VertexInfluence::kNumMaxInfluence_; index++) {
 						// 空いているところにデータを代入
 						if (currentInfluence.weight_[index] == 0.0f) {

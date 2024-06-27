@@ -10,6 +10,8 @@
 #include "../Base/CBuffer.h"
 #include "../Render/Camera.h"
 #include "SkinClusterBase.h"
+#include "SkeletonReference.h"
+#include "MeshInfluence.h"
 
 namespace SolEngine {
 
@@ -18,6 +20,8 @@ namespace SolEngine {
 		std::vector<ResourceObjectManager<Mesh>::Handle> meshHandleList_;
 		std::unique_ptr<ModelNode> rootNode_;
 		ResourceObjectManager<SkinClusterBase>::Handle skinCluster_;
+		ResourceObjectManager<SolEngine::SkeletonReference>::Handle skeletonReference_;
+		std::vector<ResourceObjectManager<MeshInfluence>::Handle> meshInfluenceList_;
 
 		void Draw(const Transform &transform, const Camera3D &camera) const;
 		void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;
@@ -28,9 +32,6 @@ namespace SolEngine {
 	template <>
 	class ResourceSource<ModelData> {
 	public:
-		ResourceSource<ModelData>() = default;
-		ResourceSource<ModelData>(const ResourceSource<ModelData>&) = default;
-		ResourceSource<ModelData>(const ResourceObjectManager<AssimpData>::Handle & data) :assimpHandle_(data) {}
 
 		// ファイルのハンドル
 		ResourceObjectManager<AssimpData>::Handle assimpHandle_;

@@ -124,7 +124,7 @@ struct SkeletonReference {
 
 struct SkeletonState {
 
-	static SkeletonState MakeSkeleton(const ModelNode *rootNode);
+	static std::unique_ptr<SkeletonState> MakeSkeleton(const ModelNode *rootNode);
 
 	void UpdateMatrix();
 
@@ -188,6 +188,8 @@ struct SkinCluster {
 
 	const VertexBuffer<VertexInfluence> &GetInfluence() const { return reference_->influence_; }
 	const StructuredBuffer<WellForGPU> &GetPalette() const { return palette_; }
+
+	//SolEngine::ResourceObjectManager<SolEngine::SkinningReference>::Handle handle_;
 
 private:
 	std::unique_ptr<SkinClusterReference> reference_;
@@ -545,7 +547,7 @@ public:
 	void SetMaterial(Material *const material);
 	Material *const GetMaterial() const { return material_; }
 
-	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const D3D12_VERTEX_BUFFER_VIEW *vbv = nullptr) const;
+	void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const D3D12_VERTEX_BUFFER_VIEW *vbv = nullptr, uint32_t vertexOffset = 0u) const;
 };
 
 struct MeshFactory {

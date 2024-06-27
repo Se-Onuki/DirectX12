@@ -45,7 +45,7 @@ namespace SolEngine {
 		auto *assimpManager = ResourceObjectManager<AssimpData>::GetInstance();
 
 		// モデルは初期値は"box.obj"であるとする
-		auto defaultModel = modelManager->Load(assimpManager->Load({ "","box.obj" }));
+		auto defaultModel = modelManager->Load({ assimpManager->Load({ "","box.obj" }) });
 
 		// エンティティマネージャを取得
 		auto *const entityManager = world->GetEntityManager();
@@ -58,7 +58,7 @@ namespace SolEngine {
 			ResourceObjectManager<ModelData>::Handle model;
 			auto assimpData = assimpManager->Load({ "", object.fileName_ });
 			if (assimpData) {
-				model = modelManager->Load(assimpData);
+				model = modelManager->Load({ assimpData });
 			}
 			// モデルが存在しない場合は
 			if (not model) {

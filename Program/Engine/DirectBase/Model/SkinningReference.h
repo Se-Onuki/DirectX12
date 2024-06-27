@@ -18,8 +18,10 @@ namespace SolEngine {
 		using MeshManager = ResourceObjectManager<Mesh>;
 
 	public:
+		// 各メッシュの頂点データ
 		std::vector<std::pair<MeshManager::Handle, VertexBuffer<VertexInfluence>>> influenceList_;
-		std::unique_ptr<SkeletonReference> skeletonReference_;
+		// スケルトンのデータ
+		ResourceObjectManager<SkeletonReference>::Handle skeletonReference_;
 
 	};
 
