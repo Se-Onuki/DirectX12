@@ -1,6 +1,7 @@
 #include "ModelData.h"
 #include "Material.h"
 #include "Mesh.h"
+#include <execution>
 
 namespace SolEngine {
 	std::unique_ptr<ModelData> ResourceCreater<ModelData>::CreateObject(const ResourceSource<ModelData> &source) const {
@@ -38,7 +39,7 @@ namespace SolEngine {
 		// 領域を確保
 		influenceSources.resize(scene->mNumMeshes);
 		// データを保存する
-		std::transform(modelResult->meshHandleList_.begin(), modelResult->meshHandleList_.end(), influenceSources.begin(), [&](const ResourceObjectManager<Mesh>::Handle mesh)->ResourceSource<MeshInfluence> {
+		std::transform(std::execution::par_unseq, modelResult->meshHandleList_.begin(), modelResult->meshHandleList_.end(), influenceSources.begin(), [&](const ResourceObjectManager<Mesh>::Handle mesh)->ResourceSource<MeshInfluence> {
 			return ResourceSource<MeshInfluence>{ mesh, modelResult->skinCluster_, modelResult->skeletonReference_ };
 			});
 		// データを構築し､保存する
@@ -73,10 +74,12 @@ namespace SolEngine {
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle(0).gpuHandle_);
-		for (auto &mesh : meshHandleList_) {
+
+		for (uint32_t i = 0; i < meshHandleList_.size(); i++) {
+			auto &mesh = meshHandleList_[i];
 			// commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 			//commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
-			mesh->Draw(commandList, 1, &skinCluster.GetInfluence().GetVBView());
+			mesh->Draw(commandList, 1, &skinCluster.reference_->meshInfluenceList_[i]->influence_.GetVBView());
 		}
 	}
 
@@ -109,8 +112,10 @@ namespace SolEngine {
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle(0).gpuHandle_);
-		for (auto &mesh : meshHandleList_) {
-			mesh->Draw(commandList, drawCount, &skinCluster.GetInfluence().GetVBView());
+
+		for (uint32_t i = 0; i < meshHandleList_.size(); i++) {
+			auto &mesh = meshHandleList_[i];
+			mesh->Draw(commandList, drawCount, &skinCluster.reference_->meshInfluenceList_[i]->influence_.GetVBView());
 		}
 	}
 }

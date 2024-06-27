@@ -46,7 +46,7 @@ void GameScene::OnEnter() {
 	auto playerModel = modelDataManager->Load({ playerAssimp });
 
 	auto boxAssimp = assimpManager->Load({ "", "box.obj" });
-	auto boxModel =modelDataManager->Load({ boxAssimp });
+	auto boxModel = modelDataManager->Load({ boxAssimp });
 
 	auto brainStemAssimp = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
 	brainStem_ = modelDataManager->Load({ brainStemAssimp });
@@ -70,11 +70,11 @@ void GameScene::OnEnter() {
 
 	spawner_.clear();
 
-	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
+	//playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "walk.gltf");
 	attackAnimation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "Attack.gltf", 1);
 
-	skinModel_ = SkinModel::MakeSkinModel(playerModel_);
+	skinModel_ = SkinModel::MakeSkinModel(*playerModel);
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());

@@ -110,17 +110,10 @@ struct ModelJointState {
 
 };
 
-struct SkeletonReference {
-
-	static std::unique_ptr<SkeletonReference> MakeSkeleton(const ModelNode *rootNode);
-
-	// RootJointのIndex
-	uint32_t root_ = 0u;
-	// Joint名からIndexを返す辞書
-	std::unordered_map<std::string, uint32_t> jointMap_;
-
-	std::vector<std::unique_ptr<ModelJointReference>> joints_;
-};
+namespace SolEngine {
+	class SkeletonReference;
+	class SkinningReference;
+}
 
 struct SkeletonState {
 
@@ -134,7 +127,7 @@ struct SkeletonState {
 	std::vector<std::unique_ptr<ModelJointState>> joints_;
 
 	// データの参照
-	std::unique_ptr<SkeletonReference> reference_;
+	SolEngine::SkeletonReference *reference_;
 
 	void AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &drawOffset = {}) const;
 
@@ -165,19 +158,8 @@ struct WellForGPU {
 	Matrix4x4 skeletonSpaceInverseTransponeMatrix; // 法線用
 };
 
-struct SkinClusterReference {
-
-	SkinClusterReference(uint32_t vertexCount);
-	static std::unique_ptr<SkinClusterReference> MakeSkinCluster(const Model *model, const SkeletonState &skeleton);
-	static std::unique_ptr<SkinClusterReference> MakeSkinCluster(const SolEngine::ModelData *model, const SkeletonState &skeleton);
-
-	std::span<VertexInfluence> influenceSpan_;
-	VertexBuffer<VertexInfluence> influence_;
-};
-
 struct SkinCluster {
 	SkinCluster(uint32_t jointsCount);
-	static std::unique_ptr<SkinCluster> MakeSkinCluster(const Model *model, const SkeletonState &skeleton);
 	static std::unique_ptr<SkinCluster> MakeSkinCluster(const SolEngine::ModelData *model, const SkeletonState &skeleton);
 
 	void Update(const SkeletonState &skeleton);
@@ -186,19 +168,20 @@ struct SkinCluster {
 
 	std::span<WellForGPU> paletteSpan_;
 
-	const VertexBuffer<VertexInfluence> &GetInfluence() const { return reference_->influence_; }
+	//const VertexBuffer<VertexInfluence> &GetInfluence() const { return reference_->influence_; }
 	const StructuredBuffer<WellForGPU> &GetPalette() const { return palette_; }
 
 	//SolEngine::ResourceObjectManager<SolEngine::SkinningReference>::Handle handle_;
 
+	const SolEngine::ModelData *reference_;
+
 private:
-	std::unique_ptr<SkinClusterReference> reference_;
+	//std::unique_ptr<SkinClusterReference> reference_;
 
 	StructuredBuffer<WellForGPU> palette_;
 };
 
 struct SkinModel {
-	static std::unique_ptr<SkinModel> MakeSkinModel(Model *model);
 	static std::unique_ptr<SkinModel> MakeSkinModel(SolEngine::ModelData *model);
 	void Update(const ModelAnimation::Animation &animation, const float animateTime);
 

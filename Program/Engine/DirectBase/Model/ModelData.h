@@ -22,6 +22,7 @@ namespace SolEngine {
 		ResourceObjectManager<SkinClusterBase>::Handle skinCluster_;
 		ResourceObjectManager<SolEngine::SkeletonReference>::Handle skeletonReference_;
 		std::vector<ResourceObjectManager<MeshInfluence>::Handle> meshInfluenceList_;
+		//ResourceObjectManager<SkinningReference>::Handle skinningReference_;
 
 		void Draw(const Transform &transform, const Camera3D &camera) const;
 		void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;

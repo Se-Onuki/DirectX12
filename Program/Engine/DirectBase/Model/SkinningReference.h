@@ -11,6 +11,7 @@
 #include "../Base/CBuffer.h"
 #include "../Render/Camera.h"
 #include "SkinClusterBase.h"
+#include "MeshInfluence.h"
 
 namespace SolEngine {
 
@@ -18,8 +19,7 @@ namespace SolEngine {
 		using MeshManager = ResourceObjectManager<Mesh>;
 
 	public:
-		// 各メッシュの頂点データ
-		std::vector<std::pair<MeshManager::Handle, VertexBuffer<VertexInfluence>>> influenceList_;
+		std::vector<ResourceObjectManager<MeshInfluence>::Handle> meshInfluence_;
 		// スケルトンのデータ
 		ResourceObjectManager<SkeletonReference>::Handle skeletonReference_;
 
@@ -28,9 +28,9 @@ namespace SolEngine {
 	template <>
 	class ResourceSource<SkinningReference> {
 	public:
-		ResourceSource<SkinningReference>() = default;
+		/*ResourceSource<SkinningReference>() = default;
 		ResourceSource<SkinningReference>(const ResourceSource<SkinningReference> &) = default;
-		ResourceSource<SkinningReference>(const ResourceObjectManager<ModelData>::Handle &data) :modelHandle_(data) {}
+		ResourceSource<SkinningReference>(const ResourceObjectManager<ModelData>::Handle &data) :modelHandle_(data) {}*/
 
 		// ファイルのハンドル
 		ResourceObjectManager<ModelData>::Handle modelHandle_;
