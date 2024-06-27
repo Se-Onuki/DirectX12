@@ -13,7 +13,6 @@
 #include "../Engine/DirectBase/Model/Mesh.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
 #include "../Engine/DirectBase/DxResource/DxResourcePool.h"
-#include "../Engine/DirectBase/Model/SkinningReference.h"
 
 void CGTaskScene::OnEnter()
 {
@@ -48,9 +47,6 @@ void CGTaskScene::OnEnter()
 
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	boxModel_ = modelDataManager->Load({ assimpHandle });
-
-	SolEngine::ResourceObjectManager<SolEngine::SkinningReference> *const skinningRefManager = SolEngine::ResourceObjectManager<SolEngine::SkinningReference>::GetInstance();
-	/*auto skinningRef =*/ skinningRefManager->Load({ boxModel_ });
 
 	skinModel_ = SkinModel::MakeSkinModel(*boxModel_);
 

@@ -154,10 +154,9 @@ namespace SolEngine {
 		std::vector<std::pair<uint32_t/*Index番号*/, const Source &/*それに紐づいたソース*/>> unloadHandle;
 		{
 			// ソースデータのイテレータ
-			auto sourceItr = sourceList.begin();
 			for (uint32_t i = 0; i < result.size(); i++) {
 				if (not result[i]) {
-					unloadHandle.push_back({ i, *sourceItr });
+					unloadHandle.push_back({ i, sourceList[i] });
 				}
 			}
 		}

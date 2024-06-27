@@ -50,6 +50,7 @@ namespace ModelAnimation {
 namespace SolEngine {
 	class ModelData;
 	class AssimpData;
+	class SkeletonReference;
 }
 
 struct ModelNode {
@@ -109,11 +110,6 @@ struct ModelJointState {
 	Matrix4x4 skeletonSpaceMatrix_;
 
 };
-
-namespace SolEngine {
-	class SkeletonReference;
-	class SkinningReference;
-}
 
 struct SkeletonState {
 

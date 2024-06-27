@@ -22,7 +22,6 @@
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include <execution>
 #include "SkeletonReference.h"
-#include "SkinningReference.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 
