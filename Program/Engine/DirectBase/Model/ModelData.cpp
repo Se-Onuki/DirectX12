@@ -33,12 +33,16 @@ namespace SolEngine {
 
 		// メッシュ影響度のマネージャ
 		ResourceObjectManager<MeshInfluence> *const meshInfluenceManager = ResourceObjectManager<MeshInfluence>::GetInstance();
-		// 影響度の配列を確保
-		modelResult->meshInfluenceList_.resize(scene->mNumMeshes);
-		// メッシュからデータを取得する
-		std::transform(modelResult->meshHandleList_.begin(), modelResult->meshHandleList_.end(), modelResult->meshInfluenceList_.begin(), [&](const ResourceObjectManager<Mesh>::Handle mesh)->ResourceObjectManager<MeshInfluence>::Handle {return meshInfluenceManager->Load(
-			ResourceSource<MeshInfluence>{ mesh, modelResult->skinCluster_, modelResult->skeletonReference_ }
-		); });
+		// 影響度のソースを作成
+		std::vector<ResourceSource<MeshInfluence>> influenceSources;
+		// 領域を確保
+		influenceSources.resize(scene->mNumMeshes);
+		// データを保存する
+		std::transform(modelResult->meshHandleList_.begin(), modelResult->meshHandleList_.end(), influenceSources.begin(), [&](const ResourceObjectManager<Mesh>::Handle mesh)->ResourceSource<MeshInfluence> {
+			return ResourceSource<MeshInfluence>{ mesh, modelResult->skinCluster_, modelResult->skeletonReference_ };
+			});
+		// データを構築し､保存する
+		modelResult->meshInfluenceList_ = meshInfluenceManager->Load(influenceSources);
 
 		return std::move(modelResult);
 	}

@@ -89,10 +89,10 @@ namespace SolEngine {
 		/// @param source 構築元のデータ
 		/// @return 構築されたリソースハンドル
 		Handle Load(const Source &source);
-		std::vector<Handle> Load(const std::initializer_list<const Source> &source);
+		template<SoLib::IsContainsType<Source> List> std::vector<Handle> Load(const List &source);
 
 		Handle Find(const Source &source) const;
-		std::vector<Handle> Find(const std::initializer_list<const Source> &source) const;
+		template<SoLib::IsContainsType<Source> List> std::vector<Handle> Find(const List &source) const;
 
 		bool Destory(const Handle &handle);
 
@@ -144,7 +144,8 @@ namespace SolEngine {
 	}
 
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
-	inline std::vector<typename ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle> ResourceObjectManager<T, Source, Creater, ContainerSize>::Load(const std::initializer_list<const Source> &sourceList)
+	template<SoLib::IsContainsType<Source> List>
+	inline std::vector<typename ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle> ResourceObjectManager<T, Source, Creater, ContainerSize>::Load(const List &sourceList)
 	{
 		// データを格納する
 		std::vector<Handle> result = Find(sourceList);
@@ -166,18 +167,20 @@ namespace SolEngine {
 			sourceMap[source].push_back(index);
 		}
 
-		for (const auto &[source, indexs] : sourceMap) {		// 引数からリソースを構築
-			DataType resource = creater_.CreateObject(source);
+		// for (const auto &[source, indexs] : sourceMap) {		// 引数からリソースを構築
+		std::for_each(sourceMap.begin(), sourceMap.end(), [&](const std::pair<Source, std::vector<uint32_t>> &sourceAndIndex) {		// 引数からリソースを構築
+			DataType resource = creater_.CreateObject(sourceAndIndex.first);
 
 			// 有効な値が帰ってきたら保存する
 			if (resource) {
-				Handle handle = AddData(source, std::move(resource));
+				Handle handle = AddData(sourceAndIndex.first, std::move(resource));
 				// その値を結果に代入する
-				for (uint32_t index : indexs) {
+				for (uint32_t index : sourceAndIndex.second) {
 					result[index] = handle;
 				}
 			}
-		}
+			}
+		);
 
 		return result;
 	}
@@ -199,7 +202,8 @@ namespace SolEngine {
 	}
 
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
-	inline std::vector<typename ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle> ResourceObjectManager<T, Source, Creater, ContainerSize>::Find(const std::initializer_list<const Source> &sourceList) const
+	template<SoLib::IsContainsType<Source> List>
+	inline std::vector<typename ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle> ResourceObjectManager<T, Source, Creater, ContainerSize>::Find(const List &sourceList) const
 	{
 		// 返却するデータ
 		std::vector<Handle> result{ sourceList.size() };
