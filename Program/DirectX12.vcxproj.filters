@@ -456,6 +456,9 @@
     <ClCompile Include="Engine\DirectBase\Model\SkinningReference.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\ModelVertexData.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -879,6 +882,9 @@
       <Filter>Engine\DxResource</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\SkinningReference.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\ModelVertexData.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>

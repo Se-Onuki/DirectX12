@@ -20,7 +20,7 @@ namespace SolEngine {
 
 	private:
 
-		ArrayBuffer<Mesh::VertexData> outPutData_;
+		ArrayBuffer<ModelVertexData::VertexData> outPutData_;
 
 		DescHeapCbvSrvUav::HeapRange heapRange_;
 		ComPtr<ID3D12PipelineState> computePipelineState_;

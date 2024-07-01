@@ -7,6 +7,8 @@ namespace SolEngine {
 		// 生成したデータ
 		std::unique_ptr<SkinningReference> result = std::make_unique<SkinningReference>();
 
+
+
 		// 各領域にデータを追加
 		for (const auto &mesh : source.modelHandle_->meshHandleList_) {
 			// データを末尾に構築

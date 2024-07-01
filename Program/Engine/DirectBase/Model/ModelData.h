@@ -18,6 +18,7 @@ namespace SolEngine {
 		std::vector<ResourceObjectManager<Mesh>::Handle> meshHandleList_;
 		std::unique_ptr<ModelNode> rootNode_;
 		ResourceObjectManager<SkinClusterBase>::Handle skinCluster_;
+		ResourceObjectManager<ModelVertexData>::Handle modelVertex_;
 
 		void Draw(const Transform &transform, const Camera3D &camera) const;
 		void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;

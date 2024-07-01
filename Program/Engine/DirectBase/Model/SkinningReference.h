@@ -18,9 +18,9 @@ namespace SolEngine {
 		using MeshManager = ResourceObjectManager<Mesh>;
 
 	public:
-		std::vector<std::pair<MeshManager::Handle, VertexBuffer<VertexInfluence>>> influenceList_;
+		std::vector<std::pair<MeshManager::Handle, std::span<VertexInfluence>>> influenceList_;
 		std::unique_ptr<SkeletonReference> skeletonReference_;
-
+		VertexBuffer<VertexInfluence> influence_;
 	};
 
 	template <>

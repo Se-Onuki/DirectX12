@@ -6,30 +6,22 @@
 #include "AssimpData.h"
 #include "../Base/VertexBuffer.h"
 #include "Material.h"
+#include "ModelVertexData.h"
 
 namespace SolEngine {
 
 	class Mesh : public IResourceObject {
 	public:
 
-		struct VertexData {
-			Vector4 position; // 頂点位置
-			Vector3 normal;   // 法線
-			Vector2 texCoord; // UV座標系
-		};
+		// 頂点データハンドル
+		const ModelVertexData *modelVertex_;
+		// MeshのIndex
+		uint32_t meshIndex_;
 
-		template <uint32_t materialSize>
-			requires(materialSize != 0 and materialSize < 8)
-		struct VertexTexcoord {
-			std::array<Vector2, materialSize> texCoord; // UV座標系
-
-		};
-		// 頂点データ
-		VertexBuffer<VertexData> vertexBuffer_;
+		// 頂点情報
+		D3D12_VERTEX_BUFFER_VIEW vbView_;
 		// index情報
-		IndexBuffer<uint32_t> indexBuffer_;
-		// uv座標があるか
-		bool hasTexcoord_ = true;
+		D3D12_INDEX_BUFFER_VIEW ibView_;
 
 		// マテリアルハンドル
 		ResourceObjectManager<Material>::Handle materialhandle_;

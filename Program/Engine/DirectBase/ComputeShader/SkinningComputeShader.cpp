@@ -32,7 +32,7 @@ namespace SolEngine {
 			.Buffer = {
 				.FirstElement = 0,
 				.NumElements = vertexCount,			// 頂点数で計算を行う
-				.StructureByteStride = sizeof(Mesh::VertexData),
+				.StructureByteStride = sizeof(ModelVertexData::VertexData),
 				.CounterOffsetInBytes = 0,
 				.Flags = D3D12_BUFFER_UAV_FLAG_NONE,
 			},
