@@ -20,7 +20,7 @@ namespace SolEngine {
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, materialhandle_->materialData_.GetGPUVirtualAddress());
 		commandList->IASetVertexBuffers(0, vbv ? 2 : 1, vbvs.data());
 		commandList->IASetIndexBuffer(&ibView_);
-		commandList->DrawIndexedInstanced(vertexOffset.indexCount_, drawCount, vertexOffset.indexOffset_, vertexOffset.vertexOffset_, 0);
+		commandList->DrawIndexedInstanced(vertexOffset.indexCount_, drawCount, vertexOffset.indexOffset_ , vertexOffset.vertexOffset_, 0);
 	}
 
 	std::unique_ptr<Mesh> ResourceCreater<Mesh>::CreateObject(const ResourceSource<Mesh> &source) const {
@@ -42,15 +42,15 @@ namespace SolEngine {
 
 		const auto vertexData = vertexManager->Load({ source.assimpHandle_ });
 
-		const auto &vertexOffset = vertexData->vertexOffsets_[source.index_];
+		//const auto &vertexOffset = vertexData->vertexOffsets_[source.index_];
 
 		// 頂点データを渡す
 		meshResult->modelVertex_ = *vertexData;
 		// メッシュ番号を渡す
 		meshResult->meshIndex_ = source.index_;
 
-		meshResult->vbView_ = { .BufferLocation = vertexData->vertexBuffer_.GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(sizeof(ModelVertexData::VertexData)) * vertexOffset.vertexCount_, .StrideInBytes = sizeof(ModelVertexData::VertexData) };
-		meshResult->ibView_ = { .BufferLocation = vertexData->indexBuffer_.GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(sizeof(uint32_t)) * vertexOffset.indexCount_, .Format = DXGI_FORMAT_R32_UINT };
+		meshResult->vbView_ = { .BufferLocation = vertexData->vertexBuffer_.GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(sizeof(ModelVertexData::VertexData)) * vertexData->vertexBuffer_.size(), .StrideInBytes = sizeof(ModelVertexData::VertexData)};
+		meshResult->ibView_ = { .BufferLocation = vertexData->indexBuffer_.GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(sizeof(uint32_t)) * vertexData->indexBuffer_.size(), .Format = DXGI_FORMAT_R32_UINT };
 
 
 

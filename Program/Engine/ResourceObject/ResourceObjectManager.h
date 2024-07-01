@@ -85,9 +85,14 @@ namespace SolEngine {
 
 	public:
 
+		/// @brief リソースを構築する
+		/// @param source 構築元のデータ
+		/// @return 構築されたリソースハンドル
 		Handle Load(const Source &source);
+		template<SoLib::IsContainsType<Source> List> std::vector<Handle> Load(const List &source);
 
 		Handle Find(const Source &source) const;
+		template<SoLib::IsContainsType<Source> List> std::vector<Handle> Find(const List &source) const;
 
 		bool Destory(const Handle &handle);
 
@@ -138,6 +143,47 @@ namespace SolEngine {
 		return result;
 	}
 
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	template<SoLib::IsContainsType<Source> List>
+	inline std::vector<typename ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle> ResourceObjectManager<T, Source, Creater, ContainerSize>::Load(const List &sourceList)
+	{
+		// データを格納する
+		std::vector<Handle> result = Find(sourceList);
+
+		// 存在していないデータを抽出する
+		std::vector<std::pair<uint32_t/*Index番号*/, const Source &/*それに紐づいたソース*/>> unloadHandle;
+		{
+			// ソースデータのイテレータ
+			for (uint32_t i = 0; i < result.size(); i++) {
+				if (not result[i]) {
+					unloadHandle.push_back({ i, sourceList[i] });
+				}
+			}
+		}
+		// 1つのソースデータにいくつのIndexが紐づいているかを取る
+		std::unordered_map<Source, std::vector<uint32_t>> sourceMap;
+		for (const auto &[index, source] : unloadHandle) {
+			sourceMap[source].push_back(index);
+		}
+
+		// for (const auto &[source, indexs] : sourceMap) {		// 引数からリソースを構築
+		std::for_each(sourceMap.begin(), sourceMap.end(), [&](const std::pair<Source, std::vector<uint32_t>> &sourceAndIndex) {		// 引数からリソースを構築
+			DataType resource = creater_.CreateObject(sourceAndIndex.first);
+
+			// 有効な値が帰ってきたら保存する
+			if (resource) {
+				Handle handle = AddData(sourceAndIndex.first, std::move(resource));
+				// その値を結果に代入する
+				for (uint32_t index : sourceAndIndex.second) {
+					result[index] = handle;
+				}
+			}
+			}
+		);
+
+		return result;
+	}
+
 	template <IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
 	ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle ResourceObjectManager<T, Source, Creater, ContainerSize>::Find(const Source &source) const
 	{
@@ -152,6 +198,34 @@ namespace SolEngine {
 			// 見つからなかったら、不正なデータを返す。
 			return Handle{};
 		}
+	}
+
+	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
+	template<SoLib::IsContainsType<Source> List>
+	inline std::vector<typename ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle> ResourceObjectManager<T, Source, Creater, ContainerSize>::Find(const List &sourceList) const
+	{
+		// 返却するデータ
+		std::vector<Handle> result{ sourceList.size() };
+
+		// 各データを検索して､それの値を返す
+		std::transform(sourceList.begin(), sourceList.end(), result.begin(), [this](const Source &item)->Handle
+			{
+				// 検索を行う
+				auto itr = findMap_.find(item);
+				// 見つかったらそれを返す
+				if (itr != findMap_.end()) {
+
+					return itr->second;
+				}
+				else {
+					// 見つからなかったら、不正なデータを返す。
+					return Handle{};
+				}
+			}
+		);
+
+
+		return result;
 	}
 
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>

@@ -92,6 +92,6 @@ namespace Angle {
 /// @brief 度数法の値を弧度法に変換
 /// @param val 度数法
 /// @return 弧度法
-inline float operator""_deg(long double val) {
+inline static constexpr float operator""_deg(long double val) {
 	return static_cast<float>(val) * Angle::Dig2Rad;
 }

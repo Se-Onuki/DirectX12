@@ -453,10 +453,16 @@
     <ClCompile Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.cpp">
       <Filter>Engine\ComputeShader</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DirectBase\Model\SkinningReference.cpp">
+    <ClCompile Include="Engine\DirectBase\Model\MeshInfluence.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonReference.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\ModelVertexData.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\ModelInfluence.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -881,10 +887,19 @@
     <ClInclude Include="Engine\DirectBase\DxResource\DxResourcePool.h">
       <Filter>Engine\DxResource</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Model\SkinningReference.h">
+    <ClInclude Include="Engine\DirectBase\Model\SkinCluster.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\MeshInfluence.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\SkeletonReference.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\ModelVertexData.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\ModelInfluence.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>

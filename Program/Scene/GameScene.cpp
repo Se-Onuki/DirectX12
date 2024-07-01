@@ -43,13 +43,13 @@ void GameScene::OnEnter() {
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 
 	auto playerAssimp = assimpManager->Load({ "Model/human/", "sneakWalk.gltf" });
-	modelDataManager->Load(playerAssimp);
+	auto playerModel = modelDataManager->Load({ playerAssimp });
 
 	auto boxAssimp = assimpManager->Load({ "", "box.obj" });
-	modelDataManager->Load(boxAssimp);
+	auto boxModel = modelDataManager->Load({ boxAssimp });
 
 	auto brainStemAssimp = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
-	brainStem_ = modelDataManager->Load(brainStemAssimp);
+	brainStem_ = modelDataManager->Load({ brainStemAssimp });
 
 	ECS::ComponentRegistry::ComponentFlag compFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp>();
 	ECS::ComponentRegistry::ComponentFlag compBigFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp, ECS::PositionComp>();
@@ -70,11 +70,11 @@ void GameScene::OnEnter() {
 
 	spawner_.clear();
 
-	playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
+	//playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "walk.gltf");
 	attackAnimation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "Attack.gltf", 1);
 
-	skinModel_ = SkinModel::MakeSkinModel(playerModel_);
+	skinModel_ = SkinModel::MakeSkinModel(*playerModel);
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
@@ -148,7 +148,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::TransformMatComp{};
 	*playerPrefab_ += ECS::ModelAnimator{ .animateList_{{ animation_.get(), animation_.get(), attackAnimation_.get(), attackAnimation_.get()}},.animatior_ = animation_.get() };
 	*playerPrefab_ += ECS::SkinModel{ .skinModel_ = skinModel_.get() };
-	*playerPrefab_ += ECS::ModelComp{ .model_ = {playerAssimp} };
+	*playerPrefab_ += ECS::ModelComp{ .model_ = {playerModel} };
 	//*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
@@ -174,7 +174,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
 	*enemyPrefab_ += ECS::PositionComp{ .position_{0.f, 1.f, 10.f} };
 	*enemyPrefab_ += ECS::TransformMatComp{};
-	*enemyPrefab_ += ECS::ModelComp{ .model_ = {boxAssimp} };
+	*enemyPrefab_ += ECS::ModelComp{ .model_ = {boxModel} };
 	*enemyPrefab_ += ECS::GravityComp{ .gravity_ = Vector3::up * -9.8f };
 	*enemyPrefab_ += ECS::SphereCollisionComp{ .collision_ = Sphere{.radius = 1.f } };
 	*enemyPrefab_ += ECS::EnemyTag{};

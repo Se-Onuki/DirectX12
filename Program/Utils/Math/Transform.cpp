@@ -135,8 +135,3 @@ void BaseTransform::DisConnectParent() {
 	// グローバル座標は変わらないので算出しない
 	this->CalcMatrix();
 }
-
-Matrix4x4  SimpleTransformQuaternion::Affine() const
-{
-	return SoLib::Math::Affine(scale_, rotate_, translate_);
-}

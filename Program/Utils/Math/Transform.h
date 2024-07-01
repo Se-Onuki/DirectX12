@@ -75,7 +75,8 @@ struct SimpleTransformQuaternion {
 	Quaternion rotate_ = Quaternion::Identity;
 	Vector3 translate_ = {};
 
-	Matrix4x4 Affine() const;
+	inline Matrix4x4 Affine() const { return SoLib::Affine(scale_, rotate_, translate_); }
+	inline Matrix4x4 Affine(const Matrix4x4 &parent) const { return Affine() * parent; }
 
 };
 
@@ -85,5 +86,6 @@ struct SimpleTransformEuler {
 	Vector3 translate_ = {};
 
 	inline Matrix4x4 Affine() const { return SoLib::Affine(scale_, rotate_, translate_); }
+	inline Matrix4x4 Affine(const Matrix4x4 &parent) const { return Affine() * parent; }
 
 };
