@@ -7,10 +7,10 @@
 
 /// @brief 頂点バッファ
 /// @tparam T 頂点データの型
-template <SoLib::IsRealType T>
+template <SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType = D3D12_HEAP_TYPE_UPLOAD>
 class VertexBuffer final {
 
-	ArrayBuffer<T> vertexData_;
+	ArrayBuffer<T, HeapType> vertexData_;
 	D3D12_VERTEX_BUFFER_VIEW vbView_;
 
 public:
@@ -41,9 +41,9 @@ public:
 	void SetVertexData(const U &source);
 };
 
-template <SoLib::IsRealType T>
+template <SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 template <SoLib::IsContainsType<T> U>
-void VertexBuffer<T>::SetVertexData(const U &source) {
+void VertexBuffer<T, HeapType>::SetVertexData(const U &source) {
 	vertexData_ = source;
 
 	// 頂点バッファビューを作成する
@@ -58,10 +58,10 @@ void VertexBuffer<T>::SetVertexData(const U &source) {
 
 /// @brief Indexバッファ
 /// @tparam T Indexデータの型
-template <SoLib::IsIntegral T>
+template <SoLib::IsIntegral T, D3D12_HEAP_TYPE HeapType = D3D12_HEAP_TYPE_UPLOAD>
 class IndexBuffer final {
 
-	ArrayBuffer<T> indexData_;
+	ArrayBuffer<T, HeapType> indexData_;
 	D3D12_INDEX_BUFFER_VIEW ibView_;
 
 public:
@@ -88,9 +88,9 @@ public:
 	void SetIndexData(const U &source);
 };
 
-template <SoLib::IsIntegral T>
+template <SoLib::IsIntegral T, D3D12_HEAP_TYPE HeapType>
 template <SoLib::IsContainsType<T> U>
-void IndexBuffer<T>::SetIndexData(const U &source) {
+void IndexBuffer<T, HeapType>::SetIndexData(const U &source) {
 
 	indexData_ = source;
 

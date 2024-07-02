@@ -9,11 +9,18 @@ namespace SolEngine {
 		//// メッシュのソースデータ
 		//const auto &meshSource = source.meshHandle_.GetSource();
 
+		auto *const dxCommon = DirectXCommon::GetInstance();
+		// SRVを取得する
+		result->heapRange_ = dxCommon->GetSRVHeap()->RequestHeapAllocation(1u);
+
 		auto *const vertexManager = ResourceObjectManager<ModelVertexData>::GetInstance();
 
 		const auto &modelVertex = vertexManager->Load({ source.assimpData_ });
 		// 頂点数と同じ長さのデータを構築する
 		result->influence_.Resize(modelVertex->vertexBuffer_.GetVertexData().size());
+
+		// デスクリプタヒープに保存
+		dxCommon->GetDevice()->CreateShaderResourceView(result->influence_.GetVertexData().GetResources(), &result->influence_.GetVertexData().GetDesc(), result->heapRange_.GetHandle(0u).cpuHandle_);
 
 
 		// 番兵を取る

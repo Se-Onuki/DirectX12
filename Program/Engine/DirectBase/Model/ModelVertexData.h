@@ -29,6 +29,8 @@ namespace SolEngine {
 
 		};
 
+
+
 		// 頂点データ
 		VertexBuffer<VertexData> vertexBuffer_;
 		// index情報

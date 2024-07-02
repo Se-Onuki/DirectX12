@@ -3,7 +3,8 @@
 #include <d3d12.h>
 #include "../Base/DirectXCommon.h"
 #include "../Base/StructBuffer.h"
-#include "../Model/Mesh.h"
+#include "../Model/Model.h"
+#include "../Model/ModelVertexData.h"
 
 namespace SolEngine {
 	class SkinningComputeShader : protected EngineObject {
@@ -17,10 +18,12 @@ namespace SolEngine {
 
 		void Init(const uint32_t vertexCount);
 
+		void Update(const ::SkinCluster& skinCluster, const ModelData& modelData, );
+
 
 	private:
 
-		ArrayBuffer<ModelVertexData::VertexData> outPutData_;
+		VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> outputData_;
 
 		DescHeapCbvSrvUav::HeapRange heapRange_;
 		ComPtr<ID3D12PipelineState> computePipelineState_;

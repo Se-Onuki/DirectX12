@@ -22,7 +22,6 @@ namespace SolEngine {
 		std::unique_ptr<ModelNode> rootNode_;
 		ResourceObjectManager<SkinClusterBase>::Handle skinCluster_;
 		ResourceObjectManager<SolEngine::SkeletonReference>::Handle skeletonReference_;
-		//std::vector<ResourceObjectManager<MeshInfluence>::Handle> meshInfluenceList_;
 		ResourceObjectManager<ModelVertexData>::Handle modelVertex_;
 		ResourceObjectManager<ModelInfluence>::Handle modelInfluence_;
 

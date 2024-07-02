@@ -22,6 +22,8 @@ namespace SolEngine {
 	public:
 		// 頂点データ
 		VertexBuffer<VertexInfluence> influence_;
+		DescHeapCbvSrvUav::HeapRange heapRange_;
+
 
 	};
 

@@ -38,8 +38,10 @@ namespace SolEngine {
 			},
 		};
 
+		outputData_.Resize(vertexCount);
+
 		heapRange_ = srvHeap->RequestHeapAllocation(1u);
-		device->CreateUnorderedAccessView(outPutData_.GetResources(), nullptr, &uavView_, heapRange_.GetHandle(0u).cpuHandle_);
+		device->CreateUnorderedAccessView(outputData_.GetVertexData().GetResources(), nullptr, &uavView_, heapRange_.GetHandle(0u).cpuHandle_);
 
 	}
 }
