@@ -18,11 +18,6 @@ namespace SolEngine {
 		// MeshのIndex
 		uint32_t meshIndex_;
 
-		// 頂点情報
-		D3D12_VERTEX_BUFFER_VIEW vbView_;
-		// index情報
-		D3D12_INDEX_BUFFER_VIEW ibView_;
-
 		// マテリアルハンドル
 		ResourceObjectManager<Material>::Handle materialhandle_;
 

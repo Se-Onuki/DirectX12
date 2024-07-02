@@ -6,7 +6,7 @@ namespace SolEngine {
 	void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const D3D12_VERTEX_BUFFER_VIEW *vbv) const {
 
 		std::array<D3D12_VERTEX_BUFFER_VIEW, 2u> vbvs = {  };
-		vbvs[0] = vbView_;
+		vbvs[0] = modelVertex_->vertexBuffer_.GetVBView();
 		//vbvs[1] = texcoordBuffer_.GetVBView();
 		if (vbv) {
 			vbvs[1] = *vbv;
@@ -19,8 +19,8 @@ namespace SolEngine {
 		::TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, materialhandle_->texHandle_);
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, materialhandle_->materialData_.GetGPUVirtualAddress());
 		commandList->IASetVertexBuffers(0, vbv ? 2 : 1, vbvs.data());
-		commandList->IASetIndexBuffer(&ibView_);
-		commandList->DrawIndexedInstanced(vertexOffset.indexCount_, drawCount, vertexOffset.indexOffset_ , vertexOffset.vertexOffset_, 0);
+		commandList->IASetIndexBuffer(&modelVertex_->indexBuffer_.GetIBView());
+		commandList->DrawIndexedInstanced(vertexOffset.indexCount_, drawCount, vertexOffset.indexOffset_, vertexOffset.vertexOffset_, 0);
 	}
 
 	std::unique_ptr<Mesh> ResourceCreater<Mesh>::CreateObject(const ResourceSource<Mesh> &source) const {
@@ -48,11 +48,6 @@ namespace SolEngine {
 		meshResult->modelVertex_ = *vertexData;
 		// メッシュ番号を渡す
 		meshResult->meshIndex_ = source.index_;
-
-		meshResult->vbView_ = { .BufferLocation = vertexData->vertexBuffer_.GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(sizeof(ModelVertexData::VertexData)) * vertexData->vertexBuffer_.size(), .StrideInBytes = sizeof(ModelVertexData::VertexData)};
-		meshResult->ibView_ = { .BufferLocation = vertexData->indexBuffer_.GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(sizeof(uint32_t)) * vertexData->indexBuffer_.size(), .Format = DXGI_FORMAT_R32_UINT };
-
-
 
 		//assert(mesh->HasNormals() and "法線が無いメッシュは今回は非対応");
 

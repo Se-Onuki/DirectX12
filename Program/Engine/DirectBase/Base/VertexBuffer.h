@@ -81,6 +81,9 @@ public:
 	const auto &GetIndexData() const noexcept { return indexData_; }
 	const auto &GetIBView() const noexcept { return ibView_; };
 
+	T &operator[](const uint32_t i) { return indexData_.data()[i]; }
+	const T &operator[](const uint32_t i) const { return indexData_.data()[i]; }
+
 	template <SoLib::IsContainsType<T> U>
 	void SetIndexData(const U &source);
 };

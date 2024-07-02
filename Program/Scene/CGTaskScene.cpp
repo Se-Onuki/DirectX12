@@ -76,7 +76,7 @@ void CGTaskScene::OnEnter()
 
 	*vec2_ = Vector2{ 10,10 };
 
-	computeShader_.Init(boxModel_->modelVertex_->vertexBuffer_.size());
+	computeShader_.Init(boxModel_->modelVertex_->vertexBuffer_.GetVertexData().size());
 
 	/*SolEngine::RootParameter rootParameters = {
 		{

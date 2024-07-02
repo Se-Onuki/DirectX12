@@ -22,12 +22,17 @@ namespace SolEngine {
 			uint32_t indexOffset_;
 			uint32_t vertexCount_;
 			uint32_t indexCount_;
+
+			template<typename T>
+			std::span<T> GetMeshSpan(T *begin) const { return std::span<T>{ begin + vertexOffset_, vertexCount_ }; }
+			std::span<uint32_t> GetIndexSpan(uint32_t *begin) const { return std::span<uint32_t>{ begin + indexOffset_, indexCount_ }; }
+
 		};
 
 		// 頂点データ
-		ArrayBuffer<VertexData> vertexBuffer_;
+		VertexBuffer<VertexData> vertexBuffer_;
 		// index情報
-		ArrayBuffer<uint32_t> indexBuffer_;
+		IndexBuffer<uint32_t> indexBuffer_;
 
 		// メッシュの分解情報
 		std::vector<VertexOffset> vertexOffsets_;

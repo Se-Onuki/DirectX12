@@ -29,8 +29,8 @@ namespace SolEngine {
 		}
 
 		// 頂点数分のメモリを確保
-		result->vertexBuffer_.CreateBuffer(vertexCount.first);
-		result->indexBuffer_.CreateBuffer(vertexCount.second);
+		result->vertexBuffer_.Resize(vertexCount.first);
+		result->indexBuffer_.Resize(vertexCount.second);
 
 		//std::vector<std::pair<std::span<ModelVertexData::VertexData>, std::span<uint32_t>>> outputTargets{ meshes.size() };
 

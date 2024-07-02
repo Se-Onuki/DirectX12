@@ -13,7 +13,7 @@ namespace SolEngine {
 
 		const auto &modelVertex = vertexManager->Load({ source.assimpData_ });
 		// 頂点数と同じ長さのデータを構築する
-		result->influence_.Resize(modelVertex->vertexBuffer_.size());
+		result->influence_.Resize(modelVertex->vertexBuffer_.GetVertexData().size());
 
 
 		// 番兵を取る
@@ -25,7 +25,7 @@ namespace SolEngine {
 			// 書き込む先
 			std::span<VertexInfluence> influence = { &result->influence_[modelVertex->vertexOffsets_[i].vertexOffset_],modelVertex->vertexOffsets_[i].vertexCount_ };
 
-				// メッシュにデータが保存されてなかったら飛ばす
+			// メッシュにデータが保存されてなかったら飛ばす
 			if (not cluster) { return nullptr; }
 
 			// モデルデータを解析してInfluenceを埋める
