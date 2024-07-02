@@ -17,7 +17,10 @@ namespace SolEngine {
 
 		modelResult->rootNode_ = ModelNode::Create(scene->mRootNode);
 		modelResult->skinCluster_ = ResourceObjectManager<SkinClusterBase>::GetInstance()->Load({ source.assimpHandle_ });
-		modelResult->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load({ modelResult->rootNode_.get() });
+		modelResult->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load(ResourceSource<SkeletonReference>{ modelResult->rootNode_.get() });
+		SolEngine::ResourceObjectManager<SolEngine::ModelVertexData> *const vertexManager = SolEngine::ResourceObjectManager<SolEngine::ModelVertexData>::GetInstance();
+
+		modelResult->modelVertex_ = vertexManager->Load({ source.assimpHandle_ });
 
 		// マテリアルマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
@@ -37,18 +40,24 @@ namespace SolEngine {
 			modelResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
 		}
 
-		// メッシュ影響度のマネージャ
-		ResourceObjectManager<MeshInfluence> *const meshInfluenceManager = ResourceObjectManager<MeshInfluence>::GetInstance();
-		// 影響度のソースを作成
-		std::vector<ResourceSource<MeshInfluence>> influenceSources;
-		// 領域を確保
-		influenceSources.resize(scene->mNumMeshes);
-		// データを保存する
-		std::transform(std::execution::par_unseq, modelResult->meshHandleList_.begin(), modelResult->meshHandleList_.end(), influenceSources.begin(), [&](const ResourceObjectManager<Mesh>::Handle mesh)->ResourceSource<MeshInfluence> {
-			return ResourceSource<MeshInfluence>{ mesh, modelResult->skinCluster_, modelResult->skeletonReference_ };
-			});
-		// データを構築し､保存する
-		modelResult->meshInfluenceList_ = meshInfluenceManager->Load(influenceSources);
+		auto *const modelInfluenceManager = ResourceObjectManager<ModelInfluence>::GetInstance();
+
+		const auto modelInfluence = modelInfluenceManager->Load({ source.assimpHandle_,modelResult->skinCluster_, modelResult->skeletonReference_ });
+
+		modelResult->modelInfluence_ = modelInfluence;
+
+		//// メッシュ影響度のマネージャ
+		//ResourceObjectManager<MeshInfluence> *const meshInfluenceManager = ResourceObjectManager<MeshInfluence>::GetInstance();
+		//// 影響度のソースを作成
+		//std::vector<ResourceSource<MeshInfluence>> influenceSources;
+		//// 領域を確保
+		//influenceSources.resize(scene->mNumMeshes);
+		//// データを保存する
+		//std::transform(std::execution::par_unseq, modelResult->meshHandleList_.begin(), modelResult->meshHandleList_.end(), influenceSources.begin(), [&](const ResourceObjectManager<Mesh>::Handle mesh)->ResourceSource<MeshInfluence> {
+		//	return ResourceSource<MeshInfluence>{ mesh, modelResult->skinCluster_, modelResult->skeletonReference_ };
+		//	});
+		//// データを構築し､保存する
+		//modelResult->meshInfluenceList_ = meshInfluenceManager->Load(influenceSources);
 
 		return std::move(modelResult);
 	}
@@ -84,7 +93,7 @@ namespace SolEngine {
 			auto &mesh = meshHandleList_[i];
 			// commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 			//commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
-			mesh->Draw(commandList, 1, &skinCluster.reference_->meshInfluenceList_[i]->influence_.GetVBView());
+			mesh->Draw(commandList, 1, &modelInfluence_->influence_.GetVBView());
 		}
 	}
 
@@ -120,7 +129,7 @@ namespace SolEngine {
 
 		for (uint32_t i = 0; i < meshHandleList_.size(); i++) {
 			auto &mesh = meshHandleList_[i];
-			mesh->Draw(commandList, drawCount, &skinCluster.reference_->meshInfluenceList_[i]->influence_.GetVBView());
+			mesh->Draw(commandList, drawCount, &modelInfluence_->influence_.GetVBView());
 		}
 	}
 }

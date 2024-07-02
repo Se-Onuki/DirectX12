@@ -10,7 +10,7 @@ namespace SolEngine {
 		// メッシュのソースデータ
 		const auto &meshSource = source.meshHandle_.GetSource();
 		// 頂点数と同じ長さのデータを構築する
-		result->influence_.Resize(source.meshHandle_->vertexBuffer_.GetVertexData().size());
+		//result->influence_.Resize(source.meshHandle_->vertexBuffer_.GetVertexData().size());
 
 		// 番兵を取る
 		const auto jointEndIt = source.skeletonReference_->jointMap_.end();

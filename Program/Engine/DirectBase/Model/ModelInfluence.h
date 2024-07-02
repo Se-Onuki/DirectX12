@@ -17,13 +17,11 @@ namespace SolEngine {
 	class ModelData;
 
 	class ModelInfluence : public IResourceObject {
-		using MeshManager = ResourceObjectManager<Mesh>;
+		//using ModelManager = ResourceObjectManager<Model>;
 
 	public:
 		// 頂点データ
-		ArrayBuffer<VertexInfluence> influence_;
-
-		std::vector<D3D12_VERTEX_BUFFER_VIEW> vbvs_;
+		VertexBuffer<VertexInfluence> influence_;
 
 	};
 
@@ -31,7 +29,9 @@ namespace SolEngine {
 	class ResourceSource<ModelInfluence> {
 	public:
 
-		ModelData *modelData_;
+		ResourceObjectManager<AssimpData>::Handle assimpData_;
+		ResourceObjectManager<SkinClusterBase>::Handle skinClusterBase_;
+		ResourceObjectManager<SkeletonReference>::Handle skeletonReference_;
 
 		bool operator==(const ResourceSource<ModelInfluence> &) const = default;
 	};
@@ -51,7 +51,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::ModelInfluence>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::ModelInfluence> &data) const {
-			return size_t{ reinterpret_cast<size_t>(data.modelData_) };
+			return size_t{ static_cast<size_t>(data.assimpData_.GetHandle()) << 32u | static_cast<size_t>(data.assimpData_.GetVersion()) };
 		}
 	};
 }

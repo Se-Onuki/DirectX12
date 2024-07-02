@@ -12,6 +12,7 @@
 #include "SkinClusterBase.h"
 #include "SkeletonReference.h"
 #include "MeshInfluence.h"
+#include "ModelInfluence.h"
 
 namespace SolEngine {
 
@@ -21,8 +22,9 @@ namespace SolEngine {
 		std::unique_ptr<ModelNode> rootNode_;
 		ResourceObjectManager<SkinClusterBase>::Handle skinCluster_;
 		ResourceObjectManager<SolEngine::SkeletonReference>::Handle skeletonReference_;
-		std::vector<ResourceObjectManager<MeshInfluence>::Handle> meshInfluenceList_;
-		//ResourceObjectManager<SkinningReference>::Handle skinningReference_;
+		//std::vector<ResourceObjectManager<MeshInfluence>::Handle> meshInfluenceList_;
+		ResourceObjectManager<ModelVertexData>::Handle modelVertex_;
+		ResourceObjectManager<ModelInfluence>::Handle modelInfluence_;
 
 		void Draw(const Transform &transform, const Camera3D &camera) const;
 		void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;

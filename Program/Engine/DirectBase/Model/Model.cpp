@@ -1134,7 +1134,7 @@ void Model::Draw(const SkinCluster &skinCluster, const Transform &transform, con
 		auto &mesh = meshList_[i];
 		// commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
-		mesh->Draw(commandList_, 1, &skinCluster.reference_->meshInfluenceList_[i]->influence_.GetVBView());
+		mesh->Draw(commandList_, 1, &skinCluster.reference_->modelInfluence_->influence_.GetVBView());
 	}
 }
 
@@ -1150,7 +1150,7 @@ void Model::Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HAND
 	for (uint32_t i = 0; i < meshList_.size(); i++) {
 		auto &mesh = meshList_[i];
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinParticle)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
-		mesh->Draw(commandList_, drawCount, &skinCluster.reference_->meshInfluenceList_[i]->influence_.GetVBView());
+		mesh->Draw(commandList_, drawCount, &skinCluster.reference_->modelInfluence_->influence_.GetVBView());
 	}
 }
 

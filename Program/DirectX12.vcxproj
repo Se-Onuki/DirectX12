@@ -187,9 +187,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Model\MeshInfluence.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\Model.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelData.cpp" />
+    <ClCompile Include="Engine\DirectBase\Model\ModelInfluence.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelRender.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\SkeletonReference.cpp" />
+    <ClCompile Include="Engine\DirectBase\Model\ModelVertexData.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\SkinClusterBase.cpp" />
     <ClCompile Include="Engine\DirectBase\PostEffect\OffScreenRendering.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Camera.cpp" />
@@ -312,6 +314,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Model\ModelRender.h" />
     <ClInclude Include="Engine\DirectBase\Model\SkeletonReference.h" />
     <ClInclude Include="Engine\DirectBase\Model\SkinCluster.h" />
+    <ClInclude Include="Engine\DirectBase\Model\ModelVertexData.h" />
     <ClInclude Include="Engine\DirectBase\Model\SkinClusterBase.h" />
     <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h" />
     <ClInclude Include="Engine\DirectBase\Render\Camera.h" />
