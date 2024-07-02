@@ -14,7 +14,7 @@
 
 /// @brief 定数バッファ
 /// @tparam T 型名 
-template<SoLib::IsRealType T>
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType = D3D12_HEAP_TYPE_UPLOAD>
 class ArrayBuffer final {
 	// 静的警告
 	static_assert(!std::is_pointer<T>::value, "ArrayBufferに与えた型がポインタ型です");
@@ -83,47 +83,47 @@ private:
 
 };
 
-template<SoLib::IsRealType T>
-inline ArrayBuffer<T>::operator bool() const noexcept {
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline ArrayBuffer<T, HeapType>::operator bool() const noexcept {
 	return resources_ != nullptr;
 }
 
-template<SoLib::IsRealType T>
-inline ArrayBuffer<T>::operator T *() noexcept {
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline ArrayBuffer<T, HeapType>::operator T *() noexcept {
 	return mapData_.data();
 }
 
-template<SoLib::IsRealType T>
-inline ArrayBuffer<T>::operator const T *() const noexcept {
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline ArrayBuffer<T, HeapType>::operator const T *() const noexcept {
 	return mapData_.data();
 }
 
-template<SoLib::IsRealType T>
-inline T *const ArrayBuffer<T>::operator->() noexcept {
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline T *const ArrayBuffer<T, HeapType>::operator->() noexcept {
 	return mapData_.data();
 }
 
-template<SoLib::IsRealType T>
-inline const T *const ArrayBuffer<T>::operator->() const noexcept {
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline const T *const ArrayBuffer<T, HeapType>::operator->() const noexcept {
 	return mapData_.data();
 }
 
-template<SoLib::IsRealType T>
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 template<SoLib::IsContainsType<T> U>
-inline ArrayBuffer<T> &ArrayBuffer<T>::operator=(const U &source) {
+inline ArrayBuffer<T, HeapType> &ArrayBuffer<T, HeapType>::operator=(const U &source) {
 	CreateBuffer(static_cast<uint32_t>(source.size()));
 	std::copy(source.begin(), source.end(), mapData_.begin());
 	return *this;
 }
 
-template<SoLib::IsRealType T>
-inline ArrayBuffer<T>::ArrayBuffer(const uint32_t width) {
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline ArrayBuffer<T, HeapType>::ArrayBuffer(const uint32_t width) {
 	CreateBuffer(width);
 }
 
-template<SoLib::IsRealType T>
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 template<SoLib::IsContainsType<T> U>
-inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
+inline ArrayBuffer<T, HeapType>::ArrayBuffer(const U &source) {
 	static_assert(requires { source.size(); }, "与えられた型にsize()メンバ関数がありません");
 	static_assert(requires { source.begin(); }, "与えられた型にbegin()メンバ関数がありません");
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
@@ -141,14 +141,14 @@ inline ArrayBuffer<T>::ArrayBuffer(const U &source) {
 //}
 
 
-template<SoLib::IsRealType T>
-inline void ArrayBuffer<T>::CreateBuffer(uint32_t size) {
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline void ArrayBuffer<T, HeapType>::CreateBuffer(uint32_t size) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
 	if (size != 0u && mapData_.size() != size) {
 		HRESULT result = S_FALSE;
 		if (resources_ != nullptr) { resources_->Release(); }
 		// 256バイト単位のアライメント
-		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff);
+		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff, HeapType);
 
 		T *tmp = nullptr;
 
@@ -161,8 +161,8 @@ inline void ArrayBuffer<T>::CreateBuffer(uint32_t size) {
 	}
 }
 
-template<SoLib::IsRealType T>
-inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T>::CreateSrvDesc() const
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T, HeapType>::CreateSrvDesc() const
 {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
 
@@ -177,8 +177,8 @@ inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T>::CreateSrvDesc() const
 	return srvDesc;
 }
 
-template<SoLib::IsRealType T>
-inline ArrayBuffer<T>::~ArrayBuffer() {
+template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
+inline ArrayBuffer<T, HeapType>::~ArrayBuffer() {
 	//if (resources_ != nullptr) { resources_->Release(); }
 }
 

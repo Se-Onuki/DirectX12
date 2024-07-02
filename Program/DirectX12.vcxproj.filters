@@ -890,6 +890,9 @@
     <ClInclude Include="Engine\DirectBase\Model\SkeletonReference.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\ModelInfluence.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

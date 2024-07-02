@@ -6,13 +6,18 @@
 namespace SolEngine {
 	std::unique_ptr<ModelData> ResourceCreater<ModelData>::CreateObject(const ResourceSource<ModelData> &source) const {
 
+		// もしハンドルが空であったら終わる
+		if (not source.assimpHandle_) { return nullptr; }
+
 		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
+		// もしデータが読めなかったら終わる
+		if (not scene) { return nullptr; }
 
 		std::unique_ptr<ModelData> modelResult = std::make_unique<ModelData>();
 
 		modelResult->rootNode_ = ModelNode::Create(scene->mRootNode);
 		modelResult->skinCluster_ = ResourceObjectManager<SkinClusterBase>::GetInstance()->Load({ source.assimpHandle_ });
-		modelResult->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load(ResourceSource<SkeletonReference>{ modelResult->rootNode_.get() });
+		modelResult->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load({ modelResult->rootNode_.get() });
 
 		// マテリアルマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();

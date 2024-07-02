@@ -4,6 +4,7 @@
 #include "../Base/DirectXCommon.h"
 #include "../Base/StructBuffer.h"
 #include "../Model/Mesh.h"
+#include "../Model/ModelData.h"
 
 namespace SolEngine {
 	class SkinningComputeShader : protected EngineObject {
@@ -15,12 +16,14 @@ namespace SolEngine {
 
 	public:
 
-		void Init(const uint32_t vertexCount);
+		void Init(const ResourceObjectManager<ModelData>::Handle modelData);
 
 
 	private:
 
-		ArrayBuffer<Mesh::VertexData> outPutData_;
+		std::vector<std::unique_ptr<ArrayBuffer<Mesh::VertexData, D3D12_HEAP_TYPE_DEFAULT>>> outputVertex_;
+
+		//ArrayBuffer<Mesh::VertexData> outPutData_;
 
 		DescHeapCbvSrvUav::HeapRange heapRange_;
 		ComPtr<ID3D12PipelineState> computePipelineState_;
