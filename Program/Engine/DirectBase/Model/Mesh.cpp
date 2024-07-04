@@ -2,7 +2,18 @@
 #include "../Base/TextureManager.h"
 
 namespace SolEngine {
+	void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertex) const
+	{
+		const auto &vertexOffset = modelVertex_->vertexOffsets_[meshIndex_];
 
+
+		commandList->SetPipelineState(Model::GetGraphicsPipelineState()[static_cast<uint32_t>(Model::GetPipelineType())][static_cast<uint32_t>(materialhandle_->blendMode_)].Get()); // PSOを設定
+		::TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kTexture, materialhandle_->texHandle_);
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kMaterial, materialhandle_->materialData_.GetGPUVirtualAddress());
+		commandList->IASetVertexBuffers(0, 1, &vertex.GetVBView());
+		commandList->IASetIndexBuffer(&modelVertex_->indexBuffer_.GetIBView());
+		commandList->DrawIndexedInstanced(vertexOffset.indexCount_, drawCount, vertexOffset.indexOffset_, vertexOffset.vertexOffset_, 0);
+	}
 	void Mesh::Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const D3D12_VERTEX_BUFFER_VIEW *vbv) const {
 
 		std::array<D3D12_VERTEX_BUFFER_VIEW, 2u> vbvs = {  };

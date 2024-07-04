@@ -77,6 +77,22 @@ namespace SolEngine {
 		}
 	}
 
+	void ModelData::Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const Transform &transform, const Camera3D &camera) const
+	{
+		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+		assert(Model::GetPipelineType() == Model::PipelineType::kModel && "設定されたシグネチャがkModelではありません");
+
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kWorldTransform, transform.GetGPUVirtualAddress());
+		for (auto &mesh : meshHandleList_) {
+			commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, ::ModelNode::kIdentity_->GetGPUVirtualAddress());
+
+			mesh->Draw(commandList, 1, vertexBuffer);
+		}
+
+	}
+
 	void ModelData::Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const
 	{
 

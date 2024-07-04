@@ -7,6 +7,12 @@ namespace SolEngine {
 		// モデルの頂点リスト
 		std::unique_ptr<ModelVertexData> result = std::make_unique<ModelVertexData>();
 
+
+		auto *const dxCommon = DirectXCommon::GetInstance();
+		// SRVを取得する
+		result->heapRange_ = dxCommon->GetSRVHeap()->RequestHeapAllocation(1u);
+
+
 		const aiScene *const scene = source.assimpHandle_->importer_->GetScene();
 
 		//const uint32_t materialCount = scene->mNumMaterials;
@@ -31,6 +37,9 @@ namespace SolEngine {
 		// 頂点数分のメモリを確保
 		result->vertexBuffer_.Resize(vertexCount.first);
 		result->indexBuffer_.Resize(vertexCount.second);
+
+		// デスクリプタヒープに保存
+		dxCommon->GetDevice()->CreateShaderResourceView(result->vertexBuffer_.GetVertexData().GetResources(), &result->vertexBuffer_.GetVertexData().GetDesc(), result->heapRange_.GetHandle(0u).cpuHandle_);
 
 		//std::vector<std::pair<std::span<ModelVertexData::VertexData>, std::span<uint32_t>>> outputTargets{ meshes.size() };
 

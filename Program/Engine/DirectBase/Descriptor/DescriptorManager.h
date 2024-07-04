@@ -38,7 +38,7 @@ public:
 		/// @brief デスクリプタハンドルを取得する
 		/// @param index 添え字
 		/// @return デスクリプタハンドル
-		Handle GetHandle(const uint32_t index) const;
+		Handle GetHandle(const uint32_t index = 0u) const;
 	private:
 		DescHeap *descHeap_ = nullptr;// 使用しているデスクリプタヒープのアドレス
 	};

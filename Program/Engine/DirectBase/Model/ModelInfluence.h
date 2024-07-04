@@ -17,13 +17,14 @@ namespace SolEngine {
 	class ModelData;
 
 	class ModelInfluence : public IResourceObject {
-		//using ModelManager = ResourceObjectManager<Model>;
 
 	public:
 		// 頂点データ
 		VertexBuffer<VertexInfluence> influence_;
 		DescHeapCbvSrvUav::HeapRange heapRange_;
 
+		// 頂点数
+		CBuffer<uint32_t> vertexCount_;
 
 	};
 

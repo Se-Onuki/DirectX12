@@ -66,6 +66,8 @@ namespace SolEngine {
 			inline T *operator->() { return GetResource(); }
 			inline const T *operator->() const { return GetResource(); }
 
+
+
 			bool IsActive() const { return static_cast<bool>(*this); }
 
 			/// @brief このデータが有効であるか

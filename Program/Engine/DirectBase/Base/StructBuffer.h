@@ -152,8 +152,11 @@ inline void ArrayBuffer<T, HeapType>::CreateBuffer(uint32_t size) {
 
 		T *tmp = nullptr;
 
-		result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&tmp));
-		assert(SUCCEEDED(result));
+		// CPUアクセスが可能であったらデータを取得する
+		if constexpr (HeapType != D3D12_HEAP_TYPE_DEFAULT) {
+			result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&tmp));
+			assert(SUCCEEDED(result));
+		}
 
 		mapData_ = { tmp, size };
 		srvDesc_ = CreateSrvDesc();

@@ -9,8 +9,8 @@
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device *device, const size_t &sizeBytes, const D3D12_HEAP_TYPE heapType)
 {
 	// ヒープの設定
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = heapType;
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = heapType;
 	// リソースの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
 	// バッファリソース。 テクスチャの場合はまた別の設定をする
@@ -23,10 +23,11 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device *device
 	resourceDesc.SampleDesc.Count = 1;
 	// バッファの場合はこれにする決まり
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	if (heapType == D3D12_HEAP_TYPE_DEFAULT) { resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS; }
 	// 実際に頂点リソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> result = nullptr;
 	HRESULT hr = S_FALSE;
-	hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&result));
+	hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, heapType == D3D12_HEAP_TYPE_DEFAULT ? D3D12_RESOURCE_STATE_COMMON : D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&result));
 	assert(SUCCEEDED(hr));
 	return result;
 }

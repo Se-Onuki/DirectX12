@@ -197,6 +197,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ModelHandleListManager::Finalize();
 	SkinModelHandleListManager::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Finalize();
+	SolEngine::ResourceObjectManager<SolEngine::ModelInfluence>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::ModelVertexData>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::Mesh>::Finalize();

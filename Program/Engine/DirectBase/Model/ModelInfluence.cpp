@@ -22,15 +22,19 @@ namespace SolEngine {
 		// デスクリプタヒープに保存
 		dxCommon->GetDevice()->CreateShaderResourceView(result->influence_.GetVertexData().GetResources(), &result->influence_.GetVertexData().GetDesc(), result->heapRange_.GetHandle(0u).cpuHandle_);
 
+		// 頂点の数を保存
+		result->vertexCount_ = result->influence_.GetVertexData().size();
+
 
 		// 番兵を取る
 		const auto jointEndIt = source.skeletonReference_->jointMap_.end();
 
 		for (uint32_t i = 0; i < source.skinClusterBase_->skinClusterData_.size(); i++) {
 			const auto &cluster = source.skinClusterBase_->skinClusterData_[i];
+			const auto &vertexOffset = modelVertex->vertexOffsets_[i];
 
 			// 書き込む先
-			std::span<VertexInfluence> influence = { &result->influence_[modelVertex->vertexOffsets_[i].vertexOffset_],modelVertex->vertexOffsets_[i].vertexCount_ };
+			std::span<VertexInfluence> influence = { &result->influence_[vertexOffset.vertexOffset_], vertexOffset.vertexCount_ };
 
 			// メッシュにデータが保存されてなかったら飛ばす
 			if (not cluster) { return nullptr; }

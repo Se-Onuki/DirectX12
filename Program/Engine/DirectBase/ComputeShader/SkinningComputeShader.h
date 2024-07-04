@@ -4,7 +4,9 @@
 #include "../Base/DirectXCommon.h"
 #include "../Base/StructBuffer.h"
 #include "../Model/Model.h"
+#include "../Model/ModelData.h"
 #include "../Model/ModelVertexData.h"
+#include "../Model/ModelInfluence.h"
 
 namespace SolEngine {
 	class SkinningComputeShader : protected EngineObject {
@@ -18,8 +20,9 @@ namespace SolEngine {
 
 		void Init(const uint32_t vertexCount);
 
-		void Update(const ::SkinCluster& skinCluster, const ModelData& modelData, );
+		void Update(const ::SkinCluster &skinCluster, const ModelData *modelData, const ModelInfluence *modelInfluence);
 
+		const auto &GetOutputData() const { return outputData_; }
 
 	private:
 
@@ -27,6 +30,8 @@ namespace SolEngine {
 
 		DescHeapCbvSrvUav::HeapRange heapRange_;
 		ComPtr<ID3D12PipelineState> computePipelineState_;
+		ResourceObjectManager<RootSignature>::Handle rootSignature_;
+
 
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavView_;
 

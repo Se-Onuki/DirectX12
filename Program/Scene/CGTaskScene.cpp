@@ -133,6 +133,8 @@ void CGTaskScene::Update()
 	CameraManager::GetInstance()->DisplayImGui();
 	CameraManager::GetInstance()->Update(deltaTime);
 
+	computeShader_.Update(*skinModel_->skinCluster_, *boxModel_, *boxModel_->modelInfluence_);
+
 	//*fullScreen_->GetGaussianParam() = { WinApp::kWindowWidth,WinApp::kWindowHeight };
 }
 
@@ -159,11 +161,11 @@ void CGTaskScene::Draw()
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
-	Model::SetPipelineType(Model::PipelineType::kSkinModel);
+	Model::SetPipelineType(Model::PipelineType::kModel);
 
 	light_->SetLight(commandList);
 
-	boxModel_->Draw(*skinModel_->skinCluster_, transform_, camera);
+	boxModel_->Draw(computeShader_.GetOutputData(), transform_, camera);
 
 	//model_->Draw(*skinModel_->skinCluster_, transform_, camera);
 	//uvModel_->Draw(transform_, camera);

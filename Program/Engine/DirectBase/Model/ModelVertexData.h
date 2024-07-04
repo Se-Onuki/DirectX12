@@ -39,6 +39,8 @@ namespace SolEngine {
 		// メッシュの分解情報
 		std::vector<VertexOffset> vertexOffsets_;
 
+		DescHeapCbvSrvUav::HeapRange heapRange_;
+
 	};
 
 	template <>
