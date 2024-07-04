@@ -533,11 +533,6 @@ void GameScene::PostEffectSetup()
 void GameScene::PostEffectEnd()
 {
 
-	auto backTex = texStrage_->Allocate();
-
-	// 描画先のRTVとDSVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = backTex->rtvHandle_.cpuHandle_;
-
 #pragma region ViewportとScissor(シザー)
 
 	// ビューポート
@@ -549,13 +544,24 @@ void GameScene::PostEffectEnd()
 
 #pragma endregion
 
+	auto resultTex = texStrage_->Allocate();
+
+	auto backTex = texStrage_->Allocate();
+
+	// 描画先のRTVとを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = backTex->rtvHandle_.cpuHandle_;
+
 	pDxCommon_->DrawTargetReset(&rtvHandle, 0xFF0000FF, nullptr, viewport, scissorRect);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetResource(), offScreen_->GetHeapRange()->GetHandle(0).gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetResource(), offScreen_->GetHeapRange()->GetHandle().gpuHandle_);
 
+
+	pDxCommon_->DrawTargetReset(&resultTex->rtvHandle_.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
+
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, backTex->renderTargetTexture_.Get(), backTex->srvHandle_.gpuHandle_);
 
 	pDxCommon_->DefaultDrawReset(false);
 
-	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, backTex->renderTargetTexture_.Get(), backTex->srvHandle_.gpuHandle_);
+	fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, resultTex->renderTargetTexture_.Get(), resultTex->srvHandle_.gpuHandle_);
 
 }

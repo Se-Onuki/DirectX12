@@ -456,13 +456,13 @@
     <ClCompile Include="Engine\DirectBase\Model\MeshInfluence.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DirectBase\Model\SkeletonReference.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\ModelVertexData.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\ModelInfluence.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonReference.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
   </ItemGroup>
