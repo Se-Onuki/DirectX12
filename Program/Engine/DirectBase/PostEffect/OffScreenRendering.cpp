@@ -89,8 +89,6 @@ namespace PostEffect {
 		auto device = GetDevice();
 		auto srvDescHeap = GetDescHeapCbvSrvUav();
 
-		constexpr uint32_t kTextureCount = 2u;
-
 #ifdef _DEBUG
 
 		//assert(device and "Deviceがnullptrです");
@@ -98,14 +96,14 @@ namespace PostEffect {
 #endif // _DEBUG
 
 		// RTVの作成
-		rtvDescHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>>(device, kTextureCount, false);
+		rtvDescHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>>(device, kTextureCount_, false);
 
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      // 出力結果をSRGBに変換して書き込む
 		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
 
 		// SRVの作成
-		srvHeapRange_ = srvDescHeap->RequestHeapAllocation(kTextureCount);
+		srvHeapRange_ = srvDescHeap->RequestHeapAllocation(kTextureCount_);
 		D3D12_SHADER_RESOURCE_VIEW_DESC renderTexturSrvDesc{};
 		renderTexturSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 		renderTexturSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -113,7 +111,7 @@ namespace PostEffect {
 		renderTexturSrvDesc.Texture2D.MipLevels = 1u;
 
 		// 描画先のテクスチャ
-		for (uint32_t i = 0; i < kTextureCount; i++) {
+		for (uint32_t i = 0; i < kTextureCount_; i++) {
 			auto &texture = fullScreenTexture_[i];
 			texture = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 0xFF0000FF);
 			device->CreateRenderTargetView(texture.Get(), &rtvDesc, rtvDescHeap_->GetHandle(0, i).cpuHandle_);

@@ -63,6 +63,8 @@ namespace PostEffect {
 
 	public:
 
+		static constexpr uint32_t kTextureCount_ = 3u;
+
 		void Init();
 
 		void Input(ID3D12Resource *const resource);
@@ -84,7 +86,7 @@ namespace PostEffect {
 
 	private:
 
-		std::array<ComPtr<ID3D12Resource>, 2u> fullScreenTexture_;
+		std::array<ComPtr<ID3D12Resource>, kTextureCount_> fullScreenTexture_;
 		std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>> rtvDescHeap_;
 
 		uint32_t textureTarget_ = 0u;
@@ -162,7 +164,7 @@ namespace PostEffect {
 		const auto &beforeTexture = fullScreenTexture_[textureTarget_];
 
 		// 書き込み先
-		auto targetTexture = rtvDescHeap_->GetHandle(0, (textureTarget_ + 1) % 2);
+		auto targetTexture = rtvDescHeap_->GetHandle(0, (textureTarget_ + 1) % kTextureCount_);
 
 		const std::pair<std::wstring, std::wstring> &key = { L"FullScreen.VS.hlsl" ,psName };
 
@@ -223,7 +225,7 @@ namespace PostEffect {
 #pragma endregion
 
 		// ターゲットを進める
-		textureTarget_ = (textureTarget_ + 1) % 2;
+		textureTarget_ = (textureTarget_ + 1) % kTextureCount_;
 
 	}
 

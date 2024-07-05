@@ -33,6 +33,7 @@ GameScene::~GameScene() {
 }
 
 void GameScene::OnEnter() {
+
 	pDxCommon_ = DirectXCommon::GetInstance();
 	pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
 	texStrage_ = SolEngine::FullScreenTextureStrage::GetInstance();
@@ -278,8 +279,8 @@ void GameScene::OnEnter() {
 	levelImporter.Import(levelData, world_.get());
 
 
-	fullScreen_->GetGaussianParam()->first = 32.f;
-	fullScreen_->GetGaussianParam()->second = 1;
+	gaussianParam_->first = 32.f;
+	gaussianParam_->second = 1;
 	menuTimer_.Start(0.01f);
 
 	brainStemTrans_->scale = Vector3::one * 5.f;
@@ -404,8 +405,8 @@ void GameScene::Update() {
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });
 
 	}
-	ImGui::DragFloat("Sigma", &fullScreen_->GetGaussianParam()->first);
-	ImGui::DragInt("Size", &fullScreen_->GetGaussianParam()->second);
+	ImGui::DragFloat("Sigma", &gaussianParam_->first);
+	ImGui::DragInt("Size", &gaussianParam_->second);
 
 	menuTimer_.Update(deltaTime);
 	if (menuTimer_.IsFinish() and input_->GetDirectInput()->IsTrigger(DIK_ESCAPE)) {
@@ -414,7 +415,7 @@ void GameScene::Update() {
 		isMenuOpen_ = !isMenuOpen_;
 	}
 
-	fullScreen_->GetGaussianParam()->second = SoLib::Lerp(1, 32, isMenuOpen_ ? menuTimer_.GetProgress() : 1.f - menuTimer_.GetProgress());
+	gaussianParam_->second = SoLib::Lerp(1, 32, isMenuOpen_ ? menuTimer_.GetProgress() : 1.f - menuTimer_.GetProgress());
 
 	//SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()
 
@@ -548,30 +549,17 @@ void GameScene::PostEffectEnd()
 
 	auto resultTex = texStrage_->Allocate();
 
+	// ポストエフェクトの初期値
 	postEffectProcessor->Input(offScreen_->GetResource());
 
 	// ガウスぼかし
-	if (true) {
-
-		postEffectProcessor->Execute(L"GaussianFilterLiner.PS.hlsl", fullScreen_->GetParam());
-		postEffectProcessor->Execute(L"GaussianFilter.PS.hlsl", fullScreen_->GetParam());
-
-		//auto backTex = texStrage_->Allocate();
-
-		//pDxCommon_->DrawTargetReset(&backTex->rtvHandle_.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
-
-		//fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetResource(), offScreen_->GetHeapRange()->GetHandle().gpuHandle_);
-
-
-		//pDxCommon_->DrawTargetReset(&resultTex->rtvHandle_.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
-
-		//fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, backTex->renderTargetTexture_.Get(), backTex->srvHandle_.gpuHandle_);
+	if (gaussianParam_->second > 1) {
+		// 処理の実行
+		postEffectProcessor->Execute(L"GaussianFilterLiner.PS.hlsl", gaussianParam_);
+		postEffectProcessor->Execute(L"GaussianFilter.PS.hlsl", gaussianParam_);
 	}
 
-	if (true) {
-
-	}
-
+	// 結果を取り出す
 	postEffectProcessor->GetResult(resultTex->renderTargetTexture_.Get());
 
 
