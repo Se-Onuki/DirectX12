@@ -2,6 +2,7 @@
 #include "../Base/PipelineState.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include "../../../Utils/Math/Transform.h"
+#include "../../../externals/DirectXTex/d3dx12.h"
 
 namespace PostEffect {
 
@@ -82,6 +83,108 @@ namespace PostEffect {
 	}
 
 
+	void ShaderEffectProcessor::Init()
+	{
+		WinApp *winApp = WinApp::GetInstance();
+		auto device = GetDevice();
+		auto srvDescHeap = GetDescHeapCbvSrvUav();
+
+		constexpr uint32_t kTextureCount = 2u;
+
+#ifdef _DEBUG
+
+		//assert(device and "Deviceがnullptrです");
+
+#endif // _DEBUG
+
+		// RTVの作成
+		rtvDescHeap_ = std::make_unique<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>>(device, kTextureCount, false);
+
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      // 出力結果をSRGBに変換して書き込む
+		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャとして書き込む
+
+		// SRVの作成
+		srvHeapRange_ = srvDescHeap->RequestHeapAllocation(kTextureCount);
+		D3D12_SHADER_RESOURCE_VIEW_DESC renderTexturSrvDesc_{};
+		renderTexturSrvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		renderTexturSrvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		renderTexturSrvDesc_.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		renderTexturSrvDesc_.Texture2D.MipLevels = 1u;
+
+		// 描画先のテクスチャ
+		for (uint32_t i = 0; i < kTextureCount; i++) {
+			auto &texture = fullScreenTexture_[i];
+			texture = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 0xFF0000FF);
+			device->CreateRenderTargetView(texture.Get(), &rtvDesc, rtvDescHeap_->GetHandle(0, i).cpuHandle_);
+			device->CreateShaderResourceView(texture.Get(), &renderTexturSrvDesc_, srvHeapRange_.GetHandle(i).cpuHandle_);
+		}
+
+
+	}
+
+	void ShaderEffectProcessor::Input(ID3D12Resource *const resource)
+	{
+		/*DirectXCommon *const pDxCommon = DirectXCommon::GetInstance();
+		FullScreenRenderer *const renderer = FullScreenRenderer::GetInstance();
+
+		auto command = GetCommandList();
+
+
+
+
+		command->CopyTextureRegion()*/
+		resource;
+
+	}
+
+	void ShaderEffectProcessor::GetResult(ID3D12Resource *const result) const
+	{
+		//		DirectXCommon *const pDxCommon = DirectXCommon::GetInstance();
+		//		FullScreenRenderer *const renderer = FullScreenRenderer::GetInstance();
+		//#pragma region ViewportとScissor(シザー)
+		//
+		//		// ビューポート
+		//		D3D12_VIEWPORT viewport;
+		//		// シザー短形
+		//		D3D12_RECT scissorRect{};
+		//
+		//		pDxCommon->SetFullscreenViewPort(&viewport, &scissorRect);
+		//
+		//#pragma endregion
+		//
+		//		DirectXCommon::GetInstance()->DrawTargetReset(&result.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
+		//		renderer->Draw({ L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, fullScreenTexture_[textureTarget_].Get(), srvHeapRange_.GetHandle(textureTarget_).gpuHandle_);
+		result;
+	}
+
+	void ShaderEffectProcessor::CopyTexture(ID3D12Resource *const src, ID3D12Resource *const dst)
+	{
+		auto command = GetCommandList();
+
+		{
+			auto srcBarrier = CD3DX12_RESOURCE_BARRIER::Transition(src, D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_COPY_SOURCE);
+			auto dstBarrier = CD3DX12_RESOURCE_BARRIER::Transition(dst, D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_COPY_DEST);
+
+			command->ResourceBarrier(2, std::array<D3D12_RESOURCE_BARRIER, 2>{ srcBarrier, dstBarrier }.data());
+		}
+
+		command->CopyResource(dst, src);
+
+		{
+			auto srcBarrier = CD3DX12_RESOURCE_BARRIER::Transition(src, D3D12_RESOURCE_STATE_COPY_SOURCE,
+				D3D12_RESOURCE_STATE_RENDER_TARGET);
+			auto dstBarrier = CD3DX12_RESOURCE_BARRIER::Transition(dst, D3D12_RESOURCE_STATE_COPY_DEST,
+				D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+			command->ResourceBarrier(2, std::array<D3D12_RESOURCE_BARRIER, 2>{ srcBarrier, dstBarrier }.data());
+		}
+
+	}
+
+
 	void FullScreenRenderer::Init(const std::list<std::pair<std::wstring, std::wstring>> &key)
 	{
 
@@ -130,7 +233,7 @@ namespace PostEffect {
 		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 
 		auto *const rootSignatureManager = SolEngine::ResourceObjectManager<RootSignature>::GetInstance();
-		SolEngine::ResourceSource<RootSignature> rootSignatureSource{.sampler_ = sampler, .item_ = accesser_.MakeRootParameters()};
+		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = sampler, .item_ = accesser_.MakeRootParameters() };
 
 		rootSignature_ = rootSignatureManager->Load(rootSignatureSource);
 

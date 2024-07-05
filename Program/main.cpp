@@ -45,6 +45,7 @@
 
 #include "Header/Object/Fade.h"
 #include "Scene/CGTaskScene.h"
+#include "Engine/DirectBase/PostEffect/OffScreenRendering.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -205,6 +206,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SolEngine::ResourceObjectManager<Shader>::Finalize();
 	SolEngine::ResourceObjectManager<RootSignature>::Finalize();
 	SolEngine::FullScreenTextureStrage::Finalize();
+	PostEffect::ShaderEffectProcessor::Finalize();
 	Sprite::Finalize();
 
 	sceneManager->Finalize();

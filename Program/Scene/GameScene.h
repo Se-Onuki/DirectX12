@@ -129,6 +129,8 @@ private:
 
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 
+	
+
 	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle brainStem_;
 	Transform brainStemTrans_;
 
