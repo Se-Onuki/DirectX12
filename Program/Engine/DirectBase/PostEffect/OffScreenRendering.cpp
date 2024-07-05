@@ -106,18 +106,18 @@ namespace PostEffect {
 
 		// SRVの作成
 		srvHeapRange_ = srvDescHeap->RequestHeapAllocation(kTextureCount);
-		D3D12_SHADER_RESOURCE_VIEW_DESC renderTexturSrvDesc_{};
-		renderTexturSrvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-		renderTexturSrvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		renderTexturSrvDesc_.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		renderTexturSrvDesc_.Texture2D.MipLevels = 1u;
+		D3D12_SHADER_RESOURCE_VIEW_DESC renderTexturSrvDesc{};
+		renderTexturSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		renderTexturSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		renderTexturSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		renderTexturSrvDesc.Texture2D.MipLevels = 1u;
 
 		// 描画先のテクスチャ
 		for (uint32_t i = 0; i < kTextureCount; i++) {
 			auto &texture = fullScreenTexture_[i];
 			texture = OffScreenRenderer::CreateRenderTextrueResource(device, winApp->kWindowWidth, winApp->kWindowHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 0xFF0000FF);
 			device->CreateRenderTargetView(texture.Get(), &rtvDesc, rtvDescHeap_->GetHandle(0, i).cpuHandle_);
-			device->CreateShaderResourceView(texture.Get(), &renderTexturSrvDesc_, srvHeapRange_.GetHandle(i).cpuHandle_);
+			device->CreateShaderResourceView(texture.Get(), &renderTexturSrvDesc, srvHeapRange_.GetHandle(i).cpuHandle_);
 		}
 
 
@@ -125,37 +125,12 @@ namespace PostEffect {
 
 	void ShaderEffectProcessor::Input(ID3D12Resource *const resource)
 	{
-		/*DirectXCommon *const pDxCommon = DirectXCommon::GetInstance();
-		FullScreenRenderer *const renderer = FullScreenRenderer::GetInstance();
-
-		auto command = GetCommandList();
-
-
-
-
-		command->CopyTextureRegion()*/
-		resource;
-
+		CopyTexture(resource, fullScreenTexture_[textureTarget_].Get());
 	}
 
 	void ShaderEffectProcessor::GetResult(ID3D12Resource *const result) const
 	{
-		//		DirectXCommon *const pDxCommon = DirectXCommon::GetInstance();
-		//		FullScreenRenderer *const renderer = FullScreenRenderer::GetInstance();
-		//#pragma region ViewportとScissor(シザー)
-		//
-		//		// ビューポート
-		//		D3D12_VIEWPORT viewport;
-		//		// シザー短形
-		//		D3D12_RECT scissorRect{};
-		//
-		//		pDxCommon->SetFullscreenViewPort(&viewport, &scissorRect);
-		//
-		//#pragma endregion
-		//
-		//		DirectXCommon::GetInstance()->DrawTargetReset(&result.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
-		//		renderer->Draw({ L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, fullScreenTexture_[textureTarget_].Get(), srvHeapRange_.GetHandle(textureTarget_).gpuHandle_);
-		result;
+		CopyTexture(fullScreenTexture_[textureTarget_].Get(), result);
 	}
 
 	void ShaderEffectProcessor::CopyTexture(ID3D12Resource *const src, ID3D12Resource *const dst)

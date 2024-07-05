@@ -102,6 +102,12 @@ namespace PostEffect {
 		FullScreenRenderer &operator=(const FullScreenRenderer &) = delete;
 		~FullScreenRenderer() = default;
 
+	private:
+
+		union ValuePair {
+			std::pair<float, float> fValue_;
+			std::pair<float, int32_t> iValue_;
+		};
 	public:
 
 		void Init(const std::list<std::pair<std::wstring, std::wstring>> &key);
@@ -115,11 +121,9 @@ namespace PostEffect {
 		std::pair<float, float> *GetFParam() { return &param_->fValue_; }
 		std::pair<float, int32_t> *GetGaussianParam() { return &param_->iValue_; }
 
+		const CBuffer<ValuePair> &GetParam() const { return param_; }
+
 	private:
-		union ValuePair {
-			std::pair<float, float> fValue_;
-			std::pair<float, int32_t> iValue_;
-		};
 
 		const SolEngine::RootParametersAccesser<DescHeapCbvSrvUav::Handle, CBuffer<ValuePair>> accesser_ = SolEngine::MakeRootParametersAccesser(
 			SignParam<DescHeapCbvSrvUav::Handle>{ "t0PS" },
@@ -138,14 +142,27 @@ namespace PostEffect {
 	inline void ShaderEffectProcessor::Execute(const std::wstring &psName, const CBuffer<Ts> &...args) {
 
 		FullScreenRenderer *const renderer = FullScreenRenderer::GetInstance();
+		auto *const pDxCommon = DirectXCommon::GetInstance();
+
+#pragma region ViewportとScissor(シザー)
+
+		// ビューポート
+		D3D12_VIEWPORT viewport;
+		// シザー短形
+		D3D12_RECT scissorRect{};
+
+		pDxCommon->SetFullscreenViewPort(&viewport, &scissorRect);
+
+#pragma endregion
 
 		auto command = GetCommandList();
 
-		// 表のテクスチャを指定
-		const auto &beforeTexture = rtvDescHeap_->GetHandle(0, textureTarget_);
+		// 元々のテクスチャを指定
+		const auto &beforeTextureSrv = srvHeapRange_.GetHandle(textureTarget_);
+		const auto &beforeTexture = fullScreenTexture_[textureTarget_];
 
-		// 裏のテクスチャを指定
-		const auto &afterTexture = fullScreenTexture_[(textureTarget_ + 1) % 2];
+		// 書き込み先
+		auto targetTexture = rtvDescHeap_->GetHandle(0, (textureTarget_ + 1) % 2);
 
 		const std::pair<std::wstring, std::wstring> &key = { L"FullScreen.VS.hlsl" ,psName };
 
@@ -158,7 +175,7 @@ namespace PostEffect {
 		// Noneにしておく
 		barrierF.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 		// バリアを張る対象のリソース。
-		barrierF.Transition.pResource = afterTexture.Get();
+		barrierF.Transition.pResource = beforeTexture.Get();
 		// 遷移前(現在)のResourceState
 		barrierF.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		// 遷移後のResourceState
@@ -169,13 +186,17 @@ namespace PostEffect {
 #pragma endregion
 
 
+		pDxCommon->DrawTargetReset(&targetTexture.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
+
 		command->SetGraphicsRootSignature(renderer->GetRootSignature());
 		command->SetPipelineState(renderer->GetPipeLine(key));
-		command->SetGraphicsRootDescriptorTable(0, beforeTexture.gpuHandle_);
+		command->SetGraphicsRootDescriptorTable(0, beforeTextureSrv.gpuHandle_);
 
-		uint32_t index = 1u;
-		// 展開を使って各argに対してSetGraphicsRootConstantBufferViewを呼び出す
-		(command->SetGraphicsRootConstantBufferView(index++, args.GetGPUVirtualAddress()));
+		if constexpr (sizeof...(Ts) != 0u) {
+			uint32_t index = 1u;
+			// 展開を使って各argに対してSetGraphicsRootConstantBufferViewを呼び出す
+			(command->SetGraphicsRootConstantBufferView(index++, args.GetGPUVirtualAddress()), ...);
+		}
 
 		//command->SetGraphicsRootConstantBufferView(1, args.GetGPUVirtualAddress());
 
@@ -191,7 +212,7 @@ namespace PostEffect {
 		// Noneにしておく
 		barrierS.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 		// バリアを張る対象のリソース。
-		barrierS.Transition.pResource = afterTexture.Get();
+		barrierS.Transition.pResource = beforeTexture.Get();
 		// 遷移前(現在)のResourceState
 		barrierS.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 		// 遷移後のResourceState

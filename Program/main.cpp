@@ -113,6 +113,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
 	gVariable->LoadFile();
 
+	auto *const postEffectProcessor = PostEffect::ShaderEffectProcessor::GetInstance();
+	postEffectProcessor->Init();
+
 	// シーン管理クラス
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->StaticInit();

@@ -533,6 +533,8 @@ void GameScene::PostEffectSetup()
 void GameScene::PostEffectEnd()
 {
 
+	auto *const postEffectProcessor = PostEffect::ShaderEffectProcessor::GetInstance();
+
 #pragma region ViewportとScissor(シザー)
 
 	// ビューポート
@@ -546,32 +548,31 @@ void GameScene::PostEffectEnd()
 
 	auto resultTex = texStrage_->Allocate();
 
+	postEffectProcessor->Input(offScreen_->GetResource());
+
 	// ガウスぼかし
-	if (false) {
-		auto backTex = texStrage_->Allocate();
+	if (true) {
 
-		pDxCommon_->DrawTargetReset(&backTex->rtvHandle_.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
+		postEffectProcessor->Execute(L"GaussianFilterLiner.PS.hlsl", fullScreen_->GetParam());
+		postEffectProcessor->Execute(L"GaussianFilter.PS.hlsl", fullScreen_->GetParam());
 
-		fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetResource(), offScreen_->GetHeapRange()->GetHandle().gpuHandle_);
+		//auto backTex = texStrage_->Allocate();
 
+		//pDxCommon_->DrawTargetReset(&backTex->rtvHandle_.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
 
-		pDxCommon_->DrawTargetReset(&resultTex->rtvHandle_.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
+		//fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, offScreen_->GetResource(), offScreen_->GetHeapRange()->GetHandle().gpuHandle_);
 
-		fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, backTex->renderTargetTexture_.Get(), backTex->srvHandle_.gpuHandle_);
-	}
-	else {
-
-		PostEffect::ShaderEffectProcessor::CopyTexture(offScreen_->GetResource(), resultTex->renderTargetTexture_.Get());
-
-		//resultTex->renderTargetTexture_.Get();
 
 		//pDxCommon_->DrawTargetReset(&resultTex->rtvHandle_.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
-		//fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, offScreen_->GetResource(), offScreen_->GetHeapRange()->GetHandle().gpuHandle_);
+
+		//fullScreen_->Draw({ L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, backTex->renderTargetTexture_.Get(), backTex->srvHandle_.gpuHandle_);
 	}
 
 	if (true) {
 
 	}
+
+	postEffectProcessor->GetResult(resultTex->renderTargetTexture_.Get());
 
 
 	pDxCommon_->DefaultDrawReset(false);
