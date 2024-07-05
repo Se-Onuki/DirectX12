@@ -24,9 +24,6 @@ PixelShaderOutput main(VertexShaderOutput input)
     vignette = saturate(pow(vignette, gVignetteParam.second));
 
     result.color_.rgb *= vignette;
-
-    //float32_t value = dot(result.color_.rgb, float32_t3(0.2125f,0.7154f,0.0721f));
-    //result.color_.rgb = float32_t3(value, value, value);
     
     return result;
 }

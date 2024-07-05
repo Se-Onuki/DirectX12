@@ -249,7 +249,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::WeaponCollision>(soundA_, model_);
 	systemManager_.AddSystem<ECS::System::PlayerMove>();
 	systemManager_.AddSystem<ECS::System::PlayerAttack>(attackModel_);
-	systemManager_.AddSystem<ECS::System::EnemyAttack>([this]() { isGrayScale_ = 30; });
+	systemManager_.AddSystem<ECS::System::EnemyAttack>([this]() { damageTimer_.Start(0.5f); });
 
 	// 汎用的な処理
 	//systemManager_.AddSystem<ECS::System::BillboardCalc>();
@@ -267,7 +267,7 @@ void GameScene::OnEnter() {
 	offScreen_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
-	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" } });
+	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GrayScale.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" } });
 
 	ModelManager::GetInstance()->AddModel("Box", Model::LoadAssimpModelFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
 
@@ -286,6 +286,8 @@ void GameScene::OnEnter() {
 	brainStemTrans_->scale = Vector3::one * 5.f;
 	brainStemTrans_->translate.z = -30.f;
 	brainStemTrans_->UpdateMatrix();
+
+	vignettingParam_ = { 16.f, 0.8f };
 
 }
 
@@ -310,7 +312,7 @@ void GameScene::Update() {
 	light_->ImGuiWidget();
 	//gameObject_.GetComponent<ModelComp>()->GetBone("Body")->ImGuiWidget();
 
-	isGrayScale_--;
+	damageTimer_.Update(deltaTime);
 
 	particleArray_.clear();
 
@@ -386,19 +388,15 @@ void GameScene::Update() {
 
 	ground_.Draw();
 
-	//gameObject_.Update(fixDeltaTime);
+	grayScaleParam_ = 1 - damageTimer_.GetProgress();
 
+	ImGui::DragFloat2("VignettingParam", &vignettingParam_->first);
 
-	//ImGui::DragFloat2("VignettingParam", &fullScreen_->GetFParam()->first);
-
-	/*float health = 0.f;
-
-
+	float health = 0.f;
 	for (const auto &[entity, healthComp, player] : world_->view<const ECS::HealthComp, const ECS::PlayerTag>()) {
-
 		health = healthComp->CalcPercent();
-	}*/
-	//fullScreen_->GetFParam()->first = SoLib::Lerp(0.5f, 16.f, health);
+	}
+	vignettingParam_->first = SoLib::Lerp(0.5f, 16.f, health);
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
 
@@ -557,6 +555,13 @@ void GameScene::PostEffectEnd()
 		// 処理の実行
 		postEffectProcessor->Execute(L"GaussianFilterLiner.PS.hlsl", gaussianParam_);
 		postEffectProcessor->Execute(L"GaussianFilter.PS.hlsl", gaussianParam_);
+	}
+
+	postEffectProcessor->Execute(L"Vignetting.PS.hlsl", vignettingParam_);
+
+
+	if (*grayScaleParam_.get() != 0) {
+		postEffectProcessor->Execute(L"GrayScale.PS.hlsl", grayScaleParam_);
 	}
 
 	// 結果を取り出す

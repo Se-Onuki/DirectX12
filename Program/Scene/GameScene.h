@@ -137,7 +137,10 @@ private:
 	SolEngine::FullScreenTextureStrage::UniqueHandle offScreenTex_;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
+	SoLib::Time::DeltaTimer damageTimer_{ 0.5f };
 
+	CBuffer<std::pair<float, float>> vignettingParam_{};
+	CBuffer<float> grayScaleParam_;
 	CBuffer<std::pair<float, int32_t>> gaussianParam_;
 
 };
