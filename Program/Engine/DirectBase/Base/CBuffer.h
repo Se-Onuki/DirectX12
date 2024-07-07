@@ -22,12 +22,12 @@ class CBuffer final {
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	SolEngine::DxResourceBuffer<> *buffer_;
+	SolEngine::DxResourceBufferPoolManager<>::UniqueHandle buffer_;
 
 public:
 
 	inline ID3D12Resource *const GetResources() noexcept { return buffer_->GetResource(); }
-	inline const ID3D12Resource *const GetResources() const noexcept { return  buffer_->GetResource(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return buffer_->GetResource(); }
 
 	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return buffer_->GetCBView(); }
 
@@ -73,7 +73,7 @@ private:
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive>::operator bool() const noexcept {
-	return buffer_ != nullptr;
+	return buffer_.GetResource() != nullptr;
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
@@ -118,7 +118,7 @@ inline CBuffer<T, IsActive>::CBuffer(const CBuffer<T, IsActive> &other) {
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive>::CBuffer(CBuffer &&other) {
 	buffer_ = std::move(other.buffer_);
-	other.buffer_ = nullptr;
+	other.buffer_ = {};
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
@@ -166,7 +166,7 @@ template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive> &CBuffer<T, IsActive>::operator=(CBuffer<T, IsActive> &&other) {
 
 	buffer_ = std::move(other);
-	other.buffer_ = nullptr;
+	other.buffer_ = {};
 	return *this;
 }
 

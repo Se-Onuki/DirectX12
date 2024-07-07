@@ -207,8 +207,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::Mesh>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::Material>::Finalize();
-	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_UPLOAD>::Finalize();
-	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_DEFAULT>::Finalize();
 	SolEngine::ResourceObjectManager<Shader>::Finalize();
 	SolEngine::ResourceObjectManager<RootSignature>::Finalize();
 	SolEngine::FullScreenTextureStrage::Finalize();
@@ -220,6 +218,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	ImGuiManager::Finalize();
 
 	audio->Finalize();
+
+	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_UPLOAD>::Finalize();
+	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_DEFAULT>::Finalize();
 
 	dxCommon->Finalize();
 

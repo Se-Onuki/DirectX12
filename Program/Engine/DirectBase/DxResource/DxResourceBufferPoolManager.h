@@ -29,62 +29,6 @@ namespace SolEngine {
 		// CPUアクセスメモリを持っているか
 		constexpr static bool kHasMemory_ = HType != D3D12_HEAP_TYPE_DEFAULT;
 
-		//struct Handle {
-
-		//	using ContainType = std::array<char, 0x100>;
-
-		//	Handle() = default;
-		//	Handle(const Handle &) = default;
-		//	Handle(Handle &&) = default;
-		//	Handle &operator=(const Handle &r) { index_ = r.index_; version_ = r.version_; return *this; }
-
-		//	Handle(const size_t index, const size_t version) : index_(index), version_(version) {};
-		//	bool operator==(const Handle &) const = default;
-
-		//	auto operator<=>(const Handle &that) const -> std::weak_ordering {
-
-		//		const size_t aIndex = this->index_;
-		//		const size_t bIndex = that.index_;
-
-		//		// ハンドルが一致していない場合
-		//		if (aIndex != bIndex) {
-		//			return aIndex <=> bIndex;
-		//		}
-		//		// 一致していた場合
-		//		else {
-		//			return this->version_ <=> that.version_;
-		//		}
-		//	}
-
-		//	size_t GetIndex() const { return index_; }
-		//	size_t GetVersion() const { return version_; }
-		//	ContainType *GetResource() { return IsActive() ? static_cast<ContainType *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
-		//	const ContainType *GetResource() const { return IsActive() ? static_cast<const ContainType *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
-
-		//	template <SoLib::IsRealType T>
-		//	T *GetResource() { return IsActive() ? static_cast<T *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
-		//	template <SoLib::IsRealType T>
-		//	const T *GetResource() const { return IsActive() ? static_cast<const T *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
-
-		//	inline ContainType *operator*() { return GetResource(); }
-		//	inline const ContainType *operator*() const { return GetResource(); }
-
-		//	bool IsActive() const { return static_cast<bool>(*this); }
-
-		//	/// @brief このデータが有効であるか
-		//	explicit inline operator bool() const {
-		//		return
-		//			index_ != (std::numeric_limits<size_t>::max)() and 		// データが最大値(無効値)に設定されていないか
-		//			Singleton::instance_ and 								// マネージャーが存在するか
-		//			Singleton::instance_->version_ == version_ and 			// バージョンが同じか
-		//			Singleton::instance_->size_ > index_ and 				// 参照ができる状態か
-		//			Singleton::instance_->resources_.at(index_)->mapPtr_;	// データが存在するか
-		//	}
-
-		//private:
-		//	size_t index_ = (std::numeric_limits<size_t>::max)();
-		//	size_t version_ = (std::numeric_limits<size_t>::max)();
-		//};
 
 	private:
 
@@ -126,16 +70,53 @@ namespace SolEngine {
 		};
 
 	public:
+		struct UniqueHandle {
+			UniqueHandle() = default;
+			UniqueHandle(const UniqueHandle &) = delete;
+			UniqueHandle &operator=(const UniqueHandle &) = delete;
+			UniqueHandle(UniqueHandle &&that) :item_(that.item_) { that.item_ = Singleton::instance_->resources_.end(); }
+			UniqueHandle &operator=(UniqueHandle &&that) { item_ = that.item_; that.item_ = Singleton::instance_->resources_.end(); return *this; }
+
+			UniqueHandle(const std::unordered_set<DxResourceItem, hash>::iterator &itr) { item_ = itr; }
+
+			~UniqueHandle() { if (IsActive()) { Singleton::instance_->Release(item_); } }
+
+			bool operator==(const UniqueHandle &) const = default;
+
+			DxResourceBuffer<HType> *GetResource() { return IsActive() ? item_->item_.get() : nullptr; }
+			const DxResourceBuffer<HType> *GetResource() const { return IsActive() ? item_->item_.get() : nullptr; }
+
+			inline DxResourceBuffer<HType> *operator->() { return GetResource(); }
+			inline const DxResourceBuffer<HType> *operator->() const { return GetResource(); }
+
+			inline DxResourceBuffer<HType> *operator*() { return GetResource(); }
+			inline const DxResourceBuffer<HType> *operator*() const { return GetResource(); }
+
+			bool IsActive() const { return static_cast<bool>(*this); }
+
+			/// @brief このデータが有効であるか
+			explicit inline operator bool() const {
+				return
+					Singleton::instance_ and 						// マネージャーが存在するか
+					item_ != Singleton::instance_->resources_.end(); // データが存在するか
+			}
+
+		private:
+			std::unordered_set<DxResourceItem, hash>::iterator item_;
+		};
+	public:
 
 		void Init();
 
-		void Clear();
+		void Release(std::unordered_set<DxResourceItem, hash>::iterator itr);
 
 		template <SoLib::IsRealType T>
-		DxResourceBuffer<HType> *PushBack(const T &data = {});
+		UniqueHandle PushBack(const T &data = {});
 
 		template<typename Itr>
 		std::vector<DxResourceBuffer<HType> *> PushBack(Itr begin, Itr end);
+
+
 
 	private:
 
@@ -178,8 +159,27 @@ namespace SolEngine {
 	}
 
 	template<D3D12_HEAP_TYPE HType>
+	inline void DxResourceBufferPoolManager<HType>::Release(std::unordered_set<DxResourceItem, hash>::iterator itr)
+	{
+
+		// もしそのデータが存在してなかったら終わり
+		if (itr == resources_.end()) { return; }
+
+		// データのサイズ
+		//const uint32_t size = static_cast<uint32_t>(itr->item_->size());
+
+		// データを移動
+	/*	unUsingResource_[size].push_back();
+		unUsingResource_[size].back().item_ = std::move(itr->item_);*/
+
+		// データを破棄
+		resources_.erase(itr);
+
+	}
+
+	template<D3D12_HEAP_TYPE HType>
 	template<SoLib::IsRealType T>
-	inline DxResourceBuffer<HType> *DxResourceBufferPoolManager<HType>::PushBack(const T &data)
+	inline DxResourceBufferPoolManager<HType>::UniqueHandle DxResourceBufferPoolManager<HType>::PushBack(const T &data)
 	{
 		// 構築する要素
 		DxResourceItem result{};
@@ -199,7 +199,7 @@ namespace SolEngine {
 		// 要素が足りなかったら直接生成する
 		else {
 			// 保存するデータ
-			result = std::make_unique<DxResourceBuffer<HType>>(DxResourceBuffer<HType>::Create(sizeof(T)));
+			result.item_ = std::make_unique<DxResourceBuffer<HType>>(DxResourceBuffer<HType>::Create(sizeof(T)));
 		}
 
 		result = &data;
@@ -208,7 +208,7 @@ namespace SolEngine {
 		auto itr = resources_.insert(std::move(result));
 
 		// そのデータのポインタを返す
-		return itr.first->item_.get();
+		return UniqueHandle(itr.first);
 	}
 
 	template<D3D12_HEAP_TYPE HType>
