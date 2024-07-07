@@ -79,7 +79,7 @@ namespace SolEngine {
 
 			UniqueHandle(const std::unordered_set<DxResourceItem, hash>::iterator &itr) { item_ = itr; }
 
-			~UniqueHandle() { if (IsActive()) { Singleton::instance_->Release(item_); } }
+			~UniqueHandle() { if (IsActive()) { Singleton::instance_->Release(std::move(item_)); } }
 
 			bool operator==(const UniqueHandle &) const = default;
 
@@ -108,7 +108,7 @@ namespace SolEngine {
 
 		void Init();
 
-		void Release(std::unordered_set<DxResourceItem, hash>::iterator itr);
+		void Release(std::unordered_set<DxResourceItem, typename hash>::iterator &&itr);
 
 		template <SoLib::IsRealType T>
 		UniqueHandle PushBack(const T &data = {});
@@ -159,21 +159,20 @@ namespace SolEngine {
 	}
 
 	template<D3D12_HEAP_TYPE HType>
-	inline void DxResourceBufferPoolManager<HType>::Release(std::unordered_set<DxResourceItem, hash>::iterator itr)
+	inline void DxResourceBufferPoolManager<HType>::Release(std::unordered_set<DxResourceItem, typename hash>::iterator &&itr)
 	{
 
 		// もしそのデータが存在してなかったら終わり
 		if (itr == resources_.end()) { return; }
 
 		// データのサイズ
-		//const uint32_t size = static_cast<uint32_t>(itr->item_->size());
+		const uint32_t size = static_cast<uint32_t>(itr->item_->size());
 
-		// データを移動
-	/*	unUsingResource_[size].push_back();
-		unUsingResource_[size].back().item_ = std::move(itr->item_);*/
+		// データを構築
+		unUsingResource_[size].emplace_back(std::move(std::move(resources_.extract(itr).value()).item_));
 
 		// データを破棄
-		resources_.erase(itr);
+		//resources_.erase(itr);
 
 	}
 
