@@ -16,8 +16,8 @@ namespace SolEngine {
 		DxResourceBuffer(const DxResourceBuffer &) = delete;
 		DxResourceBuffer &operator=(const DxResourceBuffer &) = delete;
 
-		DxResourceBuffer(DxResourceBuffer &&other) noexcept : resource_(std::move(other.resource_)), itemData_(other.itemData_) {}
-		DxResourceBuffer &operator=(DxResourceBuffer &&other) noexcept { resource_ = std::move(other.resource_); return *this; }
+		DxResourceBuffer(DxResourceBuffer &&other) noexcept : resource_(std::move(other.resource_)), itemData_(other.itemData_), cbView_(other.cbView_) {}
+		DxResourceBuffer &operator=(DxResourceBuffer &&other) noexcept { resource_ = std::move(other.resource_); itemData_ = std::move(other.itemData_); cbView_ = other.cbView_; return *this; }
 
 		bool operator==(const DxResourceBuffer &other) const = default;
 
@@ -110,7 +110,7 @@ namespace SolEngine {
 		assert(SUCCEEDED(hr));
 
 		// ビューの構築
-		result.cbView_ = { .BufferLocation = result.resource_->GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(memSize) };
+		result.cbView_ = { .BufferLocation = result.resource_->GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(result.resource_->GetDesc().Width) };
 
 		return result;
 	}
