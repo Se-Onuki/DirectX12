@@ -24,6 +24,8 @@ namespace SolEngine {
 		// CPUアクセスメモリを持っているか
 		constexpr static bool kHasMemory_ = HType != D3D12_HEAP_TYPE_DEFAULT;
 
+		using MemType = std::array<char, 0x100>;
+
 	public:
 
 	public:
@@ -36,9 +38,9 @@ namespace SolEngine {
 
 	public:
 
-		std::bitset<0x100> *data() const noexcept requires(kHasMemory_) { return itemData_.data(); }
-		std::span<std::bitset<0x100>>::iterator begin() const noexcept requires(kHasMemory_) { return itemData_.begin(); }
-		std::span<std::bitset<0x100>>::iterator end() const noexcept requires(kHasMemory_) { return itemData_.end(); }
+		MemType *data() const noexcept requires(kHasMemory_) { return itemData_.data(); }
+		std::span<MemType>::iterator begin() const noexcept requires(kHasMemory_) { return itemData_.begin(); }
+		std::span<MemType>::iterator end() const noexcept requires(kHasMemory_) { return itemData_.end(); }
 		size_t size() const noexcept {
 			if constexpr (kHasMemory_) { return itemData_.size(); }
 			else { return itemData_; }
@@ -50,7 +52,7 @@ namespace SolEngine {
 			// アイテムのサイズ
 			constexpr size_t typeSize = sizeof(T);
 			// メモリ量
-			const size_t memSize = sizeof(std::bitset<0x100>) / size();
+			const size_t memSize = sizeof(MemType) / size();
 			// 配列の要素数
 			const size_t tItemCount = memSize / typeSize;
 			// そのデータが何個格納できるかを計算する
@@ -59,11 +61,16 @@ namespace SolEngine {
 			return result;
 		}
 
+		ID3D12Resource *GetResource() noexcept { return resource_.Get(); }
+		const ID3D12Resource *GetResource() const noexcept { return resource_.Get(); }
+
+		const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetCBView() const noexcept { return cbView_; }
+
 	private:
 
 		ComPtr<ID3D12Resource> resource_;
 
-		std::conditional_t<kHasMemory_, std::span<std::bitset<0x100>>, size_t> itemData_;
+		std::conditional_t<kHasMemory_, std::span<MemType>, size_t> itemData_;
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_;
 
@@ -93,7 +100,7 @@ namespace SolEngine {
 			hr = result.resource_->Map(0, nullptr, &tmp);
 
 			// データを渡す
-			result.itemData_ = { reinterpret_cast<std::bitset<0x100>*>(tmp), memSize >> 8u };
+			result.itemData_ = { reinterpret_cast<MemType *>(tmp), memSize >> 8u };
 		}
 		else {
 

@@ -22,17 +22,14 @@ class CBuffer final {
 	static_assert(!std::is_pointer<T>::value, "CBufferに与えた型がポインタ型です");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	ComPtr<ID3D12Resource> resources_ = nullptr;
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_{};
-
-	T *mapData_;
+	SolEngine::DxResourceBuffer<> *buffer_;
 
 public:
 
-	inline ID3D12Resource *const GetResources() noexcept { return &resources_.Get(); }
-	inline const ID3D12Resource *const GetResources() const noexcept { return &resources_.Get(); }
+	inline ID3D12Resource *const GetResources() noexcept { return buffer_->GetResource(); }
+	inline const ID3D12Resource *const GetResources() const noexcept { return  buffer_->GetResource(); }
 
-	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return cbView_; }
+	inline const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetView() const noexcept { return buffer_->GetCBView(); }
 
 	inline operator bool() const noexcept;		// 値が存在するか
 
@@ -47,11 +44,11 @@ public:
 
 public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
-		return resources_->GetGPUVirtualAddress();
+		return buffer_->GetCBView().BufferLocation;
 	}
 
-	inline T *const get() { return mapData_; }
-	inline const T *const get() const { return mapData_; }
+	inline T *const get() { return buffer_->GetAccessor<T>().data(); }
+	inline const T *const get() const { return buffer_->GetAccessor<T>().data(); }
 
 	template <typename U = CBuffer>
 	void SetName();
@@ -76,32 +73,32 @@ private:
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive>::operator bool() const noexcept {
-	return resources_ != nullptr;
+	return buffer_ != nullptr;
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive>::operator T &() noexcept {
-	return *mapData_;
+	return *reinterpret_cast<T *>(buffer_->data());
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive>::operator const T &() const noexcept {
-	return *mapData_;
+	return *reinterpret_cast<const T *>(buffer_->data());
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline T *const CBuffer<T, IsActive>::operator->() noexcept {
-	return mapData_;
+	return reinterpret_cast<T *>(buffer_->data());
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline T *const CBuffer<T, IsActive>::operator->() const noexcept {
-	return mapData_;
+	return reinterpret_cast<T *>(buffer_->data());
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive> &CBuffer<T, IsActive>::operator=(const T &other) {
-	*mapData_ = static_cast<T>(other);
+	buffer_->GetAccessor<T>()[0] = static_cast<T>(other);
 	return *this;
 }
 
@@ -115,14 +112,13 @@ inline CBuffer<T, IsActive>::CBuffer(const CBuffer<T, IsActive> &other) {
 	CreateBuffer();
 
 	// データのコピー
-	*mapData_ = *other.mapData_;
+	buffer_->GetAccessor<T>()[0] = other.buffer_->GetAccessor<T>()[0];
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive>::CBuffer(CBuffer &&other) {
-	this->resources_ = std::move(other.resources_);
-	this->mapData_ = std::move(other.mapData_);
-	this->cbView_ = std::move(other.cbView_);
+	buffer_ = std::move(other.buffer_);
+	other.buffer_ = nullptr;
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
@@ -131,29 +127,33 @@ inline CBuffer<T, IsActive>::CBuffer(const T &r)
 	CreateBuffer();
 
 	// データのコピー
-	*mapData_ = r;
+	buffer_->GetAccessor<T>()[0] = r;
 }
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline void CBuffer<T, IsActive>::CreateBuffer() {
-	HRESULT result = S_FALSE;
+	//	HRESULT result = S_FALSE;
+	//
+	//
+	//	// 256バイト単位のアライメント
+	//	resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) + 0xff) & ~0xff);
+	//
+	//
+	//	cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
+	//	cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
+	//
+	//	result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
+	//	assert(SUCCEEDED(result));
+	//
+	//#ifdef _DEBUG
+	//
+	//	this->SetName();
+	//
+	//#endif // _DEBUG
 
+	auto *const bufferManager = SolEngine::DxResourceBufferPoolManager<>::GetInstance();
 
-	// 256バイト単位のアライメント
-	resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) + 0xff) & ~0xff);
-
-
-	cbView_.BufferLocation = resources_->GetGPUVirtualAddress();
-	cbView_.SizeInBytes = static_cast<uint32_t>(resources_->GetDesc().Width);
-
-	result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&mapData_));
-	assert(SUCCEEDED(result));
-
-#ifdef _DEBUG
-
-	this->SetName();
-
-#endif // _DEBUG
+	buffer_ = bufferManager->PushBack(T{});
 
 }
 
@@ -164,10 +164,9 @@ inline CBuffer<T, IsActive>::~CBuffer() {
 
 template<SoLib::IsNotPointer T, bool IsActive>
 inline CBuffer<T, IsActive> &CBuffer<T, IsActive>::operator=(CBuffer<T, IsActive> &&other) {
-	this->resources_ = std::move(other.resources_);
-	this->mapData_ = std::move(other.mapData_);
-	this->cbView_ = std::move(other.cbView_);
 
+	buffer_ = std::move(other);
+	other.buffer_ = nullptr;
 	return *this;
 }
 
@@ -357,9 +356,9 @@ inline void CBuffer<T, IsActive>::SetName() {
 
 #ifdef USE_IMGUI
 
-	if (resources_) {
+	/*if (resources_) {
 		resources_->SetName(ConvertString(typeid(U).name()).c_str());
-	}
+	}*/
 
 #endif // USE_IMGUI
 
