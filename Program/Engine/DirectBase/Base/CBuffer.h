@@ -10,6 +10,8 @@
 #include "../../../Utils/SoLib/SoLib_Traits.h"
 #include "../String/String.h"
 
+#include "../DxResource/DxResourceBufferPoolManager.h"
+
 #pragma region 単体定数バッファ
 
 /// @brief 定数バッファ

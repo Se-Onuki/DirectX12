@@ -65,6 +65,8 @@ namespace SolEngine {
 
 		std::conditional_t<kHasMemory_, std::span<std::bitset<0x100>>, size_t> itemData_;
 
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_;
+
 	};
 
 #pragma region Function
@@ -79,6 +81,7 @@ namespace SolEngine {
 		// 確保するメモリ量｡ (256バイト単位でアライメント)
 		const size_t memSize = (static_cast<size_t>(dataSize) * dataCount + 0xffllu) & ~0xffllu;
 
+		// メモリを構築
 		result.resource_ = CreateBufferResource(device, memSize, HType);
 
 		HRESULT hr = S_FALSE;
@@ -98,6 +101,9 @@ namespace SolEngine {
 		}
 
 		assert(SUCCEEDED(hr));
+
+		// ビューの構築
+		result.cbView_ = { .BufferLocation = result.resource_->GetGPUVirtualAddress(), .SizeInBytes = static_cast<uint32_t>(memSize) };
 
 		return result;
 	}

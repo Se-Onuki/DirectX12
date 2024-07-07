@@ -24,7 +24,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device *device
 	// バッファの場合はこれにする決まり
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	if (heapType == D3D12_HEAP_TYPE_DEFAULT) { resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS; }
-	// 実際に頂点リソースを作る
+	// 実際にリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> result = nullptr;
 	HRESULT hr = S_FALSE;
 	hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, heapType == D3D12_HEAP_TYPE_DEFAULT ? D3D12_RESOURCE_STATE_COMMON : D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&result));

@@ -46,6 +46,7 @@
 #include "Header/Object/Fade.h"
 #include "Scene/CGTaskScene.h"
 #include "Engine/DirectBase/PostEffect/OffScreenRendering.h"
+#include "Engine/DirectBase/DxResource/DxResourceBufferPoolManager.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -206,6 +207,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::Mesh>::Finalize();
 	SolEngine::ResourceObjectManager<SolEngine::Material>::Finalize();
+	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_UPLOAD>::Finalize();
+	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_DEFAULT>::Finalize();
 	SolEngine::ResourceObjectManager<Shader>::Finalize();
 	SolEngine::ResourceObjectManager<RootSignature>::Finalize();
 	SolEngine::FullScreenTextureStrage::Finalize();

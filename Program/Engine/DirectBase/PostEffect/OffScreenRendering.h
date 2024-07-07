@@ -194,6 +194,7 @@ namespace PostEffect {
 		command->SetPipelineState(renderer->GetPipeLine(key));
 		command->SetGraphicsRootDescriptorTable(0, beforeTextureSrv.gpuHandle_);
 
+		// もしバッファが渡されていたら
 		if constexpr (sizeof...(Ts) != 0u) {
 			uint32_t index = 1u;
 			// 展開を使って各argに対してSetGraphicsRootConstantBufferViewを呼び出す
