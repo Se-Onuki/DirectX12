@@ -447,9 +447,6 @@
     <ClCompile Include="Engine\DirectBase\Model\SkinClusterBase.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DirectBase\DxResource\DxResource.cpp">
-      <Filter>Engine\DxResource</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.cpp">
       <Filter>Engine\ComputeShader</Filter>
     </ClCompile>
@@ -881,10 +878,10 @@
     <ClInclude Include="Engine\DirectBase\ComputeShader\SkinningComputeShader.h">
       <Filter>Engine\ComputeShader</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DirectBase\DxResource\DxResource.h">
+    <ClInclude Include="Engine\DirectBase\DxResource\DxResourceBuffer.h">
       <Filter>Engine\DxResource</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DirectBase\DxResource\DxResourcePool.h">
+    <ClInclude Include="Engine\DirectBase\DxResource\DxResourceBufferPool.h">
       <Filter>Engine\DxResource</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\SkinCluster.h">

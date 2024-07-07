@@ -559,7 +559,6 @@ void GameScene::PostEffectEnd()
 
 	postEffectProcessor->Execute(L"Vignetting.PS.hlsl", vignettingParam_);
 
-
 	if (*grayScaleParam_.get() != 0) {
 		postEffectProcessor->Execute(L"GrayScale.PS.hlsl", grayScaleParam_);
 	}

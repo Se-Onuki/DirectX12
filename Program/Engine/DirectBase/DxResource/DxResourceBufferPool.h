@@ -11,14 +11,14 @@ namespace SolEngine {
 
 	template <size_t ElementSize = 1>
 		requires (ElementSize != 0)
-	class DxResourcePool : public SoLib::Singleton<DxResourcePool<ElementSize>>, protected EngineObject {
-		friend SoLib::Singleton<DxResourcePool>;
-		DxResourcePool() = default;
-		DxResourcePool(const DxResourcePool &) = delete;
-		DxResourcePool &operator=(const DxResourcePool &) = delete;
-		~DxResourcePool() = default;
+	class DxResourceBufferPool : public SoLib::Singleton<DxResourceBufferPool<ElementSize>>, protected EngineObject {
+		friend SoLib::Singleton<DxResourceBufferPool>;
+		DxResourceBufferPool() = default;
+		DxResourceBufferPool(const DxResourceBufferPool &) = delete;
+		DxResourceBufferPool &operator=(const DxResourceBufferPool &) = delete;
+		~DxResourceBufferPool() = default;
 
-		using Singleton = SoLib::Singleton<DxResourcePool<ElementSize>>;
+		using Singleton = SoLib::Singleton<DxResourceBufferPool<ElementSize>>;
 	public:
 		struct Handle {
 
@@ -122,7 +122,7 @@ namespace SolEngine {
 	};
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
-	inline std::unique_ptr<typename DxResourcePool<ElementSize>::DxResourceBuffer> DxResourcePool<ElementSize>::DxResourceBuffer::Create()
+	inline std::unique_ptr<typename DxResourceBufferPool<ElementSize>::DxResourceBuffer> DxResourceBufferPool<ElementSize>::DxResourceBuffer::Create()
 	{
 		std::unique_ptr<DxResourceBuffer> result = std::make_unique<DxResourceBuffer>();
 		HRESULT hr = S_FALSE;
@@ -145,14 +145,14 @@ namespace SolEngine {
 	}
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
-	inline void DxResourcePool<ElementSize>::Init()
+	inline void DxResourceBufferPool<ElementSize>::Init()
 	{
 		version_ = 0;
 		size_ = 0;
 	}
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
-	inline void DxResourcePool<ElementSize>::Clear()
+	inline void DxResourceBufferPool<ElementSize>::Clear()
 	{
 		size_ = 0;
 		version_++;
@@ -161,7 +161,7 @@ namespace SolEngine {
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
 	template<SoLib::IsRealType T>
-	inline DxResourcePool<ElementSize>::Handle DxResourcePool<ElementSize>::PushBack(const T &data)
+	inline DxResourceBufferPool<ElementSize>::Handle DxResourceBufferPool<ElementSize>::PushBack(const T &data)
 	{
 		// 要素が足りなかったら延長する
 		if (resources_.size() < size_ + 1) {
@@ -184,7 +184,7 @@ namespace SolEngine {
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
 	template<typename Itr>
-	inline std::vector<typename DxResourcePool<ElementSize>::Handle> DxResourcePool<ElementSize>::PushBack(Itr begin, Itr end)
+	inline std::vector<typename DxResourceBufferPool<ElementSize>::Handle> DxResourceBufferPool<ElementSize>::PushBack(Itr begin, Itr end)
 	{
 		// イテレータの差分
 		const size_t diff = std::distance(begin, end);
@@ -209,5 +209,5 @@ namespace SolEngine {
 	}
 
 	template<SoLib::IsRealType T>
-	using DxResourcePoolList = DxResourcePool<(~0xffu & (sizeof(T) + 0xffu)) / 0x100>;
+	using DxResourcePoolBufferList = DxResourceBufferPool<(~0xffu & (sizeof(T) + 0xffu)) / 0x100>;
 }

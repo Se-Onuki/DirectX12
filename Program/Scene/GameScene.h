@@ -31,7 +31,7 @@
 #include "../Engine/ResourceObject/ResourceObjectManager.h"
 #include "../ECS/Component/ComponentRegistry.h"
 #include "../Engine/DirectBase/Texture/FullScreenTextureStrage.h"
-#include "../Engine/DirectBase/DxResource/DxResourcePool.h"
+#include "../Engine/DirectBase/DxResource/DxResourceBufferPool.h"
 
 
 class GameScene : public IScene {

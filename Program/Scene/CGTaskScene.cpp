@@ -12,13 +12,13 @@
 #include "../Engine/DirectBase/Model/AssimpData.h"
 #include "../Engine/DirectBase/Model/Mesh.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
-#include "../Engine/DirectBase/DxResource/DxResourcePool.h"
+#include "../Engine/DirectBase/DxResource/DxResourceBufferPool.h"
 
 void CGTaskScene::OnEnter()
 {
 	ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
 
-	auto *matBuffer = SolEngine::DxResourcePoolList<Matrix4x4>::GetInstance();
+	auto *matBuffer = SolEngine::DxResourcePoolBufferList<Matrix4x4>::GetInstance();
 
 	std::array<Matrix4x4, 2> item{ Matrix4x4::Identity(), Matrix4x4::Identity() * 10.f };
 	auto matHandle = matBuffer->PushBack(item.begin(), item.end());
