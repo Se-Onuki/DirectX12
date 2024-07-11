@@ -207,6 +207,7 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
 
 		# カスタムプロパティ['file_name']
 		if "file_name" in object:
+			self.write_and_print (file, indent + "N %s" % object["directory_name"])
 			self.write_and_print (file, indent + "N %s" % object["file_name"])
 		# カスタムプロパティ['collider']
 		if "collider" in object:
@@ -272,21 +273,21 @@ class MYADDON_OT_create_ico_sphere(bpy.types.Operator):
 		# オペレータの命令終了を通知
 		return {"FINISHED"}
 
-# パネル ファイル名
-class OBJECT_PT_file_name(bpy.types.Panel):
-	"""オブジェクトのファイルネームパネル"""
-	bl_idname = "OBJECT_PT_file_name"
-	bl_label = "FileName"
-	bl_space_type = "PROPERTIES"
-	bl_region_type = "WINDOW"
-	bl_context = "object"
+# # パネル ファイル名
+# class OBJECT_PT_file_name(bpy.types.Panel):
+# 	"""オブジェクトのファイルネームパネル"""
+# 	bl_idname = "OBJECT_PT_file_name"
+# 	bl_label = "FileName"
+# 	bl_space_type = "PROPERTIES"
+# 	bl_region_type = "WINDOW"
+# 	bl_context = "object"
 
-	def draw(self, context):
-		# パネルに項目を追加
-		if "file_name" in context.object:
-			self.layout.prop(context.object, "file_name", text = self.bl_label)
-		else:
-			self.layout.operator(MYADDON_OT_add_filename.bl_idname)
+# 	def draw(self, context):
+# 		# パネルに項目を追加
+# 		if "file_name" in context.object:
+# 			self.layout.prop(context.object, "file_name", text = self.bl_label)
+# 		else:
+# 			self.layout.operator(MYADDON_OT_add_modeldata.bl_idname)
 
 	
 # コライダ描画
@@ -394,6 +395,35 @@ class MYADDON_OT_add_collider(bpy.types.Operator):
 	
 
 # パネル ファイル名
+class OBJECT_PT_component(bpy.types.Panel):
+	"""オブジェクトのファイルネームパネル"""
+	bl_idname = "OBJECT_PT_component"
+	bl_label = "Component Editor"
+	bl_space_type = "PROPERTIES"
+	bl_region_type = "WINDOW"
+	bl_context = "object"
+
+	def draw(self, context):
+		# パネルに項目を追加
+		if "collider" in context.object:
+			box = self.layout.box()
+			box.label(text = "Collider",icon = "DOT")
+			# すでにプロパティがあれば､プロパティを表示
+			box.prop(context.object, '["collider"]', text ="Type")
+			box.prop(context.object, '["collider_center"]', text ="Center")
+			box.prop(context.object, '["collider_size"]', text ="Size")
+		else:
+			self.layout.operator(MYADDON_OT_add_collider.bl_idname)
+		# パネルに項目を追加
+		if "file_name" in context.object:
+			box = self.layout.box()
+			box.label(text = "ModelName",icon = "DOT")
+			box.prop(context.object, '["directory_name"]', text = "DirectoryName")
+			box.prop(context.object, '["file_name"]', text = "FileName")
+		else:
+			self.layout.operator(MYADDON_OT_add_modeldata.bl_idname)
+
+# パネル ファイル名
 class OBJECT_PT_collider(bpy.types.Panel):
 	"""オブジェクトのファイルネームパネル"""
 	bl_idname = "OBJECT_PT_collider"
@@ -413,14 +443,16 @@ class OBJECT_PT_collider(bpy.types.Panel):
 			self.layout.operator(MYADDON_OT_add_collider.bl_idname)
 
 # オペレータ カスタムプロパティ['file_name']を追加
-class MYADDON_OT_add_filename(bpy.types.Operator):
-	bl_idname = "myaddon.myaddon_ot_add_filename"
-	bl_label = "FileName 追加"
+class MYADDON_OT_add_modeldata(bpy.types.Operator):
+	bl_idname = "myaddon.myaddon_ot_add_modeldata"
+	bl_label = "ModelData 追加"
 	bl_description = "カスタムプロパティ['file_name']を追加します"
 	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		
+		# カスタムプロパティ['directory_name']を追加
+		context.object["directory_name"] = ""
 		# カスタムプロパティ['file_name']を追加
 		context.object["file_name"] = ""
 
@@ -435,10 +467,9 @@ classes = (
 	MYADDON_OT_stretch_vertex,
 	MYADDON_OT_create_ico_sphere,
 	MYADDON_OT_export_scene,
-	MYADDON_OT_add_filename,
-	OBJECT_PT_file_name,
+	MYADDON_OT_add_modeldata,
 	MYADDON_OT_add_collider,
-	OBJECT_PT_collider,
+	OBJECT_PT_component,
 )
 
 # メニュー項目描画

@@ -211,14 +211,6 @@ void GameScene::OnEnter() {
 	spawnTimer_.Start();
 	Fade::GetInstance()->Start(Vector2{}, 0x00000000, 1.f);
 
-	//{
-	//	gameObject_.Init();
-	//	auto modelComp = gameObject_.AddComponent<ModelComp>();
-	//	modelComp->AddBone("Body", sphere);
-
-	//	gameObject_.transform_.translate = { 0.f,3.f,0.f };
-	//}
-
 	healthBar_ = std::make_unique<HealthBar>();
 	healthBar_->Init();
 
@@ -310,7 +302,6 @@ void GameScene::Update() {
 	}
 
 	light_->ImGuiWidget();
-	//gameObject_.GetComponent<ModelComp>()->GetBone("Body")->ImGuiWidget();
 
 	damageTimer_.Update(deltaTime);
 
@@ -415,8 +406,6 @@ void GameScene::Update() {
 
 	gaussianParam_->second = SoLib::Lerp(1, 32, isMenuOpen_ ? menuTimer_.GetProgress() : 1.f - menuTimer_.GetProgress());
 
-	//SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()
-
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
 	if (material) {
 		SoLib::ImGuiWidget("Material", *material);
@@ -445,16 +434,9 @@ void GameScene::Draw() {
 
 	dxCommon->CrearDepthBuffer();
 
-
-	//const auto &camera = *cameraManager_->GetUseCamera();
-
 #pragma region モデル描画
 
 	Model::StartDraw(commandList);
-
-	//light_->SetLight(commandList);
-
-	//gameObject_.Draw(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
 
