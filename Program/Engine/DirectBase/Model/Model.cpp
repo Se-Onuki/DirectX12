@@ -1774,16 +1774,16 @@ uint32_t ModelJointState::MakeJointIndex(const ModelNode *node, std::vector<std:
 	return selfIndex;
 }
 
-Mesh MeshFactory::CreateMesh() const
+std::unique_ptr<Mesh> MeshFactory::CreateMesh() const
 {
-	Mesh result;
-	result.meshName_ = meshName_;
-	result.pNode_ = pNode_;
-	result.material_ = pMaterial_;
-	result.indexBuffer_.SetIndexData(indexs_);
-	result.vertexBuffer_.SetVertexData(vertices_);
+	std::unique_ptr<Mesh> result = std::make_unique<Mesh>();
+	result->meshName_ = meshName_;
+	result->pNode_ = pNode_;
+	result->material_ = pMaterial_;
+	result->indexBuffer_.SetIndexData(indexs_);
+	result->vertexBuffer_.SetVertexData(vertices_);
 
-	return result;
+	return std::move(result);
 }
 //
 //SkinClusterReference::SkinClusterReference(uint32_t vertexCount)

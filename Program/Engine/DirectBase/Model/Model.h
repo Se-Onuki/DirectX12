@@ -542,7 +542,7 @@ struct MeshFactory {
 
 	std::unordered_map<Mesh::VertexData, uint32_t, Mesh::hashVertex> indexMap_; // 頂点追加用一時データ
 
-	Mesh CreateMesh() const;
+	std::unique_ptr<Mesh> CreateMesh() const;
 
 };
 

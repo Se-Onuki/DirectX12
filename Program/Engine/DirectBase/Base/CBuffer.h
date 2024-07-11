@@ -153,7 +153,7 @@ inline void CBuffer<T, IsActive>::CreateBuffer() {
 
 	auto *const bufferManager = SolEngine::DxResourceBufferPoolManager<>::GetInstance();
 
-	buffer_ = bufferManager->PushBack(T{});
+	buffer_ = bufferManager->PushBack<T>();
 
 }
 

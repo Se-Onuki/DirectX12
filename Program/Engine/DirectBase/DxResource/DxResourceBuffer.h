@@ -52,6 +52,21 @@ namespace SolEngine {
 			// アイテムのサイズ
 			constexpr size_t typeSize = sizeof(T);
 			// メモリ量
+			const size_t memSize = sizeof(MemType) * size();
+			// 配列の要素数
+			const size_t tItemCount = memSize / typeSize;
+			// そのデータが何個格納できるかを計算する
+			std::span<T> result{ reinterpret_cast<T *>(itemData_.data()), tItemCount };
+
+			return result;
+		}
+
+		template<typename T>
+			requires(kHasMemory_)
+		const std::span<T> GetAccessor() const {
+			// アイテムのサイズ
+			constexpr size_t typeSize = sizeof(T);
+			// メモリ量
 			const size_t memSize = sizeof(MemType) / size();
 			// 配列の要素数
 			const size_t tItemCount = memSize / typeSize;
@@ -62,7 +77,7 @@ namespace SolEngine {
 		}
 
 		ID3D12Resource *GetResource() noexcept { return resource_.Get(); }
-		const ID3D12Resource *GetResource() const noexcept { return resource_.Get(); }
+		ID3D12Resource *GetResource() const noexcept { return resource_.Get(); }
 
 		const D3D12_CONSTANT_BUFFER_VIEW_DESC &GetCBView() const noexcept { return cbView_; }
 

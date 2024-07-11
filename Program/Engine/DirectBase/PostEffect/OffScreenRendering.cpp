@@ -161,7 +161,7 @@ namespace PostEffect {
 	void FullScreenRenderer::Init(const std::list<std::pair<std::wstring, std::wstring>> &key)
 	{
 
-		param_->fValue_ = { 16.f, 0.8f };
+		//param_->fValue_ = { 16.f, 0.8f };
 		auto device = GetDevice();
 
 
@@ -206,7 +206,7 @@ namespace PostEffect {
 		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 
 		auto *const rootSignatureManager = SolEngine::ResourceObjectManager<RootSignature>::GetInstance();
-		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = sampler, .item_ = accesser_.MakeRootParameters() };
+		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = sampler, .item_ = { "t0PS,b0PS" } };
 
 		rootSignature_ = rootSignatureManager->Load(rootSignatureSource);
 
@@ -294,7 +294,7 @@ namespace PostEffect {
 		command->SetGraphicsRootSignature(GetRootSignature());
 		command->SetPipelineState(GetPipeLine(key));
 		command->SetGraphicsRootDescriptorTable(0, gpuHandle);
-		command->SetGraphicsRootConstantBufferView(accesser_.GetIndex<CBuffer<ValuePair>>(), param_.GetGPUVirtualAddress());
+		//command->SetGraphicsRootConstantBufferView(accesser_.GetIndex<CBuffer<ValuePair>>(), param_.GetGPUVirtualAddress());
 
 		command->DrawInstanced(3, 1, 0, 0);
 

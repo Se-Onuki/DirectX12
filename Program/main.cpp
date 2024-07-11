@@ -60,7 +60,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Init(winApp);
-
 #pragma endregion
 
 	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
@@ -78,6 +77,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	TextureManager::Load("white2x2.png");
 
 	ImGuiManager::StaticInit(winApp->GetHWND(), dxCommon->GetDevice(), dxCommon->backBufferCount_, dxCommon->GetSRVHeap());
+
+	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_UPLOAD>::GetInstance();
+	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_DEFAULT>::GetInstance();
 
 	Model::StaticInit();
 	Sprite::StaticInit();

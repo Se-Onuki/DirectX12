@@ -7,6 +7,8 @@
 #include "../Create/Create.h"
 #include "DirectXCommon.h"
 #include "CBuffer.h"
+#include "../DxResource/DxResourceBuffer.h"
+#include "../DxResource/DxResourceBufferPoolManager.h"
 
 #include "../../../Utils/SoLib/SoLib_Traits.h"
 
@@ -20,17 +22,24 @@ class ArrayBuffer final {
 	static_assert(!std::is_pointer<T>::value, "ArrayBufferに与えた型がポインタ型です");
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	ComPtr<ID3D12Resource> resources_ = nullptr;
+	using ResourceManager = SolEngine::DxResourceBufferPoolManager<HeapType>;
+	using ResourceHandle = ResourceManager::UniqueHandle;
+
+	ResourceHandle resourceHandle_;
+
+	uint32_t size_;
+
+	//ComPtr<ID3D12Resource> resources_ = nullptr;
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_{};
 
-	std::span<T> mapData_ = {};
+	//std::span<T> mapData_ = {};
 
 public:
 
 	using map_matrix = T;
 
-	inline ID3D12Resource *const GetResources() noexcept { return resources_.Get(); }
-	inline ID3D12Resource *const GetResources() const noexcept { return resources_.Get(); }
+	inline ID3D12Resource *const GetResources() noexcept { return resourceHandle_->GetResource(); }
+	inline ID3D12Resource *const GetResources() const noexcept { return resourceHandle_->GetResource(); }
 
 	inline const D3D12_SHADER_RESOURCE_VIEW_DESC &GetDesc() const noexcept { return srvDesc_; }
 
@@ -39,16 +48,18 @@ public:
 	inline operator T *() noexcept;				// 参照
 	inline operator const T *() const noexcept;	// const参照
 
-	inline T &operator[](uint32_t index) noexcept { return mapData_[index]; }
-	inline const T &operator[](uint32_t index) const noexcept { return mapData_[index]; }
+	inline T &operator[](uint32_t index) noexcept { 
+		return resourceHandle_->GetAccessor<T>()[index]; }
+	inline const T &operator[](uint32_t index) const noexcept { 
+		return resourceHandle_->GetAccessor<T>()[index]; }
 
 	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
 	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
 
-	uint32_t size() const noexcept { return static_cast<uint32_t>(mapData_.size()); }
-	T *const data() const noexcept { return mapData_.data(); }
-	auto begin() const noexcept { return mapData_.begin(); }
-	auto end() const noexcept { return mapData_.end(); }
+	uint32_t size() const noexcept { return size_; }
+	T *const data() const noexcept { return resourceHandle_->GetAccessor<T>().data(); }
+	auto begin() const noexcept { return resourceHandle_->GetAccessor<T>().begin(); }
+	auto end() const noexcept { return begin() + size(); }
 
 
 	template <SoLib::IsContainsType<T> U>
@@ -56,7 +67,7 @@ public:
 
 public:
 	inline D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept {
-		return resources_->GetGPUVirtualAddress();
+		return resourceHandle_->GetCBView().BufferLocation;
 	}
 
 
@@ -70,11 +81,11 @@ public:
 	~ArrayBuffer();
 
 	/// @brief バッファの計算
-	void CreateBuffer(uint32_t size);
+	void CreateBuffer(uint32_t buffSize);
 
 
-	void Copy(T *const begin, T *const end) {
-		std::copy(begin, end, mapData_.begin());
+	void Copy(T *const begin, T *const end) requires(ResourceManager::kHasMemory_) {
+		std::copy(begin, end, resourceHandle_->begin());
 	}
 
 private:
@@ -85,34 +96,34 @@ private:
 
 template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 inline ArrayBuffer<T, HeapType>::operator bool() const noexcept {
-	return resources_ != nullptr;
+	return static_cast<bool>(resourceHandle_);
 }
 
 template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 inline ArrayBuffer<T, HeapType>::operator T *() noexcept {
-	return mapData_.data();
+	return resourceHandle_->GetAccessor<T>().data();
 }
 
 template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 inline ArrayBuffer<T, HeapType>::operator const T *() const noexcept {
-	return mapData_.data();
+	return resourceHandle_->GetAccessor<T>().data();
 }
 
 template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 inline T *const ArrayBuffer<T, HeapType>::operator->() noexcept {
-	return mapData_.data();
+	return resourceHandle_->GetAccessor<T>().data();
 }
 
 template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 inline const T *const ArrayBuffer<T, HeapType>::operator->() const noexcept {
-	return mapData_.data();
+	return resourceHandle_->GetAccessor<T>().data();
 }
 
 template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
 template<SoLib::IsContainsType<T> U>
 inline ArrayBuffer<T, HeapType> &ArrayBuffer<T, HeapType>::operator=(const U &source) {
 	CreateBuffer(static_cast<uint32_t>(source.size()));
-	std::copy(source.begin(), source.end(), mapData_.begin());
+	std::copy(source.begin(), source.end(), begin());
 	return *this;
 }
 
@@ -129,7 +140,7 @@ inline ArrayBuffer<T, HeapType>::ArrayBuffer(const U &source) {
 	static_assert(requires { source.end(); }, "与えられた型にend()メンバ関数がありません");
 
 	CreateBuffer(static_cast<uint32_t>(source.size()));
-	std::copy(source.begin(), source.end(), mapData_.begin());
+	std::copy(source.begin(), source.end(), begin());
 }
 
 //template<SoLib::IsRealType T>
@@ -142,23 +153,18 @@ inline ArrayBuffer<T, HeapType>::ArrayBuffer(const U &source) {
 
 
 template<SoLib::IsRealType T, D3D12_HEAP_TYPE HeapType>
-inline void ArrayBuffer<T, HeapType>::CreateBuffer(uint32_t size) {
+inline void ArrayBuffer<T, HeapType>::CreateBuffer(uint32_t buffSize) {
 	// sizeが0以外である場合 && 現在の領域と異なる場合、領域を確保
-	if (size != 0u && mapData_.size() != size) {
-		HRESULT result = S_FALSE;
-		if (resources_ != nullptr) { resources_->Release(); }
+	if (buffSize != 0u && size() != buffSize) {
+		//HRESULT result = S_FALSE;
+		ResourceManager *const resourceManager = ResourceManager::GetInstance();
+		if (resourceHandle_) { resourceHandle_ = {}; }
 		// 256バイト単位のアライメント
-		resources_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), (sizeof(T) * size + 0xff) & ~0xff, HeapType);
 
-		T *tmp = nullptr;
+		resourceHandle_ = resourceManager->PushBack<T>(buffSize);
 
-		// CPUアクセスが可能であったらデータを取得する
-		if constexpr (HeapType != D3D12_HEAP_TYPE_DEFAULT) {
-			result = resources_->Map(0, nullptr, reinterpret_cast<void **>(&tmp));
-			assert(SUCCEEDED(result));
-		}
+		size_ = buffSize;
 
-		mapData_ = { tmp, size };
 		srvDesc_ = CreateSrvDesc();
 
 	}
@@ -175,7 +181,7 @@ inline D3D12_SHADER_RESOURCE_VIEW_DESC ArrayBuffer<T, HeapType>::CreateSrvDesc()
 	srvDesc.Buffer.FirstElement = 0;
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	srvDesc.Buffer.StructureByteStride = sizeof(T);	// アライメントはC++準拠
-	srvDesc.Buffer.NumElements = static_cast<uint32_t>(mapData_.size());
+	srvDesc.Buffer.NumElements = size();
 
 	return srvDesc;
 }

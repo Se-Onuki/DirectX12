@@ -106,10 +106,10 @@ namespace PostEffect {
 
 	private:
 
-		union ValuePair {
-			std::pair<float, float> fValue_;
-			std::pair<float, int32_t> iValue_;
-		};
+		//union ValuePair {
+		//	std::pair<float, float> fValue_;
+		//	std::pair<float, int32_t> iValue_;
+		//};
 	public:
 
 		void Init(const std::list<std::pair<std::wstring, std::wstring>> &key);
@@ -120,19 +120,19 @@ namespace PostEffect {
 
 		ID3D12PipelineState *GetPipeLine(const std::pair<std::wstring, std::wstring> &key) { return pipelineState_.at(key).Get(); }
 
-		std::pair<float, float> *GetFParam() { return &param_->fValue_; }
-		std::pair<float, int32_t> *GetGaussianParam() { return &param_->iValue_; }
+		//std::pair<float, float> *GetFParam() { return &param_->fValue_; }
+		//std::pair<float, int32_t> *GetGaussianParam() { return &param_->iValue_; }
 
-		const CBuffer<ValuePair> &GetParam() const { return param_; }
+		//const CBuffer<ValuePair> &GetParam() const { return param_; }
 
 	private:
 
-		const SolEngine::RootParametersAccesser<DescHeapCbvSrvUav::Handle, CBuffer<ValuePair>> accesser_ = SolEngine::MakeRootParametersAccesser(
+		/*const SolEngine::RootParametersAccesser<DescHeapCbvSrvUav::Handle, CBuffer<ValuePair>> accesser_ = SolEngine::MakeRootParametersAccesser(
 			SignParam<DescHeapCbvSrvUav::Handle>{ "t0PS" },
 			SignParam<CBuffer<ValuePair>>{ "b0PS" }
 		);
 
-		CBuffer<ValuePair> param_;
+		CBuffer<ValuePair> param_;*/
 
 		SolEngine::ResourceObjectManager<RootSignature>::Handle rootSignature_;
 

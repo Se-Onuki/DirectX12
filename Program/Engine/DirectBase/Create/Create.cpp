@@ -6,7 +6,7 @@
 #include <numbers>
 #include <wrl.h>
 
-Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device *device, const size_t &sizeBytes, const D3D12_HEAP_TYPE heapType)
+Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device *device, const size_t sizeBytes, const D3D12_HEAP_TYPE heapType)
 {
 	// ヒープの設定
 	D3D12_HEAP_PROPERTIES heapProperties{};
