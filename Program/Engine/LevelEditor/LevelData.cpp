@@ -52,6 +52,12 @@ namespace SolEngine {
 
 	void ResourceCreater<LevelData>::RecursiveLoad(const nlohmann::json &jsonObjectList, std::list<LevelData::ObjectData> &objectDataList) const
 	{
+		ResourceObjectManager<AssimpData> *const assimpManager = ResourceObjectManager<AssimpData>::GetInstance();
+		ResourceObjectManager<ModelData> *const modelManager = ResourceObjectManager<ModelData>::GetInstance();
+
+		// モデルは初期値は"box.obj"であるとする
+		const auto defaultModel = modelManager->Load({ assimpManager->Load({ "","box.obj" }) });
+
 		for (const auto &jsonObject : jsonObjectList) {
 			assert(jsonObject.contains("type") and "typeコンテナが存在しません");
 
@@ -65,7 +71,15 @@ namespace SolEngine {
 
 				// ファイル名があるならそれを保存する
 				if (jsonObject.contains("file_name")) {
-					objectData.fileName_ = jsonObject["file_name"];
+					auto assimpData = assimpManager->Load({ .directoryPath_ = jsonObject.contains("directory_name") ? jsonObject["directory_name"] : "" ,. fileName_ = jsonObject["file_name"] });
+					// ファイルを読み込めた場合
+					if (assimpData) {
+						objectData.modelHandle_ = modelManager->Load({ assimpData });
+					}
+					// モデルの読み込みに失敗していた場合
+					if (objectData.modelHandle_) {
+						objectData.modelHandle_ = defaultModel;
+					}
 				}
 
 				// ファイル名があるならそれを保存する

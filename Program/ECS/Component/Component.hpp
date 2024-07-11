@@ -51,7 +51,7 @@ namespace ECS {
 	};
 
 	struct GravityComp : IComponent, public IClassData<GravityComp> {
-		Vector3 gravity_{};
+		Vector3 gravity_ = Vector3::up * -9.8f;
 	};
 
 	struct PlayerTag : IComponent {
@@ -174,7 +174,7 @@ namespace ECS {
 	};
 
 	struct ModelComp : IComponent {
-		
+
 		SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle model_;
 
 	};

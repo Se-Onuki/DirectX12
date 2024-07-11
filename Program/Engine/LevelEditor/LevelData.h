@@ -3,6 +3,7 @@
 #include "../ResourceObject/ResourceObjectManager.h"
 #include "../../Utils/Math/Transform.h"
 #include "../../Header/Collision/Collision.h"
+#include "../DirectBase/Model/ModelData.h"
 
 
 namespace SolEngine {
@@ -12,12 +13,13 @@ namespace SolEngine {
 		struct ObjectData {
 			// すべてキューブ型であるとする
 			//Model *model_; // いったん無視
+			ResourceObjectManager<ModelData>::Handle modelHandle_;
 
-			std::string fileName_;
 			std::string name_;
 			SimpleTransformEuler transform_;
 			std::pair<Vector3, Vector3> collider_;
 			std::list<ObjectData> children_;
+
 		};
 
 		std::list<ObjectData> objectList_;

@@ -126,6 +126,14 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
 		transform["scale"] = (scale.x, scale.y, scale.z)
 		json_object["transform"] = transform
 
+		# カスタムプロパティ['rigidbody']
+		if ("rigidbody" in object):
+			rigidbody = dict()
+			rigidbody["type"] = object["rigidbody"]
+			rigidbody["gravity"] = object["gravity"]
+			json_object["rigidbody"] = rigidbody
+		
+
 		# カスタムプロパティ['file_name']
 		if ("file_name" in object):
 			json_object["file_name"] = object["file_name"]
@@ -394,6 +402,19 @@ class MYADDON_OT_add_collider(bpy.types.Operator):
 		return {"FINISHED"}
 	
 
+# オペレータ カスタムプロパティ[ 'visiblity' ]追加
+class MYADDON_OT_add_visibility(bpy.types.Operator):
+	bl_idname = "myaddon.myaddon_ot_add_visibility"
+	bl_label = "透明化 追加"
+	bl_description = "[ 'visiblity' ]カスタムプロパティを追加します"
+	bl_options = {"REGISTER", "UNDO"}
+
+	def execute(self, context):
+		#[ 'visiblity' ]カスタムプロパティを追加
+		context.object["visiblity"] = False
+		return {"FINISHED"}
+	
+
 # パネル ファイル名
 class OBJECT_PT_component(bpy.types.Panel):
 	"""オブジェクトのファイルネームパネル"""
@@ -404,43 +425,44 @@ class OBJECT_PT_component(bpy.types.Panel):
 	bl_context = "object"
 
 	def draw(self, context):
+		layout = self.layout
+		if "visiblity" in context.object:
+			layout.prop(context.object, '["visiblity"]', text ="Visiblity")
+			layout.separator()
+		else:
+			context.object["visiblity"] = False
+			layout.separator()
 		# パネルに項目を追加
 		if "collider" in context.object:
-			box = self.layout.box()
-			box.label(text = "Collider",icon = "DOT")
+			layout.label(text = "Collider",icon = "DOT")
 			# すでにプロパティがあれば､プロパティを表示
-			box.prop(context.object, '["collider"]', text ="Type")
-			box.prop(context.object, '["collider_center"]', text ="Center")
-			box.prop(context.object, '["collider_size"]', text ="Size")
+			layout.prop(context.object, '["collider"]', text ="Type")
+			layout.prop(context.object, '["collider_center"]', text ="Center")
+			layout.prop(context.object, '["collider_size"]', text ="Size")
+			layout.separator()
 		else:
-			self.layout.operator(MYADDON_OT_add_collider.bl_idname)
+			layout.operator(MYADDON_OT_add_collider.bl_idname)
+			layout.separator()
 		# パネルに項目を追加
 		if "file_name" in context.object:
-			box = self.layout.box()
-			box.label(text = "ModelName",icon = "DOT")
-			box.prop(context.object, '["directory_name"]', text = "DirectoryName")
-			box.prop(context.object, '["file_name"]', text = "FileName")
+			layout.label(text = "ModelName",icon = "DOT")
+			layout.prop(context.object, '["directory_name"]', text = "DirectoryName")
+			layout.prop(context.object, '["file_name"]', text = "FileName")
+			layout.separator()
 		else:
-			self.layout.operator(MYADDON_OT_add_modeldata.bl_idname)
-
-# パネル ファイル名
-class OBJECT_PT_collider(bpy.types.Panel):
-	"""オブジェクトのファイルネームパネル"""
-	bl_idname = "OBJECT_PT_collider"
-	bl_label = "Collider"
-	bl_space_type = "PROPERTIES"
-	bl_region_type = "WINDOW"
-	bl_context = "object"
-
-	def draw(self, context):
+			layout.operator(MYADDON_OT_add_modeldata.bl_idname)
+			layout.separator()
+			layout.separator()
 		# パネルに項目を追加
-		if "collider" in context.object:
-			# すでにプロパティがあれば､プロパティを表示
-			self.layout.prop(context.object, '["collider"]', text ="Type")
-			self.layout.prop(context.object, '["collider_center"]', text ="Center")
-			self.layout.prop(context.object, '["collider_size"]', text ="Size")
+		if "rigidbody" in context.object:
+			layout.label(text = "Rigidbody",icon = "DOT")
+			layout.prop(context.object, '["gravity"]', text = "Gravity")
+			layout.separator()
 		else:
-			self.layout.operator(MYADDON_OT_add_collider.bl_idname)
+			layout.operator(MYADDON_OT_add_rigidbody.bl_idname)
+			layout.separator()
+
+
 
 # オペレータ カスタムプロパティ['file_name']を追加
 class MYADDON_OT_add_modeldata(bpy.types.Operator):
@@ -458,6 +480,21 @@ class MYADDON_OT_add_modeldata(bpy.types.Operator):
 
 		return {"FINISHED"}
 
+# オペレータ カスタムプロパティ['rigidbody']を追加
+class MYADDON_OT_add_rigidbody(bpy.types.Operator):
+	bl_idname = "myaddon.myaddon_ot_add_rigidbody"
+	bl_label = "rigidbody 追加"
+	bl_description = "カスタムプロパティ['rigidbody']を追加します"
+	bl_options = {"REGISTER", "UNDO"}
+
+	def execute(self, context):
+		
+		# カスタムプロパティ['rigidbody']を追加
+		context.object["rigidbody"] = True
+		context.object["gravity"] = -9.8
+
+		return {"FINISHED"}
+
 
 
 
@@ -469,6 +506,8 @@ classes = (
 	MYADDON_OT_export_scene,
 	MYADDON_OT_add_modeldata,
 	MYADDON_OT_add_collider,
+	MYADDON_OT_add_rigidbody,
+	MYADDON_OT_add_visibility,
 	OBJECT_PT_component,
 )
 

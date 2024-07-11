@@ -7,6 +7,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <variant>
 
 class Render;
 struct LineBase;
@@ -220,3 +221,28 @@ struct Capsule : public IShape {
 /// @brief AABB同士の結合
 /// @return お互いの両端を取ったAABB
 AABB operator+(const AABB &first, const AABB &second);
+
+using VariantShapes = std::variant<AABB, OBB, Sphere, Capsule/*, Cylinder*/>;
+
+class ShapesList {
+
+	// Variantの型リストを取得するテンプレート
+	template <typename T>
+	struct VariantTypes;
+
+	template <typename... Ts>
+	struct VariantTypes<std::variant<Ts...>> {
+		using Types = std::tuple<std::list<Ts>...>;
+	};
+
+public:
+
+	using ShapeTypes = VariantTypes<VariantShapes>::Types;
+
+	ShapeTypes shapeTypes_;
+	/*template <typename T>
+	void push_back(const T &shape) {
+		auto &list = std::get<std::list<T>>(shapeTypes_);
+		list.push_back(shape);
+	}*/
+};

@@ -41,11 +41,11 @@ namespace SolEngine {
 	void LevelImporter::RecursiveLoad(const std::list<LevelData::ObjectData> &objectDataList, World *const world, ECS::Entity *parent) const
 	{
 
-		auto *modelManager = ResourceObjectManager<ModelData>::GetInstance();
-		auto *assimpManager = ResourceObjectManager<AssimpData>::GetInstance();
+		/*auto *modelManager = ResourceObjectManager<ModelData>::GetInstance();
+		auto *assimpManager = ResourceObjectManager<AssimpData>::GetInstance();*/
 
-		// モデルは初期値は"box.obj"であるとする
-		auto defaultModel = modelManager->Load({ assimpManager->Load({ "","box.obj" }) });
+		//// モデルは初期値は"box.obj"であるとする
+		//auto defaultModel = modelManager->Load({ assimpManager->Load({ "","box.obj" }) });
 
 		// エンティティマネージャを取得
 		auto *const entityManager = world->GetEntityManager();
@@ -55,17 +55,12 @@ namespace SolEngine {
 
 			ECS::Prefab prefab;
 			// マネージャからモデルを取得する
-			ResourceObjectManager<ModelData>::Handle model;
-			auto assimpData = assimpManager->Load({ "", object.fileName_ });
-			if (assimpData) {
-				model = modelManager->Load({ assimpData });
+			ResourceObjectManager<ModelData>::Handle model = object.modelHandle_;
+
+			// モデルデータを持っていた場合
+			if (model) { // コンポーネントを追加する
+				prefab += ECS::ModelComp{ .model_ = object.modelHandle_ };
 			}
-			// モデルが存在しない場合は
-			if (not model) {
-				// デフォルトモデルを渡す
-				model = defaultModel;
-			}
-			prefab += ECS::ModelComp{ .model_ = model };
 			{
 				prefab += ECS::PositionComp{ .position_ = object.transform_.translate_ };
 				prefab += ECS::RotateComp{ .rotate_ = object.transform_.rotate_ };
