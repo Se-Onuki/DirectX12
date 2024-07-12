@@ -142,7 +142,7 @@ namespace SolEngine {
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle(0).gpuHandle_);
-
+		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, ModelNode::kIdentity_->GetGPUVirtualAddress());
 		for (uint32_t i = 0; i < meshHandleList_.size(); i++) {
 			auto &mesh = meshHandleList_[i];
 			mesh->Draw(commandList, drawCount, &modelInfluence_->influence_.GetVBView());
