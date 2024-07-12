@@ -89,7 +89,7 @@ namespace SolEngine {
 					const Vector3 rotate = transform["rotation"].get<Vector3>();
 
 					objectData.transform_.rotate_ =
-						-Vector3{ rotate[0], rotate[2], rotate[1] } *Angle::Dig2Rad;
+						-Vector3{ rotate[0], rotate[2] + 180.f, rotate[1] } *Angle::Dig2Rad;
 				}
 				{
 					const Vector3 translate = transform["translation"].get<Vector3>();
