@@ -127,6 +127,7 @@ void GameScene::OnEnter() {
 	//entityManager_->CreateEntity(particleArchetype, 3u);
 	//auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
 
+
 	prefab_ = std::make_unique<ECS::Prefab>();
 
 	*prefab_ += ECS::Identifier{};

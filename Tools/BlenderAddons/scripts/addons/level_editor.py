@@ -443,9 +443,9 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 
 		# Select the active object (the one to be replaced)
 		obj = context.active_object
-		if obj is None or obj.type != 'MESH':
-			self.report({'ERROR'}, "Active object is not a mesh")
-			return
+		# if obj is None or obj.type != 'MESH':
+		# 	self.report({'ERROR'}, "Active object is not a mesh")
+		# 	return
 
 		# 文字列の末尾から最初の'\'までの文字をfileNameに代入
 		fileName = filepath.split('\\')[-1]

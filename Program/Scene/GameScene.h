@@ -119,6 +119,8 @@ private:
 
 	std::unique_ptr<SkinModel> skinModel_;
 
+	std::list<std::unique_ptr<SkinModel>> skinModelList_;
+
 	Model *attackModel_ = nullptr;
 
 	SoLib::DeltaTimer playerSpawn_{ 1.f, false };

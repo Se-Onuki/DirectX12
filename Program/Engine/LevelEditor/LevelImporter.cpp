@@ -60,6 +60,7 @@ namespace SolEngine {
 			// モデルデータを持っていた場合
 			if (model) { // コンポーネントを追加する
 				prefab += ECS::ModelComp{ .model_ = object.modelHandle_ };
+				/*if(model->skeletonReference_)*/
 			}
 			{
 				prefab += ECS::PositionComp{ .position_ = object.transform_.translate_ };

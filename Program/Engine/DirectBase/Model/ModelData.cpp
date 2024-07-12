@@ -125,7 +125,7 @@ namespace SolEngine {
 		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 
 		for (const auto &mesh : meshHandleList_) {
-			commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, ModelNode::kIdentity_->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, this->rootNode_->GetLocalMatrix().GetGPUVirtualAddress());
 
 			mesh->Draw(commandList, drawCount);
 		}

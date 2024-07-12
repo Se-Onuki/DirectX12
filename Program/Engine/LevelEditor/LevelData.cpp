@@ -82,14 +82,14 @@ namespace SolEngine {
 				{
 					const Vector3 scale = transform["scale"].get<Vector3>();
 
-					objectData.transform_.scale_ = type.compare("ARMATURE") ? Vector3::one*4 : // もし､アーマチュア型なら大きさを無視する
-					Vector3{ scale[0], scale[2], scale[1] };
+					objectData.transform_.scale_ = type.compare("ARMATURE") == 0 ? Vector3::one : // もし､アーマチュア型なら大きさを無視する
+						Vector3{ scale[0], scale[2], scale[1] };
 				}
 				{
 					const Vector3 rotate = transform["rotation"].get<Vector3>();
 
 					objectData.transform_.rotate_ =
-						-Vector3{ rotate[0], rotate[2], rotate[1] };
+						-Vector3{ rotate[0], rotate[2], rotate[1] } *Angle::Dig2Rad;
 				}
 				{
 					const Vector3 translate = transform["translation"].get<Vector3>();
