@@ -88,6 +88,18 @@ class MYADDON_OT_stretch_vertex(bpy.types.Operator):
 		# オペレータの命令終了を通知
 		return {"FINISHED"}
 
+class MYADDON_OT_model_loader(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
+	bl_idname = "myaddon.myaddon_ot_model_loader"
+	bl_label = "ModelLoader"
+	bl_description = "モデルを読み込み､メッシュに適用します"
+	bl_options = {"REGISTER", "UNDO"}
+
+	# メニューを実行するときに呼ばれるコールバック関数
+	def execute(self, context: Context):
+
+		# モデルを読み込む
+		bpy.ops.import_mesh.stl(filepath=self.filepath)
+
 # オペレータ シーン出力
 class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 	bl_idname = "myaddon.myaddon_ot_export_scene"
@@ -287,23 +299,6 @@ class MYADDON_OT_create_ico_sphere(bpy.types.Operator):
 
 		# オペレータの命令終了を通知
 		return {"FINISHED"}
-
-# # パネル ファイル名
-# class OBJECT_PT_file_name(bpy.types.Panel):
-# 	"""オブジェクトのファイルネームパネル"""
-# 	bl_idname = "OBJECT_PT_file_name"
-# 	bl_label = "FileName"
-# 	bl_space_type = "PROPERTIES"
-# 	bl_region_type = "WINDOW"
-# 	bl_context = "object"
-
-# 	def draw(self, context):
-# 		# パネルに項目を追加
-# 		if "file_name" in context.object:
-# 			self.layout.prop(context.object, "file_name", text = self.bl_label)
-# 		else:
-# 			self.layout.operator(MYADDON_OT_add_modeldata.bl_idname)
-
 	
 # コライダ描画
 class DrawCollider:
@@ -423,6 +418,67 @@ class MYADDON_OT_add_visibility(bpy.types.Operator):
 		context.object["visiblity"] = True
 		return {"FINISHED"}
 	
+class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
+	bl_idname = "myaddon.myaddon_ot_import_mesh"
+	bl_label = "Import Mesh"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	filename_ext = ".gltf"  # You can change this to the file type you want to support
+
+	filter_glob: bpy.props.StringProperty(
+		 default="*.gltf",
+		 options={'HIDDEN'},
+		 maxlen=255,
+	)
+
+	def execute(self, context):
+		filepath = self.filepath
+		self.import_mesh(context, filepath)
+		return {'FINISHED'}
+
+	def import_mesh(self, context, filepath):
+		
+		# Deselect all objects
+		bpy.ops.object.select_all(action='DESELECT')
+
+		# Select the active object (the one to be replaced)
+		obj = context.active_object
+		if obj is None or obj.type != 'MESH':
+			self.report({'ERROR'}, "Active object is not a mesh")
+			return
+
+		# 文字列の末尾から最初の'\'までの文字をfileNameに代入
+		fileName = filepath.split('\\')[-1]
+
+		# 'resources\'までの文字をdirectoryに代入
+		directory_index = filepath.rfind('resources\\')
+		if directory_index != -1:
+			directory = filepath.split('resources\\')[-1].split(fileName)[0]
+		else:
+			directory = ''
+		
+		obj["directory_name"] = directory
+		obj["file_name"] = fileName
+
+		# # データを保存する
+		# obj_location = obj.location
+		# obj_rotation = obj.rotation_euler
+		# obj_scale = obj.scale
+		# obj_custom_props = obj.items()
+
+		# # gltfメッシュを読み込む
+		#bpy.ops.import_scene.gltf(filepath=filepath)
+
+		# # 読み込んだメッシュにデータを渡す
+		# for new_obj in context.selected_objects:
+		# 	new_obj.location += obj_location
+		# 	#new_obj.rotation_euler = obj_rotation
+		# 	#new_obj.scale *= obj_scale
+		# 	for key, value in obj_custom_props:
+		# 		new_obj[key] = value
+
+		# # 古い方のデータを破棄
+		# bpy.data.objects.remove(obj, do_unlink=True)
 
 # パネル ファイル名
 class OBJECT_PT_component(bpy.types.Panel):
@@ -456,6 +512,7 @@ class OBJECT_PT_component(bpy.types.Panel):
 			layout.label(text = "ModelName",icon = "DOT")
 			layout.prop(context.object, '["directory_name"]', text = "DirectoryName")
 			layout.prop(context.object, '["file_name"]', text = "FileName")
+			layout.operator(MYADDON_OT_import_mesh.bl_idname)
 			layout.separator()
 		else:
 			layout.operator(MYADDON_OT_add_modeldata.bl_idname)
@@ -515,6 +572,7 @@ classes = (
 	MYADDON_OT_add_collider,
 	MYADDON_OT_add_rigidbody,
 	MYADDON_OT_add_visibility,
+	MYADDON_OT_import_mesh,
 	OBJECT_PT_component,
 )
 
