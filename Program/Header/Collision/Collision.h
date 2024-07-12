@@ -222,7 +222,13 @@ struct Capsule : public IShape {
 /// @return お互いの両端を取ったAABB
 AABB operator+(const AABB &first, const AABB &second);
 
-using VariantShapes = std::variant<AABB, OBB, Sphere, Capsule/*, Cylinder*/>;
+using VariantShapes = std::variant<std::byte, AABB, OBB, Sphere, Capsule/*, Cylinder*/>;
+
+template <typename T>
+concept IsShapeType = requires(const T shape) {
+	{ VariantShapes{ shape } } -> std::same_as<VariantShapes>;
+};
+
 
 class ShapesList {
 
@@ -240,9 +246,10 @@ public:
 	using ShapeTypes = VariantTypes<VariantShapes>::Types;
 
 	ShapeTypes shapeTypes_;
-	/*template <typename T>
+
+	template <IsShapeType T>
 	void push_back(const T &shape) {
 		auto &list = std::get<std::list<T>>(shapeTypes_);
 		list.push_back(shape);
-	}*/
+	}
 };

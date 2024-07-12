@@ -24,7 +24,7 @@ namespace SolEngine {
 		// CPUアクセスメモリを持っているか
 		constexpr static bool kHasMemory_ = HType != D3D12_HEAP_TYPE_DEFAULT;
 
-		using MemType = std::array<char, 0x100>;
+		using MemType = std::array<std::byte, 0x100>;
 
 	public:
 

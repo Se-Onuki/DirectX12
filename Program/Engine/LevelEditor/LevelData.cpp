@@ -61,50 +61,16 @@ namespace SolEngine {
 		for (const auto &jsonObject : jsonObjectList) {
 			assert(jsonObject.contains("type") and "typeコンテナが存在しません");
 
+			// 可視フラグが折れてたら､追加しない
+			if (jsonObject.contains("visiblity") and not jsonObject["visiblity"]) { continue; }
 			// 種類を取得
 			const std::string type = jsonObject["type"];
 
+
 			// MESHである場合
-			if (type.compare("MESH") == 0) {
+			if (type.compare("MESH") == 0 or type.compare("EMPTY") == 0) {
 				// オブジェクトを末尾に構築
 				auto &objectData = objectDataList.emplace_back();
-
-				// ファイル名があるならそれを保存する
-				if (jsonObject.contains("file_name")) {
-					auto assimpData = assimpManager->Load({ .directoryPath_ = jsonObject.contains("directory_name") ? jsonObject["directory_name"] : "" ,. fileName_ = jsonObject["file_name"] });
-					// ファイルを読み込めた場合
-					if (assimpData) {
-						objectData.modelHandle_ = modelManager->Load({ assimpData });
-					}
-					// モデルの読み込みに失敗していた場合
-					if (objectData.modelHandle_) {
-						objectData.modelHandle_ = defaultModel;
-					}
-				}
-
-				// ファイル名があるならそれを保存する
-				if (jsonObject.contains("collider")) {
-					const auto &collider = jsonObject["collider"];
-					const std::string &colliderType = collider["type"];
-
-					// コライダの形がBoxであった場合
-					if (colliderType.compare("BOX")) {
-						// コライダのデータを入れ込む
-						{
-							const Vector3 scale = collider["scale"].get<Vector3>();
-
-							objectData.collider_.second = Vector3{ scale[0], scale[2], scale[1] } / 2.f;
-						}
-						{
-							const Vector3 center = collider["center"].get<Vector3>();
-
-
-							objectData.collider_.first = { center[0], center[2], center[1] };
-						}
-
-					}
-
-				}
 
 				// transformの保存
 				{
@@ -126,6 +92,60 @@ namespace SolEngine {
 
 						objectData.transform_.translate_ =
 						{ translate[0], translate[2], translate[1] };
+					}
+				}
+
+				// ファイル名があるならそれを保存する
+				if (jsonObject.contains("file_name")) {
+					// ファイル名が空でない場合
+					if (jsonObject["file_name"] != "") {
+						auto assimpData = assimpManager->Load({ .directoryPath_ = jsonObject.contains("directory_name") ? jsonObject["directory_name"] : "" ,. fileName_ = jsonObject["file_name"] });
+						// ファイルを読み込めた場合
+						if (assimpData) {
+							objectData.modelHandle_ = modelManager->Load({ assimpData });
+						}
+					}
+					// モデルの読み込みに失敗していた場合
+					if (not objectData.modelHandle_) {
+						objectData.modelHandle_ = defaultModel;
+					}
+				}
+
+				// ファイル名があるならそれを保存する
+				if (jsonObject.contains("collider")) {
+					const auto &collider = jsonObject["collider"];
+					const std::string &colliderType = collider["type"];
+
+					// 型が存在する場合
+					if (colliderType != "") {
+
+						if (collider["isTrigger"]) {
+							const std::string &funcName = collider["collision_function"];
+							objectData.triggerFunc_ = funcName;
+						}
+
+						// コライダの形がBoxであった場合
+						if (colliderType.compare("BOX")) {
+							// コライダのデータを入れ込む
+							OBB obb{};
+
+							{
+								const Vector3 &transScale = objectData.transform_.scale_;
+								const Vector3 scale = collider["scale"].get<Vector3>();
+
+								obb.size = Vector3{ scale[0] * transScale.x, scale[2] * transScale.y, scale[1] * transScale.z } / 2.f;
+							}
+							{
+								const Vector3 center = collider["center"].get<Vector3>();
+
+
+								obb.centor = { center[0], center[2], center[1] };
+							}
+
+							obb.orientations = Quaternion::Create(objectData.transform_.rotate_);
+							// データを代入
+							objectData.collider_ = obb;
+						}
 					}
 				}
 

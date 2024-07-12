@@ -126,21 +126,28 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
 		transform["scale"] = (scale.x, scale.y, scale.z)
 		json_object["transform"] = transform
 
+		if ("visiblity" in object):
+			json_object["visiblity"] = object["visiblity"]
+
 		# カスタムプロパティ['rigidbody']
 		if ("rigidbody" in object):
 			rigidbody = dict()
 			rigidbody["type"] = object["rigidbody"]
+			rigidbody["isKinematic"] = object["isKinematic"]
 			rigidbody["gravity"] = object["gravity"]
 			json_object["rigidbody"] = rigidbody
 		
 
 		# カスタムプロパティ['file_name']
 		if ("file_name" in object):
+			json_object["directory_name"] = object["directory_name"]
 			json_object["file_name"] = object["file_name"]
 			
 		# カスタムプロパティ['collider']
 		if ("collider" in object):
 			collider = dict()
+			collider["isTrigger"] = object["isTrigger"]
+			collider["collision_function"] = object["collision_function"]
 			collider["type"] = object["collider"]
 			collider["center"] = object["collider_center"].to_list()
 			collider["size"] = object["collider_size"].to_list()
@@ -377,7 +384,7 @@ class DrawCollider:
 		# ビルトインのシェーダを取得
 		shader = gpu.shader.from_builtin("UNIFORM_COLOR")
 		# バッチを作成(引数 : シェーダ、トポロジー、頂点データ、Indexデータ)
-		batch = gpu_extras.batch.batch_for_shader(shader,"LINES", vertices, indices = indices)
+		batch = gpu_extras.batch.batch_for_shader(shader, "LINES", vertices, indices = indices)
 
 		# シェーダのパラメータ設定
 		color = [0.5, 1.0, 1.0, 1.0]
@@ -396,8 +403,10 @@ class MYADDON_OT_add_collider(bpy.types.Operator):
 	def execute(self, context):
 		#[ 'collider' ]カスタムプロパティを追加
 		context.object["collider"] = "BOX"
+		context.object["isTrigger"] = False
 		context.object["collider_center"] = mathutils.Vector((0,0,0))
 		context.object["collider_size"] = mathutils.Vector((2,2,2))
+		context.object["collision_function"] = ""
 
 		return {"FINISHED"}
 	
@@ -405,13 +414,13 @@ class MYADDON_OT_add_collider(bpy.types.Operator):
 # オペレータ カスタムプロパティ[ 'visiblity' ]追加
 class MYADDON_OT_add_visibility(bpy.types.Operator):
 	bl_idname = "myaddon.myaddon_ot_add_visibility"
-	bl_label = "透明化 追加"
+	bl_label = "可視性フラグの追加"
 	bl_description = "[ 'visiblity' ]カスタムプロパティを追加します"
 	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		#[ 'visiblity' ]カスタムプロパティを追加
-		context.object["visiblity"] = False
+		context.object["visiblity"] = True
 		return {"FINISHED"}
 	
 
@@ -428,21 +437,20 @@ class OBJECT_PT_component(bpy.types.Panel):
 		layout = self.layout
 		if "visiblity" in context.object:
 			layout.prop(context.object, '["visiblity"]', text ="Visiblity")
-			layout.separator()
 		else:
-			context.object["visiblity"] = False
-			layout.separator()
+			layout.operator(MYADDON_OT_add_visibility.bl_idname)
 		# パネルに項目を追加
 		if "collider" in context.object:
 			layout.label(text = "Collider",icon = "DOT")
 			# すでにプロパティがあれば､プロパティを表示
+			layout.prop(context.object, '["isTrigger"]', text ="IsTrigger")
+			layout.prop(context.object, '["collision_function"]', text ="CollisionFunction")
 			layout.prop(context.object, '["collider"]', text ="Type")
 			layout.prop(context.object, '["collider_center"]', text ="Center")
 			layout.prop(context.object, '["collider_size"]', text ="Size")
 			layout.separator()
 		else:
 			layout.operator(MYADDON_OT_add_collider.bl_idname)
-			layout.separator()
 		# パネルに項目を追加
 		if "file_name" in context.object:
 			layout.label(text = "ModelName",icon = "DOT")
@@ -451,16 +459,14 @@ class OBJECT_PT_component(bpy.types.Panel):
 			layout.separator()
 		else:
 			layout.operator(MYADDON_OT_add_modeldata.bl_idname)
-			layout.separator()
-			layout.separator()
 		# パネルに項目を追加
 		if "rigidbody" in context.object:
 			layout.label(text = "Rigidbody",icon = "DOT")
+			layout.prop(context.object, '["isKinematic"]', text = "IsKinematic")
 			layout.prop(context.object, '["gravity"]', text = "Gravity")
 			layout.separator()
 		else:
 			layout.operator(MYADDON_OT_add_rigidbody.bl_idname)
-			layout.separator()
 
 
 
@@ -491,6 +497,7 @@ class MYADDON_OT_add_rigidbody(bpy.types.Operator):
 		
 		# カスタムプロパティ['rigidbody']を追加
 		context.object["rigidbody"] = True
+		context.object["isKinematic"] = True
 		context.object["gravity"] = -9.8
 
 		return {"FINISHED"}

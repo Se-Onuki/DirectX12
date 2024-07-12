@@ -69,9 +69,14 @@ namespace SolEngine {
 			}
 			prefab += ECS::CreateByLevelData{};
 
-			// 当たり判定があったら入れる
-			if (object.collider_.second != Vector3::zero) {
-				prefab += ECS::OBBCollisionComp{ .collision_ = {.centor = object.collider_.first, .size = object.collider_.second} };
+			// OBB型なら代入する
+			if (auto ptr = std::get_if<OBB>(&object.collider_); ptr) {
+
+				//// 当たり判定があったら入れる
+				//if (object.collider_ != Vector3::zero) {
+
+				prefab += ECS::OBBCollisionComp{ .collision_ = *ptr };
+				//}
 			}
 			// 親の情報があったら渡す
 			if (parent) {

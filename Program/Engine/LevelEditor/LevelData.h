@@ -17,8 +17,11 @@ namespace SolEngine {
 
 			std::string name_;
 			SimpleTransformEuler transform_;
-			std::pair<Vector3, Vector3> collider_;
+			VariantShapes collider_ = std::byte{};
 			std::list<ObjectData> children_;
+
+			// 接触時に実行される関数名
+			std::string triggerFunc_;
 
 		};
 

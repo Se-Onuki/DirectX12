@@ -265,7 +265,7 @@ void GameScene::OnEnter() {
 
 	SolEngine::ResourceObjectManager<SolEngine::LevelData> *const levelDataManager = SolEngine::ResourceObjectManager<SolEngine::LevelData>::GetInstance();
 
-	auto levelData = levelDataManager->Load({ .fileName_ = "test.json" });
+	auto levelData = levelDataManager->Load({ .fileName_ = "check.json" });
 
 	SolEngine::LevelImporter levelImporter;
 	levelImporter.Import(levelData, world_.get());
