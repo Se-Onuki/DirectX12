@@ -2,8 +2,8 @@
     "name": "scene",
     "objects": [
         {
-            "type": "MESH",
-            "name": "Cube",
+            "type": "EMPTY",
+            "name": "Node_0",
             "transform": {
                 "translation": [
                     0.0,
@@ -21,29 +21,77 @@
                     1.0
                 ]
             },
-            "visiblity": true,
-            "rigidbody": {
-                "type": true,
-                "isKinematic": true,
-                "gravity": -9.8
-            },
-            "directory_name": "",
-            "file_name": "",
-            "collider": {
-                "isTrigger": false,
-                "collision_function": "",
-                "type": "BOX",
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "size": [
-                    2.0,
-                    2.0,
-                    2.0
-                ]
-            }
+            "directory_name": "Model/human/",
+            "file_name": "BrainStem.glb",
+            "children": [
+                {
+                    "type": "EMPTY",
+                    "name": "Node_21",
+                    "transform": {
+                        "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    },
+                    "children": [
+                        {
+                            "type": "ARMATURE",
+                            "name": "Poser_scene_root",
+                            "transform": {
+                                "translation": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    -0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ]
+                            },
+                            "children": [
+                                {
+                                    "type": "MESH",
+                                    "name": "Figure_2_geometry",
+                                    "transform": {
+                                        "translation": [
+                                            0.0,
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "rotation": [
+                                            0.0,
+                                            -0.0,
+                                            0.0
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0,
+                                            1.0
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "type": "LIGHT",
@@ -84,43 +132,6 @@
                     1.0,
                     1.0,
                     1.0
-                ]
-            }
-        },
-        {
-            "type": "EMPTY",
-            "name": "エンプティ",
-            "transform": {
-                "translation": [
-                    0.0,
-                    2.859999895095825,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "visiblity": true,
-            "collider": {
-                "isTrigger": true,
-                "collision_function": "launch",
-                "type": "BOX",
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "size": [
-                    2.0,
-                    2.0,
-                    2.0
                 ]
             }
         }

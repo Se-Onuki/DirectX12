@@ -3,7 +3,7 @@
     "objects": [
         {
             "type": "MESH",
-            "name": "Cube",
+            "name": "ICO球",
             "transform": {
                 "translation": [
                     0.0,
@@ -20,30 +20,53 @@
                     1.0,
                     1.0
                 ]
-            },
-            "visiblity": true,
-            "rigidbody": {
-                "type": true,
-                "isKinematic": true,
-                "gravity": -9.8
-            },
-            "directory_name": "",
-            "file_name": "",
-            "collider": {
-                "isTrigger": false,
-                "collision_function": "",
-                "type": "BOX",
-                "center": [
+            }
+        },
+        {
+            "type": "ARMATURE",
+            "name": "Armature.002",
+            "transform": {
+                "translation": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "size": [
-                    2.0,
-                    2.0,
-                    2.0
+                "rotation": [
+                    90.00001525878906,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    0.009999999776482582,
+                    0.010000000707805157,
+                    0.010000000707805157
                 ]
-            }
+            },
+            "directory_name": "Model/human/",
+            "file_name": "Attack.gltf",
+            "children": [
+                {
+                    "type": "MESH",
+                    "name": "Retopology_hp_Plane.001",
+                    "transform": {
+                        "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                }
+            ]
         },
         {
             "type": "LIGHT",
@@ -84,43 +107,6 @@
                     1.0,
                     1.0,
                     1.0
-                ]
-            }
-        },
-        {
-            "type": "EMPTY",
-            "name": "エンプティ",
-            "transform": {
-                "translation": [
-                    0.0,
-                    2.859999895095825,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "visiblity": true,
-            "collider": {
-                "isTrigger": true,
-                "collision_function": "launch",
-                "type": "BOX",
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "size": [
-                    2.0,
-                    2.0,
-                    2.0
                 ]
             }
         }

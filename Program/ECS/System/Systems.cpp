@@ -296,7 +296,14 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 		// const auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
 		// 
 		// 左スティックの入力
-		const Vector2 inputLs = inputManager->GetXInput()->GetState()->stickL_;
+		Vector2 inputLs = inputManager->GetXInput()->GetState()->stickL_;
+		if (inputLs == Vector2::zero) {
+			auto *const dInput = inputManager->GetDirectInput();
+			if (dInput->IsPress(DIK_A)) { inputLs.x -= 1; }
+			if (dInput->IsPress(DIK_D)) { inputLs.x += 1; }
+			if (dInput->IsPress(DIK_W)) { inputLs.y += 1; }
+			if (dInput->IsPress(DIK_S)) { inputLs.y -= 1; }
+		}
 		// 3次元的に解釈した入力
 		const Vector3 lInput3d{ inputLs.x,0.f,inputLs.y };
 		// カメラの向きに回転したベクトル

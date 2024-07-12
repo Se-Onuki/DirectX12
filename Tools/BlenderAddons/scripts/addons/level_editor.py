@@ -426,7 +426,7 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 	filename_ext = ".gltf"  # You can change this to the file type you want to support
 
 	filter_glob: bpy.props.StringProperty(
-		 default="*.gltf",
+		 default="*.gltf;*.glb",
 		 options={'HIDDEN'},
 		 maxlen=255,
 	)
@@ -453,7 +453,7 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 		# 'resources\'までの文字をdirectoryに代入
 		directory_index = filepath.rfind('resources\\')
 		if directory_index != -1:
-			directory = filepath.split('resources\\')[-1].split(fileName)[0]
+			directory = filepath.split('resources\\')[-1].split(fileName)[0].replace('\\', '/')
 		else:
 			directory = ''
 		
@@ -464,21 +464,21 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 		# obj_location = obj.location
 		# obj_rotation = obj.rotation_euler
 		# obj_scale = obj.scale
-		# obj_custom_props = obj.items()
+		obj_custom_props = obj.items()
 
-		# # gltfメッシュを読み込む
-		#bpy.ops.import_scene.gltf(filepath=filepath)
+		# gltfメッシュを読み込む
+		bpy.ops.import_scene.gltf(filepath=filepath)
 
 		# # 読み込んだメッシュにデータを渡す
-		# for new_obj in context.selected_objects:
+		new_obj = context.selected_objects[0]
 		# 	new_obj.location += obj_location
 		# 	#new_obj.rotation_euler = obj_rotation
 		# 	#new_obj.scale *= obj_scale
-		# 	for key, value in obj_custom_props:
-		# 		new_obj[key] = value
+		for key, value in obj_custom_props:
+			new_obj[key] = value
 
 		# # 古い方のデータを破棄
-		# bpy.data.objects.remove(obj, do_unlink=True)
+		bpy.data.objects.remove(obj, do_unlink=True)
 
 # パネル ファイル名
 class OBJECT_PT_component(bpy.types.Panel):
