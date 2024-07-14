@@ -164,6 +164,10 @@ namespace ECS {
 
 	struct QuaternionRotComp : IComponent {
 		Quaternion quateRot_ = Quaternion::Identity;
+
+		inline Quaternion &operator=(const Quaternion &other) { return quateRot_ = other; }
+		inline operator Quaternion &() { return quateRot_; }
+		inline operator const Quaternion &() const { return quateRot_; }
 	};
 
 	struct TransformMatComp : IComponent {

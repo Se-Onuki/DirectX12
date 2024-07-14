@@ -25,7 +25,7 @@ namespace SolEngine {
 		// レベルデータを破棄
 		levelData->objectList_.clear();
 
-		for (const auto [entity, scale, rotate, position, createByData] : world->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::CreateByLevelData>()) {
+		for (const auto [entity, scale, rotate, position, createByData] : world->view<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::CreateByLevelData>()) {
 
 			// 保存先のデータを決める
 			LevelData::ObjectData &objectData = levelData->objectList_.emplace_back();
@@ -64,7 +64,7 @@ namespace SolEngine {
 			}
 			{
 				prefab += ECS::PositionComp{ .position_ = object.transform_.translate_ };
-				prefab += ECS::RotateComp{ .rotate_ = object.transform_.rotate_ };
+				prefab += ECS::QuaternionRotComp{ .quateRot_ = object.transform_.rotate_ };
 				prefab += ECS::ScaleComp{ .scale_ = object.transform_.scale_ };
 				prefab += ECS::TransformMatComp{};
 			}

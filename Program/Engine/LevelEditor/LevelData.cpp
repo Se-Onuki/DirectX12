@@ -86,10 +86,16 @@ namespace SolEngine {
 						Vector3{ scale[0], scale[2], scale[1] };
 				}
 				{
-					const Vector3 rotate = transform["rotation"].get<Vector3>();
+					// 弧度法に変換しつつ､回転量の変換
+					const Vector3 rotate = transform["rotation"].get<Vector3>() * -Angle::Dig2Rad;
 
-					objectData.transform_.rotate_ =
-						-Vector3{ rotate[0], rotate[2] + 180.f, rotate[1] } *Angle::Dig2Rad;
+					const Quaternion quate =
+						Quaternion::AnyAxisRotation(Vector3::up, Angle::Rad180)
+						* Quaternion::AnyAxisRotation(Vector3::right, rotate.x)
+						* Quaternion::AnyAxisRotation(Vector3::front, rotate.y)
+						* Quaternion::AnyAxisRotation(Vector3::up, rotate.z);
+
+					objectData.transform_.rotate_ = quate;
 				}
 				{
 					const Vector3 translate = transform["translation"].get<Vector3>();
@@ -146,7 +152,7 @@ namespace SolEngine {
 							obb.centor = { center[0], center[2], center[1] };
 						}
 
-						obb.orientations = Quaternion::Create(objectData.transform_.rotate_);
+						obb.orientations = objectData.transform_.rotate_;
 						// データを代入
 						objectData.collider_ = obb;
 					}

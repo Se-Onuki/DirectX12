@@ -424,7 +424,7 @@ class MYADDON_OT_add_visibility(bpy.types.Operator):
 		context.object["visiblity"] = True
 		return {"FINISHED"}
 	
-def delete_hierarchy(obj):
+def delete_hierarchy(obj: bpy.types.Object):
 	for child in obj.children:
 		delete_hierarchy(child)
 	bpy.data.objects.remove(obj)
