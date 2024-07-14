@@ -21,6 +21,7 @@ Quaternion Quaternion::Create(const SoLib::Math::Euler &euler) {
 	//	/* w */ -tX[kSin] * tY[kSin] * tZ[kSin] + tX[kCos] * tY[kCos] * tZ[kCos]
 	//};
 
+	// Z->Y->Xの順で回転する｡
 	Quaternion result{
 		/* x */ tX[kSin] * tY[kCos] * tZ[kCos] - tX[kCos] * tY[kSin] * tZ[kSin],
 		/* y */ tX[kSin] * tY[kCos] * tZ[kSin] + tX[kCos] * tY[kSin] * tZ[kCos],

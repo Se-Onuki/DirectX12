@@ -89,11 +89,13 @@ namespace SolEngine {
 					// 弧度法に変換しつつ､回転量の変換
 					const Vector3 rotate = transform["rotation"].get<Vector3>() * -Angle::Dig2Rad;
 
+					static const Quaternion kBaseRotate = { 0,1,0,0 };	// Y軸に半回転する
+
 					const Quaternion quate =
-						Quaternion::AnyAxisRotation(Vector3::up, Angle::Rad180)
-						* Quaternion::AnyAxisRotation(Vector3::right, rotate.x)
+						Quaternion::AnyAxisRotation(Vector3::up, rotate.z)
 						* Quaternion::AnyAxisRotation(Vector3::front, rotate.y)
-						* Quaternion::AnyAxisRotation(Vector3::up, rotate.z);
+						* Quaternion::AnyAxisRotation(Vector3::right, rotate.x)
+						* kBaseRotate;
 
 					objectData.transform_.rotate_ = quate;
 				}
