@@ -92,10 +92,9 @@ namespace SolEngine {
 					static const Quaternion kBaseRotate = { 0,1,0,0 };	// Y軸に半回転する
 
 					const Quaternion quate =
-						Quaternion::AnyAxisRotation(Vector3::up, rotate.z)
-						* Quaternion::AnyAxisRotation(Vector3::front, rotate.y)
-						* Quaternion::AnyAxisRotation(Vector3::right, rotate.x)
-						* kBaseRotate;
+						(Quaternion::AnyAxisRotation(Vector3::up, rotate.z)
+							* Quaternion::Create({ rotate.x, 0,rotate.y })
+							* kBaseRotate).Normalize();
 
 					objectData.transform_.rotate_ = quate;
 				}
