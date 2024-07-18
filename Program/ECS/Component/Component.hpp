@@ -178,7 +178,7 @@ namespace ECS {
 
 	struct ModelComp : IComponent {
 
-		SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle model_;
+		SolEngine::ResourceHandle<SolEngine::ModelData> model_;
 
 	};
 

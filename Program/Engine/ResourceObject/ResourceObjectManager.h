@@ -344,6 +344,9 @@ namespace SolEngine {
 	{
 		Singleton::instance_ ? *this = Singleton::instance_->Load(source) : Handle{};
 	}
+
+	template<IsResourceObject T, IsResourceSource Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T, Source>, size_t ContainerSize = 0u>
+	using ResourceHandle = ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle;
 }
 
 //namespace std {
