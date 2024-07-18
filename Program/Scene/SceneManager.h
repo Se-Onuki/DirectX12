@@ -53,7 +53,6 @@ public:
 
 	void Init();
 
-
 	/// @brief インスタンスの取得
 	/// @return インスタンスの実体
 	inline static SceneManager *const GetInstance() {

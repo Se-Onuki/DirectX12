@@ -27,9 +27,21 @@ void from_json(const nlohmann::json &json, Vector4 &data) {
 	}
 }
 void to_json(nlohmann::json &json, const Quaternion &data) {
-	SoLib::ToJson(json, data);
+	using Data = SoLib::Traits<Quaternion>;
+	if (json.is_array() && json.size() == Data::Size) {
+		// データを書き込む
+		for (uint32_t i = 0u; i < Data::Size; i++) {
+			json.at(i) = Data::CBegin(data)[i];
+		}
+	}
 }
 
 void from_json(const nlohmann::json &json, Quaternion &data) {
-	SoLib::FromJson(json, data);
+	using Data = SoLib::Traits<Quaternion>;
+	if (json.is_array() && json.size() == Data::Size) {
+		// データを書き込む
+		for (uint32_t i = 0u; i < Data::Size; i++) {
+			(&data.x)[i] = json.at(i);
+		}
+	}
 }

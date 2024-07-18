@@ -16,7 +16,7 @@ namespace SolEngine {
 			ResourceObjectManager<ModelData>::Handle modelHandle_;
 
 			std::string name_;
-			SimpleTransformEuler transform_;
+			SimpleTransformQuaternion transform_;
 			VariantShapes collider_ = std::byte{};
 			std::list<ObjectData> children_;
 

@@ -109,6 +109,12 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
 	# 出力するファイルの拡張子
 	filename_ext = ".json"
 
+	filter_glob: bpy.props.StringProperty(
+		 default="*.json;*.jsonc",
+		 options={'HIDDEN'},
+		 maxlen=255,
+	)
+
 	def write_and_print(self,file,str):
 		print(str)
 		file.write(str + "\n")
@@ -418,6 +424,11 @@ class MYADDON_OT_add_visibility(bpy.types.Operator):
 		context.object["visiblity"] = True
 		return {"FINISHED"}
 	
+def delete_hierarchy(obj: bpy.types.Object):
+	for child in obj.children:
+		delete_hierarchy(child)
+	bpy.data.objects.remove(obj)
+
 class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
 	bl_idname = "myaddon.myaddon_ot_import_mesh"
 	bl_label = "Import Mesh"
@@ -467,7 +478,7 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 		obj_custom_props = obj.items()
 
 		# gltfメッシュを読み込む
-		bpy.ops.import_scene.gltf(filepath=filepath)
+		bpy.ops.import_scene.gltf(filepath=filepath, bone_heuristic = 'TEMPERANCE')
 
 		# # 読み込んだメッシュにデータを渡す
 		new_obj = context.selected_objects[0]
@@ -478,7 +489,7 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 			new_obj[key] = value
 
 		# # 古い方のデータを破棄
-		bpy.data.objects.remove(obj, do_unlink=True)
+		delete_hierarchy(obj)
 
 # パネル ファイル名
 class OBJECT_PT_component(bpy.types.Panel):
