@@ -182,7 +182,7 @@ bool Audio::ImGuiWidget()
 	itr = SoLib::ImGuiWidget("AudioList", &fileMap_, itr,
 		[](const decltype(itr) &itemIndex) -> std::string
 		{
-			return "(" + std::to_string(itemIndex->second) + ")" + itemIndex->first;
+			return '(' + std::to_string(itemIndex->second) + ')' + itemIndex->first;
 		});
 
 	if (ImGui::Button("Play")) {

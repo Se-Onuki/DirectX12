@@ -69,7 +69,6 @@ namespace SoLib {
 			/// @brief floatポインタ への非明示的変換
 			inline operator const float *() const { return data(); }
 
-			operator std::array<uint8_t, 4u>() const;
 			operator uint32_t() const;
 
 			inline operator Vector4 &() { return *(reinterpret_cast<Vector4 *>(this)); }
@@ -77,9 +76,7 @@ namespace SoLib {
 
 		private:
 			inline void Clamp() {
-				for (uint8_t i = 0u; i < 4; i++) {
-					this->data()[i] = std::clamp(this->data()[i], 0.f, 1.f);
-				}
+				std::for_each(begin(), end(), [](float &f) {f = std::clamp(f, 0.f, 1.f); });
 			}
 
 		};
@@ -99,8 +96,6 @@ namespace SoLib {
 			HSV4(HSV4 &&) = default;
 
 			HSV4(const float h, const float s, const float v, const float a) :h(h), s(s), v(v), a(a) { Clamp(); }
-			//HSV4(const std::array<float, 4u> &color);
-			//HSV4(const std::array<uint8_t, 4u> color);
 			HSV4(const uint32_t color);
 			HSV4(const Vector4 &color) {
 				std::memcpy(this->data(), color.data(), sizeof(*this));
@@ -146,7 +141,6 @@ namespace SoLib {
 			/// @brief floatポインタ への非明示的変換
 			inline operator const float *() const { return data(); }
 
-			operator std::array<uint8_t, 4u>() const;
 			operator uint32_t() const;
 
 			inline operator Vector4 &() { return *(reinterpret_cast<Vector4 *>(this)); }
@@ -154,11 +148,19 @@ namespace SoLib {
 
 		private:
 			inline void Clamp() {
-				for (uint8_t i = 0u; i < 4; i++) {
-					this->data()[i] = std::clamp(this->data()[i], 0.f, 1.f);
-				}
+				std::for_each(begin(), end(), [](float &f) {f = std::clamp(f, 0.f, 1.f); });
 			}
 		};
+
+		HSV4 operator+(const HSV4 &a, const HSV4 &b);
+		HSV4 operator-(const HSV4 &a, const HSV4 &b);
+
+		HSV4 operator*(const HSV4 &a, const float b);
+		inline HSV4 operator/(const HSV4 &a, const float b) { return a * (1.f / b); }
+
+		void to_json(nlohmann::json &json, const HSV4 &color);
+		void from_json(const nlohmann::json &json, HSV4 &color);
+
 	}
 }
 
