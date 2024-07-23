@@ -64,7 +64,7 @@ float3 RGBtoHSV(const float3 rgb)
     {
         maxIndex = 0;
     }
-    else if (rgb[1])
+    else if (rgb[1] == maxValue)
     {
         maxIndex = 1;
     }
@@ -73,14 +73,14 @@ float3 RGBtoHSV(const float3 rgb)
         maxIndex = 2;
     }
     
-    const float h = WrapValue01((2.f * maxValue + (rgb[fmod(maxIndex + 1, 3)] - rgb[fmod(maxIndex + 2, 3)]) / delta) / 6.f);
+    const float h = WrapValue01((2.f * maxIndex + (rgb[fmod(maxIndex + 1, 3)] - rgb[fmod(maxIndex + 2, 3)]) / delta) / 6.f);
     
     return float3(h, delta / maxValue, maxValue);
 }
 
 float3 HSVtoRGB(float3 hsv)
 {
-    float3 result;
+    float3 result = hsv.z;
     if (hsv.y > 0.0f)
     {
         hsv.x *= 6.0f;

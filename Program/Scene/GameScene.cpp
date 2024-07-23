@@ -257,7 +257,7 @@ void GameScene::OnEnter() {
 	offScreen_->Init();
 
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
-	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GrayScale.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" } });
+	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GrayScale.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"HsvFillter.PS.hlsl" } });
 
 	ModelManager::GetInstance()->AddModel("Box", Model::LoadAssimpModelFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
 
@@ -371,7 +371,6 @@ void GameScene::Update() {
 
 	cameraManager_->Update(fixDeltaTime);
 
-
 	if (skeletonDraw) {
 		for (const auto &[entity, skinModel, mat] : world_->view<const ECS::SkinModel, const ECS::TransformMatComp>()) {
 
@@ -412,6 +411,8 @@ void GameScene::Update() {
 	if (material) {
 		SoLib::ImGuiWidget("Material", *material);
 	}
+
+	SoLib::ImGuiWidget("HsvParam", hsvParam_.get());
 
 	particleManager_->Update(fixDeltaTime);
 }
@@ -546,6 +547,7 @@ void GameScene::PostEffectEnd()
 	if (*grayScaleParam_.get() != 0) {
 		postEffectProcessor->Execute(L"GrayScale.PS.hlsl", grayScaleParam_);
 	}
+	postEffectProcessor->Execute(L"HsvFillter.PS.hlsl", hsvParam_);
 
 	// 結果を取り出す
 	postEffectProcessor->GetResult(resultTex->renderTargetTexture_.Get());

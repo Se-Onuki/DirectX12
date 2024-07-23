@@ -143,6 +143,7 @@ private:
 
 	CBuffer<std::pair<float, float>> vignettingParam_{};
 	CBuffer<float> grayScaleParam_;
+	CBuffer<SoLib::Color::HSV4> hsvParam_;
 	CBuffer<std::pair<float, int32_t>> gaussianParam_;
 
 };
