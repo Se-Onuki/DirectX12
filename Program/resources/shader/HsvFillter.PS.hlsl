@@ -27,9 +27,9 @@ PixelShaderOutput main(VertexShaderOutput input)
     hsv = RGBtoHSV(textureColor.rgb);
     
     // 調整    
-    hsv.x = WrapValue01(hsv.x + gHsvParam.hue_);
-    hsv.y = saturate(hsv.y + gHsvParam.saturation_);
-    hsv.z = saturate(hsv.z + gHsvParam.value_);
+    hsv.x = WrapValue01(hsv.x + gHsvParam.hue_ * gHsvParam.pad_);
+    hsv.y = saturate(hsv.y + (gHsvParam.saturation_ - 0.5f) * 2.f * gHsvParam.pad_);
+    hsv.z = saturate(hsv.z + (gHsvParam.value_ - 0.5f) * 2.f * gHsvParam.pad_);
     
     // RGBに戻す
     float3 rgb = HSVtoRGB(hsv);
