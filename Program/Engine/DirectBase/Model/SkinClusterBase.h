@@ -19,7 +19,7 @@ namespace SolEngine {
 	class ResourceSource<SkinClusterBase> {
 	public:
 		// ファイルのハンドル
-		ResourceObjectManager<AssimpData>::Handle assimpHandle_;
+		ResourceHandle<AssimpData> assimpHandle_;
 
 		std::string ToStr() const {
 			const auto &assimpSource = assimpHandle_.GetSource();

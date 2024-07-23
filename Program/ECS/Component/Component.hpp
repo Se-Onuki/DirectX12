@@ -307,7 +307,7 @@ namespace ECS {
 
 	/// @brief レベルデータから構築されたという証明書
 	struct CreateByLevelData : IComponent {
-		SolEngine::ResourceObjectManager<SolEngine::LevelData>::Handle handle_;
+		SolEngine::ResourceHandle<SolEngine::LevelData> handle_;
 	};
 
 	struct InputFlagComp : IComponent {};

@@ -132,12 +132,16 @@ struct SkeletonState {
 
 template<size_t InfluenceCount = 1u>
 struct VertexWeightData {
+	// 重み係数
 	std::conditional_t<InfluenceCount != 1, std::array<float, InfluenceCount>, float> weight_;
+	// 頂点Index
 	std::conditional_t<InfluenceCount != 1, std::array<uint32_t, InfluenceCount>, uint32_t> vertexIndex_;
 };
 
 struct JointWeightData {
+	// 関節空間の変換行列
 	Matrix4x4 inverseBindPoseMatrix_;
+	// 所属する頂点の重み情報
 	std::vector<VertexWeightData<>> vertexWeightData_;
 };
 
@@ -149,6 +153,7 @@ struct VertexInfluence {
 	static constexpr uint32_t kNumMaxInfluence_ = 4u;
 	VertexWeightData<kNumMaxInfluence_> vertexInfluence_;
 };
+
 struct WellForGPU {
 	Matrix4x4 skeletonSpaceMatrix; // 位置用
 	Matrix4x4 skeletonSpaceInverseTransponeMatrix; // 法線用

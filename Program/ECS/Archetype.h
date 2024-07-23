@@ -7,10 +7,12 @@
 #include <unordered_set>
 #include <set>
 #include "ClassData.h"
+#include "Component/ComponentRegistry.h"
 
 class Archetype {
 public:
-	std::set<ClassDataManager::KeyType> data_;
+
+	ECS::ComponentRegistry::ComponentFlag compFlag_;
 
 	static constexpr size_t OneChunkCapacity = 16u * 1024u;
 
@@ -18,64 +20,33 @@ public:
 
 	template<typename T, typename... TComps>
 	void AddClassData() {
-		// 再帰前の処理
-		{
-			// クラスデータを追加する
-			ClassDataManager::GetInstance()->AddClass<T>();
-			// 型情報を追加
-			data_.insert({ typeid(T) });
-		}
-		if constexpr (sizeof...(TComps) > 0) {
-			AddClassData<TComps...>();
-		}
-		else {
-			totalSize_ = CalcTotalSize();
-			chunkCapacity_ = CalcCapacity();
-		}
+		compFlag_.AddComp<T, TComps...>();
 
-		//InnerAddClassData<T, Ts...>();
+		totalSize_ += sizeof(T);
+		((totalSize_ += sizeof(TComps)),...);
+
+		chunkCapacity_ = CalcCapacity();
 	}
-	bool operator==(const Archetype &other) const { return other.data_ == data_; }
+	bool operator==(const Archetype &other) const { return other.compFlag_ == compFlag_; }
 
 	bool operator<=(const Archetype &other) const {
-		if (data_.size() > other.data_.size()) {
-			return false;
-		}
-		for (const auto &element : data_) {
-			// 保存されてなかったら終わり
-			if (not other.data_.count(element)) {
-				return false;
-			}
-		}
-		return true;
+		return (compFlag_.Get() & other.compFlag_.Get()) == compFlag_.Get();
 	}
 
-	size_t GetTotalSize() const { return totalSize_; }
-	size_t GetChunkCapacity() const { return chunkCapacity_; }
+	uint32_t GetTotalSize() const { return totalSize_; }
+	uint32_t GetChunkCapacity() const { return chunkCapacity_; }
 
 private:
 
-	size_t CalcTotalSize() const {
-		size_t result = 0u;
-		result += sizeof(ECS::Entity);
+	uint32_t CalcCapacity() const { return OneChunkCapacity / totalSize_; }
 
-		for (auto &item : data_) {
-			result += item->size_;
-		}
-
-		return result;
-	}
-
-	size_t CalcCapacity() const { return OneChunkCapacity / this->CalcTotalSize(); }
-
-	size_t totalSize_;
-	size_t chunkCapacity_;
+	uint32_t totalSize_ = sizeof(ECS::Entity);
+	uint32_t chunkCapacity_;
 
 	template<typename... TComps>
 	void InnerAddClassData()
 	{
 		ClassDataManager *const classDataManager = ClassDataManager::GetInstance();
-		(data_.insert({ typeid(TComps) }), ...);
 		totalSize_ = sizeof(ECS::Entity) + (classDataManager->AddClass<TComps>()->size_ + ...);
 		chunkCapacity_ = OneChunkCapacity / totalSize_;
 	}
@@ -87,13 +58,7 @@ namespace std {
 	template<>
 	struct hash<Archetype> {
 		std::size_t operator()(const Archetype &obj) const {
-			std::string typeNames;
-
-			for (const auto &type : obj.data_) {
-				typeNames += type.typeIndex_.name();
-			}
-			return std::hash<std::string>{}(typeNames);
-
+			return obj.compFlag_.Get().to_ullong();
 		}
 	};
 }

@@ -138,6 +138,20 @@ namespace SoLib {
 		auto cend() const { return Self().endImpl(); }
 	};
 
+	// ヘルパー関数テンプレート
+	template<std::size_t... Is>
+	auto ForEachImpl(std::index_sequence<Is...>) {
+		return [](auto &&func, auto&&... args) {
+			(func(std::integral_constant<std::size_t, Is>{}, args...), ...);
+			};
+	}
+
+	// 型のリストを処理するForEach関数
+	template<typename... Ts, typename Func>
+	void ForEach(Func &&func, std::tuple<Ts...> tpl) {
+		ForEachImpl < std::index_sequence_for<Ts...>{} > (std::forward<Func>(func), std::get<Ts>(tpl)...);
+	}
+
 	// 型Tがタプルの何番目の要素かを取得するメタ関数
 	template<typename T, typename Tuple>
 	struct IndexOf;

@@ -222,11 +222,21 @@ public:
 		// for ()
 	}
 
-	void CreateArray(const Archetype &archetype, const uint32_t &maxSize = 16) {
-		for (const auto &element : archetype.data_) {
+	void CreateArray([[maybe_unused]]const Archetype &archetype, [[maybe_unused]] const uint32_t &maxSize = 16) {
+
+		/*const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
+
+		for (uint32_t i = 0; i < archetype.compFlag_.Get().size(); i++) {
+			if (archetype.compFlag_.Get().test(i)) {
+				const auto &comp = compRegistry->typeDatas_[i];
+				componentList_[comp.typeIndex_].Init()
+			}
+		}
+
+		for (const auto &element : ) {
 			componentList_[element.typeIndex_].Init(*element.GetClassData(), maxSize);
 		}
-		archetype_ = archetype;
+		archetype_ = archetype;*/
 	}
 
 	template<typename T> T *GetArray() {

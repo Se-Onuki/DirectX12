@@ -126,7 +126,7 @@ namespace ECS {
 
 			template <IsComponent T, IsComponent First, IsComponent... Rest>
 			struct TypeIndex<T, First, Rest...> {
-				static constexpr std::size_t value = std::is_same_v<T, First> ? 0 : 1 + TypeIndex<T, Rest...>::value;
+				static constexpr std::size_t value = std::is_same_v<T, First> or std::is_same_v<std::remove_const_t<T>, First> ? 0 : 1 + TypeIndex<T, Rest...>::value;
 			};
 
 			template <IsComponent T>

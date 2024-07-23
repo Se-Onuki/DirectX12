@@ -303,6 +303,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Input\Input.h" />
     <ClInclude Include="Engine\DirectBase\Model\AssimpData.h" />
     <ClInclude Include="Engine\DirectBase\Model\BoneModel.h" />
+    <ClInclude Include="Engine\DirectBase\Model\InstancingRenderer.h" />
     <ClInclude Include="Engine\DirectBase\Model\Material.h" />
     <ClInclude Include="Engine\DirectBase\Model\Mesh.h" />
     <ClInclude Include="Engine\DirectBase\Model\MeshInfluence.h" />
@@ -327,6 +328,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Texture\FullScreenTextureStrage.h" />
     <ClInclude Include="Engine\DirectBase\Texture\Texture.h" />
     <ClInclude Include="Engine\DirectBase\Thread\ThreadPool.h" />
+    <ClInclude Include="Engine\LayerElement.h" />
     <ClInclude Include="Engine\LevelEditor\LevelData.h" />
     <ClInclude Include="Engine\LevelEditor\LevelImporter.h" />
     <ClInclude Include="Engine\ResourceObject\ResourceObjectManager.h" />

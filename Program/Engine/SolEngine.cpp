@@ -8,44 +8,48 @@
 #include "DirectBase/Model/Model.h"
 #include "DirectBase/2D/Sprite.h"
 
-void Engine::StaticInit(const char *title, UINT windowStyle, int32_t clientWidth, int32_t clientHeight) {
+namespace SolEngine {
 
-	Engine *const instance = Engine::GetInstance();
+	void Engine::StaticInit(const char *title, UINT windowStyle, int32_t clientWidth, int32_t clientHeight) {
+
+		Engine *const instance = Engine::GetInstance();
 
 #pragma region 基盤初期化
 
-	WinApp::StaticInit();
+		WinApp::StaticInit();
 
-	WinApp *const winApp = WinApp::GetInstance();
-	winApp->CreateGameWindow(title, windowStyle, clientWidth, clientHeight);
+		WinApp *const winApp = WinApp::GetInstance();
+		winApp->CreateGameWindow(title, windowStyle, clientWidth, clientHeight);
 
-	instance->dxCommon_ = DirectXCommon::GetInstance();
-	instance->dxCommon_->Init(winApp);
+		instance->dxCommon_ = DirectXCommon::GetInstance();
+		instance->dxCommon_->Init(winApp);
 
 #pragma endregion
 
-	instance->commandList_ = instance->dxCommon_->GetCommandList();
+		instance->commandList_ = instance->dxCommon_->GetCommandList();
 
-	TextureManager *const textureManager = TextureManager::GetInstance();
+		::TextureManager *const textureManager = ::TextureManager::GetInstance();
 
-	Input *const input = Input::GetInstance();
-	//const DirectInput *const directInput = DirectInput::GetInstance();
+		Input *const input = Input::GetInstance();
+		//const DirectInput *const directInput = DirectInput::GetInstance();
 
-	Audio *const audio = Audio::GetInstance();
+		Audio *const audio = Audio::GetInstance();
 
 #pragma region その他初期化
 
-	textureManager->Init(instance->dxCommon_->GetDevice(), instance->commandList_);
-	TextureManager::Load("white2x2.png");
+		textureManager->Init(instance->dxCommon_->GetDevice(), instance->commandList_);
+		::TextureManager::Load("white2x2.png");
 
-	ImGuiManager::StaticInit(winApp->GetHWND(), instance->dxCommon_->GetDevice(), instance->dxCommon_->backBufferCount_, instance->dxCommon_->GetSRVHeap());
+		ImGuiManager::StaticInit(winApp->GetHWND(), instance->dxCommon_->GetDevice(), instance->dxCommon_->backBufferCount_, instance->dxCommon_->GetSRVHeap());
 
-	Model::StaticInit();
-	Sprite::StaticInit();
-	audio->StaticInit();
+		Model::StaticInit();
+		Sprite::StaticInit();
+		audio->StaticInit();
 
-	input->Init();
+		input->Init();
 
 #pragma endregion
+
+	}
 
 }

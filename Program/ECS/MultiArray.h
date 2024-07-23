@@ -11,15 +11,6 @@ namespace ECS {
 
 	class MultiChunk;
 
-
-	struct ChunkDeleter {
-		void operator()(void *p) const {
-			// メモリを解放
-			operator delete(p);
-		}
-	};
-
-
 	//template<typename... Ts>
 	//struct ComponentMiniArray {
 
@@ -157,7 +148,7 @@ namespace ECS {
 
 	class MultiChunk {
 	public:
-		using memoryType = uint8_t;
+		using memoryType = std::byte;
 		MultiChunk(MultiArray *const parent);
 
 		/// @brief データの置き換えによるデータの破棄
@@ -230,7 +221,7 @@ namespace ECS {
 		MultiArray *const parent_ = nullptr;
 		const Archetype *const archetype_;
 
-		std::unique_ptr<void, ChunkDeleter> memoryPtr_;
+		std::unique_ptr<std::byte[]> memoryPtr_;
 
 		//std::unordered_map<ClassData, void *> componentAddress_;
 		std::unordered_map<ClassDataManager::KeyType, void *> componentAddress_;

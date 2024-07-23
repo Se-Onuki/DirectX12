@@ -3,8 +3,9 @@
 #include <algorithm>
 
 ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archetype_(&parent_->GetArchetype()) {
+	const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
 	// メモリの確保
-	memoryPtr_.reset(operator new(Archetype::OneChunkCapacity));
+	memoryPtr_ = std::make_unique<std::byte[]>(Archetype::OneChunkCapacity);
 
 	//size_t capacity = archetype_->GetChunkCapacity();
 	//size_t offset = capacity / sizeof(memoryType);
@@ -12,9 +13,12 @@ ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archety
 	entitySize_ = static_cast<uint32_t>(archetype_->GetTotalSize());
 
 	memoryType *address = reinterpret_cast<memoryType *>(memoryPtr_.get()) + sizeof(ECS::Entity) * offset;
-	for (const auto &classData : archetype_->data_) {
+
+	for (uint32_t i = 0; i < archetype_->compFlag_.kSize; i++) {
+		if (not archetype_->compFlag_.Get()[i]) { continue; }
+		const auto &classData = compRegistry->typeDatas_[i];
 		componentAddress_[classData.typeIndex_] = address;
-		address += (classData->size_ * offset);
+		address += (classData.typeSize_ * offset);
 	}
 
 }
@@ -55,35 +59,48 @@ void ECS::MultiChunk::swap(const uint32_t indexF, const uint32_t indexS) {
 	assert(size_ > indexS && "添え字がアクセス範囲を超えています");
 
 #endif // _DEBUG
+	const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
 
-	uint32_t maxMemSize{};
-	for (const auto &classData : archetype_->data_) {
-		maxMemSize = (std::max)(maxMemSize, classData->size_);
+	//std::vector<ECS::TypeData> typeDatas;
+	//typeDatas.reserve(archetype_->compFlag_.GetCompCount());
 
-	}
+
+	//uint32_t maxMemSize{};
+	//for (uint32_t i = 0; i < archetype_->compFlag_.GetCompCount(); i++) {
+	//	const auto &classData = compRegistry->typeDatas_[i];
+	//	maxMemSize = (std::max)(maxMemSize, classData.typeSize_);
+
+	//}
 	// 一時的なメモリを最大値で確保
-	std::unique_ptr<char[]> temp(std::make_unique<char[]>(maxMemSize));
+	//std::unique_ptr<char[]> temp(std::make_unique<char[]>(maxMemSize));
 
-	for (const auto &classData : archetype_->data_) {
+	for (uint32_t i = 0; i < archetype_->compFlag_.kSize; i++) {
+		if (not archetype_->compFlag_.Get()[i]) { continue; }
+		const auto &classData = compRegistry->typeDatas_[i];
 
 		// 破棄するデータのアドレスを取得
-		auto fPtr = GetItemPtr(classData.typeIndex_, indexF);
+		std::span<std::byte> fPtr = { static_cast<std::byte *>(GetItemPtr(classData.typeIndex_, indexF)), classData.typeSize_ };
 		// 末尾のデータのアドレスをを取得
-		auto sPtr = GetItemPtr(classData.typeIndex_, indexS);
+		std::span<std::byte> sPtr = { static_cast<std::byte *>(GetItemPtr(classData.typeIndex_, indexS)) , classData.typeSize_ };
 
-		std::memcpy(temp.get(), fPtr, classData->size_);
-		std::memcpy(fPtr, sPtr, classData->size_);
-		std::memcpy(sPtr, temp.get(), classData->size_);
+		std::swap(fPtr, sPtr);
+
+		//std::memcpy(temp.get(), fPtr, classData.typeSize_);
+		//std::memcpy(fPtr, sPtr, classData.typeSize_);
+		//std::memcpy(sPtr, temp.get(), classData.typeSize_);
 
 	}
 
 }
 
 uint32_t ECS::MultiChunk::push_back() {
+	const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
 
-	for (const auto &classData : archetype_->data_) {
+	for (uint32_t i = 0; i < archetype_->compFlag_.kSize; i++) {
+		if (not archetype_->compFlag_.Get()[i]) { continue; }
+		const auto &classData = compRegistry->typeDatas_[i];
 		auto ptr = GetItemPtr(classData.typeIndex_, size_);
-		classData->constructor_(ptr);
+		classData.constructor_(ptr);
 	}
 	auto entity = static_cast<ECS::Entity *>(this->GetEntityPtr(size_));
 	entity->arrayPtr_ = this->parent_;
@@ -94,12 +111,14 @@ uint32_t ECS::MultiChunk::push_back() {
 }
 
 uint32_t ECS::MultiChunk::push_back(const ECS::Prefab &prefab) {
-
+	const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
 	const auto &compItr = prefab.GetComponentMap();
 
-	for (const auto &typeKey : archetype_->data_) {
-		auto ptr = GetItemPtr(typeKey, size_);
-		std::memcpy(ptr, compItr.at(typeKey).get(), typeKey->size_);
+	for (uint32_t i = 0; i < archetype_->compFlag_.kSize; i++) {
+		if (not archetype_->compFlag_.Get()[i]) { continue; }
+		const auto &typeKey = compRegistry->typeDatas_[i];
+		auto ptr = GetItemPtr(typeKey.typeIndex_, size_);
+		std::memcpy(ptr, compItr.at(typeKey.typeIndex_).get(), typeKey.typeSize_);
 	}
 	auto entity = static_cast<ECS::Entity *>(this->GetEntityPtr(size_));
 	entity->arrayPtr_ = this->parent_;

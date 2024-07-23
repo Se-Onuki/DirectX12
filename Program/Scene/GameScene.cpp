@@ -245,10 +245,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::EnemyAttack>([this]() { damageTimer_.Start(0.5f); });
 
 	// 汎用的な処理
-	//systemManager_.AddSystem<ECS::System::BillboardCalc>();
-	//systemManager_.AddSystem<ECS::System::BoneAnimationCalc>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
-	//systemManager_.AddSystem<ECS::System::BoneDrawer>(&boneModel_);
 	systemManager_.AddSystem<ECS::System::CalcTransMatrix>();
 	systemManager_.AddSystem<ECS::System::CalcParentTransform>();
 	systemManager_.AddSystem<ECS::System::ModelDrawer>();
@@ -270,6 +267,8 @@ void GameScene::OnEnter() {
 
 	SolEngine::LevelImporter levelImporter;
 	levelImporter.Import(levelData, world_.get());
+
+	levelDataManager->Destory(levelData);
 
 
 	gaussianParam_->first = 32.f;

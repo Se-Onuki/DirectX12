@@ -60,6 +60,7 @@ namespace SolEngine {
 
 
 	}
+
 	void SkinningComputeShader::Update(const::SkinCluster &skinCluster, const ModelData *modelData, const ModelInfluence *modelInfluence)
 	{
 		auto *const dxCommon = ::DirectXCommon::GetInstance();
@@ -74,9 +75,7 @@ namespace SolEngine {
 		resourceBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
 		resourceBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
 
-		commList->ResourceBarrier(1, &resourceBarrier);
-
-		 
+		commList->ResourceBarrier(1, &resourceBarrier);		 
 
 		commList->SetComputeRootSignature(rootSignature_->Get());
 		commList->SetPipelineState(computePipelineState_.Get());
@@ -84,7 +83,7 @@ namespace SolEngine {
 		dxCommon->GetSRVHeap()->SetCommand(commList, 1);
 
 		commList->SetComputeRootDescriptorTable(0, skinCluster.GetPalette().GetHeapRange().GetHandle().gpuHandle_);
-		commList->SetComputeRootDescriptorTable(1, modelData->meshHandleList_[0]->modelVertex_->heapRange_.GetHandle().gpuHandle_);
+		commList->SetComputeRootDescriptorTable(1, modelData->modelVertex_->heapRange_.GetHandle().gpuHandle_);
 		commList->SetComputeRootDescriptorTable(2, modelInfluence->heapRange_.GetHandle().gpuHandle_);
 		commList->SetComputeRootDescriptorTable(3, heapRange_.GetHandle().gpuHandle_);
 

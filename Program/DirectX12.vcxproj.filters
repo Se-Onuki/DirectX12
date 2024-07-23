@@ -905,6 +905,12 @@
     <ClInclude Include="Engine\DirectBase\DxResource\DxResourceBufferPoolManager.h">
       <Filter>Engine\DxResource</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\InstancingRenderer.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\LayerElement.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

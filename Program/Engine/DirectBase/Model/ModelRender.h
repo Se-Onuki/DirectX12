@@ -40,9 +40,9 @@ namespace SolEngine {
 
 	private:
 
-		ResourceManager<RootSignature>::Handle rootSignature_;
+		ResourceHandle<RootSignature> rootSignature_;
 
-		std::array<ResourceObjectManager<PipelineState>::Handle, static_cast<uint32_t>(Model::BlendMode::kTotal)> pipeline_;
+		std::array<ResourceHandle<PipelineState>, static_cast<uint32_t>(Model::BlendMode::kTotal)> pipeline_;
 
 		std::array<std::unordered_map<const Transform *, std::vector<MeshManager::Handle>>, static_cast<uint32_t>(Model::BlendMode::kTotal)> modelsBuffer_;
 

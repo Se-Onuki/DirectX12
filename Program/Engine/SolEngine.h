@@ -5,33 +5,34 @@
 #include <cstdint>
 
 #include "DirectBase/Base/WinApp.h"
+#include "../Utils/Containers/Singleton.h"
 
 class DirectXCommon;
 
-class Engine {
-	Engine() = default;
-	Engine(const Engine &) = delete;
-	Engine operator=(const Engine &) = delete;
-	Engine operator=(Engine &&) = delete;
-	~Engine() = default;
-public:
+namespace SolEngine {
 
-	static Engine *const GetInstance() {
-		static Engine instance{};
-		return &instance;
-	}
+	class Engine : public SoLib::Singleton<Engine> {
+		Engine() = default;
+		Engine(const Engine &) = delete;
+		Engine operator=(const Engine &) = delete;
+		Engine operator=(Engine &&) = delete;
+		~Engine() = default;
+		
+		friend SoLib::Singleton<Engine>;
+	public:
 
-	static void StaticInit(
-		const char *title = "DirectXGame", UINT windowStyle = WS_OVERLAPPEDWINDOW,
-		int32_t clientWidth = WinApp::kWindowWidth, int32_t clientHeight = WinApp::kWindowHeight);
+		static void StaticInit(
+			const char *title = "DirectXGame", UINT windowStyle = WS_OVERLAPPEDWINDOW,
+			int32_t clientWidth = WinApp::kWindowWidth, int32_t clientHeight = WinApp::kWindowHeight);
 
-	WinApp *const GetWinApp() const { return winApp_; }
-	DirectXCommon *const GetDXCommon() const { return dxCommon_; }
+		WinApp *const GetWinApp() const { return winApp_; }
+		DirectXCommon *const GetDXCommon() const { return dxCommon_; }
 
-private:
+	private:
 
-	WinApp *winApp_ = nullptr;
-	DirectXCommon *dxCommon_ = nullptr;
-	ID3D12GraphicsCommandList *commandList_ = nullptr;
+		WinApp *winApp_ = nullptr;
+		DirectXCommon *dxCommon_ = nullptr;
+		ID3D12GraphicsCommandList *commandList_ = nullptr;
 
-};
+	};
+}
