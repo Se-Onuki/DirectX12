@@ -18,12 +18,12 @@ namespace SolEngine {
 		// スキンクラスターから､該当するメッシュの情報を取得する
 		const auto &clusterItr = source.skinClusterBase_->skinClusterData_.at(meshSource->index_);
 		// メッシュにデータが保存されてなかったら飛ばす
-		if (not clusterItr) { return nullptr; }
+		//if (not clusterItr) { return nullptr; }
 
 		// モデルデータを解析してInfluenceを埋める
 		for (const auto &[keyName,  // ジョイント名
 			jointWeight	// 各頂点のジョイントに対する重さ
-		] : *clusterItr) {
+		] : clusterItr) {
 			// 一致するジョイントの対象が存在するか探す
 			auto it = source.skeletonReference_->jointMap_.find(keyName);
 			if (it == jointEndIt) { // 存在しなかったら飛ばす

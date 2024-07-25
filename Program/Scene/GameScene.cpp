@@ -331,12 +331,13 @@ void GameScene::Update() {
 			{
 				for (uint32_t i = 0; auto & enemy : enemys) {
 					const auto &[pos] = manager->GetComponent<ECS::PositionComp>(enemy);
-					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::PI2 / enemyCount) * i, 0.f }) * 7.5f + pos->position_;
+					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / enemyCount) * i, 0.f }) * 7.5f + pos->position_;
 					i++;
 				}
 			});
 		spawnTimer_.Start();
 	}
+
 	// プレイヤのView
 	auto playerView = world_->view<const ECS::PlayerTag>();
 	// プレイヤのViewの長さが0である場合は死んでいる
@@ -391,10 +392,9 @@ void GameScene::Update() {
 	vignettingParam_->first = SoLib::Lerp(0.5f, 16.f, health);
 
 	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
-
 		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });
-
 	}
+
 	ImGui::DragFloat("Sigma", &gaussianParam_->first);
 	ImGui::DragInt("Size", &gaussianParam_->second);
 
@@ -402,7 +402,7 @@ void GameScene::Update() {
 	if (menuTimer_.IsFinish() and input_->GetDirectInput()->IsTrigger(DIK_ESCAPE)) {
 		menuTimer_.Start(0.1f);
 
-		isMenuOpen_ = !isMenuOpen_;
+		isMenuOpen_ = not isMenuOpen_;
 	}
 
 	gaussianParam_->second = SoLib::Lerp(1, 32, isMenuOpen_ ? menuTimer_.GetProgress() : 1.f - menuTimer_.GetProgress());

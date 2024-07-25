@@ -908,7 +908,7 @@
     <ClInclude Include="Engine\DirectBase\Model\InstancingRenderer.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\LayerElement.h">
+    <ClInclude Include="Engine\EngineLayer.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>

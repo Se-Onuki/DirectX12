@@ -282,6 +282,7 @@ public:
 		ECS::ConstView<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
 
+		// アーキタイプを検出する
 		Archetype checkArche;
 		checkArche.AddClassData<T, TComps...>();
 

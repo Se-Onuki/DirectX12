@@ -12,7 +12,7 @@ namespace SolEngine {
 	class SkinClusterBase : public IResourceObject {
 	public:
 		// メッシュ内に含まれた､複数のジョイントに対する情報をそれぞれ名前と頂点の重さで保存する
-		std::vector<std::optional<std::unordered_map<std::string/*ジョイント名*/, JointWeightData/*ジョイント情報*/>>> skinClusterData_;
+		std::vector<std::unordered_map<std::string/*ジョイント名*/, JointWeightData/*ジョイント情報*/>> skinClusterData_;
 	};
 
 	template <>

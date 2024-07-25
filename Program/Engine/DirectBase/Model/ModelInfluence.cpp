@@ -36,13 +36,13 @@ namespace SolEngine {
 			// 書き込む先
 			std::span<VertexInfluence> influence = { &result->influence_[vertexOffset.vertexOffset_], vertexOffset.vertexCount_ };
 
-			// メッシュにデータが保存されてなかったら飛ばす
-			if (not cluster) { return nullptr; }
+			//// メッシュにデータが保存されてなかったら飛ばす
+			//if (not cluster) { return nullptr; }
 
 			// モデルデータを解析してInfluenceを埋める
 			for (const auto &[keyName,  // ジョイント名
 				jointWeight	// 各頂点のジョイントに対する重さ
-			] : *cluster) {
+			] : cluster) {
 				// 一致するジョイントの対象が存在するか探す
 				auto it = source.skeletonReference_->jointMap_.find(keyName);
 				if (it == jointEndIt) { // 存在しなかったら飛ばす
