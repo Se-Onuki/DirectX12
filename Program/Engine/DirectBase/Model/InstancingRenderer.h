@@ -2,9 +2,11 @@
 #include "../../Utils/Containers/Singleton.h"
 #include "Material.h"
 #include "../Base/StructBuffer.h"
+#include "ModelData.h"
 
 namespace SolEngine {
 
+	template<typename MonoElem, typename... Ts>
 	class InstancingRenderer : public SoLib::Singleton<InstancingRenderer> {
 
 		InstancingRenderer() = default;
@@ -16,9 +18,11 @@ namespace SolEngine {
 
 	public:
 
-		ArrayBuffer<Material> material_;
+		void Init(uint32_t count);
 
+		void Draw(const ModelData *model) const;
 
+		std::tuple<ArrayBuffer<Ts>...> elements_;
 
 	};
 

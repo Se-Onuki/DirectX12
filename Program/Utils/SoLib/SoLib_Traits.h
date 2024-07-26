@@ -138,6 +138,31 @@ namespace SoLib {
 		auto cend() const { return Self().endImpl(); }
 	};
 
+	template <typename... Ts>
+	struct SortByAlignment;
+
+	template <typename T, typename... Ts>
+	struct SortByAlignment<T, Ts...> {
+		template <typename U>
+		using LargerAlign = std::bool_constant<(alignof(U) > alignof(T))>;
+
+		using type = decltype(std::tuple_cat(
+			typename SortByAlignment<std::conditional_t<LargerAlign<Ts>::value, Ts, T>...>::type{},
+			std::tuple<std::conditional_t<LargerAlign<Ts>::value, T, Ts>...>{}
+		));
+	};
+
+	template <>
+	struct SortByAlignment<> {
+		using type = std::tuple<>;
+	};
+
+	// タプルのソート
+	template <typename... Ts>
+	struct SortTuple {
+		using value = typename SortByAlignment<Ts...>::type;
+	};
+
 	// ヘルパー関数テンプレート
 	template<std::size_t... Is>
 	auto ForEachImpl(std::index_sequence<Is...>) {

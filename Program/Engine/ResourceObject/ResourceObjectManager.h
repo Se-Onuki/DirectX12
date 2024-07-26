@@ -233,6 +233,8 @@ namespace SolEngine {
 	template<IsResourceObject T, IsResourceSource Source, SolEngine::IsResourceCreater<T, Source> Creater, size_t ContainerSize>
 	inline bool ResourceObjectManager<T, Source, Creater, ContainerSize>::Destory(const Handle &handle)
 	{
+		// ハンドルが存在しない場合
+		if (not handle) { return false; }
 		// indexから検索
 		auto &[version, itrAndData] = resourceList_.at(handle.GetHandle());
 		auto &[itr, data] = itrAndData;

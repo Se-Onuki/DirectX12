@@ -199,6 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Render.cpp" />
+    <ClCompile Include="Engine\DirectBase\SkinAnimation\SkinAnimation.cpp" />
     <ClCompile Include="Engine\DirectBase\Texture\FullScreenTextureStrage.cpp" />
     <ClCompile Include="Engine\DirectBase\Texture\Texture.cpp" />
     <ClCompile Include="Engine\LevelEditor\LevelData.cpp" />
@@ -324,6 +325,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.h" />
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h" />
     <ClInclude Include="Engine\DirectBase\Render\Render.h" />
+    <ClInclude Include="Engine\DirectBase\SkinAnimation\SkinAnimation.h" />
     <ClInclude Include="Engine\DirectBase\String\String.h" />
     <ClInclude Include="Engine\DirectBase\Texture\FullScreenTextureStrage.h" />
     <ClInclude Include="Engine\DirectBase\Texture\Texture.h" />

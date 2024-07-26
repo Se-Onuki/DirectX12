@@ -6,7 +6,6 @@
 namespace SolEngine {
 	std::unique_ptr<SkinClusterBase> ResourceCreater<SkinClusterBase>::CreateObject(const ResourceSource<SkinClusterBase> &source) const {
 
-
 		const auto *const scene = source.assimpHandle_->importer_->GetScene();
 		// シーンの読み込みに成功したら
 		if (scene) {

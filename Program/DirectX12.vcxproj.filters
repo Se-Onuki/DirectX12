@@ -157,6 +157,9 @@
     <Filter Include="Engine\DxResource">
       <UniqueIdentifier>{d8a1e398-8a6a-4e49-b3c2-4609c8bf62e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\SkinAnimation">
+      <UniqueIdentifier>{c6da9d2c-2ed4-4d11-a0b6-c35505c6642c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -461,6 +464,9 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\SkeletonReference.cpp">
       <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\SkinAnimation\SkinAnimation.cpp">
+      <Filter>Engine\SkinAnimation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -910,6 +916,9 @@
     </ClInclude>
     <ClInclude Include="Engine\EngineLayer.hpp">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\SkinAnimation\SkinAnimation.h">
+      <Filter>Engine\SkinAnimation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

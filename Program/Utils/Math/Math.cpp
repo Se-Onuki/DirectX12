@@ -227,11 +227,11 @@ Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion
 
 	result = quaternion.MakeRotateMatrix();
 
-	Vector4 *const matItr = reinterpret_cast<Vector4 *>(result.data());
+	std::span<Vector4, 4> matItr = std::span<Vector4,4u> { reinterpret_cast<Vector4 *>(result.data()),4u };
 	for (uint8_t i = 0u; i < 3u; i++) {
 		matItr[i] *= scale.data()[i];
 	}
-	*reinterpret_cast<Vector3 *>(result.m[3].data()) = translate;
+	*reinterpret_cast<Vector3 *>(matItr[3].data()) = translate;
 
 	return result;
 }

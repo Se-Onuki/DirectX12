@@ -331,7 +331,7 @@ void GameScene::Update() {
 			{
 				for (uint32_t i = 0; auto & enemy : enemys) {
 					const auto &[pos] = manager->GetComponent<ECS::PositionComp>(enemy);
-					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / enemyCount) * i, 0.f }) * 7.5f + pos->position_;
+					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / enemyCount) * i, 0.f }) * 25.f + pos->position_;
 					i++;
 				}
 			});
@@ -456,7 +456,6 @@ void GameScene::Draw() {
 
 	Model::SetPipelineType(Model::PipelineType::kModel);
 	light_->SetLight(commandList);
-	brainStem_->Draw(brainStemTrans_, camera);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 
@@ -477,7 +476,6 @@ void GameScene::Draw() {
 	for (uint32_t count = 0; const auto & bar : enemyHealthBar_) {
 		// もし描画数が超えた場合終了
 		if (count >= systemManager_.GetSystem<ECS::System::DrawEnemyHelthBar>()->drawCount_) { break; }
-
 		bar->Draw();
 		count++;
 	}

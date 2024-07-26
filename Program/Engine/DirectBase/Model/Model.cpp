@@ -204,7 +204,7 @@ namespace ModelAnimation {
 		CalcTransform(animationTimer_.GetNowFlame(), model->rootNode_.get());
 	}
 
-	void AnimationPlayer::CalcTransform(float animateTime, ModelNode *const modelNode)
+	void AnimationPlayer::CalcTransform(float animateTime, ModelNode *const modelNode) const
 	{
 		// 対応したアニメーションがあれば通す
 		if (animation_->nodeAnimations_.contains(modelNode->name_)) {
@@ -224,9 +224,11 @@ namespace ModelAnimation {
 			// モデルデータの転送
 			(*modelNode->localMatrix_) = rootTransform.CalcTransMat();
 		}
-		for (auto &child : modelNode->children_) {
+
+		std::for_each(std::execution::par_unseq, modelNode->children_.begin(), modelNode->children_.end(), [this, animateTime](std::unique_ptr<ModelNode> &child) { CalcTransform(animateTime, child.get()); });
+		/*for (auto &child : modelNode->children_) {
 			CalcTransform(animateTime, child.get());
-		}
+		}*/
 	}
 
 }
@@ -1718,6 +1720,8 @@ void SkeletonState::UpdateMatrix()
 
 void SkeletonState::ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime)
 {
+
+
 	for (uint32_t i = 0; i < joints_.size(); i++) {
 		const auto &ref = reference_->joints_[i];
 		auto &joint = joints_[i];

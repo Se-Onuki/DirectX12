@@ -304,7 +304,7 @@ namespace ModelAnimation {
 		/// @brief 再起的にモデルの姿勢を取得する
 		/// @param animateTime アニメーションの時間
 		/// @param modelNode モデルのノードの参照
-		void CalcTransform(float animateTime, ModelNode *const modelNode);
+		void CalcTransform(float animateTime, ModelNode *const modelNode) const;
 
 		SoLib::Time::DeltaTimer animationTimer_; // アニメーションの時刻
 
