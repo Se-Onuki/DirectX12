@@ -1,8 +1,8 @@
-# Blender 4.1.1 MTL File: 'None'
-# www.blender.org
+# Blender MTL File: 'BirchTree_1.blend'
+# Material Count: 4
 
-newmtl Black.002
-Ns 96.078453
+newmtl Black
+Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.043973 0.043973 0.043973
 Ks 0.500000 0.500000 0.500000
@@ -11,8 +11,8 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl DarkGreen.002
-Ns 96.078453
+newmtl DarkGreen
+Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.042528 0.072669 0.029578
 Ks 0.500000 0.500000 0.500000
@@ -21,8 +21,8 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl Green.002
-Ns 96.078453
+newmtl Green
+Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.069954 0.121857 0.047888
 Ks 0.500000 0.500000 0.500000
@@ -31,8 +31,8 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl White.002
-Ns 96.078453
+newmtl White
+Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.524353 0.548763 0.500589
 Ks 0.500000 0.500000 0.500000
