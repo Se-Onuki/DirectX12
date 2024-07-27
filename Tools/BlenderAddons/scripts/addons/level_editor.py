@@ -61,9 +61,7 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
 	def draw(self, context):
 
 		# トップバーの｢エディターメニュー｣に項目(オペレータ)を追加
-		self.layout.operator("wm.url_open_preset", text="Manual", icon='HELP')
-		self.layout.operator(MYADDON_OT_stretch_vertex.bl_idname, text= MYADDON_OT_stretch_vertex.bl_label)
-		self.layout.operator(MYADDON_OT_create_ico_sphere.bl_idname, text= MYADDON_OT_create_ico_sphere.bl_label)
+		self.layout.operator(MYADDON_OT_add_model.bl_idname, text= MYADDON_OT_add_model.bl_label)
 		self.layout.operator(MYADDON_OT_export_scene.bl_idname, text= MYADDON_OT_export_scene.bl_label)
 	
 	# 既存のメニューにサブメニューを追加
@@ -87,6 +85,56 @@ class MYADDON_OT_stretch_vertex(bpy.types.Operator):
 
 		# オペレータの命令終了を通知
 		return {"FINISHED"}
+
+# オペレータ モデルを読み込んで追加する
+class MYADDON_OT_add_model(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
+	bl_idname = "myaddon.myaddon_ot_add_model"
+	bl_label = "モデルObject追加"
+	bl_description = "モデルファイルからObjectとして追加します"
+	# Redo Undoを可能にするオプション
+	bl_options ={"REGISTER", "UNDO"}
+
+	filter_glob: bpy.props.StringProperty(
+		 default="*.gltf;*.glb;*.obj",
+		 options={'HIDDEN'},
+		 maxlen=255,
+	)
+
+	# メニューを実行するときに呼ばれるコールバック関数
+	def execute(self, context: Context):
+		filepath = self.filepath
+		self.import_mesh(context, filepath)
+		return {'FINISHED'}
+
+	# モデルを読み込む
+	def import_mesh(self, context, filepath):
+		
+		# 文字列の末尾から最初の'\'までの文字をfileNameに代入
+		fileName = filepath.split('\\')[-1]
+
+		# 'resources\'までの文字をdirectoryに代入
+		directory_index = filepath.rfind('resources\\')
+		if directory_index != -1:
+			directory = filepath.split('resources\\')[-1].split(fileName)[0].replace('\\', '/')
+		else:
+			directory = ''
+		
+		# もし､読み込むファイルの末尾が".obj"ならば
+		if(filepath.split('.')[-1] == 'obj'):
+			bpy.ops.wm.obj_import(filepath=filepath)
+		else:
+		# gltfメッシュを読み込む
+			bpy.ops.import_scene.gltf(filepath=filepath, bone_heuristic = 'TEMPERANCE')
+
+		# # 読み込んだメッシュにデータを渡す
+		new_obj = context.selected_objects[0]
+
+		# 回転の状態を適用
+		bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+		
+		new_obj["directory_name"] = directory
+		new_obj["file_name"] = fileName
+
 
 class MYADDON_OT_model_loader(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
 	bl_idname = "myaddon.myaddon_ot_model_loader"
@@ -463,7 +511,7 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 		if directory_index != -1:
 			directory = filepath.split('resources\\')[-1].split(fileName)[0].replace('\\', '/')
 		else:
-			directory = ''
+			directory = ""
 		
 		obj["directory_name"] = directory
 		obj["file_name"] = fileName
@@ -589,6 +637,7 @@ classes = (
 	MYADDON_OT_add_visibility,
 	MYADDON_OT_import_mesh,
 	OBJECT_PT_component,
+	MYADDON_OT_add_model,
 )
 
 # メニュー項目描画

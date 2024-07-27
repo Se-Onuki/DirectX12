@@ -45,10 +45,10 @@
         },
         {
             "type": "MESH",
-            "name": "BirchTree_1_Cube.070",
+            "name": "BirchTree_1_Cube",
             "transform": {
                 "translation": [
-                    10.0,
+                    15.0,
                     5.0,
                     0.0
                 ],
@@ -58,13 +58,59 @@
                     -135.0
                 ],
                 "scale": [
-                    2.999999761581421,
-                    2.999999761581421,
-                    3.0
+                    5.999999523162842,
+                    5.999999523162842,
+                    6.0
                 ]
             },
             "directory_name": "Model/Ultimate Nature Pack/",
             "file_name": "BirchTree_1.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "BirchTree_2_Cube.064",
+            "transform": {
+                "translation": [
+                    -20.0,
+                    -10.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    4.0,
+                    4.0,
+                    4.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "BirchTree_2.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "WoodLog_Cylinder",
+            "transform": {
+                "translation": [
+                    12.271858215332031,
+                    -20.666973114013672,
+                    -1.850000023841858
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -45.453521728515625
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "WoodLog.obj"
         }
     ]
 }
