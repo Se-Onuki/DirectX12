@@ -437,7 +437,7 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 	filename_ext = ".gltf"  # You can change this to the file type you want to support
 
 	filter_glob: bpy.props.StringProperty(
-		 default="*.gltf;*.glb",
+		 default="*.gltf;*.glb;*.obj",
 		 options={'HIDDEN'},
 		 maxlen=255,
 	)
@@ -454,9 +454,6 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 
 		# Select the active object (the one to be replaced)
 		obj = context.active_object
-		# if obj is None or obj.type != 'MESH':
-		# 	self.report({'ERROR'}, "Active object is not a mesh")
-		# 	return
 
 		# 文字列の末尾から最初の'\'までの文字をfileNameに代入
 		fileName = filepath.split('\\')[-1]
@@ -476,9 +473,13 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 		# obj_rotation = obj.rotation_euler
 		# obj_scale = obj.scale
 		obj_custom_props = obj.items()
-
+		
+		# もし､読み込むファイルの末尾が".obj"ならば
+		if(filepath.split('.')[-1] == 'obj'):
+			bpy.ops.wm.obj_import(filepath=filepath)
+		else:
 		# gltfメッシュを読み込む
-		bpy.ops.import_scene.gltf(filepath=filepath, bone_heuristic = 'TEMPERANCE')
+			bpy.ops.import_scene.gltf(filepath=filepath, bone_heuristic = 'TEMPERANCE')
 
 		# # 読み込んだメッシュにデータを渡す
 		new_obj = context.selected_objects[0]
@@ -488,6 +489,9 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 		for key, value in obj_custom_props:
 			new_obj[key] = value
 
+		# 回転の状態を適用
+		bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+		
 		# # 古い方のデータを破棄
 		delete_hierarchy(obj)
 
