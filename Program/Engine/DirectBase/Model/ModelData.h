@@ -37,7 +37,7 @@ namespace SolEngine {
 	public:
 
 		// ファイルのハンドル
-		ResourceObjectManager<AssimpData>::Handle assimpHandle_;
+		ResourceHandle<AssimpData> assimpHandle_;
 
 		bool operator==(const ResourceSource<ModelData> &) const = default;
 	};
