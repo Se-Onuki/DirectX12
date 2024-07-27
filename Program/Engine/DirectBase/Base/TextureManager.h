@@ -39,6 +39,7 @@ public:
 	void StartDraw();
 
 	static uint32_t Load(const std::string &file_name);
+	static uint32_t Load(const std::string &file_name, const std::span<uint8_t> &textData);
 
 	void Init(ID3D12Device *const device, ID3D12GraphicsCommandList *const commandList, const std::string &directoryPath = "resources/");
 
@@ -60,6 +61,8 @@ public:
 	void EndFlame();
 private:
 	uint32_t LoadInternal(const std::string &file_name);
+
+	uint32_t LoadInternal(const std::string &file_name, const std::span<uint8_t> &textData);
 	// デバイス(借用)
 	ID3D12Device *device_ = nullptr;
 	// コマンドリスト(借用)

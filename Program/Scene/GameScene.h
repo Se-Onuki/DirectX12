@@ -103,8 +103,6 @@ private:
 
 	Audio::SoundHandle soundA_;
 
-	BoneModel boneModel_;
-
 	SoLib::DeltaTimer spawnTimer_{ 2.5f };
 
 	std::array<BoneModel::SimpleTransform, 5u> boneTransform_;

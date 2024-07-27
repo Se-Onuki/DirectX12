@@ -15,10 +15,31 @@ namespace SolEngine {
 		const std::string &directoryPath = assimpSource->directoryPath_;
 
 		// 保存先のマテリアル
-		std::unique_ptr<Material> materialResult = std::make_unique<Material>();
+		std::unique_ptr<Material> result = std::make_unique<Material>();
 		// シーン内のマテリアル
 		const aiMaterial *material = materialArray[source.index_];
 
+		// 読み出されたテクスチャへのハンドル
+		std::vector<uint32_t> textureHandles;
+
+		// 内包されたテクスチャを持っているか
+		if (scene->HasTextures()) {
+			// 内包されたテクスチャの配列
+			const std::span<aiTexture *> textures = { scene->mTextures, scene->mNumTextures };
+
+			// テクスチャを1つづつ処理する
+			for (const auto *const texture : textures) {
+				// テクスチャ名
+				const auto &texName = texture->mFilename;
+
+				// テクスチャのデータ
+				const std::span<uint8_t> texData = { &(texture->pcData->b), texture->mHeight ? texture->mHeight * texture->mWidth * 4u : texture->mWidth * 4u };
+
+				// テクスチャのデータを読み込んで渡す
+				textureHandles.push_back(::TextureManager::Load(texName.C_Str(), texData));
+
+			}
+		}
 
 		// ディフューズのテクスチャが存在するか
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
@@ -28,15 +49,24 @@ namespace SolEngine {
 			// マテリアルからテクスチャ名を取得
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 
-			// テクスチャの読み込み
-			materialResult->texHandle_ = ::TextureManager::Load(directoryPath + textureFilePath.C_Str());
-			
+			// 内包されたテクスチャを読んでいない場合
+			if (textureFilePath.data[0] != '*') {
+
+				// テクスチャの読み込み
+				result->texHandle_ = ::TextureManager::Load(directoryPath + textureFilePath.C_Str());
+			}
+			// テクスチャが内包されていた場合
+			else {
+
+				// テクスチャの読み込み
+				result->texHandle_ = textureHandles[std::stoul(textureFilePath.C_Str() + 1)];
+			}
 
 		}
 
-		materialResult->blendMode_ = Model::BlendMode::kNone;
+		result->blendMode_ = Model::BlendMode::kNone;
 
-		materialResult->materialData_ = Material::MaterialData{
+		result->materialData_ = Material::MaterialData{
 			.color = Vector4{1.f, 1.f, 1.f, 1.f},
 			.emissive = {},
 			.ambient = {},
@@ -47,7 +77,7 @@ namespace SolEngine {
 
 		aiColor3D ambient;
 		if (material->Get(AI_MATKEY_COLOR_AMBIENT, ambient) == AI_SUCCESS) {
-			materialResult->materialData_->ambient = { ambient.r, ambient.g, ambient.b , 1.f };
+			result->materialData_->ambient = { ambient.r, ambient.g, ambient.b , 1.f };
 		}
 
 		ai_real alfa;
@@ -55,22 +85,22 @@ namespace SolEngine {
 
 		aiColor3D color;
 		if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
-			materialResult->materialData_->color = { color.r, color.g, color.b , isAlfa ? alfa : 1.f };
+			result->materialData_->color = { color.r, color.g, color.b , isAlfa ? alfa : 1.f };
 		}
 
 		ai_real shininess;
 		if (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) {
-			materialResult->materialData_->shininess = shininess;
+			result->materialData_->shininess = shininess;
 		}
 
 		ai_real shininessStrength;
 		if (material->Get(AI_MATKEY_SHININESS_STRENGTH, shininessStrength) == AI_SUCCESS) {
-			materialResult->materialData_->shininessStrength = shininessStrength;
+			result->materialData_->shininessStrength = shininessStrength;
 		}
 
 		aiColor3D emissive;
 		if (material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive) == AI_SUCCESS) {
-			materialResult->materialData_->emissive = { emissive.r, emissive.g, emissive.b };
+			result->materialData_->emissive = { emissive.r, emissive.g, emissive.b };
 		}
 
 		// マテリアル名の設定
@@ -80,7 +110,7 @@ namespace SolEngine {
 		/*result->materialMap_.insert({ std::to_string(materialIndex), std::move(materialResult) });*/
 
 
-		return std::move(materialResult);
+		return std::move(result);
 	}
 }
 
@@ -141,4 +171,4 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 #else
 	return false;
 #endif // USE_IMGUI
-}
+	}

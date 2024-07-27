@@ -40,6 +40,33 @@ namespace TextureFunc
 		return mipImages;
 	}
 
+	/// @brief TextureをCPUで読み込む
+	/// @param file_path ファイルパス
+	/// @return ミップマップ付きのデータ
+	inline DirectX::ScratchImage Load(const std::span<uint8_t> &texData) {
+		HRESULT hr = S_FALSE;
+		// テクスチャファイルを呼んでプログラムで扱えるようにする
+		DirectX::ScratchImage image{};
+
+		hr = DirectX::LoadFromWICMemory(texData.data(), texData.size(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+
+		assert(SUCCEEDED(hr));
+
+		// ミップマップの作成
+		DirectX::ScratchImage mipImages{};
+		// 圧縮フォーマットであるかを調べる。
+		if (DirectX::IsCompressed(image.GetMetadata().format)) {
+			mipImages = std::move(image);		// 圧縮フォーマットである場合はそのまま使用する。
+		}
+		else {
+			hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		}
+		assert(SUCCEEDED(hr));
+
+		// ミップマップ付きのデータを返す
+		return mipImages;
+	}
+
 	/// @brief DirectX12のTextureResourceを作る
 	/// @param device デバイス
 	/// @param metadata テクスチャメタデータ

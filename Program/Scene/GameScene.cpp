@@ -46,7 +46,7 @@ void GameScene::OnEnter() {
 	auto playerAssimp = assimpManager->Load({ "Model/human/", "sneakWalk.gltf" });
 	auto playerModel = modelDataManager->Load({ playerAssimp });
 
-	auto boxAssimp = assimpManager->Load({ "", "box.obj" });
+	auto boxAssimp = assimpManager->Load({ "Model/Cute Animated Monsters Pack/", "Mushroom.gltf" });
 	auto boxModel = modelDataManager->Load({ boxAssimp });
 
 	auto brainStemAssimp = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
@@ -196,16 +196,7 @@ void GameScene::OnEnter() {
 
 	entityManager_->CreateEntity(followCamera);
 
-	//*enemyPrefab_ += ECS::RotateComp{};
-
 	soundA_ = audio_->LoadMP3("resources/Audio/SE/Player/startRotate1.mp3");
-
-	boneModel_.Init();
-	auto *bodyPtr = boneModel_.AddBone("Body", boxModel_);
-	boneModel_.AddBone("Head", boxModel_, bodyPtr);
-	boneModel_.AddBone("Sword", boxModel_, bodyPtr);
-
-	boneModel_.SetNumber();
 
 	ground_.Init();
 

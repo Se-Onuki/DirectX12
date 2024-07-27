@@ -29,6 +29,12 @@ uint32_t TextureManager::Load(const std::string &file_name)
 	return GetInstance()->LoadInternal(file_name);
 }
 
+
+uint32_t TextureManager::Load(const std::string &file_name, const std::span<uint8_t> &textData)
+{
+	return GetInstance()->LoadInternal(file_name, textData);
+}
+
 void TextureManager::Init(ID3D12Device *const device, ID3D12GraphicsCommandList *const commandList, const std::string &directoryPath) {
 
 	device_ = device;
@@ -127,6 +133,64 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	DirectX::ScratchImage mipImage;
 
 	mipImage = TextureFunc::Load(directoryPath_ + file_name);
+
+
+	const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
+	texture.textureResource_ = TextureFunc::CreateResource(device_, metadata);
+	intermediateData_.push_back(TextureFunc::UpdateData(texture.textureResource_.Get(), mipImage, device_, commandList_));
+
+
+#pragma endregion
+
+#pragma region ShaderResourceViewを作る
+
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = metadata.format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+
+	texture.name_ = file_name;
+	texture.handle_ = heapRange_.GetHandle(handle);
+
+	// SRVの作成
+	device_->CreateShaderResourceView(texture.textureResource_.Get(), &srvDesc, texture.handle_.cpuHandle_);
+
+#pragma endregion
+
+	//file_name;
+	nextIndex_++;
+	return handle;
+}
+
+uint32_t TextureManager::LoadInternal(const std::string &file_name, const std::span<uint8_t> &texData)
+{
+#pragma region Texture検索
+
+	auto it = std::find_if(textureArray_.begin(), textureArray_.end(), [&](const auto &texture)
+		{
+			return texture.name_ == file_name;
+		}
+	);
+	if (it != textureArray_.end()) {
+		// 読み込み済みテクスチャの要素番号を取得
+		return static_cast<uint32_t>(std::distance(textureArray_.begin(), it));
+		//return handle;
+	}
+
+#pragma endregion
+
+	assert(nextIndex_ < maxTextureCount);
+	uint32_t handle = nextIndex_;
+	Texture &texture = textureArray_[handle];
+
+#pragma region Textureを読んで転送する
+
+	// Textureを読んで転送する
+	DirectX::ScratchImage mipImage;
+
+	mipImage = TextureFunc::Load(texData);
 
 
 	const DirectX::TexMetadata &metadata = mipImage.GetMetadata();

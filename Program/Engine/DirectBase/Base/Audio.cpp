@@ -2,6 +2,7 @@
 #include "../../Utils/SoLib/SoLib.h"
 #include "../String/String.h"
 #include <cassert>
+#include <execution>
 
 Audio *const Audio::SoundHandle::audio_ = Audio::GetInstance();
 
@@ -63,7 +64,7 @@ Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float vo
 
 	// 再生する波形データの設定
 	XAUDIO2_BUFFER buf{};
-	buf.pAudioData = soundData.pBuffer.get();
+	buf.pAudioData = reinterpret_cast<const BYTE *>(soundData.pBuffer.get());
 	buf.pContext = voice.sourceVoice;
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
@@ -270,7 +271,7 @@ Audio::SoundData SoundLoadWave(const char *filename)
 	}
 
 	// Dataチャンクのデータ部(波形データ)の読み込み
-	std::unique_ptr<BYTE[]> pBuffer = std::make_unique<BYTE[]>(data.size);
+	std::unique_ptr<std::byte[]> pBuffer = std::make_unique<std::byte[]>(data.size);
 	file.read(reinterpret_cast<char *>(pBuffer.get()), data.size);
 
 	// waveファイルを閉じる
@@ -329,7 +330,7 @@ Audio::SoundData SoundLoadMP3(const char *filename)
 
 	// データの読み込み
 	// ソースリーダから､サンプルを読み込んでvectorに格納していく
-	std::vector<BYTE> mediaData;
+	std::vector<std::byte> mediaData;
 	while (true) {
 		// メディアのデータを取得するサンプラ
 		IMFSample *pMFSample = nullptr;
@@ -376,11 +377,11 @@ Audio::SoundData SoundLoadMP3(const char *filename)
 	// xAudioとして作成する
 	Audio::SoundData result;
 	result.wfex = *waveFormat;
-	result.pBuffer = std::make_unique<BYTE[]>(mediaData.size());
+	result.pBuffer = std::make_unique<std::byte[]>(mediaData.size());
 	result.bufferSize = static_cast<uint32_t>(mediaData.size());
 
 	// データの移動
-	std::move(mediaData.cbegin(), mediaData.cend(), result.pBuffer.get());
+	std::move(std::execution::par_unseq, mediaData.cbegin(), mediaData.cend(), result.pBuffer.get());
 
 	// メディアフォーマットのデータの破棄
 	CoTaskMemFree(waveFormat);

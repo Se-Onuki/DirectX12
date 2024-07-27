@@ -33,8 +33,8 @@ class Audio {
 public:
 	/// @brief チャンクヘッダ
 	struct ChunkHeader {
-		char id[4];   // chunk用のID
 		int32_t size; // チャンクサイズ
+		char id[4];   // chunk用のID
 	};
 
 	/// @brief RIFFヘッダチャンク
@@ -51,12 +51,12 @@ public:
 
 	// 音声データ
 	struct SoundData {
-		// 波形フォーマット
-		WAVEFORMATEX wfex;
 		// バッファの先頭アドレス
-		std::unique_ptr<BYTE[]> pBuffer;
+		std::unique_ptr<std::byte[]> pBuffer;
 		// バッファのサイズ
 		uint32_t bufferSize;
+		// 波形フォーマット
+		WAVEFORMATEX wfex;
 
 		void Unload();
 	};
