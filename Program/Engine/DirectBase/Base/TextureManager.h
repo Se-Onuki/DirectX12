@@ -60,9 +60,17 @@ public:
 
 	void EndFlame();
 private:
+	/// @brief ファイル名からテクスチャを生成する｡
+	/// @param file_name ファイル名
+	/// @return 生成されたテクスチャのHandle
 	uint32_t LoadInternal(const std::string &file_name);
 
+	/// @brief バイナリデータからテクスチャを生成する｡
+	/// @param file_name ファイル名
+	/// @param textData バイナリデータ( ARGB形式 )
+	/// @return 生成されたテクスチャのHandle
 	uint32_t LoadInternal(const std::string &file_name, const std::span<uint8_t> &textData);
+
 	// デバイス(借用)
 	ID3D12Device *device_ = nullptr;
 	// コマンドリスト(借用)

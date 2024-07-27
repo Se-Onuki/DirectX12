@@ -248,6 +248,7 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 	{
 		std::list<
 			std::tuple<
+			const ECS::Entity *,
 			const ECS::AttackCollisionComp *,
 			const ECS::AttackPower *
 			>
@@ -257,7 +258,7 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 		for (const auto &[entity, weapon, damage] : world->view<const ECS::AttackCollisionComp, const ECS::AttackPower>()) {
 			// 有効なら保存する
 			if (weapon->isActive_) {
-				weaponList.push_back({ weapon, damage });
+				weaponList.push_back({ entity, weapon, damage });
 			}
 		}
 
@@ -266,7 +267,7 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 			Sphere sphere = collision->collision_;
 			sphere.centor += *pos;
 
-			for (const auto &[weapon, damage] : weaponList) {
+			for (const auto &[plEntity, weapon, damage] : weaponList) {
 				// 攻撃判定が当たってたら検知
 				if (Collision::IsHit(sphere, weapon->collision_)) {
 					// 体力を減らす
@@ -282,10 +283,28 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 						particle->acceleration_ = SoLib::Math::EulerToDirection(Vector3{ Random::GetRandom<float>(-Angle::hPI,Angle::hPI),Random::GetRandom<float>(-Angle::PI,Angle::PI),0.f }) * Random::GetRandom<float>(10.f, 20.f);
 						particle->transform_.scale = Vector3::one * 5.f;
 					}
+					// 経験値の加算
+					if (health->nowHealth_ <= 0) {
+						const auto &[exp] = world->GetEntityManager()->GetComponent<ECS::Experience>(*plEntity);
+						if (exp) { exp->exp_++; }
+					}
 				}
 			}
 
 		}
+
+		for (const auto &[entity, weapon, damage] : weaponList) {
+			const auto &[exp] = world->GetEntityManager()->GetComponent<ECS::Experience>(*entity);
+			if (not exp) { continue; }
+			while (true)
+			{
+				const uint32_t needExp = exp->needExp_(exp->level_);
+				if (needExp > exp->exp_) { break; }
+				exp->exp_ -= needExp;
+				exp->level_++;
+			}
+		}
+
 	}
 }
 
@@ -370,7 +389,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 }
 
 void ECS::System::BillboardCalc::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
-	Matrix4x4 billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
+	const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
 
 	for (const auto &[entity, scale, rotate, pos, mat, billboardRot] : world->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
 
@@ -593,6 +612,16 @@ void ECS::System::CursorDrawer::OnUpdate(::World *world, [[maybe_unused]] const 
 		}
 	}
 
+
+}
+
+void ECS::System::ExpGaugeDrawer::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
+{
+	for (const auto &[entity, plTag, exp] : world->view<ECS::PlayerTag, ECS::Experience>()) {
+
+		expBar_->SetPercent(exp->exp_ / static_cast<float>(exp->needExp_(exp->level_)));
+
+	}
 
 }
 

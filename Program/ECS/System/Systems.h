@@ -266,6 +266,19 @@ namespace ECS {
 			void OnUpdate(::World *world, const float deltaTime) override;
 		};
 
+		class ExpGaugeDrawer : public ISystem {
+		public:
+			HealthBar *expBar_ = nullptr;
+			static ExpGaugeDrawer Create(HealthBar *expBar) {
+				ExpGaugeDrawer result;
+				result.expBar_ = expBar;
+				return result;
+			}
+
+			bool IsConstSystem() const override { return false; }
+			void OnUpdate(::World *world, const float deltaTime) override;
+		};
+
 		class CalcParentTransform : public ISystem {
 		public:
 

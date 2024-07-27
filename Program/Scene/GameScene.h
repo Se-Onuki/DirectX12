@@ -112,6 +112,7 @@ private:
 	ParticleManager *particleManager_;
 
 	std::unique_ptr<HealthBar> healthBar_;
+	std::unique_ptr<HealthBar> expBar_;
 
 	std::array<std::unique_ptr<HealthBar>, 50u> enemyHealthBar_;
 

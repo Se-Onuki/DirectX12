@@ -71,7 +71,6 @@ void GameScene::OnEnter() {
 
 	spawner_.clear();
 
-	//playerModel_ = ModelManager::GetInstance()->AddModel("Pleyer", Model::LoadAssimpModelFile("Model/human/", "sneakWalk.gltf"));
 	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "walk.gltf");
 	attackAnimation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "Attack.gltf", 1);
 
@@ -145,7 +144,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::IsAlive{};
 	*playerPrefab_ += ECS::ScaleComp{ .scale_ = Vector3::one * 2.5f };
 	*playerPrefab_ += ECS::QuaternionRotComp{};
-	*playerPrefab_ += ECS::PositionComp{};
+	*playerPrefab_ += ECS::PositionComp{ .position_ {.x = 0.1f} };
 	*playerPrefab_ += ECS::InputFlagComp{};
 	*playerPrefab_ += ECS::TransformMatComp{};
 	*playerPrefab_ += ECS::ModelAnimator{ .animateList_{{ animation_.get(), animation_.get(), attackAnimation_.get(), attackAnimation_.get()}},.animatior_ = animation_.get() };
@@ -167,6 +166,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AttackStatus{ };
 	*playerPrefab_ += ECS::AttackPower{ .power_ = 20 };
 	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
+	*playerPrefab_ += ECS::Experience{ };
 
 	entityManager_->CreateEntity(*playerPrefab_);
 
@@ -206,6 +206,12 @@ void GameScene::OnEnter() {
 	healthBar_ = std::make_unique<HealthBar>();
 	healthBar_->Init();
 
+	expBar_ = std::make_unique<HealthBar>();
+	expBar_->Init();
+
+	expBar_->SetCentor({ static_cast<float>(WinApp::kWindowWidth) * 0.5f, static_cast<float>(WinApp::kWindowHeight) - 16.f });
+	expBar_->SetScale({ static_cast<float>(WinApp::kWindowWidth), 32.f });
+
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
 		bar->Init();
@@ -243,6 +249,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
 	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
 	systemManager_.AddSystem<ECS::System::CursorDrawer>();
+	systemManager_.AddSystem<ECS::System::ExpGaugeDrawer>(expBar_.get());
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
@@ -470,6 +477,8 @@ void GameScene::Draw() {
 	}
 
 	healthBar_->Draw();
+
+	expBar_->Draw();
 	// スプライトの描画
 	Fade::GetInstance()->Draw();
 

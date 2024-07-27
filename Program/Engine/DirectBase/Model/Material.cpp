@@ -21,6 +21,7 @@ namespace SolEngine {
 
 		// 読み出されたテクスチャへのハンドル
 		std::vector<uint32_t> textureHandles;
+		textureHandles.reserve(scene->mNumTextures);
 
 		// 内包されたテクスチャを持っているか
 		if (scene->HasTextures()) {
@@ -35,7 +36,7 @@ namespace SolEngine {
 				// テクスチャのデータ
 				const std::span<uint8_t> texData = { &(texture->pcData->b), texture->mHeight ? texture->mHeight * texture->mWidth * 4u : texture->mWidth * 4u };
 
-				// テクスチャのデータを読み込んで渡す
+				// テクスチャのデータを読み込んで保存する
 				textureHandles.push_back(::TextureManager::Load(texName.C_Str(), texData));
 
 			}
@@ -43,7 +44,6 @@ namespace SolEngine {
 
 		// ディフューズのテクスチャが存在するか
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
-
 			// 文字列の保存先
 			aiString textureFilePath;
 			// マテリアルからテクスチャ名を取得
@@ -51,15 +51,15 @@ namespace SolEngine {
 
 			// 内包されたテクスチャを読んでいない場合
 			if (textureFilePath.data[0] != '*') {
-
 				// テクスチャの読み込み
 				result->texHandle_ = ::TextureManager::Load(directoryPath + textureFilePath.C_Str());
 			}
 			// テクスチャが内包されていた場合
 			else {
-
 				// テクスチャの読み込み
-				result->texHandle_ = textureHandles[std::stoul(textureFilePath.C_Str() + 1)];
+				result->texHandle_ = textureHandles.at(
+					std::stoul(textureFilePath.C_Str() + 1)	// '*'の次の文字からを数字として扱う
+				);
 			}
 
 		}

@@ -26,7 +26,11 @@
 
 namespace ECS {
 
+	/// @brief コンポーネントであるというフラグ
 	struct IComponent {};
+
+	/// @brief 共有コンポーネントであるというフラグ
+	struct ISharedComponent {};
 
 	template <SoLib::IsRealType T>
 	struct IClassData {
@@ -176,7 +180,7 @@ namespace ECS {
 		inline operator const Matrix4x4 &() const { return transformMat_; }
 	};
 
-	struct ModelComp : IComponent {
+	struct ModelComp : IComponent, ISharedComponent {
 
 		SolEngine::ResourceHandle<SolEngine::ModelData> model_;
 
