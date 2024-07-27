@@ -60,6 +60,16 @@ namespace SolEngine {
 
 		std::unique_ptr<Material> CreateObject(const ResourceSource<Material> &source) const;
 
+	private:
+		/// @brief パラメータの取得
+		/// @tparam T 型名
+		/// @param material 元となるマテリアル
+		/// @param target 書き込む先
+		template<SoLib::IsRealType T>
+		static void GetParam(const aiMaterial *material, const char *pKey, unsigned int type, unsigned int idx, T &target) {
+			if (T tmp; material->Get(pKey, type, idx, tmp) == AI_SUCCESS) { target = tmp; }
+		}
+
 	};
 
 }

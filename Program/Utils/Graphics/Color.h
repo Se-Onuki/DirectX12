@@ -10,7 +10,7 @@
 namespace SoLib {
 
 	namespace Color {
-
+		
 		struct RGB4 {
 
 			RGB4() = default;
@@ -89,6 +89,8 @@ namespace SoLib {
 
 		void to_json(nlohmann::json &json, const RGB4 &color);
 		void from_json(const nlohmann::json &json, RGB4 &color);
+
+		struct RGB3 :public RGB4 {};
 
 		struct HSV4 {
 			HSV4() = default;

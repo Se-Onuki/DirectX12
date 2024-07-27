@@ -75,21 +75,18 @@ namespace SolEngine {
 			.shininessStrength = 0.25f,
 		};
 
-		aiColor3D ambient;
-		if (material->Get(AI_MATKEY_COLOR_AMBIENT, ambient) == AI_SUCCESS) {
+		if (aiColor3D ambient; material->Get(AI_MATKEY_COLOR_AMBIENT, ambient) == AI_SUCCESS) {
 			result->materialData_->ambient = { ambient.r, ambient.g, ambient.b , 1.f };
 		}
 
 		ai_real alfa;
 		bool isAlfa = material->Get(AI_MATKEY_OPACITY, alfa) == AI_SUCCESS;
 
-		aiColor3D color;
-		if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
+		if (aiColor3D color; material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
 			result->materialData_->color = { color.r, color.g, color.b , isAlfa ? alfa : 1.f };
 		}
 
-		ai_real shininess;
-		if (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) {
+		if (ai_real shininess; material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) {
 			result->materialData_->shininess = shininess;
 		}
 
@@ -171,4 +168,4 @@ bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused
 #else
 	return false;
 #endif // USE_IMGUI
-	}
+}
