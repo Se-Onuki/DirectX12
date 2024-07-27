@@ -2,6 +2,121 @@
     "name": "scene",
     "objects": [
         {
+            "type": "MESH",
+            "name": "BirchTree_1",
+            "transform": {
+                "translation": [
+                    15.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "BirchTree_1.gltf"
+        },
+        {
+            "type": "MESH",
+            "name": "BirchTree_2",
+            "transform": {
+                "translation": [
+                    -10.0,
+                    -5.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "BirchTree_2.gltf"
+        },
+        {
+            "type": "MESH",
+            "name": "BirchTree_3",
+            "transform": {
+                "translation": [
+                    20.0,
+                    7.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -45.0
+                ],
+                "scale": [
+                    3.999999761581421,
+                    3.999999761581421,
+                    4.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "BirchTree_3.gltf"
+        },
+        {
+            "type": "MESH",
+            "name": "Bush",
+            "transform": {
+                "translation": [
+                    -12.0,
+                    -12.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "Bush.gltf"
+        },
+        {
+            "type": "MESH",
+            "name": "DeadTree_1",
+            "transform": {
+                "translation": [
+                    7.0,
+                    -15.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "DeadTree_1.gltf"
+        },
+        {
             "type": "LIGHT",
             "name": "Light",
             "transform": {
@@ -42,29 +157,6 @@
                     1.0
                 ]
             }
-        },
-        {
-            "type": "MESH",
-            "name": "BirchTree_1_Cube.070",
-            "transform": {
-                "translation": [
-                    10.0,
-                    5.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    -135.0
-                ],
-                "scale": [
-                    2.999999761581421,
-                    2.999999761581421,
-                    3.0
-                ]
-            },
-            "directory_name": "Model/Ultimate Nature Pack/",
-            "file_name": "BirchTree_1.obj"
         }
     ]
 }
