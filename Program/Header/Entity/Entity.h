@@ -75,45 +75,27 @@ public:
 	/// @return 前フレームからの時間差分
 	float GetDeltaTime() const;
 
-	// 紐づけられた実体
-	GameObject *const object_ = nullptr;
-	BaseTransform *const transform_;
-
+	union {
+		// 紐づけられた実体
+		GameObject *const object_ = nullptr;
+		BaseTransform *const transform_;
+	};
 	float monoTimeScale_ = 1.f;
 };
 
-class GameObject {
-	// 生きているか
-	bool isActive_ = false;
-	// コンポーネントの連想コンテナ
-	std::unordered_map<std::type_index, std::unique_ptr<IComponent>> componentMap_;
-
-	std::unordered_set<std::string> tag_;
-
-	// 今後実装予定
-	// 
-	// シーン情報
-	// IScene * scene_ = nullptr;
-	// 
-	// 親子関係
-	// Object *parent_ = nullptr;
-	// std::list<std::unique_ptr<Object>> children_;
-
-	float deltaTime_{};
-
-	float timeScale_ = 1.f;
+class GameObject final {
 public:
 	// オブジェクトのSRT
 	BaseTransform transform_;
 
 	GameObject() = default;
 	//Object(const Object&) = default;
-	virtual ~GameObject() = default;
+	~GameObject() = default;
 
-	virtual void Init();
-	virtual void Reset();
-	virtual void Update(float deltaTime);
-	virtual void Draw(const Camera3D &vp) const;
+	void Init();
+	void Reset();
+	void Update(float deltaTime);
+	void Draw(const Camera3D &vp) const;
 
 	/*template<typename T>
 	bool HasComponent();*/
@@ -153,7 +135,7 @@ public:
 
 	const Vector3 &GetWorldPos();
 
-	virtual void OnCollision(GameObject *const other);
+	void OnCollision(GameObject *const other);
 
 	void ImGuiWidget();
 
@@ -162,7 +144,26 @@ public:
 	inline float GetDeltaTime() const { return deltaTime_ * timeScale_; }
 
 private:
+	// コンポーネントの連想コンテナ
+	std::unordered_map<std::type_index, std::unique_ptr<IComponent>> componentMap_;
 
+	std::unordered_set<std::string> tag_;
+
+	// 今後実装予定
+	// 
+	// シーン情報
+	// IScene * scene_ = nullptr;
+	// 
+	// 親子関係
+	// Object *parent_ = nullptr;
+	// std::list<std::unique_ptr<Object>> children_;
+
+	float deltaTime_{};
+
+	float timeScale_ = 1.f;
+
+	// 生きているか
+	bool isActive_ = false;
 };
 
 template <SoLib::IsBased<IComponent> T>

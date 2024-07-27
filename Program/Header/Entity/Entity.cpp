@@ -65,7 +65,7 @@ void GameObject::ImGuiWidget() {
 	}
 }
 
-IComponent::IComponent(GameObject *const object) : object_(object), transform_(&static_cast<BaseTransform &>(object->transform_)) {
+IComponent::IComponent(GameObject *const object) : object_(object) {
 }
 
 float IComponent::GetDeltaTime() const {

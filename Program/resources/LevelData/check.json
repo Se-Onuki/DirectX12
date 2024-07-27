@@ -2,13 +2,13 @@
     "name": "scene",
     "objects": [
         {
-            "type": "EMPTY",
-            "name": "Node_1",
+            "type": "MESH",
+            "name": "BirchTree_1",
             "transform": {
                 "translation": [
-                    5.0,
+                    15.0,
                     0.0,
-                    1.0
+                    0.0
                 ],
                 "rotation": [
                     0.0,
@@ -16,36 +16,105 @@
                     0.0
                 ],
                 "scale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
-            "directory_name": "Model/LowPoly Environment Pack/",
-            "file_name": "plant_2.gltf",
-            "children": [
-                {
-                    "type": "MESH",
-                    "name": "Plant_2",
-                    "transform": {
-                        "translation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "rotation": [
-                            0.0,
-                            -0.0,
-                            0.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
-                }
-            ]
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "BirchTree_1.gltf"
+        },
+        {
+            "type": "MESH",
+            "name": "BirchTree_2",
+            "transform": {
+                "translation": [
+                    -10.0,
+                    -5.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "BirchTree_2.gltf"
+        },
+        {
+            "type": "MESH",
+            "name": "BirchTree_3",
+            "transform": {
+                "translation": [
+                    20.0,
+                    7.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -45.0
+                ],
+                "scale": [
+                    3.999999761581421,
+                    3.999999761581421,
+                    4.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "BirchTree_3.gltf"
+        },
+        {
+            "type": "MESH",
+            "name": "Bush",
+            "transform": {
+                "translation": [
+                    -12.0,
+                    -12.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "Bush.gltf"
+        },
+        {
+            "type": "MESH",
+            "name": "DeadTree_1",
+            "transform": {
+                "translation": [
+                    7.0,
+                    -15.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Stylized Nature Pack/",
+            "file_name": "DeadTree_1.gltf"
         },
         {
             "type": "LIGHT",

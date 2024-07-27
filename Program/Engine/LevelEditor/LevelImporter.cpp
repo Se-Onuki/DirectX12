@@ -8,7 +8,7 @@ namespace SolEngine {
 
 		// 正しくデータにアクセスできた場合
 
-		//Archetype archeType
+		// 再帰的にロードを行う
 		RecursiveLoad(levelData->objectList_, world);
 
 		return true;
@@ -41,12 +41,6 @@ namespace SolEngine {
 	void LevelImporter::RecursiveLoad(const std::list<LevelData::ObjectData> &objectDataList, World *const world, ECS::Entity *parent) const
 	{
 
-		/*auto *modelManager = ResourceObjectManager<ModelData>::GetInstance();
-		auto *assimpManager = ResourceObjectManager<AssimpData>::GetInstance();*/
-
-		//// モデルは初期値は"box.obj"であるとする
-		//auto defaultModel = modelManager->Load({ assimpManager->Load({ "","box.obj" }) });
-
 		// エンティティマネージャを取得
 		auto *const entityManager = world->GetEntityManager();
 
@@ -72,12 +66,7 @@ namespace SolEngine {
 
 			// OBB型なら代入する
 			if (auto ptr = std::get_if<OBB>(&object.collider_); ptr) {
-
-				//// 当たり判定があったら入れる
-				//if (object.collider_ != Vector3::zero) {
-
 				prefab += ECS::OBBCollisionComp{ .collision_ = *ptr };
-				//}
 			}
 			// 親の情報があったら渡す
 			if (parent) {
