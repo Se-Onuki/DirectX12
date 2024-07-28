@@ -257,8 +257,6 @@ void GameScene::OnEnter() {
 	fullScreen_ = PostEffect::FullScreenRenderer::GetInstance();
 	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GrayScale.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Vignetting.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"Smoothing.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilter.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"GaussianFilterLiner.PS.hlsl" }, { L"FullScreen.VS.hlsl",L"HsvFillter.PS.hlsl" } });
 
-	// ModelManager::GetInstance()->AddModel("Box", Model::LoadAssimpModelFile("Model/AnimatedCube/", "AnimatedCube.gltf"));
-
 	SolEngine::ResourceObjectManager<SolEngine::LevelData> *const levelDataManager = SolEngine::ResourceObjectManager<SolEngine::LevelData>::GetInstance();
 
 	auto levelData = levelDataManager->Load({ .fileName_ = "check.json" });
@@ -267,7 +265,6 @@ void GameScene::OnEnter() {
 	levelImporter.Import(levelData, world_.get());
 
 	levelDataManager->Destory(levelData);
-
 
 	gaussianParam_->first = 32.f;
 	gaussianParam_->second = 1;

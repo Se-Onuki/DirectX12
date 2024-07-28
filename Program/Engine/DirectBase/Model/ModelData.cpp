@@ -13,14 +13,14 @@ namespace SolEngine {
 		// もしデータが読めなかったら終わる
 		if (not scene) { return nullptr; }
 
-		std::unique_ptr<ModelData> modelResult = std::make_unique<ModelData>();
+		std::unique_ptr<ModelData> result = std::make_unique<ModelData>();
 
-		modelResult->rootNode_ = ModelNode::Create(scene->mRootNode);
-		modelResult->skinCluster_ = ResourceObjectManager<SkinClusterBase>::GetInstance()->Load({ source.assimpHandle_ });
-		modelResult->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load(ResourceSource<SkeletonReference>{ modelResult->rootNode_.get() });
+		result->rootNode_ = ModelNode::Create(scene->mRootNode);
+		result->skinCluster_ = ResourceObjectManager<SkinClusterBase>::GetInstance()->Load({ source.assimpHandle_ });
+		result->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load(ResourceSource<SkeletonReference>{ result->rootNode_.get() });
 		SolEngine::ResourceObjectManager<SolEngine::ModelVertexData> *const vertexManager = SolEngine::ResourceObjectManager<SolEngine::ModelVertexData>::GetInstance();
 
-		modelResult->modelVertex_ = vertexManager->Load({ source.assimpHandle_ });
+		result->modelVertex_ = vertexManager->Load({ source.assimpHandle_ });
 
 		// マテリアルマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::Material> *const materialManager = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance();
@@ -34,17 +34,17 @@ namespace SolEngine {
 		SolEngine::ResourceObjectManager<SolEngine::Mesh> *const meshManager = SolEngine::ResourceObjectManager<SolEngine::Mesh>::GetInstance();
 
 		// メモリ確保
-		modelResult->meshHandleList_.reserve(scene->mNumMeshes);
+		result->meshHandleList_.reserve(scene->mNumMeshes);
 		// モデルデータのロードと保存
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
-			modelResult->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
+			result->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
 		}
 
 		auto *const modelInfluenceManager = ResourceObjectManager<ModelInfluence>::GetInstance();
 
-		const auto modelInfluence = modelInfluenceManager->Load({ source.assimpHandle_,modelResult->skinCluster_, modelResult->skeletonReference_ });
+		const auto modelInfluence = modelInfluenceManager->Load({ source.assimpHandle_,result->skinCluster_, result->skeletonReference_ });
 
-		modelResult->modelInfluence_ = modelInfluence;
+		result->modelInfluence_ = modelInfluence;
 
 		//// メッシュ影響度のマネージャ
 		//ResourceObjectManager<MeshInfluence> *const meshInfluenceManager = ResourceObjectManager<MeshInfluence>::GetInstance();
@@ -59,7 +59,7 @@ namespace SolEngine {
 		//// データを構築し､保存する
 		//modelResult->meshInfluenceList_ = meshInfluenceManager->Load(influenceSources);
 
-		return std::move(modelResult);
+		return std::move(result);
 	}
 
 	void ModelData::Draw(const Transform &transform, const Camera3D &camera) const

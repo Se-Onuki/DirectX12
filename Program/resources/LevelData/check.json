@@ -3,29 +3,6 @@
     "objects": [
         {
             "type": "MESH",
-            "name": "BirchTree_1_Cube",
-            "transform": {
-                "translation": [
-                    10.0,
-                    5.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scale": [
-                    2.0,
-                    2.0,
-                    2.0
-                ]
-            },
-            "directory_name": "Model/Ultimate Nature Pack/",
-            "file_name": "BirchTree_1.obj"
-        },
-        {
-            "type": "MESH",
             "name": "Rock_1_Cube.018",
             "transform": {
                 "translation": [
@@ -52,18 +29,18 @@
             "name": "CommonTree_1_Cube.049",
             "transform": {
                 "translation": [
-                    -13.420000076293945,
+                    37.04999542236328,
                     -30.0,
                     0.0
                 ],
                 "rotation": [
                     0.0,
                     -0.0,
-                    -135.0
+                    146.99998474121094
                 ],
                 "scale": [
-                    2.999999761581421,
-                    2.999999761581421,
+                    3.0,
+                    3.0,
                     3.0
                 ]
             },
@@ -100,17 +77,17 @@
                 "translation": [
                     -10.300000190734863,
                     4.440000057220459,
-                    -1.0199999809265137
+                    -0.5
                 ],
                 "rotation": [
                     0.0,
                     0.0,
-                    -74.99999237060547
+                    -50.00000762939453
                 ],
                 "scale": [
-                    3.000000238418579,
-                    3.000000238418579,
-                    2.0
+                    1.9999998807907104,
+                    1.9999998807907104,
+                    1.0
                 ]
             },
             "directory_name": "Model/Ultimate Nature Pack/",
@@ -144,8 +121,8 @@
             "name": "TreeStump_Cylinder.010",
             "transform": {
                 "translation": [
-                    2.0,
-                    7.0,
+                    -12.0,
+                    -9.25,
                     0.0
                 ],
                 "rotation": [
@@ -164,7 +141,7 @@
         },
         {
             "type": "MESH",
-            "name": "CommonTree_Dead_4_Cube.099",
+            "name": "CommonTree_Dead_4_Cube",
             "transform": {
                 "translation": [
                     10.0,
@@ -215,7 +192,7 @@
                 "translation": [
                     0.0,
                     -60.0,
-                    -8.0
+                    -15.0
                 ],
                 "rotation": [
                     0.0,
@@ -223,7 +200,7 @@
                     -179.99998474121094
                 ],
                 "scale": [
-                    2.5,
+                    2.799999952316284,
                     1.0,
                     1.0
                 ]
@@ -261,7 +238,7 @@
                     90.00000762939453
                 ],
                 "scale": [
-                    2.5,
+                    2.799999952316284,
                     1.0,
                     1.0
                 ]
@@ -299,7 +276,7 @@
                     0.0
                 ],
                 "scale": [
-                    2.5,
+                    2.799999952316284,
                     1.0,
                     1.0
                 ]
@@ -337,7 +314,7 @@
                     -90.00000762939453
                 ],
                 "scale": [
-                    2.5,
+                    2.799999952316284,
                     1.0,
                     1.0
                 ]
@@ -397,6 +374,512 @@
                     0.10000000149011612
                 ]
             }
+        },
+        {
+            "type": "MESH",
+            "name": "Rock_Moss_6_Cube.027",
+            "transform": {
+                "translation": [
+                    46.0,
+                    -49.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -80.00000762939453
+                ],
+                "scale": [
+                    10.0,
+                    10.0,
+                    20.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Rock_Moss_6.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Rock_7_Cube.030",
+            "transform": {
+                "translation": [
+                    -58.0,
+                    -53.0,
+                    3.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    64.0
+                ],
+                "scale": [
+                    20.0,
+                    20.0,
+                    30.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Rock_7.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Rock_7_Cube.001",
+            "transform": {
+                "translation": [
+                    -46.0,
+                    -49.0,
+                    3.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    10.0,
+                    10.0,
+                    20.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Rock_7.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Rock_Moss_5_Cube.025",
+            "transform": {
+                "translation": [
+                    52.0,
+                    -56.0,
+                    -6.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -152.0
+                ],
+                "scale": [
+                    19.999998092651367,
+                    19.999998092651367,
+                    45.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Rock_Moss_5.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "WoodLog_Moss_Cylinder.011",
+            "transform": {
+                "translation": [
+                    -30.530000686645508,
+                    -46.87999725341797,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    83.0
+                ],
+                "scale": [
+                    6.999999523162842,
+                    6.999999523162842,
+                    7.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "WoodLog_Moss.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "TreeStump_Moss_Cylinder.010",
+            "transform": {
+                "translation": [
+                    -18.40999984741211,
+                    -48.619998931884766,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    6.0,
+                    6.0,
+                    6.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "TreeStump_Moss.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_3_Cube.001",
+            "transform": {
+                "translation": [
+                    40.0,
+                    40.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    138.0
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_3.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Plant_3_Plane",
+            "transform": {
+                "translation": [
+                    18.739999771118164,
+                    -28.510000228881836,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    58.0
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Plant_3.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Plant_3_Plane.001",
+            "transform": {
+                "translation": [
+                    22.049999237060547,
+                    -23.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Plant_3.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Plant_3_Plane.002",
+            "transform": {
+                "translation": [
+                    12.469999313354492,
+                    2.309999465942383,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    36.0
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Plant_3.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Plant_3_Plane.003",
+            "transform": {
+                "translation": [
+                    18.739999771118164,
+                    10.809999465942383,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -42.000003814697266
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Plant_3.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Plant_4_Plane.006",
+            "transform": {
+                "translation": [
+                    20.959999084472656,
+                    -25.779998779296875,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    33.0000114440918
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Plant_4.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Plant_1_Plane.004",
+            "transform": {
+                "translation": [
+                    15.929999351501465,
+                    -27.68000030517578,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -171.0
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Plant_1.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Plant_1_Plane.001",
+            "transform": {
+                "translation": [
+                    15.929999351501465,
+                    3.9499998092651367,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Plant_1.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Plant_4_Plane.001",
+            "transform": {
+                "translation": [
+                    15.0,
+                    8.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    115.00000762939453
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Plant_4.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_1_Cube.001",
+            "transform": {
+                "translation": [
+                    -35.099998474121094,
+                    -9.059999465942383,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -10.000000953674316
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_1.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_2_Cube.036",
+            "transform": {
+                "translation": [
+                    42.22999954223633,
+                    11.319997787475586,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    25.9999942779541
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_2.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_4_Cube.001",
+            "transform": {
+                "translation": [
+                    -27.760000228881836,
+                    41.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_4.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_2_Cube.001",
+            "transform": {
+                "translation": [
+                    -35.0,
+                    33.30999755859375,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -65.0
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_2.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_5_Cube.014",
+            "transform": {
+                "translation": [
+                    -5.369999885559082,
+                    -62.329994201660156,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -82.0
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_5.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_5_Cube.001",
+            "transform": {
+                "translation": [
+                    -5.369999885559082,
+                    40.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -82.0
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_5.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_1_Cube.002",
+            "transform": {
+                "translation": [
+                    -13.420000076293945,
+                    -30.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -135.0
+                ],
+                "scale": [
+                    2.999999761581421,
+                    2.999999761581421,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_1.obj"
         }
     ]
 }
