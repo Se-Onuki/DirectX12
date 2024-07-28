@@ -375,8 +375,6 @@ void GameScene::Update() {
 		}
 	}
 
-	ground_.Draw();
-
 	grayScaleParam_ = 1 - damageTimer_.GetProgress();
 
 	ImGui::DragFloat2("VignettingParam", &vignettingParam_->first);

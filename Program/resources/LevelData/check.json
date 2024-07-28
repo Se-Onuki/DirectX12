@@ -2,54 +2,58 @@
     "name": "scene",
     "objects": [
         {
-            "type": "LIGHT",
-            "name": "Light",
-            "transform": {
-                "translation": [
-                    4.076245307922363,
-                    1.0054539442062378,
-                    5.903861999511719
-                ],
-                "rotation": [
-                    37.26104736328125,
-                    3.1637091636657715,
-                    106.93632507324219
-                ],
-                "scale": [
-                    1.0,
-                    0.9999999403953552,
-                    1.0
-                ]
-            }
-        },
-        {
-            "type": "CAMERA",
-            "name": "Camera",
-            "transform": {
-                "translation": [
-                    7.358891487121582,
-                    -6.925790786743164,
-                    4.958309173583984
-                ],
-                "rotation": [
-                    63.559295654296875,
-                    2.2983238068263745e-07,
-                    46.69194412231445
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
             "type": "MESH",
             "name": "BirchTree_1_Cube",
             "transform": {
                 "translation": [
-                    15.0,
+                    10.0,
                     5.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "BirchTree_1.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Rock_1_Cube.018",
+            "transform": {
+                "translation": [
+                    4.0,
+                    -11.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    43.0
+                ],
+                "scale": [
+                    3.0,
+                    2.0,
+                    1.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Rock_1.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_1_Cube.049",
+            "transform": {
+                "translation": [
+                    -13.420000076293945,
+                    -30.0,
                     0.0
                 ],
                 "rotation": [
@@ -58,27 +62,73 @@
                     -135.0
                 ],
                 "scale": [
-                    5.999999523162842,
-                    5.999999523162842,
-                    6.0
+                    2.999999761581421,
+                    2.999999761581421,
+                    3.0
                 ]
             },
             "directory_name": "Model/Ultimate Nature Pack/",
-            "file_name": "BirchTree_1.obj"
+            "file_name": "CommonTree_1.obj"
         },
         {
             "type": "MESH",
-            "name": "BirchTree_2_Cube.064",
+            "name": "WoodLog_Cylinder",
             "transform": {
                 "translation": [
-                    -20.0,
-                    -10.0,
+                    -10.369999885559082,
+                    -16.809999465942383,
+                    -0.8199999928474426
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    10.000001907348633
+                ],
+                "scale": [
+                    3.0,
+                    3.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "WoodLog.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Bush_1_Cube.045",
+            "transform": {
+                "translation": [
+                    -10.300000190734863,
+                    4.440000057220459,
+                    -1.0199999809265137
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    -74.99999237060547
+                ],
+                "scale": [
+                    3.000000238418579,
+                    3.000000238418579,
+                    2.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "Bush_1.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_3_Cube.031",
+            "transform": {
+                "translation": [
+                    -23.059999465942383,
+                    9.769999504089355,
                     0.0
                 ],
                 "rotation": [
                     0.0,
                     -0.0,
-                    0.0
+                    3.999999523162842
                 ],
                 "scale": [
                     4.0,
@@ -87,30 +137,266 @@
                 ]
             },
             "directory_name": "Model/Ultimate Nature Pack/",
-            "file_name": "BirchTree_2.obj"
+            "file_name": "CommonTree_3.obj"
         },
         {
             "type": "MESH",
-            "name": "WoodLog_Cylinder",
+            "name": "TreeStump_Cylinder.010",
             "transform": {
                 "translation": [
-                    12.271858215332031,
-                    -20.666973114013672,
-                    -1.850000023841858
+                    2.0,
+                    7.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.0,
+                    2.0,
+                    3.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "TreeStump.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "CommonTree_Dead_4_Cube.099",
+            "transform": {
+                "translation": [
+                    10.0,
+                    30.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    6.0,
+                    6.0,
+                    6.0
+                ]
+            },
+            "directory_name": "Model/Ultimate Nature Pack/",
+            "file_name": "CommonTree_Dead_4.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Rock_3_Cube.017",
+            "transform": {
+                "translation": [
+                    15.0,
+                    -20.0,
+                    -0.5
                 ],
                 "rotation": [
                     0.0,
                     0.0,
-                    -45.453521728515625
+                    -74.99999237060547
                 ],
                 "scale": [
                     5.0,
                     5.0,
-                    5.0
+                    2.0
                 ]
             },
             "directory_name": "Model/Ultimate Nature Pack/",
-            "file_name": "WoodLog.obj"
+            "file_name": "Rock_3.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "Cliff_1_Cube.003",
+            "transform": {
+                "translation": [
+                    0.0,
+                    -60.0,
+                    -8.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.5,
+                    1.0,
+                    1.0
+                ]
+            },
+            "directory_name": "Model/Nature Pack Low Poly By RgsDev Preview/Terrain/",
+            "file_name": "Cliff_1.obj",
+            "collider": {
+                "isTrigger": false,
+                "collision_function": "",
+                "type": "BOX",
+                "center": [
+                    0.0,
+                    0.0,
+                    8.0
+                ],
+                "size": [
+                    50.0,
+                    20.0,
+                    20.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
+            "name": "Cliff_1_Cube.001",
+            "transform": {
+                "translation": [
+                    -60.0,
+                    0.0,
+                    -8.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    90.00000762939453
+                ],
+                "scale": [
+                    2.5,
+                    1.0,
+                    1.0
+                ]
+            },
+            "directory_name": "Model/Nature Pack Low Poly By RgsDev Preview/Terrain/",
+            "file_name": "Cliff_1.obj",
+            "collider": {
+                "isTrigger": false,
+                "collision_function": "",
+                "type": "BOX",
+                "center": [
+                    0.0,
+                    0.0,
+                    8.0
+                ],
+                "size": [
+                    50.0,
+                    20.0,
+                    20.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
+            "name": "Cliff_1_Cube.002",
+            "transform": {
+                "translation": [
+                    0.0,
+                    60.0,
+                    -8.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    2.5,
+                    1.0,
+                    1.0
+                ]
+            },
+            "directory_name": "Model/Nature Pack Low Poly By RgsDev Preview/Terrain/",
+            "file_name": "Cliff_1.obj",
+            "collider": {
+                "isTrigger": false,
+                "collision_function": "",
+                "type": "BOX",
+                "center": [
+                    0.0,
+                    0.0,
+                    8.0
+                ],
+                "size": [
+                    50.0,
+                    20.0,
+                    20.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
+            "name": "Cliff_1_Cube.004",
+            "transform": {
+                "translation": [
+                    60.0,
+                    0.0,
+                    -8.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    90.00000762939453
+                ],
+                "scale": [
+                    2.5,
+                    1.0,
+                    1.0
+                ]
+            },
+            "directory_name": "Model/Nature Pack Low Poly By RgsDev Preview/Terrain/",
+            "file_name": "Cliff_1.obj",
+            "collider": {
+                "isTrigger": false,
+                "collision_function": "",
+                "type": "BOX",
+                "center": [
+                    0.0,
+                    0.0,
+                    8.0
+                ],
+                "size": [
+                    50.0,
+                    20.0,
+                    20.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
+            "name": "Terrain_Part_Plane_18_Plane.041",
+            "transform": {
+                "translation": [
+                    60.0,
+                    60.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scale": [
+                    6.0,
+                    6.0,
+                    1.0
+                ]
+            },
+            "directory_name": "Model/Nature Pack Low Poly By RgsDev Preview/Terrain/",
+            "file_name": "Terrain_Part_Plane_18.obj",
+            "collider": {
+                "isTrigger": false,
+                "collision_function": "",
+                "type": "BOX",
+                "center": [
+                    -10.0,
+                    -10.0,
+                    0.0
+                ],
+                "size": [
+                    25.0,
+                    25.0,
+                    0.10000000149011612
+                ]
+            }
         }
     ]
 }
