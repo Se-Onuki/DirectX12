@@ -330,6 +330,12 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 		// 回転したベクトルを使って移動
 		pos->position_ += rotateInput * (500.f * deltaTime * deltaTime);
 
+		// ステージの半径
+		static constexpr float kStageRadius = 43.f;
+
+		pos->position_.x = std::clamp(pos->position_.x, -kStageRadius, kStageRadius);
+		pos->position_.z = std::clamp(pos->position_.z, -kStageRadius, kStageRadius);
+
 		// 右スティックの入力
 		const Vector2 inputRs = inputManager->GetXInput()->GetState()->stickR_;
 		// 3次元的に解釈した入力
