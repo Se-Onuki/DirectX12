@@ -623,7 +623,7 @@ void ECS::System::ExpGaugeDrawer::OnUpdate(::World *world, [[maybe_unused]] cons
 		// 割合を代入する
 		expBar_->SetPercent(exp->exp_ / static_cast<float>(exp->needExp_(exp->level_)));
 		// レベルが上ってたら再生
-		if (prevLevel_ != exp->level_) {
+		if (prevLevel_ < exp->level_) {
 			levelUpTimer_.Start();
 		}
 		prevLevel_ = exp->level_;

@@ -291,7 +291,7 @@ void GameScene::OnExit() {
 
 void GameScene::Update() {
 
-	static bool skeletonDraw = true;
+	static bool skeletonDraw = false;
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	[[maybe_unused]] const float fixDeltaTime = not isMenuOpen_ ? deltaTime : 0.f;
 	[[maybe_unused]] const float powDeltaTime = fixDeltaTime * fixDeltaTime;
