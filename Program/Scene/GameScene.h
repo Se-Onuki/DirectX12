@@ -103,7 +103,7 @@ private:
 
 	Audio::SoundHandle soundA_;
 
-	SoLib::DeltaTimer spawnTimer_{ 2.5f };
+	SoLib::DeltaTimer spawnTimer_{ 5.f };
 
 	std::array<BoneModel::SimpleTransform, 5u> boneTransform_;
 
@@ -113,6 +113,7 @@ private:
 
 	std::unique_ptr<HealthBar> healthBar_;
 	std::unique_ptr<HealthBar> expBar_;
+	std::unique_ptr<Sprite> levelUI_;
 
 	std::array<std::unique_ptr<HealthBar>, 50u> enemyHealthBar_;
 

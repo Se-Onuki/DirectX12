@@ -268,9 +268,13 @@ namespace ECS {
 
 		class ExpGaugeDrawer : public ISystem {
 		public:
+			uint32_t prevLevel_ = 0u;
+			SoLib::DeltaTimer levelUpTimer_{ 1.5f };
+			Sprite *levelUI_ = nullptr;
 			HealthBar *expBar_ = nullptr;
-			static ExpGaugeDrawer Create(HealthBar *expBar) {
+			static ExpGaugeDrawer Create(Sprite *levelUI, HealthBar *expBar) {
 				ExpGaugeDrawer result;
+				result.levelUI_ = levelUI;
 				result.expBar_ = expBar;
 				return result;
 			}

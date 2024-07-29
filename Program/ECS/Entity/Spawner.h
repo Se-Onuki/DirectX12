@@ -27,7 +27,7 @@ namespace ECS {
 			spawnDatas_.clear();
 		}
 
-		void ActivateSpawn(ECS::EntityManager *manager) {
+		void Execute(ECS::EntityManager *manager) {
 			for (auto &[spawnData, count] : spawnDatas_) {
 				// 指定された個数分追加する
 				auto entList = manager->CreateEntity(*spawnData.basePrefab_, count);

@@ -339,11 +339,11 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 
 		// 右スティックの入力
 		const Vector2 inputRs = inputManager->GetXInput()->GetState()->stickR_;
-		// 3次元的に解釈した入力
-		const Vector3 rInput3d{ inputRs.x, 0.f,inputRs.y };
+		// 回転量の取得
+		const float rotate = -inputRs.GetTheta() + Angle::Rad90;
 
-		if (rInput3d.LengthSQ()) {
-			quateRot->quateRot_ = Quaternion::LookAt(rInput3d);
+		if (inputRs.Length()) {
+			quateRot->quateRot_ = Quaternion::AnyAxisRotation(Vector3::up, rotate);
 		}
 
 	}
@@ -354,7 +354,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 {
 	static ParticleManager *const particleManager = ParticleManager::GetInstance();
 
-	for (const auto &[entity, pos, quateRot, attackSt, attCT, attColl, cursor, modelAnimator, state] : world->view<const ECS::PositionComp, const ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp, ECS::ModelAnimator, ECS::EntityState>()) {
+	for (const auto &[entity, pos, quateRot, attackSt, attCT, attColl, cursor, modelAnimator, state, exp] : world->view<const ECS::PositionComp, const ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp, ECS::ModelAnimator, ECS::EntityState, ECS::Experience>()) {
 		// クールタイムが終わってたら
 		if (attCT->cooltime_.IsFinish()) {
 			// 再度開始
@@ -363,7 +363,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 			// 攻撃の座標を設定
 			attColl->collision_.centor = quateRot->quateRot_.GetFront() * attackSt->offset_ + **pos;
 			// 攻撃の半径を設定
-			attColl->collision_.radius = attackSt->radius_;
+			attColl->collision_.radius = attackSt->radius_ + 0.5f * exp->level_;
 
 			// 攻撃判定を有効化
 			attColl->isActive_ = true;
@@ -371,7 +371,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl->collision_.centor + Vector3{ .y = 0.1f });
 			particle->SetAliveTime(0.5f);
 			particle->transform_.rotate = SoLib::MakeQuaternion({ 90._deg,0,0 });
-			particle->transform_.scale = Vector3::one * (attackSt->radius_ * 2.f);
+			particle->transform_.scale = Vector3::one * (attColl->collision_.radius * 2.f);
 			particle->color_ = 0xFF5555FF;
 
 			state->ChangeState(static_cast<uint32_t>(EntityState::PlayerState::kAttack));
@@ -391,7 +391,7 @@ void ECS::System::PlayerAttack::OnUpdate(::World *world, [[maybe_unused]] const 
 }
 
 void ECS::System::BillboardCalc::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime) {
-	const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
+	const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().Transpose();
 
 	for (const auto &[entity, scale, rotate, pos, mat, billboardRot] : world->view<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp, ECS::BillboardRotate>()) {
 
@@ -620,9 +620,22 @@ void ECS::System::CursorDrawer::OnUpdate(::World *world, [[maybe_unused]] const 
 void ECS::System::ExpGaugeDrawer::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
 {
 	for (const auto &[entity, plTag, exp] : world->view<ECS::PlayerTag, ECS::Experience>()) {
-
+		// 割合を代入する
 		expBar_->SetPercent(exp->exp_ / static_cast<float>(exp->needExp_(exp->level_)));
-
+		// レベルが上ってたら再生
+		if (prevLevel_ != exp->level_) {
+			levelUpTimer_.Start();
+		}
+		prevLevel_ = exp->level_;
+	}
+	levelUpTimer_.Update(deltaTime);
+	if (levelUpTimer_.IsActive()) {
+		const float progress = levelUpTimer_.GetProgress();
+		const float percent = std::fmodf(progress, 0.5f);
+		levelUI_->SetColor(0xFFFFFF00 | SoLib::Lerp(0x00, 0xFF, progress > 0.5f ? 1.f - percent : percent));
+	}
+	else {
+		levelUI_->SetColor(0x00000000);
 	}
 
 }

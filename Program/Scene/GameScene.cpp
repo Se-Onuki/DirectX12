@@ -212,6 +212,12 @@ void GameScene::OnEnter() {
 	expBar_->SetCentor({ static_cast<float>(WinApp::kWindowWidth) * 0.5f, static_cast<float>(WinApp::kWindowHeight) - 16.f });
 	expBar_->SetScale({ static_cast<float>(WinApp::kWindowWidth), 32.f });
 
+	levelUI_ = Sprite::Create();
+	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
+	levelUI_->SetPivot(Vector2::one * 0.5f);
+	levelUI_->SetScale({ 256.f,64.f });
+	levelUI_->SetPosition({ static_cast<float>(WinApp::kWindowWidth) * 0.5f, static_cast<float>(WinApp::kWindowHeight) - 80.f });
+
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
 		bar->Init();
@@ -249,7 +255,7 @@ void GameScene::OnEnter() {
 	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
 	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
 	systemManager_.AddSystem<ECS::System::CursorDrawer>();
-	systemManager_.AddSystem<ECS::System::ExpGaugeDrawer>(expBar_.get());
+	systemManager_.AddSystem<ECS::System::ExpGaugeDrawer>(levelUI_.get(), expBar_.get());
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
@@ -311,20 +317,25 @@ void GameScene::Update() {
 	playerSpawn_.Update(fixDeltaTime);
 
 	// エンティティの追加
-	spawner_.ActivateSpawn(entityManager_);
+	spawner_.Execute(entityManager_);
 	// プレハブの破棄
 	spawner_.clear();
 
-
-	constexpr uint32_t enemyCount = 5u;
+	// 敵のスポーン数
+	constexpr uint32_t kEnemyCount = 5u;
+	// 敵の沸く半径
+	constexpr float kEnemyRadius = 45.f;
 
 	if (spawnTimer_.IsFinish()) {
+
 		// スポナーに追加を要求する
-		spawner_.AddSpawner(enemyPrefab_.get(), enemyCount, [](auto enemys, auto manager)
+		spawner_.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](auto enemys, auto manager)
 			{
+				// 発生地点の回転加算値
+				const float diff = Random::GetRandom<float>(0.f, Angle::Rad360);
 				for (uint32_t i = 0; auto & enemy : enemys) {
 					const auto &[pos] = manager->GetComponent<ECS::PositionComp>(enemy);
-					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / enemyCount) * i, 0.f }) * 25.f + pos->position_;
+					pos->position_ += SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
 					i++;
 				}
 			});
@@ -474,6 +485,7 @@ void GameScene::Draw() {
 	healthBar_->Draw();
 
 	expBar_->Draw();
+	levelUI_->Draw();
 	// スプライトの描画
 	Fade::GetInstance()->Draw();
 
@@ -533,12 +545,12 @@ void GameScene::PostEffectEnd()
 		postEffectProcessor->Execute(L"GaussianFilter.PS.hlsl", gaussianParam_);
 	}
 
-	postEffectProcessor->Execute(L"Vignetting.PS.hlsl", vignettingParam_);
+	//postEffectProcessor->Execute(L"Vignetting.PS.hlsl", vignettingParam_);
 
-	if (*grayScaleParam_.get() != 0) {
-		postEffectProcessor->Execute(L"GrayScale.PS.hlsl", grayScaleParam_);
-	}
-	postEffectProcessor->Execute(L"HsvFillter.PS.hlsl", hsvParam_);
+	//if (*grayScaleParam_.get() != 0) {
+	//	postEffectProcessor->Execute(L"GrayScale.PS.hlsl", grayScaleParam_);
+	//}
+	//postEffectProcessor->Execute(L"HsvFillter.PS.hlsl", hsvParam_);
 
 	// 結果を取り出す
 	postEffectProcessor->GetResult(resultTex->renderTargetTexture_.Get());
