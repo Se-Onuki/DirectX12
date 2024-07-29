@@ -215,8 +215,8 @@ void GameScene::OnEnter() {
 	levelUI_ = Sprite::Create();
 	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
 	levelUI_->SetPivot(Vector2::one * 0.5f);
-	levelUI_->SetScale({ 256.f,64.f });
-	levelUI_->SetPosition({ static_cast<float>(WinApp::kWindowWidth) * 0.5f, static_cast<float>(WinApp::kWindowHeight) - 80.f });
+	levelUI_->SetScale(Vector2{ 256.f,64.f } *2.f);
+	levelUI_->SetPosition({ static_cast<float>(WinApp::kWindowWidth) * 0.5f, static_cast<float>(WinApp::kWindowHeight) - 16.f - 64.f * 2.f });
 
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
@@ -335,7 +335,7 @@ void GameScene::Update() {
 				const float diff = Random::GetRandom<float>(0.f, Angle::Rad360);
 				for (uint32_t i = 0; auto & enemy : enemys) {
 					const auto &[pos] = manager->GetComponent<ECS::PositionComp>(enemy);
-					pos->position_ += SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
+					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
 					i++;
 				}
 			});

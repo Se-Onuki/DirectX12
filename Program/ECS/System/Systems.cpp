@@ -631,8 +631,10 @@ void ECS::System::ExpGaugeDrawer::OnUpdate(::World *world, [[maybe_unused]] cons
 	levelUpTimer_.Update(deltaTime);
 	if (levelUpTimer_.IsActive()) {
 		const float progress = levelUpTimer_.GetProgress();
-		const float percent = std::fmodf(progress, 0.5f);
-		levelUI_->SetColor(0xFFFFFF00 | SoLib::Lerp(0x00, 0xFF, progress > 0.5f ? 1.f - percent : percent));
+		const float percent = std::fmodf(progress, 0.5f) * 2.f;
+		const float t = progress > 0.5f ? 1.f - percent : percent;
+
+		levelUI_->SetColor(0xFFFFFF00 | SoLib::Lerp(0x00, 0xFF, SoLib::easeInOutQuad(t)));
 	}
 	else {
 		levelUI_->SetColor(0x00000000);
