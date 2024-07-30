@@ -138,30 +138,42 @@ namespace SoLib {
 		auto cend() const { return Self().endImpl(); }
 	};
 
-	template <typename... Ts>
+	// メタ関数: 与えられた型のアライメントサイズを返す
+	template<typename T>
+	constexpr std::size_t Alignment = alignof(T);
+
+	// メタ関数: 型リストから特定のアライメントサイズを持つ型を抽出する
+	template<std::size_t Align, typename... Types>
+	struct ExtractByAlignment;
+
+	template<std::size_t Align>
+	struct ExtractByAlignment<Align> {
+		using Type = std::tuple<>;
+	};
+
+	template<std::size_t Align, typename T, typename... Rest>
+	struct ExtractByAlignment<Align, T, Rest...> {
+		using Type = std::conditional_t <
+			(Alignment<T> == Align),
+			decltype(std::tuple_cat(std::tuple<T>{}, typename ExtractByAlignment<Align, Rest...>::Type{})),
+			typename ExtractByAlignment<Align, Rest...>::Type
+		> ;
+	};
+
+	// メタ関数: 与えられた型リストを特定のアライメントサイズでソートする
+	template<typename Tuple, std::size_t... Alignments>
 	struct SortByAlignment;
 
-	template <typename T, typename... Ts>
-	struct SortByAlignment<T, Ts...> {
-		template <typename U>
-		using LargerAlign = std::bool_constant<(alignof(U) > alignof(T))>;
-
-		using type = decltype(std::tuple_cat(
-			typename SortByAlignment<std::conditional_t<LargerAlign<Ts>::value, Ts, T>...>::type{},
-			std::tuple<std::conditional_t<LargerAlign<Ts>::value, T, Ts>...>{}
+	template<typename... Types, std::size_t... Alignments>
+	struct SortByAlignment<std::tuple<Types...>, Alignments...> {
+		using Type = decltype(std::tuple_cat(
+			typename ExtractByAlignment<Alignments, Types...>::Type{}...
 		));
 	};
 
-	template <>
-	struct SortByAlignment<> {
-		using type = std::tuple<>;
-	};
-
-	// タプルのソート
-	template <typename... Ts>
-	struct SortTuple {
-		using value = typename SortByAlignment<Ts...>::type;
-	};
+	// メタ関数を使いやすくするためのエイリアス
+	template<typename Tuple>
+	using SortByAlignment64 = SortByAlignment<Tuple, 64, 32, 16, 8, 4, 2, 1>;
 
 	// ヘルパー関数テンプレート
 	template<std::size_t... Is>

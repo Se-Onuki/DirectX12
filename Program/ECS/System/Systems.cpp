@@ -296,8 +296,7 @@ void ECS::System::WeaponCollision::OnUpdate(::World *world, [[maybe_unused]] con
 		for (const auto &[entity, weapon, damage] : weaponList) {
 			const auto &[exp] = world->GetEntityManager()->GetComponent<ECS::Experience>(*entity);
 			if (not exp) { continue; }
-			while (true)
-			{
+			while (true) {
 				const uint32_t needExp = exp->needExp_(exp->level_);
 				if (needExp > exp->exp_) { break; }
 				exp->exp_ -= needExp;
@@ -323,6 +322,7 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 			if (dInput->IsPress(DIK_D)) { inputLs.x += 1; }
 			if (dInput->IsPress(DIK_W)) { inputLs.y += 1; }
 			if (dInput->IsPress(DIK_S)) { inputLs.y -= 1; }
+			inputLs = inputLs.Nomalize();
 		}
 		// 3次元的に解釈した入力
 		const Vector3 lInput3d{ inputLs.x,0.f,inputLs.y };
@@ -338,12 +338,24 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 		pos->position_.z = std::clamp(pos->position_.z, -kStageRadius, kStageRadius);
 
 		// 右スティックの入力
-		const Vector2 inputRs = inputManager->GetXInput()->GetState()->stickR_;
+		Vector2 inputRs = inputManager->GetXInput()->GetState()->stickR_;
+		if (inputRs == Vector2::zero) {
+			if (dInput->IsPress(DIK_LEFT)) { inputRs.x -= 1; }
+			if (dInput->IsPress(DIK_RIGHT)) { inputRs.x += 1; }
+			if (dInput->IsPress(DIK_UP)) { inputRs.y += 1; }
+			if (dInput->IsPress(DIK_DOWN)) { inputRs.y -= 1; }
+			inputRs = inputRs.Nomalize();
+		}
 		// 回転量の取得
-		const float rotate = -inputRs.GetTheta() + Angle::Rad90;
+		// const float rotate = -inputRs.GetTheta() + Angle::Rad90;
 
-		if (inputRs.Length()) {
-			quateRot->quateRot_ = Quaternion::AnyAxisRotation(Vector3::up, rotate);
+		if (inputRs != Vector2::zero) {
+			Vector2 halfVector = (Vector2::up + inputRs.Nomalize()).Nomalize();
+			if (halfVector == Vector2::zero) {
+				halfVector = Vector2::right;
+			}
+
+			quateRot->quateRot_ = Quaternion{ Vector3::up * -(Vector2::up ^ halfVector), Vector2::up * halfVector };
 		}
 
 	}

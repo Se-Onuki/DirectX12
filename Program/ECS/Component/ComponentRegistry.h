@@ -48,7 +48,7 @@ namespace ECS {
 	public:
 		inline static constexpr uint32_t kSize = sizeof...(TComps);
 
-		using kTypes_ = std::tuple<TComps...>;
+		using kTypes_ = SoLib::SortByAlignment64<std::tuple<TComps...>>::Type;
 		std::array<TypeData, kSize> typeDatas_{ TypeData::CreateTypeData<TComps>()... };
 
 		class ComponentFlag {
