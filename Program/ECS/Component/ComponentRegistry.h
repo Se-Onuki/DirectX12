@@ -38,17 +38,20 @@ namespace ECS {
 
 	};
 
+	template <typename Tuple>
+	class BaseComponentRegistry;
+
 	template <IsComponent... TComps>
-	class BaseComponentRegistry : public SoLib::Singleton<BaseComponentRegistry<TComps...>> {
-		friend SoLib::Singleton<BaseComponentRegistry<TComps...>>;
-		using Singleton = SoLib::Singleton<BaseComponentRegistry<TComps...>>;
+	class BaseComponentRegistry<std::tuple<TComps...>> : public SoLib::Singleton<BaseComponentRegistry<std::tuple<TComps...>>> {
+		friend SoLib::Singleton<BaseComponentRegistry<std::tuple<TComps...>>>;
+		using Singleton = SoLib::Singleton<BaseComponentRegistry<std::tuple<TComps...>>>;
 	public:
 
 
 	public:
 		inline static constexpr uint32_t kSize = sizeof...(TComps);
 
-		using kTypes_ = SoLib::SortByAlignment64<std::tuple<TComps...>>::Type;
+		using kTypes = std::tuple<TComps...>;
 		std::array<TypeData, kSize> typeDatas_{ TypeData::CreateTypeData<TComps>()... };
 
 		class ComponentFlag {
@@ -154,6 +157,8 @@ namespace ECS {
 		}
 	};
 
+
+
 }
 
 namespace ECS {
@@ -169,5 +174,5 @@ namespace ECS {
 	//}
 
 
-	using ComponentRegistry = BaseComponentRegistry<IsAlive, AccelerationComp, GravityComp, PlayerTag, IsLanding, EnemyTag, ParticleComp, EmitterComp, ColorLarp, Identifier, BillboardRotate, AliveTime, LifeLimit, Color, PositionComp, VelocityComp, ScaleComp, RotateComp, QuaternionRotComp, TransformMatComp, ModelComp, FollowCamera, BoneTransformComp, EntityState, ModelAnimator, SkinModel, AttackCollisionComp, SphereCollisionComp, OBBCollisionComp, HealthComp, HealthBarComp, InvincibleTime, AttackPower, AttackCooltime, AirResistance, CursorComp, AttackStatus, Parent, CreateByLevelData, InputFlagComp, Experience>;
+	using ComponentRegistry = BaseComponentRegistry<SoLib::SortByAlignment64<std::tuple<IsAlive, AccelerationComp, GravityComp, PlayerTag, IsLanding, EnemyTag, ParticleComp, EmitterComp, ColorLarp, Identifier, BillboardRotate, AliveTime, LifeLimit, Color, PositionComp, VelocityComp, ScaleComp, RotateComp, QuaternionRotComp, TransformMatComp, ModelComp, FollowCamera, BoneTransformComp, EntityState, ModelAnimator, SkinModel, AttackCollisionComp, SphereCollisionComp, OBBCollisionComp, HealthComp, HealthBarComp, InvincibleTime, AttackPower, AttackCooltime, AirResistance, CursorComp, AttackStatus, Parent, CreateByLevelData, InputFlagComp, Experience >>::Type>;
 }

@@ -339,6 +339,7 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 
 		// 右スティックの入力
 		Vector2 inputRs = inputManager->GetXInput()->GetState()->stickR_;
+		// キーボード対応
 		if (inputRs == Vector2::zero) {
 			if (dInput->IsPress(DIK_LEFT)) { inputRs.x -= 1; }
 			if (dInput->IsPress(DIK_RIGHT)) { inputRs.x += 1; }
@@ -346,15 +347,15 @@ void ECS::System::PlayerMove::OnUpdate(::World *world, [[maybe_unused]] const fl
 			if (dInput->IsPress(DIK_DOWN)) { inputRs.y -= 1; }
 			inputRs = inputRs.Nomalize();
 		}
-		// 回転量の取得
-		// const float rotate = -inputRs.GetTheta() + Angle::Rad90;
-
+		// もし角度が0でなければ
 		if (inputRs != Vector2::zero) {
+			// ハーフべクトルを定義
 			Vector2 halfVector = (Vector2::up + inputRs.Nomalize()).Nomalize();
+			// もし真後ろなら横を代入しておく
 			if (halfVector == Vector2::zero) {
 				halfVector = Vector2::right;
 			}
-
+			// ベクトルを代入する
 			quateRot->quateRot_ = Quaternion{ Vector3::up * -(Vector2::up ^ halfVector), Vector2::up * halfVector };
 		}
 
