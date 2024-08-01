@@ -199,6 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Render.cpp" />
+    <ClCompile Include="Engine\DirectBase\Render\SkyBox\SkyBox.cpp" />
     <ClCompile Include="Engine\DirectBase\SkinAnimation\SkinAnimation.cpp" />
     <ClCompile Include="Engine\DirectBase\Texture\FullScreenTextureStrage.cpp" />
     <ClCompile Include="Engine\DirectBase\Texture\Texture.cpp" />
@@ -325,6 +326,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.h" />
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h" />
     <ClInclude Include="Engine\DirectBase\Render\Render.h" />
+    <ClInclude Include="Engine\DirectBase\Render\SkyBox\SkyBox.h" />
     <ClInclude Include="Engine\DirectBase\SkinAnimation\SkinAnimation.h" />
     <ClInclude Include="Engine\DirectBase\String\String.h" />
     <ClInclude Include="Engine\DirectBase\Texture\FullScreenTextureStrage.h" />
@@ -562,6 +564,22 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="resources\shader\SkyBox.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\shader\SkyBox.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="resources\shader\Smoothing.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
@@ -612,6 +630,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="resources\shader\Math.hlsli" />
     <None Include="resources\shader\Object3d.hlsli" />
     <None Include="resources\shader\Particle.hlsli" />
+    <None Include="resources\shader\SkyBox.hlsli" />
     <None Include="resources\shader\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>

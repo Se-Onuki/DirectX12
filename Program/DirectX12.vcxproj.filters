@@ -160,6 +160,9 @@
     <Filter Include="Engine\SkinAnimation">
       <UniqueIdentifier>{c6da9d2c-2ed4-4d11-a0b6-c35505c6642c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Render\SkyBox">
+      <UniqueIdentifier>{16a09860-785d-4695-b3cf-b58e3c92aa56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -467,6 +470,9 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\SkinAnimation\SkinAnimation.cpp">
       <Filter>Engine\SkinAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\SkyBox\SkyBox.cpp">
+      <Filter>Engine\Render\SkyBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -920,6 +926,9 @@
     <ClInclude Include="Engine\DirectBase\SkinAnimation\SkinAnimation.h">
       <Filter>Engine\SkinAnimation</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\SkyBox\SkyBox.h">
+      <Filter>Engine\Render\SkyBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">
@@ -976,6 +985,12 @@
     <FxCompile Include="resources\shader\HsvFillter.PS.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shader\SkyBox.VS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shader\SkyBox.PS.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shader\Object3d.hlsli">
@@ -991,6 +1006,9 @@
       <Filter>Engine\Shader</Filter>
     </None>
     <None Include="resources\shader\FullScreen.hlsli">
+      <Filter>Engine\Shader</Filter>
+    </None>
+    <None Include="resources\shader\SkyBox.hlsli">
       <Filter>Engine\Shader</Filter>
     </None>
   </ItemGroup>

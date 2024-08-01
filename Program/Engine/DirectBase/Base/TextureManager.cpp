@@ -118,7 +118,6 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	if (it != textureArray_.end()) {
 		// 読み込み済みテクスチャの要素番号を取得
 		return static_cast<uint32_t>(std::distance(textureArray_.begin(), it));
-		//return handle;
 	}
 
 #pragma endregion
@@ -148,8 +147,16 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	if (metadata.IsCubemap()) {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MostDetailedMip = 0;
+		srvDesc.TextureCube.MipLevels = UINT_MAX;
+		srvDesc.TextureCube.ResourceMinLODClamp = 0.f;
+	}
+	else {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	}
 
 	texture.name_ = file_name;
 	texture.handle_ = heapRange_.GetHandle(handle);
