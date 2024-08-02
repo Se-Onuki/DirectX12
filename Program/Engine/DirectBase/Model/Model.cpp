@@ -392,7 +392,7 @@ void Model::CreatePipeLine()
 	auto *pShaderManager_ = SolEngine::ShaderManager::GetInstance();
 
 
-	PipelineState::ShaderSet particleShader;
+	SolEngine::PipelineState::ShaderSet particleShader;
 	particleShader.vertex_ = pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" });
 	particleShader.pixel_ = pShaderManager_->Load({ L"Particle.PS.hlsl", L"ps_6_0" });
 
@@ -402,6 +402,7 @@ void Model::CreatePipeLine()
 
 #pragma region DepthStencilState
 
+#pragma region DepthStencileStateの設定
 #pragma region DepthStencileStateの設定
 
 	// DepthStencileStateの設定
@@ -449,7 +450,7 @@ void Model::CreatePipeLine()
 	{
 		auto shadowPipeline = graphicsPipelineStateDesc;
 
-		PipelineState::ShaderSet shadowParticleShader;
+		SolEngine::PipelineState::ShaderSet shadowParticleShader;
 		shadowParticleShader.vertex_ = pShaderManager_->Load({ L"Particle.VS.hlsl", L"vs_6_0" });
 		shadowParticleShader.pixel_ = pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" });
 
@@ -462,7 +463,7 @@ void Model::CreatePipeLine()
 	{
 		auto modelPipeline = graphicsPipelineStateDesc;
 
-		PipelineState::ShaderSet modelShader;
+		SolEngine::PipelineState::ShaderSet modelShader;
 		modelShader.vertex_ = pShaderManager_->Load({ L"Object3d.VS.hlsl", L"vs_6_0" });
 		modelShader.pixel_ = pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" });
 
@@ -478,7 +479,7 @@ void Model::CreatePipeLine()
 	{
 		auto skinParticlePipeline = graphicsPipelineStateDesc;
 
-		PipelineState::ShaderSet shadowParticleShader;
+		SolEngine::PipelineState::ShaderSet shadowParticleShader;
 		shadowParticleShader.vertex_ = pShaderManager_->Load({ L"SkinningParticle.VS.hlsl", L"vs_6_0" });
 		shadowParticleShader.pixel_ = pShaderManager_->Load({ L"ShaderParticle.PS.hlsl", L"ps_6_0" });
 
@@ -493,7 +494,7 @@ void Model::CreatePipeLine()
 	{
 		auto skinModelPipeline = graphicsPipelineStateDesc;
 
-		PipelineState::ShaderSet modelShader;
+		SolEngine::PipelineState::ShaderSet modelShader;
 		modelShader.vertex_ = pShaderManager_->Load({ L"SkinningObject3d.VS.hlsl", L"vs_6_0" });
 		modelShader.pixel_ = pShaderManager_->Load({ L"Object3d.PS.hlsl", L"ps_6_0" });
 

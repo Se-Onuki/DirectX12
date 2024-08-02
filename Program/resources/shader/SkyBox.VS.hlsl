@@ -1,12 +1,11 @@
 #include "SkyBox.hlsli"
 
-
 struct TransformationMatrix
 {
-    //matrix WVP;
     matrix World;
     matrix WorldInverseTranspose;
 };
+
 struct ViewProjectionMatrix
 {
     matrix view;
@@ -15,13 +14,11 @@ struct ViewProjectionMatrix
 };
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
-ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b3);
+ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 
 struct VertexShaderInput
 {
     float4 position : POSITION0;
-    float2 texCoord : TEXCOORD0;
-    float3 normal : NORMAL0;
 };
 
 VertexShaderOutput main(VertexShaderInput input)

@@ -101,10 +101,16 @@ void CGTaskScene::OnEnter()
 		gameObject_->transform_.rotate = { 0.f,90._deg,0.f };
 	}*/
 
+	SolEngine::SkyBoxRender::GetInstance()->Init();
+
+	skyBox_ = std::make_unique<SolEngine::SkyBox>();
+	skyBox_->SetTexture("rostock_laage_airport_4k.dds");
+
 }
 
 void CGTaskScene::OnExit()
 {
+	SolEngine::SkyBoxRender::Finalize();
 	fullScreen_->Finalize();
 }
 
@@ -157,6 +163,8 @@ void CGTaskScene::Draw()
 
 
 	dxCommon->CrearDepthBuffer();
+
+	SolEngine::SkyBoxRender::GetInstance()->Draw(*skyBox_, transform_, camera);
 
 #pragma region モデル描画
 

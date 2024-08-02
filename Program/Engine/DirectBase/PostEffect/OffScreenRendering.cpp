@@ -254,7 +254,7 @@ namespace PostEffect {
 			auto vsShader = pShaderManager_->Load({ filePath.first, L"vs_6_0" });
 			auto psShader = pShaderManager_->Load({ filePath.second, L"ps_6_0" });
 
-			PipelineState::ShaderSet copyShader;
+			SolEngine::PipelineState::ShaderSet copyShader;
 			copyShader.vertex_ = vsShader;
 			copyShader.pixel_ = psShader;
 

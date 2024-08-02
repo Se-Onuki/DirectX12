@@ -10,6 +10,7 @@
 #include "../ECS/System/SystemManager.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
 #include "../Engine/DirectBase/ComputeShader/SkinningComputeShader.h"
+#include "../Engine/DirectBase/Render/SkyBox/SkyBox.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -38,6 +39,8 @@ private:
 	Model *uvModel_;
 
 	std::unique_ptr<SkinModel> skinModel_;
+
+	std::unique_ptr<SolEngine::SkyBox> skyBox_;
 
 	std::unique_ptr<AlignasWrapper<Vector2>> vec2_;
 

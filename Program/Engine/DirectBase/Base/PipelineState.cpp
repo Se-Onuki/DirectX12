@@ -209,7 +209,7 @@ namespace SolEngine {
 //	shaderSet_ = shaderSet;
 //}
 
-void PipelineState::ShaderSet::SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc) const {
+void SolEngine::PipelineState::ShaderSet::SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc) const {
 	if (vertex_) { pipelineDesc->VS = vertex_->GetBytecode(); }
 	if (pixel_) { pipelineDesc->PS = pixel_->GetBytecode(); }
 	if (domain_) { pipelineDesc->DS = domain_->GetBytecode(); }

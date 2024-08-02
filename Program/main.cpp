@@ -211,6 +211,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SolEngine::ResourceObjectManager<SolEngine::Material>::Finalize();
 	SolEngine::ResourceObjectManager<Shader>::Finalize();
 	SolEngine::ResourceObjectManager<RootSignature>::Finalize();
+	SolEngine::SkyBoxRender::Finalize();
 	SolEngine::FullScreenTextureStrage::Finalize();
 	PostEffect::ShaderEffectProcessor::Finalize();
 	Sprite::Finalize();

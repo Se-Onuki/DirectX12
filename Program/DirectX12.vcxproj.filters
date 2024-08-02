@@ -139,9 +139,6 @@
     <Filter Include="Engine\ResourceObject">
       <UniqueIdentifier>{9f131733-8ed5-4d79-b65f-c256cc53ca4c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header\Object\SkyBox">
-      <UniqueIdentifier>{384b3797-0777-401f-89d7-14bd1b9a2d21}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\LevelEditor">
       <UniqueIdentifier>{5e0096df-e5e2-42a3-bc06-4b15755e82fd}</UniqueIdentifier>
     </Filter>
@@ -847,9 +844,6 @@
     </ClInclude>
     <ClInclude Include="Engine\ResourceObject\ResourceObject.h">
       <Filter>Engine\ResourceObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Object\SkyBox\SkyBox.h">
-      <Filter>Header\Object\SkyBox</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Containers\AlignasWrapper.h">
       <Filter>Utils\Containers</Filter>
