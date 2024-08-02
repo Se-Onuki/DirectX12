@@ -54,7 +54,7 @@ void CGTaskScene::OnEnter()
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
 	auto *nowCamera = CameraManager::GetInstance()->GetUseCamera();
-	nowCamera->translation_ = { 0.f, 0.8f,-2.5f };
+	nowCamera->translation_ = { 0.f, 0.9f,-2.5f };
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
