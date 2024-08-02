@@ -72,7 +72,7 @@ namespace SolEngine {
 			.ambient = {},
 			.uvTransform = Matrix4x4::Identity(),
 			.shininess = 1.f,
-			.shininessStrength = 0.25f,
+			.shininessStrength = 0.f,
 		};
 
 		if (aiColor3D ambient; material->Get(AI_MATKEY_COLOR_AMBIENT, ambient) == AI_SUCCESS) {

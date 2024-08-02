@@ -34,6 +34,7 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b3);
 
 Texture2D<float4> gTexture : register(t0);
+TextureCube<float4> gSkyBox : register(t1);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput
@@ -57,6 +58,10 @@ PixelShaderOutput main(VertexShaderOutput input)
     float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
     float NDotH = dot(normalize(input.normal), halfVector);
     float specularPow = saturate(pow(NDotH, gMaterial.shininess));
+    
+    const float3 cameraToPos = normalize(input.worldPos - gViewProjectionMatrix.cameraPos);
+    const float3 reflectedVector = reflect(cameraToPos, normalize(input.normal));
+    const float4 environmentColor = gSkyBox.Sample(gSampler, reflectedVector);
     
     //float3 reflectLight = reflect(normalize(gDirectionalLight.direction), normalize(input.normal));
     
@@ -82,9 +87,11 @@ PixelShaderOutput main(VertexShaderOutput input)
         float3 diffuse = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity; // 拡散反射
         
         float3 emissive = saturate(gMaterial.emissive.rgb); // 自己発光
-        float3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float3(1.0f, 1.0f, 1.0f) * gMaterial.shininessStrength;
+        float3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * gMaterial.shininessStrength;
         
-        output.color.rgb = saturate(saturate(diffuse) + saturate(emissive) + saturate(specular));
+        const float3 ambient = environmentColor.rgb * 0.05f;
+        
+        output.color.rgb = saturate(saturate(diffuse) + saturate(emissive) + saturate(specular) + saturate(ambient));
         
         output.color.a = gMaterial.color.a * textureColor.a; // α値
     }

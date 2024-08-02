@@ -34,10 +34,6 @@ private:
 
 	ECS::SystemManager systemManager_;
 
-	Model *model_;
-
-	Model *uvModel_;
-
 	std::unique_ptr<SkinModel> skinModel_;
 
 	std::unique_ptr<SolEngine::SkyBox> skyBox_;
@@ -53,7 +49,7 @@ private:
 	ModelAnimation::AnimationPlayer animationPlayer_;
 	std::unique_ptr<ModelAnimation::Animation> animation_;
 
-	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle boxModel_;
+	SolEngine::ResourceHandle<SolEngine::ModelData> boxModel_;
 
 	DirectXCommon *pDxCommon_ = nullptr;
 

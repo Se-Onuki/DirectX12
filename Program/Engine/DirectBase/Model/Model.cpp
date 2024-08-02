@@ -22,6 +22,7 @@
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include <execution>
 #include "SkeletonReference.h"
+#include "../Render/SkyBox/SkyBox.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 
@@ -253,6 +254,22 @@ void Model::CreatePipeLine()
 
 	// RootParameter作成
 	std::array<D3D12_ROOT_PARAMETER, static_cast<uint32_t>(RootParameter::kSize)> rootParameters = {};
+
+#pragma region kWorldTransform
+	{
+		// DescriptorRangeの設定
+		D3D12_DESCRIPTOR_RANGE skyDesc[1] = {};
+		skyDesc[0].BaseShaderRegister = 1;                                                   // 1から始める
+		skyDesc[0].NumDescriptors = 1;                                                       // 数は1つ
+		skyDesc[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;                              // SRVを使う
+		skyDesc[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+
+		rootParameters[(uint32_t)Model::RootParameter::kSkyBox].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;           // DescriptorTableを使う
+		rootParameters[(uint32_t)Model::RootParameter::kSkyBox].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;                    // PixelShaderで使う
+		rootParameters[(uint32_t)Model::RootParameter::kSkyBox].DescriptorTable.pDescriptorRanges = skyDesc;             // Tableの中身の配列を指定
+		rootParameters[(uint32_t)Model::RootParameter::kSkyBox].DescriptorTable.NumDescriptorRanges = _countof(skyDesc); // Tableで使用する数
+	}
+#pragma endregion
 
 #pragma region kWorldTransform
 
@@ -733,6 +750,11 @@ void Model::LoadMtlFile(const std::string &directoryPath, const std::string &fil
 	//	//material.second->CreateBuffer();
 	// }
 	return;
+}
+
+void Model::SetSkyBox(const SolEngine::SkyBox &skyBox)
+{
+	commandList_->SetGraphicsRootDescriptorTable(static_cast<uint32_t>(RootParameter::kSkyBox), TextureManager::GetInstance()->GetGpuSrvHandle(skyBox.GetTextureHandle()));
 }
 
 void Model::StartDraw(ID3D12GraphicsCommandList *const commandList)

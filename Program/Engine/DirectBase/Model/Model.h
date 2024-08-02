@@ -43,6 +43,7 @@ class ViewProjection;
 struct Material;
 struct Mesh;
 class Model;
+
 namespace ModelAnimation {
 	struct Animation;
 }
@@ -51,6 +52,7 @@ namespace SolEngine {
 	class ModelData;
 	class AssimpData;
 	class SkeletonReference;
+	class SkyBox;
 }
 
 struct ModelNode {
@@ -355,6 +357,7 @@ public:
 		kInstanceLocation,	// インスタンス先頭値
 		kMatrixPalette,		// スキン行列の配列
 		kModelTransform,   // モデルの回転情報
+		kSkyBox,
 
 		kSize, // enumのサイズ
 	};
@@ -417,6 +420,8 @@ public:
 
 	template <typename T>
 	void Draw(const SkinCluster &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
+
+	static void SetSkyBox(const SolEngine::SkyBox &skyBox);
 
 	static void StartDraw(ID3D12GraphicsCommandList *const commandList);
 	static void EndDraw();

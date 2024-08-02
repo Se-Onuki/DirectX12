@@ -47,17 +47,14 @@ void CGTaskScene::OnEnter()
 
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	boxModel_ = modelDataManager->Load({ assimpHandle });
-
 	skinModel_ = SkinModel::MakeSkinModel(*boxModel_);
-
-	uvModel_ = ModelManager::GetInstance()->AddModel("UvPlane", Model::LoadAssimpModelFile("", "plane.gltf"));
 
 	pDxCommon_ = DirectXCommon::GetInstance();
 
 	light_ = DirectionLight::Create();
 	CameraManager::GetInstance()->Init();
 	auto *nowCamera = CameraManager::GetInstance()->GetUseCamera();
-	nowCamera->translation_ = { 0.f, 3.f,-15.f };
+	nowCamera->translation_ = { 0.f, 0.8f,-2.5f };
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
@@ -77,29 +74,6 @@ void CGTaskScene::OnEnter()
 	*vec2_ = Vector2{ 10,10 };
 
 	computeShader_.Init(boxModel_->modelVertex_->vertexBuffer_.GetVertexData().size());
-
-	/*SolEngine::RootParameter rootParameters = {
-		{
-			SolEngine::RootParameter::MakePair<int, 'a'>(),
-			SolEngine::RootParameter::MakePair<int, 'b'>(),
-			SolEngine::RootParameter::MakePair<float, 'b'>(),
-		}
-	};
-
-	SolEngine::ResourceSource<RootSignature> rootSource{
-		.item_ = {{SolEngine::RootParameter::BufferType::kCBV, 0, D3D12_SHADER_VISIBILITY_ALL }}
-	};*/
-
-	/*
-	{
-		gameObject_ = std::make_unique<GameObject>();
-		gameObject_->Init();
-		auto modelComp = gameObject_->AddComponent<ModelComp>();
-		modelComp->AddBone("Body", sphere);
-
-		gameObject_->transform_.translate = { 0.f,0.f,0.f };
-		gameObject_->transform_.rotate = { 0.f,90._deg,0.f };
-	}*/
 
 	SolEngine::SkyBoxRender::GetInstance()->Init();
 
@@ -175,6 +149,7 @@ void CGTaskScene::Draw()
 
 	Model::StartDraw(commandList);
 	Model::SetPipelineType(Model::PipelineType::kModel);
+	Model::SetSkyBox(*skyBox_);
 
 	light_->SetLight(commandList);
 
