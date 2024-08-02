@@ -106,6 +106,8 @@ void CGTaskScene::OnEnter()
 	skyBox_ = std::make_unique<SolEngine::SkyBox>();
 	skyBox_->SetTexture("rostock_laage_airport_4k.dds");
 
+	skyBoxTransform_->scale = Vector3::one * 100.f;
+
 }
 
 void CGTaskScene::OnExit()
@@ -124,6 +126,9 @@ void CGTaskScene::Update()
 	//model_->ImGuiWidget();
 	transform_->ImGuiWidget();
 	transform_->UpdateMatrix();
+
+	skyBoxTransform_->ImGuiWidget("SkyBox");
+	skyBoxTransform_->UpdateMatrix();
 
 	animationPlayer_.Update(deltaTime, *boxModel_);
 	//gameObject_->Update(deltaTime);
@@ -164,7 +169,7 @@ void CGTaskScene::Draw()
 
 	dxCommon->CrearDepthBuffer();
 
-	SolEngine::SkyBoxRender::GetInstance()->Draw(*skyBox_, transform_, camera);
+	SolEngine::SkyBoxRender::GetInstance()->Draw(*skyBox_, skyBoxTransform_, camera);
 
 #pragma region モデル描画
 

@@ -44,6 +44,7 @@ private:
 
 	std::unique_ptr<AlignasWrapper<Vector2>> vec2_;
 
+	Transform skyBoxTransform_;
 	Transform transform_;
 
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;

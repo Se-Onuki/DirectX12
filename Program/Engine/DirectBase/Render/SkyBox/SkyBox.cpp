@@ -101,6 +101,10 @@ namespace SolEngine {
 		command->SetGraphicsRootDescriptorTable(0, textureManager->GetGpuSrvHandle(skyBox.GetTextureHandle()));
 		command->SetGraphicsRootConstantBufferView(1, transform.GetGPUVirtualAddress());
 		command->SetGraphicsRootConstantBufferView(2, camera.constData_.GetGPUVirtualAddress());
+
+		command->IASetVertexBuffers(0, 1, &vertex_.GetVBView());
+		command->IASetIndexBuffer(&index_.GetIBView());
+		command->DrawIndexedInstanced(6u * 6u, 1, 0, 0, 0);
 	}
 
 	void SkyBoxRender::CreateBuffer()
@@ -138,7 +142,7 @@ namespace SolEngine {
 			1,5,4,	// 上面
 
 			7,2,6,
-			6,2,4,	// 下面
+			6,2,3,	// 下面
 		};
 
 		index_.SetIndexData(indexData);
