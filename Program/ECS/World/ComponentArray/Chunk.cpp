@@ -36,7 +36,7 @@ namespace ECS {
 			// 型の情報を取得する
 			const auto &typeData = registry->typeDatas_[i];
 			// 型から情報を取得して､ポインタを保存する
-			compArrays_[i].push_back(std::make_unique<ComponentArray>(memTarget, typeData.typeSize_, entCount));
+			compArrays_[i].push_back(ComponentArray(memTarget, typeData.typeSize_, entCount));
 			// 型のサイズ分加算する
 			memTarget += typeData.typeSize_ * entCount;
 		}

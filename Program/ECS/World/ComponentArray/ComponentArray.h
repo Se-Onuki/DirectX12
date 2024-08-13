@@ -3,7 +3,7 @@
 #include <cstdint>
 
 namespace ECS {
-	/// @brief 配列としてコンポーネントを扱う形
+	/// @brief 配列としてコンポーネントを扱う型
 	class ComponentArray {
 	public:
 		ComponentArray() = default;
@@ -36,6 +36,8 @@ namespace ECS {
 		const std::byte *begin() const { return ptr_; }
 		std::byte *end() { return ptr_ + size_ * count_; }
 		const std::byte *end() const { return ptr_ + size_ * count_; }
+
+		uint32_t size() const { return count_; }
 
 	private:
 		// 配列の始点
