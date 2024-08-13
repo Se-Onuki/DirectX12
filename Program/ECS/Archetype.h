@@ -14,7 +14,7 @@ public:
 
 	ECS::ComponentRegistry::ComponentFlag compFlag_;
 
-	static constexpr size_t OneChunkCapacity = 16u * 1024u;
+	static constexpr size_t kOneChunkCapacity = 16u * 1024u;
 
 	Archetype() = default;
 
@@ -22,9 +22,11 @@ public:
 	void AddClassData() {
 		compFlag_.AddComp<T, TComps...>();
 
+		// サイズを追加する
 		totalSize_ += sizeof(T);
-		((totalSize_ += sizeof(TComps)),...);
-
+		((totalSize_ += sizeof(TComps)), ...);
+		
+		// 追加した型で容量を計算する
 		chunkCapacity_ = CalcCapacity();
 	}
 	bool operator==(const Archetype &other) const { return other.compFlag_ == compFlag_; }
@@ -38,17 +40,22 @@ public:
 
 private:
 
-	uint32_t CalcCapacity() const { return OneChunkCapacity / totalSize_; }
+	uint32_t CalcCapacity() const { return kOneChunkCapacity / totalSize_; }
 
+	// 最大のサイズ
 	uint32_t totalSize_ = sizeof(ECS::Entity);
-	uint32_t chunkCapacity_;
+	// 1つのチャンクにいくつ置けるか
+	uint32_t chunkCapacity_ = 0u;
 
+	/// @brief 型の設定
+	/// @tparam ...TComps 設定する型
 	template<typename... TComps>
-	void InnerAddClassData()
+	void InnerSetClassData()
 	{
-		ClassDataManager *const classDataManager = ClassDataManager::GetInstance();
-		totalSize_ = sizeof(ECS::Entity) + (classDataManager->AddClass<TComps>()->size_ + ...);
-		chunkCapacity_ = OneChunkCapacity / totalSize_;
+		// Entityと型のメモリを合算する
+		totalSize_ = sizeof(ECS::Entity) + (sizeof(TComps) + ...);
+		// 1つのチャンクにいくつ置けるかを計算する
+		chunkCapacity_ = kOneChunkCapacity / totalSize_;
 	}
 };
 

@@ -30,7 +30,6 @@ namespace ECS {
 			iterator(iterator &&) = default;
 			iterator &operator=(iterator &&) = default;
 
-			//private:
 			std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
 			std::list<ECS::MultiArray *>::iterator mArrayListItr_;
 
@@ -198,9 +197,6 @@ namespace ECS {
 		}
 
 
-
-		//private:
-
 		std::shared_ptr<std::list<ECS::MultiArray *>> mArrayList_;
 	};
 
@@ -242,23 +238,7 @@ public:
 		return result;
 	}
 
-	/*template<typename T, typename... Ts>
-	std::list<ECS::MultiArray *> view() {
-		std::list<ECS::MultiArray *> result;
-
-		Archetype checkArche;
-		checkArche.AddClassData<T, Ts...>();
-
-		for (const auto &[archetype, mArray] : chunkList_) {
-			if (checkArche <= archetype) {
-				result.push_back(mArray.get());
-			}
-		}
-		return result;
-	}*/
-
 	template<typename T, typename... TComps>
-	//requires (not SoLib::IsConst<T> && ... && not SoLib::IsConst<Ts>)
 	ECS::View<T, TComps...> view() {
 		ECS::View<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
@@ -296,7 +276,6 @@ public:
 		return result;
 	}
 	template<typename T, typename... TComps>
-	//requires (SoLib::IsConst<T> && ... && SoLib::IsConst<Ts>)
 	ECS::ConstView<T, TComps...> view() const {
 		ECS::ConstView<T, TComps...> result;
 		result.mArrayList_ = std::make_shared<std::list<ECS::MultiArray *>>();
@@ -329,58 +308,7 @@ public:
 
 	}
 
-
-	//template<typename T, typename...Ts> void ForEach(const std::function<void(T *, Ts*...)> &func);
-	/*template<typename A, typename B> void ForEach(std::function<void(A &, B &)> func);
-	template<typename A, typename B, typename C> void ForEach(std::function<void(A &, B &, C &)> func);*/
-
 private:
 	std::unordered_map<Archetype, std::unique_ptr<ECS::MultiArray>> chunkList_ = {};
 	std::unique_ptr<ECS::EntityManager> entityManager_;
 };
-//
-//template<typename T, typename...Ts> inline void World::ForEach(const std::function<void(T *, Ts*...)> &func) {
-//	Archetype arType;
-//	arType.AddClassData<T, Ts...>();
-//	for (auto &[archetype, mArray] : chunkList_) {
-//		if (not (arType <= archetype)) { continue; }
-//		for (size_t i = 0; i < mArray->size(); i++) {
-//
-//			auto item = mArray->GetItem<T, Ts...>(i);
-//			std::apply([&](auto... args)
-//				{
-//					return func(args...);
-//				}, item);
-//		}
-//	}
-//}
-//
-//template<typename A, typename B> inline void World::ForEach(std::function<void(A &, B &)> func) {
-//	Archetype arType;
-//	arType.AddClassData<A, B>();
-//	for (Chunk &chunk : chunkList_) {
-//		if (!(arType <= chunk.GetArchetype()))
-//			continue;
-//		A *dataA = chunk.GetArray<A>();
-//		B *dataB = chunk.GetArray<B>();
-//		for (uint32_t i = 0; i < chunk.entityCount_; i++) {
-//			func(dataA[i], dataB[i]);
-//		}
-//	}
-//}
-//
-//template<typename A, typename B, typename C>
-//inline void World::ForEach(std::function<void(A &, B &, C &)> func) {
-//	Archetype arType;
-//	arType.AddClassData<A, B, C>();
-//	for (Chunk &chunk : chunkList_) {
-//		if (!(arType <= chunk.GetArchetype()))
-//			continue;
-//		A *dataA = chunk.GetArray<A>();
-//		B *dataB = chunk.GetArray<B>();
-//		C *dataC = chunk.GetArray<C>();
-//		for (uint32_t i = 0; i < chunk.entityCount_; i++) {
-//			func(dataA[i], dataB[i], dataC[i]);
-//		}
-//	}
-//}

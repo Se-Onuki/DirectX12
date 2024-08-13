@@ -369,9 +369,6 @@
     <ClCompile Include="ECS\World\World.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\Chunk\Chunk.cpp">
-      <Filter>ECS</Filter>
-    </ClCompile>
     <ClCompile Include="ECS\MultiArray.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
@@ -470,6 +467,9 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Render\SkyBox\SkyBox.cpp">
       <Filter>Engine\Render\SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\World\ComponentArray\Chunk.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -922,6 +922,12 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Render\SkyBox\SkyBox.h">
       <Filter>Engine\Render\SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\World\ComponentArray\Chunk.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\World\ComponentArray\ComponentArray.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -52,7 +52,8 @@ namespace ECS {
 		inline static constexpr uint32_t kSize = sizeof...(TComps);
 
 		using kTypes = std::tuple<TComps...>;
-		std::array<TypeData, kSize> typeDatas_{ TypeData::CreateTypeData<TComps>()... };
+		const std::array<TypeData, kSize> typeDatas_{ TypeData::CreateTypeData<TComps>()... };
+
 
 		class ComponentFlag {
 		public:
@@ -96,7 +97,7 @@ namespace ECS {
 			// 型に対応するビットをリセットする関数
 			template <IsComponent T, IsComponent... Ts>
 			void RemoveComp() {
-				constexpr std::size_t index = GetIndex<T, TComps...>();
+				constexpr std::size_t index = GetIndex<T>();
 				bitset_.reset(index);
 				if constexpr (sizeof...(Ts)) {
 					RemoveComp<Ts...>();
@@ -106,7 +107,7 @@ namespace ECS {
 			// 型に対応するビットがセットされているかを確認する関数
 			template <IsComponent T>
 			bool IsHasComp() const {
-				constexpr std::size_t index = GetIndex<T, TComps...>();
+				constexpr std::size_t index = GetIndex<T>();
 				return bitset_.test(index);
 			}
 
@@ -121,29 +122,34 @@ namespace ECS {
 				return { bitset_ | r.bitset_ };
 			}
 
-		private:
+			/// @brief 保持しているコンポーネントのIndexを取得する
+			/// @return 保持しているIndexの配列
+			std::vector<uint32_t> GetIndexList() const {
+				// 返還するデータ
+				std::vector<uint32_t> result;
+				// メモリの確保
+				result.reserve(bitset_.count());
 
-			// 型Tのインデックスを取得するメタ関数
-			template <IsComponent T, IsComponent... Types>
-			struct TypeIndex;
+				// 数値に戻した値
+				const size_t value = bitset_.to_ullong();
 
-			template <IsComponent T, IsComponent First, IsComponent... Rest>
-			struct TypeIndex<T, First, Rest...> {
-				static constexpr std::size_t value = std::is_same_v<T, First> or std::is_same_v<std::remove_const_t<T>, First> ? 0 : 1 + TypeIndex<T, Rest...>::value;
-			};
+				// 最下位ビットの位置を特定
+				const uint32_t lowestBitPosition = static_cast<uint32_t>(std::countr_zero(value));
+				// 最上位ビットの位置を特定
+				const uint32_t highestBitPosition = static_cast<uint32_t>(std::log2(value));
 
-			template <IsComponent T>
-			struct TypeIndex<T> {
-				static constexpr std::size_t value = 0;
-			};
+				// ビットが立っている最初と最後までを回して､データを保存する
+				for (uint32_t i = lowestBitPosition; i <= highestBitPosition; i++) {
+					if (bitset_.test(i)) {
+						result.push_back(i);
+					}
+				}
 
-			template <IsComponent T, IsComponent... Types>
-			static constexpr std::size_t GetIndex() {
-				return TypeIndex<T, Types...>::value;
+				return result;
 			}
+
+		private:
 		};
-
-
 
 		static ComponentFlag CreateFlag() {
 			return ComponentFlag{};
@@ -154,6 +160,34 @@ namespace ECS {
 			ComponentFlag result{};
 			result.AddComp<TComps...>();
 			return result;
+		}
+
+	private:
+
+
+		// 型Tのインデックスを取得するメタ関数
+		template <IsComponent T, IsComponent... Types>
+		struct TypeIndex;
+
+		template <IsComponent T, IsComponent First, IsComponent... Rest>
+		struct TypeIndex<T, First, Rest...> {
+			static constexpr std::size_t value = std::is_same_v<T, First> or std::is_same_v<std::remove_const_t<T>, First> ? 0 : 1 + TypeIndex<T, Rest...>::value;
+		};
+
+		template <IsComponent T>
+		struct TypeIndex<T> {
+			static constexpr std::size_t value = 0;
+		};
+
+		template <IsComponent T, IsComponent... Types >
+		static constexpr std::size_t GetIndex() {
+			return TypeIndex<T, Types...>::value;
+		}
+
+	public:
+		template <IsComponent T>
+		static constexpr std::size_t GetIndex() {
+			return TypeIndex<T, TComps...>::value;
 		}
 	};
 

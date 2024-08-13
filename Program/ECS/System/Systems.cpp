@@ -130,6 +130,7 @@ void ECS::System::AirResistanceSystem::OnUpdate(::World *world, [[maybe_unused]]
 
 void ECS::System::MovePosition::OnUpdate(::World *world, const float deltaTime) {
 
+
 	for (const auto &[entity, velocity, acceleration] : world->view<ECS::VelocityComp, ECS::AccelerationComp>()) {
 
 		velocity->velocity_ += acceleration->acceleration_;
@@ -657,11 +658,15 @@ void ECS::System::ExpGaugeDrawer::OnUpdate(::World *world, [[maybe_unused]] cons
 
 void ECS::System::CalcParentTransform::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
 {
+	// エンティティマネージャ
 	auto *const entityManager = world->GetEntityManager();
+	// トランスフォーム行列と親子コンポーネントを持っている場合
 	for (const auto &[entity, transMat, parent] : world->view<ECS::TransformMatComp, ECS::Parent>()) {
+		// 親のエンティティから､行列コンポーネントを取得する
 		auto [parentTransMat] = entityManager->GetComponent<ECS::TransformMatComp>(parent->parent_);
+		// 親のコンポーネントがnullptrでないなら
 		if (parentTransMat) {
-
+			// 親の行列を乗算する
 			transMat->transformMat_ *= parentTransMat->transformMat_;
 		}
 	}

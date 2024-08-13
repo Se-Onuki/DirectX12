@@ -5,7 +5,7 @@
 ECS::MultiChunk::MultiChunk(MultiArray *const parent) : parent_(parent), archetype_(&parent_->GetArchetype()) {
 	const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
 	// メモリの確保
-	memoryPtr_ = std::make_unique<std::byte[]>(Archetype::OneChunkCapacity);
+	memoryPtr_ = std::make_unique<std::byte[]>(Archetype::kOneChunkCapacity);
 
 	//size_t capacity = archetype_->GetChunkCapacity();
 	//size_t offset = capacity / sizeof(memoryType);
@@ -160,11 +160,11 @@ ECS::MultiChunk *ECS::MultiArray::AddChunk() {
 	return multiChunk_.back().get();
 }
 
-size_t ECS::MultiArray::push_back() {
+uint32_t ECS::MultiArray::push_back() {
 
 	auto backChunk = multiChunk_.rbegin();
 
-	size_t index{};
+	uint32_t index{};
 
 	// 最後尾が最大であるか
 	if (multiChunk_.empty() || (*backChunk)->IsMax()) {
@@ -176,14 +176,14 @@ size_t ECS::MultiArray::push_back() {
 		index = (*backChunk)->push_back();
 	}
 
-	return index + (multiChunk_.size() - 1u) * archetype_.GetChunkCapacity();
+	return index + static_cast<uint32_t>(multiChunk_.size() - 1u) * archetype_.GetChunkCapacity();
 }
 
-size_t ECS::MultiArray::push_back(const ECS::Prefab &prefab) {
+uint32_t ECS::MultiArray::push_back(const ECS::Prefab &prefab) {
 
 	auto backChunk = multiChunk_.rbegin();
 
-	size_t index{};
+	uint32_t index{};
 
 	// 最後尾が最大であるか
 	if (multiChunk_.empty() || (*backChunk)->IsMax()) {
@@ -195,7 +195,7 @@ size_t ECS::MultiArray::push_back(const ECS::Prefab &prefab) {
 		index = (*backChunk)->push_back(prefab);
 	}
 
-	return index + (multiChunk_.size() - 1u) * archetype_.GetChunkCapacity();
+	return index + static_cast<uint32_t>(multiChunk_.size() - 1u) * archetype_.GetChunkCapacity();
 }
 
 void ECS::MultiArray::Normalize() {

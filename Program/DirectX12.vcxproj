@@ -156,12 +156,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ECS\Chunk\Chunk.cpp" />
     <ClCompile Include="ECS\Component\Component.cpp" />
     <ClCompile Include="ECS\Entity\EntityManager.cpp" />
     <ClCompile Include="ECS\MultiArray.cpp" />
     <ClCompile Include="ECS\System\SystemManager.cpp" />
     <ClCompile Include="ECS\System\Systems.cpp" />
+    <ClCompile Include="ECS\World\ComponentArray\Chunk.cpp" />
     <ClCompile Include="ECS\World\World.cpp" />
     <ClCompile Include="Engine\DirectBase\2D\Sprite.cpp" />
     <ClCompile Include="Engine\DirectBase\3D\DirectionLight.cpp" />
@@ -275,6 +275,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ECS\System\System.h" />
     <ClInclude Include="ECS\System\SystemManager.h" />
     <ClInclude Include="ECS\System\Systems.h" />
+    <ClInclude Include="ECS\World\ComponentArray\Chunk.h" />
+    <ClInclude Include="ECS\World\ComponentArray\ComponentArray.h" />
     <ClInclude Include="ECS\World\World.hpp" />
     <ClInclude Include="Engine\DirectBase\2D\Sprite.h" />
     <ClInclude Include="Engine\DirectBase\3D\DirectionLight.h" />

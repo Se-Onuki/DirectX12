@@ -11,55 +11,6 @@ namespace ECS {
 
 	class MultiChunk;
 
-	//template<typename... Ts>
-	//struct ComponentMiniArray {
-
-	//	struct iterator {
-	//		iterator() = default;
-	//		iterator(ComponentMiniArray *const parent, uint32_t index) {
-	//			itemPtr_ = parent->itemPtr_;
-	//			itemCount_ = parent->itemCount_;
-	//			index_ = index;
-	//		}
-
-	//		std::tuple<Ts *...> operator*() {
-	//			std::tuple<Ts*...> result = itemPtr_;
-
-	//			//std::apply([index_](auto&... args)
-	//			//	{
-	//			//		(args += index_, ...);
-	//			//	}, result);
-
-	//			return result;
-	//		}
-
-	//		iterator &operator++() {
-	//			++index_;
-	//			return *this;
-	//		}
-
-	//		bool operator !=(const iterator &other) {
-	//			return this->itemPtr_ != other.itemPtr_ ||
-	//				this->itemCount_ != other.itemCount_ ||
-	//				this->index_ != other.index_;
-	//		}
-
-
-	//		std::shared_ptr<std::tuple<Ts *...>> itemPtr_;
-	//		uint32_t itemCount_;
-	//		uint32_t index_;
-	//	};
-
-	//	iterator begin() { return iterator{ this,0u }; }
-	//	iterator end() { return iterator{ this,itemCount_ }; }
-	//	iterator operator[](const uint32_t index) { return iterator{ this,index }; }
-
-	//	std::shared_ptr<std::tuple<Ts *...>> itemPtr_;
-	//	uint32_t itemCount_;
-
-	//};
-
-
 	template<typename... TComps>
 	struct ComponetArray {
 
@@ -223,7 +174,6 @@ namespace ECS {
 
 		std::unique_ptr<std::byte[]> memoryPtr_;
 
-		//std::unordered_map<ClassData, void *> componentAddress_;
 		std::unordered_map<ClassDataManager::KeyType, void *> componentAddress_;
 	};
 
@@ -323,11 +273,11 @@ namespace ECS {
 
 		/// @brief 末尾に要素を追加
 		/// @return 追加された要素のindex
-		size_t push_back();
+		uint32_t push_back();
 
 		/// @brief 末尾に要素を追加
 		/// @return 追加された要素のindex
-		size_t push_back(const ECS::Prefab &prefab);
+		uint32_t push_back(const ECS::Prefab &prefab);
 
 		template<SoLib::IsNotPointer T, SoLib::IsNotPointer... TComps>
 		std::tuple<T *, TComps *...> GetItem(size_t totalIndex);

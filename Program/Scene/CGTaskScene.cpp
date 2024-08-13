@@ -105,7 +105,6 @@ void CGTaskScene::Update()
 	skyBoxTransform_->UpdateMatrix();
 
 	animationPlayer_.Update(deltaTime, *boxModel_);
-	//gameObject_->Update(deltaTime);
 
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
 	if (material) {

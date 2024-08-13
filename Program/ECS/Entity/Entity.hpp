@@ -8,7 +8,7 @@ namespace ECS {
 	class Entity {
 	public:
 		MultiArray *arrayPtr_;
-		size_t totalIndex_; // トータル番号
+		uint32_t totalIndex_; // トータル番号
 		uint32_t version_;
 
 		//template<typename T> T& GetComp();
