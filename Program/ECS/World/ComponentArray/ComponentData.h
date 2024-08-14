@@ -46,8 +46,12 @@ namespace ECS {
 
 
 	public:
+		ComponentData() = default;
+		ComponentData(const ComponentData &) = default;
+		ComponentData &operator=(const ComponentData &) = default;
+		ComponentData(uint32_t itemSize, uint32_t count) : size_(itemSize), count_(count) {}
 
-
+		void AddArray(std::byte *ptr) { components_.push_back({ ptr,size_, count_ }); }
 
 		std::span<ComponentArray> GetCompArray() { return { components_.data(), components_.size() }; }
 
@@ -57,7 +61,7 @@ namespace ECS {
 		std::byte *at(uint32_t index) { const uint32_t itemSize_ = size_ * count_; return components_[index / itemSize_][index % itemSize_]; }
 		const std::byte *at(uint32_t index) const { const uint32_t itemSize_ = size_ * count_; return components_[index / itemSize_][index % itemSize_]; }
 
-		uint32_t size() const { return components_.empty() ? 0u : count_ * (components_.size() - 1) + components_.back().size(); }
+		//uint32_t size() const { return components_.empty() ? 0u : count_ * (components_.size() - 1) + components_.back().size(); }
 
 		Range View(uint32_t end) { return Range{ this,0,end }; }
 		Range View(uint32_t begin, uint32_t end) { return Range{ this,begin,end }; }
