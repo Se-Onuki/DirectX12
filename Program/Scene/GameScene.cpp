@@ -285,6 +285,7 @@ void GameScene::OnEnter() {
 	chunk_.Init(playerPrefab_->GetArchetype());
 	chunk_.push_back(ECS::TransformMatComp{ .transformMat_ = Matrix4x4::Identity() });
 	chunk_.emplace_back(9);
+	chunk_.push_back(ECS::TransformMatComp{ .transformMat_ = Matrix4x4::Identity() * 5 });
 
 	auto transMat = chunk_.GetComponent<ECS::TransformMatComp>();
 

@@ -189,8 +189,6 @@ namespace ECS {
 	template<typename T>
 	inline T *Chunk::GetComp(uint32_t index)
 	{
-		// 1つのデータのエンティティの数
-		const uint32_t entCount = archetype_.GetChunkCapacity();
 		return &GetCompArray<T>()->second.at<T>(index);
 	}
 
