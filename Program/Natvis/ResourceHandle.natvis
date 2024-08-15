@@ -45,14 +45,10 @@
   <Type Name="ECS::ComponentData::TRange&lt;*&gt;">
     <DisplayString>{{ size = {end_ - begin_} }}</DisplayString>
     <Expand>
-      <CustomListItems MaxItemsPerView="100">
-        <Variable Name="iBucket" InitialValue="0" />
+      <IndexListItems>
         <Size>end_ - begin_</Size>
-        <Loop>
-          <Item>(compData_->at&lt;$T1&gt;(iBucket))</Item>
-          <Exec>iBucket++</Exec>
-        </Loop>
-      </CustomListItems>
+        <ValueNode>(($T1*)compData_->components_[($i + begin_) / compData_->itemCount_].ptr_)[($i + begin_) % compData_->itemCount_]</ValueNode>
+      </IndexListItems>
     </Expand>
   </Type>
 </AutoVisualizer>
