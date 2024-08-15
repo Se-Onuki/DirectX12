@@ -2,6 +2,8 @@
 #include "../../Archetype.h"
 #include "ComponentArray.h"
 #include <unordered_map>
+#include "EntityArrayStorage.h"
+#include "ComponentData.h"
 
 namespace ECS {
 
@@ -14,7 +16,7 @@ namespace ECS {
 		void Init(const Archetype &archetype);
 
 		template<typename T>
-		std::vector<std::span<T>> GetComponent();
+		ComponentData::TRange<T> GetComponent();
 
 		const Archetype &GetArchetype() const { return archetype_; }
 
@@ -41,42 +43,35 @@ namespace ECS {
 		// 型のデータ
 		Archetype archetype_;
 
-		// データを直接管理するもの
-		std::vector<std::unique_ptr<std::byte[]>> memData_;
+		// 情報の保存先
+		EntityArrayStorage storage_;
 
-		// メモリの管理 [レジストリ番号, データの位置]
-		std::unordered_map<uint32_t, std::vector<ComponentArray>> compArrays_;
+		// コンポーネントへのアクセッサ
+		std::unordered_map<uint32_t, ComponentData> componentDatas_;
 
 		// 保存しているデータの数
 		uint32_t size_;
 
 	private:
 
+		void AddGroups(const uint32_t count = 1u);
+
 		template<typename T>
-		decltype(compArrays_)::iterator GetCompArray();
+		decltype(componentDatas_)::iterator GetCompArray();
 
 	};
 
 
 	template<typename T>
-	inline std::vector<std::span<T>> Chunk::GetComponent()
+	inline ComponentData::TRange<T> Chunk::GetComponent()
 	{
 		// データの配列を取得する
-		decltype(compArrays_)::iterator compTarget = GetCompArray<T>();
+		auto compTarget = GetCompArray<T>();
 		// 存在しなかったら破棄する
-		if (compTarget == compArrays_.end()) { return std::vector<std::span<T>>{}; }
-
-		// 1つのデータのエンティティの数
-		const uint32_t entCount = archetype_.GetChunkCapacity();
+		if (compTarget == componentDatas_.end()) { return {}; }
 
 		// 返すデータ
-		std::vector<std::span<T>> result{ compTarget->second.size() };
-
-		// コンポーネントの配列にして返す
-		std::transform(compTarget->second.begin(), compTarget->second.end(), result.begin(), [](const std::unique_ptr<ComponentArray> &item) { return item->GetArray<T>(); });
-
-		// 末尾のデータを短くなるよう書き換える
-		result.back() = { reinterpret_cast<T *>(compTarget->second.back().data()), size_ % entCount };
+		ComponentData::TRange<T> result = compTarget->second.View<T>(size_);
 
 		// 情報を渡す
 		return result;
@@ -85,60 +80,39 @@ namespace ECS {
 	template<typename ...Ts>
 	inline void Chunk::push_back(const Ts & ...args)
 	{
-		// 1つのデータのエンティティの数
-		const uint32_t entCount = archetype_.GetChunkCapacity();
 
-		// コンポーネントの配列を取得し､その配列にデータを保存する
-		// { GetCompArray<Ts>()->second[size_ / entCount]->GetArray<Ts>()[size_ % entCount] = std::forward<const Ts &>(args); }...;
+		// エンティティのID
+		const uint32_t entityId = emplace_back();
 
 		(
 			(
-				[this, entCount, args]()
+				[this, entityId, args]()
 				{
-					GetCompArray<Ts>()->second[size_ / entCount].GetArray<Ts>()[size_ % entCount] = std::forward<const Ts &>(args);
+					GetCompArray<Ts>()->second.at<Ts>(entityId) = std::forward<const Ts &>(args);
 				}()
 					), ...
 			);
-		Entity *entity = reinterpret_cast<ECS::Entity *>(memData_[size_ / entCount].get()) + size_ % entCount;
-		entity->totalIndex_ = size_;
-		entity->version_++;
 
-		size_++;
 	}
 
 	template<typename ...Ts>
 	inline std::tuple<Ts *...> Chunk::emplace_back()
 	{
-		// 1つのデータのエンティティの数
-		const uint32_t entCount = archetype_.GetChunkCapacity();
-
-		const auto *const compRegistry = ECS::ComponentRegistry::GetInstance();
-
-		// コンポーネントの配列を取得し､その配列にデータを保存する
-		for (auto &[key, comps] : compArrays_) {
-			// コンストラクタを呼び出して実行する
-			compRegistry->typeDatas_[key].constructor_(comps[size_ / entCount][size_ % entCount]);
-		}
+		// エンティティのID
+		const uint32_t entityId = emplace_back();
 
 		using Result = std::tuple<Ts*...>;
-
 
 		// コンポーネントの配列を取得し､その配列にデータを保存する
 		Result result = std::make_tuple(
 			(
 
-				[this, entCount]()
+				[this, entityId]()
 				{
-					return (&(GetCompArray<Ts>()->second[size_ / entCount].GetArray<Ts>()[size_ % entCount]));
+					return (&(GetCompArray<Ts>()->second.at<Ts>(entityId)));
 				}()
 					)...
 		);
-
-		Entity *entity = reinterpret_cast<ECS::Entity *>(memData_[size_ / entCount].get()) + size_ % entCount;
-		entity->totalIndex_ = size_;
-		entity->version_++;
-
-		size_++;
 
 		return result;
 	}
@@ -148,40 +122,47 @@ namespace ECS {
 		// 1つのデータのエンティティの数
 		const uint32_t entCount = archetype_.GetChunkCapacity();
 
+		// もし末尾まで到達していたら
+		if (entCount * storage_.size() <= size_) {
+			// メモリを確保する
+			AddGroups();
+		}
+
 		const auto *const compRegistry = ECS::ComponentRegistry::GetInstance();
 
 		// コンポーネントの配列を取得し､その配列にデータを保存する
-		for (auto &[key, comps] : compArrays_) {
+		for (auto &[key, comps] : componentDatas_) {
 			// コンストラクタを呼び出して実行する
-			compRegistry->typeDatas_[key].constructor_(comps[size_ / entCount][size_ % entCount]);
+			compRegistry->typeDatas_[key].constructor_(comps[size_]);
 		}
-		Entity *entity = reinterpret_cast<ECS::Entity *>(memData_[size_ / entCount].get()) + size_ % entCount;
-		entity->totalIndex_ = size_;
-		entity->version_++;
+
+		// エンティティの取得
+		Entity &entity = storage_.GetEntity(size_);
+		entity.totalIndex_ = size_;
+		entity.version_++;
 
 		return size_++;
 	}
 
 	inline std::byte *Chunk::GetComp(uint32_t compId, uint32_t index)
 	{
-		// 1つのデータのエンティティの数
-		const uint32_t entCount = archetype_.GetChunkCapacity();
-		return compArrays_[compId][index / entCount][index % entCount];
+		return componentDatas_[compId][index];
 	}
+
 
 	template<typename T>
 	inline T *Chunk::GetComp(uint32_t index)
 	{
 		// 1つのデータのエンティティの数
 		const uint32_t entCount = archetype_.GetChunkCapacity();
-		return &GetCompArray<T>()->second[index / entCount].GetArray<T>()[index % entCount];
+		return &GetCompArray<T>()->second.at<T>(index);
 	}
 
 
 	template<typename T>
-	inline decltype(Chunk::compArrays_)::iterator Chunk::GetCompArray()
+	inline decltype(Chunk::componentDatas_)::iterator Chunk::GetCompArray()
 	{
-		return compArrays_.find(ECS::ComponentRegistry::GetIndex<T>());
+		return componentDatas_.find(static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>()));
 	}
 
 }

@@ -474,8 +474,11 @@
     <ClCompile Include="ECS\World\ComponentArray\Chunk.cpp">
       <Filter>ECS\Chunk</Filter>
     </ClCompile>
+    <ClCompile Include="ECS\World\ComponentArray\EntityArrayStorage.cpp">
+      <Filter>ECS\Chunk</Filter>
+    </ClCompile>
     <ClCompile Include="ECS\World\ComponentArray\ComponentData.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ECS\Chunk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

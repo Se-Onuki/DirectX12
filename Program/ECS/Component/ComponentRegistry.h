@@ -179,7 +179,8 @@ namespace ECS {
 			static constexpr std::size_t value = 0;
 		};
 
-		template <IsComponent T, IsComponent... Types >
+		template <IsComponent T, IsComponent... Types>
+			requires(sizeof...(Types) > 0)
 		static constexpr std::size_t GetIndex() {
 			return TypeIndex<T, Types...>::value;
 		}
@@ -187,7 +188,7 @@ namespace ECS {
 	public:
 		template <IsComponent T>
 		static constexpr std::size_t GetIndex() {
-			return TypeIndex<T, TComps...>::value;
+			return GetIndex<T, TComps...>();
 		}
 	};
 

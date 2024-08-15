@@ -282,6 +282,17 @@ void GameScene::OnEnter() {
 
 	vignettingParam_ = { 16.f, 0.8f };
 
+	chunk_.Init(playerPrefab_->GetArchetype());
+	chunk_.emplace_back();
+
+	auto transMat = chunk_.GetComponent<ECS::TransformMatComp>();
+
+	auto &test = *transMat.begin();
+
+	if (&test) {
+
+	}
+
 }
 
 void GameScene::OnExit() {

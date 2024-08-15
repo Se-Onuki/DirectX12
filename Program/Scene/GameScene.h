@@ -32,6 +32,7 @@
 #include "../ECS/Component/ComponentRegistry.h"
 #include "../Engine/DirectBase/Texture/FullScreenTextureStrage.h"
 #include "../Engine/DirectBase/DxResource/DxResourceBufferPool.h"
+#include "../ECS/World/ComponentArray/Chunk.h"
 
 
 class GameScene : public IScene {
@@ -86,6 +87,8 @@ private:
 	std::unique_ptr<World> world_ = nullptr;
 	ECS::EntityManager *entityManager_;
 	ECS::Spawner spawner_;
+
+	ECS::Chunk chunk_;
 
 	ECS::ComponentRegistry *compRegistry_;
 
