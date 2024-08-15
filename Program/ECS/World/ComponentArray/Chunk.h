@@ -31,6 +31,7 @@ namespace ECS {
 		std::tuple<Ts *...> emplace_back();
 
 		uint32_t emplace_back();
+		std::pair<uint32_t, uint32_t> emplace_back(const uint32_t count);
 
 	public:
 
@@ -142,6 +143,41 @@ namespace ECS {
 		entity.version_++;
 
 		return size_++;
+	}
+
+	inline std::pair<uint32_t, uint32_t> Chunk::emplace_back(const uint32_t count)
+	{
+		// 1つのデータのエンティティの数
+		const uint32_t entCount = archetype_.GetChunkCapacity();
+
+		// もし末尾まで到達していたら
+		if (entCount * storage_.size() <= size_) {
+			// メモリを確保する
+			AddGroups();
+		}
+
+		const auto *const compRegistry = ECS::ComponentRegistry::GetInstance();
+
+		// コンポーネントの配列を取得し､その配列にデータを保存する
+		for (auto &[key, comps] : componentDatas_) {
+
+			auto constructor = compRegistry->typeDatas_[key].constructor_;
+
+			for (uint32_t i = 0; i < count; i++) {
+				constructor(comps[size_ + i]);
+			}
+		}
+
+		for (uint32_t i = 0; i < count; i++) {
+			// エンティティの取得
+			Entity &entity = storage_.GetEntity(size_);
+			entity.totalIndex_ = size_;
+			entity.version_++;
+		}
+
+		const std::pair<uint32_t, uint32_t> result{ size_, size_ += count };
+
+		return result;
 	}
 
 	inline std::byte *Chunk::GetComp(uint32_t compId, uint32_t index)

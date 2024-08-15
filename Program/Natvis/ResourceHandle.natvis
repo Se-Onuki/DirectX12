@@ -23,7 +23,7 @@
     <Expand>
 
       <CustomListItems MaxItemsPerView="100">
-        <Variable Name="iBucket" InitialValue="0" />        
+        <Variable Name="iBucket" InitialValue="0" />
         <Loop>
           <Item Condition="bitset_[iBucket] == true">Singleton::instance_->typeDatas_[iBucket]</Item>
           <Exec>iBucket++</Exec>
@@ -39,6 +39,20 @@
       <Item Name ="size">typeSize_</Item>
       <Item Name ="alignas">typeAlignas_</Item>
 
+    </Expand>
+  </Type>
+
+  <Type Name="ECS::ComponentData::TRange&lt;*&gt;">
+    <DisplayString>{{ size = {end_ - begin_} }}</DisplayString>
+    <Expand>
+      <CustomListItems MaxItemsPerView="100">
+        <Variable Name="iBucket" InitialValue="0" />
+        <Size>end_ - begin_</Size>
+        <Loop>
+          <Item>(compData_->at&lt;$T1&gt;(iBucket))</Item>
+          <Exec>iBucket++</Exec>
+        </Loop>
+      </CustomListItems>
     </Expand>
   </Type>
 </AutoVisualizer>

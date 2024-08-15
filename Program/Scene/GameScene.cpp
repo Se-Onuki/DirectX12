@@ -283,15 +283,12 @@ void GameScene::OnEnter() {
 	vignettingParam_ = { 16.f, 0.8f };
 
 	chunk_.Init(playerPrefab_->GetArchetype());
-	chunk_.emplace_back();
+	chunk_.push_back(ECS::TransformMatComp{ .transformMat_ = Matrix4x4::Identity() });
+	chunk_.emplace_back(9);
 
 	auto transMat = chunk_.GetComponent<ECS::TransformMatComp>();
 
-	auto &test = *transMat.begin();
-
-	if (&test) {
-
-	}
+	std::for_each(std::execution::par_unseq, transMat.begin(), transMat.end(), [](ECS::TransformMatComp &comp) { comp.transformMat_ *= 3.f; });
 
 }
 

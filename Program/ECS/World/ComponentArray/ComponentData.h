@@ -10,38 +10,23 @@ namespace ECS {
 
 	class ComponentData;
 
-	template<bool IsConst>
+	template<typename T, bool IsConst>
 	class CompIterator {
 	public:
 
-		template<typename T>
-		using ConstType = std::conditional_t<IsConst, const T, T>;
+		inline static constexpr bool kIsByte = std::is_same_v<T, std::byte>;
+
+		template<typename U>
+		using ConstType = std::conditional_t<IsConst, const U, U>;
 
 		using DataType = std::conditional_t<IsConst, const ComponentData *, ComponentData *>;
 
 		using difference_type = int32_t;
-		using value_type = ConstType<std::byte>;
+		using value_type = ConstType<T>;
 		using iterator_category = std::random_access_iterator_tag;
 
-		friend auto operator++(CompIterator &)->CompIterator &;
-		friend auto operator++(CompIterator &, int)->CompIterator;
-
-		friend auto operator--(CompIterator &)->CompIterator &;
-		friend auto operator--(CompIterator &, int)->CompIterator;
-
-		friend auto operator+(const CompIterator &, int32_t)->CompIterator;
-		friend auto operator+(int32_t, const CompIterator &)->CompIterator;
-		friend auto operator+=(CompIterator &, int32_t)->CompIterator &;
-		friend auto operator-(const CompIterator &, int32_t)->CompIterator;
-		friend auto operator-=(CompIterator &, int32_t)->CompIterator &;
-
-		friend auto operator-(const CompIterator &, const CompIterator &)->difference_type;
-
-		friend auto operator*(const CompIterator &)->value_type &;
+		auto operator*()->value_type &;
 		auto operator[](uint32_t index) const->value_type &;
-
-		friend std::strong_ordering operator<=>(const CompIterator &, const CompIterator &);
-		friend bool operator==(const CompIterator &, const CompIterator &);
 
 		DataType target_;
 
@@ -49,26 +34,13 @@ namespace ECS {
 
 	};
 
-
-	template <typename T, bool IsConst>
-	struct TCompIterator : public CompIterator<IsConst> {
-
-		template<typename U>
-		using ConstType = std::conditional_t<IsConst, const U, U>;
-
-		using value_type = ConstType<T>;
-
-		auto operator*()->value_type &;
-		auto operator[](uint32_t index) const->value_type &;
-	};
-
 	class ComponentData {
 	public:
 
 		class Range {
 		public:
-			using iterator = CompIterator<false>;
-			using const_iterator = CompIterator<true>;
+			using iterator = CompIterator<std::byte, false>;
+			using const_iterator = CompIterator<std::byte, true>;
 
 			Range() = default;
 			Range(const Range &) = default;
@@ -99,8 +71,8 @@ namespace ECS {
 		class TRange {
 		public:
 
-			using iterator = TCompIterator<T, false>;
-			using const_iterator = TCompIterator<T, true>;
+			using iterator = CompIterator<T, false>;
+			using const_iterator = CompIterator<T, true>;
 
 			TRange() = default;
 			TRange(const TRange &) = default;
@@ -116,6 +88,9 @@ namespace ECS {
 			iterator end() { return iterator{ compData_, end_ }; }
 			const_iterator end() const { return const_iterator{ compData_, end_ }; }
 			const_iterator cend() const { return const_iterator{ compData_, end_ }; }
+
+			T &operator[](uint32_t i) { return compData_->at<T>(begin_ + i); }
+			const T &operator[](uint32_t i) const { return compData_->at<T>(begin_ + i); }
 
 			uint32_t size() const { return end_ - begin_; }
 
@@ -168,115 +143,107 @@ namespace ECS {
 
 #pragma region Func
 
-	template<bool IsConst>
-	auto operator++(CompIterator<IsConst> &itr) -> CompIterator<IsConst> &
+	template<typename T, bool IsConst>
+	auto operator++(CompIterator<T, IsConst> &itr) -> CompIterator<T, IsConst> &
 	{
 		itr.index_++;
 		return itr;
 	}
 
-	template<bool IsConst>
-	auto operator++(CompIterator<IsConst> &itr, int) -> CompIterator<IsConst>
+	template<typename T, bool IsConst>
+	auto operator++(CompIterator<T, IsConst> &itr, int) -> CompIterator<T, IsConst>
 	{
 		auto result = itr;
 		itr.index_++;
 		return result;
 	}
 
-	template<bool IsConst>
-	auto operator--(CompIterator<IsConst> &itr) -> CompIterator<IsConst> &
+	template<typename T, bool IsConst>
+	auto operator--(CompIterator<T, IsConst> &itr) -> CompIterator<T, IsConst> &
 	{
 		itr.index_--;
 		return itr;
 	}
 
-	template<bool IsConst>
-	auto operator--(CompIterator<IsConst> &itr, int) -> CompIterator<IsConst>
+	template<typename T, bool IsConst>
+	auto operator--(CompIterator<T, IsConst> &itr, int) -> CompIterator<T, IsConst>
 	{
 		auto result = itr;
 		itr.index_--;
 		return result;
 	}
 
-	template<bool IsConst>
-	auto operator+(const CompIterator<IsConst> &itr, int32_t diff) -> CompIterator<IsConst>
+	template<typename T, bool IsConst>
+	auto operator+(const CompIterator<T, IsConst> &itr, int32_t diff) -> CompIterator<T, IsConst>
 	{
-		CompIterator<IsConst> result = itr;
+		CompIterator<T, IsConst> result = itr;
 		result.index_ += diff;
 		return result;
 	}
-	template<bool IsConst>
-	auto operator+(int32_t diff, const CompIterator<IsConst> &itr) -> CompIterator<IsConst>
+	template<typename T, bool IsConst>
+	auto operator+(int32_t diff, const CompIterator<T, IsConst> &itr) -> CompIterator<T, IsConst>
 	{
-		CompIterator<IsConst> result = itr;
+		CompIterator<T, IsConst> result = itr;
 		result.index_ += diff;
 		return result;
 	}
-	template<bool IsConst>
-	auto operator+=(CompIterator<IsConst> &itr, int32_t diff) -> CompIterator<IsConst> &
+	template<typename T, bool IsConst>
+	auto operator+=(CompIterator<T, IsConst> &itr, int32_t diff) -> CompIterator<T, IsConst> &
 	{
 		itr.index_ += diff;
 		return itr;
 	}
-	template<bool IsConst>
-	auto operator-(const CompIterator<IsConst> &itr, int32_t diff) -> CompIterator<IsConst>
+	template<typename T, bool IsConst>
+	auto operator-(const CompIterator<T, IsConst> &itr, int32_t diff) -> CompIterator<T, IsConst>
 	{
-		CompIterator<IsConst> result = itr;
+		CompIterator<T, IsConst> result = itr;
 		result.index_ -= diff;
 		return result;
 	}
-	template<bool IsConst>
-	auto operator-=(CompIterator<IsConst> &itr, int32_t diff) -> CompIterator<IsConst> &
+	template<typename T, bool IsConst>
+	auto operator-=(CompIterator<T, IsConst> &itr, int32_t diff) -> CompIterator<T, IsConst> &
 	{
 		itr.index_ -= diff;
 		return itr;
 	}
-	template<bool IsConst>
-	auto operator-(const CompIterator<IsConst> &l, const CompIterator<IsConst> &r) -> CompIterator<IsConst>::difference_type
+	template<typename T, bool IsConst>
+	auto operator-(const CompIterator<T, IsConst> &l, const CompIterator<T, IsConst> &r) -> CompIterator<T, IsConst>::difference_type
 	{
 		return l.index_ - r.index_;
 	}
 
-	template<bool IsConst>
-	auto operator*(const CompIterator<IsConst> &itr) -> CompIterator<IsConst>::value_type &
+	template<typename T, bool IsConst>
+	auto CompIterator<T, IsConst>::operator*() -> CompIterator<T, IsConst>::value_type &
 	{
-		return itr.target_->at(itr.index_);
+		if constexpr (kIsByte) {
+			return *target_->at(index_);
+		}
+		else {
+			return target_->at<T>(index_);
+		}
 	}
-	template<bool IsConst>
-	bool operator==(const CompIterator<IsConst> &l, const CompIterator<IsConst> &r)
+	template<typename T, bool IsConst>
+	bool operator==(const CompIterator<T, IsConst> &l, const CompIterator<T, IsConst> &r)
 	{
 		return l.index_ == r.index_ and l.target_ == r.target_;
 	}
-	template<bool IsConst>
-	std::strong_ordering operator<=>(const CompIterator<IsConst> &l, const CompIterator<IsConst> &r)
+	template<typename T, bool IsConst>
+	std::strong_ordering operator<=>(const CompIterator<T, IsConst> &l, const CompIterator<T, IsConst> &r)
 	{
 		if (auto comp = l.index_ <=> r.index_; comp != 0) return comp;
 		return l.target_ <=> r.target_;
 	}
 
-	template<bool IsConst>
-	auto CompIterator<IsConst>::operator[](uint32_t index_) const -> CompIterator<IsConst>::value_type &
-	{
-		return *target_->at(index_);
-	}
-
-#pragma region TemplateRange
-
 	template<typename T, bool IsConst>
-	auto TCompIterator<T, IsConst>::operator[](uint32_t index) const -> TCompIterator<T, IsConst>::value_type &
+	auto CompIterator<T, IsConst>::operator[](uint32_t index_) const -> CompIterator<T, IsConst>::value_type &
 	{
-		return *reinterpret_cast<value_type *>((*static_cast<const CompIterator<IsConst>*>(this))[index]);
+		if constexpr (kIsByte) {
+			return *target_->at(index_);
+		}
+		else {
+			return target_->at<T>(index_);
+		}
 	}
-
-	template<typename T, bool IsConst>
-	auto TCompIterator<T, IsConst>::operator*() -> typename TCompIterator<T, IsConst>::value_type &
-	{
-		return this->target_->at<T>(this->index_);
-	}
-
-#pragma endregion
-
-
 
 #pragma endregion
 
