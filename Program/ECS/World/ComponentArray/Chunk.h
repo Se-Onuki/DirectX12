@@ -66,6 +66,10 @@ namespace ECS {
 		EntityClass &GetEntity(uint32_t index) { return storage_.GetEntity(index); }
 		const EntityClass &GetEntity(uint32_t index) const { return storage_.GetEntity(index); }
 
+	public:
+
+		void Resize(uint32_t size) { size_ = size; }
+
 	private:
 
 		// 型のデータ
