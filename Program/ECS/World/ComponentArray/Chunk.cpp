@@ -1,12 +1,14 @@
 #include "Chunk.h"
 
 namespace ECS {
+
 	Chunk::Chunk(const Archetype &archetype)
 	{
 		// 初期化する
 		Init(archetype);
 
 	}
+
 	void Chunk::Init(const Archetype &archetype)
 	{
 		const ECS::ComponentRegistry *registry = ECS::ComponentRegistry::GetInstance();
@@ -20,7 +22,7 @@ namespace ECS {
 		componentDatas_.reserve(archetype_.compFlag_.Get().count());
 
 		// エンティティストレージの確保
-		storage_ = EntityArrayStorage{ archetype_.GetChunkCapacity() };
+		storage_ = EntityArrayStorage{ this, archetype_.GetChunkCapacity() };
 		// エンティティの数
 		const uint32_t entCount = archetype_.GetChunkCapacity();
 

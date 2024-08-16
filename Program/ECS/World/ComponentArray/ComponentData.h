@@ -106,17 +106,17 @@ namespace ECS {
 		ComponentData() = default;
 		ComponentData(const ComponentData &) = default;
 		ComponentData &operator=(const ComponentData &) = default;
-		ComponentData(uint32_t itemSize, uint32_t count) : itemSize_(itemSize), itemCount_(count) {}
+		ComponentData(uint32_t itemSize, uint32_t count) : typeSize_(itemSize), itemCount_(count) {}
 
-		void AddArray(std::byte *ptr) { components_.push_back({ ptr,itemSize_, itemCount_ }); }
+		void AddArray(std::byte *ptr) { components_.push_back({ ptr,typeSize_, itemCount_ }); }
 
 		std::span<ComponentArray> GetCompArray() { return { components_.data(), components_.size() }; }
 
-		std::byte *operator[](uint32_t index) { const uint32_t groupSize = itemSize_ * itemCount_; return components_[index / groupSize][index % groupSize]; }
-		const std::byte *operator[](uint32_t index) const { const uint32_t groupSize = itemSize_ * itemCount_; return components_[index / groupSize][index % groupSize]; }
+		std::byte *operator[](uint32_t index) { const uint32_t groupSize = typeSize_ * itemCount_; return components_[index / groupSize][index % groupSize]; }
+		const std::byte *operator[](uint32_t index) const { const uint32_t groupSize = typeSize_ * itemCount_; return components_[index / groupSize][index % groupSize]; }
 
-		std::byte &at(uint32_t index) { const uint32_t groupSize = itemSize_ * itemCount_; return *components_[index / groupSize][index % groupSize]; }
-		const std::byte &at(uint32_t index) const { const uint32_t groupSize = itemSize_ * itemCount_; return *components_[index / groupSize][index % groupSize]; }
+		std::byte &at(uint32_t index) { const uint32_t groupSize = typeSize_ * itemCount_; return *components_[index / groupSize][index % groupSize]; }
+		const std::byte &at(uint32_t index) const { const uint32_t groupSize = typeSize_ * itemCount_; return *components_[index / groupSize][index % groupSize]; }
 
 		template<typename T>
 		T &at(uint32_t index) { return reinterpret_cast<T &>(at(index)); }
@@ -131,12 +131,14 @@ namespace ECS {
 		template<typename T>
 		TRange<T> View(uint32_t begin, uint32_t end) { return TRange<T>{ this, begin, end }; }
 
+		uint32_t GetTypeSize() const { return typeSize_; }
+
 
 	private:
 		// コンポーネントの配列
 		std::vector<ComponentArray> components_;
 		// 形のサイズ
-		uint32_t itemSize_;
+		uint32_t typeSize_;
 		// コンポーネント配列の長さ
 		uint32_t itemCount_;
 	};

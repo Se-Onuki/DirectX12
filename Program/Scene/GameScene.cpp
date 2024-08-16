@@ -291,6 +291,11 @@ void GameScene::OnEnter() {
 
 	std::for_each(std::execution::par_unseq, transMat.begin(), transMat.end(), [](ECS::TransformMatComp &comp) { comp.transformMat_ *= 3.f; });
 
+	auto range = chunk_.View<ECS::TransformMatComp>();
+
+	auto a = std::remove_if(range.begin(), range.end(), [](auto &item) { return item->transformMat_.m[0][0] == 0.f; });
+
+
 }
 
 void GameScene::OnExit() {

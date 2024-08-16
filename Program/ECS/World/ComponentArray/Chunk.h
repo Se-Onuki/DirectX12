@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include "EntityArrayStorage.h"
 #include "ComponentData.h"
+#include "ChunkIterator.h"
+#include "ChunkRange.h"
 
 namespace ECS {
 
@@ -14,6 +16,24 @@ namespace ECS {
 		Chunk(const Archetype &archetype);
 
 		void Init(const Archetype &archetype);
+
+	public:
+
+		friend ChunkEntityAccessor;
+		friend void EntityMove(Chunk *, uint32_t, uint32_t);
+		friend std::byte &ECS::GetComp(Chunk *, uint32_t, uint32_t);
+
+	public:
+
+		using iterator = ChunkIterator;
+
+	public:
+		template<typename T>
+		ChunkRange<T> View() { return { this, &(GetCompArray<T>()->second), 0u, size_ }; }
+
+		iterator begin() { iterator{ this, 0 }; }
+
+		iterator end() { iterator{ this, size_ }; }
 
 		template<typename T>
 		ComponentData::TRange<T> GetComponent();
@@ -35,9 +55,16 @@ namespace ECS {
 
 	public:
 
+		/// @brief コンポーネントの取得
+		/// @param compId コンポーネントのID
+		/// @param index エンティティの番号
+		/// @return データのアドレス
 		std::byte *GetComp(uint32_t compId, uint32_t index);
 		template<typename T>
 		T *GetComp(uint32_t index);
+
+		EntityClass &GetEntity(uint32_t index) { return storage_.GetEntity(index); }
+		const EntityClass &GetEntity(uint32_t index) const { return storage_.GetEntity(index); }
 
 	private:
 
@@ -51,7 +78,7 @@ namespace ECS {
 		std::unordered_map<uint32_t, ComponentData> componentDatas_;
 
 		// 保存しているデータの数
-		uint32_t size_;
+		uint32_t size_ = 0u;
 
 	private:
 
@@ -138,7 +165,7 @@ namespace ECS {
 		}
 
 		// エンティティの取得
-		Entity &entity = storage_.GetEntity(size_);
+		EntityClass &entity = storage_.GetEntity(size_);
 		entity.totalIndex_ = size_;
 		entity.version_++;
 
@@ -170,7 +197,7 @@ namespace ECS {
 
 		for (uint32_t i = 0; i < count; i++) {
 			// エンティティの取得
-			Entity &entity = storage_.GetEntity(size_);
+			EntityClass &entity = storage_.GetEntity(size_);
 			entity.totalIndex_ = size_;
 			entity.version_++;
 		}

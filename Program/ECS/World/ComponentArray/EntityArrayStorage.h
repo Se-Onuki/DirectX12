@@ -1,11 +1,73 @@
 #pragma once
 #include <vector>
-#include "../../Entity/Entity.hpp"
 #include "../../Archetype.h"
 #include <memory>
 #include <span>
 
 namespace ECS {
+
+	class Chunk;
+
+	class EntityAccessor;
+
+	template<typename T>
+	class EntityCompAccessor;
+
+	template<typename T>
+	T &GetComp(Chunk *chunk, uint32_t index) {
+		constexpr uint32_t compId = static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>());
+		return reinterpret_cast<T &>(GetComp(chunk, compId, index));
+	}
+
+	std::byte &GetComp(Chunk *chunk, uint32_t compId, uint32_t index);
+
+	void EntityMove(Chunk *chunk, uint32_t dst, uint32_t src);
+
+	class EntityClass {
+	public:
+		Chunk *chunk_;
+		uint32_t totalIndex_; // トータル番号
+		uint32_t version_;
+
+		operator EntityAccessor &() { return reinterpret_cast<EntityAccessor &>(*this); }
+		template<typename T>
+		operator EntityCompAccessor<T> &() { return reinterpret_cast<EntityCompAccessor<T> &>(*this); }
+
+		//template<typename T>
+		//T &GetComp();
+
+	};
+
+	class EntityAccessor {
+	public:
+		Chunk *chunk_;
+		uint32_t totalIndex_; // トータル番号
+		uint32_t version_;
+
+	private:
+
+	};
+
+	template<typename T>
+	class EntityCompAccessor {
+	public:
+		Chunk *chunk_;
+		uint32_t totalIndex_; // トータル番号
+		uint32_t version_;
+
+		T *operator->() { return &GetComp<T>(chunk_, totalIndex_); }
+
+		EntityCompAccessor &operator=(EntityCompAccessor &&move) {
+			EntityMove(chunk_, totalIndex_, move.totalIndex_);
+			return *this;
+		}
+
+	private:
+
+	};
+
+	EntityClass &GetEntity(Chunk *chunk, uint32_t index);
+
 	class EntityArrayStorage
 	{
 	public:
@@ -13,18 +75,18 @@ namespace ECS {
 		EntityArrayStorage(const EntityArrayStorage &) = default;
 		EntityArrayStorage &operator=(const EntityArrayStorage &) = default;
 		EntityArrayStorage &operator=(EntityArrayStorage &&) = default;
-		EntityArrayStorage(uint32_t entCount) :entityCount_(entCount) {}
+		EntityArrayStorage(Chunk *chunk, uint32_t entCount) : chunk_(chunk), entityCount_(entCount) {}
 		~EntityArrayStorage() = default;
 
 	public:
 
 		// エンティティとそれのデータのペア
-		using EntityStorage = std::pair<std::unique_ptr<Entity[]>, std::unique_ptr<std::array<std::byte, Archetype::kOneChunkCapacity>>>;
+		using EntityStorage = std::pair<std::unique_ptr<EntityClass[]>, std::unique_ptr<std::array<std::byte, Archetype::kOneChunkCapacity>>>;
 
 		// エンティティとコンポーネント情報群へのアクセッサ
 		template<bool IsConst = false>
 		using EntityData = std::pair<
-			std::conditional_t<IsConst, std::span<const Entity>, std::span<Entity>>,
+			std::conditional_t<IsConst, std::span<const EntityClass>, std::span<EntityClass>>,
 			std::conditional_t<IsConst, const std::array<std::byte, Archetype::kOneChunkCapacity> &, std::array<std::byte, Archetype::kOneChunkCapacity> &>
 		>;
 
@@ -47,7 +109,7 @@ namespace ECS {
 		EntityData<false> GetEntityData(uint32_t groupId) {
 			const auto &item = entityStorage_.at(groupId);
 			EntityData<false> result = {
-				std::span<Entity>{item.first.get(), entityCount_},
+				std::span<EntityClass>{item.first.get(), entityCount_},
 				*item.second
 			};
 			return result;
@@ -55,16 +117,17 @@ namespace ECS {
 		const EntityData<true> GetEntityData(uint32_t groupId) const {
 			const auto &item = entityStorage_.at(groupId);
 			const EntityData<true> result = {
-				std::span<const Entity>{item.first.get(), entityCount_},
+				std::span<const EntityClass>{item.first.get(), entityCount_},
 				*item.second
 			};
 			return result;
 		}
 
-		Entity &GetEntity(uint32_t index) { return entityStorage_[index / entityCount_].first[index % entityCount_]; }
-		const Entity &GetEntity(uint32_t index) const { return entityStorage_[index / entityCount_].first[index % entityCount_]; }
+		EntityClass &GetEntity(uint32_t index) { return entityStorage_[index / entityCount_].first[index % entityCount_]; }
+		const EntityClass &GetEntity(uint32_t index) const { return entityStorage_[index / entityCount_].first[index % entityCount_]; }
 
 	private:
+		Chunk *chunk_;
 
 		// エンティティとメモリの管理
 		std::vector<EntityStorage> entityStorage_;
