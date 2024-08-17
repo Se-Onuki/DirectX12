@@ -959,6 +959,9 @@
     <ClInclude Include="ECS\System\FunctionalSystem.h">
       <Filter>ECS\System</Filter>
     </ClInclude>
+    <ClInclude Include="ECS\World\NewWorld.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

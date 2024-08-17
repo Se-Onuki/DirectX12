@@ -7,6 +7,7 @@
 #include "../World/ComponentArray/ComponentData.h"
 #include "../Component/Component.hpp"
 #include "../Component/ComponentRegistry.h"
+#include "../World/NewWorld.h"
 
 namespace ECS {
 
@@ -15,6 +16,7 @@ namespace ECS {
 	struct IFunctionalSystem {
 		virtual ~IFunctionalSystem() = default;
 		virtual void Execute() = 0;
+		float deltaTime_ = 0.f;
 	};
 
 	/*template<typename... Ts>
@@ -43,7 +45,6 @@ namespace ECS {
 		}
 	};
 
-
 	struct TestSystem : public IFunctionalSystem {
 
 		using ReadWrite = GetComponentHelper<ECS::PositionComp, ECS::TransformMatComp>;
@@ -64,14 +65,19 @@ namespace ECS {
 
 	class SystemExecuter {
 	public:
+
+		using SystemData = std::pair<std::span<const uint32_t>, std::unique_ptr<IFunctionalSystem>(*)(std::byte **)>;
+
 		SystemExecuter() = default;
 
 		template<SoLib::IsBased<IFunctionalSystem> T>
 		void AddSystem();
 
+		void Execute(const SystemData &systemData, Chunk *chunk);
 		void Execute(Chunk *chunk);
+		void Execute(World *world);
 
-		std::list<std::pair<std::span<const uint32_t>, std::unique_ptr<IFunctionalSystem>(*)(std::byte **)>> systems_;
+		std::list<SystemData> systems_;
 
 	private:
 

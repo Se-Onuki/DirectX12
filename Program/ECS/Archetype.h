@@ -18,14 +18,27 @@ public:
 
 	Archetype() = default;
 
+	void AddClassData(const std::initializer_list<uint32_t> &component) {
+		ECS::ComponentRegistry *const compReg = ECS::ComponentRegistry::GetInstance();
+		// サイズを追加する
+		for (uint32_t arg : component) {
+			if (not compFlag_.Get().test(arg)) { totalSize_ += compReg->typeDatas_[arg].typeSize_; }
+		}
+		compFlag_.AddComp(component);
+
+		// 追加した型で容量を計算する
+		chunkCapacity_ = CalcCapacity();
+	}
+
 	template<typename T, typename... TComps>
 	void AddClassData() {
-		compFlag_.AddComp<T, TComps...>();
 
 		// サイズを追加する
-		totalSize_ += sizeof(T);
-		((totalSize_ += sizeof(TComps)), ...);
-		
+		if (not compFlag_.IsHasComp<T>()) { totalSize_ += sizeof(T); };
+		(([this]() { if (not compFlag_.IsHasComp<TComps>()) { totalSize_ += sizeof(TComps); }}), ...);
+
+		compFlag_.AddComp<T, TComps...>();
+
 		// 追加した型で容量を計算する
 		chunkCapacity_ = CalcCapacity();
 	}

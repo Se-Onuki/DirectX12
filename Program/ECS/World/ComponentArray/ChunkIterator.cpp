@@ -78,14 +78,14 @@ namespace ECS {
 		return l.chunk_ <=> r.chunk_;
 	}
 
-	auto ChunkIterator::operator*() -> ChunkIterator::value_type
+	auto ChunkIterator::operator*() -> ChunkIterator::value_type &
 	{
-		return { chunk_, index_ };
+		return chunk_->GetEntity(index_);
 	}
 
-	auto ChunkIterator::operator[](uint32_t index) const -> ChunkIterator::value_type
+	auto ChunkIterator::operator[](uint32_t index) const -> ChunkIterator::value_type &
 	{
-		return { chunk_, index };
+		return chunk_->GetEntity(index);
 	}
 
 	/// @brief データのムーブコピーを行う

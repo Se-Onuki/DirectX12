@@ -35,9 +35,9 @@ namespace ECS {
 			requires(sizeof...(Ts) >= 2)
 		ChunkRange<Ts...> View() { return { this, std::tuple<ComponentData*...>{&(GetCompArray<Ts>()->second)... }, 0u, size_ }; }
 
-		iterator begin() { iterator{ this, 0 }; }
+		iterator begin() { return iterator{ this, 0 }; }
 
-		iterator end() { iterator{ this, size_ }; }
+		iterator end() { return iterator{ this, size_ }; }
 
 		ComponentData *GetComponent(uint32_t compId);
 		ComponentData::Range GetComponentRange(uint32_t compId);

@@ -3,6 +3,7 @@
 #include <functional>
 #include <list>
 #include "../MultiArray.h"
+#include "NewWorld.h"
 namespace ECS {
 	class EntityManager;
 

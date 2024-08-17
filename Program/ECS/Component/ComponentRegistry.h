@@ -83,6 +83,12 @@ namespace ECS {
 				return bitset_;
 			}
 
+			void AddComp(const std::initializer_list<uint32_t> &args) {
+				for (uint32_t arg : args) {
+					bitset_.set(arg);
+				}
+			}
+
 			template <IsComponent T, IsComponent... Ts>
 			void AddComp() {
 				constexpr std::size_t index = GetIndex<T, TComps...>();

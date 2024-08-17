@@ -3,7 +3,7 @@
 #include "../World/World.hpp"
 #include <limits>
 
-ECS::EntityManager::EntityManager(World* world) : world_(world) {}
+ECS::EntityManager::EntityManager(::World* world) : world_(world) {}
 
 //
 //std::vector<Chunk&> EntityManager::FindHitChunk(const Archetype& archetype) {

@@ -12,7 +12,7 @@ namespace ECS {
 
 	class EntityManager {
 	public:
-		EntityManager(World *world);
+		EntityManager(::World *world);
 
 		/*template<typename... Ts>
 		Entity CreateEntity(const Ts&... value) {
@@ -135,6 +135,6 @@ namespace ECS {
 		//}
 		//void CheckORCreateChunk() {}
 
-		World *world_;
+		::World *world_;
 	};
 }

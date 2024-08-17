@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <compare>
-#include "../../Entity/Entity.hpp"
 #include <iterator>
+#include "EntityArrayStorage.h"
 
 namespace ECS {
 
@@ -38,7 +38,7 @@ namespace ECS {
 	public:
 
 		using difference_type = int32_t;
-		using value_type = ChunkEntityAccessor;
+		using value_type = EntityClass;
 		using iterator_category = std::random_access_iterator_tag;
 
 	public:
@@ -58,8 +58,8 @@ namespace ECS {
 
 	public:
 
-		auto operator*()->value_type;
-		auto operator[](uint32_t index) const->value_type;
+		auto operator*()->value_type&;
+		auto operator[](uint32_t index) const->value_type&;
 
 	private:
 
