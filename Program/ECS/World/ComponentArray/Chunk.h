@@ -202,6 +202,8 @@ namespace ECS {
 			AddGroups();
 		}
 
+		const uint32_t beforeCount = size_;
+
 		const auto *const compRegistry = ECS::ComponentRegistry::GetInstance();
 
 		// コンポーネントの配列を取得し､その配列にデータを保存する
@@ -217,11 +219,10 @@ namespace ECS {
 		for (uint32_t i = 0; i < count; i++) {
 			// エンティティの取得
 			EntityClass &entity = storage_.GetEntity(size_ + i);
-			entity.totalIndex_ = size_;
 			entity.version_++;
 		}
-
-		const std::pair<uint32_t, uint32_t> result{ size_, size_ += count };
+		size_ += count;
+		const std::pair<uint32_t, uint32_t> result{ beforeCount, size_ };
 
 		return result;
 	}

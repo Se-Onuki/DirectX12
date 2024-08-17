@@ -560,7 +560,7 @@ void GameScene::Draw() {
 	healthBar_->Draw();
 
 	expBar_->Draw();
-	levelUI_->Draw();
+	//levelUI_->Draw();
 	// スプライトの描画
 	Fade::GetInstance()->Draw();
 
