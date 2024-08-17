@@ -1,6 +1,7 @@
 #pragma once
 #include "Prefab.h"
 #include "EntityManager.hpp"
+#include "../World/NewWorld.h"
 
 namespace ECS {
 
@@ -8,7 +9,7 @@ namespace ECS {
 	private:
 
 		// 生成時に呼び出される関数
-		using SpawnFunc = void(*)(std::list<ECS::Entity> &entList, ECS::EntityManager *manager);
+		using SpawnFunc = void(*)(std::vector<ECS::EntityClass> &entList);
 
 		struct SpawnData {
 			// 基礎となるプレハブ
@@ -27,19 +28,17 @@ namespace ECS {
 			spawnDatas_.clear();
 		}
 
-		void Execute(ECS::EntityManager *manager) {
+		void Execute(ECS::World *world) {
 			for (auto &[spawnData, count] : spawnDatas_) {
 				// 指定された個数分追加する
-				auto entList = manager->CreateEntity(*spawnData.basePrefab_, count);
+				auto entList = world->CreateEntity(*spawnData.basePrefab_, count);
 				// もし生成関数があれば
 				if (spawnData.spawnFunc_) {
 					// 生成関数を実行する
-					spawnData.spawnFunc_(entList, manager);
+					spawnData.spawnFunc_(entList);
 				}
 			}
 		}
-
-		void Execute(ECS::World *world);
 
 		/// @brief 生成するオブジェクトを追加
 		/// @param prefab 追加するプレハブ

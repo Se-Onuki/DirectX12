@@ -120,7 +120,7 @@ namespace ECS {
 				EnemyMove(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
 				ReadWrite::Components readWrite_;
 
-				inline static Vector3 playerPos_{};
+				static Vector3 playerPos_;
 
 				void Execute() override;
 			};
@@ -143,7 +143,7 @@ namespace ECS {
 				FallCollision(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
 				ReadWrite::Components readWrite_;
 
-				inline static const Ground *ground_;
+				static const Ground *ground_;
 
 				void Execute() override;
 			};
@@ -176,7 +176,7 @@ namespace ECS {
 				PlayerAttack(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
 				ReadWrite::Components readWrite_;
 
-				inline static Model *attackModel_;
+				static Model *attackModel_;
 
 				void Execute() override;
 			};
@@ -234,7 +234,7 @@ namespace ECS {
 				DrawHelthBar(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
 				ReadWrite::Components readWrite_;
 
-				inline static HealthBar *healthBar_ = nullptr;
+				static HealthBar *healthBar_;
 
 				void Execute() override;
 			};
@@ -248,8 +248,10 @@ namespace ECS {
 
 				inline static constexpr uint32_t kDrawCount_ = 50u;
 
-				inline static std::array<std::unique_ptr<HealthBar>, kDrawCount_> *healthBar_ = nullptr;
-				inline static uint32_t drawCount_{};
+				static std::array<std::unique_ptr<HealthBar>, kDrawCount_> *healthBar_;
+				static uint32_t drawCount_;
+
+				static void Init(std::array<std::unique_ptr<HealthBar>, kDrawCount_> *healthBar);
 
 				void Execute() override;
 			};
@@ -269,10 +271,10 @@ namespace ECS {
 				ExpGaugeDrawer(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
 				ReadWrite::Components readWrite_;
 
-				inline static uint32_t prevLevel_ = 0u;
-				inline static SoLib::DeltaTimer levelUpTimer_{ 1.5f };
-				inline static Sprite *levelUI_ = nullptr;
-				inline static HealthBar *expBar_ = nullptr;
+				static uint32_t prevLevel_;
+				static SoLib::DeltaTimer levelUpTimer_;
+				static Sprite *levelUI_;
+				static HealthBar *expBar_;
 
 				void Execute() override;
 			};

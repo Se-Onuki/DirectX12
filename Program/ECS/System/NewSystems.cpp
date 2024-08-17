@@ -99,6 +99,7 @@ namespace ECS::System::Par {
 		pos.position_ += velocity.velocity_ * deltaTime_;
 	}
 
+	Vector3 EnemyMove::playerPos_{};
 	void EnemyMove::Execute()
 	{
 
@@ -159,7 +160,7 @@ namespace ECS::System::Par {
 			}
 		}
 	}
-
+	const Ground *FallCollision::ground_ = nullptr;
 	void FallCollision::Execute()
 	{
 		auto &[collision, pos, velocity] = readWrite_;
@@ -271,7 +272,7 @@ namespace ECS::System::Par {
 			quateRot.quateRot_ = Quaternion{ Vector3::up * -(Vector2::up ^ halfVector), Vector2::up * halfVector };
 		}
 	}
-
+	Model *PlayerAttack::attackModel_ = nullptr;
 	void PlayerAttack::Execute()
 	{
 		static ParticleManager *const particleManager = ParticleManager::GetInstance();
@@ -366,11 +367,19 @@ namespace ECS::System::Par {
 		mat.transformMat_ = SoLib::Math::Affine(scale, rot.rotate_, pos);
 
 	}
-
+	HealthBar *DrawHelthBar::healthBar_ = nullptr;
 	void DrawHelthBar::Execute()
 	{
 		auto &[plTag, health] = readWrite_;
 		healthBar_->SetPercent(health.CalcPercent());
+	}
+
+	std::array<std::unique_ptr<HealthBar>, DrawEnemyHelthBar::kDrawCount_> *DrawEnemyHelthBar::healthBar_ = nullptr;
+	uint32_t DrawEnemyHelthBar::drawCount_ = 0;
+
+	void DrawEnemyHelthBar::Init(std::array<std::unique_ptr<HealthBar>, kDrawCount_> *healthBar)
+	{
+		healthBar_ = healthBar;
 	}
 
 	void DrawEnemyHelthBar::Execute()
@@ -452,7 +461,10 @@ namespace ECS::System::Par {
 
 
 	}
-
+	uint32_t ExpGaugeDrawer::prevLevel_ = 0u;
+	SoLib::DeltaTimer ExpGaugeDrawer::levelUpTimer_{ 1.5f };
+	Sprite *ExpGaugeDrawer::levelUI_ = nullptr;
+	HealthBar *ExpGaugeDrawer::expBar_ = nullptr;
 	void ExpGaugeDrawer::Execute()
 	{
 	}

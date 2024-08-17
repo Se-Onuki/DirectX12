@@ -43,6 +43,13 @@ namespace ECS {
 		template<typename T, typename Predicate>
 		void erase_if(Predicate pred);
 
+		uint32_t size() {
+			uint32_t result = 0;
+			for (const auto &[key, chunk] : chunkMap_) {
+				result += chunk->size();
+			}
+			return result;
+		}
 
 	private:
 

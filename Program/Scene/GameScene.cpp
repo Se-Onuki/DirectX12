@@ -65,8 +65,6 @@ void GameScene::OnEnter() {
 	skinModelHandleRender_->Init(1024u);
 	particleManager_->Init(2048u);
 
-	world_ = std::make_unique<World>();
-	entityManager_ = world_->GetEntityManager();
 	ModelManager::GetInstance()->CreateDefaultModel();
 
 	ModelManager::GetInstance()->GetModel("Plane")->materialMap_.begin()->second->texHandle_ = TextureManager::Load("uvChecker.png");
@@ -90,8 +88,6 @@ void GameScene::OnEnter() {
 		mtr->blendMode_ = Model::BlendMode::kAdd;
 
 	}
-
-	// auto sphere = ModelManager::GetInstance()->AddModel("Sphere", Model::LoadObjFile("", "Sphere.obj"));
 
 	// カーソルのモデル
 	auto cursor = ModelManager::GetInstance()->AddModel("Cursor", Model::CreatePlane());
@@ -139,7 +135,8 @@ void GameScene::OnEnter() {
 	*prefab_ += ECS::AliveTime{};
 	*prefab_ += ECS::EmitterComp{ .count_ = 5u, .startColor_ = 0xFFFF00FF, .endColor_ = 0xFF000000, .spawnLifeLimit_{0.1f, 0.2f}, .spawnPower_{0.05f, 0.1f}, .spawnRange_{90._deg, 180._deg, 0.f} };
 
-	entityManager_->CreateEntity(*prefab_);
+	//entityManager_->CreateEntity(*prefab_);
+	newWorld_.CreateEntity(*prefab_);
 
 	playerPrefab_ = std::make_unique<ECS::Prefab>();
 
@@ -169,7 +166,8 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
 	*playerPrefab_ += ECS::Experience{ };
 
-	entityManager_->CreateEntity(*playerPrefab_);
+	//entityManager_->CreateEntity(*playerPrefab_);
+	newWorld_.CreateEntity(*playerPrefab_);
 
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
 	*enemyPrefab_ += ECS::IsAlive{};
@@ -186,7 +184,8 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::AttackPower{ .power_ = 10 };
 	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
 
-	entityManager_->CreateEntity(*enemyPrefab_);
+	//entityManager_->CreateEntity(*enemyPrefab_);
+	newWorld_.CreateEntity(*enemyPrefab_);
 
 	// カメラのオフセット位置
 	const Vector3 cameraOffset{ 0.f,1.f,-1.f };
@@ -195,7 +194,8 @@ void GameScene::OnEnter() {
 	followCamera += ECS::FollowCamera{ .rotation_ = Quaternion::LookAt(-cameraOffset), .offset_ {.z = -40.f} };
 	followCamera += ECS::PositionComp{};
 
-	entityManager_->CreateEntity(followCamera);
+	//entityManager_->CreateEntity(followCamera);
+	newWorld_.CreateEntity(followCamera);
 
 	soundA_ = audio_->LoadMP3("resources/Audio/SE/Player/startRotate1.mp3");
 
@@ -224,39 +224,39 @@ void GameScene::OnEnter() {
 		bar->Init();
 	}
 
-	// 生存などのデータの確認
-	systemManager_.AddSystem<ECS::System::CheckAliveTime>();
-	systemManager_.AddSystem<ECS::System::CheckHealthDie>();
-	// 時間に関するもの
-	systemManager_.AddSystem<ECS::System::AddAliveTime>();
-	systemManager_.AddSystem<ECS::System::AddCoolTime>();
-	// アニメーションなど
-	systemManager_.AddSystem<ECS::System::AnimateUpdate>();
-	systemManager_.AddSystem<ECS::System::ModelAnimatorUpdate>();
-	systemManager_.AddSystem<ECS::System::SkinModelUpdate>();
-	systemManager_.AddSystem<ECS::System::ColorLerp>();
-	// 座標などの移動
-	systemManager_.AddSystem<ECS::System::AddGravity>();
-	systemManager_.AddSystem<ECS::System::AirResistanceSystem>();
-	systemManager_.AddSystem<ECS::System::MovePosition>();
+	//// 生存などのデータの確認
+	//systemManager_.AddSystem<ECS::System::CheckAliveTime>();
+	//systemManager_.AddSystem<ECS::System::CheckHealthDie>();
+	//// 時間に関するもの
+	//systemManager_.AddSystem<ECS::System::AddAliveTime>();
+	//systemManager_.AddSystem<ECS::System::AddCoolTime>();
+	//// アニメーションなど
+	//systemManager_.AddSystem<ECS::System::AnimateUpdate>();
+	//systemManager_.AddSystem<ECS::System::ModelAnimatorUpdate>();
+	//systemManager_.AddSystem<ECS::System::SkinModelUpdate>();
+	//systemManager_.AddSystem<ECS::System::ColorLerp>();
+	//// 座標などの移動
+	//systemManager_.AddSystem<ECS::System::AddGravity>();
+	//systemManager_.AddSystem<ECS::System::AirResistanceSystem>();
+	//systemManager_.AddSystem<ECS::System::MovePosition>();
 
-	// ゲーム固有の処理
-	systemManager_.AddSystem<ECS::System::EnemyMove>();
-	systemManager_.AddSystem<ECS::System::FallCollision>(&ground_);
-	systemManager_.AddSystem<ECS::System::WeaponCollision>(soundA_, model_);
-	systemManager_.AddSystem<ECS::System::PlayerMove>();
-	systemManager_.AddSystem<ECS::System::PlayerAttack>(attackModel_);
-	systemManager_.AddSystem<ECS::System::EnemyAttack>([this]() { damageTimer_.Start(0.5f); });
+	//// ゲーム固有の処理
+	//systemManager_.AddSystem<ECS::System::EnemyMove>();
+	//systemManager_.AddSystem<ECS::System::FallCollision>(&ground_);
+	//systemManager_.AddSystem<ECS::System::WeaponCollision>(soundA_, model_);
+	//systemManager_.AddSystem<ECS::System::PlayerMove>();
+	//systemManager_.AddSystem<ECS::System::PlayerAttack>(attackModel_);
+	//systemManager_.AddSystem<ECS::System::EnemyAttack>([this]() { damageTimer_.Start(0.5f); });
 
-	// 汎用的な処理
-	systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
-	systemManager_.AddSystem<ECS::System::CalcTransMatrix>();
-	systemManager_.AddSystem<ECS::System::CalcParentTransform>();
-	systemManager_.AddSystem<ECS::System::ModelDrawer>();
-	systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
-	systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
-	systemManager_.AddSystem<ECS::System::CursorDrawer>();
-	systemManager_.AddSystem<ECS::System::ExpGaugeDrawer>(levelUI_.get(), expBar_.get());
+	//// 汎用的な処理
+	//systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
+	//systemManager_.AddSystem<ECS::System::CalcTransMatrix>();
+	//systemManager_.AddSystem<ECS::System::CalcParentTransform>();
+	//systemManager_.AddSystem<ECS::System::ModelDrawer>();
+	//systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
+	//systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
+	//systemManager_.AddSystem<ECS::System::CursorDrawer>();
+	//systemManager_.AddSystem<ECS::System::ExpGaugeDrawer>(levelUI_.get(), expBar_.get());
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
@@ -269,7 +269,7 @@ void GameScene::OnEnter() {
 	auto levelData = levelDataManager->Load({ .fileName_ = "check.json" });
 
 	SolEngine::LevelImporter levelImporter;
-	levelImporter.Import(levelData, world_.get());
+	levelImporter.Import(levelData, &newWorld_);
 
 	levelDataManager->Destory(levelData);
 
@@ -282,8 +282,6 @@ void GameScene::OnEnter() {
 	brainStemTrans_->UpdateMatrix();
 
 	vignettingParam_ = { 16.f, 0.8f };
-
-	newWorld_.CreateEntity(*playerPrefab_);
 
 	/*chunk_.Init(playerPrefab_->GetArchetype());
 	chunk_.push_back(ECS::TransformMatComp{ .transformMat_ = Matrix4x4::Identity() });
@@ -300,6 +298,7 @@ void GameScene::OnEnter() {
 
 	ECS::IFunctionalSystem::world_ = &newWorld_;
 
+	ECS::System::Par::DrawEnemyHelthBar::Init(&enemyHealthBar_);
 
 	// 生存などのデータの確認
 	systemExecuter_.AddSystem<ECS::System::Par::CheckAliveTime>();
@@ -328,10 +327,13 @@ void GameScene::OnEnter() {
 	// 汎用的な処理
 	systemExecuter_.AddSystem<ECS::System::Par::SlideFollowCameraUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::CalcTransMatrix>();
+	systemExecuter_.AddSystem<ECS::System::Par::CalcEulerTransMatrix>();
 	systemExecuter_.AddSystem<ECS::System::Par::CalcParentTransform>();
 	systemExecuter_.AddSystem<ECS::System::Par::ModelDrawer>();
+	systemExecuter_.AddSystem<ECS::System::Par::SkinModelDrawer>();
 	systemExecuter_.AddSystem<ECS::System::Par::DrawHelthBar>(); ECS::System::Par::DrawHelthBar::healthBar_ = healthBar_.get();
-	systemExecuter_.AddSystem<ECS::System::Par::DrawEnemyHelthBar>(); ECS::System::Par::DrawEnemyHelthBar::healthBar_ = &enemyHealthBar_;
+	systemExecuter_.AddSystem<ECS::System::Par::DrawEnemyHelthBar>();
+	ECS::System::Par::DrawEnemyHelthBar::healthBar_ = &enemyHealthBar_;
 	systemExecuter_.AddSystem<ECS::System::Par::CursorDrawer>();
 	//systemExecuter_.AddSystem<ECS::System::Par::ExpGaugeDrawer>(); ECS::System::Par::ExpGaugeDrawer::
 
@@ -350,7 +352,7 @@ void GameScene::Update() {
 	[[maybe_unused]] const float powDeltaTime = fixDeltaTime * fixDeltaTime;
 
 	ImGui::Text("XInput左スティックで移動");
-	ImGui::Text("エンティティ数 / %lu", world_->size());
+	ImGui::Text("エンティティ数 / %lu", newWorld_.size());
 	if (ImGui::Button("SkeletonDebug")) {
 		skeletonDraw = not skeletonDraw;
 	}
@@ -370,7 +372,7 @@ void GameScene::Update() {
 	playerSpawn_.Update(fixDeltaTime);
 
 	// エンティティの追加
-	spawner_.Execute(entityManager_);
+	spawner_.Execute(&newWorld_);
 	// プレハブの破棄
 	spawner_.clear();
 
@@ -382,13 +384,13 @@ void GameScene::Update() {
 	if (spawnTimer_.IsFinish()) {
 
 		// スポナーに追加を要求する
-		spawner_.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](auto enemys, auto manager)
+		spawner_.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](auto enemys)
 			{
 				// 発生地点の回転加算値
 				const float diff = Random::GetRandom<float>(0.f, Angle::Rad360);
-				for (uint32_t i = 0; auto & enemy : enemys) {
-					const auto &[pos] = manager->GetComponent<ECS::PositionComp>(enemy);
-					pos->position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
+				for (uint32_t i = 0; ECS::EntityClass & enemy : enemys) {
+					auto &pos = enemy.GetComponent<ECS::PositionComp>();
+					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
 					i++;
 				}
 			});
@@ -397,10 +399,16 @@ void GameScene::Update() {
 
 
 
+	Archetype playerArchetype;
+	playerArchetype.AddClassData<ECS::PlayerTag>();
+
 	// プレイヤのView
-	auto playerView = world_->view<const ECS::PlayerTag>();
+	auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
 	// プレイヤのViewの長さが0である場合は死んでいる
-	bool playerIsDead = playerView.begin() == playerView.end();
+	bool playerIsDead = true;
+	for (const auto *const chunk : playerChunks) {
+		if (chunk->size()) { playerIsDead = false; break; }
+	}
 
 	// 死んでいた場合は
 	if (playerIsDead) {
@@ -418,29 +426,35 @@ void GameScene::Update() {
 	}
 
 
-	// もし生存フラグが折れていたら、配列から削除
-	world_->erase_if(std::function<bool(ECS::Entity *, ECS::IsAlive *)>(
-		[](ECS::Entity *, ECS::IsAlive *a)
-		{
-			return not a->isAlive_;
-		}
-	));
+	//// もし生存フラグが折れていたら、配列から削除
+	//world_->erase_if(std::function<bool(ECS::Entity *, ECS::IsAlive *)>(
+	//	[](ECS::Entity *, ECS::IsAlive *a)
+	//	{
+	//		return not a->isAlive_;
+	//	}
+	//));
 
 	newWorld_.erase_if<ECS::IsAlive>([](auto &item) {return not item->isAlive_; });
 
-	ECS::System::Par::DrawEnemyHelthBar::healthBar_ = 0u;
+	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = 0u;
 
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 
 	// ここでECSのsystemを呼び出す
-	systemManager_.Update(world_.get(), fixDeltaTime);
+	//systemManager_.Update(world_.get(), fixDeltaTime);
 
 	cameraManager_->Update(fixDeltaTime);
 
 	if (skeletonDraw) {
-		for (const auto &[entity, skinModel, mat] : world_->view<const ECS::SkinModel, const ECS::TransformMatComp>()) {
-
-			skinModel->skinModel_->skeleton_->AddDrawBuffer(*mat, { .z = -2.f });
+		Archetype archetype;
+		archetype.AddClassData<ECS::SkinModel, ECS::TransformMatComp>();
+		auto chunks = newWorld_.GetAccessableChunk(archetype);
+		for (auto &chunk : chunks) {
+			auto skinRange = chunk->GetComponent<ECS::SkinModel>();
+			auto transRange = chunk->GetComponent<ECS::TransformMatComp>();
+			for (uint32_t i = 0; i < skinRange.size(); i++) {
+				skinRange[i].skinModel_->skeleton_->AddDrawBuffer(transRange[i], { .z = -2.f });
+			}
 		}
 	}
 
@@ -448,15 +462,15 @@ void GameScene::Update() {
 
 	ImGui::DragFloat2("VignettingParam", &vignettingParam_->first);
 
-	float health = 0.f;
-	for (const auto &[entity, healthComp, player] : world_->view<const ECS::HealthComp, const ECS::PlayerTag>()) {
-		health = healthComp->CalcPercent();
-	}
-	vignettingParam_->first = SoLib::Lerp(0.5f, 16.f, health);
+	//float health = 0.f;
+	//for (const auto &[entity, healthComp, player] : world_->view<const ECS::HealthComp, const ECS::PlayerTag>()) {
+	//	health = healthComp->CalcPercent();
+	//}
+	//vignettingParam_->first = SoLib::Lerp(0.5f, 16.f, health);
 
-	for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
-		particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });
-	}
+	//for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
+	//	particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });
+	//}
 
 	ImGui::DragFloat("Sigma", &gaussianParam_->first);
 	ImGui::DragInt("Size", &gaussianParam_->second);
@@ -538,7 +552,7 @@ void GameScene::Draw() {
 
 	for (uint32_t count = 0; const auto & bar : enemyHealthBar_) {
 		// もし描画数が超えた場合終了
-		if (count >= systemManager_.GetSystem<ECS::System::DrawEnemyHelthBar>()->drawCount_) { break; }
+		if (count >= ECS::System::Par::DrawEnemyHelthBar::drawCount_) { break; }
 		bar->Draw();
 		count++;
 	}

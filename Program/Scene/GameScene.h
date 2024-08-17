@@ -78,14 +78,14 @@ private:
 	ModelHandleListManager *modelHandleRender_;
 	SkinModelHandleListManager *skinModelHandleRender_;
 
-	ECS::SystemManager systemManager_;
+	//ECS::SystemManager systemManager_;
 
 	Model *model_ = nullptr;
 	Model *boxModel_ = nullptr;
 	Model *playerModel_ = nullptr;
 
-	std::unique_ptr<World> world_ = nullptr;
-	ECS::EntityManager *entityManager_;
+	//std::unique_ptr<World> world_ = nullptr;
+	//ECS::EntityManager *entityManager_;
 	ECS::Spawner spawner_;
 
 	ECS::World newWorld_;

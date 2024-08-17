@@ -41,6 +41,9 @@ namespace ECS {
 
 		explicit operator bool() const { return *this == GetEntity(chunk_, totalIndex_); }
 
+		template<typename T>
+		T &GetComponent() { return GetComp<T>(chunk_, totalIndex_); }
+
 	};
 
 	class EntityAccessor {
