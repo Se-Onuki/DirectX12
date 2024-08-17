@@ -16,7 +16,12 @@ namespace ECS {
 
 	struct IFunctionalSystem {
 		virtual ~IFunctionalSystem() = default;
+		virtual void PreExecute() {}
 		virtual void Execute() = 0;
+		virtual void AfterExecute() {}
+
+		inline static World *world_;
+
 		float deltaTime_ = 0.f;
 	};
 
@@ -36,6 +41,20 @@ namespace ECS {
 			return archetype;
 		}
 
+		static std::byte **MemCpy(Components &comps, std::byte **src) {
+
+			uint32_t index = 0u;
+			(
+				(
+					[&]()
+					{
+						std::memcpy(&std::get<Ts *>(comps), &(src[index]), sizeof(size_t));
+						index++;
+					}()
+						), ...
+				);
+			return src;
+		}
 		static Components Copy(std::byte **src) {
 
 			std::tuple<Ts*...> result{};
@@ -53,30 +72,13 @@ namespace ECS {
 
 		}
 
-		static std::byte **MemCpy(Components &comps, std::byte **src) {
-
-			uint32_t index = 0u;
-			(
-				(
-					[&]()
-					{
-						std::memcpy(&std::get<Ts *>(comps), &(src[index]), sizeof(size_t));
-						index++;
-					}()
-						), ...
-				);
-			return src;
-		}
 	};
 
 	struct TestSystem : public IFunctionalSystem {
 
 		using ReadWrite = GetComponentHelper<ECS::PositionComp, ECS::TransformMatComp>;
 		TestSystem() = default;
-		TestSystem(std::byte **ptr) :
-			readWrite_(ReadWrite::Copy(ptr)) {
-			//ReadWrite::MemCpy(readWrite_, ptr);
-		}
+		TestSystem(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
 
 		ReadWrite::Components readWrite_;
 
@@ -96,6 +98,7 @@ namespace ECS {
 			Archetype archetype_;
 			std::span<const uint32_t> keys_;
 			std::unique_ptr<IFunctionalSystem>(*constructor_)(std::byte **);
+			bool isSingleThreads_;
 		};
 
 		SystemExecuter() = default;
@@ -111,12 +114,24 @@ namespace ECS {
 	private:
 
 	};
+	template <typename T>
+	concept HasSingleThreadFlag = requires { { T::kIsSingleThread_ } -> std::convertible_to<bool>; };
+	template <typename T>
+	constexpr bool IsSingleThread() {
+		if constexpr (HasSingleThreadFlag<T>) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 
 	template<SoLib::IsBased<IFunctionalSystem> T>
 	inline void SystemExecuter::AddSystem()
 	{
 		// データの参照元と､実行データの構築関数を保存する
-		systems_.push_back({ T::ReadWrite::GetArchetype(), std::span<const uint32_t>{ T::ReadWrite::kTarget_.data(), T::ReadWrite::kTarget_.size() }, [](std::byte **ptr)->std::unique_ptr<IFunctionalSystem> { return std::make_unique<T>(ptr); } });
+		systems_.push_back({ T::ReadWrite::GetArchetype(), std::span<const uint32_t>{ T::ReadWrite::kTarget_.data(), T::ReadWrite::kTarget_.size() }, [](std::byte **ptr)->std::unique_ptr<IFunctionalSystem> { return std::make_unique<T>(ptr); }, IsSingleThread<T>() });
 	}
 
 }

@@ -35,7 +35,6 @@
 #include "../ECS/World/ComponentArray/Chunk.h"
 #include "../ECS/System/FunctionalSystem.h"
 
-
 class GameScene : public IScene {
 public:
 	GameScene();

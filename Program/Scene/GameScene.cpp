@@ -16,6 +16,7 @@
 #include "../Engine/LevelEditor/LevelData.h"
 #include "../Engine/LevelEditor/LevelImporter.h"
 #include "../ECS/System/FunctionalSystem.h"
+#include "../ECS/System/NewSystems.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -151,7 +152,6 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::ModelAnimator{ .animateList_{{ animation_.get(), animation_.get(), attackAnimation_.get(), attackAnimation_.get()}},.animatior_ = animation_.get() };
 	*playerPrefab_ += ECS::SkinModel{ .skinModel_ = skinModel_.get() };
 	*playerPrefab_ += ECS::ModelComp{ .model_ = {playerModel} };
-	//*playerPrefab_ += ECS::BoneTransformComp{ .boneTransform_{{BoneModel::SimpleTransform{},BoneModel::SimpleTransform{.translate_{0.f,1.f,0.f}}}} };
 	*playerPrefab_ += ECS::VelocityComp{};
 	*playerPrefab_ += ECS::AccelerationComp{};
 	*playerPrefab_ += ECS::GravityComp{};
@@ -296,7 +296,44 @@ void GameScene::OnEnter() {
 
 	//std::erase_if(chunk_.View<ECS::TransformMatComp>(), [](auto &item) { return item->transformMat_.m[0][0] == 0.f; });
 
-	systemExecuter_.AddSystem<ECS::TestSystem>();
+	//systemExecuter_.AddSystem<ECS::TestSystem>();
+
+	ECS::IFunctionalSystem::world_ = &newWorld_;
+
+
+	// 生存などのデータの確認
+	systemExecuter_.AddSystem<ECS::System::Par::CheckAliveTime>();
+	systemExecuter_.AddSystem<ECS::System::Par::CheckHealthDie>();
+	// 時間に関するもの
+	systemExecuter_.AddSystem<ECS::System::Par::AddAliveTime>();
+	systemExecuter_.AddSystem<ECS::System::Par::AddCoolTime>();
+	// アニメーションなど
+	systemExecuter_.AddSystem<ECS::System::Par::AnimateUpdate>();
+	systemExecuter_.AddSystem<ECS::System::Par::ModelAnimatorUpdate>();
+	systemExecuter_.AddSystem<ECS::System::Par::SkinModelUpdate>();
+	systemExecuter_.AddSystem<ECS::System::Par::ColorLerp>();
+	// 座標などの移動
+	systemExecuter_.AddSystem<ECS::System::Par::AddGravity>();
+	systemExecuter_.AddSystem<ECS::System::Par::AirResistanceSystem>();
+	systemExecuter_.AddSystem<ECS::System::Par::MovePosition>();
+
+	// ゲーム固有の処理
+	systemExecuter_.AddSystem<ECS::System::Par::EnemyMove>();
+	systemExecuter_.AddSystem<ECS::System::Par::FallCollision>(); ECS::System::Par::FallCollision::ground_ = &ground_;
+	systemExecuter_.AddSystem<ECS::System::Par::WeaponCollision>();
+	systemExecuter_.AddSystem<ECS::System::Par::PlayerMove>();
+	systemExecuter_.AddSystem<ECS::System::Par::PlayerAttack>(); ECS::System::Par::PlayerAttack::attackModel_ = attackModel_;
+	systemExecuter_.AddSystem<ECS::System::Par::EnemyAttack>();
+
+	// 汎用的な処理
+	systemExecuter_.AddSystem<ECS::System::Par::SlideFollowCameraUpdate>();
+	systemExecuter_.AddSystem<ECS::System::Par::CalcTransMatrix>();
+	systemExecuter_.AddSystem<ECS::System::Par::CalcParentTransform>();
+	systemExecuter_.AddSystem<ECS::System::Par::ModelDrawer>();
+	systemExecuter_.AddSystem<ECS::System::Par::DrawHelthBar>(); ECS::System::Par::DrawHelthBar::healthBar_ = healthBar_.get();
+	systemExecuter_.AddSystem<ECS::System::Par::DrawEnemyHelthBar>(); ECS::System::Par::DrawEnemyHelthBar::healthBar_ = &enemyHealthBar_;
+	systemExecuter_.AddSystem<ECS::System::Par::CursorDrawer>();
+	//systemExecuter_.AddSystem<ECS::System::Par::ExpGaugeDrawer>(); ECS::System::Par::ExpGaugeDrawer::
 
 }
 
@@ -391,7 +428,7 @@ void GameScene::Update() {
 
 	newWorld_.erase_if<ECS::IsAlive>([](auto &item) {return not item->isAlive_; });
 
-
+	ECS::System::Par::DrawEnemyHelthBar::healthBar_ = 0u;
 
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 

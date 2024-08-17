@@ -11,27 +11,34 @@ namespace ECS {
 		std::vector<ComponentData *> sourceData{ compCount };
 		std::transform(system.keys_.begin(), system.keys_.end(), sourceData.begin(), [&chunk](uint32_t compId) {return chunk->GetComponent(compId); });
 
-		std::for_each(std::execution::par, chunk->begin(), chunk->end(), [&system, &sourceData, compCount, deltaTime](EntityClass &entity) {// コンポーネントアドレスへの配列
-			std::vector<std::byte *> compData{ compCount };
-			for (uint32_t i = 0; i < compCount; i++) {
-				// ソースデータから､コンポーネントのアドレスを取得する
-				compData[i] = &sourceData[i]->at(entity.totalIndex_);
-			}
+		const auto &function = [&system, &sourceData, compCount, deltaTime](EntityClass &entity)
+			{// コンポーネントアドレスへの配列
+				std::vector<std::byte *> compData{ compCount };
+				for (uint32_t i = 0; i < compCount; i++) {
+					// ソースデータから､コンポーネントのアドレスを取得する
+					compData[i] = &sourceData[i]->at(entity.totalIndex_);
+				}
 
-			// データを構築
-			auto target = system.constructor_(compData.data());
-			target->deltaTime_ = deltaTime;
+				// データを構築
+				auto target = system.constructor_(compData.data());
+				target->deltaTime_ = deltaTime;
 
-			// 処理の実行
-			target->Execute();
-			}
-		);
+				// 処理の実行
+				target->Execute();
+			};
 
+		if (system.isSingleThreads_) {
+			std::for_each(chunk->begin(), chunk->end(), function);
+		}
+		else {
+			std::for_each(std::execution::par, chunk->begin(), chunk->end(), function);
+		}
 	}
 
 	void SystemExecuter::Execute(World *world, float deltaTime)
 	{
-		for (const auto &system : systems_) {
+		for (const auto &system : systems_) {		
+
 			auto chunkList = world->GetAccessableChunk(system.archetype_);
 			std::for_each(chunkList.begin(), chunkList.end(), [&](Chunk *chunk) { Execute(system, chunk, deltaTime); });
 		}

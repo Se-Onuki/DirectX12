@@ -306,7 +306,7 @@ namespace ECS {
 		float radius_ = 4.5f;
 	};
 	struct Parent : IComponent {
-		Entity parent_;
+		//ECS::EntityClass parent_;
 	};
 
 	struct Experience : IComponent {

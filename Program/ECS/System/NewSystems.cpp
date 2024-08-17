@@ -1,0 +1,471 @@
+#include "NewSystems.h"
+#include "../World/ComponentArray/Chunk.h"
+#include "../World/NewWorld.h"
+#include "../../Engine/DirectBase/Input/Input.h"
+#include "../../Header/Object/Particle/ParticleManager.h"
+#include "../../Header/Object/Particle/SimpleParticle.h"
+#include "../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+
+namespace ECS::System::Par {
+
+	void CheckAliveTime::Execute()
+	{
+		auto &[aliveTime, lifeLimit, isAlive] = readWrite_;
+		if (lifeLimit.lifeLimit_ >= 0.f) {
+			// 寿命を超過していたら
+			if (lifeLimit.lifeLimit_ < aliveTime.aliveTime_) {
+				// 死ぬ
+				isAlive.isAlive_ = false;
+			}
+		}
+	}
+
+	void CheckHealthDie::Execute()
+	{
+		auto &[health, isAlive] = readWrite_;
+		// もし体力が0以下なら
+		if (health.IsDead()) {
+
+			// 死ぬ
+			isAlive.isAlive_ = false;
+		}
+	}
+
+	void AddAliveTime::Execute()
+	{
+		auto &[aliveTime] = readWrite_;
+		// 生存時間を加算
+		aliveTime.aliveTime_ += deltaTime_;
+	}
+
+	void AddCoolTime::Execute()
+	{
+		auto &[coolTime] = readWrite_;
+		// 生存時間を加算
+		coolTime.cooltime_.Update(deltaTime_);
+	}
+
+	void AnimateUpdate::Execute()
+	{
+		auto &[state] = readWrite_;
+		// 現在の状態のタイマーを進める
+		state.stateTimer_ += deltaTime_;
+	}
+
+	void ModelAnimatorUpdate::Execute()
+	{
+		const auto &[model, animator] = readWrite_;
+		if (animator.animatior_.GetDeltaTimer().IsFinish()) {
+			animator.animatior_.SetAnimation(animator.animateList_[0]);
+			animator.animatior_.Start(true);
+		}
+		animator.animatior_.Update(deltaTime_, *model.model_);
+	}
+
+	void SkinModelUpdate::Execute()
+	{
+		const auto &[model, animator] = readWrite_;
+		model.skinModel_->Update(*animator.animatior_.GetAnimation(), animator.animatior_.GetDeltaTimer().GetNowFlame());
+	}
+
+	void ColorLerp::Execute()
+	{
+		auto &[aliveTime, lifelimit, colorLerp, color] = readWrite_;
+		color.color_ = colorLerp.EaseColor(aliveTime.aliveTime_ / lifelimit.lifeLimit_);
+
+	}
+
+	void AddGravity::Execute()
+	{
+		auto &[acceleration, gravity] = readWrite_;
+
+		acceleration.acceleration_ += gravity.gravity_ * deltaTime_;
+	}
+
+	void AirResistanceSystem::Execute()
+	{
+		auto &[acceleration, velocity, airResistance] = readWrite_;
+
+		acceleration.acceleration_ -= velocity.velocity_ * airResistance.resistance;
+	}
+
+	void MovePosition::Execute()
+	{
+		auto &[pos, velocity, acceleration] = readWrite_;
+
+		velocity.velocity_ += acceleration.acceleration_;
+		acceleration.acceleration_ = {};
+
+		pos.position_ += velocity.velocity_ * deltaTime_;
+	}
+
+	void EnemyMove::Execute()
+	{
+
+		auto &[enemy, pos, rotate] = readWrite_;
+		Vector3 direction = (playerPos_ - pos.position_).Nomalize() * (100.f * deltaTime_ * deltaTime_);
+		direction.y = 0.f;
+		pos.position_ += direction;
+
+		rotate.quateRot_ = Quaternion::LookAt(direction);
+
+
+	}
+
+	void EnemyAttack::Execute()
+	{
+		auto &[playerTag, playerPos, playerHealth, playerCollision, playerAcceleration] = readWrite_;
+
+		// 当たり判定を取得
+		auto plColl = playerCollision.collision_;
+		plColl.centor += *playerPos;
+
+		Archetype archetype;
+		archetype.AddClassData<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::AttackPower, ECS::AttackCooltime>();
+		for (auto *const chunk : world_->GetAccessableChunk(archetype)) {
+
+			auto posRange = chunk->GetComponent<ECS::PositionComp>();
+			auto collRange = chunk->GetComponent<ECS::SphereCollisionComp>();
+			auto powerRange = chunk->GetComponent<ECS::AttackPower>();
+			auto coolTimeRange = chunk->GetComponent<ECS::AttackCooltime>();
+
+			auto collItr = collRange.begin();
+			auto powItr = powerRange.begin();
+			auto timeItr = coolTimeRange.begin();
+
+			for (auto &pos : posRange) {
+				auto &collider = *collItr++;
+				auto &power = *powItr++;
+				auto &coolTime = *timeItr++;
+
+				Sphere enColl = collider.collision_;
+				enColl.centor += pos.position_;
+
+				// クールタイムが終わっており、接触している場合
+				if (not coolTime.cooltime_.IsActive() and Collision::IsHit(plColl, enColl)) {
+					// プレイヤに加速度を加算
+					playerAcceleration.acceleration_ += (playerPos.position_ - pos.position_) * 15.f;
+					// 体力を減算
+					playerHealth.nowHealth_ -= power.power_;
+
+					// クールタイムを開始
+					coolTime.cooltime_.Start();
+
+					if (hitFunc_) {
+						hitFunc_();
+					}
+				}
+
+			}
+		}
+	}
+
+	void FallCollision::Execute()
+	{
+		auto &[collision, pos, velocity] = readWrite_;
+
+		// 地面より座標が下なら
+		if ((pos.position_.y + collision.collision_.centor.y - collision.collision_.radius) < ground_->hight_) {
+			// 地面の上に当たり判定を上にする
+			pos.position_.y = ground_->hight_ - collision.collision_.centor.y + collision.collision_.radius;
+			// もし落下していたら
+			if (velocity.velocity_.y < 0.f) {
+				// 移動速度を0にする
+				velocity.velocity_.y = 0.f;
+			}
+		}
+
+	}
+
+	void WeaponCollision::Execute()
+	{
+		std::list<
+			std::tuple<
+			const ECS::AttackCollisionComp *,
+			const ECS::AttackPower *
+			>
+		> weaponList{};
+
+		Archetype archetype;
+		archetype.AddClassData<ECS::AttackCollisionComp, ECS::AttackPower>();
+		for (auto *const chunk : world_->GetAccessableChunk(archetype)) {
+			auto collRange = chunk->GetComponent<ECS::AttackCollisionComp>();
+			auto damageRange = chunk->GetComponent<ECS::AttackPower>();
+			for (uint32_t i = 0; i < collRange.size(); i++) {
+
+				// 有効なら保存する
+				if (collRange[i].isActive_) {
+					weaponList.push_back({ &collRange[i], &damageRange[i] });
+				}
+			}
+
+		}
+
+		auto &[enemy, pos, collision, health] = readWrite_;
+
+		Sphere sphere = collision.collision_;
+		sphere.centor += pos;
+
+		for (const auto &[weapon, damage] : weaponList) {
+			// 攻撃判定が当たってたら検知
+			if (Collision::IsHit(sphere, weapon->collision_)) {
+				// 体力を減らす
+				health.nowHealth_ -= damage->power_;
+
+			}
+		}
+
+	}
+
+	void PlayerMove::Execute()
+	{
+		auto *inputManager = Input::GetInstance();
+		auto *const xInput = inputManager->GetXInput();
+		auto *const dInput = inputManager->GetDirectInput();
+
+		auto &[pos, quateRot, acceleration, input, animator, isLanding, attackSt, attackCooltime] = readWrite_;
+
+		// 左スティックの入力
+		Vector2 inputLs = xInput->GetState()->stickL_;
+		if (inputLs == Vector2::zero) {
+			if (dInput->IsPress(DIK_A)) { inputLs.x -= 1; }
+			if (dInput->IsPress(DIK_D)) { inputLs.x += 1; }
+			if (dInput->IsPress(DIK_W)) { inputLs.y += 1; }
+			if (dInput->IsPress(DIK_S)) { inputLs.y -= 1; }
+			inputLs = inputLs.Nomalize();
+		}
+		// 3次元的に解釈した入力
+		const Vector3 lInput3d{ inputLs.x,0.f,inputLs.y };
+		// カメラの向きに回転したベクトル
+		const Vector3 &rotateInput = lInput3d /** Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y)*/;
+		// 回転したベクトルを使って移動
+		pos.position_ += rotateInput * (500.f * deltaTime_ * deltaTime_);
+
+		// ステージの半径
+		static constexpr float kStageRadius = 43.f;
+
+		pos.position_.x = std::clamp(pos.position_.x, -kStageRadius, kStageRadius);
+		pos.position_.z = std::clamp(pos.position_.z, -kStageRadius, kStageRadius);
+
+		EnemyMove::playerPos_ = pos;
+
+		// 右スティックの入力
+		Vector2 inputRs = inputManager->GetXInput()->GetState()->stickR_;
+		// キーボード対応
+		if (inputRs == Vector2::zero) {
+			if (dInput->IsPress(DIK_LEFT)) { inputRs.x -= 1; }
+			if (dInput->IsPress(DIK_RIGHT)) { inputRs.x += 1; }
+			if (dInput->IsPress(DIK_UP)) { inputRs.y += 1; }
+			if (dInput->IsPress(DIK_DOWN)) { inputRs.y -= 1; }
+			inputRs = inputRs.Nomalize();
+		}
+		// もし角度が0でなければ
+		if (inputRs != Vector2::zero) {
+			// ハーフべクトルを定義
+			Vector2 halfVector = (Vector2::up + inputRs.Nomalize()).Nomalize();
+			// もし真後ろなら横を代入しておく
+			if (halfVector == Vector2::zero) {
+				halfVector = Vector2::right;
+			}
+			// ベクトルを代入する
+			quateRot.quateRot_ = Quaternion{ Vector3::up * -(Vector2::up ^ halfVector), Vector2::up * halfVector };
+		}
+	}
+
+	void PlayerAttack::Execute()
+	{
+		static ParticleManager *const particleManager = ParticleManager::GetInstance();
+
+		auto &[pos, quateRot, attackSt, attCT, attColl, cursor, modelAnimator, state, exp] = readWrite_;
+		// クールタイムが終わってたら
+		if (attCT.cooltime_.IsFinish()) {
+			// 再度開始
+			attCT.cooltime_.Start();
+
+			// 攻撃の座標を設定
+			attColl.collision_.centor = quateRot.quateRot_.GetFront() * attackSt.offset_ + pos;
+			// 攻撃の半径を設定
+			attColl.collision_.radius = attackSt.radius_ + 0.5f * exp.level_;
+
+			// 攻撃判定を有効化
+			attColl.isActive_ = true;
+
+			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl.collision_.centor + Vector3{ .y = 0.1f });
+			particle->SetAliveTime(0.5f);
+			particle->transform_.rotate = SoLib::MakeQuaternion({ 90._deg,0,0 });
+			particle->transform_.scale = Vector3::one * (attColl.collision_.radius * 2.f);
+			particle->color_ = 0xFF5555FF;
+
+			state.ChangeState(static_cast<uint32_t>(EntityState::PlayerState::kAttack));
+			modelAnimator.animatior_.SetAnimation(modelAnimator.animateList_[static_cast<uint32_t>(EntityState::PlayerState::kAttack)]);
+			modelAnimator.animatior_.Start();
+
+		}
+		// 終わってなかったら
+		else {
+			// 攻撃判定を無効化
+			attColl.isActive_ = false;
+		}
+
+		// 攻撃タイミングをカーソルに代入
+		cursor.progress_ = attCT.cooltime_.GetProgress();
+
+	}
+
+	void ModelDrawer::Execute()
+	{
+		static ModelHandleListManager *const blockManager = ModelHandleListManager::GetInstance();
+		static SkinModelHandleListManager *const skinModelRender_ = SkinModelHandleListManager::GetInstance();
+
+		auto &[transform, model] = readWrite_;
+
+		blockManager->AddBox(model.model_, { .transMat_ = transform });
+	}
+	void SkinModelDrawer::Execute()
+	{
+		static ModelHandleListManager *const blockManager = ModelHandleListManager::GetInstance();
+		static SkinModelHandleListManager *const skinModelRender_ = SkinModelHandleListManager::GetInstance();
+
+		auto &[transform, model, skinModel] = readWrite_;
+		skinModelRender_->AddBox({ model.model_, skinModel.skinModel_ }, { .transMat_ = transform });
+	}
+
+	void SlideFollowCameraUpdate::Execute()
+	{
+		std::list<
+			const ECS::PositionComp *
+		> posList{};
+
+		Archetype archetype;
+		archetype.AddClassData<ECS::PlayerTag, ECS::PositionComp>();
+		for (auto *const chunk : world_->GetAccessableChunk(archetype)) {
+			auto posRange = chunk->GetComponent<ECS::PositionComp>();
+			for (auto &pos : posRange) {
+				posList.push_back(&pos);
+			}
+		}
+
+		auto &[followCamera, cameraPos] = readWrite_;
+
+		*cameraPos = posList.front()->position_;
+
+		followCamera.TransferData(*CameraManager::GetInstance()->GetCamera("FollowCamera"), *cameraPos);
+	}
+
+	void CalcTransMatrix::Execute()
+	{
+		auto &[scale, rot, pos, mat] = readWrite_;
+		mat.transformMat_ = SoLib::Math::Affine(scale, rot.quateRot_.Normalize(), pos);
+
+	}
+
+	void CalcEulerTransMatrix::Execute()
+	{
+		auto &[scale, rot, pos, mat] = readWrite_;
+
+		mat.transformMat_ = SoLib::Math::Affine(scale, rot.rotate_, pos);
+
+	}
+
+	void DrawHelthBar::Execute()
+	{
+		auto &[plTag, health] = readWrite_;
+		healthBar_->SetPercent(health.CalcPercent());
+	}
+
+	void DrawEnemyHelthBar::Execute()
+	{
+		auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
+
+		const Matrix4x4 &vp = Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight);
+		const Matrix4x4 &matVPVp = camera->matView_ * camera->matProjection_ * vp;
+		auto &[enmTag, health, pos, barComp] = readWrite_;
+
+		// 描画上限になった場合は終了
+		if (drawCount_ >= healthBar_->size()) { return; }
+		// もしMaxなら表示しない
+		if (health.IsMax()) { return; }
+		// 紐づいた経験値バー
+		auto *const bar = healthBar_->at(drawCount_).get();
+
+		// 画面上の場所
+		const Vector3 screenPos = Render::WorldToScreen(*pos + barComp.offset_, matVPVp);
+		// 描画場所を設定
+		bar->SetCentor(screenPos.ToVec2());
+		// 体力バーのサイズ
+		bar->SetScale(*barComp.vDefaultBarScale_ * 0.25f);
+		// 体力を設定
+		bar->SetPercent(health.CalcPercent());
+
+		// 描画個数を加算
+		drawCount_++;
+
+	}
+
+	void CursorDrawer::Execute()
+	{
+
+		// カメラの逆行列
+		const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
+
+		static BlockManager *const blockManager = BlockManager::GetInstance();
+
+		auto &[plTag, pos, rot, cursor] = readWrite_;
+
+		// カーソルの座標
+		Vector3 cursorPos = rot.quateRot_.GetFront() * cursor.offset_ + *pos + Vector3{ .y = 1.f };
+		// 外枠の表示
+		{
+			// 描画する場所
+			Matrix4x4 item = SoLib::Affine(Vector3::one * cursor.scale_, Vector3::zero, cursorPos);
+			// ビルボード変換
+			item *= billboardMat;
+			// 座標を戻す
+			item.GetTranslate() = cursorPos;
+
+			// モデルの取得
+			const Model *const model = cursor.model_;
+			// 無かったら終わり
+			if (not model) { return; }
+
+			// 描画
+			blockManager->AddBox(model, IBlock{ .transMat_ = item });
+		}
+
+		// 描画モデルがあり、倍率が有効な値である場合
+		if (cursor.inModel_ && cursor.progress_) {
+			// 描画する場所
+			Matrix4x4 item = SoLib::Affine(Vector3::one * (cursor.scale_ * cursor.progress_), Vector3::zero, cursorPos);
+			// ビルボード変換
+			item *= billboardMat;
+			// 座標を戻す
+			item.GetTranslate() = cursorPos;
+
+			// 内部のモデルの取得
+			const Model *const model = cursor.inModel_;
+			// 無かったら終わり
+			if (not model) { return; }
+
+			// 描画
+			blockManager->AddBox(model, IBlock{ .transMat_ = item, .color_ = 0xFFFFFF55 });
+		}
+
+
+	}
+
+	void ExpGaugeDrawer::Execute()
+	{
+	}
+
+	void CalcParentTransform::Execute()
+	{
+		//auto &[transMat, parent] = readWrite_;
+		//// 親の有効期限が切れてたら飛ばす
+		//if (not parent.parent_) { return; }
+		//// 親のエンティティから､行列コンポーネントを取得する
+		//auto parentTransMat = parent.parent_.chunk_->GetComp<ECS::TransformMatComp>(parent.parent_.totalIndex_);
+		//// 親の行列を乗算する
+		//transMat.transformMat_ *= parentTransMat->transformMat_;
+	}
+
+}

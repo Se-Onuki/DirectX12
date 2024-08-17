@@ -13,6 +13,8 @@ namespace ECS {
 	template<typename T>
 	class EntityCompAccessor;
 
+	class EntityClass;
+
 	template<typename T>
 	T &GetComp(Chunk *chunk, uint32_t index) {
 		constexpr uint32_t compId = static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>());
@@ -23,15 +25,21 @@ namespace ECS {
 
 	void EntityMove(Chunk *chunk, uint32_t dst, uint32_t src);
 
+	EntityClass &GetEntity(Chunk *chunk, uint32_t index);
+
 	class EntityClass {
 	public:
 		Chunk *chunk_;
 		uint32_t totalIndex_; // トータル番号
 		uint32_t version_;
 
-		 operator EntityAccessor &() { return reinterpret_cast<EntityAccessor &>(*this); }
+		bool operator==(const EntityClass &) const = default;
+
+		operator EntityAccessor &() { return reinterpret_cast<EntityAccessor &>(*this); }
 		template<typename T>
-		 operator EntityCompAccessor<T> &() { return reinterpret_cast<EntityCompAccessor<T> &>(*this); }
+		operator EntityCompAccessor<T> &() { return reinterpret_cast<EntityCompAccessor<T> &>(*this); }
+
+		explicit operator bool() const { return *this == GetEntity(chunk_, totalIndex_); }
 
 	};
 
@@ -62,8 +70,6 @@ namespace ECS {
 	private:
 
 	};
-
-	EntityClass &GetEntity(Chunk *chunk, uint32_t index);
 
 	class EntityArrayStorage
 	{

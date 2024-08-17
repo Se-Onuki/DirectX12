@@ -492,6 +492,9 @@
     <ClCompile Include="ECS\World\NewWorld.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
+    <ClCompile Include="ECS\System\NewSystems.cpp">
+      <Filter>ECS\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -967,6 +970,9 @@
     </ClInclude>
     <ClInclude Include="ECS\World\NewWorld.h">
       <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\System\NewSystems.h">
+      <Filter>ECS\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

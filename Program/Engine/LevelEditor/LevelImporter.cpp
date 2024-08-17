@@ -38,7 +38,7 @@ namespace SolEngine {
 		return true;
 	}
 
-	void LevelImporter::RecursiveLoad(const std::list<LevelData::ObjectData> &objectDataList, World *const world, ECS::Entity *parent) const
+	void LevelImporter::RecursiveLoad(const std::list<LevelData::ObjectData> &objectDataList, World *const world, [[maybe_unused]] ECS::Entity *parent) const
 	{
 
 		// エンティティマネージャを取得
@@ -69,9 +69,9 @@ namespace SolEngine {
 				prefab += ECS::OBBCollisionComp{ .collision_ = *ptr };
 			}
 			// 親の情報があったら渡す
-			if (parent) {
+			/*if (parent) {
 				prefab += ECS::Parent{ .parent_ = *parent };
-			}
+			}*/
 
 			// エンティティを追加
 			ECS::Entity entity = entityManager->CreateEntity(prefab).front();
