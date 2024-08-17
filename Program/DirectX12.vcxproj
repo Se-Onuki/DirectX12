@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ECS\Component\Component.cpp" />
     <ClCompile Include="ECS\Entity\EntityManager.cpp" />
     <ClCompile Include="ECS\MultiArray.cpp" />
+    <ClCompile Include="ECS\System\FunctionalSystem.cpp" />
     <ClCompile Include="ECS\System\SystemManager.cpp" />
     <ClCompile Include="ECS\System\Systems.cpp" />
     <ClCompile Include="ECS\World\ComponentArray\Chunk.cpp" />
@@ -274,6 +275,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ECS\Entity\Prefab.h" />
     <ClInclude Include="ECS\Entity\Spawner.h" />
     <ClInclude Include="ECS\MultiArray.h" />
+    <ClInclude Include="ECS\System\FunctionalSystem.h" />
     <ClInclude Include="ECS\System\ISystem.h" />
     <ClInclude Include="ECS\System\System.h" />
     <ClInclude Include="ECS\System\SystemManager.h" />

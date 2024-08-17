@@ -483,6 +483,9 @@
     <ClCompile Include="ECS\World\ComponentArray\ChunkIterator.cpp">
       <Filter>ECS\Chunk</Filter>
     </ClCompile>
+    <ClCompile Include="ECS\System\FunctionalSystem.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -952,6 +955,9 @@
     </ClInclude>
     <ClInclude Include="ECS\World\ComponentArray\ChunkRange.h">
       <Filter>ECS\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\System\FunctionalSystem.h">
+      <Filter>ECS\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

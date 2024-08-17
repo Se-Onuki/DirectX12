@@ -29,12 +29,9 @@ namespace ECS {
 		uint32_t totalIndex_; // トータル番号
 		uint32_t version_;
 
-		operator EntityAccessor &() { return reinterpret_cast<EntityAccessor &>(*this); }
+		 operator EntityAccessor &() { return reinterpret_cast<EntityAccessor &>(*this); }
 		template<typename T>
-		operator EntityCompAccessor<T> &() { return reinterpret_cast<EntityCompAccessor<T> &>(*this); }
-
-		//template<typename T>
-		//T &GetComp();
+		 operator EntityCompAccessor<T> &() { return reinterpret_cast<EntityCompAccessor<T> &>(*this); }
 
 	};
 

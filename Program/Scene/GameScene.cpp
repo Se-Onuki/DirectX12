@@ -15,6 +15,7 @@
 #include "../ECS/System/Systems.h"
 #include "../Engine/LevelEditor/LevelData.h"
 #include "../Engine/LevelEditor/LevelImporter.h"
+#include "../ECS/System/FunctionalSystem.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -292,6 +293,11 @@ void GameScene::OnEnter() {
 	std::for_each(std::execution::par_unseq, transMat.begin(), transMat.end(), [](ECS::TransformMatComp &comp) { comp.transformMat_ *= 3.f; });
 
 	std::erase_if(chunk_.View<ECS::TransformMatComp>(), [](auto &item) { return item->transformMat_.m[0][0] == 0.f; });
+
+	ECS::SystemExecuter executer;
+	executer.AddSystem<ECS::TestSystem>();
+
+	executer.Execute(&chunk_);
 
 }
 

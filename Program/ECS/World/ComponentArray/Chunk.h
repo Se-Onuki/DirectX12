@@ -31,10 +31,16 @@ namespace ECS {
 		template<typename T>
 		ChunkRange<T> View() { return { this, &(GetCompArray<T>()->second), 0u, size_ }; }
 
+		template<typename... Ts>
+			requires(sizeof...(Ts) >= 2)
+		ChunkRange<Ts...> View() { return { this, std::tuple<ComponentData*...>{&(GetCompArray<Ts>()->second)... }, 0u, size_ }; }
+
 		iterator begin() { iterator{ this, 0 }; }
 
 		iterator end() { iterator{ this, size_ }; }
 
+		ComponentData *GetComponent(uint32_t compId);
+		ComponentData::Range GetComponentRange(uint32_t compId);
 		template<typename T>
 		ComponentData::TRange<T> GetComponent();
 
@@ -93,6 +99,15 @@ namespace ECS {
 
 	};
 
+	inline ComponentData *Chunk::GetComponent(uint32_t compId)
+	{
+		return &componentDatas_[compId];
+	}
+
+	inline ComponentData::Range Chunk::GetComponentRange(uint32_t compId)
+	{
+		return componentDatas_[compId].View(size_);
+	}
 
 	template<typename T>
 	inline ComponentData::TRange<T> Chunk::GetComponent()
