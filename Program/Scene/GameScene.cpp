@@ -283,21 +283,20 @@ void GameScene::OnEnter() {
 
 	vignettingParam_ = { 16.f, 0.8f };
 
-	chunk_.Init(playerPrefab_->GetArchetype());
+	newWorld_.CreateEntity(*playerPrefab_);
+
+	/*chunk_.Init(playerPrefab_->GetArchetype());
 	chunk_.push_back(ECS::TransformMatComp{ .transformMat_ = Matrix4x4::Identity() });
 	chunk_.emplace_back(9);
 	chunk_.push_back(ECS::TransformMatComp{ .transformMat_ = Matrix4x4::Identity() * 5 });
 
-	auto transMat = chunk_.GetComponent<ECS::TransformMatComp>();
+	auto transMat = chunk_.GetComponent<ECS::TransformMatComp>();*/
 
-	std::for_each(std::execution::par_unseq, transMat.begin(), transMat.end(), [](ECS::TransformMatComp &comp) { comp.transformMat_ *= 3.f; });
+	//std::for_each(std::execution::par_unseq, transMat.begin(), transMat.end(), [](ECS::TransformMatComp &comp) { comp.transformMat_ *= 3.f; });
 
-	std::erase_if(chunk_.View<ECS::TransformMatComp>(), [](auto &item) { return item->transformMat_.m[0][0] == 0.f; });
+	//std::erase_if(chunk_.View<ECS::TransformMatComp>(), [](auto &item) { return item->transformMat_.m[0][0] == 0.f; });
 
-	ECS::SystemExecuter executer;
-	executer.AddSystem<ECS::TestSystem>();
-
-	executer.Execute(&chunk_);
+	systemExecuter_.AddSystem<ECS::TestSystem>();
 
 }
 
@@ -359,6 +358,8 @@ void GameScene::Update() {
 		spawnTimer_.Start();
 	}
 
+
+
 	// プレイヤのView
 	auto playerView = world_->view<const ECS::PlayerTag>();
 	// プレイヤのViewの長さが0である場合は死んでいる
@@ -387,6 +388,12 @@ void GameScene::Update() {
 			return not a->isAlive_;
 		}
 	));
+
+	newWorld_.erase_if<ECS::IsAlive>([](auto &item) {return not item->isAlive_; });
+
+
+
+	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 
 	// ここでECSのsystemを呼び出す
 	systemManager_.Update(world_.get(), fixDeltaTime);

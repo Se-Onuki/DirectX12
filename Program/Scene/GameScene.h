@@ -33,6 +33,7 @@
 #include "../Engine/DirectBase/Texture/FullScreenTextureStrage.h"
 #include "../Engine/DirectBase/DxResource/DxResourceBufferPool.h"
 #include "../ECS/World/ComponentArray/Chunk.h"
+#include "../ECS/System/FunctionalSystem.h"
 
 
 class GameScene : public IScene {
@@ -88,7 +89,8 @@ private:
 	ECS::EntityManager *entityManager_;
 	ECS::Spawner spawner_;
 
-	ECS::Chunk chunk_;
+	ECS::World newWorld_;
+	ECS::SystemExecuter systemExecuter_;
 
 	ECS::ComponentRegistry *compRegistry_;
 

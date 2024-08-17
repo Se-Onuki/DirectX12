@@ -197,7 +197,7 @@ namespace ECS {
 		const uint32_t entCount = archetype_.GetChunkCapacity();
 
 		// もし末尾まで到達していたら
-		if (entCount * storage_.size() <= size_) {
+		if (entCount * storage_.size() < size_ + count) {
 			// メモリを確保する
 			AddGroups();
 		}
@@ -216,7 +216,7 @@ namespace ECS {
 
 		for (uint32_t i = 0; i < count; i++) {
 			// エンティティの取得
-			EntityClass &entity = storage_.GetEntity(size_);
+			EntityClass &entity = storage_.GetEntity(size_ + i);
 			entity.totalIndex_ = size_;
 			entity.version_++;
 		}

@@ -483,8 +483,14 @@
     <ClCompile Include="ECS\World\ComponentArray\ChunkIterator.cpp">
       <Filter>ECS\Chunk</Filter>
     </ClCompile>
+    <ClCompile Include="ECS\Entity\Spawner.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
     <ClCompile Include="ECS\System\FunctionalSystem.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ECS\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\World\NewWorld.cpp">
+      <Filter>ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

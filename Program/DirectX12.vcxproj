@@ -158,6 +158,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="ECS\Component\Component.cpp" />
     <ClCompile Include="ECS\Entity\EntityManager.cpp" />
+    <ClCompile Include="ECS\Entity\Spawner.cpp" />
     <ClCompile Include="ECS\MultiArray.cpp" />
     <ClCompile Include="ECS\System\FunctionalSystem.cpp" />
     <ClCompile Include="ECS\System\SystemManager.cpp" />
@@ -166,6 +167,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ECS\World\ComponentArray\ChunkIterator.cpp" />
     <ClCompile Include="ECS\World\ComponentArray\ChunkRange.cpp" />
     <ClCompile Include="ECS\World\ComponentArray\EntityArrayStorage.cpp" />
+    <ClCompile Include="ECS\World\NewWorld.cpp" />
     <ClCompile Include="ECS\World\World.cpp" />
     <ClCompile Include="Engine\DirectBase\2D\Sprite.cpp" />
     <ClCompile Include="Engine\DirectBase\3D\DirectionLight.cpp" />

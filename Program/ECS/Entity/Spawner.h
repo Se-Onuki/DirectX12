@@ -39,6 +39,8 @@ namespace ECS {
 			}
 		}
 
+		void Execute(ECS::World *world);
+
 		/// @brief 生成するオブジェクトを追加
 		/// @param prefab 追加するプレハブ
 		/// @param spawnCount 追加する数
