@@ -36,18 +36,18 @@ namespace ECS {
 		//SimulationSystemGroup GetSimlationSystemGroup() const { return systemGroup_; }
 	};
 
-	class IJobSystem {
-	public:
-		virtual ~IJobSystem() = default;
+	//class IJobEntity {
+	//public:
+	//	virtual ~IJobEntity() = default;
 
-		virtual void OnUpdate(const float deltaTime) = 0;
-	};
+	//	virtual void OnUpdate(const float deltaTime) = 0;
+	//};
 
 
-	class IJobEntity {
-	public:
+	//class IJobEntity {
+	//public:
 
-		virtual void Execute(const float deltaTime) = 0;
-	};
+	//	virtual void Execute(const float deltaTime) = 0;
+	//};
 
 }

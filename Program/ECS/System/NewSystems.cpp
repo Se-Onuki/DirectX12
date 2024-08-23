@@ -8,9 +8,11 @@
 
 namespace ECS::System::Par {
 
-	void CheckAliveTime::Execute()
+	void CheckAliveTime::Execute(const World *const, const float)
 	{
-		auto &[aliveTime, lifeLimit, isAlive] = readWrite_;
+		auto &[aliveTime, lifeLimit] = onlyRead_;
+		auto &[isAlive] = onlyWrite_;
+
 		if (lifeLimit.lifeLimit_ >= 0.f) {
 			// 寿命を超過していたら
 			if (lifeLimit.lifeLimit_ < aliveTime.aliveTime_) {
@@ -20,9 +22,10 @@ namespace ECS::System::Par {
 		}
 	}
 
-	void CheckHealthDie::Execute()
+	void CheckHealthDie::Execute(const World *const, const float)
 	{
-		auto &[health, isAlive] = readWrite_;
+		auto &[health] = onlyRead_;
+		auto &[isAlive] = onlyWrite_;
 		// もし体力が0以下なら
 		if (health.IsDead()) {
 
@@ -31,80 +34,80 @@ namespace ECS::System::Par {
 		}
 	}
 
-	void AddAliveTime::Execute()
+	void AddAliveTime::Execute(const World *const, const float deltaTime)
 	{
 		auto &[aliveTime] = readWrite_;
 		// 生存時間を加算
-		aliveTime.aliveTime_ += deltaTime_;
+		aliveTime.aliveTime_ += deltaTime;
 	}
 
-	void AddCoolTime::Execute()
+	void AddCoolTime::Execute(const World *const, const float deltaTime)
 	{
 		auto &[coolTime] = readWrite_;
 		// 生存時間を加算
-		coolTime.cooltime_.Update(deltaTime_);
+		coolTime.cooltime_.Update(deltaTime);
 	}
 
-	void AnimateUpdate::Execute()
+	void AnimateUpdate::Execute(const World *const, const float deltaTime)
 	{
 		auto &[state] = readWrite_;
 		// 現在の状態のタイマーを進める
-		state.stateTimer_ += deltaTime_;
+		state.stateTimer_ += deltaTime;
 	}
 
-	void ModelAnimatorUpdate::Execute()
+	void ModelAnimatorUpdate::Execute(const World *const, const float deltaTime)
 	{
 		const auto &[model, animator] = readWrite_;
 		if (animator.animatior_.GetDeltaTimer().IsFinish()) {
 			animator.animatior_.SetAnimation(animator.animateList_[0]);
 			animator.animatior_.Start(true);
 		}
-		animator.animatior_.Update(deltaTime_, *model.model_);
+		animator.animatior_.Update(deltaTime, *model.model_);
 	}
 
-	void SkinModelUpdate::Execute()
+	void SkinModelUpdate::Execute(const World *const, const float)
 	{
 		const auto &[model, animator] = readWrite_;
 		model.skinModel_->Update(*animator.animatior_.GetAnimation(), animator.animatior_.GetDeltaTimer().GetNowFlame());
 	}
 
-	void ColorLerp::Execute()
+	void ColorLerp::Execute(const World *const, const float)
 	{
 		auto &[aliveTime, lifelimit, colorLerp, color] = readWrite_;
 		color.color_ = colorLerp.EaseColor(aliveTime.aliveTime_ / lifelimit.lifeLimit_);
 
 	}
 
-	void AddGravity::Execute()
+	void AddGravity::Execute(const World *const, const float deltaTime)
 	{
 		auto &[acceleration, gravity] = readWrite_;
 
-		acceleration.acceleration_ += gravity.gravity_ * deltaTime_;
+		acceleration.acceleration_ += gravity.gravity_ * deltaTime;
 	}
 
-	void AirResistanceSystem::Execute()
+	void AirResistanceSystem::Execute(const World *const, const float)
 	{
 		auto &[acceleration, velocity, airResistance] = readWrite_;
 
 		acceleration.acceleration_ -= velocity.velocity_ * airResistance.resistance;
 	}
 
-	void MovePosition::Execute()
+	void MovePosition::Execute(const World *const, const float deltaTime)
 	{
 		auto &[pos, velocity, acceleration] = readWrite_;
 
 		velocity.velocity_ += acceleration.acceleration_;
 		acceleration.acceleration_ = {};
 
-		pos.position_ += velocity.velocity_ * deltaTime_;
+		pos.position_ += velocity.velocity_ * deltaTime;
 	}
 
 	Vector3 EnemyMove::playerPos_{};
-	void EnemyMove::Execute()
+	void EnemyMove::Execute(const World *const, const float deltaTime)
 	{
 
 		auto &[enemy, pos, rotate] = readWrite_;
-		Vector3 direction = (playerPos_ - pos.position_).Nomalize() * (100.f * deltaTime_ * deltaTime_);
+		Vector3 direction = (playerPos_ - pos.position_).Nomalize() * (100.f * deltaTime * deltaTime);
 		direction.y = 0.f;
 		pos.position_ += direction;
 
@@ -113,7 +116,7 @@ namespace ECS::System::Par {
 
 	}
 
-	void EnemyAttack::Execute()
+	void EnemyAttack::Execute(const World *const world, const float)
 	{
 		auto &[playerTag, playerPos, playerHealth, playerCollision, playerAcceleration] = readWrite_;
 
@@ -123,7 +126,7 @@ namespace ECS::System::Par {
 
 		Archetype archetype;
 		archetype.AddClassData<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::AttackPower, ECS::AttackCooltime>();
-		for (auto *const chunk : world_->GetAccessableChunk(archetype)) {
+		for (auto *const chunk : world->GetAccessableChunk(archetype)) {
 
 			auto posRange = chunk->GetComponent<ECS::PositionComp>();
 			auto collRange = chunk->GetComponent<ECS::SphereCollisionComp>();
@@ -150,18 +153,15 @@ namespace ECS::System::Par {
 					playerHealth.nowHealth_ -= power.power_;
 
 					// クールタイムを開始
-					coolTime.cooltime_.Start();
+					//coolTime.cooltime_.Start();
 
-					if (hitFunc_) {
-						hitFunc_();
-					}
 				}
 
 			}
 		}
 	}
 	const Ground *FallCollision::ground_ = nullptr;
-	void FallCollision::Execute()
+	void FallCollision::Execute(const World *const, const float)
 	{
 		auto &[collision, pos, velocity] = readWrite_;
 
@@ -178,7 +178,7 @@ namespace ECS::System::Par {
 
 	}
 
-	void WeaponCollision::Execute()
+	void WeaponCollision::Execute(const World *const world, const float)
 	{
 		std::list<
 			std::tuple<
@@ -189,7 +189,7 @@ namespace ECS::System::Par {
 
 		Archetype archetype;
 		archetype.AddClassData<ECS::AttackCollisionComp, ECS::AttackPower>();
-		for (auto *const chunk : world_->GetAccessableChunk(archetype)) {
+		for (auto *const chunk : world->GetAccessableChunk(archetype)) {
 			auto collRange = chunk->GetComponent<ECS::AttackCollisionComp>();
 			auto damageRange = chunk->GetComponent<ECS::AttackPower>();
 			for (uint32_t i = 0; i < collRange.size(); i++) {
@@ -218,7 +218,7 @@ namespace ECS::System::Par {
 
 	}
 
-	void PlayerMove::Execute()
+	void PlayerMove::Execute(const World *const, const float deltaTime)
 	{
 		auto *inputManager = Input::GetInstance();
 		auto *const xInput = inputManager->GetXInput();
@@ -240,7 +240,7 @@ namespace ECS::System::Par {
 		// カメラの向きに回転したベクトル
 		const Vector3 &rotateInput = lInput3d /** Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y)*/;
 		// 回転したベクトルを使って移動
-		pos.position_ += rotateInput * (500.f * deltaTime_ * deltaTime_);
+		pos.position_ += rotateInput * (500.f * deltaTime * deltaTime);
 
 		// ステージの半径
 		static constexpr float kStageRadius = 43.f;
@@ -273,7 +273,7 @@ namespace ECS::System::Par {
 		}
 	}
 	Model *PlayerAttack::attackModel_ = nullptr;
-	void PlayerAttack::Execute()
+	void PlayerAttack::Execute(const World *const, const float)
 	{
 		static ParticleManager *const particleManager = ParticleManager::GetInstance();
 
@@ -313,7 +313,7 @@ namespace ECS::System::Par {
 
 	}
 
-	void ModelDrawer::Execute()
+	void ModelDrawer::Execute(const World *const, const float)
 	{
 		static ModelHandleListManager *const blockManager = ModelHandleListManager::GetInstance();
 		static SkinModelHandleListManager *const skinModelRender_ = SkinModelHandleListManager::GetInstance();
@@ -322,7 +322,7 @@ namespace ECS::System::Par {
 
 		blockManager->AddBox(model.model_, { .transMat_ = transform });
 	}
-	void SkinModelDrawer::Execute()
+	void SkinModelDrawer::Execute(const World *const, const float)
 	{
 		static ModelHandleListManager *const blockManager = ModelHandleListManager::GetInstance();
 		static SkinModelHandleListManager *const skinModelRender_ = SkinModelHandleListManager::GetInstance();
@@ -331,7 +331,7 @@ namespace ECS::System::Par {
 		skinModelRender_->AddBox({ model.model_, skinModel.skinModel_ }, { .transMat_ = transform });
 	}
 
-	void SlideFollowCameraUpdate::Execute()
+	void SlideFollowCameraUpdate::Execute(const World *const world, const float)
 	{
 		std::list<
 			const ECS::PositionComp *
@@ -339,7 +339,7 @@ namespace ECS::System::Par {
 
 		Archetype archetype;
 		archetype.AddClassData<ECS::PlayerTag, ECS::PositionComp>();
-		for (auto *const chunk : world_->GetAccessableChunk(archetype)) {
+		for (auto *const chunk : world->GetAccessableChunk(archetype)) {
 			auto posRange = chunk->GetComponent<ECS::PositionComp>();
 			for (auto &pos : posRange) {
 				posList.push_back(&pos);
@@ -353,22 +353,24 @@ namespace ECS::System::Par {
 		followCamera.TransferData(*CameraManager::GetInstance()->GetCamera("FollowCamera"), *cameraPos);
 	}
 
-	void CalcTransMatrix::Execute()
+	void CalcTransMatrix::Execute(const World *const, const float)
 	{
-		auto &[scale, rot, pos, mat] = readWrite_;
-		mat.transformMat_ = SoLib::Math::Affine(scale, rot.quateRot_.Normalize(), pos);
+		const auto &[scale, rot, pos] = onlyRead_;
+		auto &[transMat] = onlyWrite_;
+
+		transMat = SoLib::Affine(scale, rot.quateRot_.Normalize(), pos);
 
 	}
 
-	void CalcEulerTransMatrix::Execute()
+	void CalcEulerTransMatrix::Execute(const World *const, const float)
 	{
-		auto &[scale, rot, pos, mat] = readWrite_;
+		const auto &[scale, rot, pos] = onlyRead_;
+		auto &[transMat] = onlyWrite_;
 
-		mat.transformMat_ = SoLib::Math::Affine(scale, rot.rotate_, pos);
-
+		transMat = SoLib::Affine(scale, rot.rotate_, pos);
 	}
 	HealthBar *DrawHelthBar::healthBar_ = nullptr;
-	void DrawHelthBar::Execute()
+	void DrawHelthBar::Execute(const World *const, const float)
 	{
 		auto &[plTag, health] = readWrite_;
 		healthBar_->SetPercent(health.CalcPercent());
@@ -382,7 +384,7 @@ namespace ECS::System::Par {
 		healthBar_ = healthBar;
 	}
 
-	void DrawEnemyHelthBar::Execute()
+	void DrawEnemyHelthBar::Execute(const World *const, const float)
 	{
 		auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
 
@@ -411,7 +413,7 @@ namespace ECS::System::Par {
 
 	}
 
-	void CursorDrawer::Execute()
+	void CursorDrawer::Execute(const World *const, const float)
 	{
 
 		// カメラの逆行列
@@ -465,11 +467,11 @@ namespace ECS::System::Par {
 	SoLib::DeltaTimer ExpGaugeDrawer::levelUpTimer_{ 1.5f };
 	Sprite *ExpGaugeDrawer::levelUI_ = nullptr;
 	HealthBar *ExpGaugeDrawer::expBar_ = nullptr;
-	void ExpGaugeDrawer::Execute()
+	void ExpGaugeDrawer::Execute(const World *const, const float)
 	{
 	}
 
-	void CalcParentTransform::Execute()
+	void CalcParentTransform::Execute(const World *const, const float)
 	{
 		//auto &[transMat, parent] = readWrite_;
 		//// 親の有効期限が切れてたら飛ばす

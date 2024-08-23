@@ -274,7 +274,6 @@ namespace ECS {
 	struct HealthBarComp : IComponent {
 		Vector3 offset_{ .y = 2.f };
 		VariantItem<"DefaultBarScale", Vector2> vDefaultBarScale_{ {360.f,32.f * 1.5f} };
-
 	};
 
 	struct InvincibleTime : IComponent {
@@ -321,6 +320,9 @@ namespace ECS {
 	};
 
 	struct InputFlagComp : IComponent {};
+
+	//template<SoLib::IsBased<IComponent> T, uint32_t size>
+	//struct ComponentArray :IComponent, public std::array<T, size> {	};
 
 	template<class T>
 	concept IsComponent = SoLib::IsBased<T, IComponent>;

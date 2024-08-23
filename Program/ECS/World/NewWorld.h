@@ -40,6 +40,14 @@ namespace ECS {
 			return result;
 		}
 
+		std::vector<const Chunk *> GetAccessableChunk(const Archetype &archetype) const {
+			std::vector<const Chunk *> result;
+			for (const auto &[key, chunk] : chunkMap_) {
+				if (archetype <= key) { result.push_back(chunk.get()); }
+			}
+			return result;
+		}
+
 		template<typename T, typename Predicate>
 		void erase_if(Predicate pred);
 

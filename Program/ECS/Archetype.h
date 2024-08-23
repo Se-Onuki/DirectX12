@@ -30,6 +30,19 @@ public:
 		chunkCapacity_ = CalcCapacity();
 	}
 
+	template<SoLib::IsContainsType<uint32_t> T>
+	void AddClassData(const T &component) {
+		ECS::ComponentRegistry *const compReg = ECS::ComponentRegistry::GetInstance();
+		// サイズを追加する
+		for (uint32_t arg : component) {
+			if (not compFlag_.Get().test(arg)) { totalSize_ += compReg->typeDatas_[arg].typeSize_; }
+		}
+		compFlag_.AddComp(component);
+
+		// 追加した型で容量を計算する
+		chunkCapacity_ = CalcCapacity();
+	}
+
 	template<typename T, typename... TComps>
 	void AddClassData() {
 
@@ -56,7 +69,7 @@ private:
 	uint32_t CalcCapacity() const { return kOneChunkCapacity / totalSize_; }
 
 	// 最大のサイズ
-	uint32_t totalSize_ = sizeof(ECS::Entity);
+	uint32_t totalSize_ = 0u;
 	// 1つのチャンクにいくつ置けるか
 	uint32_t chunkCapacity_ = 0u;
 
@@ -66,7 +79,7 @@ private:
 	void InnerSetClassData()
 	{
 		// Entityと型のメモリを合算する
-		totalSize_ = sizeof(ECS::Entity) + (sizeof(TComps) + ...);
+		totalSize_ = (sizeof(TComps) + ...);
 		// 1つのチャンクにいくつ置けるかを計算する
 		chunkCapacity_ = kOneChunkCapacity / totalSize_;
 	}

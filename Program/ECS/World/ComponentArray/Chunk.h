@@ -43,6 +43,8 @@ namespace ECS {
 		ComponentData::Range GetComponentRange(uint32_t compId);
 		template<typename T>
 		ComponentData::TRange<T> GetComponent();
+		template<typename T>
+		ComponentData::TRange<T, true> GetComponent() const;
 
 		const Archetype &GetArchetype() const { return archetype_; }
 
@@ -97,6 +99,9 @@ namespace ECS {
 		template<typename T>
 		decltype(componentDatas_)::iterator GetCompArray();
 
+		template<typename T>
+		decltype(componentDatas_)::const_iterator GetCompArray() const;
+
 	};
 
 	inline ComponentData *Chunk::GetComponent(uint32_t compId)
@@ -119,6 +124,21 @@ namespace ECS {
 
 		// 返すデータ
 		ComponentData::TRange<T> result = compTarget->second.View<T>(size_);
+
+		// 情報を渡す
+		return result;
+	}
+
+	template<typename T>
+	inline ComponentData::TRange<T, true> Chunk::GetComponent() const
+	{
+		// データの配列を取得する
+		auto compTarget = GetCompArray<T>();
+		// 存在しなかったら破棄する
+		if (compTarget == componentDatas_.end()) { return {}; }
+
+		// 返すデータ
+		ComponentData::TRange<T, true> result = compTarget->second.View<T>(size_);
 
 		// 情報を渡す
 		return result;
@@ -239,9 +259,14 @@ namespace ECS {
 		return &GetCompArray<T>()->second.at<T>(index);
 	}
 
-
 	template<typename T>
 	inline decltype(Chunk::componentDatas_)::iterator Chunk::GetCompArray()
+	{
+		return componentDatas_.find(static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>()));
+	}
+
+	template<typename T>
+	inline decltype(Chunk::componentDatas_)::const_iterator Chunk::GetCompArray() const
 	{
 		return componentDatas_.find(static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>()));
 	}

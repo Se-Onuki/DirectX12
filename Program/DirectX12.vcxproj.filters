@@ -974,6 +974,9 @@
     <ClInclude Include="ECS\System\NewSystems.h">
       <Filter>ECS\System</Filter>
     </ClInclude>
+    <ClInclude Include="ECS\System\ECSCollisionManager.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

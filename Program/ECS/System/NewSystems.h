@@ -8,243 +8,218 @@
 namespace ECS {
 	namespace System {
 		namespace Par {
-			class CheckAliveTime : public IFunctionalSystem {
+			class CheckAliveTime :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::AliveTime, ECS::LifeLimit, ECS::IsAlive>;
-				CheckAliveTime(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				OnlyRead<ECS::AliveTime, ECS::LifeLimit> onlyRead_;
+				OnlyWrite<ECS::IsAlive> onlyWrite_;
+				using DataBase = DataBase<decltype(onlyRead_), decltype(onlyWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 
 			};
-			class CheckHealthDie : public IFunctionalSystem {
+			class CheckHealthDie :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::HealthComp, ECS::IsAlive>;
-				CheckHealthDie(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				OnlyRead<ECS::HealthComp> onlyRead_;
+				OnlyWrite<ECS::IsAlive> onlyWrite_;
+				using DataBase = DataBase<decltype(onlyRead_), decltype(onlyWrite_)>;
 
-				void Execute() override;
-
-			};
-
-			class AddAliveTime : public IFunctionalSystem {
-			public:
-				using ReadWrite = GetComponentHelper<ECS::AliveTime>;
-				AddAliveTime(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
-
-				void Execute() override;
+				void Execute(const World *const, const float);
 
 			};
 
-			class AddCoolTime : public IFunctionalSystem {
+			class AddAliveTime :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::AttackCooltime>;
-				AddCoolTime(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
 
-				void Execute() override;
+				ReadAndWrite<ECS::AliveTime> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
 
 			};
 
-			class AnimateUpdate : public IFunctionalSystem {
+			class AddCoolTime :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::EntityState>;
-				AnimateUpdate(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::AttackCooltime> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 
 			};
 
-			class ModelAnimatorUpdate : public IFunctionalSystem {
+			class AnimateUpdate :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::ModelComp, ECS::ModelAnimator>;
-				ModelAnimatorUpdate(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::EntityState> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 
 			};
 
-			class SkinModelUpdate : public IFunctionalSystem {
+			class ModelAnimatorUpdate :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::SkinModel, ECS::ModelAnimator>;
-				SkinModelUpdate(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::ModelComp, ECS::ModelAnimator> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 
 			};
 
-			class ColorLerp : public IFunctionalSystem {
+			class SkinModelUpdate :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::AliveTime, ECS::LifeLimit, ECS::ColorLarp, ECS::Color>;
-				ColorLerp(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::SkinModel, ECS::ModelAnimator> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 
 			};
 
-			class AddGravity : public IFunctionalSystem {
+			class ColorLerp :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::AccelerationComp, ECS::GravityComp>;
-				AddGravity(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::AliveTime, ECS::LifeLimit, ECS::ColorLarp, ECS::Color> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 
 			};
-			class AirResistanceSystem : public IFunctionalSystem {
-			public:
-				using ReadWrite = GetComponentHelper<ECS::AccelerationComp, const ECS::VelocityComp, const ECS::AirResistance>;
-				AirResistanceSystem(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
 
-				void Execute() override;
+			class AddGravity :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::AccelerationComp, ECS::GravityComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+				
+				void Execute(const World *const, const float);
 
 			};
-			class MovePosition : public IFunctionalSystem {
+			class AirResistanceSystem :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::PositionComp, ECS::VelocityComp, ECS::AccelerationComp>;
-				MovePosition(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::AccelerationComp, const ECS::VelocityComp, const ECS::AirResistance> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;			
 
-				void Execute() override;
+				void Execute(const World *const, const float);
+
+			};
+			class MovePosition :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::PositionComp, ECS::VelocityComp, ECS::AccelerationComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
 			};
 
-			class EnemyMove : public IFunctionalSystem {
+			class EnemyMove :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp>;
-				EnemyMove(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static Vector3 playerPos_;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class EnemyAttack : public IFunctionalSystem {
+			class EnemyAttack :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::PlayerTag, ECS::PositionComp, ECS::HealthComp, ECS::SphereCollisionComp, ECS::AccelerationComp>;
-				EnemyAttack(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, ECS::HealthComp, ECS::SphereCollisionComp, ECS::AccelerationComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				// 接触時の関数
-				inline static std::function<void(void)> hitFunc_;
-
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class FallCollision : public IFunctionalSystem {
+			class FallCollision :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::SphereCollisionComp, ECS::PositionComp, ECS::VelocityComp>;
-				FallCollision(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::SphereCollisionComp, ECS::PositionComp, ECS::VelocityComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static const Ground *ground_;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class WeaponCollision : public IFunctionalSystem {
+			class WeaponCollision :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::HealthComp>;
-				WeaponCollision(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::HealthComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				/*static Audio::SoundHandle sound_;
-				static ::Model *model_;*/
-
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class PlayerMove : public IFunctionalSystem {
+			class PlayerMove :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::ModelAnimator, ECS::IsLanding, ECS::AttackStatus, ECS::AttackCooltime>;
-				PlayerMove(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::ModelAnimator, ECS::IsLanding, ECS::AttackStatus, ECS::AttackCooltime> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
 
-			class PlayerAttack : public IFunctionalSystem {
+			class PlayerAttack :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp, ECS::ModelAnimator, ECS::EntityState, ECS::Experience>;
-				PlayerAttack(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp, ECS::ModelAnimator, ECS::EntityState, ECS::Experience> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static Model *attackModel_;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class ModelDrawer : public IFunctionalSystem {
+			class ModelDrawer :public IJobEntity {
 			public:
 				static constexpr bool kIsSingleThread_ = true;
-				using ReadWrite = GetComponentHelper<ECS::TransformMatComp, ECS::ModelComp>;
-				ModelDrawer(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::TransformMatComp, ECS::ModelComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class SkinModelDrawer : public IFunctionalSystem {
+			class SkinModelDrawer :public IJobEntity {
 			public:
 				static constexpr bool kIsSingleThread_ = true;
-				using ReadWrite = GetComponentHelper<ECS::TransformMatComp, ECS::ModelComp, ECS::SkinModel>;
-				SkinModelDrawer(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::TransformMatComp, ECS::ModelComp, ECS::SkinModel> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class SlideFollowCameraUpdate : public IFunctionalSystem {
+			class SlideFollowCameraUpdate :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::FollowCamera, ECS::PositionComp>;
-				SlideFollowCameraUpdate(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::FollowCamera, ECS::PositionComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class CalcTransMatrix : public IFunctionalSystem {
+			class CalcTransMatrix : public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp, ECS::TransformMatComp>;
-				CalcTransMatrix(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				OnlyRead<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp> onlyRead_;
+				OnlyWrite<ECS::TransformMatComp> onlyWrite_;
+				using DataBase = DataBase<decltype(onlyRead_), decltype(onlyWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class CalcEulerTransMatrix : public IFunctionalSystem {
+			class CalcEulerTransMatrix :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp, ECS::TransformMatComp>;
-				CalcEulerTransMatrix(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				OnlyRead<ECS::ScaleComp, ECS::RotateComp, ECS::PositionComp> onlyRead_;
+				OnlyWrite<ECS::TransformMatComp> onlyWrite_;
+				using DataBase = DataBase<decltype(onlyRead_), decltype(onlyWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class DrawHelthBar : public IFunctionalSystem {
+			class DrawHelthBar :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::PlayerTag, ECS::HealthComp>;
-				DrawHelthBar(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::PlayerTag, ECS::HealthComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static HealthBar *healthBar_;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class DrawEnemyHelthBar : public IFunctionalSystem {
+			class DrawEnemyHelthBar :public IJobEntity {
 			public:
 				static constexpr bool kIsSingleThread_ = true;
-				using ReadWrite = GetComponentHelper<ECS::EnemyTag, ECS::HealthComp, ECS::PositionComp, ECS::HealthBarComp>;
-				DrawEnemyHelthBar(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::EnemyTag, ECS::HealthComp, ECS::PositionComp, ECS::HealthBarComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
 				inline static constexpr uint32_t kDrawCount_ = 50u;
 
@@ -253,39 +228,36 @@ namespace ECS {
 
 				static void Init(std::array<std::unique_ptr<HealthBar>, kDrawCount_> *healthBar);
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class CursorDrawer : public IFunctionalSystem {
+			class CursorDrawer :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::PlayerTag, ECS::PositionComp, ECS::QuaternionRotComp, ECS::CursorComp>;
-				CursorDrawer(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, ECS::QuaternionRotComp, ECS::CursorComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class ExpGaugeDrawer : public IFunctionalSystem {
+			class ExpGaugeDrawer :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::AttackCooltime>;
-				ExpGaugeDrawer(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::AttackCooltime> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static uint32_t prevLevel_;
 				static SoLib::DeltaTimer levelUpTimer_;
 				static Sprite *levelUI_;
 				static HealthBar *expBar_;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
-			class CalcParentTransform : public IFunctionalSystem {
+			class CalcParentTransform :public IJobEntity {
 			public:
-				using ReadWrite = GetComponentHelper<ECS::TransformMatComp, ECS::Parent>;
-				CalcParentTransform(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-				ReadWrite::Components readWrite_;
+				ReadAndWrite<ECS::TransformMatComp, ECS::Parent> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
 
-				void Execute() override;
+				void Execute(const World *const, const float);
 			};
 
 		}

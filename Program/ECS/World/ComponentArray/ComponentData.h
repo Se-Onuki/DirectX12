@@ -67,36 +67,41 @@ namespace ECS {
 
 		};
 
-		template<typename T>
+		template<typename T, bool IsConst = false>
 		class TRange {
 		public:
 
 			using iterator = CompIterator<T, false>;
 			using const_iterator = CompIterator<T, true>;
 
+			using CompData = std::conditional_t<IsConst, const ComponentData *, ComponentData *>;
+
 			TRange() = default;
 			TRange(const TRange &) = default;
 			TRange(TRange &&) = default;
 			TRange &operator=(const TRange &) = default;
 			TRange &operator=(TRange &&) = default;
-			TRange(ComponentData *compData, uint32_t begin, uint32_t end) : compData_(compData), begin_(begin), end_(end) {}
+			TRange(CompData compData, uint32_t begin, uint32_t end) : compData_(compData), begin_(begin), end_(end) {}
 
-			iterator begin() { return iterator{ compData_, begin_ }; }
+			iterator begin() requires(IsConst == false) { return iterator{ compData_, begin_ }; }
 			const_iterator begin() const { return const_iterator{ compData_, begin_ }; }
 			const_iterator cbegin() const { return const_iterator{ compData_, begin_ }; }
 
-			iterator end() { return iterator{ compData_, end_ }; }
+			iterator end() requires(IsConst == false) { return iterator{ compData_, end_ }; }
 			const_iterator end() const { return const_iterator{ compData_, end_ }; }
 			const_iterator cend() const { return const_iterator{ compData_, end_ }; }
 
-			T &operator[](uint32_t i) { return compData_->at<T>(begin_ + i); }
+			T &operator[](uint32_t i) requires(IsConst == false) { return compData_->at<T>(begin_ + i); }
 			const T &operator[](uint32_t i) const { return compData_->at<T>(begin_ + i); }
 
 			uint32_t size() const { return end_ - begin_; }
 
 		private:
 
-			ComponentData *compData_;
+			friend TRange<T, true>;
+			friend TRange<T, false>;
+
+			CompData compData_;
 			uint32_t begin_;
 			uint32_t end_;
 
@@ -130,6 +135,11 @@ namespace ECS {
 		TRange<T> View(uint32_t end) { return TRange<T>{ this, 0u, end }; }
 		template<typename T>
 		TRange<T> View(uint32_t begin, uint32_t end) { return TRange<T>{ this, begin, end }; }
+
+		template<typename T>
+		TRange<T, true> View(uint32_t end) const { return TRange<T, true>{ this, 0u, end }; }
+		template<typename T>
+		TRange<T, true> View(uint32_t begin, uint32_t end) const { return TRange<T, true>{ this, begin, end }; }
 
 		uint32_t GetTypeSize() const { return typeSize_; }
 

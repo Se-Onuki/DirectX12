@@ -283,19 +283,6 @@ void GameScene::OnEnter() {
 
 	vignettingParam_ = { 16.f, 0.8f };
 
-	/*chunk_.Init(playerPrefab_->GetArchetype());
-	chunk_.push_back(ECS::TransformMatComp{ .transformMat_ = Matrix4x4::Identity() });
-	chunk_.emplace_back(9);
-	chunk_.push_back(ECS::TransformMatComp{ .transformMat_ = Matrix4x4::Identity() * 5 });
-
-	auto transMat = chunk_.GetComponent<ECS::TransformMatComp>();*/
-
-	//std::for_each(std::execution::par_unseq, transMat.begin(), transMat.end(), [](ECS::TransformMatComp &comp) { comp.transformMat_ *= 3.f; });
-
-	//std::erase_if(chunk_.View<ECS::TransformMatComp>(), [](auto &item) { return item->transformMat_.m[0][0] == 0.f; });
-
-	//systemExecuter_.AddSystem<ECS::TestSystem>();
-
 	ECS::IFunctionalSystem::world_ = &newWorld_;
 
 	ECS::System::Par::DrawEnemyHelthBar::Init(&enemyHealthBar_);

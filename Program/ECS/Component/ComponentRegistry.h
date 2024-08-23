@@ -89,6 +89,13 @@ namespace ECS {
 				}
 			}
 
+			template<SoLib::IsContainsType<uint32_t> T>
+			void AddComp(const T &args) {
+				for (uint32_t arg : args) {
+					bitset_.set(arg);
+				}
+			}
+
 			template <IsComponent T, IsComponent... Ts>
 			void AddComp() {
 				constexpr std::size_t index = GetIndex<T, TComps...>();
@@ -118,7 +125,6 @@ namespace ECS {
 			}
 
 			constexpr bool operator==(const ComponentFlag &) const noexcept = default;
-
 
 			ComponentFlag operator&(const ComponentFlag &r) noexcept {
 				return { bitset_ & r.bitset_ };
