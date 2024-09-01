@@ -186,6 +186,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Create\Create.cpp" />
     <ClCompile Include="Engine\DirectBase\File\GlobalVariables.cpp" />
     <ClCompile Include="Engine\DirectBase\Input\Input.cpp" />
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\AssimpData.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\BoneModel.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\Material.cpp" />
@@ -196,6 +197,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Model\ModelInfluence.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelRender.cpp" />
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\ModelNode.cpp" />
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\Skeleton.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\SkeletonReference.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\ModelVertexData.cpp" />
     <ClCompile Include="Engine\DirectBase\Model\SkinClusterBase.cpp" />
@@ -320,6 +323,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\File\GlobalVariables.h" />
     <ClInclude Include="Engine\DirectBase\File\VariantItem.h" />
     <ClInclude Include="Engine\DirectBase\Input\Input.h" />
+    <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\ModelNode.h" />
+    <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.h" />
     <ClInclude Include="Engine\DirectBase\Model\AssimpData.h" />
     <ClInclude Include="Engine\DirectBase\Model\BoneModel.h" />
     <ClInclude Include="Engine\DirectBase\Model\InstancingRenderer.h" />
@@ -332,6 +337,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Model\ModelInfluence.h" />
     <ClInclude Include="Engine\DirectBase\Model\ModelManager.h" />
     <ClInclude Include="Engine\DirectBase\Model\ModelRender.h" />
+    <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\Skeleton.h" />
     <ClInclude Include="Engine\DirectBase\Model\SkeletonReference.h" />
     <ClInclude Include="Engine\DirectBase\Model\SkinCluster.h" />
     <ClInclude Include="Engine\DirectBase\Model\ModelVertexData.h" />

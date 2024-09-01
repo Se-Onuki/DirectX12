@@ -22,7 +22,9 @@
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include <execution>
 #include "SkeletonReference.h"
+#include "SkeletonAnimation/Skeleton.h"
 #include "../Render/SkyBox/SkyBox.h"
+#include "SkeletonAnimation/ModelAnimation.h"
 
 ID3D12GraphicsCommandList *Model::commandList_ = nullptr;
 
@@ -35,204 +37,6 @@ Model::PipelineType Model::sPipelineType_ = Model::PipelineType::kModel;
 //DescHeapCbvSrvUav::HeapRange Model::srvRange_;
 
 std::unique_ptr<CBuffer<Matrix4x4>> ModelNode::kIdentity_ = nullptr;
-
-namespace ModelAnimation {
-
-	std::unique_ptr<Animation> Animation::CreateFromFile(const std::string &directoryPath, const std::string &filename, uint32_t index)
-	{
-		std::unique_ptr<Animation> result = std::make_unique<Animation>();
-
-		Assimp::Importer importer;
-
-		std::string &&filePath = Model::DefaultDirectory::c_str() + directoryPath + filename;
-
-		const aiScene *scene = importer.ReadFile(filePath.c_str(), 0);
-
-		assert(scene->mNumAnimations != 0 and "アニメーションがありません｡");
-
-		std::span<aiAnimation *>animationAssimp{ scene->mAnimations, scene->mNumAnimations }; // 一旦最初のアニメーションだけ採用する｡ そのうち複数対応するように｡
-
-		// 時間の単位を秒単位に変更
-		result->duration_ = static_cast<float>(animationAssimp[index]->mDuration / animationAssimp[index]->mTicksPerSecond);
-		// mTicksPerSecond	: 周波数｡ 単位はHz｡
-		// mDuration		: mTicksPerSecondで指定された周波数における長さ
-
-		// assimpでは個々のAnimationをchannelと呼んでいるので､channelを回してNodeAnimationの情報を取ってくる｡
-		{
-			for (uint32_t channelIndex = 0u; channelIndex < animationAssimp[index]->mNumChannels; channelIndex++) {
-				// アニメーションのデータのポインタ
-				aiNodeAnim *nodeAnimationAssimp = animationAssimp[index]->mChannels[channelIndex];
-				// アニメーションの名前から､紐づいた保存先を作成
-				NodeAnimation &nodeAnimation = result->nodeAnimations_[nodeAnimationAssimp->mNodeName.C_Str()];
-
-				// 座標データを取得していく
-				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumPositionKeys; keyIndex++) {
-					// assimp側の座標データ
-					aiVectorKey &keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
-
-					// キーフレームの保存先
-					KeyFlameVector3 keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
-					keyFlame.kValue_ = Vector3{ -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };  // 右手から左手に変更
-
-					// データを転送
-					nodeAnimation.translate_.keyFlames_.push_back(std::move(keyFlame));
-				}
-
-				// 姿勢データを取得していく
-				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumRotationKeys; keyIndex++) {
-					// assimp側の姿勢データ
-					aiQuatKey &keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
-
-					// キーフレームの保存先
-					KeyFlameQuaternion keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond);                        // 周波数から秒単位に変換
-					keyFlame.kValue_ = Quaternion{ keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w }; // 右手から左手に変更
-
-					// データを転送
-					nodeAnimation.rotate_.keyFlames_.push_back(std::move(keyFlame));
-				}
-
-				// スケールのデータを取得していく
-				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumScalingKeys; keyIndex++) {
-					// assimp側の姿勢データ
-					aiVectorKey &keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
-
-					// キーフレームの保存先
-					KeyFlameVector3 keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
-					keyFlame.kValue_ = Vector3{ keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };   // そのまま代入する
-
-					// データを転送
-					nodeAnimation.scale_.keyFlames_.push_back(std::move(keyFlame));
-				}
-			}
-		}
-
-		return std::move(result);
-	}
-
-	std::unique_ptr<Animation> Animation::Create(const SolEngine::AssimpData *assimpData, uint32_t index)
-	{
-		std::unique_ptr<Animation> result = std::make_unique<Animation>();
-
-		const aiScene *scene = assimpData->importer_->GetScene();
-
-		assert(scene->mNumAnimations != 0 and "アニメーションがありません｡");
-
-		std::span<aiAnimation *>animationAssimp{ scene->mAnimations, scene->mNumAnimations }; // 一旦最初のアニメーションだけ採用する｡ そのうち複数対応するように｡
-
-		// 時間の単位を秒単位に変更
-		result->duration_ = static_cast<float>(animationAssimp[index]->mDuration / animationAssimp[index]->mTicksPerSecond);
-		// mTicksPerSecond	: 周波数｡ 単位はHz｡
-		// mDuration		: mTicksPerSecondで指定された周波数における長さ
-
-		// assimpでは個々のAnimationをchannelと呼んでいるので､channelを回してNodeAnimationの情報を取ってくる｡
-		{
-			for (uint32_t channelIndex = 0u; channelIndex < animationAssimp[index]->mNumChannels; channelIndex++) {
-				// アニメーションのデータのポインタ
-				aiNodeAnim *nodeAnimationAssimp = animationAssimp[index]->mChannels[channelIndex];
-				// アニメーションの名前から､紐づいた保存先を作成
-				NodeAnimation &nodeAnimation = result->nodeAnimations_[nodeAnimationAssimp->mNodeName.C_Str()];
-
-				// 座標データを取得していく
-				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumPositionKeys; keyIndex++) {
-					// assimp側の座標データ
-					aiVectorKey &keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
-
-					// キーフレームの保存先
-					KeyFlameVector3 keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
-					keyFlame.kValue_ = Vector3{ -keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };  // 右手から左手に変更
-
-					// データを転送
-					nodeAnimation.translate_.keyFlames_.push_back(std::move(keyFlame));
-				}
-
-				// 姿勢データを取得していく
-				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumRotationKeys; keyIndex++) {
-					// assimp側の姿勢データ
-					aiQuatKey &keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
-
-					// キーフレームの保存先
-					KeyFlameQuaternion keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond);                        // 周波数から秒単位に変換
-					keyFlame.kValue_ = Quaternion{ keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w }; // 右手から左手に変更
-
-					// データを転送
-					nodeAnimation.rotate_.keyFlames_.push_back(std::move(keyFlame));
-				}
-
-				// スケールのデータを取得していく
-				for (uint32_t keyIndex = 0u; keyIndex < nodeAnimationAssimp->mNumScalingKeys; keyIndex++) {
-					// assimp側の姿勢データ
-					aiVectorKey &keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
-
-					// キーフレームの保存先
-					KeyFlameVector3 keyFlame;
-					keyFlame.time_ = static_cast<float>(keyAssimp.mTime / animationAssimp[index]->mTicksPerSecond); // 周波数から秒単位に変換
-					keyFlame.kValue_ = Vector3{ keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z };   // そのまま代入する
-
-					// データを転送
-					nodeAnimation.scale_.keyFlames_.push_back(std::move(keyFlame));
-				}
-			}
-		}
-
-		return std::move(result);
-	}
-
-	void AnimationPlayer::Start(bool isLoop)
-	{
-		// アニメーションの初期化
-		animationTimer_.Start(animation_->duration_, isLoop); // 時間を設定する
-	}
-
-	void AnimationPlayer::Update(float deltaTime, Model *model)
-	{
-		// Animationの更新
-		animationTimer_.Update(deltaTime);
-
-		CalcTransform(animationTimer_.GetNowFlame(), model->rootNode_.get());
-
-	}
-
-	void AnimationPlayer::Update(float deltaTime, SolEngine::ModelData *model)
-	{
-		// Animationの更新
-		animationTimer_.Update(deltaTime);
-
-		CalcTransform(animationTimer_.GetNowFlame(), model->rootNode_.get());
-	}
-
-	void AnimationPlayer::CalcTransform(float animateTime, ModelNode *const modelNode) const
-	{
-		// 対応したアニメーションがあれば通す
-		if (animation_->nodeAnimations_.contains(modelNode->name_)) {
-			// モデルのノードに紐づいたアニメーションを取得する
-			const auto &rootNodeAnimation = animation_->nodeAnimations_.at(modelNode->name_);
-			// ノードのアニメーションのデータを取得する
-			BoneModel::SimpleTransform rootTransform;
-			if (rootNodeAnimation.scale_.size()) {
-				rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
-			}
-			if (rootNodeAnimation.rotate_.size()) {
-				rootTransform.rotate_ = rootNodeAnimation.rotate_.CalcValue(animateTime);
-			}
-			if (rootNodeAnimation.translate_.size()) {
-				rootTransform.translate_ = rootNodeAnimation.translate_.CalcValue(animateTime);
-			}
-			// モデルデータの転送
-			(*modelNode->localMatrix_) = rootTransform.CalcTransMat();
-		}
-
-		std::for_each(std::execution::par_unseq, modelNode->children_.begin(), modelNode->children_.end(), [this, animateTime](std::unique_ptr<ModelNode> &child) { CalcTransform(animateTime, child.get()); });
-		/*for (auto &child : modelNode->children_) {
-			CalcTransform(animateTime, child.get());
-		}*/
-	}
-
-}
 
 void Model::StaticInit()
 {
@@ -1159,7 +963,7 @@ void Model::Draw(const SkinCluster &skinCluster, const Transform &transform, con
 		auto &mesh = meshList_[i];
 		// commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
-		mesh->Draw(commandList_, 1, &skinCluster.reference_->modelInfluence_->influence_.GetVBView());
+		mesh->Draw(commandList_, 1, &skinCluster.skeletonRef_->modelInfluence_->influence_.GetVBView());
 	}
 }
 
@@ -1175,7 +979,7 @@ void Model::Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HAND
 	for (uint32_t i = 0; i < meshList_.size(); i++) {
 		auto &mesh = meshList_[i];
 		commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinParticle)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
-		mesh->Draw(commandList_, drawCount, &skinCluster.reference_->modelInfluence_->influence_.GetVBView());
+		mesh->Draw(commandList_, drawCount, &skinCluster.skeletonRef_->modelInfluence_->influence_.GetVBView());
 	}
 }
 
@@ -1631,13 +1435,7 @@ std::unique_ptr<ModelNode> ModelNode::Create(aiNode *node)
 	aiVector3D scale, translate;
 	aiQuaternion rotate;
 
-	// transformを取得
-	node->mTransformation.Decompose(scale, rotate, translate);
-
-	result->transform_.scale_ = { scale.x, scale.y, scale.z };
-	result->transform_.rotate_ = { rotate.x, -rotate.y, -rotate.z, rotate.w };
-	result->transform_.translate_ = { -translate.x, translate.y, translate.z };
-
+	result->transform_ = SoLib::Convert<SimpleTransformQuaternion>(node->mTransformation);
 
 	// 行列を代入
 	result->localMatrix_ = std::make_unique<CBuffer<Matrix4x4>>(result->transform_.Affine());
@@ -1694,13 +1492,26 @@ const ModelNode *ModelNode::FindNode(const std::string &name) const
 	return nullptr;
 }
 
-std::unique_ptr<SkeletonState> SkeletonState::MakeSkeleton(const ModelNode *rootNode)
+std::unique_ptr<SkeletonState> SkeletonState::MakeSkeleton(const SolEngine::SkeletonAnimation::Skeleton *skeleton)
 {
 	std::unique_ptr<SkeletonState> result = std::make_unique<SkeletonState>();
-	// ノードからジョイントを構築し、現在のジョイントのindexを保存する
-	ModelJointState::MakeJointIndex(rootNode, result->joints_);
 
-	result->reference_ = *SolEngine::ResourceObjectManager<SolEngine::SkeletonReference>::GetInstance()->Load({ rootNode });
+	// ジョイント数と同じメモリを確保する
+	result->joints_.resize(skeleton->skeletonReference_->joints_.size());
+
+	//std::transform(skeleton->skeletonReference_->joints_.begin(), skeleton->skeletonReference_->joints_.end(), result->joints_.begin(), [](const std::unique_ptr<ModelJointReference> &ref) {
+	//	ModelJointState result;
+	//	result.localMatrix_ = node->GetLocalMatrix();
+	//	result.skeletonSpaceMatrix_ = Matrix4x4::Identity();
+	//	result.transform_ = ref->transform_;
+	//	return result;
+	//	}
+	//);
+
+	// ノードからジョイントを構築し、現在のジョイントのindexを保存する
+	// ModelJointState::MakeJointIndex(rootNode, result->joints_);
+
+	result->reference_ = *skeleton->skeletonReference_;
 
 	return std::move(result);
 }
@@ -1730,20 +1541,19 @@ void SkeletonState::UpdateMatrix()
 	for (uint32_t i = 0; i < joints_.size(); i++) {
 		const auto &ref = reference_->joints_[i];
 		auto &joint = joints_[i];
-		joint->CalcAffine();
-		if (ref->parent_) {
-			joint->skeletonSpaceMatrix_ = joint->localMatrix_ * joints_[*ref->parent_]->skeletonSpaceMatrix_;
+		joint.CalcAffine();
+		if (ref->parent_ != (std::numeric_limits<uint32_t>::max)()) {
+			joint.skeletonSpaceMatrix_ = joint.localMatrix_ * joints_[ref->parent_].skeletonSpaceMatrix_;
 		}
 		else {
-			joint->skeletonSpaceMatrix_ = joint->localMatrix_;
+			joint.skeletonSpaceMatrix_ = joint.localMatrix_;
 		}
 	}
 
 }
 
-void SkeletonState::ApplyAnimation(const ModelAnimation::Animation &animation, const float animateTime)
+void SkeletonState::ApplyAnimation(const SolEngine::SkeletonAnimation::Animation &animation, const float animateTime)
 {
-
 
 	for (uint32_t i = 0; i < joints_.size(); i++) {
 		const auto &ref = reference_->joints_[i];
@@ -1752,9 +1562,9 @@ void SkeletonState::ApplyAnimation(const ModelAnimation::Animation &animation, c
 		if (auto it = animation.nodeAnimations_.find(ref->name_); it != animation.nodeAnimations_.end()) {
 			const auto &rootNodeAnimation = it->second;
 			// 時間に応じた値を取得して代入する
-			joint->transform_.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
-			joint->transform_.rotate_ = rootNodeAnimation.rotate_.CalcValue(animateTime);
-			joint->transform_.translate_ = rootNodeAnimation.translate_.CalcValue(animateTime);
+			joint.transform_.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
+			joint.transform_.rotate_ = rootNodeAnimation.rotate_.CalcValue(animateTime);
+			joint.transform_.translate_ = rootNodeAnimation.translate_.CalcValue(animateTime);
 
 		}
 
@@ -1764,19 +1574,24 @@ uint32_t ModelJointReference::MakeJointIndex(const ModelNode *node, const std::o
 {
 	// 領域の確保回数を減らす
 	joints.reserve(joints.size() + 1 + node->children_.size());
-
+	// ジョイントの構築
 	auto joint = std::make_unique<ModelJointReference>();
+	// 名前の転送
 	joint->name_ = node->name_;
+	// 現在のジョイント数を計算
 	uint32_t selfIndex = joint->index_ = static_cast<uint32_t>(joints.size());
+	// 親が存在するなら代入
 	if (parent) { joint->parent_ = parent; }
+	// 書き込んだデータを追加
 	joints.push_back(std::move(joint));
-
+	// 子のデータを書き込む
 	for (const auto &child : node->children_) {
-
+		// 子のIndexを返して､子のデータを構築
 		uint32_t childIndex = ModelJointReference::MakeJointIndex(child.get(), selfIndex, joints);
+		// 自分のデータに子のデータを書き込む
 		joints[selfIndex]->children_.push_back(childIndex);
 	}
-
+	// 自分の番号を返す
 	return selfIndex;
 }
 
@@ -1938,11 +1753,12 @@ SkinCluster::SkinCluster(uint32_t jointsCount)
 //
 //}
 
-std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::ModelData *model, const SkeletonState &skeleton)
+std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::ModelData *model, const SolEngine::Skeleton *skeletonRef, const SkeletonState &skeleton)
 {
 	std::unique_ptr<SkinCluster> result = std::make_unique<SkinCluster>(static_cast<uint32_t>(skeleton.joints_.size()));
 
 	result->reference_ = model;
+	result->skeletonRef_ = skeletonRef;
 
 	// 初期化
 	result->inverseBindPoseMatrixList_.resize(skeleton.reference_->jointMap_.size());
@@ -1954,7 +1770,7 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 	for (uint32_t i = 0; i < model->meshHandleList_.size(); i++) {
 
 		// そのメッシュにデータが格納されているか
-		const auto &clusterItr = model->skinCluster_->skinClusterData_.at(i);
+		const auto &clusterItr = skeletonRef->skinCluster_->skinClusterData_.at(i);
 		//if (not clusterItr) { continue; }
 		// モデルデータを解析してInfluenceを埋める
 		for (const auto &[keyName, jointWeight] : clusterItr) {
@@ -1975,18 +1791,12 @@ std::unique_ptr<SkinCluster> SkinCluster::MakeSkinCluster(const SolEngine::Model
 
 void SkinCluster::Update(const SkeletonState &skeleton)
 {
-	/*for (size_t jointIndex = 0; jointIndex < skeleton.joints_.size(); jointIndex++) {
-		assert(jointIndex < inverseBindPoseMatrixList_.size() and "範囲外にアクセスしています");
-		auto &palette = paletteSpan_[jointIndex];
-		palette.skeletonSpaceMatrix = inverseBindPoseMatrixList_[jointIndex] * skeleton.joints_[jointIndex]->skeletonSpaceMatrix_;
-		palette.skeletonSpaceInverseTransponeMatrix = palette.skeletonSpaceMatrix.InverseSRT().Transpose();
-	}*/
 
 	std::transform(std::execution::par_unseq, skeleton.joints_.cbegin(), skeleton.joints_.cend(), inverseBindPoseMatrixList_.cbegin(), paletteSpan_.begin(), [](const auto &joint, const auto &ibpMat)
 		{
 			WellForGPU result{};
 
-			result.skeletonSpaceMatrix = ibpMat * joint->skeletonSpaceMatrix_;
+			result.skeletonSpaceMatrix = ibpMat * joint.skeletonSpaceMatrix_;
 			result.skeletonSpaceInverseTransponeMatrix = result.skeletonSpaceMatrix.InverseSRT().Transpose();
 
 			return result;
@@ -2003,16 +1813,16 @@ void SkinCluster::Update(const SkeletonState &skeleton)
 //	return std::move(result);
 //}
 
-std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(SolEngine::ModelData *model)
+std::unique_ptr<SkinModel> SkinModel::MakeSkinModel(SolEngine::ModelData *model, SolEngine::SkeletonAnimation::Skeleton *skeleton)
 {
 	std::unique_ptr<SkinModel> result = std::make_unique<SkinModel>();
 
-	result->skeleton_ = SkeletonState::MakeSkeleton(model->rootNode_.get());
-	result->skinCluster_ = SkinCluster::MakeSkinCluster(model, *result->skeleton_);
+	result->skeleton_ = SkeletonState::MakeSkeleton(skeleton);
+	result->skinCluster_ = SkinCluster::MakeSkinCluster(model, skeleton, *result->skeleton_);
 	return std::move(result);
 }
 
-void SkinModel::Update(const ModelAnimation::Animation &animation, const float animateTime)
+void SkinModel::Update(const SolEngine::SkeletonAnimation::Animation &animation, const float animateTime)
 {
 	skeleton_->ApplyAnimation(animation, animateTime);
 	skeleton_->UpdateMatrix();
@@ -2031,7 +1841,7 @@ void SkeletonState::AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &draw
 		for (uint32_t i = 0; i < 12; i++) {
 			affineMat.arr[i] = affineMat.arr[i] * 0.1f;
 		}
-		affineMat.GetTranslate() = joint->skeletonSpaceMatrix_.GetTranslate() * transMat + drawOffset;
+		affineMat.GetTranslate() = joint.skeletonSpaceMatrix_.GetTranslate() * transMat + drawOffset;
 		blockRender_->AddBox(plane, { .transMat_ = affineMat });
 	}
 

@@ -3,8 +3,8 @@
 #include "../../Utils/SoLib/SoLib_Traits.h"
 
 namespace SolEngine {
-	class IResourceObject {
 
+	class IResourceObject {
 	public:
 
 		IResourceObject() = default;
@@ -35,6 +35,4 @@ namespace SolEngine {
 		{ t.CreateObject(source) } -> std::same_as<typename std::unique_ptr<Resource>>;
 		//requires std::same_as<typename T::SourceType, Source>;
 	};
-
-
 }

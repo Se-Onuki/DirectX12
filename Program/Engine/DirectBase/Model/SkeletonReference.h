@@ -4,19 +4,32 @@
 
 #include "AssimpData.h"
 #include "Mesh.h"
-#include "Model.h"
 
 #include <d3d12.h>
 #include "../Base/CBuffer.h"
 #include "../Render/Camera.h"
 #include "SkinClusterBase.h"
+#include "SkeletonAnimation/ModelNode.h"
 
 namespace SolEngine {
 
-	class SkeletonReference : public IResourceObject {
+	class SkeletonJointReference : public IResourceObject {
 		using MeshManager = ResourceObjectManager<Mesh>;
 
 	public:
+
+		struct ModelJointReference {
+
+			// 名前
+			std::string name_;
+			// 子jointへのIndexリスト
+			std::vector<uint32_t> children_;
+			// 自分自身のIndex
+			uint32_t index_;
+			// 自身の親のIndex。存在しない場合はmax
+			uint32_t parent_ = (std::numeric_limits<uint32_t>::max)();
+
+		};
 
 		// RootJointのIndex
 		uint32_t root_ = 0u;
@@ -29,27 +42,30 @@ namespace SolEngine {
 		// ジョイントを検索してそれを返す
 		ModelJointReference *GetJointData(const char *jointName) const;
 
+		static uint32_t MakeJointIndex(const aiNode *node, std::vector<std::unique_ptr<ModelJointReference>> &joints, const uint32_t parent = (std::numeric_limits<uint32_t>::max)());
+
 
 	};
 
 	template <>
-	class ResourceSource<SkeletonReference> {
+	class ResourceSource<SkeletonJointReference> {
 	public:
-		ResourceSource<SkeletonReference>() = default;
-		ResourceSource<SkeletonReference>(const ResourceSource<SkeletonReference> &) = default;
-		ResourceSource<SkeletonReference>(const ModelNode * data) :modelNode_(data) {}
+		ResourceSource<SkeletonJointReference>() = default;
+		ResourceSource<SkeletonJointReference>(const ResourceSource<SkeletonJointReference> &) = default;
+		ResourceSource<SkeletonJointReference> &operator=(const ResourceSource<SkeletonJointReference> &) = default;
+		ResourceSource<SkeletonJointReference>(const ResourceHandle<AssimpData> assimpHandle) : assimpHandle_(assimpHandle) {}
 
 		// モデルのノード
-		const ModelNode* modelNode_;
+		ResourceHandle<AssimpData> assimpHandle_;
 
-		bool operator==(const ResourceSource<SkeletonReference> &) const = default;
+		bool operator==(const ResourceSource<SkeletonJointReference> &) const = default;
 	};
 
 	template <>
-	class ResourceCreater<SkeletonReference> {
+	class ResourceCreater<SkeletonJointReference> {
 	public:
 
-		std::unique_ptr<SkeletonReference> CreateObject(const ResourceSource<SkeletonReference> &source) const;
+		std::unique_ptr<SkeletonJointReference> CreateObject(const ResourceSource<SkeletonJointReference> &source) const;
 
 	};
 
@@ -58,9 +74,9 @@ namespace SolEngine {
 namespace std {
 
 	template<>
-	struct hash<SolEngine::ResourceSource<SolEngine::SkeletonReference>> {
-		size_t operator()(const SolEngine::ResourceSource<SolEngine::SkeletonReference> &data) const {
-			return size_t{ reinterpret_cast<size_t>(data.modelNode_) };
+	struct hash<SolEngine::ResourceSource<SolEngine::SkeletonJointReference>> {
+		size_t operator()(const SolEngine::ResourceSource<SolEngine::SkeletonJointReference> &data) const {
+			return size_t{ data.assimpHandle_.GetHandle() };
 		}
 	};
 }

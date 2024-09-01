@@ -15,7 +15,7 @@ namespace SolEngine {
 
 		auto *const vertexManager = ResourceObjectManager<ModelVertexData>::GetInstance();
 
-		const auto &modelVertex = vertexManager->Load({ source.assimpData_ });
+		const auto &modelVertex = vertexManager->Load({ source.assimpHandle_ });
 		// 頂点数と同じ長さのデータを構築する
 		result->influence_.Resize(modelVertex->vertexBuffer_.GetVertexData().size());
 
@@ -25,26 +25,29 @@ namespace SolEngine {
 		// 頂点の数を保存
 		result->vertexCount_ = result->influence_.GetVertexData().size();
 
+		ResourceObjectManager<SkeletonJointReference> *skeletonReferenceManager = ResourceObjectManager<SkeletonJointReference>::GetInstance();
+		ResourceObjectManager<SkinClusterBase> *skinClusterManager = ResourceObjectManager<SkinClusterBase>::GetInstance();
+		// スケルトンのソースデータ
+		auto skeletonRef = skeletonReferenceManager->Load({ source.assimpHandle_ });
+		// モデルデータのジョイント情報
+		auto skinCluster = skinClusterManager->Load({ source.assimpHandle_ });
 
 		// 番兵を取る
-		const auto jointEndIt = source.skeletonReference_->jointMap_.end();
+		const auto jointEndIt = skeletonRef->jointMap_.end();
 
-		for (uint32_t i = 0; i < source.skinClusterBase_->skinClusterData_.size(); i++) {
-			const auto &cluster = source.skinClusterBase_->skinClusterData_[i];
+		for (uint32_t i = 0; i < skinCluster->skinClusterData_.size(); i++) {
+			const auto &cluster = skinCluster->skinClusterData_[i];
 			const auto &vertexOffset = modelVertex->vertexOffsets_[i];
 
 			// 書き込む先
 			std::span<VertexInfluence> influence = { &result->influence_[vertexOffset.vertexOffset_], vertexOffset.vertexCount_ };
-
-			//// メッシュにデータが保存されてなかったら飛ばす
-			//if (not cluster) { return nullptr; }
 
 			// モデルデータを解析してInfluenceを埋める
 			for (const auto &[keyName,  // ジョイント名
 				jointWeight	// 各頂点のジョイントに対する重さ
 			] : cluster) {
 				// 一致するジョイントの対象が存在するか探す
-				auto it = source.skeletonReference_->jointMap_.find(keyName);
+				auto it = skeletonRef->jointMap_.find(keyName);
 				if (it == jointEndIt) { // 存在しなかったら飛ばす
 					continue;
 				}

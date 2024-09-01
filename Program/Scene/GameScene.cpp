@@ -17,6 +17,7 @@
 #include "../Engine/LevelEditor/LevelImporter.h"
 #include "../ECS/System/FunctionalSystem.h"
 #include "../ECS/System/NewSystems.h"
+#include "../Engine/DirectBase/Model/SkeletonAnimation/Skeleton.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -44,9 +45,11 @@ void GameScene::OnEnter() {
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
+	SolEngine::ResourceObjectManager<SolEngine::Skeleton> *const skeletonManager = SolEngine::ResourceObjectManager<SolEngine::Skeleton>::GetInstance();
 
 	auto playerAssimp = assimpManager->Load({ "Model/human/", "sneakWalk.gltf" });
 	auto playerModel = modelDataManager->Load({ playerAssimp });
+	auto playerSkeleton = skeletonManager->Load({ playerAssimp });
 
 	auto boxAssimp = assimpManager->Load({ "Model/Cute Animated Monsters Pack/", "Ghost.gltf" });
 	auto boxModel = modelDataManager->Load({ boxAssimp });
@@ -71,10 +74,12 @@ void GameScene::OnEnter() {
 
 	spawner_.clear();
 
-	animation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "walk.gltf");
-	attackAnimation_ = ModelAnimation::Animation::CreateFromFile("Model/human/", "Attack.gltf", 1);
+	auto animationManager = SolEngine::ResourceObjectManager<SolEngine::Animation>::GetInstance();
 
-	skinModel_ = SkinModel::MakeSkinModel(*playerModel);
+	animation_ = animationManager->Load(assimpManager->Load({ "Model/human/", "walk.gltf" }));
+	attackAnimation_ = animationManager->Load({ assimpManager->Load({ "Model/human/", "Attack.gltf" }), 1 });
+
+	skinModel_ = SkinModel::MakeSkinModel(*playerModel, *playerSkeleton);
 
 	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
 	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
@@ -146,7 +151,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::PositionComp{ .position_ {.x = 0.1f} };
 	*playerPrefab_ += ECS::InputFlagComp{};
 	*playerPrefab_ += ECS::TransformMatComp{};
-	*playerPrefab_ += ECS::ModelAnimator{ .animateList_{{ animation_.get(), animation_.get(), attackAnimation_.get(), attackAnimation_.get()}},.animatior_ = animation_.get() };
+	*playerPrefab_ += ECS::ModelAnimator{ .animateList_{{ animation_, animation_, attackAnimation_, attackAnimation_}},.animatior_ = animation_ };
 	*playerPrefab_ += ECS::SkinModel{ .skinModel_ = skinModel_.get() };
 	*playerPrefab_ += ECS::ModelComp{ .model_ = {playerModel} };
 	*playerPrefab_ += ECS::VelocityComp{};

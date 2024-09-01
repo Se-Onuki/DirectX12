@@ -57,6 +57,14 @@ namespace SolEngine {
 			uint32_t GetHandle() const { return handle_; }
 			uint32_t GetVersion() const { return version_; }
 
+			size_t GetHashID() const {
+				union Tmp {
+					size_t number_;
+					Handle handle_;
+				};
+				return Tmp{ .handle_ = *this }.number_;
+			}
+
 			T *GetResource() { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.second.get() : nullptr; }
 			const T *GetResource() const { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.second.get() : nullptr; }
 
@@ -349,6 +357,7 @@ namespace SolEngine {
 
 	template<IsResourceObject T, IsResourceSource Source = ResourceSource<T>, SolEngine::IsResourceCreater<T, Source> Creater = ResourceCreater<T, Source>, size_t ContainerSize = 0u>
 	using ResourceHandle = ResourceObjectManager<T, Source, Creater, ContainerSize>::Handle;
+
 }
 
 //namespace std {

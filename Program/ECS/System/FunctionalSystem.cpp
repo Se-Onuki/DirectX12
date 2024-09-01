@@ -35,7 +35,7 @@ namespace ECS {
 	{
 		for (const auto &system : systems_) {
 
-			auto chunkList = world->GetAccessableChunk(system.archetype_);
+			auto chunkList = world->GetAccessableChunk(system.archetype_, system.exclusions_);
 			std::for_each(chunkList.begin(), chunkList.end(), [&](Chunk *chunk) { Execute(system, world, chunk, deltaTime); });
 		}
 

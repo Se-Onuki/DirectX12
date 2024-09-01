@@ -55,20 +55,20 @@ namespace ECS::System::Par {
 		state.stateTimer_ += deltaTime;
 	}
 
-	void ModelAnimatorUpdate::Execute(const World *const, const float deltaTime)
+	void ModelAnimatorUpdate::Execute(const World *const, [[maybe_unused]] const float deltaTime)
 	{
 		const auto &[model, animator] = readWrite_;
 		if (animator.animatior_.GetDeltaTimer().IsFinish()) {
 			animator.animatior_.SetAnimation(animator.animateList_[0]);
 			animator.animatior_.Start(true);
 		}
-		animator.animatior_.Update(deltaTime, *model.model_);
+		animator.animatior_.Update(deltaTime, nullptr);
 	}
 
 	void SkinModelUpdate::Execute(const World *const, const float)
 	{
 		const auto &[model, animator] = readWrite_;
-		model.skinModel_->Update(*animator.animatior_.GetAnimation(), animator.animatior_.GetDeltaTimer().GetNowFlame());
+		model.skinModel_->Update(**animator.animatior_.GetAnimation(), animator.animatior_.GetDeltaTimer().GetNowFlame());
 	}
 
 	void ColorLerp::Execute(const World *const, const float)
@@ -316,15 +316,14 @@ namespace ECS::System::Par {
 	void ModelDrawer::Execute(const World *const, const float)
 	{
 		static ModelHandleListManager *const blockManager = ModelHandleListManager::GetInstance();
-		static SkinModelHandleListManager *const skinModelRender_ = SkinModelHandleListManager::GetInstance();
 
 		auto &[transform, model] = readWrite_;
 
 		blockManager->AddBox(model.model_, { .transMat_ = transform });
 	}
+
 	void SkinModelDrawer::Execute(const World *const, const float)
 	{
-		static ModelHandleListManager *const blockManager = ModelHandleListManager::GetInstance();
 		static SkinModelHandleListManager *const skinModelRender_ = SkinModelHandleListManager::GetInstance();
 
 		auto &[transform, model, skinModel] = readWrite_;

@@ -2,6 +2,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include <execution>
+#include "SkeletonAnimation/Skeleton.h"
 
 namespace SolEngine {
 	std::unique_ptr<ModelData> ResourceCreater<ModelData>::CreateObject(const ResourceSource<ModelData> &source) const {
@@ -13,13 +14,11 @@ namespace SolEngine {
 		// もしデータが読めなかったら終わる
 		if (not scene) { return nullptr; }
 
+		// 構築したデータ
 		std::unique_ptr<ModelData> result = std::make_unique<ModelData>();
-
-		result->rootNode_ = ModelNode::Create(scene->mRootNode);
-		result->skinCluster_ = ResourceObjectManager<SkinClusterBase>::GetInstance()->Load({ source.assimpHandle_ });
-		result->skeletonReference_ = ResourceObjectManager<SkeletonReference>::GetInstance()->Load(ResourceSource<SkeletonReference>{ result->rootNode_.get() });
+		// 頂点データマネージャのインスタンス
 		SolEngine::ResourceObjectManager<SolEngine::ModelVertexData> *const vertexManager = SolEngine::ResourceObjectManager<SolEngine::ModelVertexData>::GetInstance();
-
+		// モデルに紐づいた頂点データの構築
 		result->modelVertex_ = vertexManager->Load({ source.assimpHandle_ });
 
 		// マテリアルマネージャのインスタンス
@@ -39,12 +38,6 @@ namespace SolEngine {
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
 			result->meshHandleList_.push_back(meshManager->Load({ source.assimpHandle_, i }));
 		}
-
-		auto *const modelInfluenceManager = ResourceObjectManager<ModelInfluence>::GetInstance();
-
-		const auto modelInfluence = modelInfluenceManager->Load({ source.assimpHandle_,result->skinCluster_, result->skeletonReference_ });
-
-		result->modelInfluence_ = modelInfluence;
 
 		//// メッシュ影響度のマネージャ
 		//ResourceObjectManager<MeshInfluence> *const meshInfluenceManager = ResourceObjectManager<MeshInfluence>::GetInstance();
@@ -109,7 +102,7 @@ namespace SolEngine {
 			auto &mesh = meshHandleList_[i];
 			// commandList_->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, mesh->pNode_->GetLocalMatrix().GetGPUVirtualAddress());
 			//commandList_->SetPipelineState(graphicsPipelineState_[static_cast<uint32_t>(PipelineType::kSkinModel)][static_cast<uint32_t>(mesh->GetMaterial()->blendMode_)].Get()); // PSOを設定
-			mesh->Draw(commandList, 1, &modelInfluence_->influence_.GetVBView());
+			mesh->Draw(commandList, 1, &skinCluster.skeletonRef_->modelInfluence_->influence_.GetVBView());
 		}
 	}
 
@@ -125,7 +118,7 @@ namespace SolEngine {
 		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
 
 		for (const auto &mesh : meshHandleList_) {
-			commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, this->rootNode_->GetLocalMatrix().GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, ModelNode::kIdentity_->GetGPUVirtualAddress());
 
 			mesh->Draw(commandList, drawCount);
 		}
@@ -141,11 +134,11 @@ namespace SolEngine {
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kViewProjection, camera.constData_.GetGPUVirtualAddress());
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kInstanceLocation, drawIndex.GetGPUVirtualAddress());
 		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kWorldTransform, transformSRV);
-		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle(0).gpuHandle_);
+		commandList->SetGraphicsRootDescriptorTable((uint32_t)Model::RootParameter::kMatrixPalette, skinCluster.GetPalette().GetHeapRange().GetHandle().gpuHandle_);
 		commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kModelTransform, ModelNode::kIdentity_->GetGPUVirtualAddress());
 		for (uint32_t i = 0; i < meshHandleList_.size(); i++) {
 			auto &mesh = meshHandleList_[i];
-			mesh->Draw(commandList, drawCount, &modelInfluence_->influence_.GetVBView());
+			mesh->Draw(commandList, drawCount, &skinCluster.skeletonRef_->modelInfluence_->influence_.GetVBView());
 		}
 	}
 }

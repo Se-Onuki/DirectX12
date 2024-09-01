@@ -23,6 +23,8 @@
 #include "../../Header/Collision/Collision.h"
 #include "../../Engine/LevelEditor/LevelData.h"
 #include "../Entity/Entity.hpp"
+#include "../../Engine/DirectBase/Model/SkeletonAnimation/ModelAnimation.h"
+#include "../../Engine/DirectBase/SkinAnimation/SkinAnimation.h"
 
 namespace ECS {
 
@@ -236,9 +238,9 @@ namespace ECS {
 
 	struct ModelAnimator : IComponent {
 
-		std::array<ModelAnimation::Animation *, 4u> animateList_;
+		std::array<SolEngine::ResourceHandle<SolEngine::Animation>, 4u> animateList_;
 
-		ModelAnimation::AnimationPlayer animatior_;
+		SolEngine::AnimationPlayer animatior_;
 	};
 
 	struct SkinModel : IComponent {

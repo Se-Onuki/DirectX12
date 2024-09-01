@@ -24,8 +24,6 @@ namespace SolEngine {
 				// ボーンデータが含まれていない場合飛ばす
 				if (not mesh->mBones) { continue; }
 
-				//// データを追加
-				//result->skinClusterData_[meshIndex] = std::unordered_map<std::string, JointWeightData>{};
 				// ボーンの数と同じ量のキャパを確保
 				result->skinClusterData_[meshIndex].reserve(mesh->mNumBones);
 

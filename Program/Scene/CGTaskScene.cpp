@@ -46,8 +46,10 @@ void CGTaskScene::OnEnter()
 	auto assimpHandle = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
 
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
+	SolEngine::ResourceObjectManager<SolEngine::Skeleton> *const skeletonManager = SolEngine::ResourceObjectManager<SolEngine::Skeleton>::GetInstance();
 	boxModel_ = modelDataManager->Load({ assimpHandle });
-	skinModel_ = SkinModel::MakeSkinModel(*boxModel_);
+	skeleton_ = skeletonManager->Load({ assimpHandle });
+	skinModel_ = SkinModel::MakeSkinModel(*boxModel_, *skeleton_);
 
 	pDxCommon_ = DirectXCommon::GetInstance();
 
@@ -63,8 +65,8 @@ void CGTaskScene::OnEnter()
 	fullScreen_->Init({ { L"FullScreen.VS.hlsl",L"FullScreen.PS.hlsl" } });
 
 	// アニメーションを設定
-	animation_ = ModelAnimation::Animation::Create(*assimpHandle);
-	animationPlayer_.SetAnimation(animation_.get());
+	animation_ = SolEngine::ResourceObjectManager<SolEngine::Animation>::GetInstance()->Load({ assimpHandle });
+	animationPlayer_.SetAnimation(animation_);
 	animationPlayer_.Start(true);
 
 	vec2_ = std::make_unique<AlignasWrapper<Vector2>>();
@@ -104,7 +106,7 @@ void CGTaskScene::Update()
 	skyBoxTransform_->ImGuiWidget("SkyBox");
 	skyBoxTransform_->UpdateMatrix();
 
-	animationPlayer_.Update(deltaTime, *boxModel_);
+	animationPlayer_.Update(deltaTime, skinModel_->skeleton_.get());
 
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
 	if (material) {
@@ -112,14 +114,12 @@ void CGTaskScene::Update()
 	}
 
 
-	skinModel_->Update(*animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
+	skinModel_->Update(**animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
 
 	CameraManager::GetInstance()->DisplayImGui();
 	CameraManager::GetInstance()->Update(deltaTime);
 
-	computeShader_.Update(*skinModel_->skinCluster_, *boxModel_, *boxModel_->modelInfluence_);
-
-	//*fullScreen_->GetGaussianParam() = { WinApp::kWindowWidth,WinApp::kWindowHeight };
+	computeShader_.Update(*skinModel_->skinCluster_, *boxModel_, *skeleton_->modelInfluence_);
 }
 
 void CGTaskScene::Draw()

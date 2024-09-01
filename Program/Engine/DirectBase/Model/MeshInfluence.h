@@ -30,7 +30,7 @@ namespace SolEngine {
 		// メッシュのハンドル
 		ResourceObjectManager<Mesh>::Handle meshHandle_;
 		ResourceObjectManager<SkinClusterBase>::Handle skinClusterBase_;
-		ResourceObjectManager<SkeletonReference>::Handle skeletonReference_;
+		ResourceObjectManager<SkeletonJointReference>::Handle skeletonReference_;
 
 		bool operator==(const ResourceSource<MeshInfluence> &) const = default;
 	};

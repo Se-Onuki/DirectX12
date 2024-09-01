@@ -133,6 +133,14 @@ namespace ECS {
 			ReadAndWrite(const ComponentList::Components &arg) :readAndWrite_(arg) {};
 		};
 
+		/// @brief 除外設定
+		template <typename... Ts>
+			requires (sizeof...(Ts) > 0)
+		struct Exclusions : IGetComponent {
+			static constexpr uint32_t kCompCount_ = static_cast<uint32_t>(sizeof...(Ts));
+			using ComponentList = GetComponentHelper<Ts...>;
+		};
+
 		template <typename Type, std::size_t... sizes>
 		constexpr auto concatenate(const std::array<Type, sizes>&... arrays)
 		{
@@ -159,6 +167,8 @@ namespace ECS {
 			static constexpr std::array<std::span<const uint32_t>, sizeof...(Ts)> compRanges_ = { {std::span<const uint32_t>{ Ts::ComponentList::kTarget_.data(), Ts::ComponentList::kTarget_.size() }...} };
 
 			inline static constexpr auto kTarget_ = concatenate(reverse(Ts::ComponentList::kTarget_)...);
+
+			inline static constexpr ECS::ComponentRegistry::ComponentFlag kExclusions_{};
 
 		};
 
@@ -305,6 +315,8 @@ namespace ECS {
 
 		struct SystemData {
 			Archetype archetype_;
+			// 除外設定
+			ECS::ComponentRegistry::ComponentFlag exclusions_;
 			std::span<const uint32_t> keys_;
 			void (*executor_)(IJobEntity *, const World *, float);
 			bool isSingleThreads_;
@@ -326,11 +338,27 @@ namespace ECS {
 	private:
 
 	};
+
+
 	template <typename T>
 	concept HasSingleThreadFlag = requires { { T::kIsSingleThread_ } -> std::convertible_to<bool>; };
+
 	template <typename T>
 	constexpr bool IsSingleThread() {
 		if constexpr (HasSingleThreadFlag<T>) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	template <typename T>
+	concept HasExclusion = requires { { T::Exclusions::kCompCount_ } -> std::convertible_to<uint32_t>; };
+
+	template <typename T>
+	constexpr bool IsHasExclusion() {
+		if constexpr (HasExclusion<T>) {
 			return true;
 		}
 		else {
@@ -343,8 +371,11 @@ namespace ECS {
 	{
 		Archetype archetype;
 		archetype.AddClassData(T::DataBase::kTarget_);
+		ECS::ComponentRegistry::ComponentFlag exclusions;
+		if constexpr (IsHasExclusion<T>()) { exclusions = T::Exclusions::ComponentList::GetArchetype().compFlag_; }
+
 		// データの参照元と､実行データの構築関数を保存する
-		systems_.push_back({ archetype, std::span<const uint32_t>{ T::DataBase::kTarget_.data(), T::DataBase::kTarget_.size() },[](IJobEntity *const iSystem, const World *const world, const float deltaTime) { static_cast<T *>(iSystem)->Execute(world, deltaTime); }, IsSingleThread<T>() });
+		systems_.push_back({ archetype, exclusions, std::span<const uint32_t>{ T::DataBase::kTarget_.data(), T::DataBase::kTarget_.size() },[](IJobEntity *const iSystem, const World *const world, const float deltaTime) { static_cast<T *>(iSystem)->Execute(world, deltaTime); }, IsSingleThread<T>() });
 	}
 
 }

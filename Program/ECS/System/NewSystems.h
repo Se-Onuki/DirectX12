@@ -86,14 +86,14 @@ namespace ECS {
 			public:
 				ReadAndWrite<ECS::AccelerationComp, ECS::GravityComp> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
-				
+
 				void Execute(const World *const, const float);
 
 			};
 			class AirResistanceSystem :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::AccelerationComp, const ECS::VelocityComp, const ECS::AirResistance> readWrite_;
-				using DataBase = DataBase<decltype(readWrite_)>;			
+				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);
 
@@ -166,6 +166,7 @@ namespace ECS {
 				static constexpr bool kIsSingleThread_ = true;
 				ReadAndWrite<ECS::TransformMatComp, ECS::ModelComp> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
+				using Exclusions = Exclusions<ECS::SkinModel>;
 
 				void Execute(const World *const, const float);
 			};

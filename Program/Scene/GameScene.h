@@ -131,8 +131,8 @@ private:
 
 	std::unique_ptr<Model> assimpModel_ = nullptr;
 
-	std::unique_ptr<ModelAnimation::Animation> animation_;
-	std::unique_ptr<ModelAnimation::Animation> attackAnimation_;
+	SolEngine::ResourceHandle<SolEngine::Animation> animation_;
+	SolEngine::ResourceHandle<SolEngine::Animation> attackAnimation_;
 
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 

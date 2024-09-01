@@ -495,6 +495,15 @@
     <ClCompile Include="ECS\System\NewSystems.cpp">
       <Filter>ECS\System</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\ModelNode.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\Skeleton.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -976,6 +985,15 @@
     </ClInclude>
     <ClInclude Include="ECS\System\ECSCollisionManager.h">
       <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\ModelNode.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\Skeleton.h">
+      <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -31,10 +31,12 @@ namespace SolEngine {
 	template <>
 	class ResourceSource<ModelInfluence> {
 	public:
+		ResourceSource<ModelInfluence>() = default;
+		ResourceSource<ModelInfluence>(const ResourceSource<ModelInfluence> &) = default;
+		ResourceSource<ModelInfluence> &operator=(const ResourceSource<ModelInfluence> &) = default;
+		ResourceSource<ModelInfluence>(const ResourceHandle<AssimpData> assimpHandle) : assimpHandle_(assimpHandle) {}
 
-		ResourceObjectManager<AssimpData>::Handle assimpData_;
-		ResourceObjectManager<SkinClusterBase>::Handle skinClusterBase_;
-		ResourceObjectManager<SkeletonReference>::Handle skeletonReference_;
+		ResourceHandle<AssimpData> assimpHandle_;
 
 		bool operator==(const ResourceSource<ModelInfluence> &) const = default;
 	};
@@ -54,7 +56,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::ModelInfluence>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::ModelInfluence> &data) const {
-			return size_t{ static_cast<size_t>(data.assimpData_.GetHandle()) << 32u | static_cast<size_t>(data.assimpData_.GetVersion()) };
+			return data.assimpHandle_.GetHashID();
 		}
 	};
 }

@@ -18,6 +18,11 @@ namespace SolEngine {
 	template <>
 	class ResourceSource<SkinClusterBase> {
 	public:
+		ResourceSource<SkinClusterBase>() = default;
+		ResourceSource<SkinClusterBase>(const ResourceSource<SkinClusterBase> &) = default;
+		ResourceSource<SkinClusterBase> &operator=(const ResourceSource<SkinClusterBase> &) = default;
+		ResourceSource<SkinClusterBase>(const ResourceHandle<AssimpData> assimpHandle) : assimpHandle_(assimpHandle) {}
+
 		// ファイルのハンドル
 		ResourceHandle<AssimpData> assimpHandle_;
 

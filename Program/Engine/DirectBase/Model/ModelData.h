@@ -4,7 +4,6 @@
 
 #include "AssimpData.h"
 #include "Mesh.h"
-#include "Model.h"
 
 #include <d3d12.h>
 #include "../Base/CBuffer.h"
@@ -19,11 +18,7 @@ namespace SolEngine {
 	class ModelData : public IResourceObject {
 	public:
 		std::vector<ResourceHandle<Mesh>> meshHandleList_;
-		std::unique_ptr<ModelNode> rootNode_;
-		ResourceHandle<SkinClusterBase> skinCluster_;
-		ResourceHandle<SolEngine::SkeletonReference> skeletonReference_;
 		ResourceHandle<ModelVertexData> modelVertex_;
-		ResourceHandle<ModelInfluence> modelInfluence_;
 
 		void Draw(const Transform &transform, const Camera3D &camera) const;
 		void Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const Transform &transform, const Camera3D &camera) const;

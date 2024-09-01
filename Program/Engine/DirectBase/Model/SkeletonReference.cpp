@@ -2,7 +2,7 @@
 
 namespace SolEngine {
 
-	ModelJointReference *SkeletonReference::GetJointData(const char *jointName) const
+	SkeletonJointReference::ModelJointReference *SkeletonJointReference::GetJointData(const char *jointName) const
 	{
 		// データを検索する
 		auto itr = jointMap_.find(jointName);
@@ -16,13 +16,13 @@ namespace SolEngine {
 	}
 
 
-	std::unique_ptr<SkeletonReference> ResourceCreater<SkeletonReference>::CreateObject(const ResourceSource<SkeletonReference> &source) const
+	std::unique_ptr<SkeletonJointReference> ResourceCreater<SkeletonJointReference>::CreateObject(const ResourceSource<SkeletonJointReference> &source) const
 	{
 		// 生成するデータ
-		std::unique_ptr<SkeletonReference> result = std::make_unique<SkeletonReference>();
+		std::unique_ptr<SkeletonJointReference> result = std::make_unique<SkeletonJointReference>();
 
 		// ノードからジョイントを構築し、現在のジョイントのindexを保存する
-		result->root_ = ModelJointReference::MakeJointIndex(source.modelNode_, {}, result->joints_);
+		result->root_ = SkeletonJointReference::MakeJointIndex(source.assimpHandle_->importer_->GetScene()->mRootNode, result->joints_);
 
 		// 領域の確保
 		result->jointMap_.reserve(result->joints_.size());
@@ -34,6 +34,34 @@ namespace SolEngine {
 		// データを成功として返す
 		return std::move(result);
 
+	}
+
+	uint32_t SkeletonJointReference::MakeJointIndex(const aiNode *node, std::vector<std::unique_ptr<ModelJointReference>> &joints, const uint32_t parent)
+	{
+		// 領域の確保回数を減らす
+		joints.reserve(joints.size() + 1 + node->mNumChildren);
+		// ジョイントの構築
+		auto joint = std::make_unique<ModelJointReference>();
+		// 名前の転送
+		joint->name_ = node->mName.C_Str();
+		// 現在のジョイント数を計算
+		const uint32_t selfIndex = joint->index_ = static_cast<uint32_t>(joints.size());
+		// 親が存在するなら親のデータを代入
+		if (parent != (std::numeric_limits<uint32_t>::max)()) { joint->parent_ = parent; }
+
+		// 書き込んだデータを追加
+		joints.push_back(std::move(joint));
+		// 子の配列
+		const std::span<aiNode *> children = std::span<aiNode *>{ node->mChildren, node->mNumChildren };
+		// 子のデータを書き込む
+		for (const auto &child : children) {
+			// 子のIndexを返して､子のデータを構築
+			uint32_t childIndex = MakeJointIndex(child, joints, selfIndex);
+			// 自分のデータに子のデータを書き込む
+			joints[selfIndex]->children_.push_back(childIndex);
+		}
+		// 自分の番号を返す
+		return selfIndex;
 	}
 
 }

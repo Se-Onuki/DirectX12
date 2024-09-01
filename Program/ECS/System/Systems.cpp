@@ -88,7 +88,6 @@ void ECS::System::ModelAnimatorUpdate::OnUpdate(::World *world, [[maybe_unused]]
 			animator->animatior_.SetAnimation(animator->animateList_[0]);
 			animator->animatior_.Start(true);
 		}
-		animator->animatior_.Update(deltaTime, *model->model_);
 	}
 
 }
@@ -96,7 +95,7 @@ void ECS::System::ModelAnimatorUpdate::OnUpdate(::World *world, [[maybe_unused]]
 void ECS::System::SkinModelUpdate::OnUpdate(::World *world, [[maybe_unused]] const float deltaTime)
 {
 	for (const auto &[entity, model, animator] : world->view<ECS::SkinModel, ECS::ModelAnimator>()) {
-		model->skinModel_->Update(*animator->animatior_.GetAnimation(), animator->animatior_.GetDeltaTimer().GetNowFlame());
+		model->skinModel_->Update(**animator->animatior_.GetAnimation(), animator->animatior_.GetDeltaTimer().GetNowFlame());
 	}
 
 }

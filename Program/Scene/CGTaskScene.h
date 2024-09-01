@@ -11,6 +11,7 @@
 #include "../Engine/DirectBase/Model/ModelData.h"
 #include "../Engine/DirectBase/ComputeShader/SkinningComputeShader.h"
 #include "../Engine/DirectBase/Render/SkyBox/SkyBox.h"
+#include "../Engine/DirectBase/Model/SkeletonAnimation/Skeleton.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -46,10 +47,11 @@ private:
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
-	ModelAnimation::AnimationPlayer animationPlayer_;
-	std::unique_ptr<ModelAnimation::Animation> animation_;
+	SolEngine::AnimationPlayer animationPlayer_;
+	SolEngine::ResourceHandle<SolEngine::Animation> animation_;
 
 	SolEngine::ResourceHandle<SolEngine::ModelData> boxModel_;
+	SolEngine::ResourceHandle<SolEngine::Skeleton> skeleton_;
 
 	DirectXCommon *pDxCommon_ = nullptr;
 
