@@ -64,13 +64,13 @@ namespace ECS {
 	template<typename T>
 	class EntityCompAccessor {
 	public:
-		EntityCompAccessor(const EntityClass &entity) : entity_(entity), compData_(GetCompArray<T>(entity.chunk_)) {}
+		EntityCompAccessor(const EntityClass &entity, T &comp) : entity_(entity), compData_(comp) {}
 		const EntityClass &entity_;
-		ComponentData &compData_;
+		T &compData_;
 
 
-		T *operator->() { return &compData_.at<T>(entity_.totalIndex_); }
-		const T *operator->() const { return &compData_.at<T>(entity_.totalIndex_); }
+		T *operator->() { return &compData_; }
+		const T *operator->() const { return &compData_; }
 
 		EntityCompAccessor &operator=(EntityCompAccessor &&move) {
 			EntityMove(entity_.chunk_, entity_.totalIndex_, move.entity_.totalIndex_);

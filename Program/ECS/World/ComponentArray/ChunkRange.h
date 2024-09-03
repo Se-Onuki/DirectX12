@@ -207,13 +207,13 @@ namespace ECS {
 	template<typename T>
 	inline auto ChunkTypeIterator<T>::operator*() -> reference
 	{
-		return reference(GetEntity(chunk_->GetChunk(), index_));
+		return reference(GetEntity(chunk_->GetChunk(), index_), chunk_->GetCompData()->at<T>(index_));
 	}
 
 	template<typename T>
 	inline auto ChunkTypeIterator<T>::operator[](uint32_t index) const -> reference
 	{
-		return reference(GetEntity(chunk_->GetChunk(), index_));
+		return reference(GetEntity(chunk_->GetChunk(), index_), chunk_->GetCompData()->at<T>(index_));
 	}
 
 	template<typename T>
