@@ -39,8 +39,6 @@ private:
 
 	std::unique_ptr<SolEngine::SkyBox> skyBox_;
 
-	std::unique_ptr<AlignasWrapper<Vector2>> vec2_;
-
 	Transform skyBoxTransform_;
 	Transform transform_;
 

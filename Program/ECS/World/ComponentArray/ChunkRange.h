@@ -67,32 +67,21 @@ namespace ECS {
 		using difference_type = int32_t;
 		using value_type = EntityCompAccessor<T>;
 		using iterator_category = std::random_access_iterator_tag;
+		using pointer = value_type *;
+		using reference = value_type;
 
 	public:
 		template <typename U, typename Predicate>
 		friend uint32_t std::erase_if(ECS::ChunkRange<U> &range, Predicate pred);
 
-		/*	friend auto operator++(ChunkTypeIterator<T> &itr)->ChunkTypeIterator<T> &;
-			friend auto operator++(ChunkTypeIterator<T> &itr, int)->ChunkTypeIterator<T>;
-			friend auto operator--(ChunkTypeIterator<T> &itr)->ChunkTypeIterator<T> &;
-			friend auto operator--(ChunkTypeIterator<T> &itr, int)->ChunkTypeIterator<T>;
-			friend auto operator+(const ChunkTypeIterator<T> &itr, int32_t diff)->ChunkTypeIterator<T>;
-			friend auto operator+(int32_t diff, const ChunkTypeIterator<T> &itr)->ChunkTypeIterator<T>;
-			friend auto operator+=(ChunkTypeIterator<T> &itr, int32_t diff)->ChunkTypeIterator<T> &;
-			friend auto operator-(const ChunkTypeIterator<T> &itr, int32_t diff)->ChunkTypeIterator<T>;
-			friend auto operator-=(ChunkTypeIterator<T> &itr, int32_t diff)->ChunkTypeIterator<T> &;
-			friend auto operator-(const ChunkTypeIterator<T> &l, const ChunkTypeIterator<T> &r)->ChunkTypeIterator<T>::difference_type;
-			friend bool operator==(const ChunkTypeIterator<T> &l, const ChunkTypeIterator<T> &r);
-			friend std::strong_ordering operator<=>(const ChunkTypeIterator<T> &l, const ChunkTypeIterator<T> &r);*/
-
 	public:
 
-		auto operator*()->value_type &;
-		auto operator[](uint32_t index) const->value_type &;
+		auto operator*()->reference;
+		auto operator[](uint32_t index) const->reference;
 
 		//private:
 
-			// チャンクへのポインタ
+		// チャンクへのポインタ
 		ChunkRange<T> *chunk_;
 
 		// チャンク内でのIndex番号
@@ -216,15 +205,15 @@ namespace ECS {
 	}
 
 	template<typename T>
-	inline auto ChunkTypeIterator<T>::operator*() -> value_type &
+	inline auto ChunkTypeIterator<T>::operator*() -> reference
 	{
-		return static_cast<value_type &>(GetEntity(chunk_->GetChunk(), index_));
+		return reference(GetEntity(chunk_->GetChunk(), index_));
 	}
 
 	template<typename T>
-	inline auto ChunkTypeIterator<T>::operator[](uint32_t index) const -> value_type &
+	inline auto ChunkTypeIterator<T>::operator[](uint32_t index) const -> reference
 	{
-		return static_cast<value_type &>(GetEntity(chunk_->GetChunk(), index_));
+		return reference(GetEntity(chunk_->GetChunk(), index_));
 	}
 
 	template<typename T>

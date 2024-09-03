@@ -426,7 +426,7 @@ void GameScene::Update() {
 	//	}
 	//));
 
-	newWorld_.erase_if<ECS::IsAlive>([](auto &item) {return not item->isAlive_; });
+	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item->isAlive_; });
 
 	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = 0u;
 

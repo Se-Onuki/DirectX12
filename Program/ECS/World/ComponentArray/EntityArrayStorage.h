@@ -3,6 +3,7 @@
 #include "../../Archetype.h"
 #include <memory>
 #include <span>
+#include "ComponentData.h"
 
 namespace ECS {
 
@@ -23,6 +24,14 @@ namespace ECS {
 
 	std::byte &GetComp(Chunk *chunk, uint32_t compId, uint32_t index);
 
+	ComponentData &GetCompArray(Chunk *chunk, uint32_t compId);
+
+	template<typename T>
+	ComponentData &GetCompArray(Chunk *chunk) {
+		constexpr uint32_t compId = static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>());
+		return GetCompArray(chunk, compId);
+	}
+
 	void EntityMove(Chunk *chunk, uint32_t dst, uint32_t src);
 
 	EntityClass &GetEntity(Chunk *chunk, uint32_t index);
@@ -34,10 +43,6 @@ namespace ECS {
 		uint32_t version_;
 
 		bool operator==(const EntityClass &) const = default;
-
-		operator EntityAccessor &() { return reinterpret_cast<EntityAccessor &>(*this); }
-		template<typename T>
-		operator EntityCompAccessor<T> &() { return reinterpret_cast<EntityCompAccessor<T> &>(*this); }
 
 		explicit operator bool() const { return *this == GetEntity(chunk_, totalIndex_); }
 
@@ -59,14 +64,16 @@ namespace ECS {
 	template<typename T>
 	class EntityCompAccessor {
 	public:
-		Chunk *chunk_;
-		uint32_t totalIndex_; // トータル番号
-		uint32_t version_;
+		EntityCompAccessor(const EntityClass &entity) : entity_(entity), compData_(GetCompArray<T>(entity.chunk_)) {}
+		const EntityClass &entity_;
+		ComponentData &compData_;
 
-		T *operator->() { return &GetComp<T>(chunk_, totalIndex_); }
+
+		T *operator->() { return &compData_.at<T>(entity_.totalIndex_); }
+		const T *operator->() const { return &compData_.at<T>(entity_.totalIndex_); }
 
 		EntityCompAccessor &operator=(EntityCompAccessor &&move) {
-			EntityMove(chunk_, totalIndex_, move.totalIndex_);
+			EntityMove(entity_.chunk_, entity_.totalIndex_, move.entity_.totalIndex_);
 			return *this;
 		}
 

@@ -11,7 +11,7 @@ namespace SolEngine {
 		animationTimer_.Start(animation_->duration_, isLoop); // 時間を設定する
 	}
 
-	void AnimationPlayer::Update(float deltaTime, [[maybe_unused]] SkeletonState *model)
+	void AnimationPlayer::Update(float deltaTime)
 	{
 		// Animationの更新
 		animationTimer_.Update(deltaTime);

@@ -69,12 +69,6 @@ void CGTaskScene::OnEnter()
 	animationPlayer_.SetAnimation(animation_);
 	animationPlayer_.Start(true);
 
-	vec2_ = std::make_unique<AlignasWrapper<Vector2>>();
-
-	AlignasWrapper<Vector2, 8> test{ 53, 14 };
-
-	*vec2_ = Vector2{ 10,10 };
-
 	computeShader_.Init(boxModel_->modelVertex_->vertexBuffer_.GetVertexData().size());
 
 	SolEngine::SkyBoxRender::GetInstance()->Init();
@@ -106,7 +100,7 @@ void CGTaskScene::Update()
 	skyBoxTransform_->ImGuiWidget("SkyBox");
 	skyBoxTransform_->UpdateMatrix();
 
-	animationPlayer_.Update(deltaTime, skinModel_->skeleton_.get());
+	animationPlayer_.Update(deltaTime/* skinModel_->skeleton_.get()*/);
 
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
 	if (material) {

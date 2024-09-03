@@ -1515,26 +1515,6 @@ std::unique_ptr<SkeletonState> SkeletonState::MakeSkeleton(const SolEngine::Skel
 
 	return std::move(result);
 }
-//std::unique_ptr<SkeletonReference> SkeletonReference::MakeSkeleton(const ModelNode *rootNode)
-//{
-//	auto result = std::make_unique<SkeletonReference>();
-//	// ノードからジョイントを構築し、現在のジョイントのindexを保存する
-//	result->root_ = ModelJointReference::MakeJointIndex(rootNode, {}, result->joints_);
-//
-//	// 領域の確保
-//	result->jointMap_.reserve(result->joints_.size());
-//
-//	// 名前とindexを紐づける
-//	std::transform(result->joints_.cbegin(), result->joints_.cend(), std::inserter(result->jointMap_, result->jointMap_.end()), [](auto &item) {return std::make_pair(item->name_, item->index_); });
-//
-//	//// 名前とindexを紐づける
-//	//for (const auto &joint : result->joints_) {
-//	//	result->jointMap_.emplace(std::make_pair(joint->name_, joint->index_));
-//	//}
-//
-//	return std::move(result);
-//}
-
 
 void SkeletonState::UpdateMatrix()
 {

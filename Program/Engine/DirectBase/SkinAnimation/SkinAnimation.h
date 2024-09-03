@@ -17,7 +17,7 @@ namespace SolEngine {
 
 		void Start(bool isLoop = false);
 
-		void Update(float deltaTime, SkeletonState *model);
+		void Update(float deltaTime);
 
 		const SoLib::DeltaTimer &GetDeltaTimer() const {
 			return animationTimer_;

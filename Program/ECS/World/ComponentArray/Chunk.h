@@ -22,6 +22,7 @@ namespace ECS {
 		friend ChunkEntityAccessor;
 		friend void EntityMove(Chunk *, uint32_t, uint32_t);
 		friend std::byte &ECS::GetComp(Chunk *, uint32_t, uint32_t);
+		friend ECS::ComponentData &ECS::GetCompArray(ECS::Chunk *chunk, uint32_t compId);
 
 	public:
 

@@ -62,7 +62,7 @@ namespace ECS::System::Par {
 			animator.animatior_.SetAnimation(animator.animateList_[0]);
 			animator.animatior_.Start(true);
 		}
-		animator.animatior_.Update(deltaTime, nullptr);
+		animator.animatior_.Update(deltaTime);
 	}
 
 	void SkinModelUpdate::Execute(const World *const, const float)
