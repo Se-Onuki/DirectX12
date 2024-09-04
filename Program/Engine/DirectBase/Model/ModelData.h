@@ -19,6 +19,7 @@ namespace SolEngine {
 	public:
 		std::vector<ResourceHandle<Mesh>> meshHandleList_;
 		ResourceHandle<ModelVertexData> modelVertex_;
+		CBuffer<Matrix4x4> rootNode_;
 
 		void Draw(const Transform &transform, const Camera3D &camera) const;
 		void Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const Transform &transform, const Camera3D &camera) const;
