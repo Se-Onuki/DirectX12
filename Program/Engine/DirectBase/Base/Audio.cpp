@@ -86,7 +86,7 @@ Audio::Voice Audio::PlayWave(uint32_t index, bool loopFlag, float volume)
 	return PlayWave(*GetWave(index), loopFlag, volume);
 }
 
-bool Audio::IsPlaying(Voice voiceHandle)
+bool Audio::IsPlaying(Voice voiceHandle) const
 {
 	// 再生中リストから検索
 	auto it = voices_.find(voiceHandle);
@@ -99,6 +99,11 @@ bool Audio::IsPlaying(Voice voiceHandle)
 	return false;
 }
 
+void Audio::SetVolume(Voice &voice, const float volume)
+{
+	voice.sourceVoice->SetVolume(volume);
+}
+
 void Audio::StopWave(Voice &voiceHandle)
 {
 	// 再生中リストから検索
@@ -108,7 +113,6 @@ void Audio::StopWave(Voice &voiceHandle)
 		it->sourceVoice->DestroyVoice();
 
 		voices_.erase(it);
-		// voiceHandle.sourceVoice = nullptr;
 	}
 }
 
@@ -227,12 +231,12 @@ Audio::SoundData SoundLoadWave(const char *filename)
 	file.read((char *)&riff, sizeof(riff));
 
 	// ファイルがRIFFかどうかチェック
-	if (strncmp(riff.chunk.id, "RIFF", 4u) != 0) {
+	if (strncmp(riff.chunk.id.data(), "RIFF", 4u) != 0) {
 		assert(0 && "ファイルがRIFFではありません");
 	}
 
 	// タイプがWAVEかどうかチェック
-	if (strncmp(riff.type, "WAVE", 4u) != 0) {
+	if (strncmp(riff.type.data(), "WAVE", 4u) != 0) {
 		assert(0 && "ファイルがWAVEではありません");
 	}
 
@@ -241,12 +245,12 @@ Audio::SoundData SoundLoadWave(const char *filename)
 	// チャンクヘッダの確認
 	file.read((char *)&format, sizeof(Audio::ChunkHeader));
 	// Junkチャンクを検出した場合
-	if (strncmp(format.chunk.id, "JUNK", 4u) == 0) {
+	if (strncmp(format.chunk.id.data(), "JUNK", 4u) == 0) {
 		// 読み取り範囲をJunkチャンクの終わりまで進める
 		file.seekg(format.chunk.size, std::ios_base::cur);
 		file.read((char *)&format, sizeof(Audio::ChunkHeader));
 	}
-	if (strncmp(format.chunk.id, "fmt ", 4u) != 0) {
+	if (strncmp(format.chunk.id.data(), "fmt ", 4u) != 0) {
 		assert(0);
 	}
 
@@ -258,7 +262,7 @@ Audio::SoundData SoundLoadWave(const char *filename)
 	Audio::ChunkHeader data{};
 	file.read((char *)&data, sizeof(data));
 	// Junkチャンクを検出した場合
-	if (strncmp(data.id, "JUNK", 4u) == 0) {
+	if (strncmp(data.id.data(), "JUNK", 4u) == 0) {
 		// 読み取り範囲をJunkチャンクの終わりまで進める
 		file.seekg(data.size, std::ios_base::cur);
 		// 再読み込み
@@ -266,7 +270,7 @@ Audio::SoundData SoundLoadWave(const char *filename)
 	}
 
 	// 実際に読み込む
-	if (strncmp(data.id, "data", 4u) != 0) {
+	if (strncmp(data.id.data(), "data", 4u) != 0) {
 		assert(0);
 	}
 

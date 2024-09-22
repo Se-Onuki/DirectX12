@@ -33,14 +33,14 @@ class Audio {
 public:
 	/// @brief チャンクヘッダ
 	struct ChunkHeader {
-		int32_t size; // チャンクサイズ
-		char id[4];   // chunk用のID
+		int32_t size;			// チャンクサイズ
+		std::array<char, 4> id;	// chunk用のID
 	};
 
 	/// @brief RIFFヘッダチャンク
 	struct RiffHeader {
-		ChunkHeader chunk; // "RIFF"
-		char type[4];      // "WAVE"
+		ChunkHeader chunk;			// "RIFF"
+		std::array<char, 4> type;	// "WAVE"
 	};
 
 	/// @brief FMTチャンク
@@ -163,7 +163,9 @@ public:
 	Voice PlayWave(const SoundData &soundData, bool loopFlag, float volume);
 	Voice PlayWave(uint32_t index, bool loopFlag, float volume);
 
-	bool IsPlaying(Voice voiceHandle);
+	bool IsPlaying(Voice voiceHandle) const;
+
+	void SetVolume(Voice& voice, const float volume);
 
 	void StopWave(Voice &voiceHandle);
 	void StopAllWave();
