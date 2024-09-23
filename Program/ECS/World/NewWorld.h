@@ -7,6 +7,29 @@
 
 namespace ECS {
 
+	template <bool IsConst = false>
+	class ChunkSet : public std::conditional_t<IsConst, std::vector<const Chunk *>, std::vector<Chunk *>> {
+	public:
+
+		using Type = std::conditional_t<IsConst, std::vector<const Chunk *>, std::vector<Chunk *>>;
+
+	public:
+
+		/// @brief エンティティの数を計算する
+		/// @return エンティティの数
+		uint32_t Count() const {
+			// chuckの配列が存在すれば､それに格納されてる数を返す
+			return this->empty() ? 0u : std::accumulate(this->cbegin(), this->cend(), 0u, [](uint32_t acc, const Chunk *i)->uint32_t
+				{
+					// chunkにアクセスできるならその数を足す
+					return i ? i->size() + acc : acc;
+				}
+			);
+		}
+
+	private:
+	};
+
 	class World {
 	public:
 
@@ -32,32 +55,32 @@ namespace ECS {
 		std::vector<EntityClass> CreateEntity(const Archetype &archetype, uint32_t count);
 		std::vector<EntityClass> CreateEntity(const Prefab &prefab, uint32_t count);
 
-		std::vector<Chunk *> GetAccessableChunk(const Archetype &archetype) {
-			std::vector<Chunk *> result;
+		ChunkSet<false> GetAccessableChunk(const Archetype &archetype) {
+			ChunkSet<false> result;
 			for (const auto &[key, chunk] : chunkMap_) {
 				if (archetype <= key) { result.push_back(chunk.get()); }
 			}
 			return result;
 		}
 
-		std::vector<const Chunk *> GetAccessableChunk(const Archetype &archetype) const {
-			std::vector<const Chunk *> result;
+		ChunkSet<true> GetAccessableChunk(const Archetype &archetype) const {
+			ChunkSet<true> result;
 			for (const auto &[key, chunk] : chunkMap_) {
 				if (archetype <= key) { result.push_back(chunk.get()); }
 			}
 			return result;
 		}
 
-		std::vector<Chunk *> GetAccessableChunk(const Archetype &archetype, const ECS::ComponentRegistry::ComponentFlag exclusions) {
-			std::vector<Chunk *> result;
+		ChunkSet<false> GetAccessableChunk(const Archetype &archetype, const ECS::ComponentRegistry::ComponentFlag exclusions) {
+			ChunkSet<false> result;
 			for (const auto &[key, chunk] : chunkMap_) {
 				if (archetype <= key and (key.compFlag_.Get() & exclusions.Get()).none()) { result.push_back(chunk.get()); }
 			}
 			return result;
 		}
 
-		std::vector<const Chunk *> GetAccessableChunk(const Archetype &archetype, const ECS::ComponentRegistry::ComponentFlag exclusions) const {
-			std::vector<const Chunk *> result;
+		ChunkSet<true> GetAccessableChunk(const Archetype &archetype, const ECS::ComponentRegistry::ComponentFlag exclusions) const {
+			ChunkSet<true> result;
 			for (const auto &[key, chunk] : chunkMap_) {
 				if (archetype <= key and (key.compFlag_.Get() & exclusions.Get()).none()) { result.push_back(chunk.get()); }
 			}

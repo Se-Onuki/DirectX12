@@ -389,18 +389,14 @@ void GameScene::Update() {
 		spawnTimer_.Start();
 	}
 
-
-
 	Archetype playerArchetype;
 	playerArchetype.AddClassData<ECS::PlayerTag>();
 
 	// プレイヤのView
 	auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+
 	// プレイヤのViewの長さが0である場合は死んでいる
-	bool playerIsDead = true;
-	for (const auto *const chunk : playerChunks) {
-		if (chunk->size()) { playerIsDead = false; break; }
-	}
+	bool playerIsDead = playerChunks.Count() == 0u;
 
 	// 死んでいた場合は
 	if (playerIsDead) {
