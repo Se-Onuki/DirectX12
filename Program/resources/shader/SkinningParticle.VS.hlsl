@@ -56,18 +56,20 @@ struct Skinned
 
 Skinned Skinning(VertexShaderInput input)
 {
+    
     Skinned result;
     // スキニングの処理
     
-    result.position = (
-        0.f, 0.f, 0.f, 0.f
-    );
+    result.position = 0.f;
+    
     for (int i = 0; i < 4; i++)
     {
         result.position += mul(input.position, gMatrixPalette[input.index[i]].skeletonSpaceMatrix_) * input.weight[i];
     }
     result.position.w = 1.f; // 確実に1を代入する
     
+    result.normal = 0.f;
+
     // 法線の変換
     for (i = 0; i < 3; i++)
     {
