@@ -71,7 +71,7 @@ Skinned Skinning(VertexShaderInput input)
     // 法線の変換
     for (i = 0; i < 3; i++)
     {
-        result.normal += mul(input.normal, (float3x3) gMatrixPalette[input.index[i]].skeletonSpaceInverseTransponeMatrix_) * input.weight[i];
+        result.normal += mul(input.normal, InverseTranspone((float3x3) (gMatrixPalette[input.index[i]].skeletonSpaceMatrix_))) * input.weight[i];
     }
     // 正規化しておく
     result.normal = normalize(result.normal);

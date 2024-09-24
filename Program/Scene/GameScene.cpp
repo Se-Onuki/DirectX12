@@ -414,22 +414,12 @@ void GameScene::Update() {
 	}
 
 
-	//// もし生存フラグが折れていたら、配列から削除
-	//world_->erase_if(std::function<bool(ECS::Entity *, ECS::IsAlive *)>(
-	//	[](ECS::Entity *, ECS::IsAlive *a)
-	//	{
-	//		return not a->isAlive_;
-	//	}
-	//));
-
+	// もし生存フラグが折れていたら、配列から削除
 	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item->isAlive_; });
 
 	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = 0u;
 
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
-
-	// ここでECSのsystemを呼び出す
-	//systemManager_.Update(world_.get(), fixDeltaTime);
 
 	cameraManager_->Update(fixDeltaTime);
 
