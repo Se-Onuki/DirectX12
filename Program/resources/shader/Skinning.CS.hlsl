@@ -58,6 +58,8 @@ void main(uint3 DTid : SV_DispatchThreadID)
         }
         result.position_.w = 1.f; // 確実に1を代入する
     
+        result.normal_ = 0.f;
+
         // 法線の変換
         for (i = 0; i < 3; i++)
         {
