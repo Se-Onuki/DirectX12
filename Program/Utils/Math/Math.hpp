@@ -136,7 +136,7 @@ namespace SoLib {
 		SoLib::Math::Euler DirectionToEuler(const Vector3 &direction);
 
 		template <size_t x, size_t y, typename T>
-		void ArrayTranspose(const T *input, T *output) {
+		inline void ArrayTranspose(const T *input, T *output) {
 			for (size_t i = 0; i < x; ++i) {
 				for (size_t j = 0; j < y; ++j) {
 					output[j * x + i] = input[i * y + j];
@@ -144,13 +144,13 @@ namespace SoLib {
 			}
 		}
 
-		void Add(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
+		inline void Add(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
 			for (uint32_t i = 0; i < 2; i++) {
 				result.simd_[i] = left.simd_[i] + right.simd_[i];
 			}
 		}
 
-		void Sub(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
+		inline void Sub(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
 			for (uint32_t i = 0; i < 2; i++) {
 				result.simd_[i] = left.simd_[i] - right.simd_[i];
 			}
@@ -165,7 +165,7 @@ namespace SoLib {
 
 }
 
-static Matrix2x3 operator+(const Matrix2x3 &l, const Matrix2x3 &r) {
+inline Matrix2x3 operator+(const Matrix2x3 &l, const Matrix2x3 &r) {
 
 	Matrix2x3 result;
 

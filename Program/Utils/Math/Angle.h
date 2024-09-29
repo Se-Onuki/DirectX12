@@ -69,7 +69,7 @@ namespace Angle {
 		inline Radian &operator=(const Digree &value) noexcept { return *this = static_cast<Radian>(value); }
 
 		const float Get() const noexcept { return angle_; }
-		float Get() noexcept { return angle_; }
+		float &Get() noexcept { return angle_; }
 
 	private:
 		// 角度の値

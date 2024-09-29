@@ -117,7 +117,7 @@ struct Transform2D {
 };
 
 namespace SoLib {
-	Transform2D Lerp(const Transform2D &str, const Transform2D &end, const float t) {
+	inline Transform2D Lerp(const Transform2D &str, const Transform2D &end, const float t) {
 		Transform2D result;
 		result.scale_ = SoLib::Lerp(str, end, &Transform2D::scale_, t);
 		result.rotate_ = Angle::Radian{ Angle::Lerp(str.rotate_.Get(), end.rotate_.Get(), t) };

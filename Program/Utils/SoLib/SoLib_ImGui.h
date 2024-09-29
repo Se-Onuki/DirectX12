@@ -58,7 +58,7 @@ namespace SoLib {
 	uint32_t ImGuiWidget(const char *const label, const C *const value, const uint32_t index, const std::function<std::string(uint32_t)> &displayChar = [](uint32_t i) { return std::to_string(i); });
 
 	template <SoLib::IsContainer C, SoLib::IsIterator Itr = decltype(std::begin(std::declval<C>())), SoLib::IsFunction<std::string, const Itr &> Func = std::function<std::string(const Itr &)>>
-	Itr ImGuiWidget(const char *const label, const C *const value, Itr itr, const Func &displayChar);
+	Itr ImGuiWidget(const char *const label, C *const value, Itr itr, const Func &displayChar);
 
 	bool ImGuiWidgetAngle(const char *const label, float *const value, float min = -360.f, float max = +360.f);
 
@@ -132,7 +132,7 @@ uint32_t SoLib::ImGuiWidget(const char *const label, const C *const value, const
 }
 
 template<SoLib::IsContainer C, SoLib::IsIterator Itr, SoLib::IsFunction<std::string, const Itr &> Func>
-Itr SoLib::ImGuiWidget(const char *const label, const C *const value, Itr itr, const Func &displayChar) {
+Itr SoLib::ImGuiWidget(const char *const label, C *const value, Itr itr, const Func &displayChar) {
 
 	// イテレータが無効であった場合に初期化する
 	if (itr == value->end()) {

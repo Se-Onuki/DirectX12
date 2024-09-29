@@ -12,30 +12,30 @@ namespace SoLib {
 
 	inline constexpr float easeLinear(float number) { return number; }
 
-	constexpr float easeInSine(float x);
-	constexpr float easeOutSine(float x);
-	constexpr float easeInOutSine(float x);
+	float easeInSine(float x);
+	float easeOutSine(float x);
+	float easeInOutSine(float x);
 
-	constexpr float easeInQuad(float x);
-	constexpr float easeOutQuad(float x);
-	constexpr float easeInOutQuad(float x);
+	float easeInQuad(float x);
+	float easeOutQuad(float x);
+	float easeInOutQuad(float x);
 
-	constexpr float easeInBack(float x);
-	constexpr float easeOutBack(float x);
-	constexpr float easeInOutBack(float x);
+	float easeInBack(float x);
+	float easeOutBack(float x);
+	float easeInOutBack(float x);
 
-	constexpr float easeInCirc(float x);
-	constexpr float easeOutCirc(float x);
+	float easeInCirc(float x);
+	float easeOutCirc(float x);
 
-	constexpr float easeInExpo(float x);
-	constexpr float easeOutExpo(float x);
+	float easeInExpo(float x);
+	float easeOutExpo(float x);
 
-	constexpr float easeInOutQuint(float x);
+	float easeInOutQuint(float x);
 
 
-	constexpr float easeOutBounce(float x);
+	float easeOutBounce(float x);
 
-	constexpr float easeOutElastic(float x);
+	float easeOutElastic(float x);
 
 	inline static constexpr std::array<std::pair<const char *const, float (*)(float)>, 17> kFuncList{
 			{
@@ -76,10 +76,6 @@ namespace SoLib {
 	};
 
 	template<>
-	bool ImGuiWidget<EaseFunc>(const char *const label, EaseFunc *const value) {
-
-		return SoLib::ImGuiWidget(label, &kFuncList, value->easeFunc_, [](const uint32_t item)->std::string {return kFuncList.at(item).first; });
-
-	}
+	bool ImGuiWidget<EaseFunc>(const char *const label, EaseFunc *const value);
 
 }

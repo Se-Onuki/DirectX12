@@ -26,7 +26,7 @@ void Fade::Start(const Vector2 &targetPos, const SoLib::Color::RGB4 &targetColor
 
 	// 目的地と、現在地を設定
 	targetPos_ = targetPos;
-	originalPos_ = sprite_->GetTransform().translate.ToVec2();
+	originalPos_ = sprite_->GetTransform().translate_.ToVec2();
 
 	// 目的colorと、現在colorを設定
 	targetColor_ = targetColor;
