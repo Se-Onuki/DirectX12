@@ -67,7 +67,7 @@ void TitleScene::Update() {
 
 	button_->SetPosition(Vector2{ WinApp::kWindowWidth * 0.5f,WinApp::kWindowHeight * (2.f / 4.f) });
 
-	if (input_->GetXInput()->IsTrigger(KeyCode::A)) {
+	if (input_->GetXInput()->IsTrigger(KeyCode::A) or input_->GetDirectInput()->IsTrigger(DIK_SPACE)) {
 		sceneManager_->ChangeScene<GameScene>(1.f);
 		Fade::GetInstance()->Start(Vector2{}, 0x000000FF, 1.f);
 	}
