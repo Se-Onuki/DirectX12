@@ -369,7 +369,7 @@ void GameScene::Update() {
 	spawner_.clear();
 
 	// 敵のスポーン数
-	constexpr uint32_t kEnemyCount = 5u;
+	constexpr uint32_t kEnemyCount = 15u;
 	// 敵の沸く半径
 	constexpr float kEnemyRadius = 45.f;
 
