@@ -335,12 +335,11 @@ void Sprite::Init(const uint32_t &textureHaundle) {
 	CalcBuffer();
 
 	SetTextureHaundle(textureHaundle);
-	transform_.matWorld_ = Matrix4x4::Identity();
 }
 
 void Sprite::Draw() const {
 	if (isVisible_) {	// 不可視であれば飛ばす
-		constData_->matWorldProjection = transform_.matWorld_ * matProjection_;
+		constData_->matWorldProjection = transMat_ * matProjection_;
 
 		// マテリアルCBufferの場所を設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)RootParameter::kConstData, constData_.GetGPUVirtualAddress());
@@ -436,9 +435,9 @@ void Sprite::SetBlendMode(BlendMode blendMode)
 }
 
 void Sprite::ImGuiWidget() {
-	if (transform_.ImGuiWidget2D()) {
+	/*if (transform_.ImGuiWidget2D()) {
 		transform_.CalcMatrix();
-	}
+	}*/
 	SoLib::ImGuiWidget(&constData_->color);
 
 	static char filePath[32];
@@ -468,19 +467,31 @@ void Sprite::ImGuiWidget() {
 
 void Sprite::SetScale(const Vector2 &scale)
 {
-	transform_.scale = { scale.x,scale.y,1.f };
-	transform_.CalcMatrix();
+	transform_.scale_ = { scale.x,scale.y,1.f };
+
+	transMat_ = transform_.Affine();
 }
 void Sprite::SetRotate(const float angle)
 {
-	transform_.rotate = { 0.f,0.f,angle };
-	transform_.CalcMatrix();
+	transform_.rotate_ = Vector3{ 0.f,0.f,angle };
+
+	transMat_ = transform_.Affine();
 }
 
 void Sprite::SetPosition(const Vector2 &position)
 {
-	transform_.translate = { position.x,position.y,0.f };
-	transform_.CalcMatrix();
+	transform_.translate_ = { position.x,position.y,0.f };
+
+	transMat_ = transform_.Affine();
+}
+
+void Sprite::SetTransform(const Transform2D &trans)
+{
+	transform_.scale_ = { trans.scale_.x, trans.scale_.y, 1.f };
+	transform_.rotate_ = Vector3{ .z = trans.rotate_.Get() };
+	transform_.translate_ = { trans.translate_.x, trans.translate_.y };
+
+	transMat_ = transform_.Affine();
 }
 
 std::unique_ptr<Sprite> Sprite::Create() {
@@ -506,13 +517,13 @@ void Sprite::CalcBuffer() {
 	Vector2 texDiff = { (uv_.first.x + uv_.second.x) / resourceDesc.Width, (uv_.first.y + uv_.second.y) / resourceDesc.Height };
 
 	vertexArray[(uint32_t)VertexNumer::LDown].texCoord = { texOrigin.x,texDiff.y };	// 左下 { 0, 1 }
-	vertexArray[(uint32_t)VertexNumer::LTop].texCoord = { texOrigin.x,texOrigin.y };	// 左上 { 0, 0 }
+	vertexArray[(uint32_t)VertexNumer::LTop].texCoord = { texOrigin.x,texOrigin.y };// 左上 { 0, 0 }
 	vertexArray[(uint32_t)VertexNumer::RDown].texCoord = { texDiff.x,texDiff.y };	// 右下 { 1, 1 }
 	vertexArray[(uint32_t)VertexNumer::RTop].texCoord = { texDiff.x,texOrigin.y };	// 右上 { 1, 0 }
 
 #pragma endregion
 
-	transform_.CalcMatrix();
+	transMat_ = transform_.Affine();
 }
 
 std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle)
@@ -525,9 +536,10 @@ std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle)
 std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale)
 {
 	auto sprite = Create(textureHaundle);
-	sprite->transform_.translate = { position.x,position.y,0.f };
-	sprite->transform_.scale = { scale.x,scale.y,1.f };
-	sprite->transform_.CalcMatrix();
+	sprite->transform_.translate_ = { position.x,position.y,0.f };
+	sprite->transform_.scale_ = { scale.x,scale.y,1.f };
+
+	sprite->transMat_ = sprite->transform_.Affine();
 	return std::move(sprite);
 }
 

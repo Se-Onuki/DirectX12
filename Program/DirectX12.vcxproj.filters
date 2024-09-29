@@ -16,18 +16,6 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{b8ff11c6-a1b0-456f-a9b2-0f0e2c1a2db5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header">
-      <UniqueIdentifier>{70021064-7ab7-4ec2-9901-25c7e7295690}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity">
-      <UniqueIdentifier>{3111759b-0bb8-488a-a007-ceee6c80174c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Entity\Component">
-      <UniqueIdentifier>{a686d45a-498c-4ad2-b9e7-3cbab9f39e24}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Collision">
-      <UniqueIdentifier>{2d432e2a-c249-44f0-95d4-ec01c6a7bc70}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{67363b50-94d7-49e0-aabd-ccdcd0f4d0f0}</UniqueIdentifier>
     </Filter>
@@ -100,35 +88,8 @@
     <Filter Include="ECS\System">
       <UniqueIdentifier>{49b232f6-b920-49bf-b068-d7a1b0a86325}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header\Object">
-      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Object\Particle">
-      <UniqueIdentifier>{f27eee7f-b96d-41b7-8091-4390e104378f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Object\Particle\Particles">
-      <UniqueIdentifier>{bfcbf39d-7f11-45dd-aeb4-c96e91717d21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Object\Particle\Particles\StarParticle">
-      <UniqueIdentifier>{3451eb81-cad9-40d5-91ef-7928b32133c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Object\Particle\Particles\TestParticle">
-      <UniqueIdentifier>{f707e732-b8ea-4cf3-adc1-6cfc6dc57180}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Object\Particle\Particles\GetParticle">
-      <UniqueIdentifier>{5335fb9d-4068-44ac-a8c9-e761918551f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Object\Block">
-      <UniqueIdentifier>{0701f625-dfe0-4534-bda1-06815d39c16b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Object\SkyDome">
-      <UniqueIdentifier>{e5ac1d12-cd78-4c1b-88be-cc904778dc1b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Thread">
       <UniqueIdentifier>{adf22241-dcde-48d5-b8dc-0cbdd655e5ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header\Object\Particle\Particles\SimpleParticle">
-      <UniqueIdentifier>{c5438e29-0751-412f-85c7-3b0af4efcce0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\PostEffect">
       <UniqueIdentifier>{cd004645-b61c-4c69-b6d4-5ab977e667f3}</UniqueIdentifier>
@@ -163,6 +124,48 @@
     <Filter Include="ECS\Chunk">
       <UniqueIdentifier>{eade6eeb-5031-4a91-a192-01035414c7a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{70021064-7ab7-4ec2-9901-25c7e7295690}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Entity">
+      <UniqueIdentifier>{3111759b-0bb8-488a-a007-ceee6c80174c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Entity\Component">
+      <UniqueIdentifier>{a686d45a-498c-4ad2-b9e7-3cbab9f39e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Collision">
+      <UniqueIdentifier>{2d432e2a-c249-44f0-95d4-ec01c6a7bc70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object">
+      <UniqueIdentifier>{3bbf4198-9917-49b3-b95c-1fe74a021585}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Particle">
+      <UniqueIdentifier>{f27eee7f-b96d-41b7-8091-4390e104378f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Particle\Particles">
+      <UniqueIdentifier>{bfcbf39d-7f11-45dd-aeb4-c96e91717d21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Particle\Particles\StarParticle">
+      <UniqueIdentifier>{3451eb81-cad9-40d5-91ef-7928b32133c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Particle\Particles\TestParticle">
+      <UniqueIdentifier>{f707e732-b8ea-4cf3-adc1-6cfc6dc57180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Particle\Particles\GetParticle">
+      <UniqueIdentifier>{5335fb9d-4068-44ac-a8c9-e761918551f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Particle\Particles\SimpleParticle">
+      <UniqueIdentifier>{c5438e29-0751-412f-85c7-3b0af4efcce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Block">
+      <UniqueIdentifier>{0701f625-dfe0-4534-bda1-06815d39c16b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\SkyDome">
+      <UniqueIdentifier>{e5ac1d12-cd78-4c1b-88be-cc904778dc1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\LevelUP">
+      <UniqueIdentifier>{0853075c-ce76-491d-86e9-498ae9f16437}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -172,19 +175,19 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\ModelComp.cpp">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\Rigidbody.cpp">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClCompile>
     <ClCompile Include="Header\Collision\Collision.cpp">
-      <Filter>Header\Collision</Filter>
+      <Filter>Game\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\Projectile.cpp">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Render\Camera.cpp">
       <Filter>Engine\Render\Camera</Filter>
@@ -289,16 +292,16 @@
       <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Entity.cpp">
-      <Filter>Header\Entity</Filter>
+      <Filter>Game\Entity</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Player.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\BaseCharacter.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\FollowCamera.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Base\RootSignature.cpp">
       <Filter>Engine\Base</Filter>
@@ -307,25 +310,25 @@
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\ParticleManager.cpp">
-      <Filter>Header\Object\Particle</Filter>
+      <Filter>Game\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle.cpp">
-      <Filter>Header\Object\Particle</Filter>
+      <Filter>Game\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\ParticleEmitter.cpp">
-      <Filter>Header\Object\Particle</Filter>
+      <Filter>Game\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\ParticleEmitterManager.cpp">
-      <Filter>Header\Object\Particle</Filter>
+      <Filter>Game\Object\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp">
-      <Filter>Header\Object\Particle\Particles\StarParticle</Filter>
+      <Filter>Game\Object\Particle\Particles\StarParticle</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp">
-      <Filter>Header\Object\Particle\Particles\TestParticle</Filter>
+      <Filter>Game\Object\Particle\Particles\TestParticle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp">
       <Filter>Engine\Render\CameraAnimations</Filter>
@@ -343,19 +346,19 @@
       <Filter>Utils\Math</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Block\BlockManager.cpp">
-      <Filter>Header\Object\Block</Filter>
+      <Filter>Game\Object\Block</Filter>
     </ClCompile>
     <ClCompile Include="Scene\TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Fade.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\SkyDome\SkyDome.cpp">
-      <Filter>Header\Object\SkyDome</Filter>
+      <Filter>Game\Object\SkyDome</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\GetParticle.cpp">
-      <Filter>Header\Object\Particle\Particles\GetParticle</Filter>
+      <Filter>Game\Object\Particle\Particles\GetParticle</Filter>
     </ClCompile>
     <ClCompile Include="Utils\SoLib\SoLib_Json.cpp">
       <Filter>Utils\SoLib</Filter>
@@ -391,7 +394,7 @@
       <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Ground.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClCompile>
     <ClCompile Include="Utils\Math\Vector3Norm.cpp">
       <Filter>Utils\Math</Filter>
@@ -409,10 +412,10 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\HealthBar.cpp">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Particle\SimpleParticle.cpp">
-      <Filter>Header\Object\Particle\Particles\SimpleParticle</Filter>
+      <Filter>Game\Object\Particle\Particles\SimpleParticle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\PostEffect\OffScreenRendering.cpp">
       <Filter>Engine\PostEffect</Filter>
@@ -504,6 +507,12 @@
     <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\Skeleton.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectBase\2D\SpriteDrawer.cpp">
+      <Filter>Engine\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\Object\PlayerLevel\LevelUP.cpp">
+      <Filter>Game\Object\LevelUP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -516,25 +525,25 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\Collider.h">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\ModelComp.h">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\Rigidbody.h">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Header\Collision\Collision.h">
-      <Filter>Header\Collision</Filter>
+      <Filter>Game\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\Projectile.h">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\HealthComp.h">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\ComponentManager.h">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Engine\SolEngine.h">
       <Filter>Engine</Filter>
@@ -669,16 +678,16 @@
       <Filter>Engine\2D</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Entity.h">
-      <Filter>Header\Entity</Filter>
+      <Filter>Game\Entity</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\FollowCamera.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Player.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\BaseCharacter.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Descriptor\DescriptorManager.h">
       <Filter>Engine\Descriptor</Filter>
@@ -696,31 +705,31 @@
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\FollowCameraComp.h">
-      <Filter>Header\Entity\Component</Filter>
+      <Filter>Game\Entity\Component</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Math\Quaternion.h">
       <Filter>Utils\Math</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleManager.h">
-      <Filter>Header\Object\Particle</Filter>
+      <Filter>Game\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle.h">
-      <Filter>Header\Object\Particle</Filter>
+      <Filter>Game\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleEmitter.h">
-      <Filter>Header\Object\Particle</Filter>
+      <Filter>Game\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleEmitterManager.h">
-      <Filter>Header\Object\Particle</Filter>
+      <Filter>Game\Object\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\StarParticle.h">
-      <Filter>Header\Object\Particle\Particles\StarParticle</Filter>
+      <Filter>Game\Object\Particle\Particles\StarParticle</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleList.h">
-      <Filter>Header\Object\Particle\Particles</Filter>
+      <Filter>Game\Object\Particle\Particles</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\TestParticle.h">
-      <Filter>Header\Object\Particle\Particles\TestParticle</Filter>
+      <Filter>Game\Object\Particle\Particles\TestParticle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h">
       <Filter>Engine\Render\CameraAnimations</Filter>
@@ -741,16 +750,16 @@
       <Filter>Utils\Math</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Block\BlockManager.h">
-      <Filter>Header\Object\Block</Filter>
+      <Filter>Game\Object\Block</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Fade.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\SkyDome\SkyDome.h">
-      <Filter>Header\Object\SkyDome</Filter>
+      <Filter>Game\Object\SkyDome</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\GetParticle.h">
-      <Filter>Header\Object\Particle\Particles\GetParticle</Filter>
+      <Filter>Game\Object\Particle\Particles\GetParticle</Filter>
     </ClInclude>
     <ClInclude Include="Utils\SoLib\SoLib_Json.h">
       <Filter>Utils\SoLib</Filter>
@@ -816,7 +825,7 @@
       <Filter>Utils\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Ground.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Math\Vector3Norm.h">
       <Filter>Utils\Math</Filter>
@@ -846,10 +855,10 @@
       <Filter>Utils\Text</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\HealthBar.h">
-      <Filter>Header\Object</Filter>
+      <Filter>Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Particle\SimpleParticle.h">
-      <Filter>Header\Object\Particle\Particles\SimpleParticle</Filter>
+      <Filter>Game\Object\Particle\Particles\SimpleParticle</Filter>
     </ClInclude>
     <ClInclude Include="ECS\Entity\Spawner.h">
       <Filter>ECS</Filter>
@@ -994,6 +1003,18 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\Skeleton.h">
       <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Object\PlayerLevel\LevelUP.h">
+      <Filter>Game\Object\LevelUP</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\2D\NewSprite.h">
+      <Filter>Engine\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\2D\SpriteDrawer.h">
+      <Filter>Engine\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Math\Matrix2x3.h">
+      <Filter>Utils\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

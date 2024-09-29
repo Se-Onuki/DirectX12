@@ -127,7 +127,10 @@ public:
 	/// オーディオコールバック
 	/// </summary>
 	class XAudio2VoiceCallback : public IXAudio2VoiceCallback {
+		Audio *pAudio_ = nullptr;
 	public:
+		XAudio2VoiceCallback() = default;
+		XAudio2VoiceCallback(Audio *audio) : pAudio_(audio) {}
 		// ボイス処理パスの開始時
 		STDMETHOD_(void, OnVoiceProcessingPassStart)
 			(UINT32) {};
@@ -165,7 +168,7 @@ public:
 
 	bool IsPlaying(Voice voiceHandle) const;
 
-	void SetVolume(Voice& voice, const float volume);
+	void SetVolume(Voice &voice, const float volume);
 
 	void StopWave(Voice &voiceHandle);
 	void StopAllWave();

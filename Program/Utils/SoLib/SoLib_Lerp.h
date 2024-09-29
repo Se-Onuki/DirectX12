@@ -15,6 +15,11 @@ namespace SoLib {
 		return static_cast<T>(Start + (End - Start) * t);
 	}
 
+	template<typename T, typename U>
+	inline U Lerp(const T &start, const T &end, U T:: *ptr, const float t) {
+		return Lerp((start.*ptr), (end.*ptr), t);
+	}
+
 	/// @brief 球面線形補間
 	/// @param Start 始点のオイラー角
 	/// @param End 終点のオイラー角

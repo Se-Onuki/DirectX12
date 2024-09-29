@@ -10,6 +10,8 @@
 #include <imgui.h>
 #include "../../../Utils/SoLib/SoLib_ImGui.h"
 
+const TextureManager *TextureManager::TextureHandle::pTextureManager_ = nullptr;
+
 void TextureManager::StartDraw()
 {
 
@@ -227,4 +229,9 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name, const std::s
 	//file_name;
 	nextIndex_++;
 	return handle;
+}
+
+const TextureManager::Texture *TextureManager::TextureHandle::GetTexture() const
+{
+	return pTextureManager_->GetTexture(index_);
 }

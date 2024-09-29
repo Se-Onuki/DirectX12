@@ -259,24 +259,6 @@ namespace ECS {
 
 	using namespace ECS::ComponentAccessor;
 
-	//struct NewTestSystem : public IFunctionalSystem {
-	//	OnlyRead<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp> onlyRead_;
-
-	//	OnlyWrite<ECS::TransformMatComp> onlyWrite_;
-
-	//	using DataBase = DataBase<NewTestSystem, decltype(onlyRead_), decltype(onlyWrite_)>;
-	//	NewTestSystem(const decltype(onlyRead_)::ComponentList::Components &onlyRead, const decltype(onlyWrite_)::ComponentList::Components &onlyWrite) :onlyRead_(onlyRead), onlyWrite_(onlyWrite) {}
-
-	//	void Execute() override {
-	//		const auto &[scale, rot, pos] = onlyRead_;
-	//		auto &[transMat] = onlyWrite_;
-
-	//		transMat = SoLib::Affine(scale, rot.quateRot_.Normalize(), pos);
-	//	}
-
-
-	//};
-
 	struct StructBaseSystem : IJobEntity {
 		OnlyRead<ECS::ScaleComp, ECS::QuaternionRotComp, ECS::PositionComp> onlyRead_;
 		OnlyWrite<ECS::TransformMatComp> onlyWrite_;
@@ -289,23 +271,6 @@ namespace ECS {
 			auto &[transMat] = onlyWrite_;
 
 			transMat = SoLib::Affine(scale, rot.quateRot_.Normalize(), pos);
-		}
-
-	};
-
-	struct TestSystem : public IFunctionalSystem {
-
-		using ReadWrite = GetComponentHelper<ECS::PositionComp, ECS::TransformMatComp>;
-		TestSystem() = default;
-		TestSystem(std::byte **ptr) : readWrite_(ReadWrite::Copy(ptr)) {}
-
-		ReadWrite::Components readWrite_;
-
-		void Execute() override {
-			auto &[pos, mat] = readWrite_;
-
-			mat = Matrix4x4::Identity();
-			mat.transformMat_.GetTranslate() = pos;
 		}
 
 	};
@@ -326,9 +291,6 @@ namespace ECS {
 
 		template<SoLib::IsBased<IJobEntity> T>
 		void AddSystem();
-
-		/*template<SoLib::IsBased<IJobEntity> T>
-		void AddNewSystem();*/
 
 		void Execute(const SystemData &systemData, const World *const world, Chunk *chunk, float deltaTime);
 		void Execute(World *world, float deltaTime);

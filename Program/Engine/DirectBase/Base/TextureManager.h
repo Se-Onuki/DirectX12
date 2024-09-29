@@ -34,6 +34,33 @@ public:
 		static TextureManager instance{};
 		return &instance;
 	}
+
+	/// @brief テクスチャのハンドル
+	struct TextureHandle {
+
+		TextureHandle() = default;
+		TextureHandle(const TextureHandle &) = default;
+		TextureHandle(uint32_t index) : index_(index) {}
+
+		friend TextureManager;
+
+		uint32_t index_;
+
+		const Texture *operator*() const { return GetTexture(); }
+
+		const Texture *operator->() const { return GetTexture(); }
+
+		const Texture *GetTexture() const;
+
+		/// @brief そのテクスチャが存在しているか
+		/// @return 存在していないなら偽
+		explicit operator bool() const { return GetTexture(); }
+
+	private:
+		// テクスチャマネージャへのアクセッサ
+		static const TextureManager *pTextureManager_;
+	};
+
 	static uint32_t LoadDefaultTexture() { return Load("white2x2.png"); }
 
 	void StartDraw();
@@ -54,6 +81,20 @@ public:
 	}
 	inline const D3D12_GPU_DESCRIPTOR_HANDLE &GetGpuSrvHandle(uint32_t index) {
 		return textureArray_.at(index).handle_.gpuHandle_;
+	}
+
+	/// @brief テクスチャの取得
+	/// @return テクスチャへのアドレス(空の場合 nullptr)
+	const Texture *GetTexture(uint32_t index) const {
+		// 対象のテクスチャ
+		const auto &texture = textureArray_.at(index);
+
+		// テクスチャが存在していないなら､nullptrを返す
+		if (texture.name_.empty()) { return nullptr; }
+
+		// それ以外の場合は､テクスチャのアドレスを返す
+		return &texture;
+
 	}
 
 	void SetGraphicsRootDescriptorTable(UINT rootParamIndex, uint32_t textureHandle) const;
@@ -107,8 +148,6 @@ namespace SolEngine {
 			std::string name;
 		};
 
-
-
 	};
 
 	template <>
@@ -146,12 +185,22 @@ namespace SolEngine {
 
 }
 
+/// @brief テクスチャハンドルの短縮リテラル
+using TextureHandle = TextureManager::TextureHandle;
+
 namespace std {
 
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::Texture>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::Texture> &data) const {
 			return std::hash<std::string>{}(data.filePath_);
+		}
+	};
+
+	template<>
+	struct hash<TextureHandle> {
+		size_t operator()(const TextureHandle &data) const {
+			return std::hash<uint32_t>{}(data.index_);
 		}
 	};
 }

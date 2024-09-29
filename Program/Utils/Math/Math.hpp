@@ -5,6 +5,9 @@
 #include "Angle.h"
 #include "Euler.h"
 #include "Quaternion.h"
+#include "Matrix2x3.h"
+#include "SimdCalc.h"
+
 struct Polar;
 
 struct Vector2;
@@ -119,36 +122,6 @@ Matrix3x3 MakeViewportMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom)
 /// @return 回転したベクトル
 Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m);
 
-// float GetRandom(const float min, const float max);
-
-// namespace Angle {
-//
-//	struct Digree {
-//		float digree;
-//		float ToRadian();
-//	};
-//
-//	struct Radian {
-//		float radian;
-//		float ToDigree();
-//	};
-//
-//	constexpr float PI = static_cast<float>(std::numbers::pi);
-//	constexpr float PI2 = PI * 2.f;
-//
-//	constexpr float Dig2Rad = PI / 180.f;
-//	constexpr float Rad2Dig = 180.f / PI;
-//
-//	float Lerp(const float start, const float end, const float t);
-//	Vector3 Lerp(const Vector3 &start, const Vector3 &end, const float t);
-//
-//	float Mod(float radian);
-//	Vector3 Mod(const Vector3 &euler);
-//
-//	//enum class
-//
-// } // namespace Angle
-
 namespace SoLib {
 
 	namespace Math {
@@ -171,9 +144,36 @@ namespace SoLib {
 			}
 		}
 
+		void Add(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
+			for (uint32_t i = 0; i < 2; i++) {
+				result.simd_[i] = left.simd_[i] + right.simd_[i];
+			}
+		}
+
+		void Sub(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
+			for (uint32_t i = 0; i < 2; i++) {
+				result.simd_[i] = left.simd_[i] - right.simd_[i];
+			}
+		}
+
+		//void Mul(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
+
+		//}
+
+
 	}
 
 }
+
+static Matrix2x3 operator+(const Matrix2x3 &l, const Matrix2x3 &r) {
+
+	Matrix2x3 result;
+
+	SoLib::Math::Add(result, l, r);
+	return result;
+
+}
+
 //
 //inline Vector3 operator*(const Vector3 &left, const Matrix3x3 &right)
 //{

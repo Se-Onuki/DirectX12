@@ -80,6 +80,11 @@
         "xloctime": "cpp",
         "xmemory": "cpp",
         "xtr1common": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "deque": "cpp",
+        "execution": "cpp",
+        "iostream": "cpp",
+        "mutex": "cpp",
+        "queue": "cpp"
     }
 }

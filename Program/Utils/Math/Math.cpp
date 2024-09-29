@@ -260,3 +260,4 @@ Vector3 SoLib::Math::EulerToDirection(const SoLib::Math::Euler &euler) {
 SoLib::Math::Euler SoLib::Math::DirectionToEuler(const Vector3 &direction) {
 	return direction.Direction2Euler();
 }
+

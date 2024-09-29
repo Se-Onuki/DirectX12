@@ -44,6 +44,9 @@ void Audio::StaticInit()
 
 	fileMap_.clear();
 	voices_.clear();
+
+	// オーディオコールバックの初期化
+	voiceCallback_ = XAudio2VoiceCallback{ GetInstance() };
 }
 
 Audio::Voice Audio::PlayWave(const SoundData &soundData, bool loopFlag, float volume)
@@ -380,9 +383,9 @@ Audio::SoundData SoundLoadMP3(const char *filename)
 
 	// xAudioとして作成する
 	Audio::SoundData result;
-	result.wfex = *waveFormat;
-	result.pBuffer = std::make_unique<std::byte[]>(mediaData.size());
-	result.bufferSize = static_cast<uint32_t>(mediaData.size());
+	result.wfex = *waveFormat;	// データ型に置き換えて保存
+	result.pBuffer = std::make_unique<std::byte[]>(mediaData.size());	// 保存領域を構築する
+	result.bufferSize = static_cast<uint32_t>(mediaData.size());			// バッファのサイズを書き込む
 
 	// データの移動
 	std::move(std::execution::par_unseq, mediaData.cbegin(), mediaData.cend(), result.pBuffer.get());
@@ -407,16 +410,12 @@ void Audio::SoundData::Unload()
 	bufferSize = 0u;
 	wfex = {};
 }
-//
-// STDMETHODIMP_(void __stdcall) Audio::XAudio2VoiceCallback::OnBufferEnd(void* pBufferContext)
-//{
-//}
+
 void Audio::XAudio2VoiceCallback::OnBufferEnd(void *pBufferContext)
 {
-
+	// ポインタが有効なら
 	if (pBufferContext) {
-
 		// 再生リストから除外
-		Audio::GetInstance()->voices_.erase(Voice{ reinterpret_cast<IXAudio2SourceVoice *>(pBufferContext) });
+		pAudio_->voices_.erase(Voice{ reinterpret_cast<IXAudio2SourceVoice *>(pBufferContext) });
 	}
 }

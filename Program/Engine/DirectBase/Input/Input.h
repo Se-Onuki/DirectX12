@@ -178,7 +178,7 @@ public:
 
 
 private:
-	InputType inputType_;
+	InputType inputType_{};
 
 	DirectInput *directInput_ = nullptr;
 	XInput *xInput_ = nullptr;

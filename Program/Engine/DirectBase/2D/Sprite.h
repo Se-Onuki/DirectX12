@@ -97,7 +97,9 @@ private:
 private:
 
 	// マッピング無しTransform
-	BaseTransform transform_;
+	SimpleTransformEuler transform_;
+
+	Matrix4x4 transMat_ = Matrix4x4::Identity();
 
 private:
 
@@ -118,7 +120,7 @@ private:
 public:
 	/// @brief テクスチャ設定
 	/// @param textureHaundle テクスチャハンドル
-	void SetTextureHaundle(const uint32_t &textureHaundle) {
+	void SetTextureHaundle(const uint32_t textureHaundle) {
 		textureHaundle_ = textureHaundle;
 		resourceDesc = TextureManager::GetInstance()->GetResourceDesc(textureHaundle);
 		SetTexOrigin(ZeroVector2);
@@ -144,6 +146,8 @@ public:
 	void SetScale(const Vector2 &scale);
 	void SetRotate(const float angle);
 	void SetPosition(const Vector2 &position);
+
+	void SetTransform(const Transform2D &trans);
 
 	const auto &GetTransform() const { return transform_; }
 

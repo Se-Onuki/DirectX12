@@ -171,6 +171,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ECS\World\NewWorld.cpp" />
     <ClCompile Include="ECS\World\World.cpp" />
     <ClCompile Include="Engine\DirectBase\2D\Sprite.cpp" />
+    <ClCompile Include="Engine\DirectBase\2D\SpriteDrawer.cpp" />
     <ClCompile Include="Engine\DirectBase\3D\DirectionLight.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\Audio.cpp" />
     <ClCompile Include="Engine\DirectBase\Base\DirectXCommon.cpp" />
@@ -239,6 +240,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\Particle\StarParticle.cpp" />
     <ClCompile Include="Header\Object\Particle\TestParticle.cpp" />
     <ClCompile Include="Header\Object\Player.cpp" />
+    <ClCompile Include="Header\Object\PlayerLevel\LevelUP.cpp" />
     <ClCompile Include="Header\Object\SkyDome\SkyDome.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\CGTaskScene.cpp" />
@@ -296,7 +298,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ECS\World\ComponentArray\EntityArrayStorage.h" />
     <ClInclude Include="ECS\World\NewWorld.h" />
     <ClInclude Include="ECS\World\World.hpp" />
+    <ClInclude Include="Engine\DirectBase\2D\NewSprite.h" />
     <ClInclude Include="Engine\DirectBase\2D\Sprite.h" />
+    <ClInclude Include="Engine\DirectBase\2D\SpriteDrawer.h" />
     <ClInclude Include="Engine\DirectBase\3D\DirectionLight.h" />
     <ClInclude Include="Engine\DirectBase\Base\Audio.h" />
     <ClInclude Include="Engine\DirectBase\Base\CBuffer.h" />
@@ -386,6 +390,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Particle\StarParticle.h" />
     <ClInclude Include="Header\Object\Particle\TestParticle.h" />
     <ClInclude Include="Header\Object\Player.h" />
+    <ClInclude Include="Header\Object\PlayerLevel\LevelUP.h" />
     <ClInclude Include="Header\Object\SkyDome\SkyDome.h" />
     <ClInclude Include="Scene\CGTaskScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
@@ -409,6 +414,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Utils\Math\Math.hpp" />
     <ClInclude Include="Utils\Math\Matrix.h" />
     <ClInclude Include="Utils\Math\Matrix2x2.h" />
+    <ClInclude Include="Utils\Math\Matrix2x3.h" />
     <ClInclude Include="Utils\Math\Matrix3x3.h" />
     <ClInclude Include="Utils\Math\Matrix4x4.h" />
     <ClInclude Include="Utils\Math\AlignasVector3.h" />
