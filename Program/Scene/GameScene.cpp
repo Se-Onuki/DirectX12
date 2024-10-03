@@ -28,7 +28,6 @@ GameScene::GameScene() {
 	modelHandleRender_ = ModelHandleListManager::GetInstance();
 	skinModelHandleRender_ = SkinModelHandleListManager::GetInstance();
 	particleManager_ = ParticleManager::GetInstance();
-	// collisionManager_ = CollisionManager::GetInstance();
 }
 
 GameScene::~GameScene() {
@@ -91,7 +90,6 @@ void GameScene::OnEnter() {
 		auto *const mtr = attackModel_->materialMap_.begin()->second.get();
 		mtr->texHandle_ = TextureManager::Load("UI/fullCircle.png");
 		mtr->blendMode_ = Model::BlendMode::kAdd;
-
 	}
 
 	// カーソルのモデル
@@ -113,22 +111,6 @@ void GameScene::OnEnter() {
 	followCamera_ = cameraManager_->AddCamera("FollowCamera");
 	cameraManager_->SetUseCamera(followCamera_);
 	cameraManager_->Update(0.f);
-
-	/*Archetype archetype;
-	archetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp>();
-
-	mArray_ = std::make_unique<ECS::MultiArray>(archetype);
-
-	Archetype emitterArchetype;
-	emitterArchetype.AddClassData<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
-	emitterArray_ = std::make_unique<ECS::MultiArray>(emitterArchetype);*/
-
-	//Archetype particleArchetype;
-	//particleArchetype.AddClassData<ECS::Identifier, ECS::ModelComp, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::BillboardRotate, ECS::Color, ECS::VelocityComp, ECS::ColorLarp>();
-
-	//entityManager_->CreateEntity(particleArchetype, 3u);
-	//auto emitterList = entityManager_->CreateEntity<ECS::Identifier, ECS::IsAlive, ECS::PositionComp, ECS::RotateComp, ECS::ScaleComp, ECS::TransformMatComp, ECS::AliveTime, ECS::LifeLimit, ECS::EmitterComp>();
-
 
 	prefab_ = std::make_unique<ECS::Prefab>();
 
@@ -228,40 +210,6 @@ void GameScene::OnEnter() {
 		bar = std::make_unique<HealthBar>();
 		bar->Init();
 	}
-
-	//// 生存などのデータの確認
-	//systemManager_.AddSystem<ECS::System::CheckAliveTime>();
-	//systemManager_.AddSystem<ECS::System::CheckHealthDie>();
-	//// 時間に関するもの
-	//systemManager_.AddSystem<ECS::System::AddAliveTime>();
-	//systemManager_.AddSystem<ECS::System::AddCoolTime>();
-	//// アニメーションなど
-	//systemManager_.AddSystem<ECS::System::AnimateUpdate>();
-	//systemManager_.AddSystem<ECS::System::ModelAnimatorUpdate>();
-	//systemManager_.AddSystem<ECS::System::SkinModelUpdate>();
-	//systemManager_.AddSystem<ECS::System::ColorLerp>();
-	//// 座標などの移動
-	//systemManager_.AddSystem<ECS::System::AddGravity>();
-	//systemManager_.AddSystem<ECS::System::AirResistanceSystem>();
-	//systemManager_.AddSystem<ECS::System::MovePosition>();
-
-	//// ゲーム固有の処理
-	//systemManager_.AddSystem<ECS::System::EnemyMove>();
-	//systemManager_.AddSystem<ECS::System::FallCollision>(&ground_);
-	//systemManager_.AddSystem<ECS::System::WeaponCollision>(soundA_, model_);
-	//systemManager_.AddSystem<ECS::System::PlayerMove>();
-	//systemManager_.AddSystem<ECS::System::PlayerAttack>(attackModel_);
-	//systemManager_.AddSystem<ECS::System::EnemyAttack>([this]() { damageTimer_.Start(0.5f); });
-
-	//// 汎用的な処理
-	//systemManager_.AddSystem<ECS::System::SlideFollowCameraUpdate>();
-	//systemManager_.AddSystem<ECS::System::CalcTransMatrix>();
-	//systemManager_.AddSystem<ECS::System::CalcParentTransform>();
-	//systemManager_.AddSystem<ECS::System::ModelDrawer>();
-	//systemManager_.AddSystem<ECS::System::DrawHelthBar>(healthBar_.get());
-	//systemManager_.AddSystem<ECS::System::DrawEnemyHelthBar>(&enemyHealthBar_);
-	//systemManager_.AddSystem<ECS::System::CursorDrawer>();
-	//systemManager_.AddSystem<ECS::System::ExpGaugeDrawer>(levelUI_.get(), expBar_.get());
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
 	offScreen_->Init();
