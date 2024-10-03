@@ -1,6 +1,6 @@
 #pragma once
 #include "../../Engine/DirectBase/2D/Sprite.h"
-#include "../../Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
 
 class ButtonPickUp;
 

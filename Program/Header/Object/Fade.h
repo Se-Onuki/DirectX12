@@ -2,14 +2,14 @@
 #include <stdint.h>
 #include <memory>
 
-#include "../../Utils/SoLib/SoLib_Timer.h"
-#include "../../Utils/SoLib/SoLib_Easing.h"
+#include "../../Engine/Utils/SoLib/SoLib_Timer.h"
+#include "../../Engine/Utils/SoLib/SoLib_Easing.h"
 
-#include "../../Utils/Math/Vector2.h"
-#include "../../Utils/Math/Vector4.h"
+#include "../../Engine/Utils/Math/Vector2.h"
+#include "../../Engine/Utils/Math/Vector4.h"
 #include "../../Engine/DirectBase/2D/Sprite.h"
 
-#include "../../Utils/Graphics/Color.h"
+#include "../../Engine/Utils/Graphics/Color.h"
 
 class Fade {
 	Fade() = default;

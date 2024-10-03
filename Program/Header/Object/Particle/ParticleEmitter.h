@@ -1,7 +1,7 @@
 #pragma once
 #include "ParticleManager.h"
 #include "../../../Engine/DirectBase/File/GlobalVariables.h"
-#include "../../../Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
 
 /// <summary>
 /// パーティクル生成クラス

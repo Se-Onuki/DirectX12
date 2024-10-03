@@ -1,10 +1,10 @@
 #include "Model.h"
-#include "../../../Utils/Math/Math.hpp"
+#include "../../Engine/Utils/Math/Math.hpp"
 #include "../../DirectBase/Base/DirectXCommon.h"
 #include "../Create/Create.h"
 #include <array>
 
-#include "../../../Utils/Math/Transform.h"
+#include "../../Engine/Utils/Math/Transform.h"
 #include "../../DirectBase/Base/Shader.h"
 #include "../../DirectBase/Base/TextureManager.h"
 #include "../../DirectBase/Render/Camera.h"
@@ -17,7 +17,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-#include "../../../Utils/Convert/Convert.h"
+#include "../../Engine/Utils/Convert/Convert.h"
 #include "../Render/CameraAnimations/CameraManager.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include <execution>

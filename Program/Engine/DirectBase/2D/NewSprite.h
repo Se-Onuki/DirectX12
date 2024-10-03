@@ -1,6 +1,6 @@
 #pragma once
 #include "../../Engine/DirectBase/Base/TextureManager.h"	// テクスチャのマネージャ
-#include "../../Utils/Graphics/Color.h"						// カラー型
+#include "../../Engine/Utils/Graphics/Color.h"						// カラー型
 
 /// @brief 改善版スプライト
 class NewSprite {

@@ -58,13 +58,13 @@
     <Filter Include="Engine\Render\Camera">
       <UniqueIdentifier>{cd7e589c-b725-4086-9c87-50cc51413a95}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils">
+    <Filter Include="Engine\Utils">
       <UniqueIdentifier>{279151ca-7479-49ba-9dd1-6af1aee69a0a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Math">
+    <Filter Include="Engine\Utils\Math">
       <UniqueIdentifier>{01a70b64-c804-487f-8af2-9946a6128e21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\SoLib">
+    <Filter Include="Engine\Utils\SoLib">
       <UniqueIdentifier>{718943a2-fecd-4a48-a88c-ffda723192fa}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Render\CameraAnimations">
@@ -73,16 +73,16 @@
     <Filter Include="ECS">
       <UniqueIdentifier>{44ca97f6-34d4-44d8-be16-15451311710c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Graphics">
+    <Filter Include="Engine\Utils\Graphics">
       <UniqueIdentifier>{34273b47-9ebb-47d3-b275-7eee60fc69bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\IO">
+    <Filter Include="Engine\Utils\IO">
       <UniqueIdentifier>{f6b1456a-8fef-4089-b818-81770d49cd28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Containers">
+    <Filter Include="Engine\Utils\Containers">
       <UniqueIdentifier>{0f92dbed-cd85-4b89-919d-4810ed34015e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Text">
+    <Filter Include="Engine\Utils\Text">
       <UniqueIdentifier>{482b4099-ec56-45dc-b5cd-ca4a5614906b}</UniqueIdentifier>
     </Filter>
     <Filter Include="ECS\System">
@@ -94,7 +94,7 @@
     <Filter Include="Engine\PostEffect">
       <UniqueIdentifier>{cd004645-b61c-4c69-b6d4-5ab977e667f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Convert">
+    <Filter Include="Engine\Utils\Convert">
       <UniqueIdentifier>{b62b4b64-9d89-4d59-a066-c952dd2b03a4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\ResourceObject">
@@ -106,7 +106,7 @@
     <Filter Include="Natvis">
       <UniqueIdentifier>{a4773ae0-b1ac-46d8-89e4-32665fd8ee6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Types">
+    <Filter Include="Engine\Utils\Types">
       <UniqueIdentifier>{3081b939-dfe2-4b1d-97f6-644deac1a732}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\ComputeShader">
@@ -195,42 +195,6 @@
     <ClCompile Include="Engine\DirectBase\Render\Render.cpp">
       <Filter>Engine\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\Math\Math.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Matrix2x2.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Matrix3x3.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Matrix4x4.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Polar.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Transform.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Vector2.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Vector3.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\SoLib\SoLib_Easing.cpp">
-      <Filter>Utils\SoLib</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\SoLib\SoLib_ImGui.cpp">
-      <Filter>Utils\SoLib</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\SoLib\SoLib_Timer.cpp">
-      <Filter>Utils\SoLib</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\SoLib\SoLib_Lerp.cpp">
-      <Filter>Utils\SoLib</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\Model.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
@@ -269,15 +233,6 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Texture\Texture.cpp">
       <Filter>Engine\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Angle.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Random.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\ValueRange.cpp">
-      <Filter>Utils\Math</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\3D\DirectionLight.cpp">
       <Filter>Engine\3D</Filter>
@@ -342,9 +297,6 @@
     <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp">
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\Math\Quaternion.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
     <ClCompile Include="Header\Object\Block\BlockManager.cpp">
       <Filter>Game\Object\Block</Filter>
     </ClCompile>
@@ -360,34 +312,19 @@
     <ClCompile Include="Header\Object\Particle\GetParticle.cpp">
       <Filter>Game\Object\Particle\Particles\GetParticle</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\SoLib\SoLib_Json.cpp">
-      <Filter>Utils\SoLib</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Math\Vector4.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="ECS\Component\Component.cpp">
+    <ClCompile Include="Engine\ECS\Component\Component.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\Entity\EntityManager.cpp">
+    <ClCompile Include="Engine\ECS\Entity\EntityManager.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\World\World.cpp">
+    <ClCompile Include="Engine\ECS\World\World.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\MultiArray.cpp">
+    <ClCompile Include="Engine\ECS\MultiArray.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\Graphics\Color.cpp">
-      <Filter>Utils\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\IO\CSV.cpp">
-      <Filter>Utils\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\IO\File.cpp">
-      <Filter>Utils\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="ECS\System\SystemManager.cpp">
+    <ClCompile Include="Engine\ECS\System\SystemManager.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\BoneModel.cpp">
@@ -396,16 +333,10 @@
     <ClCompile Include="Header\Object\Ground.cpp">
       <Filter>Game\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\Math\Vector3Norm.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\CGTaskScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\Math\TransformMatrix.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="ECS\System\Systems.cpp">
+    <ClCompile Include="Engine\ECS\System\Systems.cpp">
       <Filter>ECS\System</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
@@ -419,9 +350,6 @@
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\PostEffect\OffScreenRendering.cpp">
       <Filter>Engine\PostEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Convert\Convert.cpp">
-      <Filter>Utils\Convert</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ResourceObject\ResourceObjectManager.cpp">
       <Filter>Engine\ResourceObject</Filter>
@@ -474,28 +402,28 @@
     <ClCompile Include="Engine\DirectBase\Render\SkyBox\SkyBox.cpp">
       <Filter>Engine\Render\SkyBox</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\World\ComponentArray\Chunk.cpp">
+    <ClCompile Include="Engine\ECS\World\ComponentArray\Chunk.cpp">
       <Filter>ECS\Chunk</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\World\ComponentArray\EntityArrayStorage.cpp">
+    <ClCompile Include="Engine\ECS\World\ComponentArray\EntityArrayStorage.cpp">
       <Filter>ECS\Chunk</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\World\ComponentArray\ChunkRange.cpp">
+    <ClCompile Include="Engine\ECS\World\ComponentArray\ChunkRange.cpp">
       <Filter>ECS\Chunk</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\World\ComponentArray\ChunkIterator.cpp">
+    <ClCompile Include="Engine\ECS\World\ComponentArray\ChunkIterator.cpp">
       <Filter>ECS\Chunk</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\Entity\Spawner.cpp">
+    <ClCompile Include="Engine\ECS\Entity\Spawner.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\System\FunctionalSystem.cpp">
+    <ClCompile Include="Engine\ECS\System\FunctionalSystem.cpp">
       <Filter>ECS\System</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\World\NewWorld.cpp">
+    <ClCompile Include="Engine\ECS\World\NewWorld.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\System\NewSystems.cpp">
+    <ClCompile Include="Engine\ECS\System\NewSystems.cpp">
       <Filter>ECS\System</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.cpp">
@@ -512,6 +440,78 @@
     </ClCompile>
     <ClCompile Include="Header\Object\PlayerLevel\LevelUP.cpp">
       <Filter>Game\Object\LevelUP</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Angle.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\SoLib\SoLib_Easing.cpp">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\SoLib\SoLib_ImGui.cpp">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\SoLib\SoLib_Json.cpp">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\SoLib\SoLib_Lerp.cpp">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\SoLib\SoLib_Timer.cpp">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Math.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Matrix2x2.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Matrix3x3.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Matrix4x4.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Random.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Quaternion.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Polar.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\ValueRange.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Vector2.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Vector3.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Vector3Norm.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Vector4.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\Transform.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Math\TransformMatrix.cpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Graphics\Color.cpp">
+      <Filter>Engine\Utils\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\IO\CSV.cpp">
+      <Filter>Engine\Utils\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\IO\File.cpp">
+      <Filter>Engine\Utils\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Convert\Convert.cpp">
+      <Filter>Engine\Utils\Convert</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -553,54 +553,6 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Render\Render.h">
       <Filter>Engine\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Math.hpp">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Matrix2x2.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Matrix3x3.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Matrix4x4.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Polar.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Transform.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Vector2.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Vector3.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Vector4.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\FloatArray.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\SoLib\SoLib.h">
-      <Filter>Utils\SoLib</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\SoLib\SoLib_Easing.h">
-      <Filter>Utils\SoLib</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\SoLib\SoLib_ImGui.h">
-      <Filter>Utils\SoLib</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\SoLib\SoLib_Timer.h">
-      <Filter>Utils\SoLib</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\SoLib\SoLib_Traits.h">
-      <Filter>Utils\SoLib</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\SoLib\SoLib_Lerp.h">
-      <Filter>Utils\SoLib</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\MinecraftModel.h">
       <Filter>Engine\Model</Filter>
@@ -662,15 +614,6 @@
     <ClInclude Include="Engine\DirectBase\Texture\Texture.h">
       <Filter>Engine\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Math\Angle.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Random.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\ValueRange.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\DirectBase\3D\DirectionLight.h">
       <Filter>Engine\3D</Filter>
     </ClInclude>
@@ -707,9 +650,6 @@
     <ClInclude Include="Header\Entity\Component\FollowCameraComp.h">
       <Filter>Game\Entity\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Math\Quaternion.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Object\Particle\ParticleManager.h">
       <Filter>Game\Object\Particle</Filter>
     </ClInclude>
@@ -743,12 +683,6 @@
     <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h">
       <Filter>Engine\Render\CameraAnimations</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Math\Matrix.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\SimdCalc.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Object\Block\BlockManager.h">
       <Filter>Game\Object\Block</Filter>
     </ClInclude>
@@ -761,98 +695,53 @@
     <ClInclude Include="Header\Object\Particle\GetParticle.h">
       <Filter>Game\Object\Particle\Particles\GetParticle</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\SoLib\SoLib_Json.h">
-      <Filter>Utils\SoLib</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\Component\Component.hpp">
+    <ClInclude Include="Engine\ECS\Component\Component.hpp">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Entity\Entity.hpp">
+    <ClInclude Include="Engine\ECS\Entity\Entity.hpp">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Entity\EntityManager.hpp">
+    <ClInclude Include="Engine\ECS\Entity\EntityManager.hpp">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\World\World.hpp">
+    <ClInclude Include="Engine\ECS\World\World.hpp">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Chunk\Chunk.hpp">
+    <ClInclude Include="Engine\ECS\Chunk\Chunk.hpp">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\MultiArray.h">
+    <ClInclude Include="Engine\ECS\MultiArray.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Archetype.h">
+    <ClInclude Include="Engine\ECS\Archetype.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Graphics\Color.h">
-      <Filter>Utils\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Euler.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\IO\CSV.h">
-      <Filter>Utils\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\IO\File.h">
-      <Filter>Utils\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Containers\Array2D.h">
-      <Filter>Utils\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\System\SystemManager.h">
+    <ClInclude Include="Engine\ECS\System\SystemManager.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Entity\Prefab.h">
+    <ClInclude Include="Engine\ECS\Entity\Prefab.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Text\ConstString.h">
-      <Filter>Utils\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Containers\ConstVector.h">
-      <Filter>Utils\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\System\Systems.h">
+    <ClInclude Include="Engine\ECS\System\Systems.h">
       <Filter>ECS\System</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\System\ISystem.h">
+    <ClInclude Include="Engine\ECS\System\ISystem.h">
       <Filter>ECS\System</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\BoneModel.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Containers\Singleton.h">
-      <Filter>Utils\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Object\Ground.h">
       <Filter>Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\Vector3Norm.h">
-      <Filter>Utils\Math</Filter>
     </ClInclude>
     <ClInclude Include="Scene\CGTaskScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Containers\Manager.h">
-      <Filter>Utils\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Containers\UnChainVector.h">
-      <Filter>Utils\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\TransformMatrix.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\DirectBase\Thread\ThreadPool.h">
       <Filter>Engine\Thread</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\System\System.h">
+    <ClInclude Include="Engine\ECS\System\System.h">
       <Filter>ECS\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Containers\CustomVectors.h">
-      <Filter>Utils\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Text\StaticString.h">
-      <Filter>Utils\Text</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\HealthBar.h">
       <Filter>Game\Object</Filter>
@@ -860,17 +749,11 @@
     <ClInclude Include="Header\Object\Particle\SimpleParticle.h">
       <Filter>Game\Object\Particle\Particles\SimpleParticle</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Entity\Spawner.h">
+    <ClInclude Include="Engine\ECS\Entity\Spawner.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\ClassData.h">
+    <ClInclude Include="Engine\ECS\ClassData.h">
       <Filter>ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Math\AlignasVector3.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Containers\WrappingClass.h">
-      <Filter>Utils\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h">
       <Filter>Engine\PostEffect</Filter>
@@ -878,17 +761,11 @@
     <ClInclude Include="Engine\DirectBase\Base\EngineObject.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Convert\Convert.h">
-      <Filter>Utils\Convert</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\ResourceObject\ResourceObjectManager.h">
       <Filter>Engine\ResourceObject</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ResourceObject\ResourceObject.h">
       <Filter>Engine\ResourceObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Containers\AlignasWrapper.h">
-      <Filter>Utils\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\Mesh.h">
       <Filter>Engine\Model</Filter>
@@ -911,10 +788,7 @@
     <ClInclude Include="Engine\DirectBase\Model\ModelRender.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Types\TypeID.h">
-      <Filter>Utils\Types</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\Component\ComponentRegistry.h">
+    <ClInclude Include="Engine\ECS\Component\ComponentRegistry.h">
       <Filter>ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Texture\FullScreenTextureStrage.h">
@@ -965,34 +839,34 @@
     <ClInclude Include="Engine\DirectBase\Render\SkyBox\SkyBox.h">
       <Filter>Engine\Render\SkyBox</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\World\ComponentArray\Chunk.h">
+    <ClInclude Include="Engine\ECS\World\ComponentArray\Chunk.h">
       <Filter>ECS\Chunk</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\World\ComponentArray\ComponentArray.h">
+    <ClInclude Include="Engine\ECS\World\ComponentArray\ComponentArray.h">
       <Filter>ECS\Chunk</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\World\ComponentArray\ComponentData.h">
+    <ClInclude Include="Engine\ECS\World\ComponentArray\ComponentData.h">
       <Filter>ECS\Chunk</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\World\ComponentArray\EntityArrayStorage.h">
+    <ClInclude Include="Engine\ECS\World\ComponentArray\EntityArrayStorage.h">
       <Filter>ECS\Chunk</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\World\ComponentArray\ChunkIterator.h">
+    <ClInclude Include="Engine\ECS\World\ComponentArray\ChunkIterator.h">
       <Filter>ECS\Chunk</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\World\ComponentArray\ChunkRange.h">
+    <ClInclude Include="Engine\ECS\World\ComponentArray\ChunkRange.h">
       <Filter>ECS\Chunk</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\System\FunctionalSystem.h">
+    <ClInclude Include="Engine\ECS\System\FunctionalSystem.h">
       <Filter>ECS\System</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\World\NewWorld.h">
+    <ClInclude Include="Engine\ECS\World\NewWorld.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\System\NewSystems.h">
+    <ClInclude Include="Engine\ECS\System\NewSystems.h">
       <Filter>ECS\System</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\System\ECSCollisionManager.h">
+    <ClInclude Include="Engine\ECS\System\ECSCollisionManager.h">
       <Filter>ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.h">
@@ -1013,8 +887,134 @@
     <ClInclude Include="Engine\DirectBase\2D\SpriteDrawer.h">
       <Filter>Engine\2D</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Math\Matrix2x3.h">
-      <Filter>Utils\Math</Filter>
+    <ClInclude Include="Engine\Utils\Math\Angle.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\AlignasVector3.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\SoLib_Traits.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\SoLib_Easing.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\SoLib_ImGui.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\SoLib_Json.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\SoLib_Lerp.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\SoLib_Timer.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\SoLib.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Math.hpp">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Matrix.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Matrix2x2.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Matrix2x3.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Matrix3x3.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Matrix4x4.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Random.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Quaternion.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Polar.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Vector4.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\ValueRange.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Vector2.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Vector3.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Vector3Norm.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\TransformMatrix.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Transform.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\Euler.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Types\TypeID.h">
+      <Filter>Engine\Utils\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Graphics\Color.h">
+      <Filter>Engine\Utils\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\IO\CSV.h">
+      <Filter>Engine\Utils\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\IO\File.h">
+      <Filter>Engine\Utils\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Text\ConstString.h">
+      <Filter>Engine\Utils\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Convert\Convert.h">
+      <Filter>Engine\Utils\Convert</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\SimdCalc.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Text\StaticString.h">
+      <Filter>Engine\Utils\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\FloatArray.h">
+      <Filter>Engine\Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Containers\WrappingClass.h">
+      <Filter>Engine\Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Containers\AlignasWrapper.h">
+      <Filter>Engine\Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Containers\Array2D.h">
+      <Filter>Engine\Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Containers\ConstVector.h">
+      <Filter>Engine\Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Containers\CustomVectors.h">
+      <Filter>Engine\Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Containers\Manager.h">
+      <Filter>Engine\Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Containers\Singleton.h">
+      <Filter>Engine\Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Containers\UnChainVector.h">
+      <Filter>Engine\Utils\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

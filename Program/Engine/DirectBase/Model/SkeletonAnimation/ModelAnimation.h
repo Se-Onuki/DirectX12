@@ -1,10 +1,10 @@
 #pragma once
 #include "../../Engine/ResourceObject/ResourceObject.h"
 #include "../../Engine/ResourceObject/ResourceObjectManager.h"
-#include "../../../../Utils/SoLib/SoLib_Timer.h"
+#include "../../Engine/Utils/SoLib/SoLib_Timer.h"
 #include "../AssimpData.h"
-#include "../../Utils/Math/Vector3.h"
-#include "../../Utils/Math/Quaternion.h"
+#include "../../Engine/Utils/Math/Vector3.h"
+#include "../../Engine/Utils/Math/Quaternion.h"
 
 namespace SolEngine {
 

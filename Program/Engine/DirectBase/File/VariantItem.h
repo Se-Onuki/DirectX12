@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../Utils/Text/StaticString.h"
-#include "../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/Text/StaticString.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
 #include <json.hpp>
 #include <string>
 

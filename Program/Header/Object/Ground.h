@@ -1,7 +1,7 @@
 #pragma once
 #include "../Collision/Collision.h"
-#include "../../Utils/Math/Vector2.h"
-#include "../../Utils/Math/Matrix4x4.h"
+#include "../../Engine/Utils/Math/Vector2.h"
+#include "../../Engine/Utils/Math/Matrix4x4.h"
 #include "../../Engine/DirectBase/Model/Model.h"
 
 class Ground {

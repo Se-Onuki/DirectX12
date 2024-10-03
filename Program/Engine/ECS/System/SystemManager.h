@@ -3,7 +3,7 @@
 #include <list>
 #include <memory>
 #include <array>
-#include "../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
 
 namespace ECS {
 

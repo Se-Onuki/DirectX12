@@ -5,7 +5,7 @@
 #include <cstdint>
 
 #include "DirectBase/Base/WinApp.h"
-#include "../Utils/Containers/Singleton.h"
+#include "Utils/Containers/Singleton.h"
 
 class DirectXCommon;
 

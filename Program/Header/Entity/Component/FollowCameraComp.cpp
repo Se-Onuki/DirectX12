@@ -1,6 +1,6 @@
 #include "FollowCameraComp.h"
-#include "../../../Utils/SoLib/SoLib_Lerp.h"
-#include "../../../Utils/SoLib/SoLib_ImGui.h"
+#include "../../Engine/Utils/SoLib/SoLib_Lerp.h"
+#include "../../Engine/Utils/SoLib/SoLib_ImGui.h"
 #include "../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 
 void FollowCameraComp::Init() {

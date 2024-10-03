@@ -1,7 +1,7 @@
 #pragma once
 #include "LevelData.h"
-#include "../../ECS/World/World.hpp"
-#include "../../ECS/World/NewWorld.h"
+#include "../../Engine/ECS/World/World.hpp"
+#include "../../Engine/ECS/World/NewWorld.h"
 
 namespace SolEngine {
 	class LevelImporter {

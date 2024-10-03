@@ -1,6 +1,6 @@
 #pragma once
 #include <concepts>
-#include "../../Utils/SoLib/SoLib_Traits.h"
+#include "../Utils/SoLib/SoLib_Traits.h"
 
 namespace SolEngine {
 

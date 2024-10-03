@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../Utils/Math/Math.hpp"
+#include "../../Engine/Utils/Math/Math.hpp"
 #include "../../Engine/DirectBase/Input/Input.h"
-#include "../../Utils/Math/Transform.h"
+#include "../../Engine/Utils/Math/Transform.h"
 #include "../../Engine/DirectBase/Render/Camera.h"
 #include <optional>
 #include <stdint.h>

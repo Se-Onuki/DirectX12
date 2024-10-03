@@ -1,7 +1,7 @@
 #pragma once
 
 #include "StructBuffer.h"
-#include "../../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
 
 #pragma region 頂点バッファ
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Utils/Containers/Singleton.h"
-#include "../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/Containers/Singleton.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
 #include "../Base/EngineObject.h"
 #include <vector>
 #include <d3d12.h>

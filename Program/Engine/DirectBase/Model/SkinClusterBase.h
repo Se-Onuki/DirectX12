@@ -2,7 +2,7 @@
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include "AssimpData.h"
-#include "../../Utils/Graphics/Color.h"
+#include "../../Engine/Utils/Graphics/Color.h"
 #include "../Base/CBuffer.h"
 
 struct JointWeightData;
@@ -53,9 +53,3 @@ namespace std {
 		}
 	};
 }
-//
-//namespace SoLib {
-//	template <>
-//	bool ImGuiWidget<SolEngine::Material>(const char *const label, SolEngine::Material *const value);
-//
-//}

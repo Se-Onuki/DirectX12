@@ -4,9 +4,9 @@
 #include <imgui.h>
 
 #include "../../Engine/DirectBase/Render/Camera.h"
-#include "../../Utils/Math/Math.hpp"
+#include "../../Engine/Utils/Math/Math.hpp"
 #include "../../Engine/DirectBase/File/GlobalVariables.h"
-#include "../../Utils/SoLib/SoLib_Lerp.h"
+#include "../../Engine/Utils/SoLib/SoLib_Lerp.h"
 
 void Player::ApplyClobalVariables() {
 	GlobalVariables *const gVariables = GlobalVariables::GetInstance();

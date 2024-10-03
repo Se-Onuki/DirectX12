@@ -8,7 +8,7 @@
 #include "../Component/Component.hpp"
 #include "../Component/ComponentRegistry.h"
 #include "../Archetype.h"
-#include "../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
 
 namespace ECS {
 

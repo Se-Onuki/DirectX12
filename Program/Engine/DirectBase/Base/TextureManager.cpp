@@ -8,7 +8,7 @@
 #include "DirectXCommon.h"
 
 #include <imgui.h>
-#include "../../../Utils/SoLib/SoLib_ImGui.h"
+#include "../../Engine/Utils/SoLib/SoLib_ImGui.h"
 
 const TextureManager *TextureManager::TextureHandle::pTextureManager_ = nullptr;
 

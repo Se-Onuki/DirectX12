@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../Utils/Containers/Singleton.h"
-#include "../../../Utils/Graphics/Color.h"
+#include "../../Engine/Utils/Containers/Singleton.h"
+#include "../../Engine/Utils/Graphics/Color.h"
 #include "../Base/DirectXCommon.h"
 #include <d3d12.h>
 #include <wrl.h>

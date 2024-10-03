@@ -10,7 +10,7 @@
 #include "../DxResource/DxResourceBuffer.h"
 #include "../DxResource/DxResourceBufferPoolManager.h"
 
-#include "../../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
 
 #pragma region 配列の定数バッファ
 

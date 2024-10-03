@@ -4,7 +4,7 @@
 #include "../Base/DirectXCommon.h"
 
 #include "../Render/Render.h"
-#include "../../../Utils/SoLib/SoLib_ImGui.h"
+#include "../../Engine/Utils/SoLib/SoLib_ImGui.h"
 
 
 void Camera<Render::CameraType::Projecction>::Init() {

@@ -1,7 +1,7 @@
 #pragma once
-#include "../../Utils/Math/Transform.h"
-#include "../../Utils/Math/Vector4.h"
-#include "../../Utils/Graphics/Color.h"
+#include "../../Engine/Utils/Math/Transform.h"
+#include "../../Engine/Utils/Math/Vector4.h"
+#include "../../Engine/Utils/Graphics/Color.h"
 
 struct Particle {
 	struct TransMat {

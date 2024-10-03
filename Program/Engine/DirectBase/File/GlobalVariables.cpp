@@ -6,7 +6,7 @@
 #include <windows.h>
 
 #include "../../DirectBase/Base/WinApp.h"
-#include "../../../Utils/SoLib/SoLib_ImGui.h"
+#include "../../Engine/Utils/SoLib/SoLib_ImGui.h"
 
 const GlobalVariables::Group &GlobalVariables::GetGroup(const std::string &groupName) const {
 	// グループ内を検索

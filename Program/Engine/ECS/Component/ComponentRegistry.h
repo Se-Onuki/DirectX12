@@ -4,8 +4,8 @@
 #include <cstddef>
 #include <iostream>
 
-#include "../../Utils/SoLib/SoLib_Traits.h"
-#include "../../Utils/Containers/Singleton.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/Containers/Singleton.h"
 #include "Component.hpp"
 
 namespace ECS {

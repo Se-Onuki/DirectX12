@@ -1,8 +1,8 @@
 #pragma once
 #include "../Entity.h"
 #include "../../../Engine/DirectBase/Render/Camera.h"
-#include "../../../Utils/Math/Vector3.h"
-#include "../../../Utils/Math/Matrix4x4.h"
+#include "../../Engine/Utils/Math/Vector3.h"
+#include "../../Engine/Utils/Math/Matrix4x4.h"
 #include "../../Collision/Collision.h"
 #include "../../../Engine/DirectBase/File/VariantItem.h"
 

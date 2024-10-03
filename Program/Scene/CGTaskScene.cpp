@@ -5,10 +5,10 @@
 #include "../Header/Entity/Component/ModelComp.h"
 #include "CGTaskScene.h"
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
-#include "../../externals/DirectXTex/d3dx12.h"
+#include "../../../externals/DirectXTex/d3dx12.h"
 #include "../Engine/LevelEditor/LevelData.h"
 #include "../Engine/LevelEditor/LevelImporter.h"
-#include "../../ECS/Entity/EntityManager.hpp"
+#include "../Engine/ECS/Entity/EntityManager.hpp"
 #include "../Engine/DirectBase/Model/AssimpData.h"
 #include "../Engine/DirectBase/Model/Mesh.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
@@ -31,10 +31,10 @@ void CGTaskScene::OnEnter()
 
 	auto levelData = levelDataManager->Load({ .fileName_ = "test.json" });
 
-	const auto accesser = SolEngine::MakeRootParametersAccesser(
-		SignParam<CBuffer<Matrix4x4>>{ "t0PS" },
-		SignParam<CBuffer<TransformMatrix>>{ "b0PS" }
-	);
+	//const auto accesser = SolEngine::MakeRootParametersAccesser(
+	//	SignParam<CBuffer<Matrix4x4>>{ "t0PS" },
+	//	SignParam<CBuffer<TransformMatrix>>{ "b0PS" }
+	//);
 
 	world_ = std::make_unique<World>();
 	entityManager_ = world_->GetEntityManager();
@@ -100,7 +100,7 @@ void CGTaskScene::Update()
 	skyBoxTransform_->ImGuiWidget("SkyBox");
 	skyBoxTransform_->UpdateMatrix();
 
-	animationPlayer_.Update(deltaTime/* skinModel_->skeleton_.get()*/);
+	animationPlayer_.Update(deltaTime);
 
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
 	if (material) {

@@ -6,14 +6,14 @@
 
 #include "../../Engine/DirectBase/Model/Model.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
-#include "../../Utils/Text/ConstString.h"
-#include "../../Utils/Containers/ConstVector.h"
-#include "../../Utils/Graphics/Color.h"
-#include "../../Utils/SoLib/SoLib.h"
-#include "../../Utils/Math/Euler.h"
-#include "../../Utils/Math/Transform.h"
-#include "../../Utils/Math/Vector2.h"
-#include "../../Utils/Math/Vector3.h"
+#include "../../Engine/Utils/Text/ConstString.h"
+#include "../../Engine/Utils/Containers/ConstVector.h"
+#include "../../Engine/Utils/Graphics/Color.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/Math/Euler.h"
+#include "../../Engine/Utils/Math/Transform.h"
+#include "../../Engine/Utils/Math/Vector2.h"
+#include "../../Engine/Utils/Math/Vector3.h"
 #include <bitset>
 #include <string>
 #include <unordered_map>

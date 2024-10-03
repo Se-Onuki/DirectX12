@@ -1,6 +1,6 @@
 #include "Collision.h"
 
-#include "../../Utils/SoLib/SoLib_Lerp.h"
+#include "../../Engine/Utils/SoLib/SoLib_Lerp.h"
 #include "../../Engine/DirectBase/Render/Render.h"
 #include <algorithm>
 

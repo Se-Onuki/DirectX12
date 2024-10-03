@@ -1,8 +1,8 @@
 #pragma once
-#include "../../Utils/Graphics/Color.h"
-#include "../../Utils/Math/Euler.h"
-#include "../../Utils/Math/Vector3.h"
-#include "../../Utils/Math/Vector4.h"
+#include "../../Engine/Utils/Graphics/Color.h"
+#include "../../Engine/Utils/Math/Euler.h"
+#include "../../Engine/Utils/Math/Vector3.h"
+#include "../../Engine/Utils/Math/Vector4.h"
 #include <stdint.h>
 #include <wrl.h>
 #include <d3d12.h>

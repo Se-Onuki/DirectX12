@@ -7,7 +7,7 @@
 #include "../Create/Create.h"
 #include "DirectXCommon.h"
 
-#include "../../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
 #include "../String/String.h"
 
 #include "../DxResource/DxResourceBufferPoolManager.h"

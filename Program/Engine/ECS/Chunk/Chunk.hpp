@@ -3,7 +3,7 @@
 #include <typeinfo>
 #include <unordered_set>
 #include <vector>
-#include "../../Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
 #include "../Archetype.h"
 
 #include <assert.h>

@@ -1,9 +1,9 @@
 #pragma once
-#include "../../../Utils/Math/Vector2.h"
-#include "../../../Utils/Math/Vector3.h"
-#include "../../../Utils/Math/Vector4.h"
-#include "../../../Utils/Math/Matrix4x4.h"
-#include "../../../Utils/Math/Math.hpp"
+#include "../../Engine/Utils/Math/Vector2.h"
+#include "../../Engine/Utils/Math/Vector3.h"
+#include "../../Engine/Utils/Math/Vector4.h"
+#include "../../Engine/Utils/Math/Matrix4x4.h"
+#include "../../Engine/Utils/Math/Math.hpp"
 
 struct Vector2;
 struct Matrix4x4;

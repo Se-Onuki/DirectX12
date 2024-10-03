@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../Utils/Math/Math.hpp"
-#include "../../Utils/Math/Matrix4x4.h"
-#include "../../Utils/Math/Vector3.h"
-#include "../../Utils/Math/Transform.h"
+#include "../../Engine/Utils/Math/Math.hpp"
+#include "../../Engine/Utils/Math/Matrix4x4.h"
+#include "../../Engine/Utils/Math/Vector3.h"
+#include "../../Engine/Utils/Math/Transform.h"
 #include <functional>
 #include <string>
 #include <vector>

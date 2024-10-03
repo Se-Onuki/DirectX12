@@ -3,7 +3,7 @@
 #include "../Particle.h"
 #include "../../../Engine/DirectBase/Base/StructBuffer.h"
 #include "../../../Engine/DirectBase/Model/ModelManager.h"
-#include "../../../Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
 
 class ParticleList;
 class IParticle;

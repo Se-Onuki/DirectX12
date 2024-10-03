@@ -1,7 +1,7 @@
 #include "Fade.h"
 
 #include "../../Engine/DirectBase/Base/WinApp.h"
-#include "../../Utils/SoLib/SoLib_Lerp.h"
+#include "../../Engine/Utils/SoLib/SoLib_Lerp.h"
 
 const SoLib::Color::RGB4 Fade::kFadeColor_ = 0xed7b6800;
 

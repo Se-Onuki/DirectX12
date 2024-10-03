@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../../Utils/SoLib/SoLib.h"
-#include "../../../../Utils/Math/Angle.h"
+#include "../../../Engine/Utils/SoLib/SoLib.h"
+#include "../../../Engine/Utils/Math/Angle.h"
 #include "../Camera.h"
 
 /// <summary>

@@ -6,17 +6,16 @@
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../Header/Object/Fade.h"
 #include "../Header/Object/Particle/ParticleEmitterManager.h"
-#include "../Utils/SoLib/SoLib_ImGui.h"
-#include "../Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
 #include <imgui.h>
 #include "TitleScene.h"
 #include "../Header/Entity/Component/ModelComp.h"
-#include "../../Utils/Math/Angle.h"
-#include "../ECS/System/Systems.h"
+#include "../../Engine/Utils/Math/Angle.h"
+#include "../Engine/ECS/System/Systems.h"
 #include "../Engine/LevelEditor/LevelData.h"
 #include "../Engine/LevelEditor/LevelImporter.h"
-#include "../ECS/System/FunctionalSystem.h"
-#include "../ECS/System/NewSystems.h"
+#include "../Engine/ECS/System/FunctionalSystem.h"
+#include "../Engine/ECS/System/NewSystems.h"
 #include "../Engine/DirectBase/Model/SkeletonAnimation/Skeleton.h"
 
 GameScene::GameScene() {

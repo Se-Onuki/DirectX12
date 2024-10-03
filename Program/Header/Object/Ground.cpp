@@ -1,7 +1,7 @@
 #include "Ground.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
-#include "../../Utils/Math/Math.hpp"
-#include "../../Utils/Math/Euler.h"
+#include "../../Engine/Utils/Math/Math.hpp"
+#include "../../Engine/Utils/Math/Euler.h"
 #include "Block/BlockManager.h"
 
 void Ground::Init() {

@@ -2,7 +2,7 @@
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include "AssimpData.h"
-#include "../../Utils/Graphics/Color.h"
+#include "../../Engine/Utils/Graphics/Color.h"
 #include "../Base/CBuffer.h"
 #include "Model.h"
 

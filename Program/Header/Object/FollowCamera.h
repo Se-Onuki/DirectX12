@@ -1,7 +1,7 @@
 #pragma once
 #include "../../Engine/DirectBase/Render/Camera.h"
-#include "../../Utils/Math/Math.hpp"
-#include "../../Utils/Math/Transform.h"
+#include "../../Engine/Utils/Math/Math.hpp"
+#include "../../Engine/Utils/Math/Transform.h"
 
 class Input;
 

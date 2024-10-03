@@ -6,9 +6,9 @@
 #include <type_traits>
 #include <string>
 
-#include "../../Utils/Math/Transform.h"
+#include "../../Engine/Utils/Math/Transform.h"
 #include "../../Engine/DirectBase/Render/Camera.h"
-#include "../../Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
 //#include "../../Engine/DirectBase/Render/Camera.h"
 
 class GameObject;

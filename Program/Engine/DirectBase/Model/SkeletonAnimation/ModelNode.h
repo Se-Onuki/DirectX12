@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 #include <assimp/scene.h>
-#include "../../../../Utils/Math/Matrix4x4.h"
-#include "../../../../Utils/Math/Transform.h"
+#include "../../Engine/Utils/Math/Matrix4x4.h"
+#include "../../Engine/Utils/Math/Transform.h"
 #include "../../Base/CBuffer.h"
 #include "../../Base/StructBuffer.h"
 #include "../../Engine/ResourceObject/ResourceObject.h"

@@ -1,8 +1,8 @@
 #pragma once
-#include "../../Utils/Containers/Singleton.h"
+#include "../Utils/Containers/Singleton.h"
 
 #include "ResourceObject.h"
-#include "../../Utils/SoLib/SoLib_ImGui.h"
+#include "../Utils/SoLib/SoLib_ImGui.h"
 
 namespace SolEngine {
 

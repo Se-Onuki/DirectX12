@@ -7,10 +7,10 @@
 #include "RootSignature.h"
 #include "Shader.h"
 
-#include "../../../Utils/SoLib/SoLib_Traits.h"
+#include "../../Engine/Utils/SoLib/SoLib_Traits.h"
 
 #include "../../ResourceObject/ResourceObject.h"
-#include "../../Utils/Containers/ConstVector.h"
+#include "../../Engine/Utils/Containers/ConstVector.h"
 
 namespace SolEngine {
 	class PipelineState : SolEngine::IResourceObject {

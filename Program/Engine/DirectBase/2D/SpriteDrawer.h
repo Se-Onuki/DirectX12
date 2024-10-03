@@ -1,6 +1,6 @@
 #pragma once
 #include "../../Engine/DirectBase/Base/VertexBuffer.h"	// 頂点バッファの型
-#include "../../Utils/Containers/Singleton.h"
+#include "../../Engine/Utils/Containers/Singleton.h"
 
 /// @brief スプライトの描画処理を行う
 class SpriteDrawer : public SoLib::Singleton<SpriteDrawer> {

@@ -3,7 +3,7 @@
 #include <imgui.h>
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
 #include "../Engine/DirectBase/Model/ModelManager.h"
-#include "../Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
 
 #include "../Header/Object/Fade.h"
 #include "GameScene.h"

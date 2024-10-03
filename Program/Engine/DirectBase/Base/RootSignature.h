@@ -4,10 +4,10 @@
 #include <vector>
 #include <variant>
 
-#include "../../../Utils/Text/StaticString.h"
+#include "../../Engine/Utils/Text/StaticString.h"
 #include "../../ResourceObject/ResourceObject.h"
 #include <typeindex>
-#include "../../../Utils/Types/TypeID.h"
+#include "../../Engine/Utils/Types/TypeID.h"
 
 namespace SolEngine {
 

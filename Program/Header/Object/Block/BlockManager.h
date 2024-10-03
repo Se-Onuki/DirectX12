@@ -1,11 +1,11 @@
 #pragma once
 #include <list>
-#include "../../../Utils/SoLib/SoLib.h"
+#include "../../Engine/Utils/SoLib/SoLib.h"
 #include "../../../Engine/DirectBase/Base/StructBuffer.h"
 #include "../../../Engine/DirectBase/Model/ModelManager.h"
 #include "../Particle.h"
-#include "../../Utils/Graphics/Color.h"
-#include "../../Utils/Containers/Singleton.h"
+#include "../../Engine/Utils/Graphics/Color.h"
+#include "../../Engine/Utils/Containers/Singleton.h"
 #include "../../../Engine/DirectBase/Model/ModelData.h"
 
 class IBlock {

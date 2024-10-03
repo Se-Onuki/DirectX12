@@ -2,7 +2,7 @@
 #include "../Base/DirectXCommon.h"
 #include "../Create/Create.h"
 #include "../Model/Model.h"
-#include "../../Utils/Math/Math.hpp"
+#include "../../Engine/Utils/Math/Math.hpp"
 
 void DirectionLight::Init()
 {
