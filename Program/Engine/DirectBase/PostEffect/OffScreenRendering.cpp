@@ -158,7 +158,7 @@ namespace PostEffect {
 	}
 
 
-	void FullScreenRenderer::Init(const std::list<std::pair<std::wstring, std::wstring>> &key)
+	void FullScreenRenderer::Init(const std::list<std::wstring> &key)
 	{
 
 		//param_->fValue_ = { 16.f, 0.8f };
@@ -247,15 +247,14 @@ namespace PostEffect {
 
 		auto *pShaderManager_ = SolEngine::ResourceObjectManager<Shader>::GetInstance();
 
+		SolEngine::PipelineState::ShaderSet copyShader;
+
+		copyShader.vertex_ = pShaderManager_->Load({ L"FullScreen.VS.hlsl", L"vs_6_0" });
+
 		for (const auto &filePath : key) {
 
 			auto &pileLine = pipelineState_[filePath];
-
-			auto vsShader = pShaderManager_->Load({ filePath.first, L"vs_6_0" });
-			auto psShader = pShaderManager_->Load({ filePath.second, L"ps_6_0" });
-
-			SolEngine::PipelineState::ShaderSet copyShader;
-			copyShader.vertex_ = vsShader;
+			auto psShader = pShaderManager_->Load({ filePath, L"ps_6_0" });
 			copyShader.pixel_ = psShader;
 
 			copyShader.SetPipelineDesc(&graphicsPipelineStateDesc);
@@ -266,7 +265,7 @@ namespace PostEffect {
 		}
 	}
 
-	void FullScreenRenderer::Draw(const std::pair<std::wstring, std::wstring> &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
+	void FullScreenRenderer::Draw(const std::wstring &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 	{
 
 		auto command = GetCommandList();

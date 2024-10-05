@@ -19,11 +19,11 @@ namespace SolEngine {
 	public:
 
 		struct ShaderSet {
-			SolEngine::ResourceObjectManager<Shader>::Handle vertex_;
-			SolEngine::ResourceObjectManager<Shader>::Handle pixel_;
-			SolEngine::ResourceObjectManager<Shader>::Handle domain_;
-			SolEngine::ResourceObjectManager<Shader>::Handle hull_;
-			SolEngine::ResourceObjectManager<Shader>::Handle geometry_;
+			ResourceHandle<Shader> vertex_;
+			ResourceHandle<Shader> pixel_;
+			ResourceHandle<Shader> domain_;
+			ResourceHandle<Shader> hull_;
+			ResourceHandle<Shader> geometry_;
 
 			bool operator==(const ShaderSet &) const = default;
 
@@ -52,7 +52,7 @@ namespace SolEngine {
 		ResourceSource(const ResourceSource &) = default;
 		ResourceSource &operator=(const ResourceSource &) = default;
 
-		ResourceObjectManager<RootSignature>::Handle rootSignature_;
+		ResourceHandle<RootSignature> rootSignature_;
 
 		PipelineState::ShaderSet shaderSet_;
 
@@ -70,7 +70,7 @@ namespace SolEngine {
 
 		bool operator==(const ResourceSource<PipelineState> &that) const {
 			return this->rootSignature_ == that.rootSignature_ and
-				//this->shaderSet_ == that.shaderSet_ and
+				this->shaderSet_ == that.shaderSet_ and
 				//Equal(this->inputElementDescs_, that.inputElementDescs_) and
 				//Equal(this->rasterizerDesc_, that.rasterizerDesc_) and
 				//Equal(this->depthStencilDesc_, that.depthStencilDesc_) and

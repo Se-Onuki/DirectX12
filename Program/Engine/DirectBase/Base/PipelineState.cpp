@@ -17,9 +17,15 @@ namespace SolEngine {
 #pragma region InputLayout(インプットレイアウト)
 
 		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-		inputLayoutDesc.pInputElementDescs = source.inputElementDescs_.data();
-		inputLayoutDesc.NumElements = static_cast<UINT>(source.inputElementDescs_.size());
-
+		// もし何も保存されてなかったら空とする
+		if (source.inputElementDescs_.size() == 0u) {
+			inputLayoutDesc.pInputElementDescs = nullptr;
+			inputLayoutDesc.NumElements = 0u;
+		}
+		else {
+			inputLayoutDesc.pInputElementDescs = source.inputElementDescs_.data();
+			inputLayoutDesc.NumElements = static_cast<UINT>(source.inputElementDescs_.size());
+		}
 #pragma endregion
 
 #pragma region RasterizerState(ラスタライザステート)

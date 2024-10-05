@@ -87,7 +87,7 @@ std::unique_ptr<RootSignature> SolEngine::ResourceCreater<RootSignature>::Create
 			parameter.Descriptor.ShaderRegister = item.index_;
 		}
 			break;
-		case RootParameters::BufferType::kSRV:
+		case RootParameters::BufferType::kTextureView:
 		{
 			parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 

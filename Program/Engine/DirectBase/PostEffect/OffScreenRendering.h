@@ -112,13 +112,13 @@ namespace PostEffect {
 		//};
 	public:
 
-		void Init(const std::list<std::pair<std::wstring, std::wstring>> &key);
+		void Init(const std::list<std::wstring> &key);
 
-		void Draw(const std::pair<std::wstring, std::wstring> &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
+		void Draw(const std::wstring &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
 
 		ID3D12RootSignature *GetRootSignature() { return rootSignature_.GetResource()->Get(); }
 
-		ID3D12PipelineState *GetPipeLine(const std::pair<std::wstring, std::wstring> &key) { return pipelineState_.at(key).Get(); }
+		ID3D12PipelineState *GetPipeLine(const std::wstring &key) { return pipelineState_.at(key).Get(); }
 
 		//std::pair<float, float> *GetFParam() { return &param_->fValue_; }
 		//std::pair<float, int32_t> *GetGaussianParam() { return &param_->iValue_; }
@@ -134,9 +134,9 @@ namespace PostEffect {
 
 		CBuffer<ValuePair> param_;*/
 
-		SolEngine::ResourceObjectManager<RootSignature>::Handle rootSignature_;
+		SolEngine::ResourceHandle<RootSignature> rootSignature_;
 
-		std::map<std::pair<std::wstring, std::wstring>, ComPtr<ID3D12PipelineState>> pipelineState_;
+		std::map<std::wstring, ComPtr<ID3D12PipelineState>> pipelineState_;
 
 	};
 
@@ -166,7 +166,8 @@ namespace PostEffect {
 		// 書き込み先
 		auto targetTexture = rtvDescHeap_->GetHandle(0, (textureTarget_ + 1) % kTextureCount_);
 
-		const std::pair<std::wstring, std::wstring> &key = { L"FullScreen.VS.hlsl" ,psName };
+		// 検索名
+		const auto &key = psName;
 
 #pragma region TransitionBarrierを張る
 

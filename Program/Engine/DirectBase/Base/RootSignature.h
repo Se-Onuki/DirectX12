@@ -19,7 +19,9 @@ namespace SolEngine {
 
 		enum class BufferType : uint8_t {
 			kCBV,
-			kSRV,
+			kB32,
+			kStrBuff,
+			kTextureView,
 			kUAV,
 
 			kMaxCount
@@ -42,7 +44,7 @@ namespace SolEngine {
 					type_ = BufferType::kCBV;
 					break;
 				case 't':
-					type_ = BufferType::kSRV;
+					type_ = BufferType::kTextureView;
 					break;
 				case 'u':
 					type_ = BufferType::kUAV;
@@ -66,7 +68,7 @@ namespace SolEngine {
 					type_ = BufferType::kCBV;
 					break;
 				case 't':
-					type_ = BufferType::kSRV;
+					type_ = BufferType::kTextureView;
 					break;
 				case 'u':
 					type_ = BufferType::kUAV;
@@ -137,16 +139,6 @@ namespace SolEngine {
 		RootParameters::BufferData bufferData_;
 
 		static constexpr bool kIsHasVAddress_ = requires(T t) { { t.GetGPUVirtualAddress() } -> std::same_as<D3D12_GPU_VIRTUAL_ADDRESS>; };
-
-
-		//auto GetGPUParam(const T &item) const -> std::conditional<kIsHasVAddress_, D3D12_GPU_VIRTUAL_ADDRESS, D3D12_GPU_DESCRIPTOR_HANDLE> {
-		//	if constexpr (kIsHasVAddress_) {
-		//		return item.GetGPUVirtualAddress();
-		//	}
-		//	else {
-		//		return D3D12_GPU_DESCRIPTOR_HANDLE{};
-		//	}
-		//}
 
 		MonoParameter() = default;
 		MonoParameter(RootParameters::BufferData &&bufferData) : bufferData_(bufferData) {}
