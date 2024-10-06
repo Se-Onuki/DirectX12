@@ -15,6 +15,8 @@ public:
 	//private:
 		// ボタンの画像
 	std::unique_ptr<Sprite> sprite_;
+
+	void Draw() const;
 };
 
 class ButtonPickUp {
@@ -23,6 +25,12 @@ public:
 	static constexpr uint32_t kDropDownCount_ = 2u;
 
 public:
+
+	void Reset();
+
+	/// @brief 選択中か
+	/// @return ボタンが登録されてたら true
+	bool IsPick() const { return pickUpTarget_ != nullptr; }
 
 	bool ImGuiWidget();
 
@@ -54,7 +62,7 @@ public:
 	LevelUP() = default;
 	~LevelUP() = default;
 
-	void Init();
+	void Init(int32_t count = 3);
 
 	void Start();
 
@@ -63,6 +71,8 @@ public:
 	void Update(const float deltaTime);
 
 	void Draw() const;
+
+	void Target(int32_t target);
 
 private:
 
@@ -78,7 +88,7 @@ private:
 	// ボタンのUI
 	std::vector<std::unique_ptr<ButtonUI>> button_;
 
-	// 描画のタイマー
-	SoLib::DeltaTimer timer_;
+	// ボタンのイージング
+	ButtonPickUp buttonPicker_;
 
 };

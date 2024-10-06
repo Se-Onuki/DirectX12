@@ -130,6 +130,13 @@ namespace SoLib {
 		SetGoal(goal);
 	}
 
+	void Time::DeltaTimer::Reset()
+	{
+		nowFlame_ = 0.f;
+		isFinish_ = false;
+		isActive_ = false;
+	}
+
 	void DeltaTimer::Clear() {
 		nowFlame_ = 0u;
 		isFinish_ = true;

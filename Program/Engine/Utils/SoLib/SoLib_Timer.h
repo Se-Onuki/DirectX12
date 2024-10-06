@@ -159,6 +159,9 @@ namespace SoLib {
 			/// @param isLoop ループを行うか
 			void Start(float goal, bool isLoop = false);
 
+			/// @brief 最初に戻す
+			void Reset();
+
 			/// @brief 完全停止
 			void Clear();
 

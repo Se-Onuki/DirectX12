@@ -1,13 +1,26 @@
 #include "LevelUP.h"
 #include "../../../Engine/DirectBase/Input/Input.h"
 
-void LevelUP::Init()
+void LevelUP::Init(int32_t count)
 {
+	targetCount_ = count;
+
+	button_.resize(count);
+
+	//for (int32_t i = 0; i < count; i++) {
+	//	auto &button = button_[i];
+	//	button = std::unique_ptr<ButtonUI>();
+
+	//	button->sprite_ = Sprite::Create();
+	//}
+
+
 }
 
 void LevelUP::Start()
 {
-	timer_.Start();
+	// カーソルをあわせる
+	Target(0);
 }
 
 void LevelUP::InputFunc()
@@ -23,25 +36,68 @@ void LevelUP::InputFunc()
 	// 右入力
 	const bool isRight = pXInput->IsTrigger(KeyCode::DPAD_RIGHT) || pXInput->GetState()->stickL_.x > 0.f || pDInput->IsTrigger(DIK_D) || pDInput->IsTrigger(DIK_RIGHT);
 
-	if (isLeft) { target_--; }
-	if (isRight) { target_++; }
-	target_ = std::clamp(target_, 0, targetCount_);
+	int32_t move{};
 
-	// 入力がどっちか行われていたら
-	if (isLeft or isRight) {
+	if (isLeft) { move--; }
+	if (isRight) { move++; }
 
+	// 移動したか
+	const bool isMoved = (isLeft or isRight);
 
+	// 移動してたら
+	if (isMoved) {
+		Target(target_ + move);	 // 移動した先を入力する
 	}
 }
 
 void LevelUP::Update(const float deltaTime)
 {
-	timer_.Update(deltaTime);
+	// 時計の更新
+	buttonPicker_.Update(deltaTime);
 }
 
 void LevelUP::Draw() const
 {
+	// 背景
 	backGround_->Draw();
+
+	// ボタンの描画
+	for (int32_t i = 0; i < targetCount_ and i < button_.size(); i++) {
+		if (button_[i]) { button_[i]->Draw(); }
+	}
+}
+
+void LevelUP::Target(int32_t target)
+{
+	// 移動したか
+	const bool isMoved = (target <= 0 and target > targetCount_) and target != target_;	// 範囲内でなおかつ今と違うものである
+
+	// 移動しているか､選択されてない場合
+	if (isMoved or not buttonPicker_.IsPick()) {
+
+		// ターゲットを指定する
+		target_ = std::clamp(target, 0, targetCount_ - 1);
+
+		// ボタンを指定する
+		buttonPicker_.Pickup(button_.at(target_).get());
+
+	}
+}
+
+void ButtonUI::Draw() const
+{
+	if (sprite_) {
+		sprite_->Draw();
+	}
+}
+
+void ButtonPickUp::Reset()
+{
+	pickUpTarget_ = nullptr;
+
+	dropDownTarget_ = decltype(dropDownTarget_){};
+
+	pickUpTimer_.Reset();
 }
 
 bool ButtonPickUp::ImGuiWidget()
