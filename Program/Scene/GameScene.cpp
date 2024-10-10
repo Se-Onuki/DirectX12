@@ -369,6 +369,25 @@ void GameScene::Update() {
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 
 	cameraManager_->Update(fixDeltaTime);
+	// 経験値の追加
+	{
+		Archetype expArch{};
+		expArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
+		// チャンクの取得
+		auto enemyChunks = newWorld_.GetAccessableChunk(expArch);
+		// 死亡している数
+		auto deadCount = enemyChunks.CountIf(ECS::IsAlive{ .isAlive_ = false });
+		// プレイヤチャンクを回す
+		for (auto &chunk : playerChunks) {
+			// 経験値の計算
+			auto players = chunk->GetComponent<ECS::Experience>();
+			// プレイヤに経験値を加算
+			for (auto &i : players) {
+				i.exp_ += deadCount;
+			}
+		}
+	}
+
 
 	if (skeletonDraw) {
 		Archetype archetype;
@@ -386,16 +405,6 @@ void GameScene::Update() {
 	grayScaleParam_ = 1 - damageTimer_.GetProgress();
 
 	ImGui::DragFloat2("VignettingParam", &vignettingParam_->first);
-
-	//float health = 0.f;
-	//for (const auto &[entity, healthComp, player] : world_->view<const ECS::HealthComp, const ECS::PlayerTag>()) {
-	//	health = healthComp->CalcPercent();
-	//}
-	//vignettingParam_->first = SoLib::Lerp(0.5f, 16.f, health);
-
-	//for (const auto &[entity, color, billboard, mat] : world_->view<const ECS::Color, const ECS::BillboardRotate, const ECS::TransformMatComp>()) {
-	//	particleArray_.push_back(Particle::ParticleData{ .transform = mat->transformMat_, .color = color->color_ });
-	//}
 
 	ImGui::DragFloat("Sigma", &gaussianParam_->first);
 	ImGui::DragInt("Size", &gaussianParam_->second);

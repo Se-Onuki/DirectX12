@@ -345,6 +345,9 @@ namespace ECS::System::Par {
 			}
 		}
 
+		// もしなにもなかったらおわる
+		if (posList.size() == 0) { return; }
+
 		auto &[followCamera, cameraPos] = readWrite_;
 
 		*cameraPos = posList.front()->position_;

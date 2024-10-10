@@ -27,6 +27,24 @@ namespace ECS {
 			);
 		}
 
+		template<typename T>
+		uint32_t CountIf(const T &data) const {
+
+			// chuckの配列が存在すれば､それに格納されてる数を返す
+			return this->empty() ? 0u : std::accumulate(this->cbegin(), this->cend(), 0u, [&data](uint32_t acc, const Chunk *chunk)->uint32_t
+				{
+					// 空なら終わる
+					if (not chunk) { return acc; }
+
+					// chunkのView
+					auto view = chunk->GetComponent<T>();
+
+					// chunkにアクセスできるならその数を足す
+					return std::count_if(view.begin(), view.end(), [&data](const T &i) {return i == data; }) + acc;
+				}
+			);
+		}
+
 	private:
 	};
 

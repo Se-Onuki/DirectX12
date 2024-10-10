@@ -7,14 +7,6 @@ void LevelUP::Init(int32_t count)
 
 	button_.resize(count);
 
-	//for (int32_t i = 0; i < count; i++) {
-	//	auto &button = button_[i];
-	//	button = std::unique_ptr<ButtonUI>();
-
-	//	button->sprite_ = Sprite::Create();
-	//}
-
-
 }
 
 void LevelUP::Start()
@@ -80,7 +72,6 @@ void LevelUP::Target(int32_t target)
 
 		// ボタンを指定する
 		buttonPicker_.Pickup(button_.at(target_).get());
-
 	}
 }
 

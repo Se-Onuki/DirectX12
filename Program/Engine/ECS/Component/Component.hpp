@@ -48,8 +48,10 @@ namespace ECS {
 
 	};
 
-	struct IsAlive : IComponent, public IClassData<IsAlive> {
+	struct IsAlive : IComponent {
 		bool isAlive_ = true;
+
+		inline bool operator==(const IsAlive &r) const { return isAlive_ == r.isAlive_; }
 	};
 
 	struct AccelerationComp : IComponent, public IClassData<AccelerationComp> {
