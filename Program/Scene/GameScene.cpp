@@ -274,7 +274,10 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::DrawEnemyHelthBar>();
 	ECS::System::Par::DrawEnemyHelthBar::healthBar_ = &enemyHealthBar_;
 	systemExecuter_.AddSystem<ECS::System::Par::CursorDrawer>();
-	//systemExecuter_.AddSystem<ECS::System::Par::ExpGaugeDrawer>(); ECS::System::Par::ExpGaugeDrawer::
+	systemExecuter_.AddSystem<ECS::System::Par::ExpGaugeDrawer>();
+	ECS::System::Par::ExpGaugeDrawer::expBar_ = expBar_.get();
+	ECS::System::Par::ExpGaugeDrawer::prevLevel_ = 0u;
+	ECS::System::Par::ExpGaugeDrawer::levelUI_ = levelUI_.get();
 
 }
 
@@ -316,7 +319,7 @@ void GameScene::Update() {
 	spawner_.clear();
 
 	// 敵のスポーン数
-	constexpr uint32_t kEnemyCount = 15u;
+	constexpr uint32_t kEnemyCount = 5u;
 	// 敵の沸く半径
 	constexpr float kEnemyRadius = 45.f;
 
@@ -494,7 +497,7 @@ void GameScene::Draw() {
 	healthBar_->Draw();
 
 	expBar_->Draw();
-	//levelUI_->Draw();
+	levelUI_->Draw();
 	// スプライトの描画
 	Fade::GetInstance()->Draw();
 

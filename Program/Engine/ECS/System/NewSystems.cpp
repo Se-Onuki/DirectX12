@@ -469,8 +469,35 @@ namespace ECS::System::Par {
 	SoLib::DeltaTimer ExpGaugeDrawer::levelUpTimer_{ 1.5f };
 	Sprite *ExpGaugeDrawer::levelUI_ = nullptr;
 	HealthBar *ExpGaugeDrawer::expBar_ = nullptr;
-	void ExpGaugeDrawer::Execute(const World *const, const float)
+	void ExpGaugeDrawer::Execute(const World *const, const float deltaTime)
 	{
+		const auto &[exp] = readWrite_;
+
+		if (exp.exp_ >= exp.needExp_(exp.level_)) {
+
+			prevLevel_ = exp.level_;
+			levelUpTimer_.Start();
+
+			while (exp.exp_ >= exp.needExp_(exp.level_)) {
+				exp.exp_ -= exp.needExp_(exp.level_);
+				exp.level_++;
+			}
+		}
+
+		levelUpTimer_.Update(deltaTime);
+		if (levelUpTimer_.IsActive()) {
+			const float progress = levelUpTimer_.GetProgress();
+			const float percent = std::fmodf(progress, 0.5f) * 2.f;
+			const float t = progress > 0.5f and progress < 1.0f ? 1.f - percent : percent;
+
+			levelUI_->SetColor(0xFFFFFF00 | SoLib::Lerp(0x00, 0xFF, SoLib::easeInOutQuad(t)));
+		}
+		else {
+			levelUI_->SetColor(0x00000000);
+		}
+
+		expBar_->SetPercent(static_cast<float>(exp.exp_) / exp.needExp_(exp.level_));
+
 	}
 
 	void CalcParentTransform::Execute(const World *const, const float)

@@ -242,7 +242,7 @@ namespace ECS {
 
 			class ExpGaugeDrawer :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::AttackCooltime> readWrite_;
+				ReadAndWrite<ECS::Experience> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static uint32_t prevLevel_;

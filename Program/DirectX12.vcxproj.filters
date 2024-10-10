@@ -70,9 +70,6 @@
     <Filter Include="Engine\Render\CameraAnimations">
       <UniqueIdentifier>{1b09de97-f37d-47ef-a58e-986936e385cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ECS">
-      <UniqueIdentifier>{44ca97f6-34d4-44d8-be16-15451311710c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Utils\Graphics">
       <UniqueIdentifier>{34273b47-9ebb-47d3-b275-7eee60fc69bf}</UniqueIdentifier>
     </Filter>
@@ -84,9 +81,6 @@
     </Filter>
     <Filter Include="Engine\Utils\Text">
       <UniqueIdentifier>{482b4099-ec56-45dc-b5cd-ca4a5614906b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ECS\System">
-      <UniqueIdentifier>{49b232f6-b920-49bf-b068-d7a1b0a86325}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Thread">
       <UniqueIdentifier>{adf22241-dcde-48d5-b8dc-0cbdd655e5ed}</UniqueIdentifier>
@@ -120,9 +114,6 @@
     </Filter>
     <Filter Include="Engine\Render\SkyBox">
       <UniqueIdentifier>{16a09860-785d-4695-b3cf-b58e3c92aa56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ECS\Chunk">
-      <UniqueIdentifier>{eade6eeb-5031-4a91-a192-01035414c7a7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{70021064-7ab7-4ec2-9901-25c7e7295690}</UniqueIdentifier>
@@ -165,6 +156,15 @@
     </Filter>
     <Filter Include="Game\Object\LevelUP">
       <UniqueIdentifier>{0853075c-ce76-491d-86e9-498ae9f16437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ECS">
+      <UniqueIdentifier>{44ca97f6-34d4-44d8-be16-15451311710c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ECS\System">
+      <UniqueIdentifier>{49b232f6-b920-49bf-b068-d7a1b0a86325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ECS\Chunk">
+      <UniqueIdentifier>{eade6eeb-5031-4a91-a192-01035414c7a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -313,19 +313,19 @@
       <Filter>Game\Object\Particle\Particles\GetParticle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\Component\Component.cpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\Entity\EntityManager.cpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\World\World.cpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\MultiArray.cpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\System\SystemManager.cpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\BoneModel.cpp">
       <Filter>Engine\Model</Filter>
@@ -337,7 +337,7 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\System\Systems.cpp">
-      <Filter>ECS\System</Filter>
+      <Filter>Engine\ECS\System</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
@@ -403,28 +403,28 @@
       <Filter>Engine\Render\SkyBox</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\World\ComponentArray\Chunk.cpp">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\World\ComponentArray\EntityArrayStorage.cpp">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\World\ComponentArray\ChunkRange.cpp">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\World\ComponentArray\ChunkIterator.cpp">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\Entity\Spawner.cpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\System\FunctionalSystem.cpp">
-      <Filter>ECS\System</Filter>
+      <Filter>Engine\ECS\System</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\World\NewWorld.cpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\System\NewSystems.cpp">
-      <Filter>ECS\System</Filter>
+      <Filter>Engine\ECS\System</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.cpp">
       <Filter>Engine\Model</Filter>
@@ -696,37 +696,37 @@
       <Filter>Game\Object\Particle\Particles\GetParticle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Component\Component.hpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Entity\Entity.hpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Entity\EntityManager.hpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\World\World.hpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Chunk\Chunk.hpp">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\MultiArray.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Archetype.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\System\SystemManager.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Entity\Prefab.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\System\Systems.h">
-      <Filter>ECS\System</Filter>
+      <Filter>Engine\ECS\System</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\System\ISystem.h">
-      <Filter>ECS\System</Filter>
+      <Filter>Engine\ECS\System</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\BoneModel.h">
       <Filter>Engine\Model</Filter>
@@ -741,7 +741,7 @@
       <Filter>Engine\Thread</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\System\System.h">
-      <Filter>ECS\System</Filter>
+      <Filter>Engine\ECS\System</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\HealthBar.h">
       <Filter>Game\Object</Filter>
@@ -750,10 +750,10 @@
       <Filter>Game\Object\Particle\Particles\SimpleParticle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Entity\Spawner.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\ClassData.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h">
       <Filter>Engine\PostEffect</Filter>
@@ -789,7 +789,7 @@
       <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Component\ComponentRegistry.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Texture\FullScreenTextureStrage.h">
       <Filter>Engine\Texture</Filter>
@@ -840,34 +840,34 @@
       <Filter>Engine\Render\SkyBox</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\World\ComponentArray\Chunk.h">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\World\ComponentArray\ComponentArray.h">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\World\ComponentArray\ComponentData.h">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\World\ComponentArray\EntityArrayStorage.h">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\World\ComponentArray\ChunkIterator.h">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\World\ComponentArray\ChunkRange.h">
-      <Filter>ECS\Chunk</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\System\FunctionalSystem.h">
-      <Filter>ECS\System</Filter>
+      <Filter>Engine\ECS\System</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\World\NewWorld.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\System\NewSystems.h">
-      <Filter>ECS\System</Filter>
+      <Filter>Engine\ECS\System</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\System\ECSCollisionManager.h">
-      <Filter>ECS</Filter>
+      <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.h">
       <Filter>Engine\Model</Filter>
