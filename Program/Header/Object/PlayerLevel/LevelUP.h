@@ -7,16 +7,34 @@ class ButtonPickUp;
 class ButtonUI {
 public:
 
+	static std::unique_ptr<ButtonUI> Generate();
+
 	friend ButtonPickUp;
 
-	Transform2D normalTrans_;
-	Transform2D pickUpTrans_;
+	// 実行する処理
+	std::function<void(void)> execute_;
 
-	//private:
-		// ボタンの画像
+	SoLib::Color::RGB4 normalColor_;
+	SoLib::Color::RGB4 pickUpColor_;
+
+	// ボタンの画像
 	std::unique_ptr<Sprite> sprite_;
 
 	void Draw() const;
+};
+
+class ButtonUIGroup
+{
+public:
+	ButtonUIGroup() = default;
+	~ButtonUIGroup() = default;
+
+	void SetStatus(const std::function<void(ButtonUI *, size_t index)> &statusSetter) const;
+
+
+	// ボタンの集合
+	std::vector<ButtonUI *> buttonUIList_;
+
 };
 
 class ButtonPickUp {
@@ -36,7 +54,12 @@ public:
 
 	void Pickup(ButtonUI *target);
 
+	/// @brief 更新処理
+	/// @param deltaTime 時間差分
 	void Update(const float deltaTime);
+
+	/// @brief ボタンに指定された関数の実行
+	void Execute() const;
 
 private:
 	// ピックアップ時のイージング
@@ -64,7 +87,9 @@ public:
 
 	void Init(int32_t count = 3);
 
-	void Start();
+	void SetWindow(Vector2 center, Vector2 scale, float distance);
+
+	void Start(int32_t target = 1);
 
 	void InputFunc();
 
@@ -75,6 +100,13 @@ public:
 	void Target(int32_t target);
 
 private:
+
+	// 画面の中心位置
+	Vector2 windowCenter_;
+	// ボタンの大きさ
+	Vector2 buttonScale_;
+	// ボタンの隙間
+	float distance_;
 
 	// ボタンのカーソル
 	int32_t target_;
@@ -88,7 +120,13 @@ private:
 	// ボタンのUI
 	std::vector<std::unique_ptr<ButtonUI>> button_;
 
-	// ボタンのイージング
+	// ボタンUIの集合
+	ButtonUIGroup buttonUIGroup_;
+
+	// ボタンのアニメーション
 	ButtonPickUp buttonPicker_;
+
+	// アニメーションタイマー
+	SoLib::DeltaTimer timer_;
 
 };

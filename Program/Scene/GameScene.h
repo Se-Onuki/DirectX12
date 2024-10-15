@@ -34,6 +34,7 @@
 #include "../Engine/DirectBase/DxResource/DxResourceBufferPool.h"
 #include "../Engine/ECS/World/ComponentArray/Chunk.h"
 #include "../Engine/ECS/System/FunctionalSystem.h"
+#include "../Header/Object/PlayerLevel/LevelUP.h"
 
 class GameScene : public IScene {
 public:
@@ -92,6 +93,8 @@ private:
 	ECS::SystemExecuter systemExecuter_;
 
 	ECS::ComponentRegistry *compRegistry_;
+
+	std::unique_ptr<LevelUP> levelUpUI_;
 
 	std::unique_ptr<ECS::Prefab> prefab_;
 

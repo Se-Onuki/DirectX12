@@ -279,6 +279,9 @@ void GameScene::OnEnter() {
 	ECS::System::Par::ExpGaugeDrawer::prevLevel_ = 0u;
 	ECS::System::Par::ExpGaugeDrawer::levelUI_ = levelUI_.get();
 
+	levelUpUI_ = std::make_unique<LevelUP>();
+	levelUpUI_->Init(3);
+
 }
 
 void GameScene::OnExit() {
@@ -391,6 +394,12 @@ void GameScene::Update() {
 		}
 	}
 
+	{
+		// 入力処理
+		levelUpUI_->InputFunc();
+		levelUpUI_->Update(deltaTime);
+	}
+
 
 	if (skeletonDraw) {
 		Archetype archetype;
@@ -498,6 +507,9 @@ void GameScene::Draw() {
 
 	expBar_->Draw();
 	levelUI_->Draw();
+	// レベルアップの選択処理の描画
+	levelUpUI_->Draw();
+
 	// スプライトの描画
 	Fade::GetInstance()->Draw();
 

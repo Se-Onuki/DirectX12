@@ -3,16 +3,32 @@
 
 void LevelUP::Init(int32_t count)
 {
+	backGround_ = Sprite::Create();
+
 	targetCount_ = count;
 
 	button_.resize(count);
 
+	std::generate(button_.begin(), button_.end(), ButtonUI::Generate);
+
+	// サイズを合わせる
+	buttonUIGroup_.buttonUIList_.resize(count);
+	// グループの代入
+	std::transform(button_.begin(), button_.end(), buttonUIGroup_.buttonUIList_.begin(), [](const std::unique_ptr<ButtonUI> &item)->ButtonUI *{
+		return item.get(); });
 }
 
-void LevelUP::Start()
+void LevelUP::SetWindow(Vector2 center, Vector2 scale, float distance)
+{
+	windowCenter_ = center;
+	buttonScale_ = scale;
+	distance_ = distance;
+}
+
+void LevelUP::Start(int32_t target)
 {
 	// カーソルをあわせる
-	Target(0);
+	Target(target);
 }
 
 void LevelUP::InputFunc()
@@ -44,6 +60,16 @@ void LevelUP::InputFunc()
 
 void LevelUP::Update(const float deltaTime)
 {
+	// ボタンの数
+	const size_t buttonCount = button_.size();
+	const float halfSize = (buttonScale_.x + distance_) / 2 + buttonScale_.x / 2;
+	buttonUIGroup_.SetStatus(
+		[buttonCount, halfSize, this](ButtonUI *const button, const size_t index) {
+			const float t = static_cast<float>(index) / buttonCount;
+			button->sprite_->SetPosition(Vector2{ windowCenter_.x - halfSize + halfSize * 2 * t, windowCenter_.y });
+		}
+	);
+
 	// 時計の更新
 	buttonPicker_.Update(deltaTime);
 }
@@ -73,6 +99,13 @@ void LevelUP::Target(int32_t target)
 		// ボタンを指定する
 		buttonPicker_.Pickup(button_.at(target_).get());
 	}
+}
+
+std::unique_ptr<ButtonUI> ButtonUI::Generate()
+{
+	std::unique_ptr<ButtonUI> result = std::make_unique<ButtonUI>();
+	result->sprite_ = Sprite::Create();
+	return std::move(result);
 }
 
 void ButtonUI::Draw() const
@@ -118,9 +151,7 @@ void ButtonPickUp::Pickup(ButtonUI *target)
 			// 末尾のボタン
 			auto *back = dropDownTarget_.back().first;
 			// 終了時のデータを転送
-			back->sprite_->SetScale(back->normalTrans_.scale_);
-			back->sprite_->SetRotate(back->normalTrans_.rotate_.Get());
-			back->sprite_->SetPosition(back->normalTrans_.translate_);
+			back->sprite_->SetColor(back->normalColor_);
 		}
 
 		// データを回す
@@ -148,7 +179,7 @@ void ButtonPickUp::Update(const float deltaTime)
 	pickUpTimer_.Update(deltaTime);
 	if (pickUpTarget_) {
 		// ボタンのデータを書き換える
-		pickUpTarget_->sprite_->SetTransform(SoLib::Lerp(pickUpTarget_->pickUpTrans_, pickUpTarget_->normalTrans_, dropDownEase_(pickUpTimer_.GetProgress())));
+		pickUpTarget_->sprite_->SetColor(SoLib::Lerp(pickUpTarget_->pickUpColor_, pickUpTarget_->normalColor_, dropDownEase_(pickUpTimer_.GetProgress())));
 	}
 
 	std::for_each(dropDownTarget_.begin(), dropDownTarget_.end(), [this, deltaTime](std::pair<ButtonUI *, float> &item)
@@ -158,8 +189,27 @@ void ButtonPickUp::Update(const float deltaTime)
 				// 時間を加算する
 				item.second = std::clamp(item.second + deltaTime, 0.f, dropDownTime_); // 終端まで行ったら終端に合わせる
 				// 時間に合わせてイージングを行う
-				item.first->sprite_->SetTransform(SoLib::Lerp(item.first->pickUpTrans_, item.first->normalTrans_, dropDownEase_(item.second)));
+				item.first->sprite_->SetColor(SoLib::Lerp(item.first->pickUpColor_, item.first->normalColor_, dropDownEase_(item.second)));
 			}
 		}
 	);
+}
+
+void ButtonPickUp::Execute() const
+{
+	// 選択対象が存在するなら
+	if (pickUpTarget_) {
+		// なおかつ関数が指定されているなら
+		if (pickUpTarget_->execute_) {
+			// それを実行
+			pickUpTarget_->execute_();
+		}
+	}
+}
+
+void ButtonUIGroup::SetStatus(const std::function<void(ButtonUI *, size_t index)> &statusSetter) const
+{
+	for (size_t i = 0; i < buttonUIList_.size(); i++) {
+		statusSetter(buttonUIList_[i], i);
+	}
 }
