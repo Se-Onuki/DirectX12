@@ -3,19 +3,26 @@
 
 void LevelUP::Init(int32_t count)
 {
+	// 背景の画像
 	backGround_ = Sprite::Create();
 
+	// ボタンの数
 	targetCount_ = count;
 
+	// メモリ確保
 	button_.resize(count);
 
+	// データの構築
 	std::generate(button_.begin(), button_.end(), ButtonUI::Generate);
 
 	// サイズを合わせる
 	buttonUIGroup_.buttonUIList_.resize(count);
 	// グループの代入
-	std::transform(button_.begin(), button_.end(), buttonUIGroup_.buttonUIList_.begin(), [](const std::unique_ptr<ButtonUI> &item)->ButtonUI *{
-		return item.get(); });
+	std::transform(button_.begin(), button_.end(), buttonUIGroup_.buttonUIList_.begin(), [](const std::unique_ptr<ButtonUI> &item)->ButtonUI *
+		{
+			return item.get();
+		}
+	);
 }
 
 void LevelUP::SetWindow(Vector2 center, Vector2 scale, float distance)
@@ -25,10 +32,30 @@ void LevelUP::SetWindow(Vector2 center, Vector2 scale, float distance)
 	distance_ = distance;
 }
 
-void LevelUP::Start(int32_t target)
+void LevelUP::Open(int32_t target)
 {
+	// 開いてたら終わる
+	if (isOpen_) { return; }
+
+	isSelect_ = false;
+
+	// メニューを開く
+	isOpen_ = true;
+	// タイマーを開始する
+	timer_.Start();
 	// カーソルをあわせる
 	Target(target);
+}
+
+void LevelUP::Close()
+{
+	// 閉じてたら終わる
+	if (not isOpen_) { return; }
+
+	// メニューを閉じる
+	isOpen_ = false;
+	// タイマーを開始する
+	timer_.Start();
 }
 
 void LevelUP::InputFunc()
@@ -56,10 +83,27 @@ void LevelUP::InputFunc()
 	if (isMoved) {
 		Target(target_ + move);	 // 移動した先を入力する
 	}
+
+	// 決定したか
+	const bool isPush = pXInput->IsTrigger(KeyCode::A) or pDInput->IsTrigger(DIK_RETURN) or pDInput->IsTrigger(DIK_SPACE);
+
+	// 決定していたら
+	if (isPush) {
+		// 決定フラグを立てる
+		isSelect_ = true;
+
+		// 実行する
+		buttonPicker_.Execute();
+		Close();
+	}
 }
 
 void LevelUP::Update(const float deltaTime)
 {
+
+	// タイマーの更新
+	timer_.Update(deltaTime);
+
 	// ボタンの数
 	const size_t buttonCount = button_.size();
 	const float halfSize = (buttonScale_.x + distance_) / 2 + buttonScale_.x / 2;
@@ -106,6 +150,13 @@ std::unique_ptr<ButtonUI> ButtonUI::Generate()
 	std::unique_ptr<ButtonUI> result = std::make_unique<ButtonUI>();
 	result->sprite_ = Sprite::Create();
 	return std::move(result);
+}
+
+void ButtonUI::Init(const uint32_t texture, const std::function<void(void)> &func)
+{
+	sprite_->SetTextureHaundle(texture);
+
+	execute_ = func;
 }
 
 void ButtonUI::Draw() const

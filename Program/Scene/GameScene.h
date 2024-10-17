@@ -79,6 +79,8 @@ private:
 	ModelHandleListManager *modelHandleRender_;
 	SkinModelHandleListManager *skinModelHandleRender_;
 
+	StructuredBuffer<Particle::ParticleData> ghostArray_{ 2048u };
+
 	//ECS::SystemManager systemManager_;
 
 	Model *model_ = nullptr;

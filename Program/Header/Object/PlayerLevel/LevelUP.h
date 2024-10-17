@@ -9,13 +9,17 @@ public:
 
 	static std::unique_ptr<ButtonUI> Generate();
 
+	void Init(const uint32_t texture, const std::function<void(void)> &func);
+
 	friend ButtonPickUp;
 
 	// 実行する処理
 	std::function<void(void)> execute_;
 
-	SoLib::Color::RGB4 normalColor_;
-	SoLib::Color::RGB4 pickUpColor_;
+	// 通常時
+	SoLib::Color::RGB4 normalColor_ = 0xFFFFFFFF;
+	// 選択時
+	SoLib::Color::RGB4 pickUpColor_ = 0x00FFFFFF;
 
 	// ボタンの画像
 	std::unique_ptr<Sprite> sprite_;
@@ -89,7 +93,12 @@ public:
 
 	void SetWindow(Vector2 center, Vector2 scale, float distance);
 
-	void Start(int32_t target = 1);
+	/// @brief メニューオープン
+	/// @param target 指定する番号
+	void Open(int32_t target = 1);
+
+	/// @brief メニュー非表示
+	void Close();
 
 	void InputFunc();
 
@@ -98,6 +107,16 @@ public:
 	void Draw() const;
 
 	void Target(int32_t target);
+
+	/// @brief メニューが開いているか
+	/// @return メニューが開いているならTrue
+	bool IsActive() const { return isOpen_ or timer_.IsActive(); }
+
+	/// @brief メニューが開いているときの係数
+	/// @return 0が閉じていて､1が開いている
+	float OpenProgress() const { const float t = timer_.GetProgress(); return isOpen_ ? t : 1 - t; }
+
+	ButtonUI *const GetButtonUI(uint32_t index) { return index >= button_.size() ? nullptr : button_[index].get(); }
 
 private:
 
@@ -128,5 +147,11 @@ private:
 
 	// アニメーションタイマー
 	SoLib::DeltaTimer timer_;
+
+	// 開くためのフラグ
+	bool isOpen_ = false;
+
+	// 選択しているか
+	bool isSelect_ = false;
 
 };

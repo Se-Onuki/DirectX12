@@ -66,6 +66,8 @@ void GameScene::OnEnter() {
 	skinModelHandleRender_->Init(1024u);
 	particleManager_->Init(2048u);
 
+
+
 	ModelManager::GetInstance()->CreateDefaultModel();
 
 	ModelManager::GetInstance()->GetModel("Plane")->materialMap_.begin()->second->texHandle_ = TextureManager::Load("uvChecker.png");
@@ -277,10 +279,71 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::ExpGaugeDrawer>();
 	ECS::System::Par::ExpGaugeDrawer::expBar_ = expBar_.get();
 	ECS::System::Par::ExpGaugeDrawer::prevLevel_ = 0u;
-	ECS::System::Par::ExpGaugeDrawer::levelUI_ = levelUI_.get();
 
 	levelUpUI_ = std::make_unique<LevelUP>();
-	levelUpUI_->Init(3);
+	levelUpUI_->SetWindow(Vector2{ WinApp::kWindowWidth / 2.f, WinApp::kWindowHeight / 2.f }, Vector2{ 128, 360 }, 64);
+	ECS::System::Par::ExpGaugeDrawer::levelUp_ = levelUpUI_.get();
+
+	constexpr int32_t kUiCount = 3;
+	levelUpUI_->Init(kUiCount);
+	{
+		ButtonUI *button = levelUpUI_->GetButtonUI(0);
+
+		button->Init(TextureManager::Load("white2x2.png"), [this]() {
+
+			Archetype playerArchetype;
+			playerArchetype.AddClassData<ECS::PlayerTag>();
+
+			// プレイヤのView
+			auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+
+			for (auto chunk : playerChunks) {
+				for (auto &player : *chunk) {
+					auto &status = player.GetComponent<ECS::AttackStatus>();
+
+					status.radius_ += 0.5f;
+				}
+			}
+			});
+	}
+	{
+		ButtonUI *button = levelUpUI_->GetButtonUI(1);
+
+		button->Init(TextureManager::Load("white2x2.png"), [this]() {
+			Archetype playerArchetype;
+			playerArchetype.AddClassData<ECS::PlayerTag>();
+
+			// プレイヤのView
+			auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+
+			for (auto chunk : playerChunks) {
+				for (auto &player : *chunk) {
+					auto &health = player.GetComponent<ECS::HealthComp>();
+
+					health.nowHealth_ = health.maxHealth_;
+				}
+			}
+			});
+	}
+	{
+		ButtonUI *button = levelUpUI_->GetButtonUI(2);
+
+		button->Init(TextureManager::Load("white2x2.png"), [this]() {
+			Archetype playerArchetype;
+			playerArchetype.AddClassData<ECS::PlayerTag>();
+
+			// プレイヤのView
+			auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+
+			for (auto chunk : playerChunks) {
+				for (auto &player : *chunk) {
+					auto &power = player.GetComponent<ECS::AttackPower>();
+
+					power.power_++;
+				}
+			}
+			});
+	}
 
 }
 
@@ -293,7 +356,7 @@ void GameScene::Update() {
 
 	static bool skeletonDraw = false;
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
-	[[maybe_unused]] const float fixDeltaTime = not isMenuOpen_ ? deltaTime : 0.f;
+	[[maybe_unused]] const float fixDeltaTime = not (isMenuOpen_ or levelUpUI_->IsActive()) ? deltaTime : 0.f;
 	[[maybe_unused]] const float powDeltaTime = fixDeltaTime * fixDeltaTime;
 
 	ImGui::Text("XInput左スティックで移動");
@@ -306,6 +369,7 @@ void GameScene::Update() {
 
 	damageTimer_.Update(deltaTime);
 
+	ghostArray_.clear();
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -470,6 +534,8 @@ void GameScene::Draw() {
 
 	blockRender_->Draw(camera);
 	modelHandleRender_->Draw(camera);
+
+
 
 	Model::SetPipelineType(Model::PipelineType::kSkinParticle);
 	light_->SetLight(commandList);

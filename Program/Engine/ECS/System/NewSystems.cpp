@@ -286,7 +286,7 @@ namespace ECS::System::Par {
 			// 攻撃の座標を設定
 			attColl.collision_.centor = quateRot.quateRot_.GetFront() * attackSt.offset_ + pos;
 			// 攻撃の半径を設定
-			attColl.collision_.radius = attackSt.radius_ + 0.5f * exp.level_;
+			attColl.collision_.radius = attackSt.radius_;
 
 			// 攻撃判定を有効化
 			attColl.isActive_ = true;
@@ -467,7 +467,7 @@ namespace ECS::System::Par {
 	}
 	uint32_t ExpGaugeDrawer::prevLevel_ = 0u;
 	SoLib::DeltaTimer ExpGaugeDrawer::levelUpTimer_{ 1.5f };
-	Sprite *ExpGaugeDrawer::levelUI_ = nullptr;
+	LevelUP *ExpGaugeDrawer::levelUp_ = nullptr;
 	HealthBar *ExpGaugeDrawer::expBar_ = nullptr;
 	void ExpGaugeDrawer::Execute(const World *const, const float deltaTime)
 	{
@@ -483,18 +483,16 @@ namespace ECS::System::Par {
 				exp.level_++;
 			}
 		}
-
+		levelUp_->Open();
 		levelUpTimer_.Update(deltaTime);
-		if (levelUpTimer_.IsActive()) {
-			const float progress = levelUpTimer_.GetProgress();
-			const float percent = std::fmodf(progress, 0.5f) * 2.f;
-			const float t = progress > 0.5f and progress < 1.0f ? 1.f - percent : percent;
 
-			levelUI_->SetColor(0xFFFFFF00 | SoLib::Lerp(0x00, 0xFF, SoLib::easeInOutQuad(t)));
-		}
-		else {
-			levelUI_->SetColor(0x00000000);
-		}
+		//if (levelUpTimer_.IsActive()) {
+		//	const float progress = levelUpTimer_.GetProgress();
+		//	const float percent = std::fmodf(progress, 0.5f) * 2.f;
+		//	const float t = progress > 0.5f and progress < 1.0f ? 1.f - percent : percent;
+
+
+		//}
 
 		expBar_->SetPercent(static_cast<float>(exp.exp_) / exp.needExp_(exp.level_));
 

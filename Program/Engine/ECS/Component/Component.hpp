@@ -190,6 +190,10 @@ namespace ECS {
 
 	};
 
+	struct GhostModel : IComponent {
+
+	};
+
 	struct FollowCamera : IComponent {
 
 #pragma region ビュー行列の設定

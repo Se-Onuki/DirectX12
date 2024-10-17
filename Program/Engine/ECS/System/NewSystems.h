@@ -4,6 +4,7 @@
 #include "../../Header/Object/HealthBar.h"
 #include "../../Engine/DirectBase/Base/Audio.h"
 #include "../../Engine/DirectBase/Model/Model.h"
+#include "../../../Header/Object/PlayerLevel/LevelUP.h"
 
 namespace ECS {
 	namespace System {
@@ -166,7 +167,7 @@ namespace ECS {
 				static constexpr bool kIsSingleThread_ = true;
 				ReadAndWrite<ECS::TransformMatComp, ECS::ModelComp> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
-				using Exclusions = Exclusions<ECS::SkinModel>;
+				using Exclusions = Exclusions<ECS::SkinModel, ECS::GhostModel>;
 
 				void Execute(const World *const, const float);
 			};
@@ -247,7 +248,7 @@ namespace ECS {
 
 				static uint32_t prevLevel_;
 				static SoLib::DeltaTimer levelUpTimer_;
-				static Sprite *levelUI_;
+				static LevelUP *levelUp_;
 				static HealthBar *expBar_;
 
 				void Execute(const World *const, const float);
