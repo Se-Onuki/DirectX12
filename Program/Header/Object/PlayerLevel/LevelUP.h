@@ -114,7 +114,11 @@ public:
 
 	/// @brief メニューが開いているときの係数
 	/// @return 0が閉じていて､1が開いている
-	float OpenProgress() const { const float t = timer_.GetProgress(); return isOpen_ ? t : 1 - t; }
+	float OpenProgress() const {
+		float t = timer_.GetProgress();
+		if (t == 0.f) { t = 1.f; }
+		return isOpen_ ? t : 1 - t;
+	}
 
 	ButtonUI *const GetButtonUI(uint32_t index) { return index >= button_.size() ? nullptr : button_[index].get(); }
 

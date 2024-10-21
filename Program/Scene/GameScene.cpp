@@ -572,7 +572,7 @@ void GameScene::Draw() {
 	healthBar_->Draw();
 
 	expBar_->Draw();
-	levelUI_->Draw();
+	//levelUI_->Draw();
 	// レベルアップの選択処理の描画
 	levelUpUI_->Draw();
 

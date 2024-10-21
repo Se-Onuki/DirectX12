@@ -482,8 +482,8 @@ namespace ECS::System::Par {
 				exp.exp_ -= exp.needExp_(exp.level_);
 				exp.level_++;
 			}
+			levelUp_->Open();
 		}
-		levelUp_->Open();
 		levelUpTimer_.Update(deltaTime);
 
 		//if (levelUpTimer_.IsActive()) {
