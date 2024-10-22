@@ -281,7 +281,7 @@ void GameScene::OnEnter() {
 	ECS::System::Par::ExpGaugeDrawer::prevLevel_ = 0u;
 
 	levelUpUI_ = std::make_unique<LevelUP>();
-	levelUpUI_->SetWindow(Vector2{ WinApp::kWindowWidth / 2.f, WinApp::kWindowHeight / 2.f }, Vector2{ 128, 360 }, 64);
+	levelUpUI_->SetWindow(Vector2{ WinApp::kWindowWidth / 2.f, WinApp::kWindowHeight / 2.f }, Vector2{ 320, 512 }, 64);
 	ECS::System::Par::ExpGaugeDrawer::levelUp_ = levelUpUI_.get();
 
 	constexpr int32_t kUiCount = 3;
@@ -289,7 +289,7 @@ void GameScene::OnEnter() {
 	{
 		ButtonUI *button = levelUpUI_->GetButtonUI(0);
 
-		button->Init(TextureManager::Load("white2x2.png"), [this]() {
+		button->Init(TextureManager::Load("UI/RangeUp.png"), [this]() {
 
 			Archetype playerArchetype;
 			playerArchetype.AddClassData<ECS::PlayerTag>();
@@ -300,8 +300,8 @@ void GameScene::OnEnter() {
 			for (auto chunk : playerChunks) {
 				for (auto &player : *chunk) {
 					auto &status = player.GetComponent<ECS::AttackStatus>();
-
-					status.radius_ += 0.5f;
+					// 攻撃範囲の増大
+					status.radius_ += 1.f;
 				}
 			}
 			});
@@ -309,7 +309,7 @@ void GameScene::OnEnter() {
 	{
 		ButtonUI *button = levelUpUI_->GetButtonUI(1);
 
-		button->Init(TextureManager::Load("white2x2.png"), [this]() {
+		button->Init(TextureManager::Load("UI/FullHealth.png"), [this]() {
 			Archetype playerArchetype;
 			playerArchetype.AddClassData<ECS::PlayerTag>();
 
@@ -319,7 +319,7 @@ void GameScene::OnEnter() {
 			for (auto chunk : playerChunks) {
 				for (auto &player : *chunk) {
 					auto &health = player.GetComponent<ECS::HealthComp>();
-
+					// 体力全回復
 					health.nowHealth_ = health.maxHealth_;
 				}
 			}
@@ -328,7 +328,7 @@ void GameScene::OnEnter() {
 	{
 		ButtonUI *button = levelUpUI_->GetButtonUI(2);
 
-		button->Init(TextureManager::Load("white2x2.png"), [this]() {
+		button->Init(TextureManager::Load("UI/PowerUp.png"), [this]() {
 			Archetype playerArchetype;
 			playerArchetype.AddClassData<ECS::PlayerTag>();
 
@@ -338,7 +338,7 @@ void GameScene::OnEnter() {
 			for (auto chunk : playerChunks) {
 				for (auto &player : *chunk) {
 					auto &power = player.GetComponent<ECS::AttackPower>();
-
+					// 攻撃力の増加
 					power.power_++;
 				}
 			}
