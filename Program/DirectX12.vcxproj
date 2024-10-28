@@ -282,6 +282,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\ECS\Entity\EntityManager.hpp" />
     <ClInclude Include="Engine\ECS\Entity\Prefab.h" />
     <ClInclude Include="Engine\ECS\Entity\Spawner.h" />
+    <ClInclude Include="Engine\ECS\Example\ECSCollisionManager.h" />
     <ClInclude Include="Engine\ECS\MultiArray.h" />
     <ClInclude Include="Engine\ECS\System\ECSCollisionManager.h" />
     <ClInclude Include="Engine\ECS\System\FunctionalSystem.h" />

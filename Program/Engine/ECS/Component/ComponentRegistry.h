@@ -8,6 +8,8 @@
 #include "../../Engine/Utils/Containers/Singleton.h"
 #include "Component.hpp"
 
+#define ComponentRegistry()
+
 namespace ECS {
 
 	// 型の情報

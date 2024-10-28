@@ -306,6 +306,7 @@ void GameScene::OnEnter() {
 			}
 			});
 	}
+
 	{
 		ButtonUI *button = levelUpUI_->GetButtonUI(1);
 
@@ -325,6 +326,7 @@ void GameScene::OnEnter() {
 			}
 			});
 	}
+
 	{
 		ButtonUI *button = levelUpUI_->GetButtonUI(2);
 

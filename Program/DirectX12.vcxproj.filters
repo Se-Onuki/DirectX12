@@ -166,6 +166,9 @@
     <Filter Include="Engine\ECS\Chunk">
       <UniqueIdentifier>{eade6eeb-5031-4a91-a192-01035414c7a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\ECS\Example">
+      <UniqueIdentifier>{8b2a0415-f076-41f8-b0d7-812caa8ef254}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -1015,6 +1018,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Utils\Containers\UnChainVector.h">
       <Filter>Engine\Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Example\ECSCollisionManager.h">
+      <Filter>Engine\ECS\Example</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

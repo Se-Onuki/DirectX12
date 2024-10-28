@@ -1,6 +1,7 @@
 #include "ImGuiManager.h"
 #include <imgui_impl_dx12.h>
 #include <imgui_impl_win32.h>
+#include "imnodes.h"
 
 void ImGuiManager::StartFlame() {
 
@@ -38,6 +39,8 @@ void ImGuiManager::StaticInit(const HWND &hwnd, ID3D12Device *const device, uint
 		heapHandle.cpuHandle_,
 		heapHandle.gpuHandle_
 	);
+
+	ImNodes::CreateContext();
 }
 
 void ImGuiManager::CreateCommand()
@@ -63,6 +66,7 @@ void ImGuiManager::Finalize()
 {
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
+	ImNodes::DestroyContext();
 	ImGui::DestroyContext();
 
 }
