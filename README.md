@@ -6,7 +6,7 @@ SolEngineはDirectX12を使用したC++ゲームエンジンです｡
 
 機能
 - 
-- [アーキタイプECS]()を利用したゲーム設計
+- [アーキタイプECS](ecs-entity-component-system)を利用したゲーム設計
 - Blenderを使用した[レベルエディタ]()
 - Flyweightパターンに対応したリソースマネージャ
 - マルチメッシュのOBJ,GLTFの読み込み､描画
