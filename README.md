@@ -71,8 +71,10 @@ Entity[^1]に各種コンポーネントのポインタを持たせるのでは�
 	}
 ```
 
-
 ## 作成中のゲーム
+### ECS Survivor
 ![GameScreenShot](/Images/GameScreenShot.png)
 - ECS Survivorという､[SoulStoneSurvivor](https://store.steampowered.com/app/2066020/Soulstone_Survivors/)を参考にしたゲームを作成しています｡
+![目標1](https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2066020/ss_6d985af64f465cf2538e045c1ce5315f61756f99.116x65.jpg?t=1730207613) ![目標2](https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2066020/ss_df8d10b4b673d03554087bb02b8b849a0781d38c.116x65.jpg?t=1730207613)
+
 - 大量のオブジェクトを処理できるエンジンを目指しているため､原作のワチャワチャ感を目指して行きたいです｡
