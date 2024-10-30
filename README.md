@@ -6,9 +6,9 @@ SolEngineはDirectX12を使用したC++ゲームエンジンです｡
 
 機能
 - 
-- [アーキタイプECS](ecs-entity-component-system)を利用したゲーム設計
-- Blenderを使用した[レベルエディタ]()
-- Flyweightパターンに対応したリソースマネージャ
+- [アーキタイプECS](/Program/Engine/ECS/)を利用したゲーム設計
+- Blenderを使用した[レベルエディタ](/Tools/BlenderAddons/scripts/addons/__pycache__/level_editor.cpython-311.pyc)
+- Flyweightパターンに対応した[リソースマネージャ](/Program/Engine/ResourceObject/ResourceObjectManager.h)
 - マルチメッシュのOBJ,GLTFの読み込み､描画
 - マルチメッシュモデルへのスキニングアニメーション
 - ポストエフェクトの簡易適用
@@ -27,12 +27,46 @@ Entity[^1]に各種コンポーネントのポインタを持たせるのでは�
 
 ### 使い方
 
-```cpp
+コンポーネントと呼ばれる構造体を作成し､その構造体に対して実行したいSystemを実行するようにエンジンに指示を送ることで使えます｡
+
+- コンポーネントの作成
+
+[Component.h](/Program/Engine/ECS/Component/Component.hpp)
+``` cpp
 	// コンポーネント定義
 	struct ModelComp : IComponent {
 		// 保存するデータの定義
 		SolEngine::ResourceHandle<SolEngine::ModelData> model_;
 
 	};
+```
 
+---
+- 実行するSystemの作成
+
+[System.h](/Program/Engine/ECS/System/NewSystems.h)
+```cpp
+	// Systemの名前
+	class SkinModelDrawer :public IJobEntity {
+	public:
+		// 読み書き可能で取得するコンポーネントの指定
+		ReadAndWrite<ECS::TransformMatComp, ECS::ModelComp, ECS::SkinModel> readWrite_;
+		// データの登録
+		using DataBase = DataBase<decltype(readWrite_)>;
+		// 実行する関数
+		void Execute(const World *const, const float);
+	};
+```
+[System.cpp](/Program/Engine/ECS/System/NewSystems.cpp)
+```cpp
+	// Systemの関数定義
+	void SkinModelDrawer::Execute(const World *const, const float)
+	{
+		// レンダラの取得
+		SkinModelHandleListManager *const skinModelRender_ = SkinModelHandleListManager::GetInstance();
+		// 取得したコンポーネントの展開
+		auto &[transform, model, skinModel] = readWrite_;
+		// レンダラにデータを送る
+		skinModelRender_->AddBox({ model.model_, skinModel.skinModel_ }, { .transMat_ = transform });
+	}
 ```
