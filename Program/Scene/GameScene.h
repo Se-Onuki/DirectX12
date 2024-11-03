@@ -35,6 +35,7 @@
 #include "../Engine/ECS/World/ComponentArray/Chunk.h"
 #include "../Engine/ECS/System/FunctionalSystem.h"
 #include "../Header/Object/PlayerLevel/LevelUP.h"
+#include "../Engine/DirectBase/Render/ModelInstancingRender/ModelInstancingRender.h"
 
 class GameScene : public IScene {
 public:
@@ -79,7 +80,7 @@ private:
 	ModelHandleListManager *modelHandleRender_;
 	SkinModelHandleListManager *skinModelHandleRender_;
 
-	StructuredBuffer<Particle::ParticleData> ghostArray_{ 2048u };
+	SolEngine::ModelInstancingRender ghostRenderer_;
 
 	//ECS::SystemManager systemManager_;
 

@@ -167,7 +167,7 @@ namespace ECS {
 				static constexpr bool kIsSingleThread_ = true;
 				ReadAndWrite<ECS::TransformMatComp, ECS::ModelComp> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
-				using Exclusions = Exclusions<ECS::SkinModel, ECS::GhostModel>;
+				using Exclusions = Exclusions<ECS::SkinModel, ECS::UnRender>;
 
 				void Execute(const World *const, const float);
 			};

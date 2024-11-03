@@ -48,10 +48,12 @@ public:
 	inline operator T *() noexcept;				// 参照
 	inline operator const T *() const noexcept;	// const参照
 
-	inline T &operator[](uint32_t index) noexcept { 
-		return resourceHandle_->GetAccessor<T>()[index]; }
-	inline const T &operator[](uint32_t index) const noexcept { 
-		return resourceHandle_->GetAccessor<T>()[index]; }
+	inline T &operator[](uint32_t index) noexcept {
+		return resourceHandle_->GetAccessor<T>()[index];
+	}
+	inline const T &operator[](uint32_t index) const noexcept {
+		return resourceHandle_->GetAccessor<T>()[index];
+	}
 
 	inline T *const operator->() noexcept;					// dataのメンバへのアクセス
 	inline const T *const operator->() const noexcept;		// dataのメンバへのアクセス(const)
@@ -235,6 +237,36 @@ public:
 
 	void push_back(const T &data);
 	void push_back(T &&data);
+
+	/// @brief 書き込み可能メモリを渡す
+	/// @param count 確保量
+	/// @return 書き込み先のデータ
+	std::span<T> Reservation(size_t count) {
+		// 書き込み先の配列データ
+		std::span<T> result;
+		// 範囲外なら
+		if (size_ >= arrayBuffer_.size()) {
+			// そのまま帰す
+			return result;
+		}
+
+		// 確保したあとの長さ
+		size_t afterSize = size_ + count;
+		// 範囲外に行っていたら
+		if (arrayBuffer_.size() < afterSize) {
+			// 長さと同じになるように調整
+			afterSize = arrayBuffer_.size();
+		}
+		// 返す長さ
+		size_t length = afterSize - size_;
+		// メモリを渡す
+		result = { &arrayBuffer_[size_], length };
+		// 長さを上書きする
+		size_ = static_cast<uint32_t>(afterSize);
+		// 返す
+		return result;
+
+	}
 
 	void clear();
 

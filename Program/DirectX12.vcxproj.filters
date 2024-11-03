@@ -169,6 +169,9 @@
     <Filter Include="Engine\ECS\Example">
       <UniqueIdentifier>{8b2a0415-f076-41f8-b0d7-812caa8ef254}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Render\ModelInstancingRender">
+      <UniqueIdentifier>{eeb99546-49af-4bf7-ade2-80ad8df8c756}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -515,6 +518,9 @@
     </ClCompile>
     <ClCompile Include="Engine\Utils\Convert\Convert.cpp">
       <Filter>Engine\Utils\Convert</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.cpp">
+      <Filter>Engine\Render\ModelInstancingRender</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1021,6 +1027,9 @@
     </ClInclude>
     <ClInclude Include="Engine\ECS\Example\ECSCollisionManager.h">
       <Filter>Engine\ECS\Example</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.h">
+      <Filter>Engine\Render\ModelInstancingRender</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

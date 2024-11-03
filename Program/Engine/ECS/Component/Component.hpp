@@ -190,9 +190,11 @@ namespace ECS {
 
 	};
 
-	struct GhostModel : IComponent {
+	struct GhostModel : IComponent {};
 
-	};
+	struct UnRender : IComponent {};
+
+	struct HasShadow : IComponent {};
 
 	struct FollowCamera : IComponent {
 

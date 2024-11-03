@@ -156,6 +156,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.cpp" />
     <ClCompile Include="Engine\ECS\Component\Component.cpp" />
     <ClCompile Include="Engine\ECS\Entity\EntityManager.cpp" />
     <ClCompile Include="Engine\ECS\Entity\Spawner.cpp" />
@@ -273,6 +274,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utils\SoLib\SoLib_Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.h" />
     <ClInclude Include="Engine\ECS\Archetype.h" />
     <ClInclude Include="Engine\ECS\Chunk\Chunk.hpp" />
     <ClInclude Include="Engine\ECS\ClassData.h" />

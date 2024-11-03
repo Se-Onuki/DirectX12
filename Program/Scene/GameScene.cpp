@@ -49,8 +49,8 @@ void GameScene::OnEnter() {
 	auto playerModel = modelDataManager->Load({ playerAssimp });
 	auto playerSkeleton = skeletonManager->Load({ playerAssimp });
 
-	auto boxAssimp = assimpManager->Load({ "Model/Cute Animated Monsters Pack/", "Ghost.gltf" });
-	auto boxModel = modelDataManager->Load({ boxAssimp });
+	auto ghostAssimp = assimpManager->Load({ "Model/Cute Animated Monsters Pack/", "Ghost.gltf" });
+	auto ghostModel = modelDataManager->Load({ ghostAssimp });
 
 	auto brainStemAssimp = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
 	brainStem_ = modelDataManager->Load({ brainStemAssimp });
@@ -163,7 +163,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::QuaternionRotComp{};
 	*enemyPrefab_ += ECS::PositionComp{ .position_{0.f, 1.f, 10.f} };
 	*enemyPrefab_ += ECS::TransformMatComp{};
-	*enemyPrefab_ += ECS::ModelComp{ .model_ = {boxModel} };
+	*enemyPrefab_ += ECS::ModelComp{ .model_ = {ghostModel} };
 	*enemyPrefab_ += ECS::GravityComp{};
 	*enemyPrefab_ += ECS::SphereCollisionComp{ .collision_ = Sphere{.radius = 1.f } };
 	*enemyPrefab_ += ECS::EnemyTag{};
@@ -171,6 +171,8 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::HealthBarComp{};
 	*enemyPrefab_ += ECS::AttackPower{ .power_ = 10 };
 	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
+	*enemyPrefab_ += ECS::GhostModel{};
+	*enemyPrefab_ += ECS::UnRender{};
 
 	//entityManager_->CreateEntity(*enemyPrefab_);
 	newWorld_.CreateEntity(*enemyPrefab_);
@@ -200,6 +202,9 @@ void GameScene::OnEnter() {
 
 	expBar_->SetCentor({ static_cast<float>(WinApp::kWindowWidth) * 0.5f, static_cast<float>(WinApp::kWindowHeight) - 16.f });
 	expBar_->SetScale({ static_cast<float>(WinApp::kWindowWidth), 32.f });
+
+	ghostRenderer_.Init(2048u);
+	ghostRenderer_.SetModelData(ghostModel);
 
 	levelUI_ = Sprite::Create();
 	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
@@ -371,7 +376,7 @@ void GameScene::Update() {
 
 	damageTimer_.Update(deltaTime);
 
-	ghostArray_.clear();
+	ghostRenderer_.Clear();
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -460,6 +465,35 @@ void GameScene::Update() {
 		}
 	}
 
+	// 敵の描画
+	{
+		Archetype ghostArch;
+		ghostArch.AddClassData<ECS::GhostModel>();
+		// チャンクの取得
+		auto ghostChanks = newWorld_.GetAccessableChunk(ghostArch);
+		// 書き込み先のズレ
+		size_t offset = 0;
+
+		// チャンクと同じ数のデータを確保する
+		std::valarray<uint32_t> ghostCount(ghostChanks.size());
+		for (uint32_t i = 0; i < ghostCount.size(); i++) {
+			ghostCount[i] = ghostChanks[i]->size();
+		}
+		// !ToDo
+		// 配列をoffsetが書かれたものに置き換える
+
+		// 書き込み先の確保
+		auto span = ghostRenderer_.Reservation(ghostCount.size() ? ghostCount.sum() : 0u);
+		for (uint32_t i = 0; i < ghostCount.size(); i++) {
+			// チャンクからデータの取得
+			auto transMats = ghostChanks[i]->GetComponent<ECS::TransformMatComp>();
+			// 転送する
+			std::transform(transMats.begin(), transMats.end(), &span[offset], [](const ECS::TransformMatComp &trans) {return Particle::ParticleData{ .transform = trans.transformMat_ }; });
+			// 1個の長さを足す
+			offset += static_cast<uint32_t>(ghostCount[i]);
+		}
+	}
+
 	{
 		// 入力処理
 		levelUpUI_->InputFunc();
@@ -537,7 +571,7 @@ void GameScene::Draw() {
 	blockRender_->Draw(camera);
 	modelHandleRender_->Draw(camera);
 
-
+	ghostRenderer_.Execute(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kSkinParticle);
 	light_->SetLight(commandList);
