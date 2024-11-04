@@ -144,7 +144,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
 	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
 	*playerPrefab_ += ECS::AttackStatus{ };
-	*playerPrefab_ += ECS::AttackPower{ .power_ = 20 };
+	*playerPrefab_ += ECS::AttackPower{ .power_ = 40 };
 	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
 	*playerPrefab_ += ECS::Experience{};
 	*playerPrefab_ += ECS::HasShadow{};
@@ -346,7 +346,7 @@ void GameScene::OnEnter() {
 				for (auto &player : *chunk) {
 					auto &power = player.GetComponent<ECS::AttackPower>();
 					// 攻撃力の増加
-					power.power_++;
+					power.power_ += 5;
 				}
 			}
 			});
@@ -394,7 +394,7 @@ void GameScene::Update() {
 	spawner_.clear();
 
 	// 敵のスポーン数
-	constexpr uint32_t kEnemyCount = 5u;
+	constexpr uint32_t kEnemyCount = 10u;
 	// 敵の沸く半径
 	constexpr float kEnemyRadius = 45.f;
 
