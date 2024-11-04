@@ -204,9 +204,9 @@ void GameScene::OnEnter() {
 
 	auto shadowAssimp = assimpManager->Load({ "","plane.obj" });
 	auto shadowModel = modelDataManager->Load({ shadowAssimp });
-	//auto &shadowMesh = shadowModel->meshHandleList_.front();
-	//shadowMesh->materialhandle_->blendMode_ = Model::BlendMode::kAdd;
-	static_cast<Matrix4x4 &>(shadowModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 1.5f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.f,0.f });
+	auto &shadowMesh = shadowModel->meshHandleList_.front();
+	shadowMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
+	static_cast<Matrix4x4 &>(shadowModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 1.5f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
 	shadowRenderer_.Init(2048u);
 	shadowRenderer_.SetModelData(shadowModel);
 
@@ -470,7 +470,7 @@ void GameScene::Update() {
 	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_);
 	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, 0x00000055, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
 	data.transform.World = Matrix4x4::Identity();
-	data.transform.World.GetTranslate() = translate + Vector3{ .y = 0.1f };
+	data.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
 		});
 
 	{
@@ -565,11 +565,12 @@ void GameScene::Draw() {
 
 	light_->SetLight(commandList);
 
+	shadowRenderer_.DrawExecute(camera);
+
 	model_->Draw(particleArray_, camera);
 
 	particleManager_->Draw(camera);
 
-	shadowRenderer_.DrawExecute(camera);
 
 	Model::EndDraw();
 
