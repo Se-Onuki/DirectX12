@@ -81,6 +81,7 @@ private:
 	SkinModelHandleListManager *skinModelHandleRender_;
 
 	SolEngine::ModelInstancingRender ghostRenderer_;
+	SolEngine::ModelInstancingRender shadowRenderer_;
 
 	//ECS::SystemManager systemManager_;
 
@@ -142,11 +143,7 @@ private:
 
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 
-	SolEngine::ResourceObjectManager<SolEngine::ModelData>::Handle brainStem_;
-	Transform brainStemTrans_;
-
 	SolEngine::FullScreenTextureStrage *texStrage_;
-	SolEngine::FullScreenTextureStrage::UniqueHandle offScreenTex_;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 
 	SoLib::Time::DeltaTimer damageTimer_{ 0.5f };

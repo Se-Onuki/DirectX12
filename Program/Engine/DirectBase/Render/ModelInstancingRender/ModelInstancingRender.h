@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Model/ModelData.h"
 #include "../../../../Header/Object/Particle.h"
+#include "../../Engine/ECS/World/NewWorld.h"
 
 namespace SolEngine {
 
@@ -30,11 +31,17 @@ namespace SolEngine {
 		/// @return 取得した書き込み先の配列
 		std::span<InstanceType> Reservation(size_t count);
 
+		template<typename T>
+		void AddMatData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, void(*afterFunc)(InstanceType &) = nullptr);
+
+		void AddMatData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, void(*afterFunc)(InstanceType &) = nullptr);
+
 		/// @brief 描画の実行
 		/// @param camera カメラ情報
-		void Execute(const Camera3D &camera) const;
+		void DrawExecute(const Camera3D &camera) const;
 
 	private:
+
 
 		// モデルデータ
 		ResourceHandle<ModelData> modelData_;
@@ -44,5 +51,15 @@ namespace SolEngine {
 
 
 	};
+
+	template<typename T>
+	inline void ModelInstancingRender::AddMatData(const ECS::World &world, const uint32_t color, void(*afterFunc)(InstanceType &))
+	{
+		Archetype archetype;
+		archetype.AddClassData<T>();
+
+		AddMatData(world, archetype, color, afterFunc);
+
+	}
 
 }

@@ -28,7 +28,37 @@ namespace SolEngine {
 		return buffer_->Reservation(count);
 	}
 
-	void ModelInstancingRender::Execute(const Camera3D &camera) const
+	void ModelInstancingRender::AddMatData(const ECS::World &world, const Archetype &arch, const uint32_t color, void(*afterFunc)(InstanceType &))
+	{
+
+		// チャンクの取得
+		auto ghostChanks = world.GetAccessableChunk(arch);
+		// オブジェクトの総数
+		uint32_t totalCount = 0u;
+
+		// チャンクと同じ数のデータを確保する
+		std::vector<uint32_t> ghostOffset(ghostChanks.size());
+		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+			ghostOffset[i] = totalCount;
+			totalCount += ghostChanks[i]->size();
+		}
+
+		// 書き込み先の確保
+		auto span = Reservation(totalCount);
+		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+			// チャンクからデータの取得
+			auto transMats = ghostChanks[i]->GetComponent<ECS::TransformMatComp>();
+			// 転送する
+			std::transform(transMats.begin(), transMats.end(), &span[ghostOffset[i]], [color, afterFunc](const ECS::TransformMatComp &trans) { Particle::ParticleData result{ .transform = trans.transformMat_, .color = color };
+			if (afterFunc) {
+				afterFunc(result);
+			}
+			return result;
+				});
+		}
+	}
+
+	void ModelInstancingRender::DrawExecute(const Camera3D &camera) const
 	{
 		modelData_->Draw(buffer_->GetHeapRange().GetHandle().gpuHandle_, buffer_->size(), buffer_->GetStartIndex(), camera);
 	}

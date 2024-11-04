@@ -52,12 +52,6 @@ void GameScene::OnEnter() {
 	auto ghostAssimp = assimpManager->Load({ "Model/Cute Animated Monsters Pack/", "Ghost.gltf" });
 	auto ghostModel = modelDataManager->Load({ ghostAssimp });
 
-	auto brainStemAssimp = assimpManager->Load({ "Model/human/", "BrainStem.glb" });
-	brainStem_ = modelDataManager->Load({ brainStemAssimp });
-
-	ECS::ComponentRegistry::ComponentFlag compFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp>();
-	ECS::ComponentRegistry::ComponentFlag compBigFlag = compRegistry_->CreateFlag<ECS::IsAlive, ECS::TransformMatComp, ECS::PositionComp>();
-
 	light_ = DirectionLight::Create();
 
 	blockRender_->Init(1024u);
@@ -152,7 +146,8 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AttackStatus{ };
 	*playerPrefab_ += ECS::AttackPower{ .power_ = 20 };
 	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
-	*playerPrefab_ += ECS::Experience{ };
+	*playerPrefab_ += ECS::Experience{};
+	*playerPrefab_ += ECS::HasShadow{};
 
 	//entityManager_->CreateEntity(*playerPrefab_);
 	newWorld_.CreateEntity(*playerPrefab_);
@@ -173,6 +168,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
 	*enemyPrefab_ += ECS::GhostModel{};
 	*enemyPrefab_ += ECS::UnRender{};
+	*enemyPrefab_ += ECS::HasShadow{};
 
 	//entityManager_->CreateEntity(*enemyPrefab_);
 	newWorld_.CreateEntity(*enemyPrefab_);
@@ -206,6 +202,14 @@ void GameScene::OnEnter() {
 	ghostRenderer_.Init(2048u);
 	ghostRenderer_.SetModelData(ghostModel);
 
+	auto shadowAssimp = assimpManager->Load({ "","plane.obj" });
+	auto shadowModel = modelDataManager->Load({ shadowAssimp });
+	//auto &shadowMesh = shadowModel->meshHandleList_.front();
+	//shadowMesh->materialhandle_->blendMode_ = Model::BlendMode::kAdd;
+	static_cast<Matrix4x4 &>(shadowModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 1.5f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.f,0.f });
+	shadowRenderer_.Init(2048u);
+	shadowRenderer_.SetModelData(shadowModel);
+
 	levelUI_ = Sprite::Create();
 	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
 	levelUI_->SetPivot(Vector2::one * 0.5f);
@@ -235,10 +239,6 @@ void GameScene::OnEnter() {
 	gaussianParam_->first = 32.f;
 	gaussianParam_->second = 1;
 	menuTimer_.Start(0.01f);
-
-	brainStemTrans_->scale = Vector3::one * 5.f;
-	brainStemTrans_->translate.z = -30.f;
-	brainStemTrans_->UpdateMatrix();
 
 	vignettingParam_ = { 16.f, 0.8f };
 
@@ -377,6 +377,7 @@ void GameScene::Update() {
 	damageTimer_.Update(deltaTime);
 
 	ghostRenderer_.Clear();
+	shadowRenderer_.Clear();
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -466,33 +467,11 @@ void GameScene::Update() {
 	}
 
 	// 敵の描画
-	{
-		Archetype ghostArch;
-		ghostArch.AddClassData<ECS::GhostModel>();
-		// チャンクの取得
-		auto ghostChanks = newWorld_.GetAccessableChunk(ghostArch);
-		// 書き込み先のズレ
-		size_t offset = 0;
-
-		// チャンクと同じ数のデータを確保する
-		std::valarray<uint32_t> ghostCount(ghostChanks.size());
-		for (uint32_t i = 0; i < ghostCount.size(); i++) {
-			ghostCount[i] = ghostChanks[i]->size();
-		}
-		// !ToDo
-		// 配列をoffsetが書かれたものに置き換える
-
-		// 書き込み先の確保
-		auto span = ghostRenderer_.Reservation(ghostCount.size() ? ghostCount.sum() : 0u);
-		for (uint32_t i = 0; i < ghostCount.size(); i++) {
-			// チャンクからデータの取得
-			auto transMats = ghostChanks[i]->GetComponent<ECS::TransformMatComp>();
-			// 転送する
-			std::transform(transMats.begin(), transMats.end(), &span[offset], [](const ECS::TransformMatComp &trans) {return Particle::ParticleData{ .transform = trans.transformMat_ }; });
-			// 1個の長さを足す
-			offset += static_cast<uint32_t>(ghostCount[i]);
-		}
-	}
+	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_);
+	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, 0x00000055, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
+	data.transform.World = Matrix4x4::Identity();
+	data.transform.World.GetTranslate() = translate + Vector3{ .y = 0.1f };
+		});
 
 	{
 		// 入力処理
@@ -571,7 +550,7 @@ void GameScene::Draw() {
 	blockRender_->Draw(camera);
 	modelHandleRender_->Draw(camera);
 
-	ghostRenderer_.Execute(camera);
+	ghostRenderer_.DrawExecute(camera);
 
 	Model::SetPipelineType(Model::PipelineType::kSkinParticle);
 	light_->SetLight(commandList);
@@ -589,6 +568,8 @@ void GameScene::Draw() {
 	model_->Draw(particleArray_, camera);
 
 	particleManager_->Draw(camera);
+
+	shadowRenderer_.DrawExecute(camera);
 
 	Model::EndDraw();
 
