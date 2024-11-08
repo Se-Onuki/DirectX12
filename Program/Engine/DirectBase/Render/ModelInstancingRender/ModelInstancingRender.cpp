@@ -42,6 +42,10 @@ namespace SolEngine {
 			ghostOffset[i] = totalCount;
 			totalCount += ghostChanks[i]->size();
 		}
+		// もし空なら終わる
+		if (totalCount == 0) {
+			return;
+		}
 
 		// 書き込み先の確保
 		auto span = Reservation(totalCount);

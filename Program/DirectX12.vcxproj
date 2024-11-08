@@ -156,6 +156,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\DirectBase\Model\ResourceModel.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.cpp" />
     <ClCompile Include="Engine\ECS\Component\Component.cpp" />
     <ClCompile Include="Engine\ECS\Entity\EntityManager.cpp" />
@@ -217,6 +218,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Texture\Texture.cpp" />
     <ClCompile Include="Engine\LevelEditor\LevelData.cpp" />
     <ClCompile Include="Engine\LevelEditor\LevelImporter.cpp" />
+    <ClCompile Include="Engine\ResourceManager\ResourceLoader.cpp" />
     <ClCompile Include="Engine\ResourceObject\ResourceObjectManager.cpp" />
     <ClCompile Include="Engine\SolEngine.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
@@ -274,6 +276,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utils\SoLib\SoLib_Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\DirectBase\Model\ResourceModel.h" />
     <ClInclude Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.h" />
     <ClInclude Include="Engine\ECS\Archetype.h" />
     <ClInclude Include="Engine\ECS\Chunk\Chunk.hpp" />
@@ -365,8 +368,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\EngineLayer.hpp" />
     <ClInclude Include="Engine\LevelEditor\LevelData.h" />
     <ClInclude Include="Engine\LevelEditor\LevelImporter.h" />
+    <ClInclude Include="Engine\ResourceManager\ResourceLoader.h" />
     <ClInclude Include="Engine\ResourceObject\ResourceObjectManager.h" />
     <ClInclude Include="Engine\ResourceObject\ResourceObject.h" />
+    <ClInclude Include="Engine\SceneManager\SceneData.h" />
+    <ClInclude Include="Engine\SceneManager\SceneLoader.h" />
     <ClInclude Include="Engine\SolEngine.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />

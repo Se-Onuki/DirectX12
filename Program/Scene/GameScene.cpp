@@ -17,6 +17,7 @@
 #include "../Engine/ECS/System/FunctionalSystem.h"
 #include "../Engine/ECS/System/NewSystems.h"
 #include "../Engine/DirectBase/Model/SkeletonAnimation/Skeleton.h"
+#include "../Engine/ResourceManager/ResourceLoader.h"
 
 GameScene::GameScene() {
 	input_ = Input::GetInstance();
@@ -60,7 +61,12 @@ void GameScene::OnEnter() {
 	skinModelHandleRender_->Init(1024u);
 	particleManager_->Init(2048u);
 
-
+	SolEngine::Resource::ResourceLoadManager resourceLoadManager;
+	SoLib::IO::File file{ "resources/Scene/GameScene.jsonc" };
+	nlohmann::json sceneJson;
+	file.GetData() >> sceneJson;
+	resourceLoadManager.Init(sceneJson["Resources"]);
+	resourceLoadManager.Load();
 
 	ModelManager::GetInstance()->CreateDefaultModel();
 

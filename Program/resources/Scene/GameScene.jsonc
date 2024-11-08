@@ -1,0 +1,28 @@
+
+{
+	"Scene": "GameScene",
+	"Resources": [
+		{
+			"Name": "TestModel1",
+			"Type": "Model",
+			"Path": "Model/human/walk.gltf"
+		},
+		{
+			"Name": "TestModel2",
+			"Type": "Model",
+			"Path": "Model/human/walk.gltf"
+		},
+		{
+			"Name": "TestMesh",
+			"Type": "Mesh",
+			"Path": "Mesh/human/walk.gltf"
+		},
+		{
+			"Name": "TestModel3",
+			"Type": "Model",
+			"References": [
+				"TestMesh"
+			]
+		}
+	]
+}
