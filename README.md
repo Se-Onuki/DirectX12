@@ -13,17 +13,14 @@ SolEngineはDirectX12を使用したC++ゲームエンジンです｡
 - マルチメッシュモデルへのスキニングアニメーション
 - ポストエフェクトの簡易適用
 
-- [externals](/Program/externals/)フォルダに､[Imgui](/Program/externals/ImGuiProject/), [Assimp](/Program/externals/assimp/), [nlohmannJson](/Program/externals/nlohmann/), [DirectXTex](/Program/externals/DirectXTex/)を導入しています｡
-
 ## ECS (Entity-Component-System)
 
 [ソースコード](/Program/Engine/ECS/)
+- Worldクラスに"CreateEntity"関数を用いてコンポーネントを渡すことで､そのコンポーネントを持ったEntityを生成して､保存できます｡
+![ECS UML](/Images/UML.png)
 
-![ECS Sample](/Images/ECS.png)
-Entity[^1]に各種コンポーネントのポインタを持たせるのではなく､Componentを配列として整列させることで､効率的なアクセスが可能になります｡
-
-- [ECSとは (Unity/C#)](https://www.bing.com/ck/a?!&&p=22fc76fd9c67fa0d465343ad4225d48d5da80c2026278fffedf7113d576151f6JmltdHM9MTczMDI0NjQwMA&ptn=3&ver=2&hsh=4&fclid=0aa3bc30-5ae8-629c-3d7e-a89e5b866383&u=a1L3ZpZGVvcy9yaXZlcnZpZXcvcmVsYXRlZHZpZGVvP3E9RUNTK1VuaXR5Jm1pZD01OTg3OTE0NjNDQzU2REUxOEZDMjU5ODc5MTQ2M0NDNTZERTE4RkMyJkZPUk09VklSRQ&ntb=1)
-- [参考サイト (C++)](https://qiita.com/harayuu10/items/e15b02e3b0f3081d729b)
+- SystemはSystemExecuterにわたすことで､自動的に型を取得して実行するようになっています｡
+![ECS SystemUML](/Images/SystemUML.png)
 
 ### 使い方
 
@@ -70,6 +67,37 @@ Entity[^1]に各種コンポーネントのポインタを持たせるのでは�
 		skinModelRender_->AddBox({ model.model_, skinModel.skinModel_ }, { .transMat_ = transform });
 	}
 ```
+
+**実際の流れ**
+```cpp
+
+	ECS::NewWorld world;		// ワールドを生成
+	ECS::Prefab prefab;		// プレハブの生成
+	prefab += ECS::IsAlive{};	// プレハブに生存フラグのコンポーネントを追加
+	prefab += ECS::ModelComp{};	// モデルデータのコンポーネントを追加
+
+	world.CreateEntity(prefab);	// プレハブをワールドに追加
+
+	ECS::SystemExecuter systemExecuter;	// システムの実行クラスを作成
+
+	systemExecuter.AddSystem<ECS::System::Par::SkinModelDrawer>();	// スキニングモデルの描画Systemの追加
+
+	// ゲームループ
+	while(true){
+	systemExecuter_.Execute(&world, deltaTime);	// システムの実行
+	}
+
+```
+
+## 外部ライブラリ
+
+
+- [Program/externals](/Program/externals/)
+	- [Imgui](https://github.com/ocornut/imgui)
+	- [Assimp](https://github.com/assimp/assimp)
+	- [nlohmannJson](https://github.com/nlohmann/json)
+	- [DirectXTex](https://github.com/microsoft/DirectXTex)
+
 
 ## 作成中のゲーム
 ### ECS Survivor

@@ -15,6 +15,16 @@ namespace ECS {
 
 	public:
 
+		template <typename T>
+		std::vector<ComponentData::TRange<T, IsConst>> GetRange() const {
+			std::vector<ComponentData::TRange<T, IsConst>> result;
+			result.resize(this->size());
+
+			std::transform(this->cbegin(), this->cend(), result.begin(), [](auto *chunk) {return chunk->GetComponent<T>(); });
+
+			return result;
+		}
+
 		/// @brief エンティティの数を計算する
 		/// @return エンティティの数
 		uint32_t Count() const {
