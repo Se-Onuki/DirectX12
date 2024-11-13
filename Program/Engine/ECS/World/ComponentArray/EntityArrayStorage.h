@@ -19,7 +19,7 @@ namespace ECS {
 	template<typename T>
 	T &GetComp(Chunk *chunk, uint32_t index) {
 		constexpr uint32_t compId = static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>());
-		return reinterpret_cast<T &>(GetComp(chunk, compId, index));
+		return *std::bit_cast<T *>(&GetComp(chunk, compId, index));
 	}
 
 	std::byte &GetComp(Chunk *chunk, uint32_t compId, uint32_t index);

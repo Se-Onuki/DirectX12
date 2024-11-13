@@ -20,7 +20,7 @@ namespace ECS {
 					compData[i] = &sourceData[i]->at(entity.totalIndex_);
 				}
 				// コンポーネントを格納したデータから実行する
-				system.executor_(reinterpret_cast<IJobEntity *>(compData.data()), world, deltaTime);
+				system.executor_(std::bit_cast<IJobEntity *>(compData.data()), world, deltaTime);
 			};
 
 		if (system.isSingleThreads_) {

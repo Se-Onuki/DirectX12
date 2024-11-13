@@ -887,9 +887,6 @@
     <ClInclude Include="Engine\ECS\System\NewSystems.h">
       <Filter>Engine\ECS\System</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\ECS\System\ECSCollisionManager.h">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\DirectBase\Model\SkeletonAnimation\ModelAnimation.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>

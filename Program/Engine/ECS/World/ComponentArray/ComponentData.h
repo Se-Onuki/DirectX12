@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
+#include <bit>
 
 #include "ComponentArray.h"
 
@@ -124,9 +125,9 @@ namespace ECS {
 		const std::byte &at(uint32_t index) const { const uint32_t groupSize = typeSize_ * itemCount_; return *components_[index / groupSize][index % groupSize]; }
 
 		template<typename T>
-		T &at(uint32_t index) { return reinterpret_cast<T &>(at(index)); }
+		T &at(uint32_t index) { return *std::bit_cast<T *>(&at(index)); }
 		template<typename T>
-		const T &at(uint32_t index) const { return reinterpret_cast<const T &>(at(index)); }
+		const T &at(uint32_t index) const { return *std::bit_cast<const T *>(&at(index)); }
 
 		Range View(uint32_t end) { return Range{ this,0,end }; }
 		Range View(uint32_t begin, uint32_t end) { return Range{ this,begin,end }; }

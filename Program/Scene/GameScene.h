@@ -89,13 +89,13 @@ private:
 	Model *boxModel_ = nullptr;
 	Model *playerModel_ = nullptr;
 
-	//std::unique_ptr<World> world_ = nullptr;
-	//ECS::EntityManager *entityManager_;
+	// スポナークラス
 	ECS::Spawner spawner_;
-
+	// ECSのワールド
 	ECS::World newWorld_;
+	// システムの実行クラス
 	ECS::SystemExecuter systemExecuter_;
-
+	// コンポーネントレジストリ
 	ECS::ComponentRegistry *compRegistry_;
 
 	std::unique_ptr<LevelUP> levelUpUI_;

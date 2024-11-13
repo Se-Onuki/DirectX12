@@ -17,9 +17,9 @@ namespace ECS {
 		/// @brief 配列の取得
 		/// @return 配列の取得
 		template<typename T>
-		const std::span<T> GetArray() { return { reinterpret_cast<T *>(ptr_), count_ }; }
+		const std::span<T> GetArray() { return { std::bit_cast<T *>(ptr_), count_ }; }
 		template<typename T>
-		const std::span<const T> GetArray() const { return { reinterpret_cast<const T *>(ptr_), count_ }; }
+		const std::span<const T> GetArray() const { return { std::bit_cast<const T *>(ptr_), count_ }; }
 
 		const std::span<std::byte> GetArray() { return { ptr_, typeSize_ * count_ }; }
 		const std::span<const std::byte> GetArray() const { return { ptr_, typeSize_ * count_ }; }

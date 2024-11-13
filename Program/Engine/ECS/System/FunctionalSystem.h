@@ -81,7 +81,7 @@ namespace ECS {
 						), ...
 				);
 			src = &src[index];
-			return *reinterpret_cast<ComponentsBase<IsConst> *>(&result);
+			return *std::bit_cast<ComponentsBase<IsConst> *>(&result);
 
 		}
 
