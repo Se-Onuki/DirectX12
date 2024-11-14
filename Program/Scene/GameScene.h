@@ -83,12 +83,6 @@ private:
 	SolEngine::ModelInstancingRender ghostRenderer_;
 	SolEngine::ModelInstancingRender shadowRenderer_;
 
-	//ECS::SystemManager systemManager_;
-
-	Model *model_ = nullptr;
-	Model *boxModel_ = nullptr;
-	Model *playerModel_ = nullptr;
-
 	// スポナークラス
 	ECS::Spawner spawner_;
 	// ECSのワールド

@@ -81,11 +81,6 @@ void GameScene::OnEnter() {
 
 	skinModel_ = SkinModel::MakeSkinModel(*playerModel, *playerSkeleton);
 
-	boxModel_ = ModelManager::GetInstance()->AddModel("Block", Model::LoadAssimpModelFile("", "box.obj"));
-	model_ = ModelManager::GetInstance()->AddModel("Particle", Model::CreatePlane());
-	model_->materialMap_.begin()->second->texHandle_ = TextureManager::Load("circle.png");
-	model_->materialMap_.begin()->second->blendMode_ = Model::BlendMode::kAdd;
-
 	attackModel_ = ModelManager::GetInstance()->AddModel("AttackModel", Model::CreatePlane());
 	{
 		auto *const mtr = attackModel_->materialMap_.begin()->second.get();
@@ -572,8 +567,6 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	shadowRenderer_.DrawExecute(camera);
-
-	model_->Draw(particleArray_, camera);
 
 	particleManager_->Draw(camera);
 

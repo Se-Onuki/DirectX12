@@ -1,5 +1,6 @@
 #pragma once
 #include "../World/ComponentArray/ComponentData.h"
+#include <list>
 
 namespace ECS {
 
@@ -11,10 +12,10 @@ namespace ECS {
 
 	private:
 
+		// コライダのリスト
+		std::list<ECS::ComponentData*> collderList_;
 		
 
-		
+	};
 
-	};		
-
-}
+ }

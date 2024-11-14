@@ -1,4 +1,5 @@
 #pragma once
+#include <bit>
 #include "../Utils/Containers/Singleton.h"
 
 #include "ResourceObject.h"
@@ -58,11 +59,9 @@ namespace SolEngine {
 			uint32_t GetVersion() const { return version_; }
 
 			size_t GetHashID() const {
-				union Tmp {
-					size_t number_;
-					Handle handle_;
-				};
-				return Tmp{ .handle_ = *this }.number_;
+				size_t result;
+				std::memcpy(&result, this, sizeof(size_t));
+				return result;
 			}
 
 			T *GetResource() { return Singleton::instance_ ? Singleton::instance_->resourceList_.at(handle_).second.second.get() : nullptr; }

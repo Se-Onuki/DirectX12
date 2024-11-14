@@ -1,4 +1,10 @@
 #pragma once
+///
+/// @file Component.h
+/// @brief ECSで使用するコンポーネントの記述
+/// @author ONUKI seiya
+///
+
 #include <memory>
 
 #include <concepts>
@@ -34,18 +40,9 @@ namespace ECS {
 	/// @brief 共有コンポーネントであるというフラグ
 	struct ISharedComponent {};
 
-	template <SoLib::IsRealType T>
-	struct IClassData {
-
-		static const std::type_index &GetTypeid() {
-			static std::type_index typeindex{ typeid(T) };
-			return typeindex;
-		}
-
-		static size_t GetSize() {
-			return sizeof(T);
-		}
-
+	template <size_t Size>
+	struct ArrayComponent : IComponent {
+		inline static constexpr size_t kSize_ = Size;
 	};
 
 	struct IsAlive : IComponent {
@@ -54,11 +51,11 @@ namespace ECS {
 		inline bool operator==(const IsAlive &r) const { return isAlive_ == r.isAlive_; }
 	};
 
-	struct AccelerationComp : IComponent, public IClassData<AccelerationComp> {
+	struct AccelerationComp : IComponent {
 		Vector3 acceleration_;
 	};
 
-	struct GravityComp : IComponent, public IClassData<GravityComp> {
+	struct GravityComp : IComponent {
 		Vector3 gravity_ = Vector3::up * -9.8f;
 	};
 
@@ -105,6 +102,7 @@ namespace ECS {
 			return isChanged;
 		}
 	};
+
 	struct ColorLarp :IComponent {
 		SoLib::Color::RGB4 start_;
 		SoLib::Color::RGB4 end_;
@@ -251,24 +249,36 @@ namespace ECS {
 		SolEngine::AnimationPlayer animatior_;
 	};
 
+	// スキンモデルコンポーネント
 	struct SkinModel : IComponent {
-
+		// スキンモデルのポインタ
 		::SkinModel *skinModel_;
 	};
 
+	// 攻撃のコリジョンのコンポーネント
 	struct AttackCollisionComp : IComponent {
+		// 球体
 		Sphere collision_;
+		// 動作中か
 		bool isActive_ = false;
 	};
 
+	// 球のコリジョン
 	struct SphereCollisionComp : IComponent {
 		Sphere collision_;
 	};
 
+	// Obbのコリジョン
 	struct OBBCollisionComp : IComponent {
 		OBB collision_;
 	};
 
+	// 攻撃のベクトルコンポーネント
+	struct AttackFacing : IComponent {
+		Vector3 facing_{};
+	};
+
+	// 体力コンポーネント
 	struct HealthComp : IComponent {
 		int32_t maxHealth_ = 0;
 		int32_t nowHealth_ = 0;
@@ -336,4 +346,13 @@ namespace ECS {
 
 	template<class T>
 	concept IsComponent = SoLib::IsBased<T, IComponent>;
+}
+
+namespace std {
+	template<>
+	struct hash<ECS::ModelComp> {
+		size_t operator()(const ECS::ModelComp data) const {
+			return data.model_.GetHashID();
+		}
+	};
 }
