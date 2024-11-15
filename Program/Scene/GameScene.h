@@ -102,15 +102,11 @@ private:
 
 	std::unique_ptr<ECS::Prefab> enemyPrefab_ = nullptr;
 
-	SoLib::UnChainVector<uint32_t> unVector_;
-
 	Camera3D *followCamera_;
 
 	Audio::SoundHandle soundA_;
 
 	SoLib::DeltaTimer spawnTimer_{ 5.f };
-
-	std::array<BoneModel::SimpleTransform, 5u> boneTransform_;
 
 	GameObject gameObject_;
 
@@ -129,8 +125,6 @@ private:
 	Model *attackModel_ = nullptr;
 
 	SoLib::DeltaTimer playerSpawn_{ 1.f, false };
-
-	std::unique_ptr<Model> assimpModel_ = nullptr;
 
 	SolEngine::ResourceHandle<SolEngine::Animation> animation_;
 	SolEngine::ResourceHandle<SolEngine::Animation> attackAnimation_;
