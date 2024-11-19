@@ -64,7 +64,7 @@ void GameScene::OnEnter() {
 	SolEngine::Resource::ResourceLoadManager resourceLoadManager;
 	SoLib::IO::File file{ "resources/Scene/GameScene.jsonc" };
 	nlohmann::json sceneJson;
-	file.GetData() >> sceneJson;
+	file >> sceneJson;
 	resourceLoadManager.Init(sceneJson["Resources"]);
 	resourceLoadManager.Load();
 
@@ -486,9 +486,9 @@ void GameScene::Update() {
 		}
 	);
 	// カメラの逆行列
-	//const Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT() * Matrix4x4::AnyAngleRotate(Vector3::right, Angle::Rad90);
-	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500AA, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
-	data.transform.World = Matrix4x4::Identity() * 0.5f;
+	const Matrix4x4 billboardMat = Matrix4x4::AnyAngleRotate(Vector3::right, -Angle::Rad90) * cameraManager_->GetUseCamera()->matView_.GetRotate().Transpose();
+	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500AA, [&billboardMat](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
+	data.transform.World = billboardMat * 0.5f;
 	data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
 		}
 	);

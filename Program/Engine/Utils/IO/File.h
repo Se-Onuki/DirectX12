@@ -62,6 +62,8 @@ namespace SoLib {
 
 			operator bool() const { return filePath_.size(); }
 
+			operator std::stringstream &() { return data_; }
+
 		private:
 			std::string filePath_;
 			std::stringstream data_;

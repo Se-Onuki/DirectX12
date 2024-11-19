@@ -104,9 +104,7 @@ namespace SoLib {
 
 	template<>
 	bool ImGuiWidget(const char *const label, EaseFunc *const value) {
-
 		return SoLib::ImGuiWidget(label, &kFuncList, value->easeFunc_, [](const uint32_t item)->std::string {return kFuncList.at(item).first; });
-
 	}
 
 }
