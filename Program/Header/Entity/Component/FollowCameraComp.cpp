@@ -20,7 +20,7 @@ void FollowCameraComp::Update() {
 		rotate_.x = SoLib::Lerp(rotate_.x, -40._deg, 0.2f);
 	}
 
-	SoLib::ImGuiText("FollowCameraAngle", SoLib::to_string(rotate_));
+	SoLib::ImGuiDraw("FollowCameraAngle", SoLib::to_string(rotate_));
 
 	const Vector3 cameraOffset = offset_.GetItem() * rotate_;
 

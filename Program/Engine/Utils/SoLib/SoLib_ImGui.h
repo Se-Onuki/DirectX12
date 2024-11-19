@@ -18,16 +18,13 @@ namespace SoLib {
 
 	// ImGuiの前方宣言
 	template<IsNotPointer T>
-	bool ImGuiWidget(const char *const label, T *const value) {
-		// ImGuiWidget関数を呼び出す
-		return value->ImGuiWidget(label);
-	}
+	bool ImGuiWidget(const char *const label, T *const value);
 
 	template<IsNotPointer T>
-	void ImGuiText(const char *const label, const T &text);
+	void ImGuiDraw(const char *const label, const T &text);
 
 	template<>
-	void ImGuiText(const char *const label, const std::string &text);
+	void ImGuiDraw(const char *const label, const std::string &text);
 
 	template <>
 	bool ImGuiWidget<bool>(const char *const label, bool *const value);

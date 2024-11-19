@@ -1,9 +1,10 @@
 #include "SoLib_ImGui.h"
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <imgui_stdlib.h>
 
 template<>
-void SoLib::ImGuiText([[maybe_unused]] const char *const label, [[maybe_unused]] const std::string &text) {
+void SoLib::ImGuiDraw([[maybe_unused]] const char *const label, [[maybe_unused]] const std::string &text) {
 #ifdef USE_IMGUI
 	ImGui::Text("%s : %s", label, text.c_str());
 #endif // USE_IMGUI
@@ -77,7 +78,7 @@ bool SoLib::ImGuiWidget<Vector4>([[maybe_unused]] const char *const label, [[may
 template<>
 bool SoLib::ImGuiWidget([[maybe_unused]] const char *const label, [[maybe_unused]] std::string *const value) {
 #ifdef USE_IMGUI
-	return ImGui::InputText(label, value->data(), value->size() + 1);
+	return ImGui::InputText(label, value);
 #else
 	return false;
 #endif // USE_IMGUI

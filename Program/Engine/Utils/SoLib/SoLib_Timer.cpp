@@ -151,6 +151,8 @@ namespace SoLib {
 		return std::clamp(nowFlame_ / goalFlame_, 0.f, 1.f);
 	}
 
+
+
 	bool FunctionTimer::Update() {
 		bool isActive = FlameTimer::Update(); // 実行中であるか
 		if (isActive && IsFinish())	// 実行中である & ゴールに到達している => 実行

@@ -532,7 +532,7 @@
       <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ResourceManager\ResourceLoader.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\ResourceManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
