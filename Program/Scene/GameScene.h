@@ -83,6 +83,8 @@ private:
 	SolEngine::ModelInstancingRender ghostRenderer_;
 	SolEngine::ModelInstancingRender shadowRenderer_;
 
+	SolEngine::ModelInstancingRender expRender_;
+
 	// スポナークラス
 	ECS::Spawner spawner_;
 	// ECSのワールド

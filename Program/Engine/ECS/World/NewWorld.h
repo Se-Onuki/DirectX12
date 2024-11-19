@@ -7,6 +7,64 @@
 
 namespace ECS {
 
+
+
+	template <typename T, bool IsConst = false>
+	class ChunkTRange : public std::vector<ComponentData::TRange<T, IsConst>> {
+	public:
+		/*using Type = std::vector<ComponentData::TRange<T, IsConst>>;
+
+		struct Iterator {
+			ChunkTRange *range_;
+			uint32_t chunkIndex_;
+			uint32_t itr_;
+			T &operator->() requires(std::is_same_v<IsConst, false>) {
+				return range_->data_[chunkIndex_]->GetComp<T>(itr_);
+			}
+		};
+
+		friend Iterator;
+
+	public:
+		ChunkTRange() = default;
+		ChunkTRange(Type &&item) : data_(std::move(item)) {}
+
+
+
+
+	private:
+		Type data_;
+		uint32_t chunkIndex_;
+		uint32_t itr_;*/
+
+	public:
+
+		T &At(uint32_t index) /*requires(std::is_same_v<IsConst, false>)*/ {
+
+			for (ComponentData::TRange<T, IsConst> &chunk : *this) {
+				if (index > chunk.size()) {
+					index -= chunk.size();
+					continue;
+				}
+				return chunk[index];
+			}
+			assert(0 and "範囲外アクセス");
+			return this->front()[0];
+		}
+
+		/*const T &At(uint32_t index) const requires(std::is_same_v<IsConst, true>) {
+
+			for (const ComponentData::TRange<T, IsConst> &chunk : *this) {
+				if (index > chunk.size()) {
+					index -= chunk.size();
+					continue;
+				}
+				else {
+					return chunk[index];
+				}
+			}
+		}*/
+	};
 	template <bool IsConst = false>
 	class ChunkSet : public std::conditional_t<IsConst, std::vector<const Chunk *>, std::vector<Chunk *>> {
 	public:
@@ -16,8 +74,8 @@ namespace ECS {
 	public:
 
 		template <typename T>
-		std::vector<ComponentData::TRange<T, IsConst>> GetRange() const {
-			std::vector<ComponentData::TRange<T, IsConst>> result;
+		ChunkTRange<T, IsConst> GetRange() const {
+			ChunkTRange<T, IsConst> result;
 			result.resize(this->size());
 
 			std::transform(this->cbegin(), this->cend(), result.begin(), [](auto *chunk) {return chunk->GetComponent<T>(); });
@@ -53,6 +111,24 @@ namespace ECS {
 					return std::count_if(view.begin(), view.end(), [&data](const T &i) {return i == data; }) + acc;
 				}
 			);
+		}
+		template<typename T>
+		std::pair<std::vector<bool>, size_t> CountIfFlag(const T &data) const {
+			// ヒット数
+			size_t count = 0;
+			// 要素数の数だけのメモリを確保する
+			std::vector<bool> flag(Count());
+			auto itr = flag.begin();
+			// チャンクを走査
+			for (const Chunk *chank : *this) {
+				// コンポーネントを取得して返す
+				for (const T &value : chank->GetComponent<T>()) {
+					*itr = value == data;
+					++itr;
+					if (value == data) { count++; }
+				}
+			}
+			return { std::move(flag), count };
 		}
 
 	private:

@@ -194,6 +194,8 @@ namespace ECS {
 
 	struct HasShadow : IComponent {};
 
+	struct ExpOrb : IComponent {};
+
 	struct FollowCamera : IComponent {
 
 #pragma region ビュー行列の設定

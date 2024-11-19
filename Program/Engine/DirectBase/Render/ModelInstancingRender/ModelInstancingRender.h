@@ -2,6 +2,7 @@
 #include "../../Model/ModelData.h"
 #include "../../../../Header/Object/Particle.h"
 #include "../../Engine/ECS/World/NewWorld.h"
+#include <functional>
 
 namespace SolEngine {
 
@@ -33,8 +34,12 @@ namespace SolEngine {
 
 		template<typename T>
 		void AddMatData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, void(*afterFunc)(InstanceType &) = nullptr);
+		
+		template<typename T>
+		void AddTransData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
 
 		void AddMatData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, void(*afterFunc)(InstanceType &) = nullptr);
+		void AddTransData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
 
 		/// @brief 描画の実行
 		/// @param camera カメラ情報
@@ -59,6 +64,15 @@ namespace SolEngine {
 		archetype.AddClassData<T>();
 
 		AddMatData(world, archetype, color, afterFunc);
+
+	}
+	template<typename T>
+	inline void ModelInstancingRender::AddTransData(const ECS::World &world, const uint32_t color, std::function<void(InstanceType &)> afterFunc)
+	{
+		Archetype archetype;
+		archetype.AddClassData<T>();
+
+		AddTransData(world, archetype, color, afterFunc);
 
 	}
 

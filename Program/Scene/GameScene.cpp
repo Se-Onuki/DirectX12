@@ -210,6 +210,8 @@ void GameScene::OnEnter() {
 	static_cast<Matrix4x4 &>(shadowModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 1.5f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
 	shadowRenderer_.Init(2048u);
 	shadowRenderer_.SetModelData(shadowModel);
+	expRender_.Init(2048u);
+	expRender_.SetModelData(shadowModel);
 
 	levelUI_ = Sprite::Create();
 	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
@@ -379,6 +381,7 @@ void GameScene::Update() {
 
 	ghostRenderer_.Clear();
 	shadowRenderer_.Clear();
+	expRender_.Clear();
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -450,19 +453,27 @@ void GameScene::Update() {
 	cameraManager_->Update(fixDeltaTime);
 	// 経験値の追加
 	{
-		Archetype expArch{};
-		expArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
+		// 敵のアーキタイプ
+		Archetype enemArch{};
+		enemArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
 		// チャンクの取得
-		auto enemyChunks = newWorld_.GetAccessableChunk(expArch);
+		auto enemyChunks = newWorld_.GetAccessableChunk(enemArch);
 		// 死亡している数
-		auto deadCount = enemyChunks.CountIf(ECS::IsAlive{ .isAlive_ = false });
-		// プレイヤチャンクを回す
-		for (auto &chunk : playerChunks) {
-			// 経験値の計算
-			auto players = chunk->GetComponent<ECS::Experience>();
-			// プレイヤに経験値を加算
-			for (auto &i : players) {
-				i.exp_ += deadCount;
+		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
+		// 経験値のアーキタイプ
+		Archetype expArch;
+		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp>();
+		// 経験値オーブの生成
+		newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
+		auto expChunks = newWorld_.GetAccessableChunk(expArch);
+		auto expRanges = expChunks.GetRange<ECS::PositionComp>();
+
+		uint32_t index = 0;
+		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
+		uint32_t size = enemyChunks.Count();
+		for (uint32_t i = 0; i < size; i++) {
+			if (deadCount.first.at(i)) {
+				expRanges.At(index++) = enemRange.At(i);
 			}
 		}
 	}
@@ -472,7 +483,23 @@ void GameScene::Update() {
 	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, 0x00000055, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
 	data.transform.World = Matrix4x4::Identity();
 	data.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
-		});
+		}
+	);
+	// カメラの逆行列
+	//const Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT() * Matrix4x4::AnyAngleRotate(Vector3::right, Angle::Rad90);
+	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500AA, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
+	data.transform.World = Matrix4x4::Identity() * 0.5f;
+	data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
+		}
+	);
+
+	// 経験値のアーキタイプ
+	Archetype expArch;
+	expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp>();
+	auto expChunks = newWorld_.GetAccessableChunk(expArch);
+	auto expRanges = expChunks.GetRange<ECS::PositionComp>();
+
+
 
 	{
 		// 入力処理
@@ -567,9 +594,7 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	shadowRenderer_.DrawExecute(camera);
-
-	particleManager_->Draw(camera);
-
+	expRender_.DrawExecute(camera);
 
 	Model::EndDraw();
 
