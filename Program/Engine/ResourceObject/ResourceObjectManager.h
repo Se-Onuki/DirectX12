@@ -26,7 +26,6 @@ namespace SolEngine {
 			Handle(const Handle &) = default;
 			Handle(Handle &&) = default;
 			Handle &operator=(const Handle &r) { handle_ = r.handle_; version_ = r.version_; return *this; }
-			//Handle &operator=(Handle &&) = default;
 
 			Handle(const Source &source);
 			Handle &operator=(const Source &source) { return *this = Handle{ source }; }
@@ -90,6 +89,11 @@ namespace SolEngine {
 		private:
 			uint32_t handle_ = (std::numeric_limits<uint32_t>::max)();
 			uint32_t version_ = (std::numeric_limits<uint32_t>::max)();
+		};
+
+		template <typename T>
+		struct THandle : public Handle {
+
 		};
 
 	public:

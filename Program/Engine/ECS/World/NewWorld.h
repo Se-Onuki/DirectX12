@@ -7,8 +7,6 @@
 
 namespace ECS {
 
-
-
 	template <typename T, bool IsConst = false>
 	class ChunkTRange : public std::vector<ComponentData::TRange<T, IsConst>> {
 	public:

@@ -6,12 +6,12 @@
 #include "../Engine/DirectBase/PostEffect/OffScreenRendering.h"
 #include "../Engine/DirectBase/Model/Model.h"
 #include "../../Engine/Utils/Containers/AlignasWrapper.h"
-#include "../Engine/ECS/World/World.hpp"
-#include "../Engine/ECS/System/SystemManager.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
 #include "../Engine/DirectBase/ComputeShader/SkinningComputeShader.h"
 #include "../Engine/DirectBase/Render/SkyBox/SkyBox.h"
 #include "../Engine/DirectBase/Model/SkeletonAnimation/Skeleton.h"
+#include "../Engine/DirectBase/Model/SkeletonAnimation/ModelAnimation.h"
+#include "../Engine/DirectBase/SkinAnimation/SkinAnimation.h"
 
 class CGTaskScene : public IScene {
 public:
@@ -29,11 +29,6 @@ public:
 
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
-
-	std::unique_ptr<World> world_ = nullptr;
-	ECS::EntityManager *entityManager_;
-
-	ECS::SystemManager systemManager_;
 
 	std::unique_ptr<SkinModel> skinModel_;
 

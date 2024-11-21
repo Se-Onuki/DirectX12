@@ -1,6 +1,5 @@
 #pragma once
 #include "Prefab.h"
-#include "EntityManager.hpp"
 #include "../World/NewWorld.h"
 
 namespace ECS {

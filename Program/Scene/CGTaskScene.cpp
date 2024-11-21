@@ -8,7 +8,6 @@
 #include "../../../externals/DirectXTex/d3dx12.h"
 #include "../Engine/LevelEditor/LevelData.h"
 #include "../Engine/LevelEditor/LevelImporter.h"
-#include "../Engine/ECS/Entity/EntityManager.hpp"
 #include "../Engine/DirectBase/Model/AssimpData.h"
 #include "../Engine/DirectBase/Model/Mesh.h"
 #include "../Engine/DirectBase/Model/ModelData.h"
@@ -24,23 +23,6 @@ void CGTaskScene::OnEnter()
 	auto matHandle = matBuffer->PushBack(item.begin(), item.end());
 	std::vector<Matrix4x4 *> matPtr;
 	std::transform(matHandle.begin(), matHandle.end(), std::back_inserter(matPtr), [](auto itr) { return itr.GetResource<Matrix4x4>(); });
-
-	//constexpr size_t size = (~0xffllu & (sizeof(std::array<Matrix4x4, 4>) + 0xffllu));
-
-	SolEngine::ResourceObjectManager<SolEngine::LevelData> *const levelDataManager = SolEngine::ResourceObjectManager<SolEngine::LevelData>::GetInstance();
-
-	auto levelData = levelDataManager->Load({ .fileName_ = "test.json" });
-
-	//const auto accesser = SolEngine::MakeRootParametersAccesser(
-	//	SignParam<CBuffer<Matrix4x4>>{ "t0PS" },
-	//	SignParam<CBuffer<TransformMatrix>>{ "b0PS" }
-	//);
-
-	world_ = std::make_unique<World>();
-	entityManager_ = world_->GetEntityManager();
-
-	SolEngine::LevelImporter levelImporter;
-	levelImporter.Import(levelData, world_.get());
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
 	auto assimpHandle = assimpManager->Load({ "Model/human/", "BrainStem.glb" });

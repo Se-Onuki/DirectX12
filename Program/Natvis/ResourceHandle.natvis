@@ -51,5 +51,17 @@
       </IndexListItems>
     </Expand>
   </Type>
-  
+
+  <Type Name="ArrayBuffer&lt;*&gt;">
+    <DisplayString>{{ size = {size_} }}</DisplayString>
+    <Expand>
+      <IndexListItems>
+        <Size>size_</Size>
+        <ValueNode>
+          (($T1*)((resourceHandle_.item_._Value._Ptr->_Myval)->item_._Mypair._Myval2->itemData_[0])
+        </ValueNode>
+      </IndexListItems>
+    </Expand>
+  </Type>
+
 </AutoVisualizer>
