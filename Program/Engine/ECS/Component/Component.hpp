@@ -340,6 +340,14 @@ namespace ECS {
 		SolEngine::ResourceHandle<SolEngine::LevelData> handle_;
 	};
 
+	struct AttackCircle : IComponent {
+
+	};
+
+	struct EffectPlayer : IComponent {
+
+	};
+
 	struct InputFlagComp : IComponent {};
 
 	//template<SoLib::IsBased<IComponent> T, uint32_t size>
