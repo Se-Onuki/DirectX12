@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <span>
 #include <assert.h>
-#include "Converter/TextureConverter.h"
+#include "TexConverter/TextureConverter.h"
 
 #include <combaseapi.h>	// COM系
 

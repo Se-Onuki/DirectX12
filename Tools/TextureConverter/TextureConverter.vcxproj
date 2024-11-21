@@ -155,11 +155,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Converter\TextureConverter.cpp" />
+    <ClCompile Include="TexConverter\TextureConverter.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Converter\TextureConverter.h" />
+    <ClInclude Include="StringConverter\StringConverter.h" />
+    <ClInclude Include="TexConverter\TextureConverter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

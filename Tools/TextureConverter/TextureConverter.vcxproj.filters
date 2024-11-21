@@ -16,18 +16,24 @@
     <Filter Include="TextureConverter">
       <UniqueIdentifier>{d84e0218-6922-4826-ad8a-7950c7d28068}</UniqueIdentifier>
     </Filter>
+    <Filter Include="StringConverter">
+      <UniqueIdentifier>{6bc04ca3-0d9d-45e9-82fc-c72377bcbf02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Converter\TextureConverter.cpp">
+    <ClCompile Include="TexConverter\TextureConverter.cpp">
       <Filter>TextureConverter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Converter\TextureConverter.h">
+    <ClInclude Include="TexConverter\TextureConverter.h">
       <Filter>TextureConverter</Filter>
+    </ClInclude>
+    <ClInclude Include="StringConverter\StringConverter.h">
+      <Filter>StringConverter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
