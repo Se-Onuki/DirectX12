@@ -194,7 +194,7 @@ bool ButtonPickUp::ImGuiWidget()
 #ifdef USE_IMGUI
 
 	isChanged |= SoLib::ImGuiWidget("PickUpEase", &pickUpEase_);
-	isChanged |= pickUpTimer_.ImGuiWidget("PickUpTimer");
+	isChanged |= SoLib::ImGuiWidget("PickUpTimer", &pickUpTimer_);
 
 	isChanged |= SoLib::ImGuiWidget("DropDownEase", &dropDownEase_);
 	isChanged |= SoLib::ImGuiWidget("DropDownTime", &dropDownTime_);

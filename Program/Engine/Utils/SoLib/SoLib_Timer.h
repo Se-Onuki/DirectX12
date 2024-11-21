@@ -9,6 +9,12 @@ namespace SoLib {
 
 
 	namespace Time {
+	
+		class DeltaTimer;
+	}
+	template<>
+	bool ImGuiWidget(const char *const label, Time::DeltaTimer *const ptr);
+	namespace Time {
 
 
 		template <SoLib::IsFloatPoint T>
@@ -139,13 +145,12 @@ namespace SoLib {
 			inline void SetGoal(float Goal) { goalFlame_ = Goal; }
 
 		public:
+			friend bool ::SoLib::ImGuiWidget(const char *const label, DeltaTimer *const ptr);
 			DeltaTimer(float goal = 0.f, bool start = false, bool isLoop = false) : goalFlame_(goal), nowFlame_(0.f), isFinish_(false), isActive_(false), isLoop_(isLoop) {
 				if (start) {
 					Start(goal, isLoop);
 				}
 			}
-
-			bool ImGuiWidget(const char *const label);
 
 			/// @brief 更新処理 ( 基本的に各フレームの先頭で行うこと )
 			/// @return bool 実行中である場合true
@@ -186,7 +191,6 @@ namespace SoLib {
 			float GetProgress() const;
 		};
 
-
 		class FunctionTimer : public FlameTimer {
 			std::function<void(void)> function_ = nullptr;
 
@@ -198,33 +202,35 @@ namespace SoLib {
 		};
 	}
 
-	using namespace Time;
-}
-
-inline bool SoLib::DeltaTimer::ImGuiWidget(const char *const label) {
+	template<>
+	inline bool ImGuiWidget(const char *const label, Time::DeltaTimer *const data) {
 
 #ifdef USE_IMGUI
-	bool isChanged = false;
+		bool isChanged = false;
 
-	isChanged |= ImGui::DragFloat(label, &this->goalFlame_, 0.1f, 0.f, 100.f, "%.3fsec");
+		isChanged |= ImGui::DragFloat(label, &(data->goalFlame_), 0.1f, 0.f, 100.f, "%.3fsec");
 
-	if (ImGui::Button("Stop")) {
-		this->Clear();
-		isChanged = true;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Start")) {
-		this->Start();
-		isChanged = true;
-	}
+		if (ImGui::Button("Stop")) {
+			data->Clear();
+			isChanged = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Start")) {
+			data->Start();
+			isChanged = true;
+		}
 
-	return isChanged;
+		return isChanged;
 
 #else
 
-	label;
-	return false;
+		label;
+		return false;
 
 #endif // USE_IMGUI
 
+	}
+
+
+	using namespace Time;
 }

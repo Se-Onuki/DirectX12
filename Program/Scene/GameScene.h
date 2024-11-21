@@ -10,15 +10,11 @@
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
-#include "../Engine/ECS/World/World.hpp"
-#include "../Engine/ECS/Entity/EntityManager.hpp"
-#include "../Engine/ECS/MultiArray.h"
 
 #include "../../Engine/Utils/Graphics/Color.h"
 #include "../../Engine/Utils/IO/CSV.h"
 #include "../../Header/Object/Particle.h"
 #include "../../Engine/Utils/Containers/ConstVector.h"
-#include "../Engine/ECS/System/SystemManager.h"
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Engine/DirectBase/Model/BoneModel.h"
 #include "../Header/Object/Ground.h"

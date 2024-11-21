@@ -2,11 +2,9 @@
 #include <typeindex>
 #include <stdint.h>
 #include <list>
-#include "Entity/Entity.hpp"
 #include "../Utils/SoLib/SoLib.h"
 #include <unordered_set>
 #include <set>
-#include "ClassData.h"
 #include "Component/ComponentRegistry.h"
 
 class Archetype {

@@ -64,7 +64,7 @@ void GameScene::OnEnter() {
 	SolEngine::Resource::ResourceLoadManager resourceLoadManager;
 	SoLib::IO::File file{ "resources/Scene/GameScene.jsonc" };
 	nlohmann::json sceneJson;
-	file.GetData() >> sceneJson;
+	file >> sceneJson;
 	resourceLoadManager.Init(sceneJson["Resources"]);
 	resourceLoadManager.Load();
 
@@ -210,8 +210,14 @@ void GameScene::OnEnter() {
 	static_cast<Matrix4x4 &>(shadowModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 1.5f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
 	shadowRenderer_.Init(2048u);
 	shadowRenderer_.SetModelData(shadowModel);
+
+	auto orbAssimp = assimpManager->Load({ "Model/", "Orb.obj" });
+	auto orbModel = modelDataManager->Load({ orbAssimp });
+	auto &orbMesh = orbModel->meshHandleList_.front();
+	orbMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
+
 	expRender_.Init(2048u);
-	expRender_.SetModelData(shadowModel);
+	expRender_.SetModelData(orbModel);
 
 	levelUI_ = Sprite::Create();
 	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
@@ -486,9 +492,9 @@ void GameScene::Update() {
 		}
 	);
 	// カメラの逆行列
-	//const Matrix4x4 billboardMat = cameraManager_->GetUseCamera()->matView_.GetRotate().InverseRT() * Matrix4x4::AnyAngleRotate(Vector3::right, Angle::Rad90);
-	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500AA, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
-	data.transform.World = Matrix4x4::Identity() * 0.5f;
+	//const Matrix4x4 billboardMat = Matrix4x4::AnyAngleRotate(Vector3::right, -Angle::Rad90) * cameraManager_->GetUseCamera()->matView_.GetRotate().Transpose();
+	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500FF, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
+	data.transform.World = Matrix4x4::Identity();
 	data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
 		}
 	);

@@ -7,8 +7,6 @@
 
 namespace ECS {
 
-
-
 	template <typename T, bool IsConst = false>
 	class ChunkTRange : public std::vector<ComponentData::TRange<T, IsConst>> {
 	public:
@@ -112,6 +110,11 @@ namespace ECS {
 				}
 			);
 		}
+
+		/// @brief 一致した値の並びと数を返す
+		/// @tparam T 比較する型
+		/// @param data 比較する値
+		/// @return 一致しているかをtrueで返す
 		template<typename T>
 		std::pair<std::vector<bool>, size_t> CountIfFlag(const T &data) const {
 			// ヒット数

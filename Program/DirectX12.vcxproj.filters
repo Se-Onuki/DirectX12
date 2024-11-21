@@ -178,6 +178,9 @@
     <Filter Include="Engine\ResourceManager">
       <UniqueIdentifier>{55bd5988-fded-4dd6-9394-5de84f017934}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\ECS\Entity">
+      <UniqueIdentifier>{e2b452d7-7445-4db4-9ab2-d9cdb127218b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -325,18 +328,6 @@
       <Filter>Game\Object\Particle\Particles\GetParticle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\Component\Component.cpp">
-      <Filter>Engine\ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\ECS\Entity\EntityManager.cpp">
-      <Filter>Engine\ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\ECS\World\World.cpp">
-      <Filter>Engine\ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\ECS\MultiArray.cpp">
-      <Filter>Engine\ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\ECS\System\SystemManager.cpp">
       <Filter>Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DirectBase\Model\BoneModel.cpp">
@@ -532,7 +523,7 @@
       <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ResourceManager\ResourceLoader.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\ResourceManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -719,25 +710,7 @@
     <ClInclude Include="Engine\ECS\Component\Component.hpp">
       <Filter>Engine\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\ECS\Entity\Entity.hpp">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\ECS\Entity\EntityManager.hpp">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\ECS\World\World.hpp">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\ECS\Chunk\Chunk.hpp">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\ECS\MultiArray.h">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\ECS\Archetype.h">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\ECS\System\SystemManager.h">
       <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Entity\Prefab.h">
@@ -771,9 +744,6 @@
       <Filter>Game\Object\Particle\Particles\SimpleParticle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ECS\Entity\Spawner.h">
-      <Filter>Engine\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\ECS\ClassData.h">
       <Filter>Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h">
@@ -1051,6 +1021,9 @@
     </ClInclude>
     <ClInclude Include="Engine\ResourceManager\ResourceLoader.h">
       <Filter>Engine\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ECS\Entity\EntityList.h">
+      <Filter>Engine\ECS\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

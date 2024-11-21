@@ -29,10 +29,7 @@ class ArrayBuffer final {
 
 	uint32_t size_;
 
-	//ComPtr<ID3D12Resource> resources_ = nullptr;
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_{};
-
-	//std::span<T> mapData_ = {};
 
 public:
 

@@ -38,11 +38,11 @@ void DirectionLight::ImGuiWidget()
 		lightData_->direction = SoLib::EulerToDirection(euler_).Nomalize();
 	}
 	ImGui::DragFloat("Brightness ", &lightData_->intensity, 0.01f, 0, 1);
-	const static std::array<std::string, 3u>lightPattern{ "kNone", "kLambert","kHalfLambert" };
-	if (ImGui::BeginCombo("LightingPattren", lightPattern[lightData_->pattern].c_str())) {
+	const static std::array<const char *const, 3u>lightPattern{ "kNone", "kLambert","kHalfLambert" };
+	if (ImGui::BeginCombo("LightingPattren", lightPattern[lightData_->pattern])) {
 
 		for (uint32_t i = 0; i < lightPattern.size(); i++) {
-			if (ImGui::Selectable(lightPattern[i].c_str())) {
+			if (ImGui::Selectable(lightPattern[i])) {
 				lightData_->pattern = i;
 				break;
 			}

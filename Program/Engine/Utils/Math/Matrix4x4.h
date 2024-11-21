@@ -227,7 +227,7 @@ inline Matrix4x4 Matrix4x4::Crop() const
 	Matrix4x4 result = Matrix4x4::Identity();
 
 	for (uint32_t y = 0; y < row; ++y) {
-		std::memcpy(result.m[y].data(), m[y].data(), column);
+		std::memcpy(result.m[y].data(), m[y].data(), sizeof(float) * column);
 	}
 
 	return result;

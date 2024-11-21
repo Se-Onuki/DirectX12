@@ -28,7 +28,6 @@
 #include "../../Engine/DirectBase/Model/BoneModel.h"
 #include "../../Header/Collision/Collision.h"
 #include "../../Engine/LevelEditor/LevelData.h"
-#include "../Entity/Entity.hpp"
 #include "../../Engine/DirectBase/Model/SkeletonAnimation/ModelAnimation.h"
 #include "../../Engine/DirectBase/SkinAnimation/SkinAnimation.h"
 
@@ -339,6 +338,14 @@ namespace ECS {
 	/// @brief レベルデータから構築されたという証明書
 	struct CreateByLevelData : IComponent {
 		SolEngine::ResourceHandle<SolEngine::LevelData> handle_;
+	};
+
+	struct AttackCircle : IComponent {
+
+	};
+
+	struct EffectPlayer : IComponent {
+
 	};
 
 	struct InputFlagComp : IComponent {};
