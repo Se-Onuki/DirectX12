@@ -21,16 +21,25 @@ int32_t main(int32_t argc, char *argv[]) {
 
 	// 引数のリスト
 	const std::span<char *> args{ argv, static_cast<size_t>(argc) };
-	// もし範囲外ならエラーを吐く
-	assert(args.size() >= static_cast<size_t>(Argument::kNUM) and "引数が一致しません｡");
+	if (args.size() < static_cast<size_t>(Argument::kNUM)) {
+		SoLib::TextureConverter::OutputUsage();
+		return 0;
+	}
+
+	std::span<char *> commandArgs{};
+
+	// もし引数があったら
+	if (args.size() > static_cast<size_t>(Argument::kNUM)) {
+		commandArgs = std::span<char *>{ argv + static_cast<size_t>(Argument::kNUM), argc - static_cast<size_t>(Argument::kNUM) };
+	}
 
 	// テクスチャの変換クラス
 	SoLib::TextureConverter textureConverter{};
 
 	// テクスチャへのファイルパスを変換関数に渡す
-	textureConverter.ConvertTextureWIC2DDS(args[static_cast<uint32_t>(Argument::kFilePath)]);
+	textureConverter.ConvertTextureWIC2DDS(args[static_cast<uint32_t>(Argument::kFilePath)], commandArgs);
 
-	std::system("pause");
+	// std::system("pause");
 
 	// 終了処理
 	CoUninitialize();

@@ -1,11 +1,21 @@
 #pragma once
 #include "DirectXTex/DirectXTex.h"
 #include <string>
+#include <span>
 
 namespace SoLib {
 
 	class TextureConverter {
 	public:
+
+		// コマンドを解釈する
+		struct CommandLoader {
+			// ミップレベル
+			size_t mipLevel_ = 0u;
+
+			CommandLoader() = default;
+			CommandLoader(const std::span<char *> options);
+		};
 
 		struct TextureFileName {
 			// ディレクトリパス
@@ -29,16 +39,19 @@ namespace SoLib {
 		};
 		TextureConverter() = default;
 
+		/// @brief 使用方法の出力
+		static void OutputUsage();
+
 		/// @brief テクスチャをWICからDDSに変換する
 		/// @param file_path ファイルパス
-		void ConvertTextureWIC2DDS(const char *const file_path);
+		void ConvertTextureWIC2DDS(const std::string_view &file_path, std::span<char *> options);
 
 
 	private:
 
 		/// @brief テクスチャのロード
-		/// @param file_path 
-		void LoadWICTexture(const char *const file_path);
+		/// @param file_path ファイルパス
+		void LoadWICTexture(const std::string_view &file_path);
 
 		/// @brief DDSファイルへ変換して保存する
 		void SaveDDSTexture();
@@ -50,6 +63,9 @@ namespace SoLib {
 
 		// テクスチャファイルの名前
 		TextureFileName textureFileName_;
+
+		// コマンドのデータ
+		CommandLoader command_;
 
 		// 画像データ
 		DirectX::TexMetadata metaData_;

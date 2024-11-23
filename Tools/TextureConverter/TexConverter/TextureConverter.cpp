@@ -1,21 +1,32 @@
 #include "TextureConverter.h"
-
+#include <iostream>
 #include <algorithm>
 #include <cassert>
 #include "../StringConverter/StringConverter.h"
 
 namespace SoLib {
-	void TextureConverter::ConvertTextureWIC2DDS(const char *const file_path)
+	void TextureConverter::OutputUsage()
+	{
+		std::cout << "画像ファイルをWIC形式からDDS形式に変換します｡\n" << std::endl;
+		std::cout << "TextureConverter [ドライブ:][パス][ファイル名][-m level]\n" << std::endl;
+		std::cout << "[ドライブ:][パス][ファイル名]: 変換したいWIC形式の画像ファイルを指定します｡" << std::endl;
+		std::cout << "[-ml level]: ミップレベルを指定します｡初期値は0で､1pxまでの全てのミップマップを生成します｡" << std::endl;
+	}
+
+	void TextureConverter::ConvertTextureWIC2DDS(const std::string_view &file_path, std::span<char *> options)
 	{
 		// テクスチャファイルを読み込む
 		LoadWICTexture(file_path);
+
+		// コマンドを解釈する
+		command_ = CommandLoader(options);
 
 		// DDS形式に変換して書き出す
 		SaveDDSTexture();
 
 	}
 
-	void TextureConverter::LoadWICTexture(const char *const file_path)
+	void TextureConverter::LoadWICTexture(const std::string_view &file_path)
 	{
 		HRESULT hr = S_FALSE;
 
@@ -36,12 +47,32 @@ namespace SoLib {
 	{
 		HRESULT hr = S_FALSE;
 
+		// ミップマップの保存先
+		DirectX::ScratchImage mipChain;
+
+		// ミップマップの生成
+		hr = DirectX::GenerateMipMaps(scratchImage_.GetImages(), scratchImage_.GetImageCount(), scratchImage_.GetMetadata(), DirectX::TEX_FILTER_FLAGS::TEX_FILTER_DEFAULT, command_.mipLevel_, mipChain);
+
+		// 生成に成功したら
+		if (SUCCEEDED(hr)) {
+			// イメージとメタデータをミップマップ版で置き換える
+			scratchImage_ = std::move(mipChain);
+			metaData_ = scratchImage_.GetMetadata();
+		}
+
+		// 圧縮形式に変換
+		DirectX::ScratchImage converted;
+		hr = DirectX::Compress(scratchImage_.GetImages(), scratchImage_.GetImageCount(), metaData_, DXGI_FORMAT_BC7_UNORM_SRGB,
+			DirectX::TEX_COMPRESS_FLAGS::TEX_COMPRESS_BC7_QUICK | DirectX::TEX_COMPRESS_FLAGS::TEX_COMPRESS_SRGB_OUT | DirectX::TEX_COMPRESS_FLAGS::TEX_COMPRESS_PARALLEL,
+			1.f, converted);
+
 		// 読み込んだデータをSRGBとして扱う
 		metaData_.format = DirectX::MakeSRGB(metaData_.format);
 		// 出力ファイルを設定する
 		const std::wstring file_path = textureFileName_.GetFilePath(L".dds");
 		// DDSファイルを書き出し
 		hr = DirectX::SaveToDDSFile(scratchImage_.GetImages(), scratchImage_.GetImageCount(), metaData_, DirectX::DDS_FLAGS::DDS_FLAGS_NONE, file_path.c_str());
+		assert(SUCCEEDED(hr) and "DDSファイルへの変換に失敗しました｡");
 
 	}
 
@@ -85,5 +116,19 @@ namespace SoLib {
 		}
 
 		return result;
+	}
+
+	TextureConverter::CommandLoader::CommandLoader(const std::span<char *> options)
+	{
+		for (auto itr = options.begin(); itr != options.end();) {
+			const std::string_view option{ *itr };
+
+			if (option == "-ml") {
+				mipLevel_ = std::stoull(*++itr);
+				continue;
+			}
+
+			itr++;
+		}
 	}
 }
