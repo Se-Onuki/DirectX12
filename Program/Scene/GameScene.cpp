@@ -144,7 +144,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
 	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
-	*playerPrefab_ += ECS::AttackStatus{ };
+	*playerPrefab_ += ECS::AttackStatus{ .radius_ = 10.f };
 	*playerPrefab_ += ECS::AttackPower{ .power_ = 40 };
 	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
 	*playerPrefab_ += ECS::Experience{};
@@ -219,6 +219,15 @@ void GameScene::OnEnter() {
 
 	expRender_.Init(2048u);
 	expRender_.SetModelData(orbModel);
+
+	auto attackAssimp = assimpManager->Load({ "","Attack.obj" });
+	auto attackModel = modelDataManager->Load({ attackAssimp });
+	auto &attackMesh = attackModel->meshHandleList_.front();
+	attackMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
+	static_cast<Matrix4x4 &>(attackModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 2.f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
+
+	attackRender_.Init(256u);
+	attackRender_.SetModelData(attackModel);
 
 	levelUI_ = Sprite::Create();
 	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
@@ -369,7 +378,6 @@ void GameScene::OnExit() {
 	audio_->StopAllWave();
 	fullScreen_->Finalize();
 
-
 	ECS::System::Par::WeaponCollision::attackCollisions_.reset();
 }
 
@@ -393,6 +401,7 @@ void GameScene::Update() {
 	ghostRenderer_.Clear();
 	shadowRenderer_.Clear();
 	expRender_.Clear();
+	attackRender_.Clear();
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -431,25 +440,26 @@ void GameScene::Update() {
 
 	Archetype playerArchetype;
 	playerArchetype.AddClassData<ECS::PlayerTag>();
+	{
+		// プレイヤのView
+		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
 
-	// プレイヤのView
-	auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+		// プレイヤのViewの長さが0である場合は死んでいる
+		bool playerIsDead = playerChunks.Count() == 0u;
 
-	// プレイヤのViewの長さが0である場合は死んでいる
-	bool playerIsDead = playerChunks.Count() == 0u;
+		// 死んでいた場合は
+		if (playerIsDead) {
+			// スポーンタイマーが止まっていたら
+			if (not playerSpawn_.IsActive()) {
+				// 再度実行
+				playerSpawn_.Start();
+			}
 
-	// 死んでいた場合は
-	if (playerIsDead) {
-		// スポーンタイマーが止まっていたら
-		if (not playerSpawn_.IsActive()) {
-			// 再度実行
-			playerSpawn_.Start();
-		}
-
-		// 終わっていたら
-		if (playerSpawn_.IsFinish()) {
-			// スポナーに追加
-			spawner_.AddSpawner(playerPrefab_.get());
+			// 終わっていたら
+			if (playerSpawn_.IsFinish()) {
+				// スポナーに追加
+				spawner_.AddSpawner(playerPrefab_.get());
+			}
 		}
 	}
 	// 経験値の追加
@@ -463,7 +473,7 @@ void GameScene::Update() {
 		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
 		// 経験値のアーキタイプ
 		Archetype expArch;
-		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp>();
+		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
 		// 経験値オーブの生成
 		newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
 		auto expChunks = newWorld_.GetAccessableChunk(expArch);
@@ -527,6 +537,42 @@ void GameScene::Update() {
 
 	// もし生存フラグが折れていたら、配列から削除
 	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item->isAlive_; });
+
+	{
+		// プレイヤのView
+		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+		if (playerChunks.Count()) {
+			const auto &playerPos = playerChunks.GetRange<ECS::PositionComp>().At(0);
+			auto &playerExp = playerChunks.GetRange<ECS::Experience>().At(0);
+
+			// 経験値のアーキタイプ
+			Archetype expArch;
+			expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
+			auto expChunks = newWorld_.GetAccessableChunk(expArch);
+
+			const uint32_t size = expChunks.Count();
+
+			auto expPosRange = expChunks.GetRange<ECS::PositionComp>();
+			auto expAliveRange = expChunks.GetRange<ECS::IsAlive>();
+
+			for (uint32_t i = 0; i < size; i++) {
+
+				auto &isAlive = expAliveRange.At(i);
+				// 生きてたら
+				if (isAlive.isAlive_) {
+					Vector3 pos = expPosRange.At(i).position_;
+					pos.y = 0.f;
+
+					// 三マス以下なら吸収する
+					if ((playerPos.position_ - pos).LengthSQ() <= 9.f) {
+						playerExp.exp_++;
+						isAlive.isAlive_ = false;
+					}
+				}
+			}
+		}
+
+	}
 	// 描画のカウントのリセット
 	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = 0u;
 	// ECSの処理の更新
@@ -549,18 +595,45 @@ void GameScene::Update() {
 		}
 	);
 
-	// 経験値の描画
-	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500FF, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
-	data.transform.World = Matrix4x4::Identity();
-	data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
-		}
-	);
+	// 攻撃範囲の描画
+	{
 
-	// 経験値のアーキタイプ
-	Archetype expArch;
-	expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp>();
-	auto expChunks = newWorld_.GetAccessableChunk(expArch);
-	auto expRanges = expChunks.GetRange<ECS::PositionComp>();
+		Archetype archetype;
+		archetype.AddClassData<ECS::AttackCircle>();
+		// チャンクの取得
+		auto ghostChanks = newWorld_.GetAccessableChunk(archetype);
+		// オブジェクトの総数
+		uint32_t totalCount = 0u;
+
+		// チャンクと同じ数のデータを確保する
+		std::vector<uint32_t> ghostOffset(ghostChanks.size());
+		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+			ghostOffset[i] = totalCount;
+			totalCount += ghostChanks[i]->size();
+		}
+		// もし空なら終わる
+		if (totalCount == 0) {
+			return;
+		}
+
+		// 書き込み先の確保
+		auto span = attackRender_.Reservation(totalCount);
+		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+			// チャンクからデータの取得
+			auto posRange = ghostChanks[i]->GetComponent<ECS::SphereCollisionComp>();
+			auto aliveRange = ghostChanks[i]->GetComponent<ECS::AliveTime>();
+			// 転送する
+			std::transform(posRange.begin(), posRange.end(), aliveRange.begin(), &span[ghostOffset[i]], [](const ECS::SphereCollisionComp &trans, const ECS::AliveTime &alive) {
+
+				Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * SoLib::easeOutExpo(alive.aliveTime_ / 0.5f))) };
+				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * SoLib::easeInOutBack(alive.aliveTime_ / 0.5f)) * trans.collision_.radius;
+				result.transform.World.GetTranslate() = trans.collision_.centor;
+				result.transform.World.m[3][3] = 1.f;
+				return result;
+				});
+		}
+	}
+
 
 	{
 		// 入力処理
@@ -655,6 +728,7 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	shadowRenderer_.DrawExecute(camera);
+	attackRender_.DrawExecute(camera);
 	expRender_.DrawExecute(camera);
 
 	Model::EndDraw();

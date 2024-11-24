@@ -47,7 +47,7 @@ namespace ECS {
 				void Execute(const World *const, const float);
 
 			};
-			
+
 			class CalcInvincibleTime :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::InvincibleTime> readWrite_;
@@ -133,6 +133,22 @@ namespace ECS {
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);
+			};
+
+			class LevelUp :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::Experience> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+				struct ExpList {
+					ECS::ChunkTRange<ECS::PositionComp, true> pos_;
+					ECS::ChunkTRange<ECS::IsAlive, true> isAlive_;
+					uint32_t size_ = 0;
+
+				};
+				inline static std::unique_ptr<ExpList> expList_ = nullptr;
+
+				void Execute(const World *const, const float);
+				static void ExecuteOnce(const World *const, const float);
 			};
 
 			class FallCollision :public IJobEntity {

@@ -323,7 +323,7 @@ namespace ECS {
 	};
 
 	struct AttackStatus : IComponent {
-		float offset_ = 4.5f;
+		float offset_ = 0.f;
 		float radius_ = 4.5f;
 	};
 	struct Parent : IComponent {

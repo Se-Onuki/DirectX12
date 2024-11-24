@@ -80,6 +80,7 @@ private:
 	SolEngine::ModelInstancingRender shadowRenderer_;
 
 	SolEngine::ModelInstancingRender expRender_;
+	SolEngine::ModelInstancingRender attackRender_;
 
 	// スポナークラス
 	ECS::Spawner spawner_;
@@ -104,7 +105,7 @@ private:
 
 	Audio::SoundHandle soundA_;
 
-	SoLib::DeltaTimer spawnTimer_{ 5.f };
+	SoLib::DeltaTimer spawnTimer_{ 2.5f };
 
 	GameObject gameObject_;
 

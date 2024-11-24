@@ -34,9 +34,13 @@ namespace SolEngine {
 
 		template<typename T>
 		void AddMatData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, void(*afterFunc)(InstanceType &) = nullptr);
-		
+
 		template<typename T>
 		void AddTransData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
+
+		template<typename ...Ts>
+			requires(sizeof...(Ts) > 0)
+		void AddData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
 
 		void AddMatData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, void(*afterFunc)(InstanceType &) = nullptr);
 		void AddTransData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);

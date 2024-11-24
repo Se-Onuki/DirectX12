@@ -167,6 +167,24 @@ namespace ECS::System::Par {
 			}
 		}
 	}
+
+	void LevelUp::Execute(const World *const, const float)
+	{
+	}
+
+	void LevelUp::ExecuteOnce(const World *const world, const float)
+	{
+		Archetype archetype;
+		archetype.AddClassData<ECS::SphereCollisionComp, ECS::KnockBackDirection, ECS::AttackPower>();
+		const auto &chunks = world->GetAccessableChunk(archetype);
+		expList_ = std::make_unique<ExpList>();
+		expList_->size_ = chunks.Count();
+		if (expList_->size_) {
+			expList_->pos_ = std::move(chunks.GetRange<ECS::PositionComp>());
+			expList_->isAlive_ = std::move(chunks.GetRange<ECS::IsAlive>());
+		}
+	}
+
 	const Ground *FallCollision::ground_ = nullptr;
 	void FallCollision::Execute(const World *const, const float)
 	{
@@ -209,6 +227,7 @@ namespace ECS::System::Par {
 				if (knockBack.diff_ == Vector2::zero) {
 					// 相対座標で押し出す
 					pos.position_ += (pos.position_ - attackColl.collision_.centor) * knockBack.diffPower_.Random();
+					pos.position_.y = 0.f;
 				}
 				invincible.timer_.Start(0.5f);
 				break;
