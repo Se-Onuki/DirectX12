@@ -48,6 +48,13 @@ namespace ECS::System::Par {
 		coolTime.cooltime_.Update(deltaTime);
 	}
 
+	void CalcInvincibleTime::Execute(const World *const, const float deltaTime)
+	{
+		auto &[invincible] = readWrite_;
+		// 生存時間を加算
+		invincible.timer_.Update(deltaTime);
+	}
+
 	void AnimateUpdate::Execute(const World *const, const float deltaTime)
 	{
 		auto &[state] = readWrite_;
@@ -178,44 +185,51 @@ namespace ECS::System::Par {
 
 	}
 
-	void WeaponCollision::Execute(const World *const world, const float)
+	void WeaponCollision::Execute(const World *const, const float)
 	{
-		std::list<
-			std::tuple<
-			const ECS::AttackCollisionComp *,
-			const ECS::AttackPower *
-			>
-		> weaponList{};
-
-		Archetype archetype;
-		archetype.AddClassData<ECS::AttackCollisionComp, ECS::AttackPower>();
-		for (auto *const chunk : world->GetAccessableChunk(archetype)) {
-			auto collRange = chunk->GetComponent<ECS::AttackCollisionComp>();
-			auto damageRange = chunk->GetComponent<ECS::AttackPower>();
-			for (uint32_t i = 0; i < collRange.size(); i++) {
-
-				// 有効なら保存する
-				if (collRange[i].isActive_) {
-					weaponList.push_back({ &collRange[i], &damageRange[i] });
-				}
-			}
-
+		auto &[enemy, pos, collision, health, invincible] = readWrite_;
+		// 無敵時間なら終わり
+		if (invincible.timer_.IsActive()) {
+			return;
 		}
-
-		auto &[enemy, pos, collision, health] = readWrite_;
 
 		Sphere sphere = collision.collision_;
 		sphere.centor += pos;
+		for (uint32_t i = 0; i < attackCollisions_->size_; i++) {
+			const auto &attackColl = attackCollisions_->sphere_.At(i);
 
-		for (const auto &[weapon, damage] : weaponList) {
 			// 攻撃判定が当たってたら検知
-			if (Collision::IsHit(sphere, weapon->collision_)) {
+			if (Collision::IsHit(sphere, attackColl.collision_)) {
 				// 体力を減らす
-				health.nowHealth_ -= damage->power_;
+				health.nowHealth_ -= attackCollisions_->power_.At(i).power_;
+
+				// ノックバック
+				const auto &knockBack = attackCollisions_->knockBack_.At(i);
+				// ノックバックが指定されてなかったら
+				if (knockBack.diff_ == Vector2::zero) {
+					// 相対座標で押し出す
+					pos.position_ += (pos.position_ - attackColl.collision_.centor) * knockBack.diffPower_.Random();
+				}
+				invincible.timer_.Start(0.5f);
+				break;
 
 			}
 		}
 
+	}
+
+	void WeaponCollision::ExecuteOnce(const World *const world, const float)
+	{
+		Archetype archetype;
+		archetype.AddClassData<ECS::SphereCollisionComp, ECS::KnockBackDirection, ECS::AttackPower>();
+		const auto &chunks = world->GetAccessableChunk(archetype);
+		attackCollisions_ = std::make_unique<AttackCollisions>();
+		attackCollisions_->size_ = chunks.Count();
+		if (attackCollisions_->size_) {
+			attackCollisions_->sphere_ = std::move(chunks.GetRange<ECS::SphereCollisionComp>());
+			attackCollisions_->knockBack_ = std::move(chunks.GetRange<ECS::KnockBackDirection>());
+			attackCollisions_->power_ = std::move(chunks.GetRange<ECS::AttackPower>());
+		}
 	}
 
 	void PlayerMove::Execute(const World *const, const float deltaTime)
@@ -283,19 +297,19 @@ namespace ECS::System::Par {
 			// 再度開始
 			attCT.cooltime_.Start();
 
-			// 攻撃の座標を設定
-			attColl.collision_.centor = quateRot.quateRot_.GetFront() * attackSt.offset_ + pos;
-			// 攻撃の半径を設定
-			attColl.collision_.radius = attackSt.radius_;
+			//// 攻撃の座標を設定
+			//attColl.collision_.centor = quateRot.quateRot_.GetFront() * attackSt.offset_ + pos;
+			//// 攻撃の半径を設定
+			//attColl.collision_.radius = attackSt.radius_;
 
-			// 攻撃判定を有効化
+			//// 攻撃判定を有効化
 			attColl.isActive_ = true;
 
-			auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl.collision_.centor + Vector3{ .y = 0.1f });
-			particle->SetAliveTime(0.5f);
-			particle->transform_.rotate = SoLib::MakeQuaternion({ 90._deg,0,0 });
-			particle->transform_.scale = Vector3::one * (attColl.collision_.radius * 2.f);
-			particle->color_ = 0xFF5555FF;
+			//auto particle = particleManager->AddParticle<SimpleParticle>(attackModel_, attColl.collision_.centor + Vector3{ .y = 0.1f });
+			//particle->SetAliveTime(0.5f);
+			//particle->transform_.rotate = SoLib::MakeQuaternion({ 90._deg,0,0 });
+			//particle->transform_.scale = Vector3::one * (attColl.collision_.radius * 2.f);
+			//particle->color_ = 0xFF5555FF;
 
 			state.ChangeState(static_cast<uint32_t>(EntityState::PlayerState::kAttack));
 			modelAnimator.animatior_.SetAnimation(modelAnimator.animateList_[static_cast<uint32_t>(EntityState::PlayerState::kAttack)]);
@@ -308,8 +322,17 @@ namespace ECS::System::Par {
 			attColl.isActive_ = false;
 		}
 
-		// 攻撃タイミングをカーソルに代入
-		cursor.progress_ = attCT.cooltime_.GetProgress();
+		//// 攻撃タイミングをカーソルに代入
+		//cursor.progress_ = attCT.cooltime_.GetProgress();
+
+	}
+
+	void PlayerAreaAttack::Execute(const World *const, const float)
+	{
+		auto &[pos, quateRot, attackCircle] = readWrite_;
+		auto &[lifeLimit, aliveTime] = onlyRead_;
+
+
 
 	}
 
@@ -508,5 +531,4 @@ namespace ECS::System::Par {
 		//// 親の行列を乗算する
 		//transMat.transformMat_ *= parentTransMat->transformMat_;
 	}
-
 }

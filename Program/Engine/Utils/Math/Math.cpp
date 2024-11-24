@@ -45,7 +45,7 @@ float CrossProduct(Vector2 VectorA, Vector2 VectorB) {
 Vector2 operator <<(Vector2 &vec2, const Polar &Polar)
 {
 	return vec2 = {
-		(float)(cos(Polar.theta) * Polar.radius), (float)(sin(Polar.theta) * Polar.radius)
+		(float)(std::cos(Polar.theta_.Get()) * Polar.radius_), (float)(std::sin(Polar.theta_.Get()) * Polar.radius_)
 	};
 }
 
@@ -227,7 +227,7 @@ Matrix4x4 SoLib::Math::Affine(const Vector3 &scale, const Quaternion &quaternion
 
 	result = quaternion.MakeRotateMatrix();
 
-	std::span<Vector4, 4> matItr = std::span<Vector4,4u> { reinterpret_cast<Vector4 *>(result.data()),4u };
+	std::span<Vector4, 4> matItr = std::span<Vector4, 4u>{ reinterpret_cast<Vector4 *>(result.data()),4u };
 	for (uint8_t i = 0u; i < 3u; i++) {
 		matItr[i] *= scale.data()[i];
 	}

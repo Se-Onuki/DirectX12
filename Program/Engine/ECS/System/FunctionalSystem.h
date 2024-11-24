@@ -284,6 +284,7 @@ namespace ECS {
 			ECS::ComponentRegistry::ComponentFlag exclusions_;
 			std::span<const uint32_t> keys_;
 			void (*executor_)(IJobEntity *, const World *, float);
+			void (*preExecuter_)(const World *, float);
 			bool isSingleThreads_;
 		};
 
@@ -327,17 +328,32 @@ namespace ECS {
 			return false;
 		}
 	}
+	template <typename T>
+	concept HasExecuteOnce = requires {
+		{ T::ExecuteOnce(std::declval<const World *const>(), std::declval<float>()) } -> std::same_as<void>;
+	};
+	template <typename T>
+	constexpr bool IsHasExecuteOnce() {
+		if constexpr (HasExecuteOnce<T>) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	template<SoLib::IsBased<IJobEntity> T>
 	inline void SystemExecuter::AddSystem()
 	{
+		void (*preExecuter)(const World *, float) = nullptr;
 		Archetype archetype;
 		archetype.AddClassData(T::DataBase::kTarget_);
 		ECS::ComponentRegistry::ComponentFlag exclusions;
 		if constexpr (IsHasExclusion<T>()) { exclusions = T::Exclusions::ComponentList::GetArchetype().compFlag_; }
+		if constexpr (IsHasExecuteOnce<T>()) { preExecuter = &T::ExecuteOnce; }
 
 		// データの参照元と､実行データの構築関数を保存する
-		systems_.push_back({ archetype, exclusions, std::span<const uint32_t>{ T::DataBase::kTarget_.data(), T::DataBase::kTarget_.size() },[](IJobEntity *const iSystem, const World *const world, const float deltaTime) { static_cast<T *>(iSystem)->Execute(world, deltaTime); }, IsSingleThread<T>() });
+		systems_.push_back({ archetype, exclusions, std::span<const uint32_t>{ T::DataBase::kTarget_.data(), T::DataBase::kTarget_.size() },[](IJobEntity *const iSystem, const World *const world, const float deltaTime) { static_cast<T *>(iSystem)->Execute(world, deltaTime); }, preExecuter, IsSingleThread<T>() });
 	}
 
 }

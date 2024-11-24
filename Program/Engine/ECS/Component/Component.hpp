@@ -20,6 +20,7 @@
 #include "../../Engine/Utils/Math/Transform.h"
 #include "../../Engine/Utils/Math/Vector2.h"
 #include "../../Engine/Utils/Math/Vector3.h"
+#include "../../Engine/Utils/Math/Polar.h"
 #include <bitset>
 #include <string>
 #include <unordered_map>
@@ -81,9 +82,9 @@ namespace ECS {
 		SoLib::Color::RGB4 startColor_ = 0xFFFFFFFF;
 		SoLib::Color::RGB4 endColor_{};
 
-		ValueRange<float> spawnLifeLimit_{ };
+		ValuePair<float> spawnLifeLimit_{ };
 
-		ValueRange<float> spawnPower_{};
+		ValuePair<float> spawnPower_{};
 		SoLib::Math::Euler spawnRange_{};
 
 		// SoLib::ConstVector<uint32_t, 7u> color_;
@@ -326,7 +327,6 @@ namespace ECS {
 		float radius_ = 4.5f;
 	};
 	struct Parent : IComponent {
-		//ECS::EntityClass parent_;
 	};
 
 	struct Experience : IComponent {
@@ -342,6 +342,14 @@ namespace ECS {
 
 	struct AttackCircle : IComponent {
 
+	};
+	/// @brief 当たったら押し出す方向｡
+	struct KnockBackDirection : IComponent {
+		// 当たった対象がベクトルに対して押し出される方向｡範囲内乱数のローカルの弧度法｡
+		// もしZeroなら位置基準の相対方向
+		Vector2 diff_{};
+		// 押し出す強さ
+		ValuePair<float> diffPower_{};
 	};
 
 	struct EffectPlayer : IComponent {

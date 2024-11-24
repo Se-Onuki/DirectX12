@@ -37,10 +37,10 @@ namespace ECS {
 
 	public:
 
-		T &At(uint32_t index) /*requires(std::is_same_v<IsConst, false>)*/ {
+		T &At(uint32_t index) requires(IsConst == false) {
 
 			for (ComponentData::TRange<T, IsConst> &chunk : *this) {
-				if (index > chunk.size()) {
+				if (index >= chunk.size()) {
 					index -= chunk.size();
 					continue;
 				}
@@ -50,10 +50,10 @@ namespace ECS {
 			return this->front()[0];
 		}
 
-		/*const T &At(uint32_t index) const requires(std::is_same_v<IsConst, true>) {
+		const T &At(uint32_t index) const {
 
 			for (const ComponentData::TRange<T, IsConst> &chunk : *this) {
-				if (index > chunk.size()) {
+				if (index >= chunk.size()) {
 					index -= chunk.size();
 					continue;
 				}
@@ -61,8 +61,11 @@ namespace ECS {
 					return chunk[index];
 				}
 			}
-		}*/
+			assert(0 and "範囲外アクセス");
+			return this->front()[0];
+		}
 	};
+
 	template <bool IsConst = false>
 	class ChunkSet : public std::conditional_t<IsConst, std::vector<const Chunk *>, std::vector<Chunk *>> {
 	public:
@@ -126,9 +129,28 @@ namespace ECS {
 			for (const Chunk *chank : *this) {
 				// コンポーネントを取得して返す
 				for (const T &value : chank->GetComponent<T>()) {
-					*itr = value == data;
-					++itr;
-					if (value == data) { count++; }
+					if (*itr++ = value == data) { count++; }
+				}
+			}
+			return { std::move(flag), count };
+		}
+
+		/// @brief 一致した値の並びと数を返す
+		/// @tparam T 比較する型
+		/// @param data 比較する値
+		/// @return 一致しているかをtrueで返す
+		template<typename T, typename Pred>
+		std::pair<std::vector<bool>, size_t> CountIfFlag(const Pred &pred) const {
+			// ヒット数
+			size_t count = 0;
+			// 要素数の数だけのメモリを確保する
+			std::vector<bool> flag(Count());
+			auto itr = flag.begin();
+			// チャンクを走査
+			for (const Chunk *chank : *this) {
+				// コンポーネントを取得して返す
+				for (const T &value : chank->GetComponent<T>()) {
+					if (*itr++ = pred(value)) { count++; }
 				}
 			}
 			return { std::move(flag), count };

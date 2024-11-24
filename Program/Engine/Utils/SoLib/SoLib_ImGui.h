@@ -64,7 +64,7 @@ namespace SoLib {
 	inline bool ImGuiWidget(ITEM *const value) { return SoLib::ImGuiWidget(value->GetKey(), &value->GetItem()); }
 
 	template <typename T>
-	inline bool ImGuiWidget(const char *const label, ValueRange<T> *const value);
+	inline bool ImGuiWidget(const char *const label, ValuePair<T> *const value);
 
 	bool ImGuiDragEuler(const char *const label, float *value);
 
@@ -73,7 +73,7 @@ namespace SoLib {
 #pragma region inline関数の記述
 
 template<typename T>
-bool SoLib::ImGuiWidget(const char *const label, ValueRange<T> *const value) {
+bool SoLib::ImGuiWidget(const char *const label, ValuePair<T> *const value) {
 	bool isAction = false;
 
 #ifdef USE_IMGUI

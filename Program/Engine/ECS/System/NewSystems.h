@@ -5,6 +5,7 @@
 #include "../../Engine/DirectBase/Base/Audio.h"
 #include "../../Engine/DirectBase/Model/Model.h"
 #include "../../../Header/Object/PlayerLevel/LevelUP.h"
+#include "../World/NewWorld.h"
 
 namespace ECS {
 	namespace System {
@@ -41,6 +42,15 @@ namespace ECS {
 			class AddCoolTime :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::AttackCooltime> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
+
+			};
+			
+			class CalcInvincibleTime :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::InvincibleTime> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);
@@ -137,10 +147,19 @@ namespace ECS {
 
 			class WeaponCollision :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::HealthComp> readWrite_;
+				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::HealthComp, ECS::InvincibleTime> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
+				struct AttackCollisions {
+					ECS::ChunkTRange<ECS::SphereCollisionComp, true> sphere_;
+					ECS::ChunkTRange<ECS::KnockBackDirection, true> knockBack_;
+					ECS::ChunkTRange<ECS::AttackPower, true> power_;
+					uint32_t size_ = 0;
+
+				};
+				inline static std::unique_ptr<AttackCollisions> attackCollisions_ = nullptr;
 
 				void Execute(const World *const, const float);
+				static void ExecuteOnce(const World *const, const float);
 			};
 
 			class PlayerMove :public IJobEntity {
@@ -152,7 +171,7 @@ namespace ECS {
 			};
 
 
-			class PlayerAttack :public IJobEntity {
+			class PlayerAttack : public IJobEntity {
 			public:
 				ReadAndWrite<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp, ECS::CursorComp, ECS::ModelAnimator, ECS::EntityState, ECS::Experience> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
@@ -160,6 +179,17 @@ namespace ECS {
 				static Model *attackModel_;
 
 				void Execute(const World *const, const float);
+			};
+
+			class PlayerAreaAttack :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackCircle> readWrite_;
+				OnlyRead<ECS::LifeLimit, ECS::AliveTime> onlyRead_;
+				using DataBase = DataBase<decltype(readWrite_), decltype(onlyRead_)>;
+
+
+				void Execute(const World *const, const float);
+				void ExecuteOnce(const World *const, const float);
 			};
 
 			class ModelDrawer :public IJobEntity {

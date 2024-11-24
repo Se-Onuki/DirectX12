@@ -170,6 +170,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::GhostModel{};
 	*enemyPrefab_ += ECS::UnRender{};
 	*enemyPrefab_ += ECS::HasShadow{};
+	*enemyPrefab_ += ECS::InvincibleTime{};
 
 	//entityManager_->CreateEntity(*enemyPrefab_);
 	newWorld_.CreateEntity(*enemyPrefab_);
@@ -261,6 +262,7 @@ void GameScene::OnEnter() {
 	// 時間に関するもの
 	systemExecuter_.AddSystem<ECS::System::Par::AddAliveTime>();
 	systemExecuter_.AddSystem<ECS::System::Par::AddCoolTime>();
+	systemExecuter_.AddSystem<ECS::System::Par::CalcInvincibleTime>();
 	// アニメーションなど
 	systemExecuter_.AddSystem<ECS::System::Par::AnimateUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::ModelAnimatorUpdate>();
@@ -366,6 +368,9 @@ void GameScene::OnEnter() {
 void GameScene::OnExit() {
 	audio_->StopAllWave();
 	fullScreen_->Finalize();
+
+
+	ECS::System::Par::WeaponCollision::attackCollisions_.reset();
 }
 
 void GameScene::Update() {
@@ -447,16 +452,6 @@ void GameScene::Update() {
 			spawner_.AddSpawner(playerPrefab_.get());
 		}
 	}
-
-
-	// もし生存フラグが折れていたら、配列から削除
-	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item->isAlive_; });
-
-	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = 0u;
-
-	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
-
-	cameraManager_->Update(fixDeltaTime);
 	// 経験値の追加
 	{
 		// 敵のアーキタイプ
@@ -483,6 +478,61 @@ void GameScene::Update() {
 			}
 		}
 	}
+	// 攻撃の追加
+	{
+		// 攻撃のアーキタイプ
+		Archetype attackPlayerArch{};
+		attackPlayerArch.AddClassData<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp>();
+		// チャンクの取得
+		const auto attackPlayerChunks = newWorld_.GetAccessableChunk(attackPlayerArch);
+		// 攻撃中のプレイヤの数
+		auto attackCount = attackPlayerChunks.CountIfFlag<ECS::AttackCollisionComp>([](const ECS::AttackCollisionComp &flag) { return flag.isActive_; });
+		// 攻撃範囲のアーキタイプ
+		Archetype areaArch;
+		areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackCircle>();
+		// 攻撃範囲の生成
+		newWorld_.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second));
+		auto areaChanks = newWorld_.GetAccessableChunk(areaArch);
+
+		auto sphereRanges = areaChanks.GetRange<ECS::SphereCollisionComp>();
+		auto attackPowerRanges = areaChanks.GetRange<ECS::AttackPower>();
+		auto knockBackRanges = areaChanks.GetRange<ECS::KnockBackDirection>();
+		auto lifeRanges = areaChanks.GetRange<ECS::LifeLimit>();
+
+		uint32_t index = 0;
+		auto playerPosRanges = attackPlayerChunks.GetRange<ECS::PositionComp>();
+		auto playerRotRanges = attackPlayerChunks.GetRange<ECS::QuaternionRotComp>();
+		auto playerAttackRanges = attackPlayerChunks.GetRange<ECS::AttackStatus>();
+		auto playerPowerRanges = attackPlayerChunks.GetRange<ECS::AttackPower>();
+		uint32_t size = attackPlayerChunks.Count();
+		for (uint32_t i = 0; i < size; i++) {
+			if (attackCount.first.at(i)) {
+				const auto &attackStatus = playerAttackRanges.At(i);
+				auto &sphere = sphereRanges.At(index);
+				sphere.collision_.centor = playerPosRanges.At(i).position_ + attackStatus.offset_ * playerRotRanges.At(i).quateRot_.GetFront();
+				sphere.collision_.radius = attackStatus.radius_;
+				auto &knockBack = knockBackRanges.At(index);
+				// 吹き飛ばす力
+				knockBack.diffPower_ = { 0.5f,0.5f };
+				// 攻撃持続時間
+				lifeRanges.At(index).lifeLimit_ = 0.5f;
+				// 攻撃力
+				attackPowerRanges.At(index) = playerPowerRanges.At(i);
+
+				// 次に移動
+				++index;
+			}
+		}
+	}
+
+	// もし生存フラグが折れていたら、配列から削除
+	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item->isAlive_; });
+	// 描画のカウントのリセット
+	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = 0u;
+	// ECSの処理の更新
+	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
+	// カメラのアップデート
+	cameraManager_->Update(fixDeltaTime);
 
 	// 敵の描画
 	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_);
@@ -491,8 +541,15 @@ void GameScene::Update() {
 	data.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
 		}
 	);
-	// カメラの逆行列
-	//const Matrix4x4 billboardMat = Matrix4x4::AnyAngleRotate(Vector3::right, -Angle::Rad90) * cameraManager_->GetUseCamera()->matView_.GetRotate().Transpose();
+
+	// 経験値の描画
+	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500FF, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
+	data.transform.World = Matrix4x4::Identity();
+	data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
+		}
+	);
+
+	// 経験値の描画
 	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500FF, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
 	data.transform.World = Matrix4x4::Identity();
 	data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
@@ -504,8 +561,6 @@ void GameScene::Update() {
 	expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp>();
 	auto expChunks = newWorld_.GetAccessableChunk(expArch);
 	auto expRanges = expChunks.GetRange<ECS::PositionComp>();
-
-
 
 	{
 		// 入力処理

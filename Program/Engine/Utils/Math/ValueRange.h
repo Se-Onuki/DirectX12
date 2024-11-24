@@ -4,7 +4,7 @@
 #include "Vector2.h"
 
 template <typename T>
-struct ValueRange {
+struct ValuePair {
 	T min_ = 0.f;
 	T max_ = 0.f;
 	using baseType = T;
@@ -21,16 +21,16 @@ struct ValueRange {
 
 
 template <typename T>
-T ValueRange<T>::Clamp(T value) const {
+T ValuePair<T>::Clamp(T value) const {
 	return std::clamp<T>(value, min_, max_);
 }
 
 template <typename T>
 template <typename U>
-T ValueRange<T>::Random() const {
+T ValuePair<T>::Random() const {
 	return Random::GetRandom<U>(min_, max_);
 }
 template <typename T>
-T ValueRange<T>::Random() const {
-	return Random::GetRandom(min_, max_);
+T ValuePair<T>::Random() const {
+	return min_ >= max_ ? min_ : Random::GetRandom(min_, max_);
 }
