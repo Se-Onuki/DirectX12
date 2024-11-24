@@ -16,7 +16,9 @@ enum class Argument {
 int32_t main(int32_t argc, char *argv[]) {
 
 	// COMの初期化処理
-	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	HRESULT hr = S_FALSE;
+
+	hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr) and "初期化に失敗しました｡");
 
 	// 引数のリスト
@@ -38,8 +40,6 @@ int32_t main(int32_t argc, char *argv[]) {
 
 	// テクスチャへのファイルパスを変換関数に渡す
 	textureConverter.ConvertTextureWIC2DDS(args[static_cast<uint32_t>(Argument::kFilePath)], commandArgs);
-
-	// std::system("pause");
 
 	// 終了処理
 	CoUninitialize();

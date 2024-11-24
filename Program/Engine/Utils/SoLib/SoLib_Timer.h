@@ -9,7 +9,7 @@ namespace SoLib {
 
 
 	namespace Time {
-	
+
 		class DeltaTimer;
 	}
 	template<>
@@ -224,7 +224,7 @@ namespace SoLib {
 
 #else
 
-		label;
+		label; data;
 		return false;
 
 #endif // USE_IMGUI
