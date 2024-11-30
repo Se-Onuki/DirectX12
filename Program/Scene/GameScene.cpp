@@ -527,7 +527,7 @@ void GameScene::Update() {
 				// 吹き飛ばす力
 				knockBack.diffPower_ = { 0.5f,0.5f };
 				// 攻撃持続時間
-				lifeRanges.At(index).lifeLimit_ = 0.5f;
+				lifeRanges.At(index).lifeLimit_ = 0.25f;
 				// 攻撃力
 				attackPowerRanges.At(index) = playerPowerRanges.At(i);
 
@@ -627,8 +627,8 @@ void GameScene::Update() {
 			// 転送する
 			std::transform(posRange.begin(), posRange.end(), aliveRange.begin(), &span[ghostOffset[i]], [](const ECS::SphereCollisionComp &trans, const ECS::AliveTime &alive) {
 
-				Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * SoLib::easeOutExpo(alive.aliveTime_ / 0.5f))) };
-				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * SoLib::easeInOutBack(alive.aliveTime_ / 0.5f)) * trans.collision_.radius;
+				Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / 0.25f)))) };
+				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / 0.25f)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / 0.25f);
 				result.transform.World.GetTranslate() = trans.collision_.centor;
 				result.transform.World.m[3][3] = 1.f;
 				return result;
