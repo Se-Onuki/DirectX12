@@ -118,11 +118,11 @@ namespace ECS {
 
 		std::span<ComponentArray> GetCompArray() { return { components_.data(), components_.size() }; }
 
-		std::byte *operator[](uint32_t index) { const uint32_t groupSize = typeSize_ * itemCount_; return components_[index / groupSize][index % groupSize]; }
-		const std::byte *operator[](uint32_t index) const { const uint32_t groupSize = typeSize_ * itemCount_; return components_[index / groupSize][index % groupSize]; }
+		std::byte *operator[](uint32_t index) { return components_[index / itemCount_][index % itemCount_]; }
+		const std::byte *operator[](uint32_t index) const { return components_[index / itemCount_][index % itemCount_]; }
 
-		std::byte &at(uint32_t index) { const uint32_t groupSize = typeSize_ * itemCount_; return *components_[index / groupSize][index % groupSize]; }
-		const std::byte &at(uint32_t index) const { const uint32_t groupSize = typeSize_ * itemCount_; return *components_[index / groupSize][index % groupSize]; }
+		std::byte &at(uint32_t index) { return *components_[index / itemCount_][index % itemCount_]; }
+		const std::byte &at(uint32_t index) const { return *components_[index / itemCount_][index % itemCount_]; }
 
 		template<typename T>
 		T &at(uint32_t index) { return *std::bit_cast<T *>(&at(index)); }
@@ -143,6 +143,19 @@ namespace ECS {
 		TRange<T, true> View(uint32_t begin, uint32_t end) const { return TRange<T, true>{ this, begin, end }; }
 
 		uint32_t GetTypeSize() const { return typeSize_; }
+
+
+	public:
+
+		/// @brief 値を移動させる
+		/// @param flagArray フラグの配列
+		/// @param trueCount 生きてる数の配列
+		void MoveElement(const std::vector<bool> &flagArray, const std::vector<uint32_t> trueCount);
+
+		/// @brief 値を破棄する
+		/// @param flagArray フラグの配列
+		/// @param trueCount 生きてる数
+		void erase(const std::vector<bool> &flagArray, const size_t trueCount, const uint32_t count);
 
 
 	private:

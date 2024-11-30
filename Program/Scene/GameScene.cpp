@@ -462,32 +462,34 @@ void GameScene::Update() {
 			}
 		}
 	}
-	// 経験値の追加
-	{
-		// 敵のアーキタイプ
-		Archetype enemArch{};
-		enemArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
-		// チャンクの取得
-		auto enemyChunks = newWorld_.GetAccessableChunk(enemArch);
-		// 死亡している数
-		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
-		// 経験値のアーキタイプ
-		Archetype expArch;
-		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
-		// 経験値オーブの生成
-		newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
-		auto expChunks = newWorld_.GetAccessableChunk(expArch);
-		auto expRanges = expChunks.GetRange<ECS::PositionComp>();
 
-		uint32_t index = 0;
-		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
-		uint32_t size = enemyChunks.Count();
-		for (uint32_t i = 0; i < size; i++) {
-			if (deadCount.first.at(i)) {
-				expRanges.At(index++) = enemRange.At(i);
-			}
-		}
-	}
+	// 経験値の追加
+	//{
+	//	// 敵のアーキタイプ
+	//	Archetype enemArch{};
+	//	enemArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
+	//	// チャンクの取得
+	//	auto enemyChunks = newWorld_.GetAccessableChunk(enemArch);
+	//	// 死亡している数
+	//	auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
+	//	// 経験値のアーキタイプ
+	//	Archetype expArch;
+	//	expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
+	//	// 経験値オーブの生成
+	//	newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
+	//	auto expChunks = newWorld_.GetAccessableChunk(expArch);
+	//	auto expRanges = expChunks.GetRange<ECS::PositionComp>();
+	//
+	//	uint32_t index = 0;
+	//	auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
+	//	uint32_t size = enemyChunks.Count();
+	//	for (uint32_t i = 0; i < size; i++) {
+	//		if (deadCount.first.at(i)) {
+	//			expRanges.At(index++) = enemRange.At(i);
+	//		}
+	//	}
+	//}
+
 	// 攻撃の追加
 	{
 		// 攻撃のアーキタイプ
@@ -536,7 +538,7 @@ void GameScene::Update() {
 	}
 
 	// もし生存フラグが折れていたら、配列から削除
-	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item->isAlive_; });
+	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item.isAlive_; });
 
 	{
 		// プレイヤのView

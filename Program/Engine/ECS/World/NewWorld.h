@@ -217,7 +217,7 @@ namespace ECS {
 		}
 
 		template<typename T, typename Predicate>
-		void erase_if(Predicate pred);
+		void erase_if(const Predicate &pred);
 
 		uint32_t size() {
 			uint32_t result = 0;
@@ -234,14 +234,14 @@ namespace ECS {
 	};
 
 	template<typename T, typename Predicate>
-	inline void World::erase_if(Predicate pred)
+	inline void World::erase_if(const Predicate &pred)
 	{
 		Archetype archetype;
 		archetype.AddClassData<T>();
 		auto chunkList = GetAccessableChunk(archetype);
 		std::for_each(chunkList.begin(), chunkList.end(), [pred](Chunk *chunk)
 			{
-				std::erase_if(chunk->View<T>(), pred);
+				chunk->erase_if<T>(pred);
 			}
 		);
 

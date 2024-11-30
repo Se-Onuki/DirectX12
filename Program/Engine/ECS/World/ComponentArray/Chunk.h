@@ -62,6 +62,19 @@ namespace ECS {
 		uint32_t emplace_back();
 		std::pair<uint32_t, uint32_t> emplace_back(const uint32_t count);
 
+
+		template<typename T, typename Predicate>
+		void erase_if(const Predicate &pred);
+
+
+
+		/// @brief 一致した値の並びと数を返す
+		/// @tparam T 比較する型
+		/// @param data 比較する値
+		/// @return 一致しているかをtrueで返す
+		template<typename T, typename Predicate>
+		std::pair<std::vector<bool>, size_t> CountIfFlag(const Predicate &pred) const;
+
 	public:
 
 		/// @brief コンポーネントの取得
@@ -183,6 +196,46 @@ namespace ECS {
 		);
 
 		return result;
+	}
+
+	template<typename T, typename Predicate>
+	inline void Chunk::erase_if(const Predicate &pred)
+	{
+		// もし何も持ってなかったら終わる｡
+		if (not this->size()) { return; }
+		const auto &[
+			flag,	// 関数に対する正負値
+				count	// 一致した数
+		] = this->CountIfFlag<T>(pred);
+
+		// それぞれのコンポーネントで操作を行う
+		for (auto &[key, compArray] : this->componentDatas_) {
+			// エンティティの生存数に応じて並べ替える
+			compArray.erase(flag, count, size_);
+		}
+		// エンティティの並べ替えをする
+		storage_.erase(flag, count, size_);
+
+		size_ -= static_cast<uint32_t>(count);
+
+	}
+
+	template<typename T, typename Predicate>
+	inline std::pair<std::vector<bool>, size_t> Chunk::CountIfFlag(const Predicate &pred) const
+	{
+		// ヒット数
+		size_t count = 0;
+		// 要素数の数だけのメモリを確保する
+		std::vector<bool> flag(size());
+		auto itr = flag.begin();
+		// チャンク内部を走査
+			// コンポーネントを取得して返す
+		for (const T &value : this->GetComponent<T>()) {
+			// 条件に一致したらtrueを代入し､カウントを追加する
+			if (*itr++ = pred(value)) { count++; }
+		}
+		return { std::move(flag), count };
+
 	}
 
 	inline uint32_t Chunk::emplace_back()

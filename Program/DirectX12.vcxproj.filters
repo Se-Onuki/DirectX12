@@ -525,6 +525,12 @@
     <ClCompile Include="Engine\ResourceManager\ResourceLoader.cpp">
       <Filter>Engine\ResourceManager</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentData.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentArray.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">

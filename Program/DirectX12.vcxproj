@@ -166,6 +166,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\ECS\World\ComponentArray\Chunk.cpp" />
     <ClCompile Include="Engine\ECS\World\ComponentArray\ChunkIterator.cpp" />
     <ClCompile Include="Engine\ECS\World\ComponentArray\ChunkRange.cpp" />
+    <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentArray.cpp" />
+    <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentData.cpp" />
     <ClCompile Include="Engine\ECS\World\ComponentArray\EntityArrayStorage.cpp" />
     <ClCompile Include="Engine\ECS\World\NewWorld.cpp" />
     <ClCompile Include="Engine\DirectBase\2D\Sprite.cpp" />

@@ -108,6 +108,11 @@ namespace ECS {
 		/// @param count 追加数
 		std::span<EntityStorage> AddGroup(uint32_t count = 1u);
 
+		/// @brief 値を破棄する
+		/// @param flagArray フラグの配列
+		/// @param trueCount 生きてる数
+		void erase(const std::vector<bool> &flagArray, const size_t trueCount, const uint32_t count);
+
 	public:
 
 		uint32_t size() const { return static_cast<uint32_t>(entityStorage_.size()); }

@@ -44,6 +44,25 @@ std::span<ECS::EntityArrayStorage::EntityStorage> ECS::EntityArrayStorage::AddGr
 
 }
 
+void ECS::EntityArrayStorage::erase(const std::vector<bool> &flagArray, const size_t trueCount, const uint32_t count)
+{
+	// もし死んだ要素数がゼロなら終わり
+	if (not trueCount) { return; }
+
+	// 生きている要素数
+	const uint32_t aliveCount = count - static_cast<uint32_t>(trueCount);
+
+	// 先頭から､書き込み可能の場所を探す
+	for (uint32_t i = 0; i < aliveCount; i++) {
+		// もし､フラグが折れていたら次へ
+		if (not flagArray[i]) { continue; }
+		// 逆に､書き込み可能なら
+
+		// 上書きしたというフラグを立てる
+		GetEntity(i).version_++;
+	}
+}
+
 std::byte &ECS::GetComp(Chunk *chunk, uint32_t compId, uint32_t index)
 {
 	return chunk->componentDatas_.at(compId).at(index);
