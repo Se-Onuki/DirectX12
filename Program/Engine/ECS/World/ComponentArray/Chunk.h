@@ -208,6 +208,9 @@ namespace ECS {
 				count	// 一致した数
 		] = this->CountIfFlag<T>(pred);
 
+		// もし何も一致しなかったら終わり
+		if (not count) { return; }
+
 		// それぞれのコンポーネントで操作を行う
 		for (auto &[key, compArray] : this->componentDatas_) {
 			// エンティティの生存数に応じて並べ替える
@@ -216,6 +219,7 @@ namespace ECS {
 		// エンティティの並べ替えをする
 		storage_.erase(flag, count, size_);
 
+		// 死んだ数で除算
 		size_ -= static_cast<uint32_t>(count);
 
 	}
