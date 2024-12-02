@@ -22,17 +22,24 @@ namespace ECS {
 		componentDatas_.reserve(archetype_.compFlag_.Get().count());
 
 		// エンティティストレージの確保
-		storage_ = EntityArrayStorage{ this, archetype_.GetChunkCapacity() };
+		storage_ = std::make_unique<EntityArrayStorage>(this, archetype_.GetChunkCapacity());
 		// エンティティの数
 		const uint32_t entCount = archetype_.GetChunkCapacity();
 
+		uint32_t componentOffset = 0u;
 		// アーキタイプに保存された型からメモリ配置を行う
 		for (const uint32_t i : compIndexList) {
 			// 型の情報を取得する
 			const auto &typeData = registry->typeDatas_[i];
 
+			assert(componentOffset < Archetype::kOneChunkCapacity and "範囲外に出ています");
+
 			// 型から情報を取得して､ポインタを保存する
-			componentDatas_[i] = ComponentData{ typeData.typeSize_, entCount };
+			componentDatas_[i] = ComponentData{ storage_.get(), componentOffset, typeData.typeSize_, entCount };
+
+			// 型のサイズ分加算する
+			componentOffset += typeData.typeSize_ * entCount;
+
 		}
 
 		AddGroups();
@@ -42,37 +49,7 @@ namespace ECS {
 	void Chunk::AddGroups(const uint32_t count)
 	{
 		// エンティティストレージの確保
-		const auto groups = storage_.AddGroup(count);
-
-		// アーキタイプに保存された型の一覧
-		const auto &compIndexList = archetype_.compFlag_.GetIndexList();
-		const ECS::ComponentRegistry *registry = ECS::ComponentRegistry::GetInstance();
-
-		// エンティティの数
-		const uint32_t entCount = archetype_.GetChunkCapacity();
-
-		uint32_t componentOffset = 0u;
-
-		// アーキタイプに保存された型からメモリ配置を行う
-		for (const uint32_t compId : compIndexList) {
-			// 型の情報を取得する
-			const auto &typeData = registry->typeDatas_[compId];
-			// 型から情報を取得して､ポインタを保存する
-			auto &compData = componentDatas_[compId];
-
-			// 指定された数だけ構築する
-			for (uint32_t i = 0; i < count; i++) {
-
-				// 始点のメモリ
-				std::byte *memTarget = groups[i].second->data();
-
-				// 配列の追加
-				compData.AddArray(memTarget + componentOffset);
-			}
-			// 型のサイズ分加算する
-			componentOffset += typeData.typeSize_ * entCount;
-
-		}
+		/*const auto groups = */storage_->AddGroup(count);
 
 	}
 

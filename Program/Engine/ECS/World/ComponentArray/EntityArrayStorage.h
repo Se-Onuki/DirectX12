@@ -81,6 +81,12 @@ namespace ECS {
 
 	};
 
+	class alignas(32) EntityComponentMemory : public std::array<std::byte, Archetype::kOneChunkCapacity> {
+	public:
+		EntityComponentMemory() = default;
+		~EntityComponentMemory() = default;
+	};
+
 	class EntityArrayStorage
 	{
 	public:
@@ -94,13 +100,13 @@ namespace ECS {
 	public:
 
 		// エンティティとそれのデータのペア
-		using EntityStorage = std::pair<std::unique_ptr<EntityClass[]>, std::unique_ptr<std::array<std::byte, Archetype::kOneChunkCapacity>>>;
+		using EntityStorage = std::pair<std::unique_ptr<EntityClass[]>, std::unique_ptr<EntityComponentMemory>>;
 
 		// エンティティとコンポーネント情報群へのアクセッサ
 		template<bool IsConst = false>
 		using EntityData = std::pair<
 			std::conditional_t<IsConst, std::span<const EntityClass>, std::span<EntityClass>>,
-			std::conditional_t<IsConst, const std::array<std::byte, Archetype::kOneChunkCapacity> &, std::array<std::byte, Archetype::kOneChunkCapacity> &>
+			std::conditional_t<IsConst, const EntityComponentMemory &, EntityComponentMemory &>
 		>;
 
 	public:
@@ -116,6 +122,10 @@ namespace ECS {
 	public:
 
 		uint32_t size() const { return static_cast<uint32_t>(entityStorage_.size()); }
+
+		/// @brief エンティティの情報の取得
+		/// @return エンティティとコンポーネントの情報の配列
+		std::vector<EntityStorage> &GetEntityStorage() { return entityStorage_; }
 
 		/// @brief エンティティの情報の取得
 		/// @return エンティティとコンポーネントの情報の配列

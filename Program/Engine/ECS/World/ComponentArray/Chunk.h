@@ -85,8 +85,8 @@ namespace ECS {
 		template<typename T>
 		T *GetComp(uint32_t index);
 
-		EntityClass &GetEntity(uint32_t index) { return storage_.GetEntity(index); }
-		const EntityClass &GetEntity(uint32_t index) const { return storage_.GetEntity(index); }
+		EntityClass &GetEntity(uint32_t index) { return storage_->GetEntity(index); }
+		const EntityClass &GetEntity(uint32_t index) const { return storage_->GetEntity(index); }
 
 	public:
 
@@ -98,7 +98,7 @@ namespace ECS {
 		Archetype archetype_;
 
 		// 情報の保存先
-		EntityArrayStorage storage_;
+		std::unique_ptr<EntityArrayStorage> storage_;
 
 		// コンポーネントへのアクセッサ
 		std::unordered_map<uint32_t, ComponentData> componentDatas_;
@@ -217,7 +217,7 @@ namespace ECS {
 			compArray.erase(flag, count, size_);
 		}
 		// エンティティの並べ替えをする
-		storage_.erase(flag, count, size_);
+		storage_->erase(flag, count, size_);
 
 		// 死んだ数で除算
 		size_ -= static_cast<uint32_t>(count);
@@ -248,7 +248,7 @@ namespace ECS {
 		const uint32_t entCount = archetype_.GetChunkCapacity();
 
 		// もし末尾まで到達していたら
-		if (entCount * storage_.size() <= size_) {
+		if (entCount * storage_->size() <= size_) {
 			// メモリを確保する
 			AddGroups();
 		}
@@ -262,7 +262,7 @@ namespace ECS {
 		}
 
 		// エンティティの取得
-		EntityClass &entity = storage_.GetEntity(size_);
+		EntityClass &entity = storage_->GetEntity(size_);
 		entity.totalIndex_ = size_;
 		entity.version_++;
 
@@ -275,7 +275,7 @@ namespace ECS {
 		const uint32_t entCount = archetype_.GetChunkCapacity();
 
 		// もし末尾まで到達していたら
-		if (entCount * storage_.size() < size_ + count) {
+		if (entCount * storage_->size() < size_ + count) {
 			// メモリを確保する
 			AddGroups();
 		}
@@ -290,13 +290,14 @@ namespace ECS {
 			auto constructor = compRegistry->typeDatas_[key].constructor_;
 
 			for (uint32_t i = 0; i < count; i++) {
-				constructor(comps[size_ + i]);
+				auto target = comps[size_ + i];
+				constructor(target);
 			}
 		}
 
 		for (uint32_t i = 0; i < count; i++) {
 			// エンティティの取得
-			EntityClass &entity = storage_.GetEntity(size_ + i);
+			EntityClass &entity = storage_->GetEntity(size_ + i);
 			entity.version_++;
 		}
 		size_ += count;

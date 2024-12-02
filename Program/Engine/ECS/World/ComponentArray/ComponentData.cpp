@@ -1,13 +1,22 @@
 #include "ComponentData.h"
+#include "EntityArrayStorage.h"
 
 namespace ECS {
-	//void ComponentData::MoveElement(const std::vector<bool> &flagArray, const std::vector<uint32_t> trueCount)
-	//{
-	//	for (size_t i = 0; i < components_.size(); i++) {
-	//		auto &compArray = components_[i];
-	//		compArray.MoveElement(flagArray.begin() + i* )
-	//	}
-	//}
+
+	std::span<std::byte> ComponentData::GetCompArray(uint32_t index)
+	{
+		return { entityStorage_->GetEntityStorage()[index].second->data() + offset_, itemCount_ * typeSize_ };
+	}
+
+	std::byte *ComponentData::operator[](uint32_t index)
+	{
+		return (entityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_) + (index % itemCount_) * typeSize_;
+	}
+
+	const std::byte *ComponentData::operator[](uint32_t index) const
+	{
+		return entityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_ + (index % itemCount_)* typeSize_;
+	}
 
 	void ComponentData::erase(const std::vector<bool> &flagArray, const size_t trueCount, const uint32_t count)
 	{

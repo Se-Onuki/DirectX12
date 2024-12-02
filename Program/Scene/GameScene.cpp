@@ -427,10 +427,12 @@ void GameScene::Update() {
 		// スポナーに追加を要求する
 		spawner_.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](auto enemys)
 			{
+				// コンポーネントの配列
+				ECS::ComponentData::TRange<ECS::PositionComp> arr = enemys.front().chunk_->GetComponent<ECS::PositionComp>();
 				// 発生地点の回転加算値
 				const float diff = Random::GetRandom<float>(0.f, Angle::Rad360);
 				for (uint32_t i = 0; ECS::EntityClass & enemy : enemys) {
-					auto &pos = enemy.GetComponent<ECS::PositionComp>();
+					auto &pos = arr[enemy.totalIndex_];
 					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
 					i++;
 				}

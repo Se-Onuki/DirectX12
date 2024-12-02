@@ -11,6 +11,8 @@ namespace ECS {
 
 	class ComponentData;
 
+	class EntityArrayStorage;
+
 	template<typename T, bool IsConst>
 	class CompIterator {
 	public:
@@ -112,17 +114,16 @@ namespace ECS {
 		ComponentData() = default;
 		ComponentData(const ComponentData &) = default;
 		ComponentData &operator=(const ComponentData &) = default;
+		ComponentData(EntityArrayStorage *entityStr, uint32_t offset, uint32_t itemSize, uint32_t count) : entityStorage_(entityStr), offset_(offset), typeSize_(itemSize), itemCount_(count) {}
 		ComponentData(uint32_t itemSize, uint32_t count) : typeSize_(itemSize), itemCount_(count) {}
 
-		void AddArray(std::byte *ptr) { components_.push_back({ ptr,typeSize_, itemCount_ }); }
+		std::span<std::byte> GetCompArray(uint32_t index);
 
-		std::span<ComponentArray> GetCompArray() { return { components_.data(), components_.size() }; }
+		std::byte *operator[](uint32_t index);
+		const std::byte *operator[](uint32_t index) const;
 
-		std::byte *operator[](uint32_t index) { return components_[index / itemCount_][index % itemCount_]; }
-		const std::byte *operator[](uint32_t index) const { return components_[index / itemCount_][index % itemCount_]; }
-
-		std::byte &at(uint32_t index) { return *components_[index / itemCount_][index % itemCount_]; }
-		const std::byte &at(uint32_t index) const { return *components_[index / itemCount_][index % itemCount_]; }
+		std::byte &at(uint32_t index) { return *(*this)[index]; }
+		const std::byte &at(uint32_t index) const { return *(*this)[index]; }
 
 		template<typename T>
 		T &at(uint32_t index) { return *std::bit_cast<T *>(&at(index)); }
@@ -147,11 +148,6 @@ namespace ECS {
 
 	public:
 
-		/// @brief 値を移動させる
-		/// @param flagArray フラグの配列
-		/// @param trueCount 生きてる数の配列
-		void MoveElement(const std::vector<bool> &flagArray, const std::vector<uint32_t> trueCount);
-
 		/// @brief 値を破棄する
 		/// @param flagArray フラグの配列
 		/// @param trueCount 生きてる数
@@ -159,8 +155,12 @@ namespace ECS {
 
 
 	private:
-		// コンポーネントの配列
-		std::vector<ComponentArray> components_;
+
+		// エンティティのデータ群
+		EntityArrayStorage *entityStorage_ = nullptr;
+
+		// コンポーネントの始点
+		uint32_t offset_ = 0u;
 		// 形のサイズ
 		uint32_t typeSize_;
 		// コンポーネント配列の長さ

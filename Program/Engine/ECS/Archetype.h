@@ -46,7 +46,7 @@ public:
 
 		// サイズを追加する
 		if (not compFlag_.IsHasComp<T>()) { totalSize_ += sizeof(T); };
-		(([this]() { if (not compFlag_.IsHasComp<TComps>()) { totalSize_ += sizeof(TComps); }}), ...);
+		(([this]() { if (not compFlag_.IsHasComp<TComps>()) { totalSize_ += sizeof(TComps); }})(), ...);	// 生成だけして実行してなかった
 
 		compFlag_.AddComp<T, TComps...>();
 

@@ -16,7 +16,7 @@ std::span<ECS::EntityArrayStorage::EntityStorage> ECS::EntityArrayStorage::AddGr
 	std::for_each(newBegin, entityStorage_.end(), [this](EntityStorage &item) {
 		item = EntityStorage{
 			std::make_unique_for_overwrite<ECS::EntityClass[]>(entityCount_),
-			std::make_unique_for_overwrite<std::array<std::byte, Archetype::kOneChunkCapacity>>()
+			std::make_unique_for_overwrite<EntityComponentMemory>()
 		};
 		}
 	);
