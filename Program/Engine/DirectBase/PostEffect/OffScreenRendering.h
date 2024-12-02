@@ -116,7 +116,7 @@ namespace PostEffect {
 
 		void Draw(const std::wstring &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
 
-		ID3D12RootSignature *GetRootSignature() { return rootSignature_.GetResource()->Get(); }
+		ID3D12RootSignature *GetRootSignature() { return rootSignature_->Get(); }
 
 		ID3D12PipelineState *GetPipeLine(const std::wstring &key) { return pipelineState_.at(key).Get(); }
 
@@ -134,7 +134,7 @@ namespace PostEffect {
 
 		CBuffer<ValuePair> param_;*/
 
-		SolEngine::ResourceHandle<RootSignature> rootSignature_;
+		std::unique_ptr<RootSignature> rootSignature_;
 
 		std::map<std::wstring, ComPtr<ID3D12PipelineState>> pipelineState_;
 

@@ -376,7 +376,7 @@ void GameScene::OnEnter() {
 
 void GameScene::OnExit() {
 	audio_->StopAllWave();
-	fullScreen_->Finalize();
+	//fullScreen_->Finalize();
 
 	ECS::System::Par::WeaponCollision::attackCollisions_.reset();
 }
@@ -466,31 +466,31 @@ void GameScene::Update() {
 	}
 
 	// 経験値の追加
-	//{
-	//	// 敵のアーキタイプ
-	//	Archetype enemArch{};
-	//	enemArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
-	//	// チャンクの取得
-	//	auto enemyChunks = newWorld_.GetAccessableChunk(enemArch);
-	//	// 死亡している数
-	//	auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
-	//	// 経験値のアーキタイプ
-	//	Archetype expArch;
-	//	expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
-	//	// 経験値オーブの生成
-	//	newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
-	//	auto expChunks = newWorld_.GetAccessableChunk(expArch);
-	//	auto expRanges = expChunks.GetRange<ECS::PositionComp>();
-	//
-	//	uint32_t index = 0;
-	//	auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
-	//	uint32_t size = enemyChunks.Count();
-	//	for (uint32_t i = 0; i < size; i++) {
-	//		if (deadCount.first.at(i)) {
-	//			expRanges.At(index++) = enemRange.At(i);
-	//		}
-	//	}
-	//}
+	{
+		// 敵のアーキタイプ
+		Archetype enemArch{};
+		enemArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
+		// チャンクの取得
+		auto enemyChunks = newWorld_.GetAccessableChunk(enemArch);
+		// 死亡している数
+		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
+		// 経験値のアーキタイプ
+		Archetype expArch;
+		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
+		// 経験値オーブの生成
+		newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
+		auto expChunks = newWorld_.GetAccessableChunk(expArch);
+		auto expRanges = expChunks.GetRange<ECS::PositionComp>();
+
+		uint32_t index = 0;
+		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
+		uint32_t size = enemyChunks.Count();
+		for (uint32_t i = 0; i < size; i++) {
+			if (deadCount.first.at(i)) {
+				expRanges.At(index++) = enemRange.At(i);
+			}
+		}
+	}
 
 	// 攻撃の追加
 	{
@@ -616,25 +616,24 @@ void GameScene::Update() {
 			totalCount += ghostChanks[i]->size();
 		}
 		// もし空なら終わる
-		if (totalCount == 0) {
-			return;
-		}
+		if (totalCount > 0) {
 
-		// 書き込み先の確保
-		auto span = attackRender_.Reservation(totalCount);
-		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
-			// チャンクからデータの取得
-			auto posRange = ghostChanks[i]->GetComponent<ECS::SphereCollisionComp>();
-			auto aliveRange = ghostChanks[i]->GetComponent<ECS::AliveTime>();
-			// 転送する
-			std::transform(posRange.begin(), posRange.end(), aliveRange.begin(), &span[ghostOffset[i]], [](const ECS::SphereCollisionComp &trans, const ECS::AliveTime &alive) {
+			// 書き込み先の確保
+			auto span = attackRender_.Reservation(totalCount);
+			for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+				// チャンクからデータの取得
+				auto posRange = ghostChanks[i]->GetComponent<ECS::SphereCollisionComp>();
+				auto aliveRange = ghostChanks[i]->GetComponent<ECS::AliveTime>();
+				// 転送する
+				std::transform(posRange.begin(), posRange.end(), aliveRange.begin(), &span[ghostOffset[i]], [](const ECS::SphereCollisionComp &trans, const ECS::AliveTime &alive) {
 
-				Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / 0.25f)))) };
-				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / 0.25f)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / 0.25f);
-				result.transform.World.GetTranslate() = trans.collision_.centor;
-				result.transform.World.m[3][3] = 1.f;
-				return result;
-				});
+					Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / 0.25f)))) };
+					result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / 0.25f)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / 0.25f);
+					result.transform.World.GetTranslate() = trans.collision_.centor;
+					result.transform.World.m[3][3] = 1.f;
+					return result;
+					});
+			}
 		}
 	}
 

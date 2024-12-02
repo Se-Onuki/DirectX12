@@ -293,7 +293,6 @@ namespace ECS {
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static uint32_t prevLevel_;
-				static SoLib::DeltaTimer levelUpTimer_;
 				static LevelUP *levelUp_;
 				static HealthBar *expBar_;
 

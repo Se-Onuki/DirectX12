@@ -205,17 +205,16 @@ namespace PostEffect {
 		sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 
-		auto *const rootSignatureManager = SolEngine::ResourceObjectManager<RootSignature>::GetInstance();
 		SolEngine::ResourceSource<RootSignature> rootSignatureSource{ .sampler_ = sampler, .item_ = { "t0PS,b0PS" } };
-
-		rootSignature_ = rootSignatureManager->Load(rootSignatureSource);
+		
+		rootSignature_ = SolEngine::ResourceCreater<RootSignature>{}.CreateObject(rootSignatureSource);
 
 		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 		inputLayoutDesc.pInputElementDescs = nullptr;
 		inputLayoutDesc.NumElements = 0u;
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-		graphicsPipelineStateDesc.pRootSignature = rootSignature_.GetResource()->Get();	// RootSignature
+		graphicsPipelineStateDesc.pRootSignature = rootSignature_->Get();	// RootSignature
 		graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 		graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;			// RasterizeState
 

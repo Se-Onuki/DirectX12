@@ -508,17 +508,15 @@ namespace ECS::System::Par {
 
 	}
 	uint32_t ExpGaugeDrawer::prevLevel_ = 0u;
-	SoLib::DeltaTimer ExpGaugeDrawer::levelUpTimer_{ 1.5f };
 	LevelUP *ExpGaugeDrawer::levelUp_ = nullptr;
 	HealthBar *ExpGaugeDrawer::expBar_ = nullptr;
-	void ExpGaugeDrawer::Execute(const World *const, const float deltaTime)
+	void ExpGaugeDrawer::Execute(const World *const, const float)
 	{
 		const auto &[exp] = readWrite_;
 
 		if (exp.exp_ >= exp.needExp_(exp.level_)) {
 
 			prevLevel_ = exp.level_;
-			levelUpTimer_.Start();
 
 			while (exp.exp_ >= exp.needExp_(exp.level_)) {
 				exp.exp_ -= exp.needExp_(exp.level_);
@@ -526,7 +524,6 @@ namespace ECS::System::Par {
 			}
 			levelUp_->Open();
 		}
-		levelUpTimer_.Update(deltaTime);
 
 		//if (levelUpTimer_.IsActive()) {
 		//	const float progress = levelUpTimer_.GetProgress();
