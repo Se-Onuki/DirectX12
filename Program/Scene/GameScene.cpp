@@ -68,10 +68,6 @@ void GameScene::OnEnter() {
 	resourceLoadManager.Init(sceneJson["Resources"]);
 	resourceLoadManager.Load();
 
-	ModelManager::GetInstance()->CreateDefaultModel();
-
-	ModelManager::GetInstance()->GetModel("Plane")->materialMap_.begin()->second->texHandle_ = TextureManager::Load("uvChecker.png");
-
 	spawner_.clear();
 
 	auto animationManager = SolEngine::ResourceObjectManager<SolEngine::Animation>::GetInstance();
@@ -459,10 +455,10 @@ void GameScene::Update() {
 
 			// 終わっていたら
 			if (playerSpawn_.IsFinish() and playerSpawn_.IsActive()) {
-				// スポナーに追加
-				// spawner_.AddSpawner(playerPrefab_.get());
 
 				sceneManager_->ChangeScene("TitleScene", 0.5f);
+
+				Fade::GetInstance()->Start({}, 0x000000FF, 0.25f);
 			}
 		}
 	}
