@@ -44,13 +44,13 @@ std::span<ECS::EntityArrayStorage::EntityStorage> ECS::EntityArrayStorage::AddGr
 
 }
 
-void ECS::EntityArrayStorage::erase(const std::vector<bool> &flagArray, const size_t trueCount, const uint32_t count)
+void ECS::EntityArrayStorage::erase(const std::vector<bool> &flagArray, const size_t delCount, const uint32_t count)
 {
 	// もし死んだ要素数がゼロなら終わり
-	if (not trueCount) { return; }
+	if (not delCount) { return; }
 
 	// 生きている要素数
-	const uint32_t aliveCount = count - static_cast<uint32_t>(trueCount);
+	const uint32_t aliveCount = count - static_cast<uint32_t>(delCount);
 
 	// 先頭から､書き込み可能の場所を探す
 	for (uint32_t i = 0; i < aliveCount; i++) {

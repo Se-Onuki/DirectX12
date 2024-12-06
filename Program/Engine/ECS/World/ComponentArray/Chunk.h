@@ -210,15 +210,16 @@ namespace ECS {
 
 		// もし何も一致しなかったら終わり
 		if (not count) { return; }
+		if (count != size()) {
 
-		// それぞれのコンポーネントで操作を行う
-		for (auto &[key, compArray] : this->componentDatas_) {
-			// エンティティの生存数に応じて並べ替える
-			compArray.erase(flag, count, size_);
+			// それぞれのコンポーネントで操作を行う
+			for (auto &[key, compArray] : this->componentDatas_) {
+				// エンティティの生存数に応じて並べ替える
+				compArray.erase(flag, count, size_);
+			}
+			// エンティティの並べ替えをする
+			storage_->erase(flag, count, size_);
 		}
-		// エンティティの並べ替えをする
-		storage_->erase(flag, count, size_);
-
 		// 死んだ数で除算
 		size_ -= static_cast<uint32_t>(count);
 

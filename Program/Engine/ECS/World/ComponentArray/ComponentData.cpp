@@ -15,17 +15,17 @@ namespace ECS {
 
 	const std::byte *ComponentData::operator[](uint32_t index) const
 	{
-		return entityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_ + (index % itemCount_)* typeSize_;
+		return entityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_ + (index % itemCount_) * typeSize_;
 	}
 
-	void ComponentData::erase(const std::vector<bool> &flagArray, const size_t trueCount, const uint32_t count)
+	void ComponentData::erase(const std::vector<bool> &flagArray, const size_t delCount, const uint32_t count)
 	{
 		// もし死んでいる要素数がゼロなら終わり
-		if (not trueCount) { return; }
+		if (not delCount) { return; }
 		// 全部死んでいたら終わり
-		if (trueCount == count) { return; }
+		if (delCount == count) { return; }
 		// アクセス先のフラグ
-		uint32_t front = count - static_cast<uint32_t>(trueCount) - 1;	// 前側
+		uint32_t front = count - static_cast<uint32_t>(delCount) - 1;	// 前側
 		uint32_t back = front + 1;	// 後ろ側
 
 		// 先頭から､書き込み可能の場所を探す
@@ -45,6 +45,8 @@ namespace ECS {
 				// 型をコピーする
 				std::memcpy(&at(front), &at(back), typeSize_);
 
+				// 次に移動する
+				back++;
 				// 次のコピー先を探しに行く
 				break;
 			}

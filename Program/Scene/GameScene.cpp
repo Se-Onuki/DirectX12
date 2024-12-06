@@ -460,7 +460,9 @@ void GameScene::Update() {
 			// 終わっていたら
 			if (playerSpawn_.IsFinish()) {
 				// スポナーに追加
-				spawner_.AddSpawner(playerPrefab_.get());
+				// spawner_.AddSpawner(playerPrefab_.get());
+
+				sceneManager_->ChangeScene("TitleScene");
 			}
 		}
 	}
@@ -478,7 +480,7 @@ void GameScene::Update() {
 		Archetype expArch;
 		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
 		// 経験値オーブの生成
-		newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
+		auto ent = newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
 		auto expChunks = newWorld_.GetAccessableChunk(expArch);
 		auto expRanges = expChunks.GetRange<ECS::PositionComp>();
 
@@ -487,7 +489,7 @@ void GameScene::Update() {
 		uint32_t size = enemyChunks.Count();
 		for (uint32_t i = 0; i < size; i++) {
 			if (deadCount.first.at(i)) {
-				expRanges.At(index++) = enemRange.At(i);
+				expRanges.At(ent[index++].totalIndex_) = enemRange.At(i);
 			}
 		}
 	}
@@ -546,6 +548,7 @@ void GameScene::Update() {
 		// プレイヤのView
 		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
 		if (playerChunks.Count()) {
+
 			const auto &playerPos = playerChunks.GetRange<ECS::PositionComp>().At(0);
 			auto &playerExp = playerChunks.GetRange<ECS::Experience>().At(0);
 
@@ -583,6 +586,17 @@ void GameScene::Update() {
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 	// カメラのアップデート
 	cameraManager_->Update(fixDeltaTime);
+
+	// 無理やりなエラー対策
+	{
+		// プレイヤのView
+		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+		if (playerChunks.Count()) {
+			if (not playerChunks.GetRange<ECS::IsAlive>().At(0).isAlive_) {
+				sceneManager_->ChangeScene("TitleScene");
+			}
+		}
+	}
 
 	// 敵の描画
 	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_);
