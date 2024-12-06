@@ -187,7 +187,7 @@ namespace ECS {
 		ChunkSet<false> GetAccessableChunk(const Archetype &archetype) {
 			ChunkSet<false> result;
 			for (const auto &[key, chunk] : chunkMap_) {
-				if (archetype <= key) { result.push_back(chunk.get()); }
+				if (archetype <= key and chunk and chunk->size()) { result.push_back(chunk.get()); }
 			}
 			return result;
 		}
@@ -195,7 +195,7 @@ namespace ECS {
 		ChunkSet<true> GetAccessableChunk(const Archetype &archetype) const {
 			ChunkSet<true> result;
 			for (const auto &[key, chunk] : chunkMap_) {
-				if (archetype <= key) { result.push_back(chunk.get()); }
+				if (archetype <= key and chunk and chunk->size()) { result.push_back(chunk.get()); }
 			}
 			return result;
 		}
@@ -203,7 +203,7 @@ namespace ECS {
 		ChunkSet<false> GetAccessableChunk(const Archetype &archetype, const ECS::ComponentRegistry::ComponentFlag exclusions) {
 			ChunkSet<false> result;
 			for (const auto &[key, chunk] : chunkMap_) {
-				if (archetype <= key and (key.compFlag_.Get() & exclusions.Get()).none()) { result.push_back(chunk.get()); }
+				if (archetype <= key and (key.compFlag_.Get() & exclusions.Get()).none() and chunk and chunk->size()) { result.push_back(chunk.get()); }
 			}
 			return result;
 		}
@@ -211,7 +211,7 @@ namespace ECS {
 		ChunkSet<true> GetAccessableChunk(const Archetype &archetype, const ECS::ComponentRegistry::ComponentFlag exclusions) const {
 			ChunkSet<true> result;
 			for (const auto &[key, chunk] : chunkMap_) {
-				if (archetype <= key and (key.compFlag_.Get() & exclusions.Get()).none()) { result.push_back(chunk.get()); }
+				if (archetype <= key and (key.compFlag_.Get() & exclusions.Get()).none() and chunk and chunk->size()) { result.push_back(chunk.get()); }
 			}
 			return result;
 		}

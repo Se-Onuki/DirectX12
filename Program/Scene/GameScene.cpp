@@ -458,11 +458,11 @@ void GameScene::Update() {
 			}
 
 			// 終わっていたら
-			if (playerSpawn_.IsFinish()) {
+			if (playerSpawn_.IsFinish() and playerSpawn_.IsActive()) {
 				// スポナーに追加
 				// spawner_.AddSpawner(playerPrefab_.get());
 
-				sceneManager_->ChangeScene("TitleScene");
+				sceneManager_->ChangeScene("TitleScene", 0.5f);
 			}
 		}
 	}
@@ -586,17 +586,6 @@ void GameScene::Update() {
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 	// カメラのアップデート
 	cameraManager_->Update(fixDeltaTime);
-
-	// 無理やりなエラー対策
-	{
-		// プレイヤのView
-		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
-		if (playerChunks.Count()) {
-			if (not playerChunks.GetRange<ECS::IsAlive>().At(0).isAlive_) {
-				sceneManager_->ChangeScene("TitleScene");
-			}
-		}
-	}
 
 	// 敵の描画
 	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_);
