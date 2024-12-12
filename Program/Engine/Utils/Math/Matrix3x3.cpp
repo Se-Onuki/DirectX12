@@ -3,7 +3,7 @@
 //#include <Novice.h>
 #include "Math.hpp"
 
-//void Matrix3x3::Printf(const int &x, const int &y) const {
+//void Matrix3x3::Printf(const int32_t x, const int32_t y) const {
 //	for (int i = 0; i < 3; i++) {
 //		for (int j = 0; j < 3; j++) {
 //			//Novice::ScreenPrintf(x + j * TextWidth * 2, y + i * TextHeight, "%10.6f", m[i][j]);

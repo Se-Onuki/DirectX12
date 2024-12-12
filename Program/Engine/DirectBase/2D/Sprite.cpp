@@ -329,7 +329,7 @@ void Sprite::Init(const std::string &textureName) {
 	Init(TextureManager::Load(textureName));
 }
 
-void Sprite::Init(const uint32_t &textureHaundle) {
+void Sprite::Init(const uint32_t textureHaundle) {
 	CreateBuffer();
 	MapVertex();
 	CalcBuffer();
@@ -465,7 +465,7 @@ void Sprite::ImGuiWidget() {
 }
 
 
-void Sprite::SetScale(const Vector2 &scale)
+void Sprite::SetScale(const Vector2 scale)
 {
 	transform_.scale_ = { scale.x,scale.y,1.f };
 
@@ -478,7 +478,7 @@ void Sprite::SetRotate(const float angle)
 	transMat_ = transform_.Affine();
 }
 
-void Sprite::SetPosition(const Vector2 &position)
+void Sprite::SetPosition(const Vector2 position)
 {
 	transform_.translate_ = { position.x,position.y,0.f };
 
@@ -533,7 +533,7 @@ std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle)
 	return std::move(sprite);
 }
 
-std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale)
+std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle, const Vector2 position, const Vector2 scale)
 {
 	auto sprite = Create(textureHaundle);
 	sprite->transform_.translate_ = { position.x,position.y,0.f };
@@ -554,17 +554,17 @@ const SoLib::Color::RGB4 &Sprite::GetColor() const
 }
 
 
-void Sprite::SetTexOrigin(const Vector2 &texOrigin) {
+void Sprite::SetTexOrigin(const Vector2 texOrigin) {
 	uv_.first = texOrigin;
 	CalcBuffer();
 }
 
-void Sprite::SetTexDiff(const Vector2 &texDiff) {
+void Sprite::SetTexDiff(const Vector2 texDiff) {
 	uv_.second = texDiff;
 	CalcBuffer();
 }
 
-void Sprite::SetPivot(const Vector2 &pivot) {
+void Sprite::SetPivot(const Vector2 pivot) {
 	pivot_ = pivot;
 	CalcBuffer();
 }

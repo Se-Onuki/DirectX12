@@ -49,7 +49,7 @@ Vector2 operator <<(Vector2 &vec2, const Polar &Polar)
 	};
 }
 
-Polar operator<<(Polar &Polar, const Vector2 &vec2) {
+Polar operator<<(Polar &Polar, const Vector2 vec2) {
 	return Polar = { (float)(atan2(vec2.y, vec2.x)), vec2.Length() };
 }
 
@@ -64,7 +64,7 @@ Matrix2x2 MakeRotateMatrix(const float &theta) {
 }
 
 
-Matrix3x3 MakeScaleMatrix(const Vector2 &scale) {
+Matrix3x3 MakeScaleMatrix(const Vector2 scale) {
 	return Matrix3x3{
 		scale.x, 0, 0,
 		0, scale.y, 0,
@@ -91,7 +91,7 @@ Matrix3x3 MakeRotateMatrix3x3(const float &theta) {
 	);
 }
 
-Matrix3x3 MakeTranslateMatrix(const Vector2 &translate) {
+Matrix3x3 MakeTranslateMatrix(const Vector2 translate) {
 	return Matrix3x3{
 		1, 0, 0,
 		0, 1, 0,
@@ -109,7 +109,7 @@ Matrix4x4 MakeTranslateMatrix(const Vector3 &translate) {
 }
 
 
-Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vector2 &translate) {
+Matrix3x3 MakeAffineMatrix(const Vector2 scale, const float &theta, const Vector2 translate) {
 	return Matrix3x3{
 		scale.x * (float)cos(theta) , scale.x * (float)sin(theta), 0,
 		scale.y * (float)-sin(theta), scale.y * (float)cos(theta), 0,
@@ -118,7 +118,7 @@ Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vecto
 }
 
 //
-//Vector2 Transform(const Vector2 &vector, const Matrix3x3 &matrix) {
+//Vector2 Transform(const Vector2 vector, const Matrix3x3 &matrix) {
 //	Vector2 result;
 //
 //	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + 1.0f * matrix.m[2][0];
@@ -141,7 +141,7 @@ Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vecto
 //}
 
 
-Matrix3x3 MakeOrthographicMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom) {
+Matrix3x3 MakeOrthographicMatrix(const Vector2 LeftTop, const Vector2 RightBottom) {
 	return
 	{
 		2.0f / (RightBottom.x - LeftTop.x), 0,0,
@@ -150,7 +150,7 @@ Matrix3x3 MakeOrthographicMatrix(const Vector2 &LeftTop, const Vector2 &RightBot
 	};
 }
 
-Matrix3x3 MakeViewportMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom) {
+Matrix3x3 MakeViewportMatrix(const Vector2 LeftTop, const Vector2 RightBottom) {
 	return
 	{
 		(RightBottom.x - LeftTop.x) / 2.0f, 0,0,

@@ -5,7 +5,7 @@ Vector2 Angle::RadToVec2(float radian) {
 	return Vector2{ std::cosf(radian),std::sinf(radian) };
 }
 
-float Angle::Vec2ToRad(const Vector2 &vec) {
+float Angle::Vec2ToRad(const Vector2 vec) {
 	return std::atan2(vec.y, vec.x);
 }
 

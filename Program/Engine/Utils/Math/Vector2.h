@@ -42,11 +42,11 @@ struct Vector2 {
 	/// <returns>ベクトル長が1のベクトル</returns>
 	Vector2 Nomalize() const;
 
-	Vector2 operator+(const Vector2 &Second) const;
-	Vector2 operator-(const Vector2 &Second) const;
+	Vector2 operator+(const Vector2 Second) const;
+	Vector2 operator-(const Vector2 Second) const;
 
-	void operator+=(const Vector2 &Second);
-	void operator-=(const Vector2 &Second);
+	void operator+=(const Vector2 Second);
+	void operator-=(const Vector2 Second);
 
 	Vector2 operator*(const float &Second) const;
 	Vector2 operator/(const float &Second) const;
@@ -75,11 +75,11 @@ struct Vector2 {
 	}
 
 	// 内積
-	inline float operator*(const Vector2 &v) const {
+	inline float operator*(const Vector2 v) const {
 		return x * v.x + y * v.y;
 	}
 	// 外積
-	inline float operator^(const Vector2 &v) const {
+	inline float operator^(const Vector2 v) const {
 		return x * v.y - y * v.x;
 	}
 
@@ -94,7 +94,7 @@ struct Vector2 {
 		// return {this->x- 2}
 	}
 
-	inline bool operator==(const Vector2 &vec) const {
+	inline bool operator==(const Vector2 vec) const {
 		return (this->x == vec.x) && (this->y == vec.y);
 	}
 
@@ -115,7 +115,7 @@ struct Vector2 {
 private:
 };
 
-inline Vector2 operator*(const float &A, const Vector2 &B) {
+inline Vector2 operator*(const float &A, const Vector2 B) {
 	return B * A;
 }
 

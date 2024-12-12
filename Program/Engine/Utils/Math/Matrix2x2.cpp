@@ -3,7 +3,7 @@
 #include"Vector2.h"
 #include"Math.hpp"
 
-//void Matrix2x2::Printf(const int& x, const int& y) {
+//void Matrix2x2::Printf(const int32_t  x, const int32_t  y) {
 //	for (int i = 0; i < 2; i++) {
 //		for (int j = 0; j < 2; j++) {
 //			//Novice::ScreenPrintf(x + j * TextWidth, y + i * TextHeight, "%6.2f", m[i][j]);

@@ -25,9 +25,9 @@ public:
 
 	static void StaticInit();
 
-	void SetState(const Vector2 &pos, const SoLib::Color::RGB4 &alpha);
+	void SetState(const Vector2 pos, const SoLib::Color::RGB4 &alpha);
 
-	void Start(const Vector2 &targetPos, const SoLib::Color::RGB4 &targetAlpha, float goalTime);
+	void Start(const Vector2 targetPos, const SoLib::Color::RGB4 &targetAlpha, float goalTime);
 	void Update(float deltaTime);
 	void Draw();
 

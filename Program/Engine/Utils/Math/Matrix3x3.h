@@ -24,7 +24,7 @@ struct Matrix3x3 {
 	
 #pragma warning(pop)  // 以前の警告のステータスに戻す
 
-	//void Printf(const int &x, const int &y) const;
+	//void Printf(const int32_t x, const int32_t y) const;
 
 	/// @brief 逆行列関数
 	/// @return 逆行列

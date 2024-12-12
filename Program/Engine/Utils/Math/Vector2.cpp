@@ -44,20 +44,20 @@ Vector2 Vector2::Nomalize() const {
 ////	Novice::ScreenPrintf(x_, y_ + TextHeight, "%12.2f", this->y);
 //}
 
-Vector2 Vector2::operator+(const Vector2 &Second) const {
+Vector2 Vector2::operator+(const Vector2 Second) const {
 	return { (this->x) + (Second.x), (this->y) + (Second.y) };
 }
 
-Vector2 Vector2::operator-(const Vector2 &Second) const {
+Vector2 Vector2::operator-(const Vector2 Second) const {
 	return { (this->x) - (Second.x), (this->y) - (Second.y) };
 }
 
-void Vector2::operator +=(const Vector2 &Second) {
+void Vector2::operator +=(const Vector2 Second) {
 	this->x += Second.x;
 	this->y += Second.y;
 }
 
-void Vector2::operator -=(const Vector2 &Second) {
+void Vector2::operator -=(const Vector2 Second) {
 	this->x -= Second.x;
 	this->y -= Second.y;
 }

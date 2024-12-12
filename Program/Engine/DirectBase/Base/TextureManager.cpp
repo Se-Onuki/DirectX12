@@ -90,7 +90,7 @@ uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
 
 	if (textureArray_[index].handle_.gpuHandle_.ptr) {
 		const auto &resourceDesc = textureArray_[index].textureResource_->GetDesc();
-		const Vector2 &texSize = Vector2{ (float)resourceDesc.Width,(float)resourceDesc.Height } / (float)resourceDesc.Width * 100.f;
+		const Vector2 texSize = Vector2{ (float)resourceDesc.Width,(float)resourceDesc.Height } / (float)resourceDesc.Width * 100.f;
 		ImGui::Image((ImTextureID)textureArray_[index].handle_.gpuHandle_.ptr, ImVec2{ texSize.x,texSize.y });
 		ImGui::SameLine();
 		ImGui::Text("Width: %d\nHeight: %d", resourceDesc.Width, resourceDesc.Height);

@@ -45,7 +45,7 @@ struct Matrix4x4 final {
 	};
 
 	void
-		Printf(const int &x, const int &y) const;
+		Printf(const int32_t x, const int32_t y) const;
 
 	/// @brief 逆行列関数
 	/// @return 逆行列
