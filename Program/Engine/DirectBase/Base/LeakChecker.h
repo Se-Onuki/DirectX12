@@ -1,3 +1,6 @@
+/// @file LeakChecker.h
+/// @brief すべてのデータが開放された時に開放を行う
+/// @author ONUKI seiya
 #pragma once
 #include <wrl.h>
 #include <dxgi1_6.h>
@@ -11,6 +14,8 @@
 #pragma comment(lib, "dxcompiler.lib")
 
 
+/// @struct DirectResourceLeakChecker
+/// @brief すべてのデータが開放された時に開放を行う
 struct DirectResourceLeakChecker {
 private:
 	// リークチェックの実行管理値
@@ -20,9 +25,11 @@ private:
 	DirectResourceLeakChecker &operator=(const DirectResourceLeakChecker &) = delete;
 
 public:
+	/// @brief 実体の数をカウントする
 	DirectResourceLeakChecker() {
 		loadCount++;
 	}
+	/// @brief すべてが開放されたらリークチェックを行う
 	~DirectResourceLeakChecker() {
 		loadCount--;
 #ifdef _DEBUG

@@ -1,3 +1,6 @@
+/// @file RootSignature.cpp
+/// @brief ルートシグネチャ
+/// @author ONUKI seiya
 #include "RootSignature.h"
 #include "DirectXCommon.h"
 

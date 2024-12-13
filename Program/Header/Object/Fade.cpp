@@ -12,7 +12,7 @@ void Fade::StaticInit() {
 
 	auto *const winApp = WinApp::GetInstance();
 
-	instance->sprite_ = Sprite::Create();
+	instance->sprite_ = Sprite::Generate();
 	instance->sprite_->SetScale({ static_cast<float>(winApp->kWindowWidth), static_cast<float>(winApp->kWindowHeight) });
 
 }

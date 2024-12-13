@@ -1,3 +1,6 @@
+/// @file ImGuiManager.cpp
+/// @brief ImGuiの管理を行うクラス
+/// @author ONUKI seiya
 #include "ImGuiManager.h"
 #include <imgui_impl_dx12.h>
 #include <imgui_impl_win32.h>

@@ -1,6 +1,6 @@
 #include "HealthBar.h"
 
-HealthBar::HealthBar() :backGround_(Sprite::Create()), gauge_(Sprite::Create()), decrementGauge_(Sprite::Create()) {
+HealthBar::HealthBar() :backGround_(Sprite::Generate()), gauge_(Sprite::Generate()), decrementGauge_(Sprite::Generate()) {
 }
 
 void HealthBar::Init() {

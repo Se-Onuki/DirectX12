@@ -1,3 +1,6 @@
+/// @file Audio.cpp
+/// @brief 音を再生するクラス
+/// @author ONUKI seiya
 #include "Audio.h"
 #include "../../Engine/Utils/SoLib/SoLib.h"
 #include "../String/String.h"

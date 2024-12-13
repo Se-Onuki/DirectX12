@@ -20,12 +20,12 @@ TitleScene::~TitleScene() {
 
 void TitleScene::OnEnter() {
 	// ライトの生成
-	light_ = DirectionLight::Create();
+	light_ = DirectionLight::Generate();
 	blockRender_->Init(1024u);
 	ModelManager::GetInstance()->CreateDefaultModel();
 
-	sprite_ = Sprite::Create(TextureManager::Load("UI/TitleECS.png"));
-	button_ = Sprite::Create(TextureManager::Load("UI/TD2_3week_2/Title/Start_CR.png"));
+	sprite_ = Sprite::Generate(TextureManager::Load("UI/TitleECS.png"));
+	button_ = Sprite::Generate(TextureManager::Load("UI/TD2_3week_2/Title/Start_CR.png"));
 
 	Fade::GetInstance()->Start(Vector2{}, 0x00000000, 1.f);
 

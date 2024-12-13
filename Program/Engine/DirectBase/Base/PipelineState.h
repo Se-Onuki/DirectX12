@@ -1,3 +1,6 @@
+/// @file PipelineState.h
+/// @brief パイプラインステートの実装
+/// @author ONUKI seiya
 #pragma once
 #include <wrl.h>
 #include <d3d12.h>
@@ -12,21 +15,35 @@
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../Engine/Utils/Containers/ConstVector.h"
 
+/// @namespace SolEngine
+/// @brief SolEngineの名前空間
 namespace SolEngine {
+
+	/// @class PipelineState
+	/// @brief パイプラインステート
 	class PipelineState : SolEngine::IResourceObject {
 
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	public:
 
+		/// @class ShaderSet
+		/// @brief シェーダーのデータ群
 		struct ShaderSet {
+			/// @brief 頂点シェーダー
 			ResourceHandle<Shader> vertex_;
+			/// @brief ピクセルシェーダー
 			ResourceHandle<Shader> pixel_;
+			/// @brief ドメインシェーダー
 			ResourceHandle<Shader> domain_;
+			/// @brief ハルシェーダー
 			ResourceHandle<Shader> hull_;
+			/// @brief ジオメトリシェーダー
 			ResourceHandle<Shader> geometry_;
 
 			bool operator==(const ShaderSet &) const = default;
-
+			/// @fn void SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const)
+			/// @brief パイプラインステートの設定
+			/// @param[out] pipelineDesc パイプラインステート
 			void SetPipelineDesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC *const pipelineDesc) const;
 		};
 
@@ -81,6 +98,8 @@ namespace SolEngine {
 
 	private:
 
+		/// @brief 比較関数
+		/// @return 一致したらtrue
 		template<SoLib::IsRealType T>
 			requires (requires(const T t) { { t == t } ->std::same_as<bool>; } and not SoLib::IsContainer<T>)
 		static bool Equal(const T &l, const T &r) {
@@ -88,6 +107,9 @@ namespace SolEngine {
 			return l == r;
 
 		}
+		
+		/// @brief 比較関数
+		/// @return 一致したらtrue
 		template<SoLib::IsContainer Container>
 		static bool Equal(const Container &l, const Container &r) {
 			if (l.size() != r.size()) {
@@ -103,6 +125,8 @@ namespace SolEngine {
 			return true;
 		}
 
+		/// @brief 比較関数
+		/// @return 一致したらtrue
 		static bool Equal(const D3D12_INPUT_ELEMENT_DESC &l, const D3D12_INPUT_ELEMENT_DESC &r) {
 			return
 				l.SemanticIndex == r.SemanticIndex and
@@ -116,6 +140,8 @@ namespace SolEngine {
 				true;
 
 		}
+		/// @brief 比較関数
+		/// @return 一致したらtrue
 		static bool Equal(const D3D12_RASTERIZER_DESC &l, const D3D12_RASTERIZER_DESC &r) {
 			return
 				l.FillMode == r.FillMode and
@@ -134,6 +160,8 @@ namespace SolEngine {
 		}
 
 
+		/// @brief 比較関数
+		/// @return 一致したらtrue
 		static bool Equal(const D3D12_DEPTH_STENCIL_DESC &l, const D3D12_DEPTH_STENCIL_DESC &r) {
 
 			static constexpr std::tuple kMemPtr = { &D3D12_DEPTH_STENCIL_DESC::DepthEnable, &D3D12_DEPTH_STENCIL_DESC::DepthWriteMask, &D3D12_DEPTH_STENCIL_DESC::DepthFunc,&D3D12_DEPTH_STENCIL_DESC::StencilEnable,&D3D12_DEPTH_STENCIL_DESC::StencilReadMask,&D3D12_DEPTH_STENCIL_DESC::StencilWriteMask,&D3D12_DEPTH_STENCIL_DESC::FrontFace,&D3D12_DEPTH_STENCIL_DESC::BackFace, };
@@ -145,6 +173,8 @@ namespace SolEngine {
 			);
 		}
 
+		/// @brief 比較関数
+		/// @return 一致したらtrue
 		static bool Equal(const D3D12_DEPTH_STENCILOP_DESC &l, const D3D12_DEPTH_STENCILOP_DESC &r) {
 
 			static constexpr std::tuple kMemPtr = { &D3D12_DEPTH_STENCILOP_DESC::StencilFailOp,&D3D12_DEPTH_STENCILOP_DESC::StencilDepthFailOp,&D3D12_DEPTH_STENCILOP_DESC::StencilPassOp, &D3D12_DEPTH_STENCILOP_DESC::StencilFunc, };
@@ -156,6 +186,8 @@ namespace SolEngine {
 			);
 		}
 
+		/// @brief 比較関数
+		/// @return 一致したらtrue
 		static bool Equal(const D3D12_RENDER_TARGET_BLEND_DESC &l, const D3D12_RENDER_TARGET_BLEND_DESC &r) {
 			return std::memcmp(&l, &r, 36u) == 0 and l.RenderTargetWriteMask == r.RenderTargetWriteMask;
 		}
@@ -168,6 +200,10 @@ namespace SolEngine {
 	template<>
 	class ResourceCreater<PipelineState> {
 	public:
+		/// @fn std::unique_ptr<PipelineState> CreateObject(const ResourceSource<PipelineState> &)
+		/// @brief 生成関数
+		/// @param[in] source 生成ソース
+		/// @return 生成したオブジェクト
 		std::unique_ptr<PipelineState> CreateObject(const ResourceSource<PipelineState> &source) const;
 	};
 

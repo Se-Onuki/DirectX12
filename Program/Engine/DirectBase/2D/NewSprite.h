@@ -1,12 +1,17 @@
+/// @file NewSprite.h
+/// @brief 新しいスプライトの実装
+/// @author ONUKI seiya
+
 #pragma once
 #include "../../Engine/DirectBase/Base/TextureManager.h"	// テクスチャのマネージャ
 #include "../../Engine/Utils/Graphics/Color.h"						// カラー型
 #include "../../Utils/Math/Transform.h"
 
+/// @class NewSprite
 /// @brief 改善版スプライト
 class NewSprite {
 public:
-	// ブレンドモード
+	/// @brief ブレンドモード
 	enum class BlendMode : uint32_t {
 		kNone,		// ブレンドなし
 		kNormal,	// アルファブレンド

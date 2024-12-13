@@ -1,3 +1,6 @@
+/// @file DirectXCommon.cpp
+/// @brief DirectXの基本処理を担うクラス
+/// @author ONUKI seiya
 #include "DirectXCommon.h"
 #include "../../externals/DirectXTex/d3dx12.h"
 #include "../Create/Create.h"

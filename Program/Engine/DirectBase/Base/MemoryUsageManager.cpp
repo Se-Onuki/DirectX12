@@ -1,3 +1,6 @@
+/// @file MemoryUsageManager.cpp
+/// @brief GPUメモリの管理を行う
+/// @author ONUKI seiya
 #include "MemoryUsageManager.h"
 
 std::unique_ptr<MemoryUsageManager::MemoryRange> MemoryUsageManager::RequestRange(uint32_t length) {

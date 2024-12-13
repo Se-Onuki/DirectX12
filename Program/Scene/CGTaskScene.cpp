@@ -35,7 +35,7 @@ void CGTaskScene::OnEnter()
 
 	pDxCommon_ = DirectXCommon::GetInstance();
 
-	light_ = DirectionLight::Create();
+	light_ = DirectionLight::Generate();
 	CameraManager::GetInstance()->Init();
 	auto *nowCamera = CameraManager::GetInstance()->GetUseCamera();
 	nowCamera->translation_ = { 0.f, 0.9f,-2.5f };

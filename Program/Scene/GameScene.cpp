@@ -53,7 +53,7 @@ void GameScene::OnEnter() {
 	auto ghostAssimp = assimpManager->Load({ "Model/Cute Animated Monsters Pack/", "Ghost.gltf" });
 	auto ghostModel = modelDataManager->Load({ ghostAssimp });
 
-	light_ = DirectionLight::Create();
+	light_ = DirectionLight::Generate();
 
 	blockRender_->Init(1024u);
 	skinModelRender_->Init(1024u);
@@ -225,7 +225,7 @@ void GameScene::OnEnter() {
 	attackRender_.Init(256u);
 	attackRender_.SetModelData(attackModel);
 
-	levelUI_ = Sprite::Create();
+	levelUI_ = Sprite::Generate();
 	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
 	levelUI_->SetPivot(Vector2::one * 0.5f);
 	levelUI_->SetScale(Vector2{ 256.f,64.f } *2.f);

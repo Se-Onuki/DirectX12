@@ -1,3 +1,6 @@
+/// @file PipelineState.cpp
+/// @brief パイプラインステートの実装
+/// @author ONUKI seiya
 #include "PipelineState.h"
 #include "Shader.h"
 //#include "DirectXCommon.h"

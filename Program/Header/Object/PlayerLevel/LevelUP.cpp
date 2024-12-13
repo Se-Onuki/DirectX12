@@ -4,7 +4,7 @@
 void LevelUP::Init(int32_t count)
 {
 	// 背景の画像
-	backGround_ = Sprite::Create();
+	backGround_ = Sprite::Generate();
 
 	// ボタンの数
 	targetCount_ = count;
@@ -159,7 +159,7 @@ void LevelUP::Target(int32_t target)
 std::unique_ptr<ButtonUI> ButtonUI::Generate()
 {
 	std::unique_ptr<ButtonUI> result = std::make_unique<ButtonUI>();
-	result->sprite_ = Sprite::Create();
+	result->sprite_ = Sprite::Generate();
 	result->sprite_->SetPivot(Vector2::one * 0.5f);
 	return std::move(result);
 }

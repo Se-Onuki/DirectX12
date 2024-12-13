@@ -1,3 +1,6 @@
+/// @file DirectionLight.cpp
+/// @brief 並行光源の実装
+/// @author ONUKI seiya
 #include "DirectionLight.h"
 #include "../Base/DirectXCommon.h"
 #include "../Create/Create.h"
@@ -23,7 +26,7 @@ void DirectionLight::SetLight(ID3D12GraphicsCommandList *const commandList)
 	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource_->GetGPUVirtualAddress());
 }
 
-std::unique_ptr<DirectionLight> DirectionLight::Create()
+std::unique_ptr<DirectionLight> DirectionLight::Generate()
 {
 	auto light = std::make_unique<DirectionLight>();
 	light->Init();

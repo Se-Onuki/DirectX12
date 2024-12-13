@@ -1,3 +1,6 @@
+/// @file SpriteDrawer.cpp
+/// @brief スプライトの描画処理クラス
+/// @author ONUKI seiya
 #include "SpriteDrawer.h"
 
 namespace SolEngine {

@@ -1,34 +1,46 @@
+/// @file DirectXCommon.h
+/// @brief DirectXの基本処理を担うクラス
+/// @author ONUKI seiya
 #pragma once
-#include <d3d12.h>
-#include <wrl.h>
 #include "WinApp.h"
-#include <dxgi1_6.h>
-#include <vector>
 #include <array>
-#include <memory>
 #include <chrono>
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <memory>
+#include <vector>
+#include <wrl.h>
 
 #include "LeakChecker.h"
 
-#include "../Descriptor/DescriptorManager.h"
 #include "../../Engine/Utils/Graphics/Color.h"
+#include "../Descriptor/DescriptorManager.h"
 
-class DirectXCommon {
+class DirectXCommon
+{
 	DirectXCommon() = default;
 	DirectXCommon(const DirectXCommon &) = delete;
 	const DirectXCommon &operator=(const DirectXCommon &) = delete;
 	~DirectXCommon() = default;
 
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	template <class T>
+	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	static DirectResourceLeakChecker leakChecker; // リークチェッカー
 public:
-	class FPSManager {
+	/// @class FPSManager
+	/// @brief FPS管理
+	/// @details FPSの上限を管理する
+	class FPSManager
+	{
 	public:
 		FPSManager() = default;
 		~FPSManager() = default;
 
 		void Init();
+
+		/// @brief 更新
+		/// @details 60FPSを上限にする
 		void Update();
 
 	private:
@@ -39,7 +51,6 @@ public:
 	static const uint32_t srvCount_ = 512u;
 
 private:
-
 	// ウィンドウ管理
 	WinApp *winApp_ = nullptr;
 
@@ -79,24 +90,47 @@ private:
 	std::unique_ptr<DescHeapCbvSrvUav> srvHeap_;
 
 	std::unique_ptr<FPSManager> fpsManager_ = nullptr;
+
 public:
-
+	/// @fn void Init(void)
+	/// @brief 初期化
+	/// @param[in] winApp ウィンドウ管理
+	/// @param[in] backBufferWidth ウィンドウサイズの幅
+	/// @param[in] backBufferHeight ウィンドウサイズの高さ
 	void Init(WinApp *winApp, int32_t backBufferWidth = WinApp::kWindowWidth,
-		int32_t backBufferHeight = WinApp::kWindowHeight);
+			  int32_t backBufferHeight = WinApp::kWindowHeight);
 
-	ID3D12Device *const GetDevice()const {
+	/// @fn ID3D12Device *const GetDevice(void)
+	/// @brief D3D12デバイスの取得
+	/// @return D3D12デバイス
+	ID3D12Device *const GetDevice() const
+	{
 		return device_.Get();
 	}
-	ID3D12GraphicsCommandList *const GetCommandList()const {
+
+	/// @fn ID3D12GraphicsCommandList *const GetCommandList(void)
+	/// @brief コマンドリストの取得
+	/// @return コマンドリスト
+	ID3D12GraphicsCommandList *const GetCommandList() const
+	{
 		return commandList_.Get();
 	}
 
-	DescHeapCbvSrvUav *const GetSRVHeap() {
+	/// @fn DescHeapCbvSrvUav *const GetSRVHeap(void)
+	/// @brief SRVデスクリプタヒープの取得
+	/// @return SRVデスクリプタヒープ
+	DescHeapCbvSrvUav *const GetSRVHeap()
+	{
 		return srvHeap_.get();
 	}
 
+	/// @fn uint32_t GetHeapSize<D3D12_DESCRIPTOR_HEAP_TYPE>(void)
+	/// @brief ヒープサイズの取得
+	/// @tparam type ヒープタイプ
+	/// @return 1個のヒープの幅
 	template <D3D12_DESCRIPTOR_HEAP_TYPE type>
-	uint32_t GetHeapSize() {
+	uint32_t GetHeapSize()
+	{
 		if constexpr (type == D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) {
 			return descriptorSizeSRV;
 		}
@@ -109,52 +143,93 @@ public:
 		return 0;
 	}
 
+	/// @fn void Finalize(void)
 	/// @brief 各種破棄
 	void Finalize();
 
+	/// @fn static DirectXCommon *const GetInstance(void)
+	/// @brief シングルトンインスタンス取得
+	/// @return インスタンス
 	static DirectXCommon *const GetInstance();
 
-	static void Log(const std::string &message) {
+	/// @fn static void Log(const std::string &)
+	/// @brief ログ出力
+	/// @param[in] message ログメッセージ
+	static void Log(const std::string &message)
+	{
 		OutputDebugStringA(message.c_str());
 	}
 
+	/// @fn void StartDraw(void)
+	/// @brief 描画開始
+	/// @details 書き込み状態に変更する
 	void StartDraw();
 
+	/// @fn void DefaultDrawReset(bool)
 	/// @brief 初期設定で描画設定を行う
-	/// @param hasDsv DSVを持っているか
+	/// @param[in] hasDsv DSVを持っているか
 	void DefaultDrawReset(bool hasDsv = true);
 
+	/// @fn void SetFullscreenViewPort(D3D12_VIEWPORT *, D3D12_RECT *)
 	/// @brief フルスクリーンのビューポート設定を適用する
 	/// @param viewport ビューポート
-	/// @param scissorRect シザー短形
+	/// @param[in] scissorRect シザー短形
 	void SetFullscreenViewPort(D3D12_VIEWPORT *viewport, D3D12_RECT *scissorRect);
 
+	/// @fn void DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *, const SoLib::Color::RGB4 &, D3D12_CPU_DESCRIPTOR_HANDLE *, const D3D12_VIEWPORT &, const D3D12_RECT &)
+	/// @brief 描画先のRTVとDSVを設定する
+	/// @param[in] rtvHandle 描画先のRTVヒープのハンドル
+	/// @param[in] clearColor 初期化する色
+	/// @param[in] dsvHandle 描画先のDSVヒープのハンドル
+	/// @param[in] vp ビューポート
+	/// @param[in] scissorRect シザー短形
 	void DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *rtvHandle, const SoLib::Color::RGB4 &clearColor, D3D12_CPU_DESCRIPTOR_HANDLE *dsvHandle, const D3D12_VIEWPORT &vp, const D3D12_RECT &scissorRect);
 
+	/// @fn void EndDraw(void)
+	/// @brief 描画終了
+	/// @details 書き込み状態を解除する
 	void EndDraw();
 
+	/// @fn void CrearDepthBuffer(void)
+	/// @brief 深度バッファを初期化する
 	void CrearDepthBuffer();
 
+	/// @fn uint32_t GetBackIndex(void)
 	/// @brief バックバッファのindexを取得する
 	/// @return バックバッファのindex
 	uint32_t GetBackIndex() const { return swapChain_->GetCurrentBackBufferIndex(); }
 
+	/// @fn ID3D12DescriptorHeap *GetDsvDescHeap(void)
+	/// @brief DSVディスクリプタヒープの取得
+	/// @return DSVディスクリプタヒープ
 	ID3D12DescriptorHeap *GetDsvDescHeap() { return dsvHeap_.Get(); }
 
-
 private:
-
+	/// @fn void InitDXGI_Device(void)
+	/// @brief DXGIの初期化
 	void InitDXGI_Device();
 
+	/// @fn void InitCommand(void)
+	/// @brief コマンドリストの初期化
 	void InitCommand();
 
+	/// @fn void CreateSwapChain(void)
+	/// @brief スワップチェインの初期化
 	void CreateSwapChain();
 
+	/// @fn void CreateRenderTarget(void)
+	/// @brief レンターターゲットの生成
 	void CreateRenderTarget();
 
+	/// @fn void CreateDepthStencile(void)
+	/// @brief 深度バッファの生成
 	void CreateDepthStencile();
 
+	/// @fn void CreateFence(void)
+	/// @brief フェンスの生成
 	void CreateFence();
 
+	/// @fn void TransfarEngineObject(void)
+	/// @brief エンジンオブジェクトにデータを転送する
 	void TransfarEngineObject();
 };

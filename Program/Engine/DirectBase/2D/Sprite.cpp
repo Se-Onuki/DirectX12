@@ -1,3 +1,6 @@
+/// @file Sprite.cpp
+/// @brief スプライトの実装
+/// @author ONUKI seiya
 #include "Sprite.h"
 #include <array>
 
@@ -494,7 +497,7 @@ void Sprite::SetTransform(const Transform2D &trans)
 	transMat_ = transform_.Affine();
 }
 
-std::unique_ptr<Sprite> Sprite::Create() {
+std::unique_ptr<Sprite> Sprite::Generate() {
 	auto sprite = std::make_unique<Sprite>();
 	sprite->Init();
 	return std::move(sprite);
@@ -526,16 +529,16 @@ void Sprite::CalcBuffer() {
 	transMat_ = transform_.Affine();
 }
 
-std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle)
+std::unique_ptr<Sprite> Sprite::Generate(const uint32_t textureHaundle)
 {
 	auto sprite = std::make_unique<Sprite>();
 	sprite->Init(textureHaundle);
 	return std::move(sprite);
 }
 
-std::unique_ptr<Sprite> Sprite::Create(const uint32_t textureHaundle, const Vector2 position, const Vector2 scale)
+std::unique_ptr<Sprite> Sprite::Generate(const uint32_t textureHaundle, const Vector2 position, const Vector2 scale)
 {
-	auto sprite = Create(textureHaundle);
+	auto sprite = Generate(textureHaundle);
 	sprite->transform_.translate_ = { position.x,position.y,0.f };
 	sprite->transform_.scale_ = { scale.x,scale.y,1.f };
 
