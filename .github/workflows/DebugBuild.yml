@@ -21,5 +21,5 @@ jobs:
           msbuild-archecture: x64
       - name: Build
         run: |
-          msbuild ${{env.SOTUITON_FILE_PATH}} /p:Pratform=x64,Configuration=${{env.CONFIGURATION}}
+          msbuild ${{env.SOLUTION_FILE_PATH}} /p:Pratform=x64,Configuration=${{env.CONFIGURATION}}
           
