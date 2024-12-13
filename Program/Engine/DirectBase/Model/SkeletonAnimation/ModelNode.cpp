@@ -1,3 +1,6 @@
+/// @file ModelNode.cpp
+/// @brief Skeletonアニメーション用ノードの実装
+/// @author ONUKI seiya
 #include "ModelNode.h"
 #include "../../Engine/Utils/Convert/Convert.h"
 

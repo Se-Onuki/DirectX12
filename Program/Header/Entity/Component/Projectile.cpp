@@ -1,3 +1,6 @@
+/// @file ProjectileComp.cpp
+/// @brief 投擲物のコンポーネント
+/// @author ONUKI seiya
 #include "Projectile.h"
 #include "HealthComp.h"
 

@@ -1,3 +1,6 @@
+/// @file SoLib_Lerp.cpp
+/// @brief Lerpの実装
+/// @author ONUKI seiya
 #include "SoLib_Lerp.h"
 
 #include "../Math/Vector3.h"

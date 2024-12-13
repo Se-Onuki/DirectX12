@@ -1,3 +1,6 @@
+/// @file ComponentArray.cpp
+/// @brief コンポーネントの配列
+/// @author ONUKI seiya
 #include "ComponentArray.h"
 
 namespace ECS {

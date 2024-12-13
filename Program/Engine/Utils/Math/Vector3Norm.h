@@ -1,3 +1,6 @@
+/// @file Vector3Norm.h
+/// @brief NormalizeされたVector3
+/// @author ONUKI seiya
 #pragma once
 #include "Vector3.h"
 

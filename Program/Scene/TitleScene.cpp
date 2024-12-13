@@ -1,3 +1,6 @@
+/// @file TitleScene.cpp
+/// @brief タイトルシーン
+/// @author ONUKI seiya
 #include "TitleScene.h"
 
 #include <imgui.h>

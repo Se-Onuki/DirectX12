@@ -1,3 +1,6 @@
+/// @file ChunkRange.h
+/// @brief チャンクのRange
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 #include <iterator>
@@ -113,7 +116,11 @@ namespace ECS {
 		iterator erase(iterator itr);
 		iterator erase(iterator first, iterator last);
 
+		/// @brief コンポーネントの配列を取得する
+		/// @return コンポーネントの配列
 		ComponentData *GetCompData() { return compDatas_; }
+		/// @brief チャンクを取得する
+		/// @return チャンク
 		Chunk *GetChunk() { return chunk_; }
 
 		uint32_t GetBegin() const { return begin_; }

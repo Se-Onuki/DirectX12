@@ -1,3 +1,6 @@
+/// @file SoLib_Timer.h
+/// @brief タイマー
+/// @author ONUKI seiya
 #pragma once
 #include <functional>
 #include <chrono>
@@ -33,7 +36,7 @@ namespace SoLib {
 			}
 
 			using type = T;
-
+			/// @brief 時間の取得
 			T &GetTime()  noexcept { return time_; }
 			const T &GetTime() const noexcept { return time_; }
 
@@ -109,23 +112,24 @@ namespace SoLib {
 
 		public:
 			RealTimer() = default;
-
+			/// @brief 更新処理
 			bool Update();
-
+			/// @brief フレームのリセット
 			void Start();
-
+			/// @brief フレームの初期化
+			/// @param goal 必要フレーム
 			void Start(float seconds);
-
+			/// @brief 完全停止
 			void Clear();
-
+			/// @brief フレームが終点に到達しているか
 			bool IsFinish() const { return isFinish_; }
-
+			/// @brief 実行中であるかどうか
 			bool IsActive() const { return isActive_; }
-
+			/// @brief 現在フレームを取得
 			float GetElapsedSeconds() const { return duration_.count(); }
-
+			/// @brief ゴールフレームを取得
 			float GetGoalSeconds() const { return goalDuration_.count(); }
-
+			/// @brief 現在進行度を取得
 			float GetProgress() const;
 		};
 

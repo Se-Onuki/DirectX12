@@ -1,3 +1,6 @@
+/// @file ModelData.h
+/// @brief モデルデータ(現行のモデルデータ)
+/// @author ONUKI seiya
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
@@ -21,6 +24,7 @@ namespace SolEngine {
 		ResourceHandle<ModelVertexData> modelVertex_;
 		CBuffer<Matrix4x4> rootNode_;
 
+		/// @brief モデルの描画
 		void Draw(const Transform &transform, const Camera3D &camera) const;
 		void Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const Transform &transform, const Camera3D &camera) const;
 		void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;
@@ -42,6 +46,9 @@ namespace SolEngine {
 	class ResourceCreater<ModelData> {
 	public:
 
+		/// @brief リソースの作成
+		/// @param[in] source リソースソース
+		/// @return 作成したリソース
 		std::unique_ptr<ModelData> CreateObject(const ResourceSource<ModelData> &source) const;
 
 	};
@@ -53,7 +60,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::ModelData>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::ModelData> &data) const {
-			return size_t{ static_cast<size_t>(data.assimpHandle_.GetHandle()) << 32u | static_cast<size_t>(data.assimpHandle_.GetVersion()) };
+			return data.assimpHandle_.GetHashID();
 		}
 	};
 }

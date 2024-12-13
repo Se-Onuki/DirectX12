@@ -1,3 +1,6 @@
+/// @file SkeletonReference.h
+/// @brief スケルトンの情報源
+/// @author ONUKI seiya
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
@@ -39,9 +42,16 @@ namespace SolEngine {
 		// 各ジョイントに対しての情報を持つ｡
 		std::vector<std::unique_ptr<ModelJointReference>> joints_;
 
-		// ジョイントを検索してそれを返す
+		/// @brief ジョイントを検索してそれを返す
+		/// @param[in] jointName 検索するジョイントの名前
+		/// @return 検索したジョイント
 		ModelJointReference *GetJointData(const char *jointName) const;
 
+		/// @brief 再起的にスケルトンを構築
+		/// @param[in] node 元のノード
+		/// @param[out] joints 出力先のジョイントリスト
+		/// @param[in] parent 親のIndex
+		/// @return 自分自身のIndex
 		static uint32_t MakeJointIndex(const aiNode *node, std::vector<std::unique_ptr<ModelJointReference>> &joints, const uint32_t parent = (std::numeric_limits<uint32_t>::max)());
 
 
@@ -65,6 +75,9 @@ namespace SolEngine {
 	class ResourceCreater<SkeletonJointReference> {
 	public:
 
+		/// @brief リソースの生成
+		/// @param[in] source リソースソース
+		/// @return 生成したリソース
 		std::unique_ptr<SkeletonJointReference> CreateObject(const ResourceSource<SkeletonJointReference> &source) const;
 
 	};
@@ -76,7 +89,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::SkeletonJointReference>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::SkeletonJointReference> &data) const {
-			return size_t{ data.assimpHandle_.GetHandle() };
+			return data.assimpHandle_.GetHashID();
 		}
 	};
 }

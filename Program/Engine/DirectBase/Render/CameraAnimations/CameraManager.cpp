@@ -1,3 +1,6 @@
+/// @file CameraManager.cpp
+/// @brief カメラマネージャー
+/// @author TOYODA yuki
 #include "CameraManager.h"
 
 CameraManager *CameraManager::GetInstance()

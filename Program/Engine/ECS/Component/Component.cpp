@@ -1,3 +1,6 @@
+/// @file Component.cpp
+/// @brief コンポーネント
+/// @author ONUKI seiya
 #include "Component.hpp"
 //#include "Component.hpp"
 ////

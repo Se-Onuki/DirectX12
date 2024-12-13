@@ -1,3 +1,6 @@
+/// @file SoLib_Json.h
+/// @brief Jsonへの変換
+/// @author ONUKI seiya
 #pragma once
 #include "SoLib_Traits.h"
 #include <variant>
@@ -27,6 +30,7 @@ namespace SoLib {
 	template<SoLib::IsNotPointer T>
 	using JsonPairList = std::list<std::variant<JsonItemPtr<T>, JsonPair<T>>>;
 
+	/// @brief JsonPairListを作成する
 	template<SoLib::IsNotPointer T>
 	inline JsonPairList<T> GetJsonPairList();
 

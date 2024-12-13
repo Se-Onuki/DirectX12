@@ -1,3 +1,6 @@
+/// @file FollowCameraComp.cpp
+/// @brief フォローカメラのコンポーネント
+/// @author ONUKI seiya
 #include "FollowCameraComp.h"
 #include "../../Engine/Utils/SoLib/SoLib_Lerp.h"
 #include "../../Engine/Utils/SoLib/SoLib_ImGui.h"

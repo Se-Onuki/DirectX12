@@ -1,3 +1,6 @@
+/// @file FollowCamera.h
+/// @brief フォローカメラ
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/DirectBase/Render/Camera.h"
 #include "../../Engine/Utils/Math/Math.hpp"
@@ -19,10 +22,14 @@ public:
 
 	void Init();
 	void Update();
+	/// @brief 目標を設定
 	inline void SetTarget(const Transform *const target) { target_ = target; }
 
+	/// @brief ビュー行列を取得
 	const Matrix4x4 &GetViewMatrix() const;
+	/// @brief プロジェクション行列を取得
 	const Matrix4x4 &GetProjectionMatrix() const;
 
+	/// @brief カメラを取得
 	const auto *const GetCamera() const { return &camera_; }
 };

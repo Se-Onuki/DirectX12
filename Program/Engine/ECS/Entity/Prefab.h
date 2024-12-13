@@ -1,3 +1,6 @@
+/// @file Prefab.h
+/// @brief ECSのプレハブ
+/// @author ONUKI seiya
 #pragma once
 #include "../Component/Component.hpp"
 #include <memory>
@@ -12,13 +15,18 @@ namespace ECS {
 		Prefab() = default;
 		~Prefab() = default;
 
+		/// @brief コンポーネントを追加
 		template<IsComponent T>
 		T &AddComponent();
 
+		/// @brief コンポーネントを取得
 		const auto &GetComponentMap() const { return componentData_; }
 
+		/// @brief アーキタイプを取得
 		const Archetype &GetArchetype() const { return archetype_; }
 
+		/// @brief コンポーネントを追加
+		/// @param[in] comp 追加するコンポーネント
 		template<IsComponent T>
 		Prefab &operator+= (const T &comp) {
 			this->AddComponent<T>() = comp;

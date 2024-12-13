@@ -1,3 +1,6 @@
+/// @file Ground.cpp
+/// @brief 地面クラス
+/// @author ONUKI seiya
 #include "Ground.h"
 #include "../../Engine/DirectBase/Model/ModelManager.h"
 #include "../../Engine/Utils/Math/Math.hpp"

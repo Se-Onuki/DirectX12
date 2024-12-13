@@ -1,3 +1,6 @@
+/// @file Entity.cpp
+/// @brief ゲームオブジェクトの実装
+/// @author ONUKI seiya
 #include "Entity.h"
 #include "Component/ModelComp.h"
 #include "Component/Rigidbody.h"

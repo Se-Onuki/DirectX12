@@ -1,3 +1,6 @@
+/// @file Vector3Norm.cpp
+/// @brief NormalizeされたVector3
+/// @author ONUKI seiya
 #include "Vector3Norm.h"
 
 Vector3Norm::Vector3Norm(const Vector3 &other) {

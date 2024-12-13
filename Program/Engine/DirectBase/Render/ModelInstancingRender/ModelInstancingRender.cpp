@@ -1,3 +1,6 @@
+/// @file ModelInstancingRender.cpp
+/// @brief 単一モデルのインスタンス描画
+/// @author ONUKI seiya
 #include "ModelInstancingRender.h"
 
 namespace SolEngine {

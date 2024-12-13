@@ -1,3 +1,6 @@
+/// @file EntityArrayStorage.h
+/// @brief エンティティのデータの管理を行う
+/// @author ONUKI seiya
 #pragma once
 #include <vector>
 #include "../../Archetype.h"
@@ -16,24 +19,48 @@ namespace ECS {
 
 	class EntityClass;
 
+	/// @brief 一つのグループの情報を取得する
+	/// @param[in] chunk チャンク
+	/// @param[in] index インデックス
+	/// @return コンポーネントの参照
 	template<typename T>
 	T &GetComp(Chunk *chunk, uint32_t index) {
 		constexpr uint32_t compId = static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>());
 		return *std::bit_cast<T *>(&GetComp(chunk, compId, index));
 	}
 
+	/// @brief 一つのグループの情報を取得する
+	/// @param[in] chunk チャンク
+	/// @param[in] compId コンポーネントID
+	/// @param[in] index インデックス
+	/// @return コンポーネントへの参照
 	std::byte &GetComp(Chunk *chunk, uint32_t compId, uint32_t index);
 
+	/// @brief コンポーネントの配列を取得する
+	/// @param[in] chunk チャンク
+	/// @param[in] compId コンポーネントID
+	/// @return コンポーネントの配列
 	ComponentData &GetCompArray(Chunk *chunk, uint32_t compId);
 
+	/// @brief コンポーネントの配列を取得する
+	/// @param[in] chunk チャンク
+	/// @return コンポーネントの配列
 	template<typename T>
 	ComponentData &GetCompArray(Chunk *chunk) {
 		constexpr uint32_t compId = static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>());
 		return GetCompArray(chunk, compId);
 	}
 
+	/// @brief エンティティを移動させる
+	/// @param[in] chunk チャンク
+	/// @param[in] dst 移動先のインデックス
+	/// @param[in] src 移動元のインデックス
 	void EntityMove(Chunk *chunk, uint32_t dst, uint32_t src);
 
+	/// @brief エンティティを取得する
+	/// @param[in] chunk チャンク
+	/// @param[in] index インデックス
+	/// @return エンティティ
 	EntityClass &GetEntity(Chunk *chunk, uint32_t index);
 
 	class EntityClass {
@@ -46,6 +73,7 @@ namespace ECS {
 
 		explicit operator bool() const { return *this == GetEntity(chunk_, totalIndex_); }
 
+		/// @brief コンポーネントを取得する
 		template<typename T>
 		T &GetComponent() { return GetComp<T>(chunk_, totalIndex_); }
 
@@ -81,6 +109,9 @@ namespace ECS {
 
 	};
 
+
+	/// @brief コンポーネントを格納するメモリ
+	/// @details 32byteアライメントを行っている
 	class alignas(32) EntityComponentMemory : public std::array<std::byte, Archetype::kOneChunkCapacity> {
 	public:
 		EntityComponentMemory() = default;
@@ -121,6 +152,7 @@ namespace ECS {
 
 	public:
 
+		/// @brief エンティティの数
 		uint32_t size() const { return static_cast<uint32_t>(entityStorage_.size()); }
 
 		/// @brief エンティティの情報の取得
@@ -142,6 +174,10 @@ namespace ECS {
 			};
 			return result;
 		}
+		
+		/// @brief 一つのグループの情報を取得する
+		/// @param groupId グループ番号
+		/// @return グループ情報のペア
 		const EntityData<true> GetEntityData(uint32_t groupId) const {
 			const auto &item = entityStorage_.at(groupId);
 			const EntityData<true> result = {
@@ -151,7 +187,13 @@ namespace ECS {
 			return result;
 		}
 
+		/// @brief エンティティの取得
+		/// @param index インデックス
+		/// @return エンティティ
 		EntityClass &GetEntity(uint32_t index) { return entityStorage_[index / entityCount_].first[index % entityCount_]; }
+		/// @brief エンティティの取得
+		/// @param index インデックス
+		/// @return エンティティ
 		const EntityClass &GetEntity(uint32_t index) const { return entityStorage_[index / entityCount_].first[index % entityCount_]; }
 
 	private:

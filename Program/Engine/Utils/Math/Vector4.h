@@ -1,3 +1,6 @@
+/// @file Vector4.h
+/// @brief 四次元ベクトル
+/// @author ONUKI seiya
 #pragma once
 
 #include <cmath>

@@ -1,3 +1,6 @@
+/// @file FollowCamera.cpp
+/// @brief フォローカメラ
+/// @author ONUKI seiya
 #include "FollowCamera.h"
 #include "../../Engine/DirectBase/Input/Input.h"
 #include "../../Engine/Utils/Math/Transform.h"

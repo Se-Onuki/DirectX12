@@ -1,3 +1,6 @@
+/// @file SkyBox.cpp
+/// @brief スカイボックス
+/// @author ONUKI seiya
 #include "SkyBox.h"
 #include "../../Base/TextureManager.h"
 
@@ -87,7 +90,7 @@ namespace SolEngine {
 
 	void SkyBoxRender::Draw(const SkyBox &skyBox, const Transform &transform, const Camera3D &camera) const
 	{
-		auto *const dxCommon = DirectXCommon::GetInstance();
+		auto *const dxCommon = ::DirectXCommon::GetInstance();
 		auto *const command = dxCommon->GetCommandList();
 		auto *const textureManager = ::TextureManager::GetInstance();
 

@@ -1,3 +1,6 @@
+/// @file Random.h
+/// @brief ランダム関数
+/// @author ONUKI seiya
 #pragma once
 #include <stdint.h>
 #include <random>

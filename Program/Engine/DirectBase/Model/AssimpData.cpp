@@ -1,3 +1,6 @@
+/// @file AssimpData.cpp
+/// @brief Assimpのデータの保持
+/// @author ONUKI seiya
 #include "AssimpData.h"
 #include <assimp/postprocess.h>
 

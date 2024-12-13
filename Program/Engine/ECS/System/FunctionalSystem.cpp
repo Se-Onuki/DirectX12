@@ -1,3 +1,6 @@
+/// @file FunctionalSystem.cpp
+/// @brief 関数式のシステムの実行クラス
+/// @author ONUKI seiya
 #include "FunctionalSystem.h"
 #include "../World/ComponentArray/Chunk.h"
 #include "../World/NewWorld.h"

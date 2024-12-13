@@ -1,3 +1,6 @@
+/// @file NewWorld.cpp
+/// @brief ECSのワールド
+/// @author ONUKI seiya
 #include "NewWorld.h"
 
 namespace ECS {

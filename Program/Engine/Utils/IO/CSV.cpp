@@ -1,3 +1,6 @@
+/// @file CSV.cpp
+/// @brief CSV形式で保存する型
+/// @author ONUKI seiya
 #include "CSV.h"
 
 SoLib::IO::CSV::CSV(const File &file) {

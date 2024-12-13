@@ -1,3 +1,6 @@
+/// @file HealthComp.cpp
+/// @brief 体力コンポーネント
+/// @author ONUKI seiya
 #include "HealthComp.h"
 #include <algorithm>
 

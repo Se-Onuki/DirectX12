@@ -1,3 +1,6 @@
+/// @file ISystem.h
+/// @brief システムの基底
+/// @author ONUKI seiya
 #pragma once
 
 class World;

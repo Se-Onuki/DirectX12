@@ -1,3 +1,6 @@
+/// @file DescriptorHandle.h
+/// @brief ディスクリプタの管理
+/// @author ONUKI seiya
 #pragma once
 #include <d3d12.h>
 #include <cstdint>

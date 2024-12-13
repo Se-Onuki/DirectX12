@@ -1,3 +1,6 @@
+/// @file Mesh.cpp
+/// @brief メッシュ
+/// @author ONUKI seiya
 #include "Mesh.h"
 #include "../Base/TextureManager.h"
 

@@ -1,3 +1,6 @@
+/// @file Fade.h
+/// @brief フェードクラス
+/// @author ONUKI seiya
 #pragma once
 #include <stdint.h>
 #include <memory>
@@ -23,17 +26,22 @@ public:
 		return &instance;
 	}
 
+	/// @brief 初期化
 	static void StaticInit();
-
+	/// @brief 状態の設定
 	void SetState(const Vector2 pos, const SoLib::Color::RGB4 &alpha);
 
+	/// @brief フェードの開始
 	void Start(const Vector2 targetPos, const SoLib::Color::RGB4 &targetAlpha, float goalTime);
 	void Update(float deltaTime);
 	void Draw();
 
+	/// @brief イージング関数の設定
 	void SetEaseFunc(float (*easeFunc)(float)) { easeFunc_ = easeFunc; }
 
+	/// @brief スプライトの取得
 	Sprite *const GetSprite() { return sprite_.get(); }
+	/// @brief タイマーの取得
 	const SoLib::DeltaTimer *const GetTimer() { return timer_.get(); }
 
 	static const SoLib::Color::RGB4 kFadeColor_;

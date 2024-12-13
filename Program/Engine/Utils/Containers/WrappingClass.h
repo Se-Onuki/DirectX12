@@ -1,3 +1,6 @@
+/// @file WrappingClass.h
+/// @brief CRTPでメンバ変数をラッピングする
+/// @author ONUKI seiya
 #pragma once
 #include "../SoLib/SoLib_Traits.h"
 namespace SoLib::Containers {

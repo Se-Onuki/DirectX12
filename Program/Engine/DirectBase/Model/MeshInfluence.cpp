@@ -1,3 +1,6 @@
+/// @file MeshInfluence.cpp
+/// @brief メッシュへの影響を保存する
+/// @author ONUKI seiya
 #include "MeshInfluence.h"
 
 namespace SolEngine {

@@ -1,3 +1,6 @@
+/// @file Skeleton.cpp
+/// @brief スケルトンの実装
+/// @author ONUKI seiya
 #include "Skeleton.h"
 
 namespace SolEngine {

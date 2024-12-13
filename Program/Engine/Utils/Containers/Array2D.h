@@ -1,3 +1,6 @@
+/// @file Array2D.h
+/// @brief 2次元配列の実装
+/// @author ONUKI seiya
 #pragma once
 #include <vector>
 #include <stdexcept>

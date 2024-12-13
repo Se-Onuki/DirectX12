@@ -1,3 +1,6 @@
+/// @file Angle.cpp
+/// @brief 角度に関するクラス
+/// @author ONUKI seiya
 #include "Angle.h"
 #include <cmath>
 

@@ -1,3 +1,6 @@
+/// @file OffScreenRendering.cpp
+/// @brief オフスクリーンの描画クラス
+/// @author ONUKI seiya
 #include "OffScreenRendering.h"
 #include "../Base/PipelineState.h"
 #include "../../ResourceObject/ResourceObjectManager.h"

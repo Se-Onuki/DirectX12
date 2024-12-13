@@ -1,10 +1,11 @@
+/// @file NewSystems.cpp
+/// @brief ECSのシステムの実装
+/// @author ONUKI seiya
 #include "NewSystems.h"
 #include "../World/ComponentArray/Chunk.h"
 #include "../World/NewWorld.h"
 #include "../../Engine/DirectBase/Input/Input.h"
-#include "../../Header/Object/Particle/ParticleManager.h"
-#include "../../Header/Object/Particle/SimpleParticle.h"
-#include "../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../DirectBase/Render/CameraAnimations/CameraManager.h"
 
 namespace ECS::System::Par {
 
@@ -308,7 +309,7 @@ namespace ECS::System::Par {
 	Model *PlayerAttack::attackModel_ = nullptr;
 	void PlayerAttack::Execute(const World *const, const float)
 	{
-		static ParticleManager *const particleManager = ParticleManager::GetInstance();
+		// static ParticleManager *const particleManager = ParticleManager::GetInstance();
 
 		auto &[pos, quateRot, attackSt, attCT, attColl, cursor, modelAnimator, state, exp] = readWrite_;
 		// クールタイムが終わってたら

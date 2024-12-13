@@ -1,14 +1,19 @@
+/// @file Matrix4x4.h
+/// @brief 4x4行列
+/// @author ONUKI seiya
 #pragma once
 #include "Vector4.h"
 #include <array>
-#include <immintrin.h>
 #include <execution>
+#include <immintrin.h>
 
 struct Vector3;
 struct Vector3Norm;
 
-struct Matrix4x4 final {
-	enum EulerAngle {
+struct Matrix4x4 final
+{
+	enum EulerAngle
+	{
 		Pitch, // x軸
 		Yaw,   // y軸
 		Roll   // z軸
@@ -23,7 +28,7 @@ struct Matrix4x4 final {
 			  Vector4{A, B, C, D},
 			  Vector4{E, F, G, H},
 			  Vector4{I, J, K, L},
-			  Vector4{M, N, O, P} } {}
+			  Vector4{M, N, O, P}} {}
 
 	inline Matrix4x4(const Vector4 &A, const Vector4 &B, const Vector4 &C, const Vector4 &D)
 	{
@@ -38,14 +43,15 @@ struct Matrix4x4 final {
 		vecs = vec;
 	}
 
-	union {
+	union
+	{
 		std::array<Vector4, 4u> vecs;
 		std::array<std::array<float, 4u>, 4u> m;
 		std::array<float, 16u> arr;
 	};
 
 	void
-		Printf(const int32_t x, const int32_t y) const;
+	Printf(const int32_t x, const int32_t y) const;
 
 	/// @brief 逆行列関数
 	/// @return 逆行列
@@ -87,10 +93,11 @@ struct Matrix4x4 final {
 	/// @return 切り出した行列(その他は単位行列)
 	template <uint8_t row, uint8_t column>
 	Matrix4x4 Crop() const;
-
+	/// @brief 回転行列を取得する
 	Matrix4x4 GetRotate() const { return this->Crop<3u, 3u>(); }
-
+	/// @brief 右ベクトル
 	const Vector3 &GetRight() const { return *reinterpret_cast<const Vector3 *>(m[0].data()); }
+	/// @brief 上ベクトル
 	const Vector3 &GetUp() const { return *reinterpret_cast<const Vector3 *>(m[1].data()); }
 
 	/// @brief 前方ベクトル
@@ -100,25 +107,31 @@ struct Matrix4x4 final {
 	Vector3 &GetTranslate() { return reinterpret_cast<Vector3 &>(m[3]); }
 	const Vector3 &GetTranslate() const { return reinterpret_cast<const Vector3 &>(m[3]); }
 
+	/// @brief アフィン行列を生成する
 	static Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);
 
+	/// @brief 回転行列を生成する
 	static Matrix4x4 EulerRotate(EulerAngle, float angle);
+	/// @brief 回転行列を生成する
 	static Matrix4x4 EulerRotate(const Vector3 &angle);
 
+	/// @brief 任意軸の回転行列を生成する
 	static Matrix4x4 AnyAngleRotate(const Vector3Norm &axis, const float angle);
 
+	/// @brief 任意軸の回転行列を生成する
 	static Matrix4x4 AnyAngleRotate(const Vector3Norm &axis, const float cos, const float sin);
 
+	/// @brief 方向ベクトルから回転行列を生成する
 	static Matrix4x4 DirectionToDirection(const Vector3Norm &from, const Vector3Norm &to);
 
 	/// @brief 単位行列関数
 	/// @return 単位行列
 	static const Matrix4x4 &Identity()
 	{
-		static const Matrix4x4 identity{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+		static const Matrix4x4 identity{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
 		return identity;
 	}
-
+	/// @brief 指定したベクトルを目指す視点行列を生成する
 	static Matrix4x4 LookAtLH(
 		const Vector3 &cameraPosition, // 視点の位置
 		const Vector3 &cameraTarget,   // 目標の位置
@@ -140,6 +153,7 @@ struct Matrix4x4 final {
 	const float *const cdata() const { return begin(); }
 
 private:
+	/// @brief 行列の乗算
 	inline static void Mul(Matrix4x4 &result, const Matrix4x4 &left, const Matrix4x4 &right);
 };
 
@@ -186,7 +200,8 @@ inline void Matrix4x4::Mul(Matrix4x4 &result, const Matrix4x4 &left, const Matri
 
 Matrix4x4 Matrix4x4::InverseSRT() const
 {
-	union VecSimd {
+	union VecSimd
+	{
 		Vector4 v;
 		__m128 s;
 		std::array<float, 4u> arr;
@@ -207,11 +222,11 @@ Matrix4x4 Matrix4x4::InverseSRT() const
 	static const constinit int32_t mask = 0b01111111;
 
 	const VecSimd vecX2 =
-	{ .s = _mm_div_ps(mm[0].s, _mm_dp_ps(mm[0].s, mm[0].s, mask)) };
+		{.s = _mm_div_ps(mm[0].s, _mm_dp_ps(mm[0].s, mm[0].s, mask))};
 	const VecSimd vecY2 =
-	{ .s = _mm_div_ps(mm[1].s, _mm_dp_ps(mm[1].s, mm[1].s, mask)) };
+		{.s = _mm_div_ps(mm[1].s, _mm_dp_ps(mm[1].s, mm[1].s, mask))};
 	const VecSimd vecZ2 =
-	{ .s = _mm_div_ps(mm[2].s, _mm_dp_ps(mm[2].s, mm[2].s, mask)) };
+		{.s = _mm_div_ps(mm[2].s, _mm_dp_ps(mm[2].s, mm[2].s, mask))};
 
 	return Matrix4x4{
 		{vecX2.v.x, vecY2.v.x, vecZ2.v.x, 0.f},
@@ -219,7 +234,7 @@ Matrix4x4 Matrix4x4::InverseSRT() const
 		{vecX2.v.z, vecY2.v.z, vecZ2.v.z, 0.f},
 		{-_mm_cvtss_f32(_mm_dp_ps(mm[3].s, vecX2.s, mask)),
 		 -_mm_cvtss_f32(_mm_dp_ps(mm[3].s, vecY2.s, mask)),
-		 -_mm_cvtss_f32(_mm_dp_ps(mm[3].s, vecZ2.s, mask)), 1.f} };
+		 -_mm_cvtss_f32(_mm_dp_ps(mm[3].s, vecZ2.s, mask)), 1.f}};
 };
 template <uint8_t row, uint8_t column>
 inline Matrix4x4 Matrix4x4::Crop() const

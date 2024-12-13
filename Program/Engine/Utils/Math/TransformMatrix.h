@@ -1,3 +1,6 @@
+/// @file TransformMatrix.h
+/// @brief Transform用のMatrix
+/// @author ONUKI seiya
 #pragma once
 #include "Matrix3x3.h"
 #include "Vector3.h"
@@ -29,10 +32,13 @@ public:
 
 	static const TransformMatrix one;
 
+	/// @brief 単位行列を取得する
 	const TransformMatrix &Identity() const { return one; }
 
+	/// @brief 逆行列を取得する
 	TransformMatrix Inverse() const;
 
+	/// @brief 逆行列を取得する(回転+平行移動行列のみ)
 	TransformMatrix InverseRT() const;
 
 	/// @brief 回転行列を取得する
@@ -62,19 +68,23 @@ public:
 
 public:
 
+	/// @brief 行列を作成する
 	static TransformMatrix MakeMatrix(const Matrix4x4 &matrix);
 
+	/// @brief 回転行列を作成する
 	static TransformMatrix MakeRotate(const SoLib::Math::Euler &rotate);
 
+	/// @brief アフィン行列を作成する
 	static TransformMatrix Affine(const Vector3 &scale, const SoLib::Math::Euler &rotate, const Vector3 &translate);
+	/// @brief 任意軸での回転行列を作成する
 	static TransformMatrix AnyAngleRotate(const Vector3Norm &axis, const float angle);
 	static TransformMatrix AnyAngleRotate(const Vector3Norm &axis, const float cos, const float sin);
-
+	/// @brief 特定の方向を向く行列を作成する
 	static TransformMatrix DirectionToDirection(const Vector3Norm &from, const Vector3Norm &to);
 
 
 public:
-
+	/// @brief 行列を乗算する
 	inline static void Mul(TransformMatrix &result, const TransformMatrix &left, const TransformMatrix &right);
 };
 

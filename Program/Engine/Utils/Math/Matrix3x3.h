@@ -1,3 +1,6 @@
+/// @file Matrix3x3.h
+/// @brief 3x3行列
+/// @author ONUKI seiya
 #pragma once
 #include <array>
 #include <cstdint>

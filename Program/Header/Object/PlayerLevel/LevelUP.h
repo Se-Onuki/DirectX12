@@ -1,3 +1,6 @@
+/// @file LevelUP.h
+/// @brief レベルアップのUI
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/DirectBase/2D/Sprite.h"
 #include "../../Engine/Utils/SoLib/SoLib.h"
@@ -7,6 +10,7 @@ class ButtonPickUp;
 class ButtonUI {
 public:
 
+	/// @brief 生成
 	static std::unique_ptr<ButtonUI> Generate();
 
 	void Init(const uint32_t texture, const std::function<void(void)> &func);
@@ -22,7 +26,7 @@ public:
 	SoLib::Color::RGB4 pickUpColor_ = 0x00FFFFFF;
 
 	// ボタンの画像
-	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr<Sprite> sprite_ = nullptr;
 
 	void Draw() const;
 };
@@ -33,6 +37,7 @@ public:
 	ButtonUIGroup() = default;
 	~ButtonUIGroup() = default;
 
+	/// @brief ボタンの状態を設定
 	void SetStatus(const std::function<void(ButtonUI *, size_t index)> &statusSetter) const;
 
 
@@ -67,19 +72,19 @@ public:
 
 private:
 	// ピックアップ時のイージング
-	SoLib::EaseFunc pickUpEase_;
+	SoLib::EaseFunc pickUpEase_{};
 	// ピックアップ時のタイマー
 	SoLib::Time::DeltaTimer pickUpTimer_{ 0.5f };
 
 	// 解除時のイージング
-	SoLib::EaseFunc dropDownEase_;
+	SoLib::EaseFunc dropDownEase_{};
 	// 解除時に必要な時間
 	float dropDownTime_ = 0.5f;
 
 	// 指定するターゲット
 	ButtonUI *pickUpTarget_ = nullptr;
 	// 解除するターゲット
-	std::array<std::pair<ButtonUI *, float>, kDropDownCount_> dropDownTarget_;
+	std::array<std::pair<ButtonUI *, float>, kDropDownCount_> dropDownTarget_{};
 
 };
 
@@ -125,9 +130,9 @@ public:
 private:
 
 	// 画面の中心位置
-	Vector2 windowCenter_;
+	Vector2 windowCenter_{};
 	// ボタンの大きさ
-	Vector2 buttonScale_;
+	Vector2 buttonScale_{};
 	// ボタンの隙間
 	float distance_{};
 
@@ -138,7 +143,7 @@ private:
 	int32_t targetCount_{};
 
 	// 背景
-	std::unique_ptr<Sprite> backGround_;
+	std::unique_ptr<Sprite> backGround_ = nullptr;
 
 	// ボタンのUI
 	std::vector<std::unique_ptr<ButtonUI>> button_;
@@ -150,7 +155,7 @@ private:
 	ButtonPickUp buttonPicker_{};
 
 	// アニメーションタイマー
-	SoLib::DeltaTimer timer_;
+	SoLib::DeltaTimer timer_{};
 
 	// 開くためのフラグ
 	bool isOpen_ = false;

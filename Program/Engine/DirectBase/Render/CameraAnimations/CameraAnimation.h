@@ -1,3 +1,6 @@
+/// @file CameraAnimation.h
+/// @brief カメラのアニメーション
+/// @author TOYODA yuki
 #pragma once
 #include "../../../Engine/Utils/SoLib/SoLib.h"
 #include "../../../Engine/Utils/Math/Angle.h"

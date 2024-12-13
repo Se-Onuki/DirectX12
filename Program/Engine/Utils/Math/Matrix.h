@@ -1,3 +1,6 @@
+/// @file Matrix.h
+/// @brief 汎用的な行列
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 

@@ -1,3 +1,6 @@
+/// @file ConstString.h
+/// @brief 固定長文字列
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 #include <array>

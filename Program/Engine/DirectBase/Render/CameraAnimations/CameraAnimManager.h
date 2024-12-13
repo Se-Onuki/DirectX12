@@ -1,3 +1,6 @@
+/// @file CameraAnimManager.h
+/// @brief カメラアニメーションのマネージャー
+/// @author TOYODA yuki
 #pragma once
 #include "CameraAnimation.h"
 #include <vector>

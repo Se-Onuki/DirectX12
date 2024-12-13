@@ -1,3 +1,6 @@
+/// @file EngineLayer.hpp
+/// @brief エンジンのレイヤー分けのクラス
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 

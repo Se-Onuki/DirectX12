@@ -1,3 +1,6 @@
+/// @file SkinClusterBase.h
+/// @brief スキンクラスタの情報源
+/// @author ONUKI seiya
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
@@ -26,6 +29,8 @@ namespace SolEngine {
 		// ファイルのハンドル
 		ResourceHandle<AssimpData> assimpHandle_;
 
+		/// @brief ソースを文字列で表現する
+		/// @return ファイル名
 		std::string ToStr() const {
 			const auto &assimpSource = assimpHandle_.GetSource();
 			return assimpSource->directoryPath_ + assimpSource->fileName_;
@@ -37,7 +42,9 @@ namespace SolEngine {
 	template <>
 	class ResourceCreater<SkinClusterBase> {
 	public:
-
+		/// @brief リソースを作成する
+		/// @param[in] source リソースソース
+		/// @return リソース
 		std::unique_ptr<SkinClusterBase> CreateObject(const ResourceSource<SkinClusterBase> &source) const;
 
 	};
@@ -49,7 +56,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::SkinClusterBase>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::SkinClusterBase> &data) const {
-			return size_t{ static_cast<size_t>(data.assimpHandle_.GetHandle()) << 32u | static_cast<size_t>(data.assimpHandle_.GetVersion()) };
+			return data.assimpHandle_.GetHashID();
 		}
 	};
 }

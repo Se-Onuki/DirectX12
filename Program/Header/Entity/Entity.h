@@ -1,3 +1,6 @@
+/// @file Entity.h
+/// @brief ゲームオブジェクトの実装
+/// @author ONUKI seiya
 #pragma once
 #include <unordered_map>
 #include <unordered_set>

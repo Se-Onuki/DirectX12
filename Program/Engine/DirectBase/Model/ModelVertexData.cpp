@@ -1,4 +1,8 @@
+/// @file ModelVertexData.cpp
+/// @brief モデル全体のの頂点情報
+/// @author ONUKI seiya
 #include "ModelVertexData.h"
+#include "../Engine/DirectBase/Base/DirectXCommon.h"
 
 namespace SolEngine {
 
@@ -8,7 +12,7 @@ namespace SolEngine {
 		std::unique_ptr<ModelVertexData> result = std::make_unique<ModelVertexData>();
 
 
-		auto *const dxCommon = DirectXCommon::GetInstance();
+		auto *const dxCommon = ::DirectXCommon::GetInstance();
 		// SRVを取得する
 		result->heapRange_ = dxCommon->GetSRVHeap()->RequestHeapAllocation(1u);
 

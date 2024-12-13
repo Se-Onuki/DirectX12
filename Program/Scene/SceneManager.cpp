@@ -1,3 +1,6 @@
+/// @file SceneManager.cpp
+/// @brief シーンマネージャ
+/// @author ONUKI seiya
 #include "SceneManager.h"
 #include "../Header/Object/Fade.h"
 #include "GameScene.h"

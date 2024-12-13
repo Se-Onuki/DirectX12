@@ -1,3 +1,6 @@
+/// @file TransformMatrix.cpp
+/// @brief Transform用のMatrix
+/// @author ONUKI seiya
 #include "TransformMatrix.h"
 #include "Math.hpp"
 #include "Matrix4x4.h"

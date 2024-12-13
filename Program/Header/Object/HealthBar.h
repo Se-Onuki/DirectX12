@@ -1,3 +1,6 @@
+/// @file HealthBar.h
+/// @brief 体力バー
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/DirectBase/2D/Sprite.h"
 #include <memory>
@@ -14,10 +17,13 @@ public:
 
 	void Draw();
 
+	/// @brief 体力の割合を設定
 	void SetPercent(const float t);
 
+	/// @brief 中心座標を設定
 	void SetCentor(const Vector2 pos);
 
+	/// @brief サイズを設定
 	void SetScale(const Vector2 radius);
 
 

@@ -1,3 +1,6 @@
+/// @file EntityArrayStorage.cpp
+/// @brief エンティティのデータの管理
+/// @author ONUKI seiya
 #include "EntityArrayStorage.h"
 #include "Chunk.h"
 

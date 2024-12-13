@@ -34,7 +34,6 @@
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Header/Object/Ground.h"
 #include "../Header/Object/HealthBar.h"
-#include "../Header/Object/Particle/ParticleManager.h"
 #include "../Header/Object/PlayerLevel/LevelUP.h"
 
 /// @class GameScene
@@ -145,8 +144,6 @@ private:
 	SoLib::DeltaTimer spawnTimer_{ 2.5f };
 	/// @brief ゲームオブジェクト
 	GameObject gameObject_;
-	/// @brief パーティクルマネージャーのインスタンス
-	ParticleManager *particleManager_ = nullptr;
 
 	/// @brief 体力バー
 	std::unique_ptr<HealthBar> healthBar_;
@@ -184,4 +181,11 @@ private:
 	CBuffer<SoLib::Color::HSV4> hsvParam_{ {0.f, 0.5f, 0.5f, 1.f} };
 	/// @brief ガウシアンブラーのパラメータ
 	CBuffer<std::pair<float, int32_t>> gaussianParam_;
+
+	SoLib::Color::RGB4 shadowColor_ = 0x00000055;
+	SoLib::Color::RGB4 expColor_ = 0x555500FF;
+
+	float attackTime_ = 0.25f;
+	float knockBackPower_ = 0.5f;
+
 };

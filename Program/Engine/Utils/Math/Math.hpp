@@ -125,16 +125,18 @@ Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m);
 namespace SoLib {
 
 	namespace Math {
-
+		/// @brief アフィン行列の作成
 		Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);
 		Matrix4x4 Affine(const Vector3 &scale, const Quaternion &quaternion, const Vector3 &translate);
 
+		/// @brief クォータニオンの作成
 		Quaternion MakeQuaternion(const SoLib::Math::Euler &euler);
-
+		/// @brief 回転からベクトルを作成
 		Vector3 EulerToDirection(const SoLib::Math::Euler &euler);
-
+		/// @brief ベクトルから回転を作成
 		SoLib::Math::Euler DirectionToEuler(const Vector3 &direction);
 
+		/// @brief 行列の転置
 		template <size_t x, size_t y, typename T>
 		inline void ArrayTranspose(const T *input, T *output) {
 			for (size_t i = 0; i < x; ++i) {
@@ -143,13 +145,13 @@ namespace SoLib {
 				}
 			}
 		}
-
+		/// @brief 行列の加算
 		inline void Add(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
 			for (uint32_t i = 0; i < 2; i++) {
 				result.simd_[i] = left.simd_[i] + right.simd_[i];
 			}
 		}
-
+		/// @brief 行列の減算
 		inline void Sub(Matrix2x3 &result, const Matrix2x3 &left, const Matrix2x3 &right) {
 			for (uint32_t i = 0; i < 2; i++) {
 				result.simd_[i] = left.simd_[i] - right.simd_[i];
@@ -165,6 +167,7 @@ namespace SoLib {
 
 }
 
+/// @brief 行列の加算
 inline Matrix2x3 operator+(const Matrix2x3 &l, const Matrix2x3 &r) {
 
 	Matrix2x3 result;
@@ -190,6 +193,8 @@ inline Matrix2x3 operator+(const Matrix2x3 &l, const Matrix2x3 &r) {
 //	return result;
 //}
 
+
+/// @brief 行列とベクトルの乗算
 inline Vector3 operator*(const Vector3 &left, const Matrix3x3 &right)
 {
 
@@ -210,6 +215,7 @@ inline Vector3 operator*(const Vector3 &left, const Matrix3x3 &right)
 	return *reinterpret_cast<const Vector3 *>(&result);
 }
 
+/// @brief 行列とベクトルの乗算
 inline Vector3 &operator*=(Vector3 &left, const Matrix3x3 &right)
 {
 
@@ -230,14 +236,17 @@ inline Vector3 &operator*=(Vector3 &left, const Matrix3x3 &right)
 	return left = *reinterpret_cast<const Vector3 *>(&result);
 }
 
+/// @brief クォータニオンとベクトルの乗算
 inline Vector3 operator*(const Vector3 &left, const Quaternion &right) {
 	return right.RotateVector(left);
 }
 
+/// @brief クォータニオンとベクトルの乗算
 inline Vector3 &operator*=(Vector3 &left, const Quaternion &right) {
 	return left = right.RotateVector(left);
 }
 
+/// @brief 行列とベクトルの乗算
 inline void Mul(Vector4 &result, const Vector4 &left, const Matrix4x4 &right)
 {
 
@@ -260,6 +269,7 @@ inline void Mul(Vector4 &result, const Vector4 &left, const Matrix4x4 &right)
 	_mm_storeu_ps(result.data(), row);
 }
 
+/// @brief 行列とベクトルの乗算
 inline Vector4 operator*(const Vector4 &left, const Matrix4x4 &right) {
 	Vector4 result;
 
@@ -268,7 +278,7 @@ inline Vector4 operator*(const Vector4 &left, const Matrix4x4 &right) {
 	return result;
 }
 
-
+/// @brief 行列とベクトルの乗算
 inline Vector4 &operator*=(Vector4 &left, const Matrix4x4 &right) {
 
 	Mul(left, left, right);

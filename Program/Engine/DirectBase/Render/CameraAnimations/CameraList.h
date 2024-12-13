@@ -1,3 +1,6 @@
+/// @file CameraList.h
+/// @brief カメラのリスト
+/// @author TOYODA yuki
 #pragma once
 #include "../Camera.h"
 #include <map>

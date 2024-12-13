@@ -1,3 +1,6 @@
+/// @file ChunkIterator.h
+/// @brief チャンクのイテレータ
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 #include <compare>

@@ -61,8 +61,8 @@ namespace SolEngine {
 		/// @brief ディスクリプターサイズの取得
 		/// @tparam HeapType ヒープタイプ
 		/// @return ディスクリプターサイズ
-		template <D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
-		static uint32_t GetDescSize();
+		/*template <D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
+		static uint32_t GetDescSize();*/
 
 		/// @fn static uint32_t GetDescriptorSizeSRV(void)
 		/// @brief SRVヒープサイズの取得

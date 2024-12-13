@@ -1,3 +1,6 @@
+/// @file SkinAnimation.cpp
+/// @brief スキニングのアニメーション
+/// @author ONUKI seiya
 #include "SkinAnimation.h"
 
 #include <algorithm>

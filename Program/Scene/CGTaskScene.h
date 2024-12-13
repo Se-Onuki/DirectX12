@@ -1,3 +1,6 @@
+/// @file CGTaskScene.h
+/// @brief CGの課題のシーン
+/// @author ONUKI seiya
 #pragma once
 #include "SceneManager.h"
 #include <memory>

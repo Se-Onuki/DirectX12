@@ -1,3 +1,6 @@
+/// @file MopdelComp.cpp
+/// @brief モデルコンポーネント
+/// @author ONUKI seiya
 #include "ModelComp.h"
 
 void ModelComp::Update() {

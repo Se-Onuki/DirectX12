@@ -1,3 +1,6 @@
+/// @file Render.h
+/// @brief レンダラー
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/Utils/Math/Vector2.h"
 #include "../../Engine/Utils/Math/Vector3.h"
@@ -50,6 +53,9 @@ public:
 	/// @return スクリーン上の座標
 	static Vector3 WorldToScreen(const Vector3 &worldPos, const Matrix4x4 &matVPVp);
 
+	/// @brief オブジェクトのスケールを取得する
+	/// @param[in] worldPos オブジェクトのワールド座標
+	/// @param[in] projectionMatrix プロジェクション行列
 	static float GetObjectScale(const Vector3 &worldPos, const Matrix4x4 &projectionMatrix) {
 
 		Vector4 pos = { .w = 1.f };

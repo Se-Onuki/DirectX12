@@ -1,3 +1,6 @@
+/// @file Quaternion.h
+/// @brief クォータニオン
+/// @author ONUKI seiya
 #pragma once
 #include <immintrin.h>
 #include "SimdCalc.h"
@@ -61,15 +64,21 @@ struct Quaternion final {
 	/// @return 三次元ベクトル
 	Vector3 GetFront() const noexcept;
 
+	/// @brief 回転行列を作成する
 	Matrix4x4 MakeRotateMatrix() const;
 
+	/// @brief ベクトルを回転する
 	static inline Vector3 RotateVector(const Vector3 &a, const Quaternion &b);
+	/// @brief ベクトルを回転する
 	inline Vector3 RotateVector(const Vector3 &v) const;
 
+	/// @brief 任意軸で回転するクォータニオンを作成
 	static Quaternion AnyAxisRotation(const Vector3Norm &axis, float angle);
 
+	/// @brief 回転クォータニオンを作成
 	static Quaternion Create(const SoLib::Math::Euler &euler);
 
+	/// @brief クォータニオンの球面線形補間
 	static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
 
 	/// @brief 指定の方向に向く回転クォータニオンを作成

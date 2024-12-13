@@ -1,3 +1,6 @@
+/// @file SkinningComputeShader.h
+/// @brief スキニングをコンピュートシェーダーで行う
+/// @author ONUKI seiya
 #pragma once
 #include "../Base/EngineObject.h"
 #include <d3d12.h>
@@ -18,10 +21,18 @@ namespace SolEngine {
 
 	public:
 
+		/// @brief 初期化
+		/// @param[in] vertexCount 頂点数
 		void Init(const uint32_t vertexCount);
 
+		/// @brief Update
+		/// @param[in] skinCluster スキニングの情報群
+		/// @param[in] modelData モデルデータ
+		/// @param[in] modelInfluence モデルへの影響量
 		void Update(const ::SkinCluster &skinCluster, const ModelData *modelData, const ModelInfluence *modelInfluence);
 
+		/// @brief データを取得
+		/// @return 計算し終わったデータ
 		const auto &GetOutputData() const { return outputData_; }
 
 	private:

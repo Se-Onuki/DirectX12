@@ -1,3 +1,6 @@
+/// @file HealthBar.cpp
+/// @brief 体力バー
+/// @author ONUKI seiya
 #include "HealthBar.h"
 
 HealthBar::HealthBar() :backGround_(Sprite::Generate()), gauge_(Sprite::Generate()), decrementGauge_(Sprite::Generate()) {

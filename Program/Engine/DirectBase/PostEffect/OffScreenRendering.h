@@ -1,18 +1,22 @@
+/// @file OffScreenRendering.h
+/// @brief オフスクリーンの描画クラス
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/Utils/Containers/Singleton.h"
 #include "../../Engine/Utils/Graphics/Color.h"
+#include "../../ResourceObject/ResourceObjectManager.h"
+#include "../Base/CBuffer.h"
 #include "../Base/DirectXCommon.h"
-#include <d3d12.h>
-#include <wrl.h>
 #include "../Base/EngineObject.h"
 #include "../Base/RootSignature.h"
-#include "../Base/CBuffer.h"
-#include "../../ResourceObject/ResourceObjectManager.h"
+#include <d3d12.h>
+#include <wrl.h>
 
 namespace PostEffect {
 
-	class OffScreenRenderer : public SolEngine::EngineObject {
-		//friend SoLib::Singleton<OffScreenRenderer>;
+	class OffScreenRenderer : public SolEngine::EngineObject
+	{
+		// friend SoLib::Singleton<OffScreenRenderer>;
 
 	public:
 		OffScreenRenderer() = default;
@@ -30,31 +34,40 @@ namespace PostEffect {
 		/// @return rtvヒープのポインタ
 		DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV> *GetRtvDescHeap() { return rtvDescHeap_.get(); }
 
+		/// @brief 初期化する色を取得
+		/// @return 初期化する色
 		inline const SoLib::Color::RGB4 &GetClearColor() { return clearColor_; }
 
 		const DescHeapCbvSrvUav::HeapRange *const GetHeapRange() const { return &srvHeapRange_; }
 
-		//private:
+		// private:
+
+		/// @brief レンダーターゲットを作成する
+		/// @param[in] device デバイス
+		/// @param[in] width 横幅
+		/// @param[in] height 高さ
+		/// @param[in] format フォーマット
+		/// @param[in] clearColor 初期化する色
 		static ComPtr<ID3D12Resource> CreateRenderTextrueResource(ID3D12Device *device, uint32_t width, uint32_t height, DXGI_FORMAT format, const SoLib::Color::RGB4 &clearColor);
 
 	private:
-
 		DirectResourceLeakChecker leakChecker_{};
 
 		// クリア時の色
 		SoLib::Color::RGB4 clearColor_ = 0xFF0000FF; // 赤を指定しておく
 
-		ComPtr<ID3D12Resource> renderTargetTexture_;
+		ComPtr<ID3D12Resource> renderTargetTexture_{};
 
-		std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>> rtvDescHeap_;
+		std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>> rtvDescHeap_ = nullptr;
 
-		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};
 
-		DescHeapCbvSrvUav::HeapRange srvHeapRange_;
-
+		DescHeapCbvSrvUav::HeapRange srvHeapRange_{};
 	};
 
-	class ShaderEffectProcessor : public SoLib::Singleton<ShaderEffectProcessor>, protected SolEngine::EngineObject {
+	/// @brief シェーダーエフェクト処理クラス
+	class ShaderEffectProcessor : public SoLib::Singleton<ShaderEffectProcessor>, protected SolEngine::EngineObject
+	{
 		friend SoLib::Singleton<ShaderEffectProcessor>;
 		ShaderEffectProcessor() = default;
 		ShaderEffectProcessor(const ShaderEffectProcessor &) = delete;
@@ -62,41 +75,45 @@ namespace PostEffect {
 		~ShaderEffectProcessor() = default;
 
 	public:
-
 		static constexpr uint32_t kTextureCount_ = 3u;
 
+		/// @brief 初期化
 		void Init();
 
+		/// @brief テクスチャを入力する
+		/// @param[in] resource 入力するテクスチャ
+		/// @details RenderTargetTextureを入力する
 		void Input(ID3D12Resource *const resource);
 
+		/// @brief 変更したテクスチャを取得
+		/// @param[out] result 出力先のテクスチャ
+		/// @details RenderTargetTextureに出力する
 		void GetResult(ID3D12Resource *const result) const;
 
+		/// @brief テクスチャをコピー
+		/// @param[in] src コピー元のテクスチャ
+		/// @param[in] dst コピー先のテクスチャ
+		/// @details コピー元のテクスチャをコピー先のテクスチャにコピーする｡\
+		/// RenderTargetTextureである必要がある｡
 		static void CopyTexture(ID3D12Resource *const src, ID3D12Resource *const dst);
 
-		template<SoLib::IsRealType... Ts>
+		/// @brief シェーダーを実行する
+		/// @param[in] psName シェーダー名
+		/// @param[in] args シェーダーに渡す引数
+		template <SoLib::IsRealType... Ts>
 		void Execute(const std::wstring &psName, const CBuffer<Ts> &...args);
-		/*template<SoLib::IsRealType...Ts>
-			requires(sizeof...(Ts) > 1)
-		void Execute(const CBuffer<Ts>&... args) {
-
-
-
-		}*/
-
 
 	private:
-
 		std::array<ComPtr<ID3D12Resource>, kTextureCount_> fullScreenTexture_;
 		std::unique_ptr<DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_RTV>> rtvDescHeap_;
 
 		uint32_t textureTarget_ = 0u;
 
 		DescHeapCbvSrvUav::HeapRange srvHeapRange_;
-
 	};
 
-
-	class FullScreenRenderer : public SoLib::Singleton<FullScreenRenderer>, public SolEngine::EngineObject {
+	class FullScreenRenderer : public SoLib::Singleton<FullScreenRenderer>, public SolEngine::EngineObject
+	{
 		friend SoLib::Singleton<FullScreenRenderer>;
 
 		FullScreenRenderer() = default;
@@ -105,43 +122,31 @@ namespace PostEffect {
 		~FullScreenRenderer() = default;
 
 	private:
-
-		//union ValuePair {
-		//	std::pair<float, float> fValue_;
-		//	std::pair<float, int32_t> iValue_;
-		//};
 	public:
-
+		/// @brief 初期化
+		/// @param[in] key シェーダー名
 		void Init(const std::list<std::wstring> &key);
-
+		/// @brief 描画
+		/// @param[in] key シェーダー名
+		/// @param[in] texture 描画するテクスチャ
+		/// @param[in] gpuHandle 描画するテクスチャのGPUハンドル
 		void Draw(const std::wstring &key, ID3D12Resource *texture, D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
 
+		/// @brief ルートシグネチャを取得
 		ID3D12RootSignature *GetRootSignature() { return rootSignature_->Get(); }
-
+		/// @brief パイプラインステートを取得
 		ID3D12PipelineState *GetPipeLine(const std::wstring &key) { return pipelineState_.at(key).Get(); }
 
-		//std::pair<float, float> *GetFParam() { return &param_->fValue_; }
-		//std::pair<float, int32_t> *GetGaussianParam() { return &param_->iValue_; }
-
-		//const CBuffer<ValuePair> &GetParam() const { return param_; }
-
 	private:
-
-		/*const SolEngine::RootParametersAccesser<DescHeapCbvSrvUav::Handle, CBuffer<ValuePair>> accesser_ = SolEngine::MakeRootParametersAccesser(
-			SignParam<DescHeapCbvSrvUav::Handle>{ "t0PS" },
-			SignParam<CBuffer<ValuePair>>{ "b0PS" }
-		);
-
-		CBuffer<ValuePair> param_;*/
 
 		std::unique_ptr<RootSignature> rootSignature_;
 
 		std::map<std::wstring, ComPtr<ID3D12PipelineState>> pipelineState_;
-
 	};
 
-	template<SoLib::IsRealType... Ts>
-	inline void ShaderEffectProcessor::Execute(const std::wstring &psName, const CBuffer<Ts> &...args) {
+	template <SoLib::IsRealType... Ts>
+	inline void ShaderEffectProcessor::Execute(const std::wstring &psName, const CBuffer<Ts> &...args)
+	{
 
 		FullScreenRenderer *const renderer = FullScreenRenderer::GetInstance();
 		auto *const pDxCommon = DirectXCommon::GetInstance();
@@ -188,7 +193,6 @@ namespace PostEffect {
 
 #pragma endregion
 
-
 		pDxCommon->DrawTargetReset(&targetTexture.cpuHandle_, 0xFF0000FF, nullptr, viewport, scissorRect);
 
 		command->SetGraphicsRootSignature(renderer->GetRootSignature());
@@ -202,10 +206,9 @@ namespace PostEffect {
 			(command->SetGraphicsRootConstantBufferView(index++, args.GetGPUVirtualAddress()), ...);
 		}
 
-		//command->SetGraphicsRootConstantBufferView(1, args.GetGPUVirtualAddress());
+		// command->SetGraphicsRootConstantBufferView(1, args.GetGPUVirtualAddress());
 
 		command->DrawInstanced(3, 1, 0, 0);
-
 
 #pragma region TransitionBarrierを張る
 
@@ -228,7 +231,6 @@ namespace PostEffect {
 
 		// ターゲットを進める
 		textureTarget_ = (textureTarget_ + 1) % kTextureCount_;
-
 	}
 
 }

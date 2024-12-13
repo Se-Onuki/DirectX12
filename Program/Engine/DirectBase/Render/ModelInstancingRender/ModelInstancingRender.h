@@ -1,3 +1,6 @@
+/// @file ModelInstancingRender.h
+/// @brief 単一モデルのインスタンシング描画
+/// @author ONUKI seiya
 #pragma once
 #include "../../Model/ModelData.h"
 #include "../../../../Header/Object/Particle.h"
@@ -32,17 +35,38 @@ namespace SolEngine {
 		/// @return 取得した書き込み先の配列
 		std::span<InstanceType> Reservation(size_t count);
 
+		/// @brief 描画データの追加
+		/// @param[in] world ECSのワールド
+		/// @param[in] color モデルの色
+		/// @param[in] afterFunc 追加後の処理
 		template<typename T>
 		void AddMatData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, void(*afterFunc)(InstanceType &) = nullptr);
 
+		/// @brief 描画データの追加
+		/// @param[in] world ECSのワールド
+		/// @param[in] color モデルの色
+		/// @param[in] afterFunc 追加後の処理
 		template<typename T>
 		void AddTransData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
 
+		/// @brief 描画データの追加
+		/// @param[in] world ECSのワールド
+		/// @param[in] color モデルの色
+		/// @param[in] afterFunc 追加後の処理
 		template<typename ...Ts>
 			requires(sizeof...(Ts) > 0)
 		void AddData(const ECS::World &world, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
 
+		/// @brief 描画データの追加
+		/// @param[in] world ECSのワールド
+		/// @param[in] color モデルの色
+		/// @param[in] afterFunc 追加後の処理
 		void AddMatData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, void(*afterFunc)(InstanceType &) = nullptr);
+		
+		/// @brief 描画データの追加
+		/// @param[in] world ECSのワールド
+		/// @param[in] color モデルの色
+		/// @param[in] afterFunc 追加後の処理
 		void AddTransData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
 
 		/// @brief 描画の実行

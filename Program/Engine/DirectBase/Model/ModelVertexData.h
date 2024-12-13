@@ -1,3 +1,6 @@
+/// @file ModelVertexData.h
+/// @brief モデル全体の頂点情報
+/// @author ONUKI seiya
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
@@ -56,6 +59,9 @@ namespace SolEngine {
 	class ResourceCreater<ModelVertexData> {
 	public:
 
+		/// @brief リソースの作成
+		/// @param[in] source リソースソース
+		/// @return 作成したリソース
 		std::unique_ptr<ModelVertexData> CreateObject(const ResourceSource<ModelVertexData> &source) const;
 
 	};
@@ -67,7 +73,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::ModelVertexData>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::ModelVertexData> &data) const {
-			return size_t{ static_cast<size_t>(data.assimpHandle_.GetHandle()) << 32u | static_cast<size_t>(data.assimpHandle_.GetVersion()) };
+			return data.assimpHandle_.GetHashID();
 		}
 	};
 }

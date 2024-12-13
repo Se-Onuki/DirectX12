@@ -1,3 +1,6 @@
+/// @file GameScene.cpp
+/// @brief ゲームの処理を実装する
+/// @author ONUKI seiya
 #include "GameScene.h"
 
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
@@ -5,7 +8,6 @@
 #include "../Engine/DirectBase/Model/ModelManager.h"
 #include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
 #include "../Header/Object/Fade.h"
-#include "../Header/Object/Particle/ParticleEmitterManager.h"
 #include "../../Engine/Utils/SoLib/SoLib.h"
 #include <imgui.h>
 #include "TitleScene.h"
@@ -27,7 +29,6 @@ GameScene::GameScene() {
 	skinModelRender_ = SkinModelListManager::GetInstance();
 	modelHandleRender_ = ModelHandleListManager::GetInstance();
 	skinModelHandleRender_ = SkinModelHandleListManager::GetInstance();
-	particleManager_ = ParticleManager::GetInstance();
 }
 
 GameScene::~GameScene() {
@@ -59,7 +60,6 @@ void GameScene::OnEnter() {
 	skinModelRender_->Init(1024u);
 	modelHandleRender_->Init(1024u);
 	skinModelHandleRender_->Init(1024u);
-	particleManager_->Init(2048u);
 
 	SolEngine::Resource::ResourceLoadManager resourceLoadManager;
 	SoLib::IO::File file{ "resources/Scene/GameScene.jsonc" };
@@ -103,19 +103,6 @@ void GameScene::OnEnter() {
 	followCamera_ = cameraManager_->AddCamera("FollowCamera");
 	cameraManager_->SetUseCamera(followCamera_);
 	cameraManager_->Update(0.f);
-
-	prefab_ = std::make_unique<ECS::Prefab>();
-
-	*prefab_ += ECS::Identifier{};
-	*prefab_ += ECS::IsAlive{};
-	*prefab_ += ECS::PositionComp{};
-	*prefab_ += ECS::RotateComp{};
-	*prefab_ += ECS::ScaleComp{};
-	*prefab_ += ECS::AliveTime{};
-	*prefab_ += ECS::EmitterComp{ .count_ = 5u, .startColor_ = 0xFFFF00FF, .endColor_ = 0xFF000000, .spawnLifeLimit_{0.1f, 0.2f}, .spawnPower_{0.05f, 0.1f}, .spawnRange_{90._deg, 180._deg, 0.f} };
-
-	//entityManager_->CreateEntity(*prefab_);
-	newWorld_.CreateEntity(*prefab_);
 
 	playerPrefab_ = std::make_unique<ECS::Prefab>();
 
@@ -302,7 +289,9 @@ void GameScene::OnEnter() {
 	ECS::System::Par::ExpGaugeDrawer::prevLevel_ = 0u;
 
 	levelUpUI_ = std::make_unique<LevelUP>();
-	levelUpUI_->SetWindow(Vector2{ WinApp::kWindowWidth / 2.f, WinApp::kWindowHeight / 2.f }, Vector2{ 320, 512 }, 64);
+	const Vector2 windowSize { 320, 512 };
+	const float windowDistance = 64.f;
+	levelUpUI_->SetWindow(Vector2{ WinApp::kWindowWidth / 2.f, WinApp::kWindowHeight / 2.f }, windowSize, windowDistance);
 	ECS::System::Par::ExpGaugeDrawer::levelUp_ = levelUpUI_.get();
 
 	constexpr int32_t kUiCount = 3;
@@ -322,7 +311,7 @@ void GameScene::OnEnter() {
 				for (auto &player : *chunk) {
 					auto &status = player.GetComponent<ECS::AttackStatus>();
 					// 攻撃範囲の増大
-					status.radius_ += 1.f;
+					status.radius_++;
 				}
 			}
 			});
@@ -350,6 +339,7 @@ void GameScene::OnEnter() {
 
 	{
 		ButtonUI *button = levelUpUI_->GetButtonUI(2);
+		static constexpr int32_t powerUp = 5;
 
 		button->Init(TextureManager::Load("UI/PowerUp.png"), [this]() {
 			Archetype playerArchetype;
@@ -362,7 +352,7 @@ void GameScene::OnEnter() {
 				for (auto &player : *chunk) {
 					auto &power = player.GetComponent<ECS::AttackPower>();
 					// 攻撃力の増加
-					power.power_ += 5;
+					power.power_ += powerUp;
 				}
 			}
 			});
@@ -372,7 +362,6 @@ void GameScene::OnEnter() {
 
 void GameScene::OnExit() {
 	audio_->StopAllWave();
-	//fullScreen_->Finalize();
 
 	ECS::System::Par::WeaponCollision::attackCollisions_.reset();
 }
@@ -525,9 +514,9 @@ void GameScene::Update() {
 				sphere.collision_.radius = attackStatus.radius_;
 				auto &knockBack = knockBackRanges.At(index);
 				// 吹き飛ばす力
-				knockBack.diffPower_ = { 0.5f,0.5f };
+				knockBack.diffPower_ = { knockBackPower_, knockBackPower_ };
 				// 攻撃持続時間
-				lifeRanges.At(index).lifeLimit_ = 0.25f;
+				lifeRanges.At(index).lifeLimit_ = attackTime_;
 				// 攻撃力
 				attackPowerRanges.At(index) = playerPowerRanges.At(i);
 
@@ -577,7 +566,7 @@ void GameScene::Update() {
 
 	}
 	// 描画のカウントのリセット
-	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = 0u;
+	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = {};
 	// ECSの処理の更新
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 	// カメラのアップデート
@@ -585,14 +574,14 @@ void GameScene::Update() {
 
 	// 敵の描画
 	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_);
-	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, 0x00000055, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
+	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, shadowColor_, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
 	data.transform.World = Matrix4x4::Identity();
 	data.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
 		}
 	);
 
 	// 経験値の描画
-	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, 0x555500FF, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
+	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, expColor_, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
 	data.transform.World = Matrix4x4::Identity();
 	data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
 		}
@@ -623,11 +612,13 @@ void GameScene::Update() {
 				// チャンクからデータの取得
 				auto posRange = ghostChanks[i]->GetComponent<ECS::SphereCollisionComp>();
 				auto aliveRange = ghostChanks[i]->GetComponent<ECS::AliveTime>();
+				// データを転送する
+				const float attackTime = attackTime_;
 				// 転送する
-				std::transform(posRange.begin(), posRange.end(), aliveRange.begin(), &span[ghostOffset[i]], [](const ECS::SphereCollisionComp &trans, const ECS::AliveTime &alive) {
+				std::transform(posRange.begin(), posRange.end(), aliveRange.begin(), &span[ghostOffset[i]], [attackTime](const ECS::SphereCollisionComp &trans, const ECS::AliveTime &alive) {
 
-					Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / 0.25f)))) };
-					result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / 0.25f)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / 0.25f);
+					Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / attackTime)))) };
+					result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / attackTime)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / attackTime);
 					result.transform.World.GetTranslate() = trans.collision_.centor;
 					result.transform.World.m[3][3] = 1.f;
 					return result;
@@ -679,8 +670,6 @@ void GameScene::Update() {
 	}
 
 	SoLib::ImGuiWidget("HsvParam", hsvParam_.get());
-
-	particleManager_->Update(fixDeltaTime);
 }
 
 void GameScene::Draw() {

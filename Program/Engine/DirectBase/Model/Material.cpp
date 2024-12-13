@@ -1,3 +1,6 @@
+/// @file Material.cpp
+/// @brief マテリアルクラス
+/// @author ONUKI seiya
 #include "Material.h"
 #include "../Base/TextureManager.h"
 

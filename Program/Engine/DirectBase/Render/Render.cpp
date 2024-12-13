@@ -1,3 +1,6 @@
+/// @file Render.cpp
+/// @brief レンダラー
+/// @author ONUKI seiya
 #include "Render.h"
 
 #include <cmath>

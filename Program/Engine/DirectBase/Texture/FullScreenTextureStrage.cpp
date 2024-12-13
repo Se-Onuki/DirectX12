@@ -1,3 +1,6 @@
+/// @file FullScreenTextureStrage.cpp
+/// @brief 全画面テクスチャのストレージ
+/// @author ONUKI seiya
 #include "FullScreenTextureStrage.h"
 #include "../PostEffect/OffScreenRendering.h"
 

@@ -1,3 +1,6 @@
+/// @file EntityList.h
+/// @brief エンティティのリスト
+/// @author ONUKI seiya
 #pragma once
 #include "../World/ComponentArray/Chunk.h"
 

@@ -1,3 +1,6 @@
+/// @file ModelManager.cpp
+/// @brief モデルマネージャ(旧版)
+/// @author ONUKI seiya
 #include "ModelManager.h"
 
 #include <memory>

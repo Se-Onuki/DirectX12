@@ -1,3 +1,6 @@
+/// @file Matrix3x3.cpp
+/// @brief 3x3行列
+/// @author ONUKI seiya
 #include "Matrix3x3.h"
 
 //#include <Novice.h>

@@ -1,9 +1,13 @@
+/// @file ModelData.cpp
+/// @brief モデルデータ(現行のモデルデータ)
+/// @author ONUKI seiya
 #include "ModelData.h"
 #include "Material.h"
 #include "Mesh.h"
 #include <execution>
 #include "SkeletonAnimation/Skeleton.h"
 #include "../../Engine/Utils/Convert/Convert.h"
+#include "../Engine/DirectBase/Base/DirectXCommon.h"
 
 namespace SolEngine {
 	std::unique_ptr<ModelData> ResourceCreater<ModelData>::CreateObject(const ResourceSource<ModelData> &source) const {
@@ -46,7 +50,7 @@ namespace SolEngine {
 
 	void ModelData::Draw(const Transform &transform, const Camera3D &camera) const
 	{
-		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		::DirectXCommon *const dxCommon = ::DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 		assert(Model::GetPipelineType() == Model::PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
@@ -61,7 +65,7 @@ namespace SolEngine {
 
 	void ModelData::Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const Transform &transform, const Camera3D &camera) const
 	{
-		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		::DirectXCommon *const dxCommon = ::DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 		assert(Model::GetPipelineType() == Model::PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
@@ -78,7 +82,7 @@ namespace SolEngine {
 	void ModelData::Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const
 	{
 
-		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		::DirectXCommon *const dxCommon = ::DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
 		assert(Model::GetPipelineType() == Model::PipelineType::kSkinModel && "設定されたシグネチャがkSkinModelではありません");
@@ -96,7 +100,7 @@ namespace SolEngine {
 
 	void ModelData::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
 	{
-		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		::DirectXCommon *const dxCommon = ::DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 
 		assert((Model::GetPipelineType() == Model::PipelineType::kParticle or Model::GetPipelineType() == Model::PipelineType::kShadowParticle) && "設定されたシグネチャがkParticleではありません");
@@ -115,7 +119,7 @@ namespace SolEngine {
 
 	void ModelData::Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
 	{
-		DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+		::DirectXCommon *const dxCommon = ::DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 		assert(Model::GetPipelineType() == Model::PipelineType::kSkinParticle && "設定されたシグネチャがkSkinParticleではありません");
 

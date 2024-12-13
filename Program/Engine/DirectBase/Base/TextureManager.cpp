@@ -1,3 +1,6 @@
+/// @file TextureManager.cpp
+/// @brief テクスチャの管理を行う
+/// @author ONUKI seiya
 #include "TextureManager.h"
 
 #include "../../externals/DirectXTex/DirectXTex.h"

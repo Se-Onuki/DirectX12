@@ -1,3 +1,6 @@
+/// @file ComponentRegistry.h
+/// @brief コンポーネントの情報を保持する
+/// @author ONUKI seiya
 #pragma once
 #include <tuple>
 #include <bitset>
@@ -62,8 +65,6 @@ namespace ECS {
 			using BitData = std::bitset<sizeof...(TComps)>;
 
 			inline static constexpr uint32_t kSize = sizeof...(TComps);
-			/*friend static ComponentFlag BaseComponentRegistry<TComps...>::operator&(const ComponentFlag &, const ComponentFlag &) noexcept;
-			friend static ComponentFlag BaseComponentRegistry<TComps...>::operator|(const ComponentFlag &, const ComponentFlag &) noexcept;*/
 
 
 		private:
@@ -75,22 +76,27 @@ namespace ECS {
 			// Archetypeのコンストラクタ
 			ComponentFlag() = default;
 			ComponentFlag(BitData &&bitset) :bitset_(bitset) {}
-
+			/// @brief コンポーネントの数を返す
+			/// @return コンポーネントの数
 			uint32_t GetCompCount() const { return static_cast<uint32_t>(bitset_.count()); }
 
+			/// @brief BitDataを取得する
 			operator const BitData() { return bitset_; }
 			operator const BitData &() const { return bitset_; }
 
+			/// @brief BitDataを取得する
 			const BitData &Get() const {
 				return bitset_;
 			}
 
+			/// @brief コンポーネントを追加する
 			void AddComp(const std::initializer_list<uint32_t> &args) {
 				for (uint32_t arg : args) {
 					bitset_.set(arg);
 				}
 			}
 
+			/// @brief コンポーネントを追加する
 			template<SoLib::IsContainsType<uint32_t> T>
 			void AddComp(const T &args) {
 				for (uint32_t arg : args) {
@@ -98,6 +104,7 @@ namespace ECS {
 				}
 			}
 
+			/// @brief コンポーネントを追加する
 			template <IsComponent T, IsComponent... Ts>
 			void AddComp() {
 				constexpr std::size_t index = GetIndex<T, TComps...>();
@@ -165,10 +172,14 @@ namespace ECS {
 		private:
 		};
 
+		/// @brief フラグを作成する
 		static ComponentFlag CreateFlag() {
 			return ComponentFlag{};
 		}
 
+		/// @brief フラグを作成する
+		/// @tparam ...TComps コンポーネントの型
+		/// @return フラグ
 		template <IsComponent... TComps>
 		static ComponentFlag CreateFlag() {
 			ComponentFlag result{};

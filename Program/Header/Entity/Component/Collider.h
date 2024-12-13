@@ -1,3 +1,6 @@
+/// @file Collider.h
+/// @brief コライダーコンポーネント
+/// @author ONUKI seiya
 #pragma once
 
 #include "../Entity.h"

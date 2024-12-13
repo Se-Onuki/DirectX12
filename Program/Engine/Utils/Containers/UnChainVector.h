@@ -1,3 +1,6 @@
+/// @file UnChainVector.h
+/// @brief 非連続のベクター｡使ってない｡
+/// @author ONUKI seiya
 #pragma once
 #include "../SoLib/SoLib_Traits.h"
 #include "ConstVector.h"

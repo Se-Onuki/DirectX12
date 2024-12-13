@@ -1,3 +1,6 @@
+/// @file SoLib_ImGui.cpp
+/// @brief ImGuiのラッピング
+/// @author ONUKI seiya
 #include "SoLib_ImGui.h"
 #include <imgui.h>
 #include <imgui_internal.h>

@@ -1,3 +1,6 @@
+/// @file SoLib_Timer.cpp
+/// @brief タイマー
+/// @author ONUKI seiya
 #include "SoLib_Timer.h"
 #include <algorithm>
 

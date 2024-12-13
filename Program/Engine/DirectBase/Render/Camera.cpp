@@ -1,3 +1,6 @@
+/// @file Camera.cpp
+/// @brief カメラ
+/// @author ONUKI seiya
 #include "Camera.h"
 
 #include "../Create/Create.h"

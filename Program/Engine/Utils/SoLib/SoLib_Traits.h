@@ -1,3 +1,6 @@
+/// @file SoLib_Traits.h
+/// @brief Traitsの実装
+/// @author ONUKI seiya
 #pragma once
 
 #include <stdint.h>
@@ -96,7 +99,7 @@ namespace SoLib {
 		R &operator=(T &&other) { static_cast<R *>(this)->Get() = std::move(other); return *static_cast<R *>(this); }
 
 		bool operator ==(const T &other) { return static_cast<R *>(this)->Get() == other; }
-
+		/// @brief データのアドレスを返す
 		T &Get() {
 			auto &ptr = *reinterpret_cast<T *>(this);
 			return ptr;
@@ -361,6 +364,7 @@ namespace SoLib {
 	template <typename T>
 	struct has_to_string<T, std::void_t<decltype(std::to_string(std::declval<T>()))>> : std::true_type {};
 
+	/// @brief 指定した型を文字列に変換する
 	template <typename T>
 	std::string to_string(const T &data) {
 		if constexpr (has_to_string<T>::value) {

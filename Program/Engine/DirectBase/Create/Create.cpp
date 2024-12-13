@@ -1,3 +1,6 @@
+/// @file Create.cpp
+/// @brief DirectResourceを作成する
+/// @author ONUKI seiya
 #include "Create.h"
 #include "../Render/Render.h"
 #include "../../Engine/Utils/Math/Math.hpp"

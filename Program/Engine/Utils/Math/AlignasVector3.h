@@ -1,3 +1,6 @@
+/// @file AlignasVector3.h
+/// @brief アライメントされたVector3
+/// @author ONUKI seiya
 #pragma once
 #include "Vector3.h"
 #include "../Containers/WrappingClass.h"

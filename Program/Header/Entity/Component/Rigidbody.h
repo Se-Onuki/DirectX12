@@ -1,3 +1,6 @@
+/// @file Rigidbody.h
+/// @brief 物理挙動のコンポーネント
+/// @author ONUKI seiya
 #pragma once
 #include "../Entity.h"
 
@@ -20,22 +23,29 @@ public:
 	/// @param deltaTime 時間差分
 	void ApplyContinuousForce(const Vector3 &vec) { acceleration_ += vec * GetDeltaTime(); }
 
+	/// @brief 加速度をセット
 	void SetAcceleration(const Vector3 &vec) { acceleration_ = vec; }
+	/// @brief 加速度を取得
 	const Vector3 &GetAcceleration() const { return acceleration_; }
 
+	/// @brief 速度をセット
 	void SetVelocity(const Vector3 &vec) { velocity_ = vec; }
-
+	/// @brief 速度を取得
 	const Vector3 &GetVelocity() const { return velocity_; }
-
+	/// @brief 着地しているかどうか
 	bool GetIsGround() const { return isGround_; }
+	/// @brief 着地している状態にする
 	void SetIsGround(const bool isGround) { isGround_ = isGround; }
 
+	/// @brief 最大速度を取得
 	const Vector3 &GetMaxSpeed() const { return maxSpeed_; }
+	/// @brief 最大速度をセット
 	void SetMaxSpeed(const Vector3 &hoge) { maxSpeed_ = hoge; }
 
 	bool hasCollider_ = false;
 	float radius_ = 1.f;
 
+	/// @brief 前フレームの座標
 	const Vector3 &GetBeforePos() const { return beforePos_; }
 
 private:

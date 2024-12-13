@@ -1,3 +1,6 @@
+/// @file Matrix2x2.cpp
+/// @brief 2x2行列
+/// @author ONUKI seiya
 #include "Matrix2x2.h"
 
 #include"Vector2.h"

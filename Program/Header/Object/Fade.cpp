@@ -1,3 +1,6 @@
+/// @file Fade.cpp
+/// @brief フェードクラス
+/// @author ONUKI seiya
 #include "Fade.h"
 
 #include "../../Engine/DirectBase/Base/WinApp.h"

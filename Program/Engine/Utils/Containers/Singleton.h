@@ -1,3 +1,6 @@
+/// @file Singleton.h
+/// @brief CRTPを使ったシングルトン
+/// @author ONUKI seiya
 #pragma once
 #include "../SoLib/SoLib_Traits.h"
 #include <memory>
@@ -15,6 +18,7 @@ namespace SoLib {
 	/// @brief シングルトンの基底クラス
 	class ISingleton {
 	public:
+		/// @brief 終了処理
 		virtual void FinalizeSelf() {};
 	};
 	/// @brief シングルトンのスタック

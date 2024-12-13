@@ -1,3 +1,6 @@
+/// @file Ground.h
+/// @brief 地面クラス
+/// @author ONUKI seiya
 #pragma once
 #include "../Collision/Collision.h"
 #include "../../Engine/Utils/Math/Vector2.h"
@@ -14,6 +17,7 @@ public:
 
 	Model *model_;
 
+	/// @brief 描画で使う行列計算
 	Matrix4x4 CalcMatrix() const;
 
 	void Draw();

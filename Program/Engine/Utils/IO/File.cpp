@@ -1,3 +1,6 @@
+/// @file File.cpp
+/// @brief ファイルクラス
+/// @author ONUKI seiya
 #include "File.h"
 
 SoLib::IO::Value &SoLib::IO::Value::convert() {

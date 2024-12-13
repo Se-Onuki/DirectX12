@@ -1,3 +1,6 @@
+/// @file ECSCollisionManager.h
+/// @brief ECS用のコライダマネージャー
+/// @author ONUKI seiya
 #pragma once
 #include "../World/ComponentArray/ComponentData.h"
 #include <list>

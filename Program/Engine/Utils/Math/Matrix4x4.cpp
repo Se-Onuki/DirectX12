@@ -1,3 +1,6 @@
+/// @file Matrix4x4.cpp
+/// @brief 4x4行列
+/// @author ONUKI seiya
 #include "Matrix4x4.h"
 
 #include "Matrix2x2.h"

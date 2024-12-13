@@ -1,3 +1,6 @@
+/// @file Texture.h
+/// @brief テクスチャ
+/// @author ONUKI seiya
 #pragma once
 #include "../../externals/DirectXTex/DirectXTex.h"
 #include <string>

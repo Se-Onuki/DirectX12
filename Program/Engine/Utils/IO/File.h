@@ -1,3 +1,6 @@
+/// @file File.h
+/// @brief ファイルクラス
+/// @author ONUKI seiya
 #pragma once
 #include <string>
 #include <fstream>
@@ -10,7 +13,8 @@
 namespace SoLib {
 
 	namespace IO {
-
+		
+		/// @brief ファイルの値を格納する型
 		using ValueItem = std::variant<int32_t, float, SoLib::Text::ConstString<12u>>;
 		class Value final {
 		public:
@@ -41,6 +45,9 @@ namespace SoLib {
 				Load(filePath);
 			}
 
+			/// @brief ファイルを読み込む
+			/// @param filePath 読み込むファイルのパス
+			/// @return 読み込みに成功したか
 			bool Load(const std::string &filePath) {
 				std::ifstream file(filePath);
 				if (not file) {
@@ -58,10 +65,13 @@ namespace SoLib {
 			// データを取得する
 			auto &GetData() { return data_; }
 			const auto &GetData() const { return data_; }
+			/// @brief ファイルパスを取得する
 			const std::string &GetFilePath() const { return filePath_; }
 
+			/// @brief ファイルが読み込まれているか
 			operator bool() const { return filePath_.size(); }
 
+			/// @brief sstreamとして振る舞う
 			operator std::stringstream &() { return data_; }
 
 		private:

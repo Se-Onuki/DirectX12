@@ -1,99 +1,146 @@
+/// @file Chunk.h
+/// @brief チャンク
+/// @author ONUKI seiya
 #pragma once
 #include "../../Archetype.h"
-#include "ComponentArray.h"
-#include <unordered_map>
-#include "EntityArrayStorage.h"
-#include "ComponentData.h"
 #include "ChunkIterator.h"
 #include "ChunkRange.h"
+#include "ComponentArray.h"
+#include "ComponentData.h"
+#include "EntityArrayStorage.h"
+#include <unordered_map>
 
 namespace ECS {
 
-	class Chunk {
+	class Chunk
+	{
 	public:
-
 		Chunk() = default;
 		Chunk(const Archetype &archetype);
 
+		/// @brief 初期化
+		/// @param[in] archetype 初期化するアーキテクチャ
 		void Init(const Archetype &archetype);
 
 	public:
-
 		friend ChunkEntityAccessor;
 		friend void EntityMove(Chunk *, uint32_t, uint32_t);
 		friend std::byte &ECS::GetComp(Chunk *, uint32_t, uint32_t);
 		friend ECS::ComponentData &ECS::GetCompArray(ECS::Chunk *chunk, uint32_t compId);
 
 	public:
-
 		using iterator = ChunkIterator;
 
 	public:
-		template<typename T>
-		ChunkRange<T> View() { return { this, &(GetCompArray<T>()->second), 0u, size_ }; }
+		/// @brief T型のコンポーネントのRangeを取得
+		/// @tparam T 取得するコンポーネント
+		/// @return コンポーネントのRange
+		template <typename T>
+		ChunkRange<T> View() { return {this, &(GetCompArray<T>()->second), 0u, size_}; }
 
-		template<typename... Ts>
+		/// @brief 複数のコンポーネントのRangeを取得
+		/// @tparam Ts 取得するコンポーネント
+		/// @return コンポーネントのRange
+		template <typename... Ts>
 			requires(sizeof...(Ts) >= 2)
-		ChunkRange<Ts...> View() { return { this, std::tuple<ComponentData*...>{&(GetCompArray<Ts>()->second)... }, 0u, size_ }; }
+		ChunkRange<Ts...> View()
+		{
+			return {this, std::tuple<ComponentData *...>{&(GetCompArray<Ts>()->second)...}, 0u, size_};
+		}
 
-		iterator begin() { return iterator{ this, 0 }; }
+		/// @brief 開始イテレータの取得
+		iterator begin() { return iterator{this, 0}; }
 
-		iterator end() { return iterator{ this, size_ }; }
+		/// @brief 番兵イテレータの取得
+		iterator end() { return iterator{this, size_}; }
 
+		/// @brief コンポーネントの取得
+		/// @param[in] compId コンポーネントのID
+		/// @return コンポーネント
 		ComponentData *GetComponent(uint32_t compId);
+		/// @brief コンポーネントの取得
+		/// @param[in] compId コンポーネントのID
+		/// @return コンポーネントのRange
 		ComponentData::Range GetComponentRange(uint32_t compId);
-		template<typename T>
+		/// @brief コンポーネントの取得
+		/// @tparam T コンポーネントの型
+		/// @return コンポーネントのTRange
+		template <typename T>
 		ComponentData::TRange<T> GetComponent();
-		template<typename T>
+		/// @brief コンポーネントの取得
+		/// @tparam T コンポーネントの型
+		/// @return コンポーネントのTRange
+		template <typename T>
 		ComponentData::TRange<T, true> GetComponent() const;
 
+		/// @brief アーキタイプの取得
+		/// @return アーキタイプ
 		const Archetype &GetArchetype() const { return archetype_; }
 
+		/// @brief サイズの取得
+		/// @return サイズ
+		/// @details エンティティの数
 		uint32_t size() const { return size_; }
 
 	public:
+		/// @brief エンティティの追加
+		/// @tparam Ts 追加するコンポーネント
+		/// @param[in] args 追加するコンポーネント
+		template <typename... Ts>
+		void push_back(const Ts &...args);
 
-		template<typename... Ts>
-		void push_back(const Ts&... args);
-
-		template<typename... Ts>
+		/// @brief エンティティの構築
+		/// @tparam ...Ts コンポーネントの型
+		/// @return このエンティティのコンポーネント
+		template <typename... Ts>
 		std::tuple<Ts *...> emplace_back();
 
+		/// @brief エンティティの構築
+		/// @return このエンティティのIndex
 		uint32_t emplace_back();
+		/// @brief エンティティの構築
+		/// @param[in] count エンティティの数
+		/// @return このエンティティのIndexの幅
 		std::pair<uint32_t, uint32_t> emplace_back(const uint32_t count);
 
-
-		template<typename T, typename Predicate>
+		/// @brief エンティティの削除
+		/// @tparam T 検知するコンポーネント
+		/// @param[in] pred 削除するかどうかを判断する関数
+		template <typename T, typename Predicate>
 		void erase_if(const Predicate &pred);
-
-
 
 		/// @brief 一致した値の並びと数を返す
 		/// @tparam T 比較する型
 		/// @param data 比較する値
 		/// @return 一致しているかをtrueで返す
-		template<typename T, typename Predicate>
+		template <typename T, typename Predicate>
 		std::pair<std::vector<bool>, size_t> CountIfFlag(const Predicate &pred) const;
 
 	public:
-
 		/// @brief コンポーネントの取得
 		/// @param compId コンポーネントのID
 		/// @param index エンティティの番号
 		/// @return データのアドレス
 		std::byte *GetComp(uint32_t compId, uint32_t index);
-		template<typename T>
+		/// @brief コンポーネントの取得
+		/// @tparam T コンポーネントの型
+		/// @param index エンティティの番号
+		/// @return コンポーネントのアドレス
+		template <typename T>
 		T *GetComp(uint32_t index);
 
+		/// @brief エンティティの取得
+		/// @param[in] index エンティティの番号
+		/// @return エンティティ
 		EntityClass &GetEntity(uint32_t index) { return storage_->GetEntity(index); }
 		const EntityClass &GetEntity(uint32_t index) const { return storage_->GetEntity(index); }
 
 	public:
-
+		/// @brief サイズの変更
+		/// @param size 変更後のサイズ
 		void Resize(uint32_t size) { size_ = size; }
 
 	private:
-
 		// 型のデータ
 		Archetype archetype_;
 
@@ -107,15 +154,21 @@ namespace ECS {
 		uint32_t size_ = 0u;
 
 	private:
-
+		/// @brief グループの追加
+		/// @param count 追加する数
 		void AddGroups(const uint32_t count = 1u);
 
-		template<typename T>
+		/// @brief コンポーネントの配列を取得する
+		/// @tparam T コンポーネントの型
+		/// @return Tに対応するコンポーネントの配列
+		template <typename T>
 		decltype(componentDatas_)::iterator GetCompArray();
 
-		template<typename T>
+		/// @brief コンポーネントの配列を取得する
+		/// @tparam T コンポーネントの型
+		/// @return Tに対応するコンポーネントの配列
+		template <typename T>
 		decltype(componentDatas_)::const_iterator GetCompArray() const;
-
 	};
 
 	inline ComponentData *Chunk::GetComponent(uint32_t compId)
@@ -128,13 +181,15 @@ namespace ECS {
 		return componentDatas_[compId].View(size_);
 	}
 
-	template<typename T>
+	template <typename T>
 	inline ComponentData::TRange<T> Chunk::GetComponent()
 	{
 		// データの配列を取得する
 		auto compTarget = GetCompArray<T>();
 		// 存在しなかったら破棄する
-		if (compTarget == componentDatas_.end()) { return {}; }
+		if (compTarget == componentDatas_.end()) {
+			return {};
+		}
 
 		// 返すデータ
 		ComponentData::TRange<T> result = compTarget->second.View<T>(size_);
@@ -143,13 +198,15 @@ namespace ECS {
 		return result;
 	}
 
-	template<typename T>
+	template <typename T>
 	inline ComponentData::TRange<T, true> Chunk::GetComponent() const
 	{
 		// データの配列を取得する
 		auto compTarget = GetCompArray<T>();
 		// 存在しなかったら破棄する
-		if (compTarget == componentDatas_.end()) { return {}; }
+		if (compTarget == componentDatas_.end()) {
+			return {};
+		}
 
 		// 返すデータ
 		ComponentData::TRange<T, true> result = compTarget->second.View<T>(size_);
@@ -158,8 +215,8 @@ namespace ECS {
 		return result;
 	}
 
-	template<typename ...Ts>
-	inline void Chunk::push_back(const Ts & ...args)
+	template <typename... Ts>
+	inline void Chunk::push_back(const Ts &...args)
 	{
 
 		// エンティティのID
@@ -167,49 +224,46 @@ namespace ECS {
 
 		(
 			(
-				[this, entityId, args]()
-				{
+				[this, entityId, args]() {
 					GetCompArray<Ts>()->second.at<Ts>(entityId) = std::forward<const Ts &>(args);
-				}()
-					), ...
-			);
-
+				}()),
+			...);
 	}
 
-	template<typename ...Ts>
+	template <typename... Ts>
 	inline std::tuple<Ts *...> Chunk::emplace_back()
 	{
 		// エンティティのID
 		const uint32_t entityId = emplace_back();
 
-		using Result = std::tuple<Ts*...>;
+		using Result = std::tuple<Ts *...>;
 
 		// コンポーネントの配列を取得し､その配列にデータを保存する
 		Result result = std::make_tuple(
 			(
 
-				[this, entityId]()
-				{
+				[this, entityId]() {
 					return (&(GetCompArray<Ts>()->second.at<Ts>(entityId)));
-				}()
-					)...
-		);
+				}())...);
 
 		return result;
 	}
 
-	template<typename T, typename Predicate>
+	template <typename T, typename Predicate>
 	inline void Chunk::erase_if(const Predicate &pred)
 	{
 		// もし何も持ってなかったら終わる｡
-		if (not this->size()) { return; }
-		const auto &[
-			flag,	// 関数に対する正負値
-				count	// 一致した数
+		if (not this->size()) {
+			return;
+		}
+		const auto &[flag, // 関数に対する正負値
+					 count // 一致した数
 		] = this->CountIfFlag<T>(pred);
 
 		// もし何も一致しなかったら終わり
-		if (not count) { return; }
+		if (not count) {
+			return;
+		}
 		if (count != size()) {
 
 			// それぞれのコンポーネントで操作を行う
@@ -222,10 +276,9 @@ namespace ECS {
 		}
 		// 死んだ数で除算
 		size_ -= static_cast<uint32_t>(count);
-
 	}
 
-	template<typename T, typename Predicate>
+	template <typename T, typename Predicate>
 	inline std::pair<std::vector<bool>, size_t> Chunk::CountIfFlag(const Predicate &pred) const
 	{
 		// ヒット数
@@ -237,10 +290,11 @@ namespace ECS {
 		// コンポーネントを取得して返す
 		for (const T &value : this->GetComponent<T>()) {
 			// 条件に一致したらtrueを代入し､カウントを追加する
-			if (*itr++ = pred(value)) { count++; }
+			if (*itr++ = pred(value)) {
+				count++;
+			}
 		}
-		return { std::move(flag), count };
-
+		return {std::move(flag), count};
 	}
 
 	inline uint32_t Chunk::emplace_back()
@@ -302,7 +356,7 @@ namespace ECS {
 			entity.version_++;
 		}
 		size_ += count;
-		const std::pair<uint32_t, uint32_t> result{ beforeCount, size_ };
+		const std::pair<uint32_t, uint32_t> result{beforeCount, size_};
 
 		return result;
 	}
@@ -312,20 +366,19 @@ namespace ECS {
 		return componentDatas_[compId][index];
 	}
 
-
-	template<typename T>
+	template <typename T>
 	inline T *Chunk::GetComp(uint32_t index)
 	{
 		return &GetCompArray<T>()->second.at<T>(index);
 	}
 
-	template<typename T>
+	template <typename T>
 	inline decltype(Chunk::componentDatas_)::iterator Chunk::GetCompArray()
 	{
 		return componentDatas_.find(static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>()));
 	}
 
-	template<typename T>
+	template <typename T>
 	inline decltype(Chunk::componentDatas_)::const_iterator Chunk::GetCompArray() const
 	{
 		return componentDatas_.find(static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>()));

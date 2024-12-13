@@ -1,3 +1,6 @@
+/// @file CameraAnimation.cpp
+/// @brief カメラのアニメーションを行う
+/// @author TOYODA yuki
 #include "CameraAnimation.h"
 #include "CameraManager.h"
 

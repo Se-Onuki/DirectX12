@@ -1,3 +1,6 @@
+/// @file BoneModel.cpp
+/// @brief ボーンモデルの実装
+/// @author ONUKI seiya
 #include "BoneModel.h"
 
 BoneModel::Box *BoneModel::Bone::AddBox(Model *const model) {

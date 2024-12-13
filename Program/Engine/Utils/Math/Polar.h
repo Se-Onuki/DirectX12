@@ -1,3 +1,6 @@
+/// @file Polar.h
+/// @brief 極座標
+/// @author ONUKI seiya
 #pragma once
 #include "Angle.h"
 

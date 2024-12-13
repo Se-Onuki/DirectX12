@@ -1,3 +1,6 @@
+/// @file Transform.cpp
+/// @brief 座標データのクラス
+/// @author ONUKI seiya
 #include "Transform.h"
 //
 //#include "../../Engine/DirectBase/Create/Create.h"

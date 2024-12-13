@@ -1,3 +1,6 @@
+/// @file SkyBox.h
+/// @brief スカイボックス
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 #include <string>
@@ -19,6 +22,8 @@ namespace SolEngine {
 		/// @param file_path ファイルパス
 		void SetTexture(const std::string &file_path);
 
+		/// @brief テクスチャのハンドルの取得
+		/// @return テクスチャハンドル
 		uint32_t GetTextureHandle() const { return textureHandle_; }
 
 	private:
@@ -38,6 +43,10 @@ namespace SolEngine {
 		/// @brief 初期化処理
 		void Init();
 
+		/// @brief 描画
+		/// @param[in] skyBox 天空ボックス
+		/// @param[in] transform 座標
+		/// @param[in] camera カメラ
 		void Draw(const SkyBox &skyBox, const Transform &transform, const Camera3D &camera) const;
 
 	private:

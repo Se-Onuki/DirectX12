@@ -1,3 +1,6 @@
+/// @file DxResourceBufferPool.h
+/// @brief DxResourceの確保と保持を行うクラス
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/Utils/Containers/Singleton.h"
 #include "../../Engine/Utils/SoLib/SoLib_Traits.h"
@@ -20,6 +23,9 @@ namespace SolEngine {
 
 		using Singleton = SoLib::Singleton<DxResourceBufferPool<ElementSize>>;
 	public:
+
+		/// @brief ハンドル
+		/// @details 添え字とバージョンを持つ｡両方が一致した場合､同じリソースと見なす｡
 		struct Handle {
 
 			using ContainType = std::array<char, 0x100 * ElementSize>;
@@ -46,8 +52,11 @@ namespace SolEngine {
 					return this->version_ <=> that.version_;
 				}
 			}
-
+			/// @brief 添え字を取得
+			/// @return 添え字
 			size_t GetIndex() const { return index_; }
+			/// @brief バージョンを取得
+			/// @return バージョン
 			size_t GetVersion() const { return version_; }
 			ContainType *GetResource() { return IsActive() ? static_cast<ContainType *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
 			const ContainType *GetResource() const { return IsActive() ? static_cast<const ContainType *>(Singleton::instance_->resources_.at(index_)->mapPtr_) : nullptr; }
@@ -60,6 +69,8 @@ namespace SolEngine {
 			inline ContainType *operator*() { return GetResource(); }
 			inline const ContainType *operator*() const { return GetResource(); }
 
+			/// @brief このデータが有効であるか
+			/// @return 有効な場合true
 			bool IsActive() const { return static_cast<bool>(*this); }
 
 			/// @brief このデータが有効であるか
@@ -77,14 +88,23 @@ namespace SolEngine {
 			size_t version_ = (std::numeric_limits<size_t>::max)();
 		};
 	public:
-
+		/// @brief 初期化
 		void Init();
-
+		/// @brief 解放		
 		void Clear();
 
+		/// @brief データを追加
+		/// @tparam T 追加するデータの型
+		/// @param[in] data 追加するデータ
+		/// @return 追加したデータのハンドル
 		template <SoLib::IsRealType T>
 		Handle PushBack(const T &data = {});
 
+		/// @brief データを追加
+		/// @tparam Itr 追加するデータのイテレータ
+		/// @param[in] begin 追加するデータのイテレータの開始位置
+		/// @param[in] end 追加するデータのイテレータの終了位置
+		/// @return 追加したデータのハンドル群
 		template<typename Itr>
 		std::vector<Handle> PushBack(Itr begin, Itr end);
 
@@ -92,7 +112,8 @@ namespace SolEngine {
 
 		class DxResourceBuffer {
 		public:
-
+			/// @brief リソースを作成
+			/// @return 作成したリソース
 			static std::unique_ptr<DxResourceBuffer> Create();
 
 			void *mapPtr_ = nullptr;
@@ -120,29 +141,33 @@ namespace SolEngine {
 		std::vector<DxResourceItem> resources_;
 
 	};
+
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
 	inline std::unique_ptr<typename DxResourceBufferPool<ElementSize>::DxResourceBuffer> DxResourceBufferPool<ElementSize>::DxResourceBuffer::Create()
 	{
+		// 書き込み先を作成
 		std::unique_ptr<DxResourceBuffer> result = std::make_unique<DxResourceBuffer>();
 		HRESULT hr = S_FALSE;
-
+		// デバイスの取得
 		auto *const device = EngineObject::GetDevice();
 
 		// 256バイト単位のアライメント
 		result->resource_ = CreateBufferResource(device, 0x100 * ElementSize);
-
+		// リソースをマップ
 		hr = result->resource_->Map(0, nullptr, reinterpret_cast<void **>(&result->mapPtr_));
 		assert(SUCCEEDED(hr));
 
 #ifdef _DEBUG
-
+		// デバッグ用の名前を付ける
 		result->resource_->SetName(L"DxResourcePool");
 
 #endif // _DEBUG
 
+		// リソースを返す
 		return std::move(result);
 	}
+
 	template<size_t ElementSize>
 		requires (ElementSize != 0)
 	inline void DxResourceBufferPool<ElementSize>::Init()
@@ -208,6 +233,8 @@ namespace SolEngine {
 		return result;
 	}
 
+	/// @brief データがどのハンドルに割り当てられているかを返す
+	/// @tparam T 調べたい型
 	template<SoLib::IsRealType T>
 	using DxResourcePoolBufferList = DxResourceBufferPool<(~0xffu & (sizeof(T) + 0xffu)) / 0x100>;
 }

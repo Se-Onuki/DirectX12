@@ -1,3 +1,6 @@
+/// @file SoLib_Lerp.h
+/// @brief Lerpの実装
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 

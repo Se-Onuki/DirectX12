@@ -1,3 +1,6 @@
+/// @file DxResourceBuffer.h
+/// @brief DxResourceの確保と保持を行うクラス
+/// @author ONUKI seiya
 #pragma once
 #include "../Base/EngineObject.h"
 #include <d3d12.h>
@@ -24,6 +27,8 @@ namespace SolEngine {
 		// CPUアクセスメモリを持っているか
 		constexpr static bool kHasMemory_ = HType != D3D12_HEAP_TYPE_DEFAULT;
 
+		/// @brief 取得するメモリの型
+		/// @details 256byte単位でアライメント
 		using MemType = std::array<std::byte, 0x100>;
 
 	public:
@@ -46,6 +51,9 @@ namespace SolEngine {
 			else { return itemData_; }
 		}
 
+		/// @brief 指定した型でアクセスできる配列を取得する
+		/// @tparam T 型
+		/// @return 配列
 		template<typename T>
 			requires(kHasMemory_)
 		std::span<T> GetAccessor() {

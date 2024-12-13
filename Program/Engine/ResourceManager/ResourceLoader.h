@@ -1,3 +1,6 @@
+/// @file ResourceLoader.h
+/// @brief リソースの読み込みを行う
+/// @author ONUKI seiya
 #pragma once
 #include <string>
 #include "../Utils/SoLib/SoLib_Json.h"
@@ -32,8 +35,10 @@ namespace SolEngine {
 			ResourceLoadManager() = default;
 			~ResourceLoadManager() = default;
 
+			/// @brief 初期化
+			/// @param[in] json 読み込むリソースの情報
 			void Init(const Json &json);
-
+			/// @brief ロードの実行
 			void Load();
 
 		private:

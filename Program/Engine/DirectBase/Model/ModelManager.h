@@ -1,3 +1,6 @@
+/// @file ModelManager.h
+/// @brief モデルマネージャ(旧版)
+/// @author ONUKI seiya
 #pragma once
 #include <string>
 #include <unordered_map>
@@ -131,7 +134,9 @@ public:
 
 private:
 
-
+	/// @brief メッシュの取得
+	/// @param[in] index インデックス
+	/// @return メッシュ
 	Mesh *const InnerGetMesh(const uint32_t index) const {
 		// 頻度は少ないが、存在しない場合はnullptrを返す
 		if (meshArray_.size() < index) [[unlikely]] { return nullptr; }

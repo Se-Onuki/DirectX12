@@ -1,3 +1,6 @@
+/// @file Quaternion.cpp
+/// @brief クォータニオン
+/// @author ONUKI seiya
 #include "Quaternion.h"
 #include "Euler.h"
 Quaternion const Quaternion::Identity{ Vector3::zero, 1.f };

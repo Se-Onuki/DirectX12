@@ -1,3 +1,6 @@
+/// @file ResourceLoader.cpp
+/// @brief リソースの読み込みを行う
+/// @author ONUKI seiya
 #include "ResourceLoader.h"
 
 namespace SolEngine {

@@ -1,3 +1,6 @@
+/// @file Chunk.cpp
+/// @brief チャンク
+/// @author ONUKI seiya
 #include "Chunk.h"
 
 namespace ECS {

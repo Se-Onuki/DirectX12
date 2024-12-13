@@ -1,3 +1,6 @@
+/// @file Model.cpp
+/// @brief モデルの実装(旧モデル)
+/// @author ONUKI seiya
 #include "Model.h"
 #include "../../Engine/Utils/Math/Math.hpp"
 #include "../../DirectBase/Base/DirectXCommon.h"
@@ -1294,7 +1297,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 	// ファイルオープンエラー
 	if (ifs.fail()) {
 		std::string message = "Failed open data file for read.";
-		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		MessageBoxA(nullptr, message.c_str(), "MinecraftModel", 0);
 		assert(0);
 		return;
 	}

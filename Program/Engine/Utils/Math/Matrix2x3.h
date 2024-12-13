@@ -1,3 +1,6 @@
+/// @file Matrix2x3.h
+/// @brief 2x3行列
+/// @author ONUKI seiya
 #pragma once
 #include <valarray>
 #include <array>

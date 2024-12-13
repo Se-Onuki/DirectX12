@@ -1,9 +1,7 @@
-#pragma once
-///
 /// @file Component.h
 /// @brief ECSで使用するコンポーネントの記述
 /// @author ONUKI seiya
-///
+#pragma once
 
 #include <memory>
 
@@ -240,7 +238,8 @@ namespace ECS {
 
 		// 状態の
 		float stateTimer_ = 0.f;
-
+		/// @brief 状態を変更する
+		/// @param[in] nextState 変更したい状態
 		void ChangeState(uint32_t nextState);
 	};
 
@@ -285,11 +284,17 @@ namespace ECS {
 		int32_t maxHealth_ = 0;
 		int32_t nowHealth_ = 0;
 
+		/// @brief 体力の回復
 		void Reset() noexcept { nowHealth_ = maxHealth_; }
+		/// @brief 体力の割合
 		float CalcPercent() const noexcept { return nowHealth_ < 0 ? 0.f : static_cast<float>(nowHealth_) / maxHealth_; }
+		/// @brief 死んでいるか
 		bool IsDead() const noexcept { return nowHealth_ <= 0; }
+		/// @brief 最大値か
 		bool IsMax() const noexcept { return maxHealth_ == nowHealth_; }
 
+		/// @brief 生成
+		/// @param[in] health 体力
 		static HealthComp Create(int32_t health) { return HealthComp{ .maxHealth_ = health, .nowHealth_ = health }; }
 	};
 

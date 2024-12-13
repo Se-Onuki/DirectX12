@@ -1,3 +1,6 @@
+/// @file Input.cpp
+/// @brief 入力管理クラス
+/// @author ONUKI seiya
 #include "Input.h"
 #include <cassert>
 #include "../Base/WinApp.h"

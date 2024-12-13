@@ -1,3 +1,6 @@
+/// @file Angle.h
+/// @brief 角度に関するクラス
+/// @author ONUKI seiya
 #pragma once
 #include <numbers>
 #include "Vector2.h"
@@ -36,7 +39,7 @@ namespace Angle {
 
 		/// @brief 非明示的にDigreeを[ Radian ]に変換できる
 		inline operator Angle::Radian() const noexcept;
-
+		/// @brief 角度の取得 
 		const float &Get() const noexcept { return angle_; }
 		float &Get() noexcept { return angle_; }
 
@@ -67,7 +70,7 @@ namespace Angle {
 		inline explicit operator Digree () const noexcept { return Digree{ angle_ * Rad2Dig }; }
 
 		inline Radian &operator=(const Digree &value) noexcept { return *this = static_cast<Radian>(value); }
-
+		/// @brief 角度の取得
 		const float Get() const noexcept { return angle_; }
 		float &Get() noexcept { return angle_; }
 
@@ -76,13 +79,16 @@ namespace Angle {
 		float angle_;
 	};
 
-
+	/// @brief 弧度法からベクトルに変換
 	Vector2 RadToVec2(float radian);
+	/// @brief ベクトルから弧度法に変換
 	float Vec2ToRad(const Vector2 vec);
 
+	/// @brief 線形補間(弧度法)
 	float Lerp(const float start, const float end, const float t);
+	/// @brief 線形補間(ベクトル)
 	Vector3 Lerp(const Vector3 &start, const Vector3 &end, const float t);
-
+	/// @brief 弧度法を[ 0 ~ 360 ]に変換
 	float Mod(float radian);
 	Vector3 Mod(const Vector3 &euler);
 

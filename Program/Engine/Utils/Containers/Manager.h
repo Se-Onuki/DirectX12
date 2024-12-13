@@ -1,3 +1,6 @@
+/// @file Manager.h
+/// @brief なにかのマネージャ
+/// @author ONUKI seiya
 #pragma once
 #include "Singleton.h"
 #include <memory>

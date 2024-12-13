@@ -1,3 +1,6 @@
+/// @file CSV.h
+/// @brief CSV形式で保存する型
+/// @author ONUKI seiya
 #pragma once
 #include <string>
 #include <vector>
@@ -43,6 +46,8 @@ namespace SoLib {
 				return *this;
 			}
 
+			/// @brief CSVの行のサイズを変更する
+			/// @param size 新しいサイズ
 			void resize(const size_t size) {
 				if (size_ != size) {
 					size_ = size;
@@ -79,8 +84,13 @@ namespace SoLib {
 			CSV(const File &file);
 			~CSV() = default;
 
+			/// @brief CSVファイルを読み込む
+			/// @param file CSVファイル
 			CSV &operator=(const File &file);
 
+			/// @brief 指定した行を取得
+			/// @param index 行数
+			/// @return 指定した行のデータ
 			CsvData &operator[](const size_t index);
 
 			Map &Get() { return data_; }
@@ -107,7 +117,10 @@ namespace SoLib {
 
 		};
 
-
+		/// @brief CSVを出力する
+		/// @param stream 出力先
+		/// @param value 出力するCSV
+		/// @return 出力先
 		inline std::ostream &operator<<(std::ostream &stream, const CSV &value) {
 			for (auto &line : value) {
 				for (auto &item : line) {

@@ -1,3 +1,6 @@
+/// @file SkeletonReference.cpp
+/// @brief スケルトンの情報源
+/// @author ONUKI seiya
 #include "SkeletonReference.h"
 
 namespace SolEngine {

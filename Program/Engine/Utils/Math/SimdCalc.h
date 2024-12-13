@@ -1,3 +1,6 @@
+/// @file SimdCalc.h
+/// @brief SIMDを用いた演算
+/// @author ONUKI seiya
 #pragma once
 #include <immintrin.h>
 #include <cstdint>
@@ -15,6 +18,7 @@ namespace SoLib {
 			inline operator __m128 &() noexcept { return kValue_; }
 			inline operator const __m128 &() const noexcept { return kValue_; }
 
+			/// @brief 任意の長さのSIMDを用いた内積
 			template<uint8_t Length>
 			static inline float Dot(const __m128 &vecA, const __m128 &vecB);
 

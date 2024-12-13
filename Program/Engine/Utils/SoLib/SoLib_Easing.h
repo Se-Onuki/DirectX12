@@ -1,3 +1,6 @@
+/// @file SoLib_Easing.cpp
+/// @brief イージング
+/// @author ONUKI seiya
 #pragma once
 #include <stdint.h>
 #include "SoLib_ImGui.h"

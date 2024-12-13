@@ -1,3 +1,6 @@
+/// @file TypeID.h
+/// @brief 型に対するID
+/// @author ONUKI seiya
 #pragma once
 #include "../SoLib/SoLib_Traits.h"
 

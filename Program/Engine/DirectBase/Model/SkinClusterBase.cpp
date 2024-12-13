@@ -1,3 +1,6 @@
+/// @file SkinClusterBase.cpp
+/// @brief スキンクラスタの情報源
+/// @author ONUKI seiya
 #include "SkinClusterBase.h"
 #include "../../Engine/Utils/Convert/Convert.h"
 #include "Model.h"

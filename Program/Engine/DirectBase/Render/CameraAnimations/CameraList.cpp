@@ -1,3 +1,6 @@
+/// @file CameraList.cpp
+/// @brief カメラのリスト
+/// @author TOYODA yuki
 #include "CameraList.h"
 
 void CameraList::ListClear()

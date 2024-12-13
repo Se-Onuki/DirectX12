@@ -1,3 +1,6 @@
+/// @file LevelData.cpp
+/// @brief レベルデータ
+/// @author ONUKI seiya
 #include "LevelData.h"
 #include <fstream>
 

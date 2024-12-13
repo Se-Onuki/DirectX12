@@ -1,10 +1,14 @@
+/// @file ModelRender.cpp
+/// @brief モデルの描画クラス
+/// @author ONUKI seiya
 #include "ModelRender.h"
+#include "../Engine/DirectBase/Base/DirectXCommon.h"
 
 namespace SolEngine {
 
 	void SolEngine::ModelRender::Init()
 	{
-		dxCommon_ = DirectXCommon::GetInstance();
+		dxCommon_ = ::DirectXCommon::GetInstance();
 		commandList_ = dxCommon_->GetCommandList();
 
 		ResourceObjectManager<RootSignature> *const rootSignatureManager = ResourceObjectManager<RootSignature>::GetInstance();

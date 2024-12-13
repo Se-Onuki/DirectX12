@@ -1,3 +1,6 @@
+/// @file ResourceModel.cpp
+/// @brief リソースインターフェースのモデル
+/// @author ONUKI seiya
 #include "ResourceModel.h"
 #include "../../ResourceManager/ResourceLoader.h"
 

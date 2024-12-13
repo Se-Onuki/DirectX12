@@ -1,3 +1,6 @@
+/// @file SoLib_ImGui.h
+/// @brief ImGuiのラッピング
+/// @author ONUKI seiya
 #pragma once
 #include <stdint.h>
 #include <imgui.h>
@@ -16,7 +19,7 @@
 
 namespace SoLib {
 
-	// ImGuiの前方宣言
+	// ImGuiのラッピングを行う
 	template<IsNotPointer T>
 	bool ImGuiWidget(const char *const label, T *const value);
 

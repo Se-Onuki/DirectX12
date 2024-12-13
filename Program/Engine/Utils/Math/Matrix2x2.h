@@ -1,3 +1,6 @@
+/// @file Matrix2x2.h
+/// @brief 2x2行列
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 

@@ -1,3 +1,6 @@
+/// @file Vector3.cpp
+/// @brief Vector3
+/// @author ONUKI seiya
 #include "Vector3.h"
 #include "Math.hpp"
 #include "Matrix4x4.h"

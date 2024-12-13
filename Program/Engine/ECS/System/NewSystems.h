@@ -1,3 +1,6 @@
+/// @file NewSystems.cpp
+/// @brief ECSで使用するシステムの実装
+/// @author ONUKI seiya
 #pragma once
 #include "FunctionalSystem.h"
 #include "../../Header/Object/Ground.h"
@@ -148,6 +151,7 @@ namespace ECS {
 				inline static std::unique_ptr<ExpList> expList_ = nullptr;
 
 				void Execute(const World *const, const float);
+				/// @brief 毎フレーム一度だけ実行するシステム
 				static void ExecuteOnce(const World *const, const float);
 			};
 
@@ -175,6 +179,7 @@ namespace ECS {
 				inline static std::unique_ptr<AttackCollisions> attackCollisions_ = nullptr;
 
 				void Execute(const World *const, const float);
+				/// @brief 毎フレーム一度だけ実行するシステム
 				static void ExecuteOnce(const World *const, const float);
 			};
 
@@ -205,6 +210,7 @@ namespace ECS {
 
 
 				void Execute(const World *const, const float);
+				/// @brief 毎フレーム一度だけ実行するシステム
 				void ExecuteOnce(const World *const, const float);
 			};
 

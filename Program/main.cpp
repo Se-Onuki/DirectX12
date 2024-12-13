@@ -41,7 +41,6 @@
 #include "Engine/DirectBase/Texture/FullScreenTextureStrage.h"
 
 #include "Engine/DirectBase/File/GlobalVariables.h"
-#include "Header/Object/Particle/ParticleManager.h"
 
 #include "Header/Object/Fade.h"
 #include "Scene/CGTaskScene.h"

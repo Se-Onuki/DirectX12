@@ -1,3 +1,6 @@
+/// @file SolEngine.cpp
+/// @brief エンジンの実装
+/// @author ONUKI seiya
 #include "SolEngine.h"
 #include "DirectBase/Base/DirectXCommon.h"
 #include "DirectBase/Base/TextureManager.h"

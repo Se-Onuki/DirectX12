@@ -1,3 +1,6 @@
+/// @file ConstVector.h
+/// @brief 全体のメモリが固定の配列
+/// @author ONUKI seiya
 #pragma once
 #include "../SoLib/SoLib_Traits.h"
 #include <cstdint>
@@ -93,15 +96,15 @@ namespace SoLib {
 	private:
 
 		friend ContainerBeginEnd<ConstVector<T, MaxSize>>;
-
+		/// @brief 開始イテレータのimpl
 		iterator beginImpl() { return GetArray().data(); }
 		const_iterator beginImpl() const { return GetArray().data(); }
-
+		/// @brief 番兵イテレータのimpl 
 		iterator endImpl() { return GetArray().data() + size_; }
 		const_iterator endImpl() const { return GetArray().data() + size_; }
 
 	private:
-
+		/// @brief 配列の取得
 		ArrayType &GetArray() { return *reinterpret_cast<ArrayType *>(itemData_.data()); }
 		const ArrayType &GetArray() const { return *reinterpret_cast<const ArrayType *>(itemData_.data()); }
 		// 配列

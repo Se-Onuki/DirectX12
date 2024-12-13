@@ -1,3 +1,6 @@
+/// @file Convert.h
+/// @brief 変換を行う
+/// @author ONUKI seiya
 #pragma once
 #include "assimp/vector3.h"
 #include "assimp/quaternion.h"

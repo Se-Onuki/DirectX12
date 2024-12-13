@@ -1,3 +1,6 @@
+/// @file BlockManager.h
+/// @brief ブロックの描画
+/// @author ONUKI seiya/TOYODA yuki
 #pragma once
 #include <list>
 #include "../../Engine/Utils/SoLib/SoLib.h"

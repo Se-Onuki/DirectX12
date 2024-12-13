@@ -16,6 +16,8 @@ public:
 
 	Archetype() = default;
 
+	/// @brief コンポーネントを追加
+	/// @param component 追加するコンポーネント
 	void AddClassData(const std::initializer_list<uint32_t> &component) {
 		ECS::ComponentRegistry *const compReg = ECS::ComponentRegistry::GetInstance();
 		// サイズを追加する
@@ -28,6 +30,8 @@ public:
 		chunkCapacity_ = CalcCapacity();
 	}
 
+	/// @brief コンポーネントを追加
+	/// @param component 追加するコンポーネント
 	template<SoLib::IsContainsType<uint32_t> T>
 	void AddClassData(const T &component) {
 		ECS::ComponentRegistry *const compReg = ECS::ComponentRegistry::GetInstance();
@@ -41,6 +45,7 @@ public:
 		chunkCapacity_ = CalcCapacity();
 	}
 
+	/// @brief コンポーネントを追加
 	template<typename T, typename... TComps>
 	void AddClassData() {
 
@@ -58,12 +63,14 @@ public:
 	bool operator<=(const Archetype &other) const {
 		return (compFlag_.Get() & other.compFlag_.Get()) == compFlag_.Get();
 	}
-
+	/// @brief すべてのコンポーネントを合算したサイズを取得
 	uint32_t GetTotalSize() const { return totalSize_; }
+	/// @brief 1つのチャンクにいくつ置けるかを取得
 	uint32_t GetChunkCapacity() const { return chunkCapacity_; }
 
 private:
 
+	/// @brief 1つのチャンクにいくつ置けるかを計算
 	uint32_t CalcCapacity() const { return kOneChunkCapacity / totalSize_; }
 
 	// 最大のサイズ

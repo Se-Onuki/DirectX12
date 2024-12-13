@@ -1,3 +1,6 @@
+/// @file VertexBuffer.h
+/// @brief 頂点バッファ
+/// @author ONUKI seiya
 #pragma once
 
 #include "StructBuffer.h"
@@ -18,6 +21,8 @@ public:
 	VertexBuffer(const VertexBuffer &) = default;
 	~VertexBuffer() = default;
 
+	/// @brief 頂点バッファをリサイズする
+	/// @param size 頂点数
 	void Resize(uint32_t size) {
 		vertexData_.CreateBuffer(size);
 
@@ -69,6 +74,8 @@ public:
 	IndexBuffer(const IndexBuffer &) = default;
 	~IndexBuffer() = default;
 
+	/// @brief Indexバッファをリサイズする
+	/// @param size 頂点数
 	void Resize(uint32_t size) {
 		indexData_.CreateBuffer(size);
 		// インデックスview

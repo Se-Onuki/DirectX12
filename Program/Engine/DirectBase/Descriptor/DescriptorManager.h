@@ -1,3 +1,6 @@
+/// @file DescriptorManager.h
+/// @brief ディスクリプタの管理
+/// @author ONUKI seiya
 #pragma once
 
 #include <d3d12.h>
@@ -25,7 +28,6 @@ public:
 	/// @brief デスクリプタヒープの使用領域
 	struct HeapRange {
 		HeapRange() = default;
-		//HeapRange(uint32_t offset, uint32_t width, DescHeap *descHeap) : offset_(offset), width_(width), descHeap_(descHeap) {}
 		HeapRange(std::unique_ptr<MemoryUsageManager::MemoryRange> &&memoryRange, DescHeap *descHeap) : memoryRange_(std::move(memoryRange)), descHeap_(descHeap) {}
 		~HeapRange() = default;
 		HeapRange(HeapRange &&other) = default;
@@ -118,32 +120,6 @@ inline DescHeap<HeapType>::Handle DescHeap<HeapType>::HeapRange::GetHandle(const
 	assert(memoryRange_->length > index && "与えられた添え字が、許可された範囲をオーバーしました");
 	return descHeap_->GetHandle(memoryRange_->offset, index);
 }
-
-//template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
-//inline DescHeap<HeapType>::HeapRange::~HeapRange() {
-//}
-//template<D3D12_DESCRIPTOR_HEAP_TYPE HeapType>
-//class DescriptorManager {
-//	DescriptorManager() = default;
-//	DescriptorManager(const DescriptorManager &) = delete;
-//	DescriptorManager &operator=(const DescriptorManager &) = delete;
-//	~DescriptorManager() = default;
-//public:
-//	static auto *const GetInstance() {
-//		static DescriptorManager instance{};
-//		return &instance;
-//	}
-//
-//	auto *const GetHeap() const {
-//		&descriptorHeap_;
-//	}
-//
-//
-//private:
-//
-//	DescHeap<HeapType, > descriptorHeap_{};
-//
-//};
 
 /// @brief SRVやCBVなどのデスクリプタヒープ
 using DescHeapCbvSrvUav = DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>;

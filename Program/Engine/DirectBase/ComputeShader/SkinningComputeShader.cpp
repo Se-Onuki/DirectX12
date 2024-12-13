@@ -1,3 +1,6 @@
+/// @file SkinningComputeShader.cpp
+/// @brief スキニングをコンピュートシェーダーで行う
+/// @author ONUKI seiya
 #include "SkinningComputeShader.h"
 #include "../Base/Shader.h"
 #include "../Base/RootSignature.h"

@@ -1,3 +1,6 @@
+/// @file ResourceModel.h
+/// @brief リソースインターフェースのモデル
+/// @author ONUKI seiya
 #pragma once
 #include "ModelData.h"
 #include "Mesh.h"

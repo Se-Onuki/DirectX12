@@ -1,3 +1,6 @@
+/// @file ChunkIterator.cpp
+/// @brief チャンクのイテレータ
+/// @author ONUKI seiya
 #include "ChunkIterator.h"
 #include "Chunk.h"
 

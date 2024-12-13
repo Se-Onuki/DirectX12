@@ -1,3 +1,6 @@
+/// @file Color.h
+/// @brief 色に関するクラス
+/// @author ONUKI seiya
 #pragma once
 #include <stdint.h>
 #include <array>

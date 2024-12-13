@@ -1,3 +1,6 @@
+/// @file Spawner.h
+/// @brief スポナー
+/// @author ONUKI seiya
 #pragma once
 #include "Prefab.h"
 #include "../World/NewWorld.h"
@@ -23,10 +26,13 @@ namespace ECS {
 		Spawner() = default;
 		~Spawner() = default;
 
+		/// @brief スポナーをクリア
 		void clear() {
 			spawnDatas_.clear();
 		}
 
+		/// @brief スポナーを実行
+		/// @param[out] world 実行するワールド
 		void Execute(ECS::World *world) {
 			for (auto &[spawnData, count] : spawnDatas_) {
 				// 指定された個数分追加する
@@ -40,9 +46,9 @@ namespace ECS {
 		}
 
 		/// @brief 生成するオブジェクトを追加
-		/// @param prefab 追加するプレハブ
-		/// @param spawnCount 追加する数
-		/// @param spawnFunc 実行する関数
+		/// @param[in] prefab 追加するプレハブ
+		/// @param[in] spawnCount 追加する数
+		/// @param[in] spawnFunc 実行する関数
 		void AddSpawner(Prefab *prefab, uint32_t spawnCount = 1u, SpawnFunc spawnFunc = nullptr) {
 			spawnDatas_.push_back({ {prefab,spawnFunc},spawnCount });
 		}

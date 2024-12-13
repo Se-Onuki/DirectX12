@@ -1,3 +1,6 @@
+/// @file CustomVectors.h
+/// @brief ベクターの定義
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 #include <array>

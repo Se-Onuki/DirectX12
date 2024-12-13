@@ -1,3 +1,6 @@
+/// @file ComponentData.cpp
+/// @brief コンポーネントのSpanのように振る舞う
+/// @author ONUKI seiya
 #include "ComponentData.h"
 #include "EntityArrayStorage.h"
 

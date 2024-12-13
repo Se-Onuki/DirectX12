@@ -1,3 +1,6 @@
+/// @file Collision.cpp
+/// @brief 当たり判定など
+/// @author ONUKI seiya
 #include "Collision.h"
 
 #include "../../Engine/Utils/SoLib/SoLib_Lerp.h"

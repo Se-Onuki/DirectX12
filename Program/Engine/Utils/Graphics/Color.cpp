@@ -1,3 +1,6 @@
+/// @file Color.cpp
+/// @brief 色に関するクラス
+/// @author ONUKI seiya
 #include "Color.h"
 
 namespace SoLib::Color {

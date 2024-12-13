@@ -1,4 +1,8 @@
+/// @file ModelInfluence.cpp
+/// @brief モデルの影響情報
+/// @author ONUKI seiya
 #include "ModelInfluence.h"
+#include "../Engine/DirectBase/Base/DirectXCommon.h"
 
 namespace SolEngine {
 
@@ -9,7 +13,7 @@ namespace SolEngine {
 		//// メッシュのソースデータ
 		//const auto &meshSource = source.meshHandle_.GetSource();
 
-		auto *const dxCommon = DirectXCommon::GetInstance();
+		auto *const dxCommon = ::DirectXCommon::GetInstance();
 		// SRVを取得する
 		result->heapRange_ = dxCommon->GetSRVHeap()->RequestHeapAllocation(1u);
 

@@ -1,3 +1,6 @@
+/// @file NewWorld.h
+/// @brief ECSのワールド
+/// @author ONUKI seiya
 #pragma once
 #include <unordered_map>
 #include <memory>
@@ -37,6 +40,10 @@ namespace ECS {
 
 	public:
 
+
+		/// @brief アクセス
+		/// @param index アクセスするインデックス
+		/// @return アクセスした値
 		T &At(uint32_t index) requires(IsConst == false) {
 
 			for (ComponentData::TRange<T, IsConst> &chunk : *this) {
@@ -50,6 +57,9 @@ namespace ECS {
 			return this->front()[0];
 		}
 
+		/// @brief アクセス
+		/// @param index アクセスするインデックス
+		/// @return アクセスした値
 		const T &At(uint32_t index) const {
 
 			for (const ComponentData::TRange<T, IsConst> &chunk : *this) {
@@ -74,6 +84,8 @@ namespace ECS {
 
 	public:
 
+		/// @brief チャンクの範囲を返す
+		/// @return チャンクの範囲
 		template <typename T>
 		ChunkTRange<T, IsConst> GetRange() const {
 			ChunkTRange<T, IsConst> result;
@@ -96,6 +108,8 @@ namespace ECS {
 			);
 		}
 
+		/// @brief 条件に一致した値の数を返す
+		/// @tparam T 比較する型
 		template<typename T>
 		uint32_t CountIf(const T &data) const {
 
@@ -164,11 +178,13 @@ namespace ECS {
 
 		World() = default;
 
+		/// @brief チャンクを返す
 		Chunk *GetChunk(const Archetype &archetype) {
 			auto itr = chunkMap_.find(archetype);
 			return itr == chunkMap_.end() ? nullptr : itr->second.get();
 		}
 
+		/// @brief チャンクを返すか､生成する
 		Chunk *CreateOrGetChunk(const Archetype &archetype) {
 			auto chunk = GetChunk(archetype);
 			if (chunk) { return chunk; }
@@ -178,12 +194,14 @@ namespace ECS {
 
 		}
 
+		/// @brief エンティティを生成する
 		const EntityClass &CreateEntity(const Archetype &archetype);
 
 		const EntityClass &CreateEntity(const Prefab &prefab);
 		std::vector<EntityClass> CreateEntity(const Archetype &archetype, uint32_t count);
 		std::vector<EntityClass> CreateEntity(const Prefab &prefab, uint32_t count);
 
+		/// @brief アクセスできるチャンクを返す
 		ChunkSet<false> GetAccessableChunk(const Archetype &archetype) {
 			ChunkSet<false> result;
 			for (const auto &[key, chunk] : chunkMap_) {
@@ -191,7 +209,6 @@ namespace ECS {
 			}
 			return result;
 		}
-
 		ChunkSet<true> GetAccessableChunk(const Archetype &archetype) const {
 			ChunkSet<true> result;
 			for (const auto &[key, chunk] : chunkMap_) {
@@ -216,9 +233,12 @@ namespace ECS {
 			return result;
 		}
 
+		/// @brief 指定した条件を持つエンティティを削除する
+		/// @param pred 条件の関数
 		template<typename T, typename Predicate>
 		void erase_if(const Predicate &pred);
 
+		/// @brief エンティティの数を返す
 		uint32_t size() {
 			uint32_t result = 0;
 			for (const auto &[key, chunk] : chunkMap_) {

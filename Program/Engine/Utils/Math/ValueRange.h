@@ -1,3 +1,6 @@
+/// @file ValueRange.h
+/// @brief 値のペア
+/// @author ONUKI seiya
 #pragma once
 #include <algorithm>
 #include "Random.h"
@@ -9,13 +12,14 @@ struct ValuePair {
 	T max_ = 0.f;
 	using baseType = T;
 
+	/// @brief 値のクランプ
 	T Clamp(T value) const;
 
 	// 使用するランダム関数の変更
 	template <typename U>
 	T Random() const;
 
-	/// @ 
+	/// @brief デフォルトのランダム関数
 	T Random() const;
 };
 

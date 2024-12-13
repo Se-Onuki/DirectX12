@@ -1,5 +1,7 @@
+/// @file GlobalVariables.cpp
+/// @brief Jsonで保存するグローバル変数
+/// @author ONUKI seiya
 #include "GlobalVariables.h"
-// #include <WinUser.h>
 #include <fstream>
 #include <imgui.h>
 #include <json.hpp>

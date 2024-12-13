@@ -1,3 +1,6 @@
+/// @file SceneManager.h
+/// @brief シーンマネージャ
+/// @author ONUKI seiya
 #pragma once
 
 #include <unordered_map>

@@ -1,3 +1,6 @@
+/// @file AlignasWrapper.h
+/// @brief アライメントを行うラッパークラス
+/// @author ONUKI seiya
 #pragma once
 #include "../SoLib/SoLib_Traits.h"
 #include <array>

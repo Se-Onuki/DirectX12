@@ -1,3 +1,6 @@
+/// @file SoLib_Json.cpp
+/// @brief Jsonへの変換
+/// @author ONUKI seiya
 #include "SoLib_Json.h"
 
 void from_json(const nlohmann::json &json, Vector2 &data) {

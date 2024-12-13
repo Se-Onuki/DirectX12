@@ -1,3 +1,6 @@
+/// @file TitleScene.h
+/// @brief タイトルシーン
+/// @author ONUKI seiya
 #pragma once
 #include "SceneManager.h"
 
@@ -11,10 +14,6 @@
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
 #include "../Header/Object/Particle.h"
-#include "../Header/Object/Particle/ParticleManager.h"
-#include "../Header/Object/Particle/ParticleEmitterManager.h"
-
-#include "../Header/Object/TitleManager/TitleManager.h"
 
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Header/Object/Ground.h"

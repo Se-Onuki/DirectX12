@@ -1,3 +1,6 @@
+/// @file Mesh.h
+/// @brief メッシュ
+/// @author ONUKI seiya
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
@@ -21,7 +24,15 @@ namespace SolEngine {
 		// マテリアルハンドル
 		ResourceObjectManager<Material>::Handle materialhandle_;
 
+		/// @brief 描画
+		/// @param[in] commandList コマンドリスト
+		/// @param[in] drawCount 描画する数
+		/// @param[in] vertex 頂点データ
 		void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount, const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertex) const;
+		/// @brief 描画
+		/// @param[in] commandList コマンドリスト
+		/// @param[in] drawCount 描画する数
+		/// @param[in] vbv 頂点データハンドル
 		void Draw(ID3D12GraphicsCommandList *const commandList, uint32_t drawCount = 1u, const D3D12_VERTEX_BUFFER_VIEW *vbv = nullptr) const;
 	};
 
@@ -39,7 +50,9 @@ namespace SolEngine {
 	template <>
 	class ResourceCreater<Mesh> {
 	public:
-
+		/// @brief リソースを作成する
+		/// @param[in] source リソースソース
+		/// @return 作成したリソース
 		std::unique_ptr<Mesh> CreateObject(const ResourceSource<Mesh> &source) const;
 
 	};

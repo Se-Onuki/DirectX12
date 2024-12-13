@@ -1,3 +1,6 @@
+/// @file SceneLoader.h
+/// @brief シーンにリソースを格納するクラス
+/// @author ONUKI seiya
 #pragma once
 
 namespace SolEngine {

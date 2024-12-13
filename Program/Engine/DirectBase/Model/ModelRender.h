@@ -1,3 +1,6 @@
+/// @file ModelRender.h
+/// @brief モデルの描画クラス
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/Utils/Containers/Singleton.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
@@ -23,19 +26,24 @@ namespace SolEngine {
 
 	public:
 
-
+		/// @brief 初期化
 		void Init();
-
+		/// @brief 破棄
 		void clear();
-
+		/// @brief データの追加
+		/// @param[in] model モデル
+		/// @param[in] transform ワールド行列
 		void AddData(ModelManager::Handle model, const Transform &transform);
 
+		/// @brief ソート
 		void Sort();
 
+		/// @brief 描画
+		/// @param[in] camera カメラ
 		void Draw(const Camera3D &camera) const;
 
 	private:
-		DirectXCommon *dxCommon_;
+		::DirectXCommon *dxCommon_;
 		ID3D12GraphicsCommandList *commandList_;
 
 	private:

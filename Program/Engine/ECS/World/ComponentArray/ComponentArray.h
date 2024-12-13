@@ -1,3 +1,6 @@
+/// @file ComponentArray.h
+/// @brief コンポーネントの配列
+/// @author ONUKI seiya
 #pragma once
 #include <span>
 #include <cstdint>
@@ -45,6 +48,8 @@ namespace ECS {
 
 		uint32_t size() const { return count_; }
 
+		/// @brief 形のサイズの取得
+		/// @return 形のサイズ
 		uint32_t GetItemSize() const { return typeSize_; }
 
 		/// @brief 配列を移動させる

@@ -1,3 +1,6 @@
+/// @file ComponentManager.h
+/// @brief コンポーネントのマネージャ
+/// @author ONUKI seiya
 #pragma once
 
 #include <unordered_map>
@@ -25,6 +28,7 @@ private:
 	std::unordered_map<std::string, IComponent *(*)(Entity *const object)> componentMap_;
 };
 
+/// @brief コンポーネントの登録
 template<typename T>
 inline void ComponentManager::Register() {
 	static_assert(std::is_base_of<IComponent, T>::value, "テンプレート型はIComponentクラスの派生クラスではありません");

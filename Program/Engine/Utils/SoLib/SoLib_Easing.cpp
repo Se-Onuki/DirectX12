@@ -1,3 +1,6 @@
+/// @file SoLib_Easing.cpp
+/// @brief イージング
+/// @author ONUKI seiya
 #include "SoLib_Easing.h"
 #include <algorithm>
 #include <cmath>

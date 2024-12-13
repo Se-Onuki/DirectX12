@@ -1,3 +1,6 @@
+/// @file StaticString.h
+/// @brief 静的文字列
+/// @author ONUKI seiya
 #pragma once
 #include <cstdint>
 #include <array>

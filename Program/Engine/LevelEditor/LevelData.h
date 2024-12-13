@@ -1,3 +1,6 @@
+/// @file LevelData.h
+/// @brief レベルデータ
+/// @author ONUKI seiya
 #pragma once
 #include "../ResourceObject/ResourceObject.h"
 #include "../ResourceObject/ResourceObjectManager.h"
@@ -44,11 +47,16 @@ namespace SolEngine {
 		inline static const char *const kDefaultDirectory_ = "resources/LevelData/";
 
 	public:
-
+		/// @brief リソースを作成する
+		/// @param[in] source リソースソース
+		/// @return 作成したリソース
 		std::unique_ptr<LevelData> CreateObject(const ResourceSource<LevelData> &source) const;
 
 	private:
 
+		/// @brief 再帰的にJsonからリソースを作成する
+		/// @param[in] jsonObjectList jsonのオブジェクトリスト
+		/// @param[out] objectDataList 書き込み先のオブジェクトリスト
 		void RecursiveLoad(const nlohmann::json &jsonObjectList, std::list<LevelData::ObjectData> &objectDataList) const;
 
 	};

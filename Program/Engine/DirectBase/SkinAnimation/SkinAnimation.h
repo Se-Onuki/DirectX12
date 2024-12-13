@@ -1,3 +1,6 @@
+/// @file SkinAnimation.h
+/// @brief スキニングのアニメーション
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/Utils/SoLib/SoLib_Timer.h"
 #include <unordered_map>
@@ -11,14 +14,23 @@ namespace SolEngine {
 		AnimationPlayer() = default;
 		AnimationPlayer(const ResourceHandle<Animation> animation) : animation_(animation) {}
 
+		/// @brief アニメーションを設定
+		/// @param[in] animation アニメーション
 		inline void SetAnimation(const ResourceHandle<Animation> animation) { animation_ = animation; }
 
+		/// @brief アニメーションを取得
+		/// @return アニメーション
 		const ResourceHandle<Animation> &GetAnimation() const { return animation_; }
-
+		/// @brief アニメーションを再生する
+		/// @param[in] isLoop true:ループ再生する false:ループ再生しない
 		void Start(bool isLoop = false);
 
+		/// @brief アニメーションを更新する
+		/// @param[in] deltaTime 経過差分時間
 		void Update(float deltaTime);
 
+		/// @brief アニメーションの時刻を取得
+		/// @return アニメーションの時刻
 		const SoLib::DeltaTimer &GetDeltaTimer() const {
 			return animationTimer_;
 		}

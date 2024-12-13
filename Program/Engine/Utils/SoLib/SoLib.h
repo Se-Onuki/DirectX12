@@ -1,3 +1,6 @@
+/// @file SoLib.h
+/// @brief SoLibのまとめ
+/// @author ONUKI seiya
 #pragma once
 
 #include "SoLib_Easing.h"	// イージング

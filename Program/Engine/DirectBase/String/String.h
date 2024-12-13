@@ -1,8 +1,14 @@
+/// @file String.h
+/// @brief 文字列の変換
+/// @author ONUKI seiya
 #pragma once
 #include <Windows.h>
 #include <string>
 
 
+/// @brief ワイド文字列と文字列の相互変換
+/// @param[in] str 変換する文字列
+/// @return 変換後の文字列
 inline std::wstring ConvertString(const std::string& str) {
 	if (str.empty()) {
 		return std::wstring();

@@ -1,3 +1,6 @@
+/// @file SceneData.h
+/// @brief シーンにリソースを紐づけるクラス
+/// @author ONUKI seiya
 #pragma once
 #include <string>			// 文字列
 #include <memory>			// メモリ

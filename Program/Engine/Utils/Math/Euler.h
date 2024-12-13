@@ -1,3 +1,6 @@
+/// @file Euler.h
+/// @brief 3次元回転を表すクラス
+/// @author ONUKI seiya
 #pragma once
 #include "Vector3.h"
 #include "Matrix4x4.h"

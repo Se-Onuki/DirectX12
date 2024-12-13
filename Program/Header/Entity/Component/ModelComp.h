@@ -1,3 +1,6 @@
+/// @file ModelComp.h
+/// @brief モデルコンポーネント
+/// @author ONUKI seiya
 #pragma once
 #include "../Entity.h"
 
@@ -16,11 +19,16 @@ public:
 		ModelBone *parent_ = nullptr;
 		std::list<std::unique_ptr<ModelBone>> children_;
 
+		/// @brief 初期化
 		void Init(Model *const model = nullptr);
+		/// @brief 座標の設定
 		void SetTransform(const BaseTransform &srt);
 
+		/// @brief 子供の追加
 		ModelBone *const AddChild(Model *const model);
+		/// @brief 子供の追加
 		void AddChild(ModelBone *const child);
+		/// @brief 親の設定
 		void SetParent(ModelBone *const parent);
 
 		void Update();
@@ -57,11 +65,14 @@ public:
 
 	void ImGuiWidget() override;
 
+	/// @brief ボーンモデルの追加
 	ModelBone *const AddBone(const std::string &key, Model *const model, const BaseTransform &srt = {});
 	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const BaseTransform &srt);
 
+	/// @brief ボーンモデルの取得
 	ModelBone *const GetBone(const std::string &key) { return modelKey_.at(key); }
 
+	/// @brief モデルツリーの取得
 	const auto &GetModelTree() const { return modelTree_; }
 
 private:

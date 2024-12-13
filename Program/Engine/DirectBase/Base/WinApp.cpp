@@ -1,3 +1,6 @@
+/// @file WinApp.cpp
+/// @brief ウィンドウの管理を行う
+/// @author ONUKI seiya
 #include "WinApp.h"
 #include "../String/String.h"
 

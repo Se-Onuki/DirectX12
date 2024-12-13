@@ -1,3 +1,6 @@
+/// @file Particle.h
+/// @brief パーティクルの実装
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/Utils/Math/Transform.h"
 #include "../../Engine/Utils/Math/Vector4.h"

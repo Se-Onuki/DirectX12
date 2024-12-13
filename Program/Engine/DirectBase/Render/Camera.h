@@ -1,3 +1,6 @@
+/// @file Camera.h
+/// @brief カメラ
+/// @author ONUKI seiya
 #pragma once
 #include <wrl.h>
 #include <d3d12.h>
@@ -56,21 +59,26 @@ public:
 	Matrix4x4 matView_{};
 	Matrix4x4 matProjection_{};
 
+	/// @brief 初期化
 	void Init();
 
+	/// @brief 行列の計算
 	void CalcMatrix();
 
+	/// @brief 行列の更新
+	/// @details ビュー行列と射影行列を計算して､転送する
 	void UpdateMatrix();
 
+	/// @brief 行列の転送
 	void TransferMatrix();
 
+	/// @brief ImGui表示
+	/// @return 変更されたらtrue
 	bool ImGuiWidget();
 
-	/// <summary>
-	/// 表示名を指定するImGui表示関数
-	/// </summary>
-	/// <param name="id">ウィンドウ名</param>
-	/// <returns></returns>
+	/// @brief ImGui表示
+	/// @param[in] id 表示名
+	/// @return 変更されたらtrue
 	bool ImGuiWidget(const std::string &id);
 
 };
@@ -113,14 +121,21 @@ public:
 	Matrix4x4 matView_{};
 	Matrix4x4 matProjection_{};
 
+	/// @brief 初期化
 	void Init();
 
+	/// @brief 行列の計算
 	void CalcMatrix();
 
+	/// @brief 行列の更新
+	/// @details ビュー行列と射影行列を計算して､転送する
 	void UpdateMatrix();
 
+	/// @brief 行列の転送
 	void TransferMatrix();
 
+	/// @brief ImGui表示
+	/// @return 変更されたらtrue
 	bool ImGuiWidget();
 
 };

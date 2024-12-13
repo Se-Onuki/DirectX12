@@ -1,3 +1,6 @@
+/// @file Rigidbody.cpp
+/// @brief 物理挙動のコンポーネント
+/// @author ONUKI seiya
 #include "Rigidbody.h"
 #include "Collider.h"
 

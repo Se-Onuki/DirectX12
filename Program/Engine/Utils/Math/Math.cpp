@@ -1,3 +1,6 @@
+/// @file Math.cpp
+/// @brief 数学系の関数
+/// @author ONUKI seiya
 #include"Math.hpp"
 
 #define _USE_MATH_DEFINES
@@ -17,7 +20,7 @@
 #include <random>
 
 
-
+/// @brief 内積
 float DotProduct(Vector2 startA, Vector2 endA, Vector2 startB, Vector2 endB) {
 	Vector2 a = { ((endA.x) - (startA.x)),((endA.y) - (startA.y)) };
 	Vector2 b = { ((endB.x) - (startB.x)),((endB.y) - (startB.y)) };
@@ -29,7 +32,7 @@ float DotProduct(Vector2 VectorA, Vector2 VectorB) {
 	return VectorA.x * VectorB.x + VectorA.y * VectorB.y;
 }
 
-
+/// @brief 外積
 float CrossProduct(Vector2 startA, Vector2 endA, Vector2 startB, Vector2 endB) {
 	Vector2 a = { ((endA.x) - (startA.x)),((endA.y) - (startA.y)) };
 	Vector2 b = { ((endB.x) - (startB.x)),((endB.y) - (startB.y)) };
@@ -41,7 +44,7 @@ float CrossProduct(Vector2 VectorA, Vector2 VectorB) {
 }
 
 
-
+/// @brief 角度からベクトルを作成
 Vector2 operator <<(Vector2 &vec2, const Polar &Polar)
 {
 	return vec2 = {
@@ -49,13 +52,12 @@ Vector2 operator <<(Vector2 &vec2, const Polar &Polar)
 	};
 }
 
+/// @brief ベクトルから角度を作成
 Polar operator<<(Polar &Polar, const Vector2 vec2) {
 	return Polar = { (float)(atan2(vec2.y, vec2.x)), vec2.Length() };
 }
 
-
-
-
+/// @brief 回転行列を作成
 Matrix2x2 MakeRotateMatrix(const float &theta) {
 	return Matrix2x2(
 		cos(theta), sin(theta),
@@ -63,7 +65,7 @@ Matrix2x2 MakeRotateMatrix(const float &theta) {
 	);
 }
 
-
+/// @brief スケール行列を作成
 Matrix3x3 MakeScaleMatrix(const Vector2 scale) {
 	return Matrix3x3{
 		scale.x, 0, 0,
@@ -72,6 +74,7 @@ Matrix3x3 MakeScaleMatrix(const Vector2 scale) {
 	};
 }
 
+/// @brief スケール行列を作成
 Matrix4x4 MakeScaleMatrix(const Vector3 &scale) {
 	return Matrix4x4{
 		scale.x, 0, 0, 0,
@@ -81,8 +84,7 @@ Matrix4x4 MakeScaleMatrix(const Vector3 &scale) {
 	};
 }
 
-
-
+/// @brief 回転行列を作成
 Matrix3x3 MakeRotateMatrix3x3(const float &theta) {
 	return Matrix3x3(
 		cos(theta), sin(theta), 0,
@@ -91,6 +93,7 @@ Matrix3x3 MakeRotateMatrix3x3(const float &theta) {
 	);
 }
 
+/// @brief 移動行列を作成
 Matrix3x3 MakeTranslateMatrix(const Vector2 translate) {
 	return Matrix3x3{
 		1, 0, 0,
@@ -99,6 +102,7 @@ Matrix3x3 MakeTranslateMatrix(const Vector2 translate) {
 	};
 }
 
+/// @brief 移動行列を作成
 Matrix4x4 MakeTranslateMatrix(const Vector3 &translate) {
 	return Matrix4x4{
 		1, 0, 0, 0,
@@ -109,6 +113,7 @@ Matrix4x4 MakeTranslateMatrix(const Vector3 &translate) {
 }
 
 
+/// @brief アフィン行列を作成
 Matrix3x3 MakeAffineMatrix(const Vector2 scale, const float &theta, const Vector2 translate) {
 	return Matrix3x3{
 		scale.x * (float)cos(theta) , scale.x * (float)sin(theta), 0,
@@ -140,7 +145,7 @@ Matrix3x3 MakeAffineMatrix(const Vector2 scale, const float &theta, const Vector
 //	return result / w; // 演算子のオーバーライド
 //}
 
-
+/// @brief 正射影行列を作成
 Matrix3x3 MakeOrthographicMatrix(const Vector2 LeftTop, const Vector2 RightBottom) {
 	return
 	{
@@ -149,7 +154,7 @@ Matrix3x3 MakeOrthographicMatrix(const Vector2 LeftTop, const Vector2 RightBotto
 		(RightBottom.x + LeftTop.x) / (LeftTop.x - RightBottom.x), (LeftTop.y + RightBottom.y) / (RightBottom.y - LeftTop.y), 1
 	};
 }
-
+/// @brief ビューポート行列を作成
 Matrix3x3 MakeViewportMatrix(const Vector2 LeftTop, const Vector2 RightBottom) {
 	return
 	{
@@ -159,6 +164,7 @@ Matrix3x3 MakeViewportMatrix(const Vector2 LeftTop, const Vector2 RightBottom) {
 	};
 }
 
+/// @brief 回転だけの行列との掛け算
 Vector3 TransformNormal(const Vector3 &v, const Matrix4x4 &m) {
 	return Vector3{
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],

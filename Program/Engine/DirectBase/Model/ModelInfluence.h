@@ -1,3 +1,6 @@
+/// @file M<odelInfluence.h
+/// @brief モデルの影響情報
+/// @author ONUKI seiya
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
@@ -45,6 +48,9 @@ namespace SolEngine {
 	class ResourceCreater<ModelInfluence> {
 	public:
 
+		/// @brief リソースの作成
+		/// @param[in] source リソースソース
+		/// @return 作成したリソース
 		std::unique_ptr<ModelInfluence> CreateObject(const ResourceSource<ModelInfluence> &source) const;
 
 	};

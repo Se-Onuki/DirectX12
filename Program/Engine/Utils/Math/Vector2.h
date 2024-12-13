@@ -1,3 +1,6 @@
+/// @file Vector2.h
+/// @brief Vector2
+/// @author ONUKI seiya
 #pragma once
 #include <cmath>
 

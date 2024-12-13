@@ -1,3 +1,6 @@
+/// @file BoneModel.h
+/// @brief ボーンモデルの実装
+/// @author ONUKI seiya
 #pragma once
 #include "Model.h"
 #include <unordered_map>
@@ -7,7 +10,8 @@
 class BoneModel {
 public:
 	class Bone;
-
+	
+	/// @brief モデルとボーンを紐づけるクラス
 	class Box {
 		friend Bone;
 		// モデルデータ
@@ -19,16 +23,18 @@ public:
 	public:
 		Box(Model *model) :model_(model) {};
 
-		/// @brief 親ボーンのゲッタ
+		/// @brief 親ボーンの取得
 		/// @return 親ボーンのアドレス
 		Bone *GetParent() const { return parent_; }
 
-		/// @brief モデルデータのゲッタ
+		/// @brief モデルデータの取得
 		/// @return モデルデータアドレス
 		Model *GetModel() const { return model_; }
 
 	};
 
+	/// @class Bone
+	/// @brief ボーンクラス
 	class Bone {
 		// 親のボーン
 		Bone *parent_ = nullptr;
@@ -39,20 +45,37 @@ public:
 
 	public:
 
+		/// @brief モデルBoxの追加
+		/// @param[in] model モデル
+		/// @return 追加したモデルBox
 		Box *AddBox(Model *const model);
+		/// @brief モデルBoxの追加
+		/// @param[in] box モデルBox
+		/// @return 追加したモデルBoxのIndex
 		uint32_t AddBox(Box &&box);
-		Bone *AddChild(std::unique_ptr<Bone> child);
+		/// @brief 子供のボーンの追加
+		/// @return 追加した子供のボーン
 		Bone *AddChild();
+		/// @param[in] child 追加する子供のボーン
+		Bone *AddChild(std::unique_ptr<Bone> child);
 
 		void SetParent(Bone *const parent);
 		Bone *GetParent() const { return parent_; }
 
+		/// @brief 子供のボーンの取得
+		/// @return 子供のボーン
 		const auto &GetChild() const { return boneChildren_; }
 
+		/// @brief モデルBoneの取得
+		/// @return モデルBoneのリスト
 		std::list<const Bone *> GetBoneList() const;
-
+		/// @brief モデルBoxの取得
+		/// @return モデルBoxのリスト
 		std::list<const Box *> GetBoxList() const;
 
+		/// @brief モデルBoxの取得
+		/// @param index 添字
+		/// @return モデルBox
 		Box *const GetBox(const uint32_t index) { return boxArray_[index].get(); }
 
 

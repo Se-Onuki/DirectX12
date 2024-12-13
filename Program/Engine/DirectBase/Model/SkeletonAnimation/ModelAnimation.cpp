@@ -1,3 +1,6 @@
+/// @file ModelAnimation.cpp
+/// @brief モデルのアニメーションのリソース
+/// @author ONUKI seiya
 #include "ModelAnimation.h"
 
 namespace SolEngine {

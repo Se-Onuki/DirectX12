@@ -1,3 +1,6 @@
+/// @file ComponentData.h
+/// @brief コンポーネントのSpanのように振る舞う
+/// @author ONUKI seiya
 #pragma once
 #include <span>
 #include <cstdint>
@@ -130,19 +133,45 @@ namespace ECS {
 		template<typename T>
 		const T &at(uint32_t index) const { return *std::bit_cast<const T *>(&at(index)); }
 
+		/// @brief 範囲を返す
+		/// @param end 範囲の終わり
+		/// @return データの範囲
 		Range View(uint32_t end) { return Range{ this,0,end }; }
+		/// @brief 範囲を返す
+		/// @param begin 範囲の始まり
+		/// @param end 範囲の終わり
+		/// @return データの範囲
 		Range View(uint32_t begin, uint32_t end) { return Range{ this,begin,end }; }
 
+		/// @brief 範囲を返す
+		/// @param end 範囲の終わり
+		/// @return 型指定ありのデータの範囲
 		template<typename T>
 		TRange<T> View(uint32_t end) { return TRange<T>{ this, 0u, end }; }
+		
+		/// @brief 範囲を返す
+		/// @param begin 範囲の始まり
+		/// @param end 範囲の終わり
+		/// @return 型指定ありのデータの範囲
 		template<typename T>
 		TRange<T> View(uint32_t begin, uint32_t end) { return TRange<T>{ this, begin, end }; }
 
+		
+		/// @brief 範囲を返す
+		/// @param end 範囲の終わり
+		/// @return 型指定ありのデータの範囲
 		template<typename T>
 		TRange<T, true> View(uint32_t end) const { return TRange<T, true>{ this, 0u, end }; }
+		
+		/// @brief 範囲を返す
+		/// @param begin 範囲の始まり
+		/// @param end 範囲の終わり
+		/// @return 型指定ありのデータの範囲
 		template<typename T>
 		TRange<T, true> View(uint32_t begin, uint32_t end) const { return TRange<T, true>{ this, begin, end }; }
 
+		/// @brief コンポーネントのサイズを返す
+		/// @return コンポーネントのサイズ
 		uint32_t GetTypeSize() const { return typeSize_; }
 
 

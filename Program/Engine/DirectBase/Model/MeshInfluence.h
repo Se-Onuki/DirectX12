@@ -1,3 +1,6 @@
+/// @file MeshInfluence.h
+/// @brief メッシュへの影響を保存する
+/// @author ONUKI seiya
 #pragma once
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
@@ -29,7 +32,9 @@ namespace SolEngine {
 
 		// メッシュのハンドル
 		ResourceObjectManager<Mesh>::Handle meshHandle_;
+		// スキンクラスタのハンドル
 		ResourceObjectManager<SkinClusterBase>::Handle skinClusterBase_;
+		// スケルトンのハンドル
 		ResourceObjectManager<SkeletonJointReference>::Handle skeletonReference_;
 
 		bool operator==(const ResourceSource<MeshInfluence> &) const = default;
@@ -38,7 +43,9 @@ namespace SolEngine {
 	template <>
 	class ResourceCreater<MeshInfluence> {
 	public:
-
+		/// @brief リソースを作成する
+		/// @param[in] source リソースソース
+		/// @return 作成したリソース
 		std::unique_ptr<MeshInfluence> CreateObject(const ResourceSource<MeshInfluence> &source) const;
 
 	};
@@ -50,7 +57,7 @@ namespace std {
 	template<>
 	struct hash<SolEngine::ResourceSource<SolEngine::MeshInfluence>> {
 		size_t operator()(const SolEngine::ResourceSource<SolEngine::MeshInfluence> &data) const {
-			return size_t{ static_cast<size_t>(data.meshHandle_.GetHandle()) << 32u | static_cast<size_t>(data.meshHandle_.GetVersion()) };
+			return data.meshHandle_.GetHashID();
 		}
 	};
 }

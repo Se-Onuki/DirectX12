@@ -1,3 +1,6 @@
+/// @file LevelImporter.cpp
+/// @brief レベルの読み込みクラス
+/// @author ONUKI seiya
 #include "LevelImporter.h"
 namespace SolEngine {
 

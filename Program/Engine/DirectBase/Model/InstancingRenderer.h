@@ -1,3 +1,6 @@
+/// @file InstancingRenderer.h
+/// @brief インスタンシング描画
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/Utils/Containers/Singleton.h"
 #include "Material.h"
@@ -18,8 +21,12 @@ namespace SolEngine {
 
 	public:
 
+		/// @brief 初期化
+		/// @param[in] count インスタンス数
 		void Init(uint32_t count);
 
+		/// @brief 描画の実行
+		/// @param[in] model モデル
 		void Draw(const ModelData *model) const;
 
 		std::tuple<ArrayBuffer<Ts>...> elements_;

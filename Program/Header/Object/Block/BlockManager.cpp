@@ -1,3 +1,6 @@
+/// @file BlockManager.cpp
+/// @brief ブロックの描画
+/// @author ONUKI seiya/TOYODA yuki
 #include "BlockManager.h"
 
 void BlockManager::Init(uint32_t maxCount)

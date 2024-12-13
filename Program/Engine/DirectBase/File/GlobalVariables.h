@@ -1,3 +1,6 @@
+/// @file GlobalVariables.h
+/// @brief Jsonで保存するグローバル変数
+/// @author ONUKI seiya
 #pragma once
 #include "../../Engine/Utils/Math/Vector2.h"
 #include "../../Engine/Utils/Math/Vector3.h"
@@ -17,6 +20,7 @@ class GlobalVariables {
 	GlobalVariables operator=(const GlobalVariables &) = delete;
 	~GlobalVariables() = default;
 
+	/// @brief Jsonファイルの保存場所
 	const std::string kDirectoryPath = "resources/GlobalVariables/";
 
 public:
@@ -30,10 +34,12 @@ public:
 		return &instance;
 	}
 
+	/// @brief グループを作る
+	/// @param[in] groupName グループ名
 	void CreateGroups(const std::string &groupName) { datas_[groupName]; }
 
 	/// @brief Group自体のゲッタ
-	/// @param groupName グループ名
+	/// @param[in] groupName グループ名
 	/// @return 紐づいた Group
 	const Group &GetGroup(const std::string &groupName) const;
 	Group &GetGroup(const std::string &groupName);
@@ -41,40 +47,61 @@ public:
 	Group &operator[](const std::string &groupName) { return datas_[groupName]; }
 
 	/// @brief Item自体のゲッタ
-	/// @param groupName グループ名
-	/// @param key 紐づけられたキー
+	/// @param[in] groupName グループ名
+	/// @param[in] key 紐づけられたキー
 	/// @return 紐づいた Item
 	const Item &Get(const std::string &groupName, const std::string &key) const;
 
 	/// @brief 変換付きゲッタ
 	/// @tparam T 変換先の型
-	/// @param groupName グループ名
-	/// @param key 紐づけられたキー
+	/// @param[in] groupName グループ名
+	/// @param[in] key 紐づけられたキー
 	/// @return 型変換した値
 	template<typename T>
 	T Get(const std::string &groupName, const std::string &key) const;
-	/*template<typename T>
-	void AddValue(const std::string& groupName, const std::string& key, const T value);*/
 
+	/// @brief 値の追加
+	/// @tparam T 追加する型
+	/// @param[in] groupName グループ名
+	/// @param[in] key 変数名
+	/// @param[in] value 保存する値
 	template<typename T>
 	void AddValue(const std::string &groupName, const std::string &key, const T &value);
 
+	/// @brief 値の更新
+	/// @tparam T 更新する型
+	/// @param[in] groupName グループ名
+	/// @param[in] key 変数名
+	/// @param[in] value 更新する値
 	template<typename T>
 	void SetValue(const std::string &groupName, const std::string &key, const T &value);
 
+	/// @brief 値の追加
+	/// @tparam ITEM 追加する型と名前のペア
+	/// @param[in] groupName グループ名
+	/// @param[in] item 追加する値と名前
 	template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
 		requires(std::same_as<ITEM, VariantItem<V, T>>)
 	void AddValue(const std::string &groupName, const ITEM &item);
 
+	/// @brief 値の更新
+	/// @tparam ITEM 更新する型と名前のペア
+	/// @param[in] groupName グループ名
+	/// @param[in] item 更新する値と名前
 	template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
 		requires(std::same_as<ITEM, VariantItem<V, T>>)
 	void SetValue(const std::string &groupName, const ITEM &item);
 
+	/// @brief 更新
 	void Update();
 
+	/// @brief Jsonファイルを保存
+	/// @param groupName 保存するグループ名
 	void SaveFile(const std::string &groupName) const;
 
+	/// @brief Jsonファイルを読み込む
 	void LoadFile();
+	/// @param[in] groupName グループ名
 	void LoadFile(const std::string &groupName);
 
 private:
@@ -99,9 +126,8 @@ void operator>> (const GlobalVariables::Item &item, T &value) {
 
 /// @brief Itemから型変換を行って代入
 /// @tparam T 代入する型
-/// @param value 代入先の変数
 /// @param item 保存されたItem
-
+/// @param value 代入先の変数
 template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
 	requires(std::same_as<ITEM, VariantItem<V, T>>)
 void operator>> (const GlobalVariables::Item &item, ITEM &value) {
@@ -115,6 +141,10 @@ void operator>> (const GlobalVariables::Item &item, ITEM &value) {
 	value = T{};
 }
 
+/// @brief Itemから型変換を行って代入
+/// @tparam T 代入する型
+/// @param group 保存されたグループ
+/// @param value 代入先の変数
 template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
 	requires(std::same_as<ITEM, VariantItem<V, T>>)
 void operator>> (const GlobalVariables::Group &group, ITEM &value) {
@@ -136,26 +166,21 @@ void operator>> (const GlobalVariables::Group &group, ITEM &value) {
 	value = T{};
 }
 
+/// @brief Itemから型変換を行ってJson出力
+/// @tparam T 代入する型
+/// @param group 保存先のグループ
+/// @param value 代入する変数
 template <typename ITEM, SoLib::Text::ConstExprString V = ITEM::str_, SoLib::IsRealType T = typename ITEM::ItemType>
 	requires(std::same_as<ITEM, VariantItem<V, T>>)
 void operator<< (GlobalVariables::Group &group, const ITEM &value) {
 	group[value.GetKey()] = value.GetItem();
 }
 
-//
-//template<typename T>
-//void operator<< (GlobalVariables::Group &group, VariantItem<T> &value) {
-//
-//	// キーがあるか
-//	const auto &itItem = group.find(value.GetKey());
-//	assert(itItem != group.end());
-//
-//	// アイテムの参照
-//	auto &item = itItem->second;
-//
-//	item = value.GetItem();
-//}
-
+/// @brief 値の取得
+/// @tparam T 取得する型
+/// @param[in] groupName グループ名
+/// @param[in] key キー
+/// @return 型変換した値
 template<typename T>
 inline T GlobalVariables::Get(const std::string &groupName, const std::string &key) const {
 
@@ -169,6 +194,11 @@ inline T GlobalVariables::Get(const std::string &groupName, const std::string &k
 	return T{};
 }
 
+/// @brief 値の追加
+/// @tparam T 追加する型
+/// @param[in] groupName グループ名
+/// @param[in] key キー
+/// @param[in] value 保存する値
 template<typename T>
 void GlobalVariables::AddValue(
 	const std::string &groupName, const std::string &key, const T &value) {
@@ -180,6 +210,11 @@ void GlobalVariables::AddValue(
 	return;
 }
 
+/// @brief 値の更新
+/// @tparam T 更新する型
+/// @param[in] groupName グループ名
+/// @param[in] key キー
+/// @param[in] value 更新する値
 template<typename T>
 void GlobalVariables::SetValue(
 	const std::string &groupName, const std::string &key, const T &value) {
@@ -187,12 +222,18 @@ void GlobalVariables::SetValue(
 	group[key] = value;
 }
 
+/// @brief 値の追加
+/// @param[in] groupName グループ名
+/// @param[in] item 追加するアイテム
 template <typename ITEM, SoLib::Text::ConstExprString V,  SoLib::IsRealType T>
 	requires(std::same_as<ITEM, VariantItem<V, T>>)
 inline void GlobalVariables::AddValue(const std::string &groupName, const ITEM &item) {
 	AddValue(groupName, item.GetKey(), item.GetItem());
 }
 
+/// @brief 値の更新
+/// @param[in] groupName グループ名
+/// @param[in] item 更新するアイテム
 template <typename ITEM, SoLib::Text::ConstExprString V, SoLib::IsRealType T>
 	requires(std::same_as<ITEM, VariantItem<V, T>>)
 inline void GlobalVariables::SetValue(const std::string &groupName, const ITEM &item) {
