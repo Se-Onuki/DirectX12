@@ -2,7 +2,7 @@ name: DebugBuild
 on:
   push:
     branches:
-      - SolEngine
+      - master
 env:
   # リポジトリのルートディレクトリを起点としたソリューションファイルのパス
   SOLUTION_FILE_PATH: Program/DirectX12.sln
