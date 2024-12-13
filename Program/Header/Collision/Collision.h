@@ -53,9 +53,9 @@ struct IShape {
 };
 
 struct OBB : public IShape {
-	Vector3 centor;									// 中心点
+	Vector3 centor{};									// 中心点
 	Quaternion orientations = Quaternion::Identity; // ローカル座標
-	Vector3 size;                                   // 中心点からの各軸の半径
+	Vector3 size{};                                   // 中心点からの各軸の半径
 
 	void SetRotate(const Vector3 &euler);
 
@@ -86,12 +86,11 @@ struct Triangle : public IShape {
 
 	Triangle() {}
 	/// @param LocalVertices 頂点リスト(時計回り)
-	Triangle(const std::array<Vector3, 3u> Vertices);
 	Triangle(const Vector3 &Vertice0, const Vector3 &Vertice1, const Vector3 &Vertice2)
 		: vertices_{ Vertice0, Vertice1, Vertice2 } {}
 
 	Triangle(const Triangle &) = default;
-	~Triangle();
+	~Triangle() =default;
 
 	[[nodiscard]] const Triangle operator*(const Matrix4x4 &matrix) const {
 		Triangle out{};
@@ -107,7 +106,7 @@ struct Triangle : public IShape {
 		return (VecA.cross(VecB)).Nomalize();
 	}
 
-	void ImGuiDebug(const std::string &group);
+	//void ImGuiDebug(const std::string &group);
 };
 
 struct Sphere : public IShape {

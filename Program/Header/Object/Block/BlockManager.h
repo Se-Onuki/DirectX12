@@ -97,9 +97,9 @@ private: // メンバ変数
 	CBuffer<uint32_t> indexLocation_;
 
 	// ブロックモデル
-	const Model *model_;
+	const Model *model_ = nullptr;
 	// ブロック配列
-	std::list<IBlock> blocks_;
+	std::list<IBlock> blocks_{};
 };
 
 /// <summary>
@@ -220,7 +220,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="camera"></param>
 	void Draw(const Camera3D &camera);
-	void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
+	//void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
 
 	IBlock *const AddBox(const SkinModelPair &model, IBlock &&block) {
 
@@ -381,7 +381,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="camera"></param>
 	void Draw(const Camera3D &camera);
-	void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
+	//void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
 
 	IBlock *const AddBox(const ModelHandle model, IBlock &&block) {
 
@@ -466,7 +466,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="camera"></param>
 	void Draw(const Camera3D &camera);
-	void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
+	//void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
 
 	IBlock *const AddBox(const SkinModelPair &model, IBlock &&block) {
 

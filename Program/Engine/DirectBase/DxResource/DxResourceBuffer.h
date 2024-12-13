@@ -87,7 +87,7 @@ namespace SolEngine {
 
 		std::conditional_t<kHasMemory_, std::span<MemType>, size_t> itemData_;
 
-		D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_;
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbView_{};
 
 	};
 

@@ -77,7 +77,7 @@ private:
 	float dropDownTime_ = 0.5f;
 
 	// 指定するターゲット
-	ButtonUI *pickUpTarget_;
+	ButtonUI *pickUpTarget_ = nullptr;
 	// 解除するターゲット
 	std::array<std::pair<ButtonUI *, float>, kDropDownCount_> dropDownTarget_;
 
@@ -129,13 +129,13 @@ private:
 	// ボタンの大きさ
 	Vector2 buttonScale_;
 	// ボタンの隙間
-	float distance_;
+	float distance_{};
 
 	// ボタンのカーソル
-	int32_t target_;
+	int32_t target_{};
 
 	// ボタンの数
-	int32_t targetCount_;
+	int32_t targetCount_{};
 
 	// 背景
 	std::unique_ptr<Sprite> backGround_;
@@ -144,10 +144,10 @@ private:
 	std::vector<std::unique_ptr<ButtonUI>> button_;
 
 	// ボタンUIの集合
-	ButtonUIGroup buttonUIGroup_;
+	ButtonUIGroup buttonUIGroup_{};
 
 	// ボタンのアニメーション
-	ButtonPickUp buttonPicker_;
+	ButtonPickUp buttonPicker_{};
 
 	// アニメーションタイマー
 	SoLib::DeltaTimer timer_;

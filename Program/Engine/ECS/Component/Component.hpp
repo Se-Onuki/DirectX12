@@ -77,7 +77,7 @@ namespace ECS {
 	};
 
 	struct EmitterComp : IComponent {
-		int32_t count_;
+		int32_t count_{};
 		SoLib::DeltaTimer frequency_;
 		SoLib::Color::RGB4 startColor_ = 0xFFFFFFFF;
 		SoLib::Color::RGB4 endColor_{};
@@ -318,8 +318,8 @@ namespace ECS {
 		float offset_{ 5.f };
 		float scale_{ 2.f };
 		float progress_ = 0.f;
-		Model *model_;
-		Model *inModel_;
+		Model *model_ = nullptr;
+		Model *inModel_ = nullptr;
 	};
 
 	struct AttackStatus : IComponent {
@@ -330,8 +330,8 @@ namespace ECS {
 	};
 
 	struct Experience : IComponent {
-		uint32_t level_;
-		uint32_t exp_;
+		uint32_t level_{};
+		uint32_t exp_{};
 		uint32_t(*needExp_)(uint32_t level) = [](uint32_t level)->uint32_t { return 10 + static_cast<uint32_t>(0.25f * std::powf(static_cast<float>(level), 1.5f)); };
 	};
 

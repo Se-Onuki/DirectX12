@@ -162,9 +162,9 @@ namespace ECS {
 		// コンポーネントの始点
 		uint32_t offset_ = 0u;
 		// 形のサイズ
-		uint32_t typeSize_;
+		uint32_t typeSize_{};
 		// コンポーネント配列の長さ
-		uint32_t itemCount_;
+		uint32_t itemCount_{};
 	};
 
 #pragma region Func

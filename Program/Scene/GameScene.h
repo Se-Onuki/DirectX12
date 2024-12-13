@@ -55,7 +55,7 @@ private:
 
 	SoLib::DeltaTimer menuTimer_;
 
-	bool isMenuOpen_;
+	bool isMenuOpen_ = false;
 
 	SolEngine::ResourceObjectManager<Shader> *pShaderManager_;
 

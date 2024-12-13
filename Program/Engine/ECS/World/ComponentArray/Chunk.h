@@ -234,7 +234,7 @@ namespace ECS {
 		std::vector<bool> flag(size());
 		auto itr = flag.begin();
 		// チャンク内部を走査
-			// コンポーネントを取得して返す
+		// コンポーネントを取得して返す
 		for (const T &value : this->GetComponent<T>()) {
 			// 条件に一致したらtrueを代入し､カウントを追加する
 			if (*itr++ = pred(value)) { count++; }

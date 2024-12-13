@@ -119,7 +119,7 @@ private:
 	// デスクリプタヒープ(借用)
 	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV> *srvHeap_;
 	// ヒープの使用位置
-	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
+	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_{};
 
 	// デスクリプタヒープを現在使用している量(size)
 	uint32_t nextIndex_ = static_cast<uint32_t>(-1);
