@@ -11,7 +11,7 @@
 #include "Math.hpp"
 #include <cmath>
 
-// void Matrix4x4::Printf(const int& x, const int& y) const {
+// void Matrix4x4::Printf(const int32_t  x, const int32_t  y) const {
 //	for (int i = 0; i < 4; i++) {
 //		for (int j = 0; j < 4; j++) {
 //			/*Novice::ScreenPrintf(

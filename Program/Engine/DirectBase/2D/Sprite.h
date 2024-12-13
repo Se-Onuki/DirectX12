@@ -83,7 +83,7 @@ private:
 
 
 	void Init(const std::string &textureName = "white2x2.png");
-	void Init(const uint32_t &textureHaundle);
+	void Init(const uint32_t textureHaundle);
 
 private:
 
@@ -128,10 +128,10 @@ public:
 	}
 
 	/// @brief テクスチャ原点設定(左上)
-	void SetTexOrigin(const Vector2 &texOrigin);
+	void SetTexOrigin(const Vector2 texOrigin);
 
 	/// @brief テクスチャ差分設定(右下)
-	void SetTexDiff(const Vector2 &texDiff);
+	void SetTexDiff(const Vector2 texDiff);
 
 	/// @brief テクスチャ座標取得 
 	/// @return { テクスチャ原点(左上), テクスチャ差分(右下) }
@@ -141,11 +141,11 @@ public:
 	bool GetVisible() const { return isVisible_; }
 
 	/// @brief 中心点設定
-	void SetPivot(const Vector2 &pivot);
+	void SetPivot(const Vector2 pivot);
 
-	void SetScale(const Vector2 &scale);
+	void SetScale(const Vector2 scale);
 	void SetRotate(const float angle);
-	void SetPosition(const Vector2 &position);
+	void SetPosition(const Vector2 position);
 
 	void SetTransform(const Transform2D &trans);
 
@@ -161,7 +161,7 @@ public:
 
 	[[nodiscard]] static std::unique_ptr<Sprite> Create();
 	[[nodiscard]] static std::unique_ptr<Sprite> Create(const uint32_t textureHaundle);
-	[[nodiscard]] static std::unique_ptr<Sprite> Create(const uint32_t textureHaundle, const Vector2 &position, const Vector2 &scale);
+	[[nodiscard]] static std::unique_ptr<Sprite> Create(const uint32_t textureHaundle, const Vector2 position, const Vector2 scale);
 
 	void ImGuiWidget();
 

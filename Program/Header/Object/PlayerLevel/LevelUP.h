@@ -94,7 +94,7 @@ public:
 	void SetWindow(Vector2 center, Vector2 scale, float distance);
 
 	/// @brief メニューオープン
-	/// @param target 指定する番号
+	/// @param [in] target 指定する番号
 	void Open(int32_t target = 1);
 
 	/// @brief メニュー非表示

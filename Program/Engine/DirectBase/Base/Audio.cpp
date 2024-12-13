@@ -206,11 +206,6 @@ bool Audio::ImGuiWidget()
 	return false;
 }
 
-//
-// uint32_t Audio::FindUnusedIndex() const {
-//	return indexManager_.FindUnusedRange(1u);
-//}
-
 Audio::SoundData SoundLoadWave(const char *filename)
 {
 

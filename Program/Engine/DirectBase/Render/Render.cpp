@@ -3,7 +3,7 @@
 #include <cmath>
 
 Matrix4x4 Render::MakeOrthographicMatrix(
-	const Vector2 &LeftTop, const Vector2 &RightBottom, const float &nearClip,
+	const Vector2 LeftTop, const Vector2 RightBottom, const float &nearClip,
 	const float &farClip) {
 	return Matrix4x4{
 		2.f / (RightBottom.x - LeftTop.x), 0.f, 0.f, 0.f,
@@ -30,7 +30,7 @@ Matrix4x4 Render::MakePerspectiveFovMatrix(
 }
 
 Matrix4x4 Render::MakeViewportMatrix(
-	const Vector2 &LeftTop, const float &width, const float &height, const float &minDepth,
+	const Vector2 LeftTop, const float &width, const float &height, const float &minDepth,
 	const float &maxDepth) {
 	return Matrix4x4{
 		width / 2, 0, 0, 0,
@@ -42,7 +42,7 @@ Matrix4x4 Render::MakeViewportMatrix(
 
 
 
-std::pair<Vector3, Vector3> Render::ScreenToWorld(const Vector2 &screenPos, const Matrix4x4 &matVPVp) {
+std::pair<Vector3, Vector3> Render::ScreenToWorld(const Vector2 screenPos, const Matrix4x4 &matVPVp) {
 	Matrix4x4 matInvarseVPVp = matVPVp.InverseSRT();
 
 	Vector3 posNear{ screenPos.x, screenPos.y, 0.f };

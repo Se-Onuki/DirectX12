@@ -60,7 +60,7 @@ namespace SoLib {
 
 			/// @brief 終点フレームの設定
 			/// @param GoalFlame 終点フレーム
-			inline void SetGoal(const int &Goal) { goalFlame_ = Goal; }
+			inline void SetGoal(const int32_t Goal) { goalFlame_ = Goal; }
 
 		public:
 			FlameTimer(uint32_t goal = 0u) : goalFlame_(goal), nowFlame_(0), isFinish_(false), isActive_(false) {}

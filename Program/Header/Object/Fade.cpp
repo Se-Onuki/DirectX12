@@ -17,12 +17,12 @@ void Fade::StaticInit() {
 
 }
 
-void Fade::SetState(const Vector2 &pos, const SoLib::Color::RGB4 &color) {
+void Fade::SetState(const Vector2 pos, const SoLib::Color::RGB4 &color) {
 	sprite_->SetPosition(pos);
 	sprite_->SetColor(color);
 }
 
-void Fade::Start(const Vector2 &targetPos, const SoLib::Color::RGB4 &targetColor, float goalTime) {
+void Fade::Start(const Vector2 targetPos, const SoLib::Color::RGB4 &targetColor, float goalTime) {
 
 	// 目的地と、現在地を設定
 	targetPos_ = targetPos;

@@ -93,7 +93,7 @@ void GlobalVariables::SaveFile(const std::string &groupName) const {
 			root[groupName][itemName] = std::get<float>(item);
 		}
 		else if (std::holds_alternative<Vector2>(item)) {
-			const Vector2 &value = std::get<Vector2>(item);
+			const Vector2 value = std::get<Vector2>(item);
 			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y });
 		}
 		else if (std::holds_alternative<Vector3>(item)) {

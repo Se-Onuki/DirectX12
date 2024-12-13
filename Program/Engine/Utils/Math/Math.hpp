@@ -31,7 +31,7 @@ Vector2 operator<<(Vector2 &vec2, const Polar &Polar);
 /// </summary>
 /// <param name="Vector">ベクトル</param>
 /// <returns>極座標クラス</returns>
-Polar operator<<(Polar &Polar, const Vector2 &vec2);
+Polar operator<<(Polar &Polar, const Vector2 vec2);
 
 /// <summary>
 /// 回転行列作成関数
@@ -45,7 +45,7 @@ Matrix2x2 MakeRotateMatrix(const float &theta);
 /// </summary>
 /// <param name="scale">拡縮の倍率</param>
 /// <returns>3x3の拡縮行列</returns>
-Matrix3x3 MakeScaleMatrix(const Vector2 &scale);
+Matrix3x3 MakeScaleMatrix(const Vector2 scale);
 
 // <summary>
 /// 拡縮行列作成関数
@@ -66,7 +66,7 @@ Matrix3x3 MakeRotateMatrix3x3(const float &theta);
 /// </summary>
 /// <param name="translate">変換元のベクトル</param>
 /// <returns>同次座標系</returns>
-Matrix3x3 MakeTranslateMatrix(const Vector2 &translate);
+Matrix3x3 MakeTranslateMatrix(const Vector2 translate);
 
 /// <summary>
 /// 平行移動行列の作成関数
@@ -82,7 +82,7 @@ Matrix4x4 MakeTranslateMatrix(const Vector3 &translate);
 /// <param name="theta">radian角度</param>
 /// <param name="translate">変換元のベクトル</param>
 /// <returns>同次座標系</returns>
-Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vector2 &translate);
+Matrix3x3 MakeAffineMatrix(const Vector2 scale, const float &theta, const Vector2 translate);
 //
 ///// <summary>
 ///// ベクトルと同次座標系の合成
@@ -90,7 +90,7 @@ Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vecto
 ///// <param name="vector">合成前のベクトル</param>
 ///// <param name="matrix">同次座標系の平行移動行列</param>
 ///// <returns>合成したベクトル</returns>
-// Vector2 Transform(const Vector2 &vector, const Matrix3x3 &matrix);
+// Vector2 Transform(const Vector2 vector, const Matrix3x3 &matrix);
 //
 ///// <summary>
 ///// ベクトルと同次座標系の合成
@@ -106,7 +106,7 @@ Matrix3x3 MakeAffineMatrix(const Vector2 &scale, const float &theta, const Vecto
 /// <param name="LeftTop">左上</param>
 /// <param name="RightBottom">右下</param>
 /// <returns>正射影行列</returns>
-Matrix3x3 MakeOrthographicMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom);
+Matrix3x3 MakeOrthographicMatrix(const Vector2 LeftTop, const Vector2 RightBottom);
 
 /// <summary>
 /// ビューポート行列
@@ -114,7 +114,7 @@ Matrix3x3 MakeOrthographicMatrix(const Vector2 &LeftTop, const Vector2 &RightBot
 /// <param name="LeftTop">左上</param>
 /// <param name="RightBottom">右下</param>
 /// <returns>ビューポート行列</returns>
-Matrix3x3 MakeViewportMatrix(const Vector2 &LeftTop, const Vector2 &RightBottom);
+Matrix3x3 MakeViewportMatrix(const Vector2 LeftTop, const Vector2 RightBottom);
 
 /// @brief ベクトルの向きのみの回転
 /// @param v 元ベクトル

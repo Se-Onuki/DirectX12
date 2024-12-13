@@ -22,7 +22,7 @@ public:
 	/// @param farClip 遠平面
 	/// @return 正射影行列
 	static Matrix4x4 MakeOrthographicMatrix(
-		const Vector2 &LeftTop, const Vector2 &RightBottom, const float &nearClip,
+		const Vector2 LeftTop, const Vector2 RightBottom, const float &nearClip,
 		const float &farClip);
 
 	/// @brief 透視射影行列関数
@@ -35,14 +35,14 @@ public:
 		const float &fovY, const float &aspectRatio, const float &nearClip, const float &farClip);
 
 	static Matrix4x4 MakeViewportMatrix(
-		const Vector2 &LeftTop, const float &width, const float &height, const float &minDepth = 0.f,
+		const Vector2 LeftTop, const float &width, const float &height, const float &minDepth = 0.f,
 		const float &maxDepth = 1.f);
 
 	/// @brief スクリーン座標から3D座標に変換する
 	/// @param screenPos 2次元ベクトル
 	/// @param matVPVp 座標変換行列
 	/// @return 始点と終点座標 { 近, 遠 }
-	static std::pair<Vector3, Vector3> ScreenToWorld(const Vector2 &screenPos, const Matrix4x4 &matVPVp);
+	static std::pair<Vector3, Vector3> ScreenToWorld(const Vector2 screenPos, const Matrix4x4 &matVPVp);
 
 	/// @brief 3D座標からスクリーン座標に変換する
 	/// @param worldPos 3次元の座標

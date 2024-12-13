@@ -28,7 +28,7 @@ namespace Random {
 	/// @param max 最大値
 	/// @return ベクタ型のランダム値
 	template <typename T = float>
-	inline Vector2 GetRandom(const Vector2 &min, const Vector2 &max);
+	inline Vector2 GetRandom(const Vector2 min, const Vector2 max);
 
 	/// @brief 浮動小数のランダム関数
 	/// @param min 最小値
@@ -71,7 +71,7 @@ float Random::GetRandom<float>(float min, float max) {
 }
 
 template <typename T>
-Vector2 Random::GetRandom(const Vector2 &min, const Vector2 &max) {
+Vector2 Random::GetRandom(const Vector2 min, const Vector2 max) {
 
 	// Tに合わせて変換を行い、floatに戻してVector2に戻す
 	return Vector2{

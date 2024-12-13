@@ -9,7 +9,7 @@ struct Matrix2x2 {
 
 	float m[2][2];
 
-	//void Printf(const int& x, const int& y);
+	//void Printf(const int32_t  x, const int32_t  y);
 
 	Matrix2x2 operator+(const Matrix2x2& Second) const;
 	Matrix2x2 operator-(const Matrix2x2& Second) const;
