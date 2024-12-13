@@ -1,3 +1,6 @@
+/// @file Shader.h
+/// @brief シェーダの実装
+/// @author ONUKI seiya
 #pragma once
 
 #include <d3d12.h>
@@ -19,6 +22,8 @@
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
 
+/// @class Shader
+/// @brief シェーダの実装
 class Shader : public SolEngine::IResourceObject {
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -40,10 +45,15 @@ public:
 	void SetIDxcBlob(ComPtr<IDxcBlob> &&shaderBlob) { shaderBlob_ = std::move(shaderBlob); }
 	void SetShaderPath(const std::wstring &str) { shaderPath_ = str; }
 
+	/// @fn const std::wstring &GetShaderPath(void)
+	/// @brief シェーダのファイルパスを取得
+	/// @return ファイルパスの文字列
 	inline const std::wstring &GetShaderPath() const {
 		return shaderPath_;
 	}
-
+	/// @fn D3D12_SHADER_BYTECODE GetBytecode(void)
+	/// @brief シェーダのバイトコードの取得
+	/// @return バイトコード
 	D3D12_SHADER_BYTECODE GetBytecode()const;
 };
 
@@ -57,6 +67,9 @@ public:
 	std::wstring name_;
 	std::wstring profile_;
 
+	/// @fn ToStr(void)
+	/// @brief 文字列化する
+	/// @return 文字列
 	std::string ToStr() const {
 		return ConvertString(name_) + '/' + ConvertString(profile_);
 	}

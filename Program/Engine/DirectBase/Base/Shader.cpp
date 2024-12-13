@@ -1,3 +1,6 @@
+/// @file Shader.cpp
+/// @brief シェーダの実装
+/// @author ONUKI seiya
 #include "Shader.h"
 inline Shader::operator bool() noexcept {
 	return shaderBlob_ != nullptr;
