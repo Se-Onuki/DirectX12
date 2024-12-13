@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../nlohmann/json.hpp"
+#include "../Utils/SoLib/SoLib_Json.h"
 #include "../Utils/IO/File.h"
 #include <unordered_set>
 #include "../DirectBase/Model/ResourceModel.h"

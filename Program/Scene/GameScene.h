@@ -86,7 +86,7 @@ private:
 	/// @brief メニューの表示フラグ
 	bool isMenuOpen_ = false;
 	/// @brief シェーダーのリソースマネージャ
-	SolEngine::ResourceObjectManager<Shader> *pShaderManager_;
+	SolEngine::ResourceObjectManager<Shader> *pShaderManager_ = nullptr;
 	/// @brief グレースケールが有効か
 	int32_t isGrayScale_ = 0;
 	/// @brief 入力のインスタンス
@@ -102,13 +102,13 @@ private:
 	/// @brief パーティクルの配列
 	StructuredBuffer<Particle::ParticleData> particleArray_{ 1024u };
 	/// @brief ブロックマネージャーのインスタンス
-	BlockManager *blockRender_;
+	BlockManager *blockRender_ = nullptr;
 	/// @brief スキンモデルマネージャーのインスタンス
-	SkinModelListManager *skinModelRender_;
+	SkinModelListManager *skinModelRender_ = nullptr;
 	/// @brief モデルハンドルマネージャーのインスタンス
-	ModelHandleListManager *modelHandleRender_;
+	ModelHandleListManager *modelHandleRender_ = nullptr;
 	/// @brief スキンモデルハンドルマネージャーのインスタンス
-	SkinModelHandleListManager *skinModelHandleRender_;
+	SkinModelHandleListManager *skinModelHandleRender_ = nullptr;
 	/// @brief ゴーストモデルのインスタンシング描画の配列
 	SolEngine::ModelInstancingRender ghostRenderer_;
 	/// @brief 影モデルのインスタンシング描画の配列
@@ -126,7 +126,7 @@ private:
 	/// @brief システムの実行クラス
 	ECS::SystemExecuter systemExecuter_;
 	/// @brief コンポーネントレジストリ
-	ECS::ComponentRegistry *compRegistry_;
+	ECS::ComponentRegistry *compRegistry_ = nullptr;
 	/// @brief レベルアップ時に表示されるUI
 	std::unique_ptr<LevelUP> levelUpUI_;
 	/// @brief ECSのプレハブ
@@ -138,7 +138,7 @@ private:
 	/// @brief 敵のプレハブ
 	std::unique_ptr<ECS::Prefab> enemyPrefab_ = nullptr;
 	/// @brief カメラのアドレス
-	Camera3D *followCamera_;
+	Camera3D *followCamera_ = nullptr;
 	/// @brief 音のリソースハンドル
 	Audio::SoundHandle soundA_;
 	/// @brief スポーン間隔を管理するタイマー
@@ -146,7 +146,7 @@ private:
 	/// @brief ゲームオブジェクト
 	GameObject gameObject_;
 	/// @brief パーティクルマネージャーのインスタンス
-	ParticleManager *particleManager_;
+	ParticleManager *particleManager_ = nullptr;
 
 	/// @brief 体力バー
 	std::unique_ptr<HealthBar> healthBar_;
@@ -171,7 +171,7 @@ private:
 	/// @brief オフスクリーンレンダラの実体
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 	/// @brief テクスチャストレージのインスタンス
-	SolEngine::FullScreenTextureStrage *texStrage_;
+	SolEngine::FullScreenTextureStrage *texStrage_ = nullptr;
 	/// @brief フルスクリーンレンダラのインスタンス
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
 	/// @brief ダメージのタイマー

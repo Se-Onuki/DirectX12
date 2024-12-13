@@ -6,9 +6,12 @@
 #include <array>
 #include <immintrin.h>
 #include "SimdCalc.h"
-#include <json.hpp>
 #include <cstdint>
 
+#pragma warning(push)
+#pragma warning(disable:4023)
+#include "json.hpp"
+#pragma warning(pop)
 struct Matrix4x4;
 
 struct Vector3 {

@@ -1,8 +1,11 @@
 #pragma once
 #include "../../Engine/Utils/Text/StaticString.h"
 #include "../../Engine/Utils/SoLib/SoLib_Traits.h"
-#include <json.hpp>
 #include <string>
+#pragma warning(push)
+#pragma warning(disable:4023)
+#include "json.hpp"
+#pragma warning(pop)
 
 template<SoLib::Text::ConstExprString Str, SoLib::IsRealType T>
 class VariantItem final : public SoLib::Text::StaticString<Str> {

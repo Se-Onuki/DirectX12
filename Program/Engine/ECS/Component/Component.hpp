@@ -104,9 +104,9 @@ namespace ECS {
 	};
 
 	struct ColorLarp :IComponent {
-		SoLib::Color::RGB4 start_;
-		SoLib::Color::RGB4 end_;
-		SoLib::EaseFunc easeFunc_;
+		SoLib::Color::RGB4 start_{};
+		SoLib::Color::RGB4 end_{};
+		SoLib::EaseFunc easeFunc_{};
 
 		SoLib::Color::RGB4 EaseColor(float t);
 	};
@@ -260,7 +260,7 @@ namespace ECS {
 	// 攻撃のコリジョンのコンポーネント
 	struct AttackCollisionComp : IComponent {
 		// 球体
-		Sphere collision_;
+		Sphere collision_{};
 		// 動作中か
 		bool isActive_ = false;
 	};

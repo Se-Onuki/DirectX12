@@ -2,7 +2,10 @@
 #include "SoLib_Traits.h"
 #include <variant>
 
-#include "../../externals/nlohmann/json.hpp"
+#pragma warning(push)
+#pragma warning(disable:4023)
+#include "json.hpp"
+#pragma warning(pop)
 
 #include "../Math/Matrix2x2.h"
 #include "../Math/Matrix3x3.h"

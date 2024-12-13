@@ -125,7 +125,7 @@ struct SkeletonState {
 	std::vector<ModelJointState> joints_;
 
 	// データの参照
-	const SolEngine::SkeletonJointReference *reference_;
+	const SolEngine::SkeletonJointReference *reference_ = nullptr;
 
 	void AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &drawOffset = {}) const;
 
@@ -176,8 +176,8 @@ struct SkinCluster {
 
 	//SolEngine::ResourceObjectManager<SolEngine::SkinningReference>::Handle handle_;
 
-	const SolEngine::ModelData *reference_;
-	const SolEngine::SkeletonAnimation::Skeleton *skeletonRef_;
+	const SolEngine::ModelData *reference_ = nullptr;
+	const SolEngine::SkeletonAnimation::Skeleton *skeletonRef_ = nullptr;
 
 private:
 	//std::unique_ptr<SkinClusterReference> reference_;
@@ -380,9 +380,9 @@ public:
 	std::list<VertexData> vertices_;
 	std::list<uint32_t> indexs_;
 
-	Material *material_;
+	Material *material_ = nullptr;
 
-	const ModelNode *pNode_;
+	const ModelNode *pNode_ = nullptr;
 
 	std::string meshName_;
 
@@ -403,9 +403,9 @@ struct MeshFactory {
 	std::list<Mesh::VertexData> vertices_;
 	std::list<uint32_t> indexs_;
 
-	Material *pMaterial_;
+	Material *pMaterial_ = nullptr;
 
-	const ModelNode *pNode_;
+	const ModelNode *pNode_ = nullptr;
 
 	std::string meshName_;
 
@@ -429,8 +429,8 @@ class MinecraftModel {
 		ComPtr<ID3D12Resource> vertexBuff_;
 		ComPtr<ID3D12Resource> indexBuff_;
 
-		Mesh::VertexData *vertices_;
-		uint32_t *indexs_;
+		Mesh::VertexData *vertices_ = nullptr;
+		uint32_t *indexs_ = nullptr;
 
 		void CreateBuffer();
 		void Init();
@@ -468,15 +468,12 @@ class MinecraftModel {
 		std::vector<Cube> cubes_;
 		std::unordered_map<std::string, Bone> children_;
 
-		Bone *parent_;
+		Bone *parent_ = nullptr;
 
 		Transform transform_;
 
 		void UpdateTransform();
 		void SetParent(Bone *const parent);
-		void Init();
-
-		void AddCube();
 
 		void Draw(ID3D12GraphicsCommandList *const commandList);
 	};
@@ -493,7 +490,6 @@ public:
 
 	Transform transformOrigin_;
 
-	void Init();
 	void Draw(ID3D12GraphicsCommandList *const commandList);
 
 	void LoadJson(const std::string &file_path);
