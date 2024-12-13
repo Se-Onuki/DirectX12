@@ -1,4 +1,5 @@
 # SolEngine
+[![DebugBuild](https://github.com/Se-Onuki/DirectX12/actions/workflows/DebugBuild.yml/badge.svg?event=push)](https://github.com/Se-Onuki/DirectX12/actions/workflows/DebugBuild.yml)
 
 SolEngineはDirectX12を使用したC++ゲームエンジンです｡
 アーキタイプ式ECSを主軸に開発しています｡
