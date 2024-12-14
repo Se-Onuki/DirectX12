@@ -27,7 +27,7 @@ void TitleScene::OnEnter() {
 	blockRender_->Init(1024u);
 	ModelManager::GetInstance()->CreateDefaultModel();
 
-	sprite_ = Sprite::Generate(TextureManager::Load("UI/TitleECS.png"));
+	sprite_ = Sprite::Generate(TextureManager::Load("UI/TitleECS.dds"));
 	button_ = Sprite::Generate(TextureManager::Load("UI/TD2_3week_2/Title/Start_CR.png"));
 
 	Fade::GetInstance()->Start(Vector2{}, 0x00000000, 1.f);
