@@ -79,6 +79,21 @@ public:
 	void PostEffectEnd() override;
 
 private:
+
+	/// @brief プレイヤの攻撃処理
+	/// @param world[in, out] ワールドデータ
+	void PlayerAttack(ECS::World& world) const;
+
+	/// @brief 経験値の加算
+	/// @param world[in, out] ワールドデータ
+	void PlayerExperience(ECS::World& world) const;
+
+	/// @brief 攻撃判定の描画
+	/// @param world[in] ワールドデータ
+	/// @param attackRender[out] 描画バッファ
+	void AttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
+
+private:
 	/// @brief メニューのタイマー
 	SoLib::DeltaTimer menuTimer_;
 

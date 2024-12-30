@@ -16,7 +16,7 @@ namespace ECS {
 	private:
 
 		// コライダのリスト
-		std::list<ECS::ComponentData*> collderList_;
+		std::list<ECS::ComponentSpan*> collderList_;
 		
 
 	};

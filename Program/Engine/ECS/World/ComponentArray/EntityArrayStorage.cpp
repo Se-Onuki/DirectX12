@@ -71,7 +71,7 @@ std::byte &ECS::GetComp(Chunk *chunk, uint32_t compId, uint32_t index)
 	return chunk->componentDatas_.at(compId).at(index);
 }
 
-ECS::ComponentData &ECS::GetCompArray(ECS::Chunk *chunk, uint32_t compId)
+ECS::ComponentSpan &ECS::GetCompArray(ECS::Chunk *chunk, uint32_t compId)
 {
 	return chunk->componentDatas_.at(compId);
 }

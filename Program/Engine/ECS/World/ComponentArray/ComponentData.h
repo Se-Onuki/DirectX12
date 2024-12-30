@@ -12,7 +12,7 @@
 
 namespace ECS {
 
-	class ComponentData;
+	class ComponentSpan;
 
 	class EntityArrayStorage;
 
@@ -25,7 +25,7 @@ namespace ECS {
 		template<typename U>
 		using ConstType = std::conditional_t<IsConst, const U, U>;
 
-		using DataType = std::conditional_t<IsConst, const ComponentData *, ComponentData *>;
+		using DataType = std::conditional_t<IsConst, const ComponentSpan *, ComponentSpan *>;
 
 		using difference_type = int32_t;
 		using value_type = ConstType<T>;
@@ -40,7 +40,7 @@ namespace ECS {
 
 	};
 
-	class ComponentData {
+	class ComponentSpan {
 	public:
 
 		class Range {
@@ -53,7 +53,7 @@ namespace ECS {
 			Range(Range &&) = default;
 			Range &operator=(const Range &) = default;
 			Range &operator=(Range &&) = default;
-			Range(ComponentData *compData, uint32_t begin, uint32_t end) : compData_(compData), begin_(begin), end_(end) {}
+			Range(ComponentSpan *compData, uint32_t begin, uint32_t end) : compData_(compData), begin_(begin), end_(end) {}
 
 			iterator begin() { return iterator{ compData_, begin_ }; }
 			const_iterator begin() const { return const_iterator{ compData_, begin_ }; }
@@ -67,7 +67,7 @@ namespace ECS {
 
 		private:
 
-			ComponentData *compData_;
+			ComponentSpan *compData_;
 			uint32_t begin_;
 			uint32_t end_;
 
@@ -80,7 +80,7 @@ namespace ECS {
 			using iterator = CompIterator<T, false>;
 			using const_iterator = CompIterator<T, true>;
 
-			using CompData = std::conditional_t<IsConst, const ComponentData *, ComponentData *>;
+			using CompData = std::conditional_t<IsConst, const ComponentSpan *, ComponentSpan *>;
 
 			TRange() = default;
 			TRange(const TRange &) = default;
@@ -114,11 +114,11 @@ namespace ECS {
 		};
 
 	public:
-		ComponentData() = default;
-		ComponentData(const ComponentData &) = default;
-		ComponentData &operator=(const ComponentData &) = default;
-		ComponentData(EntityArrayStorage *entityStr, uint32_t offset, uint32_t itemSize, uint32_t count) : entityStorage_(entityStr), offset_(offset), typeSize_(itemSize), itemCount_(count) {}
-		ComponentData(uint32_t itemSize, uint32_t count) : typeSize_(itemSize), itemCount_(count) {}
+		ComponentSpan() = default;
+		ComponentSpan(const ComponentSpan &) = default;
+		ComponentSpan &operator=(const ComponentSpan &) = default;
+		ComponentSpan(EntityArrayStorage *entityStr, uint32_t offset, uint32_t itemSize, uint32_t count) : entityStorage_(entityStr), offset_(offset), typeSize_(itemSize), itemCount_(count) {}
+		ComponentSpan(uint32_t itemSize, uint32_t count) : typeSize_(itemSize), itemCount_(count) {}
 
 		std::span<std::byte> GetCompArray(uint32_t index);
 

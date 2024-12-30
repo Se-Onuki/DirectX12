@@ -471,11 +471,11 @@
     <ClCompile Include="Engine\ResourceManager\ResourceLoader.cpp">
       <Filter>Engine\ResourceManager</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentData.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentArray.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\ECS\Chunk</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentData.cpp">
+      <Filter>Engine\ECS\Chunk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -40,13 +40,13 @@ namespace ECS {
 	/// @param[in] chunk チャンク
 	/// @param[in] compId コンポーネントID
 	/// @return コンポーネントの配列
-	ComponentData &GetCompArray(Chunk *chunk, uint32_t compId);
+	ComponentSpan &GetCompArray(Chunk *chunk, uint32_t compId);
 
 	/// @brief コンポーネントの配列を取得する
 	/// @param[in] chunk チャンク
 	/// @return コンポーネントの配列
 	template<typename T>
-	ComponentData &GetCompArray(Chunk *chunk) {
+	ComponentSpan &GetCompArray(Chunk *chunk) {
 		constexpr uint32_t compId = static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<T>());
 		return GetCompArray(chunk, compId);
 	}

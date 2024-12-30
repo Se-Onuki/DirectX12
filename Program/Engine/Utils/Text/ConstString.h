@@ -14,37 +14,26 @@ namespace SoLib {
 		class ConstString {
 		public:
 			using StringType = std::array<char, size>;
-			ConstString(const char *const name = "") {
+			ConstString(const std::string_view & name = "") {
 				*this = name;
 			}
 
 			/// @brief 文字列の代入
 			/// @param str 文字列
 			/// @return 文字列クラス
-			inline ConstString &operator=(const char *const str) {
-				std::memcpy(string_.data(), str, (std::min<uint32_t>)(size - 1u, static_cast<uint32_t>(std::strlen(str) + 1u)));
+			inline ConstString &operator=(const std::string_view &str) {
+				std::memcpy(string_.data(), str.data(), (std::min<uint32_t>)(size - 1u, static_cast<uint32_t>(str.size() + 1u)));
 				string_[size - 1u] = '\0';
 				return *this;
 			}
 
-			/// @brief 文字列の代入
-			/// @param str 文字列
-			/// @return 文字列クラス
-			inline ConstString &operator=(const std::string &str) {
-				std::memcpy(string_.data(), str.data(), (std::min<uint32_t>)(size - 1u, static_cast<uint32_t>(str.size() + 1u)));
+			inline ConstString &operator=(const ConstString &) = default;
 
-				return *this;
-			}
-
-			inline bool operator==(const ConstString &str) const {
-				return not(std::strcmp(this->data(), str.data()));
-			}
+			inline bool operator==(const ConstString &) const = default;
 
 			inline bool operator==(const char *const str) const {
 				return not(std::strcmp(this->data(), str));
 			}
-
-			bool ImGuiWidget(const char *const label);
 
 			operator char *const () { return string_.data(); }
 			operator const char *const () const { return string_.data(); }
@@ -60,22 +49,8 @@ namespace SoLib {
 
 		private:
 			// 文字列
-			std::array<char, size> string_;
+			StringType string_;
 		};
-
-		template<uint32_t size>
-		inline bool ConstString<size>::ImGuiWidget(const char *const label) {
-#ifdef USE_IMGUI
-
-			return ImGui::InputText(label, this->data(), size);
-
-#else
-			label;
-			return false;
-
-#endif // USE_IMGUI
-
-		}
 
 		template<uint32_t size>
 		void to_json(nlohmann::json &json, const ConstString<size> &value) {
@@ -87,4 +62,23 @@ namespace SoLib {
 			value = json.get<std::string>();
 		}
 	}
+
+	template<uint32_t size>
+	bool ImGuiWidget(const char *const label, Text::ConstString<size> *const value) {
+
+		bool isChange = false;
+
+#ifdef USE_IMGUI
+
+		isChange = ImGui::InputText(label, value->data(), size);
+
+#else
+
+		label; value;
+
+#endif // USE_IMGUI
+
+		return isChange;
+	}
+
 }

@@ -97,7 +97,7 @@ namespace ECS {
 	public:
 		ChunkRange() = default;
 		ChunkRange(const ChunkRange &) = default;
-		ChunkRange(Chunk *chunk, ComponentData *comp, uint32_t begin, uint32_t end) : chunk_(chunk), compDatas_(comp), begin_(begin), end_(end) {}
+		ChunkRange(Chunk *chunk, ComponentSpan *comp, uint32_t begin, uint32_t end) : chunk_(chunk), compDatas_(comp), begin_(begin), end_(end) {}
 
 		~ChunkRange() = default;
 
@@ -118,7 +118,7 @@ namespace ECS {
 
 		/// @brief コンポーネントの配列を取得する
 		/// @return コンポーネントの配列
-		ComponentData *GetCompData() { return compDatas_; }
+		ComponentSpan *GetCompData() { return compDatas_; }
 		/// @brief チャンクを取得する
 		/// @return チャンク
 		Chunk *GetChunk() { return chunk_; }
@@ -129,7 +129,7 @@ namespace ECS {
 	private:
 
 		Chunk *chunk_;
-		ComponentData *compDatas_;
+		ComponentSpan *compDatas_;
 
 		uint32_t begin_;
 		uint32_t end_;

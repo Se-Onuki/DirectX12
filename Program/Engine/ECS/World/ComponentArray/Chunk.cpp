@@ -38,7 +38,7 @@ namespace ECS {
 			assert(componentOffset < Archetype::kOneChunkCapacity and "範囲外に出ています");
 
 			// 型から情報を取得して､ポインタを保存する
-			componentDatas_[i] = ComponentData{ storage_.get(), componentOffset, typeData.typeSize_, entCount };
+			componentDatas_[i] = ComponentSpan{ storage_.get(), componentOffset, typeData.typeSize_, entCount };
 
 			// 型のサイズ分加算する
 			componentOffset += typeData.typeSize_ * entCount;

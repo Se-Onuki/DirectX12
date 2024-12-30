@@ -11,7 +11,7 @@ namespace ECS {
 		// コンポーネントの数
 		const uint32_t compCount = static_cast<uint32_t>(system.keys_.size());
 		// コンポーネントデータのソース
-		std::vector<ComponentData *> sourceData{ compCount };
+		std::vector<ComponentSpan *> sourceData{ compCount };
 		std::transform(system.keys_.begin(), system.keys_.end(), sourceData.begin(), [&chunk](uint32_t compId) {return chunk->GetComponent(compId); });
 
 		const auto &function = [world, &system, &sourceData, compCount, deltaTime](EntityClass &entity)

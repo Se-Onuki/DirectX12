@@ -41,7 +41,7 @@ namespace ECS {
 	{
 		using Types = std::tuple<Ts...>;
 		static constexpr std::array<uint32_t, sizeof...(Ts)> kTarget_{static_cast<uint32_t>(ECS::ComponentRegistry::GetIndex<Ts>())...};
-		using Source = std::tuple<ComponentData::TRange<Ts>...>;
+		using Source = std::tuple<ComponentSpan::TRange<Ts>...>;
 		template <bool IsConst>
 		using ComponentsBase = std::conditional_t<IsConst, std::tuple<const Ts &...>, std::tuple<Ts &...>>;
 		using Components = ComponentsBase<false>;

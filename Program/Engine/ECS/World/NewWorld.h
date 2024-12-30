@@ -11,7 +11,7 @@
 namespace ECS {
 
 	template <typename T, bool IsConst = false>
-	class ChunkTRange : public std::vector<ComponentData::TRange<T, IsConst>> {
+	class ChunkTRange : public std::vector<ComponentSpan::TRange<T, IsConst>> {
 	public:
 		/*using Type = std::vector<ComponentData::TRange<T, IsConst>>;
 
@@ -46,7 +46,7 @@ namespace ECS {
 		/// @return アクセスした値
 		T &At(uint32_t index) requires(IsConst == false) {
 
-			for (ComponentData::TRange<T, IsConst> &chunk : *this) {
+			for (ComponentSpan::TRange<T, IsConst> &chunk : *this) {
 				if (index >= chunk.size()) {
 					index -= chunk.size();
 					continue;
@@ -62,7 +62,7 @@ namespace ECS {
 		/// @return アクセスした値
 		const T &At(uint32_t index) const {
 
-			for (const ComponentData::TRange<T, IsConst> &chunk : *this) {
+			for (const ComponentSpan::TRange<T, IsConst> &chunk : *this) {
 				if (index >= chunk.size()) {
 					index -= chunk.size();
 					continue;

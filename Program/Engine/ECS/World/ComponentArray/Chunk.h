@@ -26,7 +26,7 @@ namespace ECS {
 		friend ChunkEntityAccessor;
 		friend void EntityMove(Chunk *, uint32_t, uint32_t);
 		friend std::byte &ECS::GetComp(Chunk *, uint32_t, uint32_t);
-		friend ECS::ComponentData &ECS::GetCompArray(ECS::Chunk *chunk, uint32_t compId);
+		friend ECS::ComponentSpan &ECS::GetCompArray(ECS::Chunk *chunk, uint32_t compId);
 
 	public:
 		using iterator = ChunkIterator;
@@ -45,7 +45,7 @@ namespace ECS {
 			requires(sizeof...(Ts) >= 2)
 		ChunkRange<Ts...> View()
 		{
-			return {this, std::tuple<ComponentData *...>{&(GetCompArray<Ts>()->second)...}, 0u, size_};
+			return {this, std::tuple<ComponentSpan *...>{&(GetCompArray<Ts>()->second)...}, 0u, size_};
 		}
 
 		/// @brief 開始イテレータの取得
@@ -57,21 +57,21 @@ namespace ECS {
 		/// @brief コンポーネントの取得
 		/// @param[in] compId コンポーネントのID
 		/// @return コンポーネント
-		ComponentData *GetComponent(uint32_t compId);
+		ComponentSpan *GetComponent(uint32_t compId);
 		/// @brief コンポーネントの取得
 		/// @param[in] compId コンポーネントのID
 		/// @return コンポーネントのRange
-		ComponentData::Range GetComponentRange(uint32_t compId);
+		ComponentSpan::Range GetComponentRange(uint32_t compId);
 		/// @brief コンポーネントの取得
 		/// @tparam T コンポーネントの型
 		/// @return コンポーネントのTRange
 		template <typename T>
-		ComponentData::TRange<T> GetComponent();
+		ComponentSpan::TRange<T> GetComponent();
 		/// @brief コンポーネントの取得
 		/// @tparam T コンポーネントの型
 		/// @return コンポーネントのTRange
 		template <typename T>
-		ComponentData::TRange<T, true> GetComponent() const;
+		ComponentSpan::TRange<T, true> GetComponent() const;
 
 		/// @brief アーキタイプの取得
 		/// @return アーキタイプ
@@ -148,7 +148,7 @@ namespace ECS {
 		std::unique_ptr<EntityArrayStorage> storage_;
 
 		// コンポーネントへのアクセッサ
-		std::unordered_map<uint32_t, ComponentData> componentDatas_;
+		std::unordered_map<uint32_t, ComponentSpan> componentDatas_;
 
 		// 保存しているデータの数
 		uint32_t size_ = 0u;
@@ -171,18 +171,18 @@ namespace ECS {
 		decltype(componentDatas_)::const_iterator GetCompArray() const;
 	};
 
-	inline ComponentData *Chunk::GetComponent(uint32_t compId)
+	inline ComponentSpan *Chunk::GetComponent(uint32_t compId)
 	{
 		return &componentDatas_[compId];
 	}
 
-	inline ComponentData::Range Chunk::GetComponentRange(uint32_t compId)
+	inline ComponentSpan::Range Chunk::GetComponentRange(uint32_t compId)
 	{
 		return componentDatas_[compId].View(size_);
 	}
 
 	template <typename T>
-	inline ComponentData::TRange<T> Chunk::GetComponent()
+	inline ComponentSpan::TRange<T> Chunk::GetComponent()
 	{
 		// データの配列を取得する
 		auto compTarget = GetCompArray<T>();
@@ -192,14 +192,14 @@ namespace ECS {
 		}
 
 		// 返すデータ
-		ComponentData::TRange<T> result = compTarget->second.View<T>(size_);
+		ComponentSpan::TRange<T> result = compTarget->second.View<T>(size_);
 
 		// 情報を渡す
 		return result;
 	}
 
 	template <typename T>
-	inline ComponentData::TRange<T, true> Chunk::GetComponent() const
+	inline ComponentSpan::TRange<T, true> Chunk::GetComponent() const
 	{
 		// データの配列を取得する
 		auto compTarget = GetCompArray<T>();
@@ -209,7 +209,7 @@ namespace ECS {
 		}
 
 		// 返すデータ
-		ComponentData::TRange<T, true> result = compTarget->second.View<T>(size_);
+		ComponentSpan::TRange<T, true> result = compTarget->second.View<T>(size_);
 
 		// 情報を渡す
 		return result;
