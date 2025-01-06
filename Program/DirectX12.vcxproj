@@ -231,6 +231,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\ResourceManager\ResourceLoader.cpp" />
     <ClCompile Include="Engine\ResourceObject\ResourceObjectManager.cpp" />
     <ClCompile Include="Engine\SolEngine.cpp" />
+    <ClCompile Include="Engine\Utils\Math\UIValue.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
@@ -377,6 +378,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\SceneManager\SceneData.h" />
     <ClInclude Include="Engine\SceneManager\SceneLoader.h" />
     <ClInclude Include="Engine\SolEngine.h" />
+    <ClInclude Include="Engine\Utils\Math\UIValue.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />

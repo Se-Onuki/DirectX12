@@ -29,10 +29,6 @@ void Audio::StaticInit()
 
 	HRESULT hr = S_FALSE;
 
-	//// COMの初期化
-	//hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-	//assert(SUCCEEDED(hr));
-
 	// Media Foundationの初期化
 	hr = MFStartup(MF_VERSION, MFSTARTUP_NOSOCKET);
 	assert(SUCCEEDED(hr));

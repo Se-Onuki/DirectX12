@@ -83,6 +83,13 @@ private:
 	/// @brief メニューのタイマー
 	SoLib::DeltaTimer menuTimer_;
 
+	VItem(Vector2, LevelUpUISize, _) {};
+	VItem(Vector2, ExpUICentorMul, _) { { 0.5f, 1.f } };
+	VItem(Vector2, ExpUICentorDiff, _) { {0.f, -16.f} };
+	VItem(Vector2, ExpUIScaleMul, _) { {1.f, 0.f} };
+	VItem(Vector2, ExpUIScaleDiff, _) { {0.f, 32.f} };
+
+
 	/// @brief メニューの表示フラグ
 	bool isMenuOpen_ = false;
 	/// @brief シェーダーのリソースマネージャ

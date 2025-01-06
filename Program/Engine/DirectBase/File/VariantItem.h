@@ -7,6 +7,11 @@
 #include "json.hpp"
 #pragma warning(pop)
 
+/// 
+#define VItem(T, Name) VariantItem<#Name,T> v##Name
+/// 修飾文字付き
+#define VItem(T, Name, Deco) VariantItem<#Name,T> v##Name##Deco
+
 template<SoLib::Text::ConstExprString Str, SoLib::IsRealType T>
 class VariantItem final : public SoLib::Text::StaticString<Str> {
 public:
