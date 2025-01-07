@@ -15,7 +15,7 @@ namespace ECS {
 
 		struct SpawnData {
 			// 基礎となるプレハブ
-			Prefab *basePrefab_;
+			const Prefab *basePrefab_;
 			// 生成時に実行する処理
 			SpawnFunc spawnFunc_;
 		};
@@ -49,7 +49,7 @@ namespace ECS {
 		/// @param[in] prefab 追加するプレハブ
 		/// @param[in] spawnCount 追加する数
 		/// @param[in] spawnFunc 実行する関数
-		void AddSpawner(Prefab *prefab, uint32_t spawnCount = 1u, SpawnFunc spawnFunc = nullptr) {
+		void AddSpawner(const Prefab *prefab, uint32_t spawnCount = 1u, SpawnFunc spawnFunc = nullptr) {
 			spawnDatas_.push_back({ {prefab,spawnFunc},spawnCount });
 		}
 

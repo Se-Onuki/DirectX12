@@ -21,7 +21,7 @@ namespace SolEngine {
 	public:
 		/// @brief バッファの初期化
 		/// @param size 初期化
-		void Init(uint32_t size);
+		void Init(uint32_t size = 2048u);
 
 		/// @brief 保存しているデータの破棄
 		void Clear();

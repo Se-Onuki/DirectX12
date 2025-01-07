@@ -181,10 +181,10 @@ void GameScene::OnEnter() {
 	expBar_ = std::make_unique<HealthBar>();
 	expBar_->Init();
 
-	expBar_->SetCentor({ static_cast<float>(WinApp::kWindowWidth) * 0.5f, static_cast<float>(WinApp::kWindowHeight) - 16.f });
-	expBar_->SetScale({ static_cast<float>(WinApp::kWindowWidth), 32.f });
+	expBar_->SetCentor(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUICentorMul_->x, static_cast<float>(WinApp::kWindowHeight) * vExpUICentorMul_->y } + *vExpUICentorDiff_);
+	expBar_->SetScale(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUIScaleMul_->x + vExpUIScaleDiff_->x, static_cast<float>(WinApp::kWindowHeight) * vExpUIScaleMul_->y + vExpUIScaleDiff_->y });
 
-	ghostRenderer_.Init(2048u);
+	ghostRenderer_.Init();
 	ghostRenderer_.SetModelData(ghostModel);
 
 	auto shadowAssimp = assimpManager->Load({ "","plane.obj" });
@@ -192,7 +192,7 @@ void GameScene::OnEnter() {
 	auto &shadowMesh = shadowModel->meshHandleList_.front();
 	shadowMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
 	static_cast<Matrix4x4 &>(shadowModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 1.5f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
-	shadowRenderer_.Init(2048u);
+	shadowRenderer_.Init();
 	shadowRenderer_.SetModelData(shadowModel);
 
 	auto orbAssimp = assimpManager->Load({ "Model/", "Orb.obj" });
@@ -200,7 +200,7 @@ void GameScene::OnEnter() {
 	auto &orbMesh = orbModel->meshHandleList_.front();
 	orbMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
 
-	expRender_.Init(2048u);
+	expRender_.Init();
 	expRender_.SetModelData(orbModel);
 
 	auto attackAssimp = assimpManager->Load({ "","Attack.obj" });
@@ -209,14 +209,8 @@ void GameScene::OnEnter() {
 	attackMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
 	static_cast<Matrix4x4 &>(attackModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 2.f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
 
-	attackRender_.Init(256u);
+	attackRender_.Init();
 	attackRender_.SetModelData(attackModel);
-
-	levelUI_ = Sprite::Generate();
-	levelUI_->SetTextureHaundle(TextureManager::Load("UI/LevelUP.png"));
-	levelUI_->SetPivot(Vector2::one * 0.5f);
-	levelUI_->SetScale(Vector2{ 256.f,64.f } *2.f);
-	levelUI_->SetPosition({ static_cast<float>(WinApp::kWindowWidth) * 0.5f, static_cast<float>(WinApp::kWindowHeight) - 16.f - 64.f * 2.f });
 
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
@@ -402,82 +396,14 @@ void GameScene::Update() {
 	// プレハブの破棄
 	spawner_.clear();
 
-	// 敵のスポーン数
-	constexpr uint32_t kEnemyCount = 10u;
-	// 敵の沸く半径
-	constexpr float kEnemyRadius = 45.f;
+	// 敵の追加
+	AddSpawner(spawnTimer_, spawner_);
 
-	if (spawnTimer_.IsFinish()) {
+	// プレイヤの死亡処理
+	PlayerDead(newWorld_, playerSpawn_, sceneManager_, Fade::GetInstance());
 
-		// スポナーに追加を要求する
-		spawner_.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](auto enemys)
-			{
-				// コンポーネントの配列
-				ECS::ComponentSpan::TRange<ECS::PositionComp> arr = enemys.front().chunk_->GetComponent<ECS::PositionComp>();
-				// 発生地点の回転加算値
-				const float diff = Random::GetRandom<float>(0.f, Angle::Rad360);
-				for (uint32_t i = 0; ECS::EntityClass & enemy : enemys) {
-					auto &pos = arr[enemy.totalIndex_];
-					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
-					i++;
-				}
-			});
-		spawnTimer_.Start();
-	}
-
-	Archetype playerArchetype;
-	playerArchetype.AddClassData<ECS::PlayerTag>();
-	{
-		// プレイヤのView
-		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
-
-		// プレイヤのViewの長さが0である場合は死んでいる
-		bool playerIsDead = playerChunks.Count() == 0u;
-
-		// 死んでいた場合は
-		if (playerIsDead) {
-			// スポーンタイマーが止まっていたら
-			if (not playerSpawn_.IsActive()) {
-				// 再度実行
-				playerSpawn_.Start();
-			}
-
-			// 終わっていたら
-			if (playerSpawn_.IsFinish() and playerSpawn_.IsActive()) {
-
-				sceneManager_->ChangeScene("TitleScene", 0.5f);
-
-				Fade::GetInstance()->Start({}, 0x000000FF, 0.25f);
-			}
-		}
-	}
-
-	// 経験値の追加
-	{
-		// 敵のアーキタイプ
-		Archetype enemArch{};
-		enemArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
-		// チャンクの取得
-		auto enemyChunks = newWorld_.GetAccessableChunk(enemArch);
-		// 死亡している数
-		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
-		// 経験値のアーキタイプ
-		Archetype expArch;
-		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
-		// 経験値オーブの生成
-		auto ent = newWorld_.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
-		auto expChunks = newWorld_.GetAccessableChunk(expArch);
-		auto expRanges = expChunks.GetRange<ECS::PositionComp>();
-
-		uint32_t index = 0;
-		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
-		uint32_t size = enemyChunks.Count();
-		for (uint32_t i = 0; i < size; i++) {
-			if (deadCount.first.at(i)) {
-				expRanges.At(ent[index++].totalIndex_) = enemRange.At(i);
-			}
-		}
-	}
+	// 経験値オーブの追加
+	AddExperience(newWorld_);
 
 	// 攻撃の追加
 	PlayerAttack(newWorld_);
@@ -704,6 +630,36 @@ void GameScene::PostEffectEnd()
 
 }
 
+void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SceneManager *const scene, Fade *const fade) const
+{
+	Archetype playerArchetype;
+	playerArchetype.AddClassData<ECS::PlayerTag>();
+	{
+		// プレイヤのView
+		auto playerChunks = world.GetAccessableChunk(playerArchetype);
+
+		// プレイヤのViewの長さが0である場合は死んでいる
+		bool playerIsDead = playerChunks.Count() == 0u;
+
+		// 死んでいた場合は
+		if (playerIsDead) {
+			// スポーンタイマーが止まっていたら
+			if (not playerTimer.IsActive()) {
+				// 再度実行
+				playerTimer.Start();
+			}
+
+			// 終わっていたら
+			if (playerTimer.IsFinish() and playerTimer.IsActive()) {
+
+				scene->ChangeScene("TitleScene", 0.5f);
+
+				fade->Start({}, 0x000000FF, 0.25f);
+			}
+		}
+	}
+}
+
 void GameScene::PlayerAttack(ECS::World &world) const
 {
 	// 攻撃のアーキタイプ
@@ -747,6 +703,36 @@ void GameScene::PlayerAttack(ECS::World &world) const
 
 			// 次に移動
 			++index;
+		}
+	}
+}
+
+void GameScene::AddExperience(ECS::World &world) const
+{
+	// 経験値の追加
+	{
+		// 敵のアーキタイプ
+		Archetype enemArch{};
+		enemArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
+		// チャンクの取得
+		auto enemyChunks = world.GetAccessableChunk(enemArch);
+		// 死亡している数
+		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
+		// 経験値のアーキタイプ
+		Archetype expArch;
+		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
+		// 経験値オーブの生成
+		auto ent = world.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
+		auto expChunks = world.GetAccessableChunk(expArch);
+		auto expRanges = expChunks.GetRange<ECS::PositionComp>();
+
+		uint32_t index = 0;
+		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
+		uint32_t size = enemyChunks.Count();
+		for (uint32_t i = 0; i < size; i++) {
+			if (deadCount.first.at(i)) {
+				expRanges.At(ent[index++].totalIndex_) = enemRange.At(i);
+			}
 		}
 	}
 }
@@ -827,5 +813,31 @@ void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInst
 				return result;
 				});
 		}
+	}
+}
+
+void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) const
+{
+	// 敵のスポーン数
+	constexpr uint32_t kEnemyCount = 10u;
+	// 敵の沸く半径
+	constexpr float kEnemyRadius = 45.f;
+
+	if (timer.IsFinish()) {
+
+		// スポナーに追加を要求する
+		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](auto enemys)
+			{
+				// コンポーネントの配列
+				ECS::ComponentSpan::TRange<ECS::PositionComp> arr = enemys.front().chunk_->GetComponent<ECS::PositionComp>();
+				// 発生地点の回転加算値
+				const float diff = Random::GetRandom<float>(0.f, Angle::Rad360);
+				for (uint32_t i = 0; ECS::EntityClass & enemy : enemys) {
+					auto &pos = arr[enemy.totalIndex_];
+					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
+					i++;
+				}
+			});
+		timer.Start();
 	}
 }

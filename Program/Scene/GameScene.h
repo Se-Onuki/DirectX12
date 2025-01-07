@@ -80,9 +80,13 @@ public:
 
 private:
 
+	void PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SceneManager*const scene, Fade*const fade) const;
+
 	/// @brief プレイヤの攻撃処理
 	/// @param world[in, out] ワールドデータ
 	void PlayerAttack(ECS::World& world) const;
+
+	void AddExperience(ECS::World &world) const;
 
 	/// @brief 経験値の加算
 	/// @param world[in, out] ワールドデータ
@@ -93,9 +97,18 @@ private:
 	/// @param attackRender[out] 描画バッファ
 	void AttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
 
+	void AddSpawner(SoLib::DeltaTimer& timer, ECS::Spawner& spawner) const;
+
 private:
 	/// @brief メニューのタイマー
 	SoLib::DeltaTimer menuTimer_;
+
+	VItem(Vector2, LevelUpUISize, _) {};
+	VItem(Vector2, ExpUICentorMul, _) { { 0.5f, 1.f } };
+	VItem(Vector2, ExpUICentorDiff, _) { {0.f, -16.f} };
+	VItem(Vector2, ExpUIScaleMul, _) { {1.f, 0.f} };
+	VItem(Vector2, ExpUIScaleDiff, _) { {0.f, 32.f} };
+
 
 	/// @brief メニューの表示フラグ
 	bool isMenuOpen_ = false;

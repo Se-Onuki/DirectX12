@@ -471,10 +471,13 @@
     <ClCompile Include="Engine\ResourceManager\ResourceLoader.cpp">
       <Filter>Engine\ResourceManager</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentArray.cpp">
-      <Filter>Engine\ECS\Chunk</Filter>
+    <ClCompile Include="Engine\Utils\Math\UIValue.cpp">
+      <Filter>Engine\Utils\Math</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentData.cpp">
+      <Filter>Engine\ECS\Chunk</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentArray.cpp">
       <Filter>Engine\ECS\Chunk</Filter>
     </ClCompile>
   </ItemGroup>
@@ -940,6 +943,9 @@
     </ClInclude>
     <ClInclude Include="Engine\ECS\Entity\EntityList.h">
       <Filter>Engine\ECS\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Math\UIValue.h">
+      <Filter>Engine\Utils\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
