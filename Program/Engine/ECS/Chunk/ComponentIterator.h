@@ -14,19 +14,22 @@ namespace ECS {
 	public:
 
 		template<typename U>
-		using ConstType = std::conditional_t<IsConst, const U &, U &>;
+		using ConstRef = std::conditional_t<IsConst, const U &, U &>;
+		template<typename U>
+		using ConstPtr = std::conditional_t<IsConst, const U *, U *>;
 
 		using difference_type = int32_t;
-		using value_type = std::tuple<ConstType<Ts>...>;
+		using value_type = std::tuple<ConstRef<Ts>...>;
 		using iterator_category = std::random_access_iterator_tag;
+
+		using value_ptr = std::tuple<ConstPtr<Ts>...>;
 
 		auto operator*()->value_type;
 		auto operator[](uint32_t index) const->value_type;
 
 	private:
 
-		template<std::size_t... Indices>
-		auto CreateValue(std::index_sequence<Indices...>, uint16_t i) const->value_type;
+		auto GetGroupPtr() const->value_ptr;
 
 	public:
 
@@ -161,21 +164,15 @@ namespace ECS {
 		return l.index_ - r.index_;
 	}
 
-	template<bool IsConst, typename... Ts>
-	template<std::size_t... Indices>
-	auto TypeCompIterator<IsConst, Ts...>::CreateValue(std::index_sequence<Indices...>, uint16_t i) const -> value_type
-	{
-		return { (*(std::bit_cast<Ts *>(pEntityMemory_->at(offset_[Indices])) + i))... };
-	}
 
 	template<bool IsConst, typename... Ts>
 	auto TypeCompIterator<IsConst, Ts...>::operator*() -> TypeCompIterator<IsConst, Ts...>::value_type
 	{
+		// グループ内のIndexに変更する
 		uint16_t i = index_ % cGroupSize_;
-		return std::apply([this, i](auto... memoryOffsets) {
-			return value_type(*(reinterpret_cast<Ts *>(&(pEntityMemory_->at(memoryOffsets))) + i)...);
-			}, offset_);
-		//return CreateValue(std::index_sequence_for<Ts...>(), i);
+		return std::apply([i](ConstPtr<Ts>... ptrs) {
+			return value_type(ptrs[i]...);
+			}, GetGroupPtr());
 	}
 
 	template<bool IsConst, typename... Ts>
@@ -190,9 +187,22 @@ namespace ECS {
 	}
 
 	template<bool IsConst, typename... Ts>
-	auto TypeCompIterator<IsConst, Ts...>::operator[](uint32_t index_) const -> TypeCompIterator<IsConst, Ts...>::value_type
+	auto TypeCompIterator<IsConst, Ts...>::operator[](uint32_t index) const -> TypeCompIterator<IsConst, Ts...>::value_type
 	{
-		return *(*this + index_);
+		return *(*this + index);
+	}
+
+	template<bool IsConst, typename ...Ts>
+	inline auto TypeCompIterator<IsConst, Ts...>::GetGroupPtr() const -> TypeCompIterator<IsConst, Ts...>::value_ptr
+	{
+		return std::apply([this](auto... memoryOffsets) {
+			return value_ptr(									// 4. それらを全部まとめて返す
+				reinterpret_cast<ConstPtr<Ts>>(					// 3. Ts型にポインタを変更する
+					&(											// 2. std::byte*に型を変更する
+						pEntityMemory_->at(memoryOffsets)	// 1. 保存先の先頭にオフセットを加算する(std::byte&)
+						))
+				...);
+			}, offset_);
 	}
 
 #pragma endregion
