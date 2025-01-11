@@ -855,27 +855,27 @@ void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInst
 		totalCount += ghostChanks[i]->size();
 	}
 	// もし空なら終わる
-	if (totalCount > 0) {
+	if (totalCount == 0) { return; }
 
-		// 書き込み先の確保
-		auto span = attackRender.Reservation(totalCount);
-		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
-			// チャンクからデータの取得
-			auto posRange = ghostChanks[i]->GetComponent<ECS::SphereCollisionComp>();
-			auto aliveRange = ghostChanks[i]->GetComponent<ECS::AliveTime>();
-			// データを転送する
-			const float attackTime = attackTime_;
-			// 転送する
-			std::transform(posRange.begin(), posRange.end(), aliveRange.begin(), &span[ghostOffset[i]], [attackTime](const ECS::SphereCollisionComp &trans, const ECS::AliveTime &alive) {
+	// 書き込み先の確保
+	auto span = attackRender.Reservation(totalCount);
+	for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+		// チャンクからデータの取得
+		auto range = ghostChanks[i]->View<ECS::SphereCollisionComp, ECS::AliveTime>();
+		// データを転送する
+		const float attackTime = attackTime_;
+		// 転送する
+		std::transform(range.begin(), range.end(), &span[ghostOffset[i]], [attackTime](const auto &itm) {
+			const auto &[trans, alive] = itm;
 
-				Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / attackTime)))) };
-				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / attackTime)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / attackTime);
-				result.transform.World.GetTranslate() = trans.collision_.centor;
-				result.transform.World.m[3][3] = 1.f;
-				return result;
-				});
-		}
+			Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / attackTime)))) };
+			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / attackTime)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / attackTime);
+			result.transform.World.GetTranslate() = trans.collision_.centor;
+			result.transform.World.m[3][3] = 1.f;
+			return result;
+			});
 	}
+
 }
 
 void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const
@@ -900,11 +900,11 @@ void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::Mode
 		auto span = attackRender.Reservation(totalCount);
 		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
 			// チャンクからデータの取得
-			auto range = ghostChanks[i]->View<ECS::SphereCollisionComp,ECS::AliveTime>();
+			auto range = ghostChanks[i]->View<ECS::SphereCollisionComp, ECS::AliveTime>();
 			// データを転送する
 			const float attackTime = attackTime_;
 			// 転送する
-			std::transform(range[0], range[1], &span[ghostOffset[i]], [attackTime](const auto& itm) {
+			std::transform(range.begin(), range.end(), &span[ghostOffset[i]], [attackTime](const auto &itm) {
 				const auto &[trans, alive] = itm;
 
 				Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / attackTime)))) };
