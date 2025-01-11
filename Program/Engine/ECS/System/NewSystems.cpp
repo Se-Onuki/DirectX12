@@ -110,6 +110,14 @@ namespace ECS::System::Par {
 		pos.position_ += velocity.velocity_ * deltaTime;
 	}
 
+	void MoveCollisionPosition::Execute(const World *const, const float deltaTime)
+	{
+		auto &[pos, velocity] = readWrite_;
+
+
+		pos.collision_.centor += velocity.velocity_ * deltaTime;
+	}
+
 	Vector3 EnemyMove::playerPos_{};
 	void EnemyMove::Execute(const World *const, const float deltaTime)
 	{

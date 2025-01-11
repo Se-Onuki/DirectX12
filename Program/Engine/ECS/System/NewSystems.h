@@ -119,6 +119,13 @@ namespace ECS {
 
 				void Execute(const World *const, const float);
 			};
+			class MoveCollisionPosition :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::SphereCollisionComp, ECS::VelocityComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
+			};
 
 			class EnemyMove :public IJobEntity {
 			public:

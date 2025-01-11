@@ -39,7 +39,7 @@ namespace ECS {
 		/// @tparam T 取得するコンポーネント
 		/// @return コンポーネントのRange
 		template <typename T>
-		ChunkRange<T> View() { return {this, &(GetCompArray<T>()->second), 0u, size_}; }
+		ChunkRange<T> View() { return { this, &(GetCompArray<T>()->second), 0u, size_ }; }
 
 		/// @brief 複数のコンポーネントのRangeを取得
 		/// @tparam Ts 取得するコンポーネント
@@ -56,12 +56,12 @@ namespace ECS {
 			begin.index_ = 0u;
 			begin.offset_ = { static_cast<uint16_t>(GetCompArray<Ts>()->second.GetOffset())... };
 
-			auto end = begin;
+			TypeCompIterator<false, Ts...> end{};
 			end.index_ = static_cast<uint16_t>(size_);
 
 			return std::ranges::subrange{ begin, end };
 		}
-		
+
 		/// @brief 複数のコンポーネントのRangeを取得
 		/// @tparam Ts 取得するコンポーネント
 		/// @return コンポーネントのRange
@@ -78,7 +78,7 @@ namespace ECS {
 			begin.index_ = 0u;
 			begin.offset_ = { static_cast<uint16_t>(GetCompArray<Ts>()->second.GetOffset())... };
 
-			auto end = begin;
+			TypeCompIterator<true, Ts...> end{};
 			end.index_ = static_cast<uint16_t>(size_);
 
 			return std::ranges::subrange{ begin, end };
@@ -87,10 +87,10 @@ namespace ECS {
 		}
 
 		/// @brief 開始イテレータの取得
-		iterator begin() { return iterator{this, 0}; }
+		iterator begin() { return iterator{ this, 0 }; }
 
 		/// @brief 番兵イテレータの取得
-		iterator end() { return iterator{this, size_}; }
+		iterator end() { return iterator{ this, size_ }; }
 
 		/// @brief コンポーネントの取得
 		/// @param[in] compId コンポーネントのID
@@ -295,7 +295,7 @@ namespace ECS {
 			return;
 		}
 		const auto &[flag, // 関数に対する正負値
-					 count // 一致した数
+			count // 一致した数
 		] = this->CountIfFlag<T>(pred);
 
 		// もし何も一致しなかったら終わり
@@ -332,7 +332,7 @@ namespace ECS {
 				count++;
 			}
 		}
-		return {std::move(flag), count};
+		return { std::move(flag), count };
 	}
 
 	inline uint32_t Chunk::emplace_back()
@@ -394,7 +394,7 @@ namespace ECS {
 			entity.version_++;
 		}
 		size_ += count;
-		const std::pair<uint32_t, uint32_t> result{beforeCount, size_};
+		const std::pair<uint32_t, uint32_t> result{ beforeCount, size_ };
 
 		return result;
 	}
