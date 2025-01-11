@@ -35,6 +35,7 @@
 #include "../Header/Object/Ground.h"
 #include "../Header/Object/HealthBar.h"
 #include "../Header/Object/PlayerLevel/LevelUP.h"
+#include "../Header/Object/Fade.h"
 
 /// @class GameScene
 /// @brief ゲームシーン
@@ -82,11 +83,17 @@ private:
 
 	void PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SceneManager*const scene, Fade*const fade) const;
 
-	/// @brief プレイヤの攻撃処理
+	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
-	void PlayerAttack(ECS::World& world) const;
+	void GeneratePlayerRangeAttack(ECS::World& world) const;
 
-	void AddExperience(ECS::World &world) const;
+	/// @brief プレイヤの範囲攻撃の生成処理
+	/// @param world[in, out] ワールドデータ
+	void GeneratePlayerArrowAttack(ECS::World& world) const;
+
+	/// @brief 経験値の生成
+	/// @param world[in, out] ワールドデータ
+	void GenerateExperience(ECS::World &world) const;
 
 	/// @brief 経験値の加算
 	/// @param world[in, out] ワールドデータ
@@ -96,6 +103,11 @@ private:
 	/// @param world[in] ワールドデータ
 	/// @param attackRender[out] 描画バッファ
 	void AttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
+
+	/// @brief 攻撃判定の描画
+	/// @param world[in] ワールドデータ
+	/// @param attackRender[out] 描画バッファ
+	void ArrowAttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
 
 	void AddSpawner(SoLib::DeltaTimer& timer, ECS::Spawner& spawner) const;
 
@@ -145,6 +157,9 @@ private:
 	SolEngine::ModelInstancingRender expRender_;
 	/// @brief 攻撃モデルのインスタンシング描画の配列
 	SolEngine::ModelInstancingRender attackRender_;
+
+	/// @brief 矢のモデルのインスタンシング描画の配列
+	SolEngine::ModelInstancingRender arrowAttackRender_;
 
 	/// @brief スポナークラス
 	ECS::Spawner spawner_;

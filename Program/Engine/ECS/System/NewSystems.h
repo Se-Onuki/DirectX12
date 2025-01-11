@@ -204,7 +204,7 @@ namespace ECS {
 
 			class PlayerAreaAttack :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackCircle> readWrite_;
+				ReadAndWrite<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackRangeCircle> readWrite_;
 				OnlyRead<ECS::LifeLimit, ECS::AliveTime> onlyRead_;
 				using DataBase = DataBase<decltype(readWrite_), decltype(onlyRead_)>;
 

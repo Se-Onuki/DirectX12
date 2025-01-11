@@ -279,6 +279,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Model\ResourceModel.h" />
     <ClInclude Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.h" />
     <ClInclude Include="Engine\ECS\Archetype.h" />
+    <ClInclude Include="Engine\ECS\Chunk\ComponentIterator.h" />
     <ClInclude Include="Engine\ECS\Component\Component.hpp" />
     <ClInclude Include="Engine\ECS\Component\ComponentRegistry.h" />
     <ClInclude Include="Engine\ECS\Entity\EntityList.h" />

@@ -8,17 +8,17 @@ namespace ECS {
 
 	std::span<std::byte> ComponentSpan::GetCompArray(uint32_t index)
 	{
-		return { entityStorage_->GetEntityStorage()[index].second->data() + offset_, itemCount_ * typeSize_ };
+		return { pEntityStorage_->GetEntityStorage()[index].second->data() + offset_, itemCount_ * typeSize_ };
 	}
 
 	std::byte *ComponentSpan::operator[](uint32_t index)
 	{
-		return (entityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_) + (index % itemCount_) * typeSize_;
+		return (pEntityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_) + (index % itemCount_) * typeSize_;
 	}
 
 	const std::byte *ComponentSpan::operator[](uint32_t index) const
 	{
-		return entityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_ + (index % itemCount_) * typeSize_;
+		return pEntityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_ + (index % itemCount_) * typeSize_;
 	}
 
 	void ComponentSpan::erase(const std::vector<bool> &flagArray, const size_t delCount, const uint32_t count)

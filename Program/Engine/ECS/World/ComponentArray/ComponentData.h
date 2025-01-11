@@ -117,7 +117,7 @@ namespace ECS {
 		ComponentSpan() = default;
 		ComponentSpan(const ComponentSpan &) = default;
 		ComponentSpan &operator=(const ComponentSpan &) = default;
-		ComponentSpan(EntityArrayStorage *entityStr, uint32_t offset, uint32_t itemSize, uint32_t count) : entityStorage_(entityStr), offset_(offset), typeSize_(itemSize), itemCount_(count) {}
+		ComponentSpan(EntityArrayStorage *entityStr, uint32_t offset, uint32_t itemSize, uint32_t count) : pEntityStorage_(entityStr), offset_(offset), typeSize_(itemSize), itemCount_(count) {}
 		ComponentSpan(uint32_t itemSize, uint32_t count) : typeSize_(itemSize), itemCount_(count) {}
 
 		std::span<std::byte> GetCompArray(uint32_t index);
@@ -148,7 +148,7 @@ namespace ECS {
 		/// @return 型指定ありのデータの範囲
 		template<typename T>
 		TRange<T> View(uint32_t end) { return TRange<T>{ this, 0u, end }; }
-		
+
 		/// @brief 範囲を返す
 		/// @param begin 範囲の始まり
 		/// @param end 範囲の終わり
@@ -156,13 +156,13 @@ namespace ECS {
 		template<typename T>
 		TRange<T> View(uint32_t begin, uint32_t end) { return TRange<T>{ this, begin, end }; }
 
-		
+
 		/// @brief 範囲を返す
 		/// @param end 範囲の終わり
 		/// @return 型指定ありのデータの範囲
 		template<typename T>
 		TRange<T, true> View(uint32_t end) const { return TRange<T, true>{ this, 0u, end }; }
-		
+
 		/// @brief 範囲を返す
 		/// @param begin 範囲の始まり
 		/// @param end 範囲の終わり
@@ -173,6 +173,8 @@ namespace ECS {
 		/// @brief コンポーネントのサイズを返す
 		/// @return コンポーネントのサイズ
 		uint32_t GetTypeSize() const { return typeSize_; }
+
+		uint32_t GetOffset() const { return offset_; }
 
 
 	public:
@@ -186,7 +188,7 @@ namespace ECS {
 	private:
 
 		// エンティティのデータ群
-		EntityArrayStorage *entityStorage_ = nullptr;
+		EntityArrayStorage *pEntityStorage_ = nullptr;
 
 		// コンポーネントの始点
 		uint32_t offset_ = 0u;

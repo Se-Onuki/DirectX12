@@ -20,9 +20,9 @@ namespace ECS {
 		archetype_ = archetype;
 
 		// アーキタイプに保存された型の一覧
-		const auto &compIndexList = archetype_.compFlag_.GetIndexList();
+		const auto &compIndexList = archetype_.required_.GetIndexList();
 		// 型の数だけメモリを確保する
-		componentDatas_.reserve(archetype_.compFlag_.Get().count());
+		componentDatas_.reserve(archetype_.required_.Get().count());
 
 		// エンティティストレージの確保
 		storage_ = std::make_unique<EntityArrayStorage>(this, archetype_.GetChunkCapacity());

@@ -947,6 +947,9 @@
     <ClInclude Include="Engine\Utils\Math\UIValue.h">
       <Filter>Engine\Utils\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\ECS\Chunk\ComponentIterator.h">
+      <Filter>Engine\ECS\Chunk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

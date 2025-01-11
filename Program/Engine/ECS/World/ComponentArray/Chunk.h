@@ -10,6 +10,8 @@
 #include "EntityArrayStorage.h"
 #include <unordered_map>
 
+#include "../Engine/ECS/Chunk/ComponentIterator.h"
+
 namespace ECS {
 
 	class Chunk
@@ -43,9 +45,43 @@ namespace ECS {
 		/// @return コンポーネントのRange
 		template <typename... Ts>
 			requires(sizeof...(Ts) >= 2)
-		ChunkRange<Ts...> View()
+		std::array<TypeCompIterator<false, Ts...>, 2>  View()
 		{
-			return {this, std::tuple<ComponentSpan *...>{&(GetCompArray<Ts>()->second)...}, 0u, size_};
+			TypeCompIterator<false, Ts...> begin;
+			begin.pEntityStorage_ = storage_.get();
+			begin.pEntityMemory_ = storage_->GetEntityStorage().data()->second.get();
+			begin.cGroupSize_ = static_cast<uint16_t>(archetype_.GetChunkCapacity());
+			begin.cSize_ = static_cast<uint16_t>(size_);
+			begin.index_ = 0u;
+			begin.offset_ = { static_cast<uint16_t>(GetCompArray<Ts>()->second.GetOffset())... };
+
+
+			TypeCompIterator<false, Ts...> end = begin;
+			end.index_ = static_cast<uint16_t>(size_);
+
+			return { begin, end };
+		}
+		
+		/// @brief 複数のコンポーネントのRangeを取得
+		/// @tparam Ts 取得するコンポーネント
+		/// @return コンポーネントのRange
+		template <typename... Ts>
+			requires(sizeof...(Ts) >= 2)
+		std::array<TypeCompIterator<true, Ts...>,2> View() const
+		{
+			TypeCompIterator<true, Ts...> begin;
+			begin.pEntityStorage_ = storage_.get();
+			begin.pEntityMemory_ = storage_->GetEntityStorage().data()->second.get();
+			begin.cGroupSize_ = static_cast<uint16_t>(archetype_.GetChunkCapacity());
+			begin.cSize_ = static_cast<uint16_t>(size_);
+			begin.index_ = 0u;
+			begin.offset_ = { static_cast<uint16_t>(GetCompArray<Ts>()->second.GetOffset())... };
+
+
+			TypeCompIterator<true, Ts...> end = begin;
+			end.index_ = static_cast<uint16_t>(size_);
+
+			return { begin, end };
 		}
 
 		/// @brief 開始イテレータの取得

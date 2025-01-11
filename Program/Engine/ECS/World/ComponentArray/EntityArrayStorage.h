@@ -196,6 +196,10 @@ namespace ECS {
 		/// @return エンティティ
 		const EntityClass &GetEntity(uint32_t index) const { return entityStorage_[index / entityCount_].first[index % entityCount_]; }
 
+		/// @brief 一つのグループに含まれるエンティティの数
+		/// @return エンティティの数
+		uint32_t GetGroupSize() const { return entityCount_; }
+
 	private:
 		Chunk *chunk_;
 

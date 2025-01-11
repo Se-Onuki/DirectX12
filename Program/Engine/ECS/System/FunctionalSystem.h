@@ -401,7 +401,7 @@ namespace ECS {
 		archetype.AddClassData(T::DataBase::kTarget_);
 		ECS::ComponentRegistry::ComponentFlag exclusions;
 		if constexpr (IsHasExclusion<T>()) {
-			exclusions = T::Exclusions::ComponentList::GetArchetype().compFlag_;
+			exclusions = T::Exclusions::ComponentList::GetArchetype().required_;
 		}
 		if constexpr (IsHasExecuteOnce<T>()) {
 			preExecuter = &T::ExecuteOnce;

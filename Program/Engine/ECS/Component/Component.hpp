@@ -345,7 +345,12 @@ namespace ECS {
 		SolEngine::ResourceHandle<SolEngine::LevelData> handle_;
 	};
 
-	struct AttackCircle : IComponent {
+	// 範囲攻撃の演出
+	struct AttackRangeCircle : IComponent {
+
+	};
+	// 矢の攻撃の演出
+	struct AttackArrow : IComponent {
 
 	};
 	/// @brief 当たったら押し出す方向｡

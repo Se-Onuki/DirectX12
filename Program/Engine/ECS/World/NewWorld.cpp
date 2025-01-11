@@ -21,8 +21,8 @@ namespace ECS {
 		const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
 		const auto &compItr = prefab.GetComponentMap();
 
-		for (uint32_t i : prefab.GetArchetype().compFlag_.GetIndexList()) {
-			if (not prefab.GetArchetype().compFlag_.Get()[i]) { continue; }
+		for (uint32_t i : prefab.GetArchetype().required_.GetIndexList()) {
+			if (not prefab.GetArchetype().required_.Get()[i]) { continue; }
 			const auto &typeKey = compRegistry->typeDatas_[i];
 
 			auto ptr = entity.chunk_->GetComp(i, entity.totalIndex_);
@@ -53,8 +53,8 @@ namespace ECS {
 		const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
 		const auto &compItr = prefab.GetComponentMap();
 
-		for (uint32_t i : prefab.GetArchetype().compFlag_.GetIndexList()) {
-			if (not prefab.GetArchetype().compFlag_.Get()[i]) { continue; }
+		for (uint32_t i : prefab.GetArchetype().required_.GetIndexList()) {
+			if (not prefab.GetArchetype().required_.Get()[i]) { continue; }
 			const auto &typeKey = compRegistry->typeDatas_[i];
 
 			auto *const src = compItr.at(typeKey.typeIndex_).get();

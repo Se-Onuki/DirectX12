@@ -209,8 +209,16 @@ void GameScene::OnEnter() {
 	attackMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
 	static_cast<Matrix4x4 &>(attackModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 2.f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
 
+	auto arrowAssimp = assimpManager->Load({ "Model/Shuriken/","shuriken.glb" });
+	auto arrowModel = modelDataManager->Load({ arrowAssimp });
+
+	// 攻撃の描画
 	attackRender_.Init();
 	attackRender_.SetModelData(attackModel);
+
+	// 飛び道具の描画
+	arrowAttackRender_.Init();
+	arrowAttackRender_.SetModelData(arrowModel);
 
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
@@ -381,6 +389,7 @@ void GameScene::Update() {
 	shadowRenderer_.Clear();
 	expRender_.Clear();
 	attackRender_.Clear();
+	arrowAttackRender_.Clear();
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -403,10 +412,10 @@ void GameScene::Update() {
 	PlayerDead(newWorld_, playerSpawn_, sceneManager_, Fade::GetInstance());
 
 	// 経験値オーブの追加
-	AddExperience(newWorld_);
+	GenerateExperience(newWorld_);
 
 	// 攻撃の追加
-	PlayerAttack(newWorld_);
+	GeneratePlayerRangeAttack(newWorld_);
 
 	// もし生存フラグが折れていたら、配列から削除
 	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item.isAlive_; });
@@ -436,7 +445,8 @@ void GameScene::Update() {
 	);
 
 	// 攻撃範囲の描画
-	AttackEffectRender(newWorld_, attackRender_);
+	ArrowAttackEffectRender(newWorld_, attackRender_);
+	//AttackEffectRender(newWorld_, attackRender_);
 
 	{
 		// 入力処理
@@ -660,9 +670,9 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 	}
 }
 
-void GameScene::PlayerAttack(ECS::World &world) const
+void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 {
-	// 攻撃のアーキタイプ
+	// 攻撃しているプレイヤのアーキタイプ
 	Archetype attackPlayerArch{};
 	attackPlayerArch.AddClassData<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp>();
 	// チャンクの取得
@@ -671,7 +681,7 @@ void GameScene::PlayerAttack(ECS::World &world) const
 	auto attackCount = attackPlayerChunks.CountIfFlag<ECS::AttackCollisionComp>([](const ECS::AttackCollisionComp &flag) { return flag.isActive_; });
 	// 攻撃範囲のアーキタイプ
 	Archetype areaArch;
-	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackCircle>();
+	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackArrow>();
 	// 攻撃範囲の生成
 	world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second));
 	auto areaChanks = world.GetAccessableChunk(areaArch);
@@ -681,7 +691,59 @@ void GameScene::PlayerAttack(ECS::World &world) const
 	auto knockBackRanges = areaChanks.GetRange<ECS::KnockBackDirection>();
 	auto lifeRanges = areaChanks.GetRange<ECS::LifeLimit>();
 
+	// 書き込み先のIndex
 	uint32_t index = 0;
+
+	auto playerPosRanges = attackPlayerChunks.GetRange<ECS::PositionComp>();
+	auto playerRotRanges = attackPlayerChunks.GetRange<ECS::QuaternionRotComp>();
+	auto playerAttackRanges = attackPlayerChunks.GetRange<ECS::AttackStatus>();
+	auto playerPowerRanges = attackPlayerChunks.GetRange<ECS::AttackPower>();
+	// プレイヤの数
+	uint32_t size = attackPlayerChunks.Count();
+	for (uint32_t i = 0; i < size; i++) {
+		if (attackCount.first.at(i)) {
+			const auto &attackStatus = playerAttackRanges.At(i);
+			auto &sphere = sphereRanges.At(index);
+			sphere.collision_.centor = playerPosRanges.At(i).position_ + attackStatus.offset_ * playerRotRanges.At(i).quateRot_.GetFront();
+			sphere.collision_.radius = attackStatus.radius_;
+			auto &knockBack = knockBackRanges.At(index);
+			// 吹き飛ばす力
+			knockBack.diffPower_ = { knockBackPower_, knockBackPower_ };
+			// 攻撃持続時間
+			lifeRanges.At(index).lifeLimit_ = attackTime_;
+			// 攻撃力
+			attackPowerRanges.At(index) = playerPowerRanges.At(i);
+
+			// 次に移動
+			++index;
+		}
+	}
+}
+
+void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
+{
+	// 攻撃しているプレイヤのアーキタイプ
+	Archetype attackPlayerArch{};
+	attackPlayerArch.AddClassData<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp>();
+	// チャンクの取得
+	const auto attackPlayerChunks = world.GetAccessableChunk(attackPlayerArch);
+	// 攻撃中のプレイヤの数
+	auto attackCount = attackPlayerChunks.CountIfFlag<ECS::AttackCollisionComp>([](const ECS::AttackCollisionComp &flag) { return flag.isActive_; });
+	// 攻撃範囲のアーキタイプ
+	Archetype areaArch;
+	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackRangeCircle>();
+	// 攻撃範囲の生成
+	world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second));
+	auto areaChanks = world.GetAccessableChunk(areaArch);
+
+	auto sphereRanges = areaChanks.GetRange<ECS::SphereCollisionComp>();
+	auto attackPowerRanges = areaChanks.GetRange<ECS::AttackPower>();
+	auto knockBackRanges = areaChanks.GetRange<ECS::KnockBackDirection>();
+	auto lifeRanges = areaChanks.GetRange<ECS::LifeLimit>();
+
+	// 書き込み先のIndex
+	uint32_t index = 0;
+
 	auto playerPosRanges = attackPlayerChunks.GetRange<ECS::PositionComp>();
 	auto playerRotRanges = attackPlayerChunks.GetRange<ECS::QuaternionRotComp>();
 	auto playerAttackRanges = attackPlayerChunks.GetRange<ECS::AttackStatus>();
@@ -707,7 +769,7 @@ void GameScene::PlayerAttack(ECS::World &world) const
 	}
 }
 
-void GameScene::AddExperience(ECS::World &world) const
+void GameScene::GenerateExperience(ECS::World &world) const
 {
 	// 経験値の追加
 	{
@@ -780,7 +842,7 @@ void GameScene::PlayerExperience(ECS::World &world) const
 void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const
 {
 	Archetype archetype;
-	archetype.AddClassData<ECS::AttackCircle>();
+	archetype.AddClassData<ECS::AttackRangeCircle>();
 	// チャンクの取得
 	auto ghostChanks = world.GetAccessableChunk(archetype);
 	// オブジェクトの総数
@@ -805,6 +867,45 @@ void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInst
 			const float attackTime = attackTime_;
 			// 転送する
 			std::transform(posRange.begin(), posRange.end(), aliveRange.begin(), &span[ghostOffset[i]], [attackTime](const ECS::SphereCollisionComp &trans, const ECS::AliveTime &alive) {
+
+				Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / attackTime)))) };
+				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / attackTime)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / attackTime);
+				result.transform.World.GetTranslate() = trans.collision_.centor;
+				result.transform.World.m[3][3] = 1.f;
+				return result;
+				});
+		}
+	}
+}
+
+void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const
+{
+	Archetype archetype;
+	archetype.AddClassData<ECS::AttackRangeCircle>();
+	// チャンクの取得
+	auto ghostChanks = world.GetAccessableChunk(archetype);
+	// オブジェクトの総数
+	uint32_t totalCount = 0u;
+
+	// チャンクと同じ数のデータを確保する
+	std::vector<uint32_t> ghostOffset(ghostChanks.size());
+	for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+		ghostOffset[i] = totalCount;
+		totalCount += ghostChanks[i]->size();
+	}
+	// もし空なら終わる
+	if (totalCount > 0) {
+
+		// 書き込み先の確保
+		auto span = attackRender.Reservation(totalCount);
+		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+			// チャンクからデータの取得
+			auto range = ghostChanks[i]->View<ECS::SphereCollisionComp,ECS::AliveTime>();
+			// データを転送する
+			const float attackTime = attackTime_;
+			// 転送する
+			std::transform(range[0], range[1], &span[ghostOffset[i]], [attackTime](const auto& itm) {
+				const auto &[trans, alive] = itm;
 
 				Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / attackTime)))) };
 				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / attackTime)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / attackTime);

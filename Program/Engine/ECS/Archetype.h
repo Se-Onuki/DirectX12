@@ -10,7 +10,8 @@
 class Archetype {
 public:
 
-	ECS::ComponentRegistry::ComponentFlag compFlag_;
+	/// @brief 必須コンポーネント
+	ECS::ComponentRegistry::ComponentFlag required_;
 
 	static constexpr size_t kOneChunkCapacity = 16u * 1024u;
 
@@ -22,9 +23,9 @@ public:
 		ECS::ComponentRegistry *const compReg = ECS::ComponentRegistry::GetInstance();
 		// サイズを追加する
 		for (uint32_t arg : component) {
-			if (not compFlag_.Get().test(arg)) { totalSize_ += compReg->typeDatas_[arg].typeSize_; }
+			if (not required_.Get().test(arg)) { totalSize_ += compReg->typeDatas_[arg].typeSize_; }
 		}
-		compFlag_.AddComp(component);
+		required_.AddComp(component);
 
 		// 追加した型で容量を計算する
 		chunkCapacity_ = CalcCapacity();
@@ -37,9 +38,9 @@ public:
 		ECS::ComponentRegistry *const compReg = ECS::ComponentRegistry::GetInstance();
 		// サイズを追加する
 		for (uint32_t arg : component) {
-			if (not compFlag_.Get().test(arg)) { totalSize_ += compReg->typeDatas_[arg].typeSize_; }
+			if (not required_.Get().test(arg)) { totalSize_ += compReg->typeDatas_[arg].typeSize_; }
 		}
-		compFlag_.AddComp(component);
+		required_.AddComp(component);
 
 		// 追加した型で容量を計算する
 		chunkCapacity_ = CalcCapacity();
@@ -50,18 +51,18 @@ public:
 	void AddClassData() {
 
 		// サイズを追加する
-		if (not compFlag_.IsHasComp<T>()) { totalSize_ += sizeof(T); };
-		(([this]() { if (not compFlag_.IsHasComp<TComps>()) { totalSize_ += sizeof(TComps); }})(), ...);	// 生成だけして実行してなかった
+		if (not required_.IsHasComp<T>()) { totalSize_ += sizeof(T); };
+		(([this]() { if (not required_.IsHasComp<TComps>()) { totalSize_ += sizeof(TComps); }})(), ...);	// 生成だけして実行してなかった
 
-		compFlag_.AddComp<T, TComps...>();
+		required_.AddComp<T, TComps...>();
 
 		// 追加した型で容量を計算する
 		chunkCapacity_ = CalcCapacity();
 	}
-	bool operator==(const Archetype &other) const { return other.compFlag_ == compFlag_; }
+	bool operator==(const Archetype &other) const { return other.required_ == required_; }
 
 	bool operator<=(const Archetype &other) const {
-		return (compFlag_.Get() & other.compFlag_.Get()) == compFlag_.Get();
+		return (required_.Get() & other.required_.Get()) == required_.Get();
 	}
 	/// @brief すべてのコンポーネントを合算したサイズを取得
 	uint32_t GetTotalSize() const { return totalSize_; }
@@ -96,7 +97,7 @@ namespace std {
 	template<>
 	struct hash<Archetype> {
 		std::size_t operator()(const Archetype &obj) const {
-			return obj.compFlag_.Get().to_ullong();
+			return obj.required_.Get().to_ullong();
 		}
 	};
 }
