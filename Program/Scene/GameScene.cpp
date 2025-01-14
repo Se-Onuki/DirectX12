@@ -683,11 +683,14 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 	const auto attackPlayerChunks = world.GetAccessableChunk(attackPlayerArch);
 	// 攻撃中のプレイヤの数
 	auto attackCount = attackPlayerChunks.CountIfFlag<ECS::AttackCollisionComp>([](const ECS::AttackCollisionComp &flag) { return flag.isActive_; });
+	// もし生成数が0なら終わり
+	if (attackCount.second == 0) { return; }
 	// 攻撃範囲のアーキタイプ
 	Archetype areaArch;
 	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackArrow, ECS::VelocityComp>();
+
 	// 攻撃範囲の生成
-	world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second));
+	uint32_t index = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)).front().totalIndex_; // 書き込み先のIndex
 	auto areaChanks = world.GetAccessableChunk(areaArch);
 
 	auto sphereRanges = areaChanks.GetRange<ECS::SphereCollisionComp>();
@@ -695,9 +698,6 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 	auto knockBackRanges = areaChanks.GetRange<ECS::KnockBackDirection>();
 	auto lifeRanges = areaChanks.GetRange<ECS::LifeLimit>();
 	auto velocity = areaChanks.GetRange<ECS::VelocityComp>();
-
-	// 書き込み先のIndex
-	uint32_t index = 0;
 
 	auto playerPosRanges = attackPlayerChunks.GetRange<ECS::PositionComp>();
 	auto playerRotRanges = attackPlayerChunks.GetRange<ECS::QuaternionRotComp>();
@@ -713,17 +713,17 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 			const auto &attackStatus = playerAttackRanges.At(i);
 			auto &sphere = sphereRanges.At(index);
 			sphere.collision_.centor = playerPosRanges.At(i).position_ + attackStatus.offset_ * playerFacing;
-			sphere.collision_.radius = attackStatus.radius_;
+			sphere.collision_.radius = attackStatus.radius_ * 0.25f;
 			auto &knockBack = knockBackRanges.At(index);
 			// 吹き飛ばす力
 			knockBack.diffPower_ = { knockBackPower_, knockBackPower_ };
 			knockBack.diff_ = { playerFacing.x, playerFacing.z };
 			// 攻撃持続時間
-			lifeRanges.At(index).lifeLimit_ = 10.f;
+			lifeRanges.At(index).lifeLimit_ = 5.f;
 			// 攻撃力
 			attackPowerRanges.At(index) = playerPowerRanges.At(i);
 
-			velocity.At(index).velocity_ = playerFacing * 10.f;
+			velocity.At(index).velocity_ = playerFacing * 20.f;
 
 			// 次に移動
 			++index;
@@ -740,20 +740,20 @@ void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
 	const auto attackPlayerChunks = world.GetAccessableChunk(attackPlayerArch);
 	// 攻撃中のプレイヤの数
 	auto attackCount = attackPlayerChunks.CountIfFlag<ECS::AttackCollisionComp>([](const ECS::AttackCollisionComp &flag) { return flag.isActive_; });
+	// もし生成数が0なら終わり
+	if (attackCount.second == 0) { return; }
 	// 攻撃範囲のアーキタイプ
 	Archetype areaArch;
 	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackRangeCircle>();
+
 	// 攻撃範囲の生成
-	world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second));
+	uint32_t index = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)).front().totalIndex_; // 書き込み先のIndex
 	auto areaChanks = world.GetAccessableChunk(areaArch);
 
 	auto sphereRanges = areaChanks.GetRange<ECS::SphereCollisionComp>();
 	auto attackPowerRanges = areaChanks.GetRange<ECS::AttackPower>();
 	auto knockBackRanges = areaChanks.GetRange<ECS::KnockBackDirection>();
 	auto lifeRanges = areaChanks.GetRange<ECS::LifeLimit>();
-
-	// 書き込み先のIndex
-	uint32_t index = 0;
 
 	auto playerPosRanges = attackPlayerChunks.GetRange<ECS::PositionComp>();
 	auto playerRotRanges = attackPlayerChunks.GetRange<ECS::QuaternionRotComp>();
@@ -791,20 +791,24 @@ void GameScene::GenerateExperience(ECS::World &world) const
 		auto enemyChunks = world.GetAccessableChunk(enemArch);
 		// 死亡している数
 		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
+
+		if (deadCount.second == 0) { return; }
+
 		// 経験値のアーキタイプ
 		Archetype expArch;
 		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
 		// 経験値オーブの生成
 		auto ent = world.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
-		auto expChunks = world.GetAccessableChunk(expArch);
-		auto expRanges = expChunks.GetRange<ECS::PositionComp>();
+		auto chunk = ent.front().chunk_->View<ECS::PositionComp, ECS::IsAlive>();
+		auto entItr = chunk.begin() + ent.front().totalIndex_;
 
-		uint32_t index = 0;
+		//uint32_t index = 0;
 		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
 		uint32_t size = enemyChunks.Count();
 		for (uint32_t i = 0; i < size; i++) {
 			if (deadCount.first.at(i)) {
-				expRanges.At(ent[index++].totalIndex_) = enemRange.At(i);
+				auto [a, b] = (*entItr);
+				a = enemRange.At(i);
 			}
 		}
 	}
@@ -919,7 +923,7 @@ void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::Mode
 			const auto &[trans, alive] = itm;
 
 			Particle::ParticleData result{ .color = 0xFFFFFFFF };
-			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * std::fmodf(alive.aliveTime_, attackRotSpeed)) * trans.collision_.radius;
+			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * std::fmodf(alive.aliveTime_, attackRotSpeed)) * (trans.collision_.radius * 0.25f);
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
 			return result;

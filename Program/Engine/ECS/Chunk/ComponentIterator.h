@@ -119,7 +119,7 @@ namespace ECS {
 	{
 		// もし負数なら､逆側に渡す
 		if (diff < 0) { return itr -= -diff; }
-		itr.index_ += diff;
+		itr.index_ = static_cast<uint16_t>(itr.index_ + diff);
 		// もし領域を越えていたら
 		if (diff >= itr.cGroupSize_ or (itr.index_ % itr.cGroupSize_) < diff) {
 			// ストレージ
@@ -134,7 +134,7 @@ namespace ECS {
 	auto operator-(const TypeCompIterator<IsConst, Ts...> &itr, int32_t diff) -> TypeCompIterator<IsConst, Ts...>
 	{
 		TypeCompIterator<IsConst, Ts...> result = itr;
-		result.index_ -= diff;
+		result -= diff;
 		return result;
 	}
 	template<bool IsConst, typename... Ts>
@@ -142,7 +142,7 @@ namespace ECS {
 	{
 		// もし負数なら､逆側に渡す
 		if (diff < 0) { return itr += -diff; }
-		itr.index_ -= diff;
+		itr.index_ = static_cast<uint16_t>(itr.index_ - diff);
 		// もし領域を越えていたら
 		if (diff >= itr.cGroupSize_ // もし範囲より大きい移動幅か
 			or (itr.index_ % itr.cGroupSize_) > diff	// 移動先が別のグループなら

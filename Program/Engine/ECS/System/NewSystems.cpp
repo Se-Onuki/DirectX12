@@ -123,12 +123,12 @@ namespace ECS::System::Par {
 	{
 
 		auto &[enemy, pos, rotate] = readWrite_;
-		Vector3 direction = (playerPos_ - pos.position_).Nomalize() * (100.f * deltaTime * deltaTime);
+		Vector3 direction = (playerPos_ - pos.position_);
 		direction.y = 0.f;
+		direction = direction.Nomalize() * (100.f * deltaTime * deltaTime);
 		pos.position_ += direction;
 
 		rotate.quateRot_ = Quaternion::LookAt(direction);
-
 
 	}
 
@@ -163,8 +163,11 @@ namespace ECS::System::Par {
 
 				// クールタイムが終わっており、接触している場合
 				if (not coolTime.cooltime_.IsActive() and Collision::IsHit(plColl, enColl)) {
+					Vector3 diff = playerPos.position_ - pos.position_;
+					// 高さを0にする
+					diff.y = 0;
 					// プレイヤに加速度を加算
-					playerAcceleration.acceleration_ += (playerPos.position_ - pos.position_) * 15.f;
+					playerAcceleration.acceleration_ += diff.Nomalize() * 15.f;
 					// 体力を減算
 					playerHealth.nowHealth_ -= power.power_;
 
@@ -289,6 +292,8 @@ namespace ECS::System::Par {
 
 		pos.position_.x = std::clamp(pos.position_.x, -kStageRadius, kStageRadius);
 		pos.position_.z = std::clamp(pos.position_.z, -kStageRadius, kStageRadius);
+
+		pos.position_.y = 0.f;
 
 		EnemyMove::playerPos_ = pos;
 

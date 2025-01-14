@@ -13,30 +13,6 @@ namespace ECS {
 	template <typename T, bool IsConst = false>
 	class ChunkTRange : public std::vector<ComponentSpan::TRange<T, IsConst>> {
 	public:
-		/*using Type = std::vector<ComponentData::TRange<T, IsConst>>;
-
-		struct Iterator {
-			ChunkTRange *range_;
-			uint32_t chunkIndex_;
-			uint32_t itr_;
-			T &operator->() requires(std::is_same_v<IsConst, false>) {
-				return range_->data_[chunkIndex_]->GetComp<T>(itr_);
-			}
-		};
-
-		friend Iterator;
-
-	public:
-		ChunkTRange() = default;
-		ChunkTRange(Type &&item) : data_(std::move(item)) {}
-
-
-
-
-	private:
-		Type data_;
-		uint32_t chunkIndex_;
-		uint32_t itr_;*/
 
 	public:
 
@@ -75,6 +51,11 @@ namespace ECS {
 			return this->front()[0];
 		}
 	};
+
+	//template<bool IsConst, typename... Ts>
+	//struct 
+
+
 
 	template <bool IsConst = false>
 	class ChunkSet : public std::conditional_t<IsConst, std::vector<const Chunk *>, std::vector<Chunk *>> {
