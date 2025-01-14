@@ -690,7 +690,7 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackArrow, ECS::VelocityComp>();
 
 	// 攻撃範囲の生成
-	uint32_t index = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)).front().totalIndex_; // 書き込み先のIndex
+	uint32_t index = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)).begin(); // 書き込み先のIndex
 	auto areaChanks = world.GetAccessableChunk(areaArch);
 
 	auto sphereRanges = areaChanks.GetRange<ECS::SphereCollisionComp>();
@@ -747,7 +747,7 @@ void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
 	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackRangeCircle>();
 
 	// 攻撃範囲の生成
-	uint32_t index = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)).front().totalIndex_; // 書き込み先のIndex
+	uint32_t index = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)).begin(); // 書き込み先のIndex
 	auto areaChanks = world.GetAccessableChunk(areaArch);
 
 	auto sphereRanges = areaChanks.GetRange<ECS::SphereCollisionComp>();
@@ -799,8 +799,8 @@ void GameScene::GenerateExperience(ECS::World &world) const
 		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
 		// 経験値オーブの生成
 		auto ent = world.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
-		auto chunk = ent.front().chunk_->View<ECS::PositionComp, ECS::IsAlive>();
-		auto entItr = chunk.begin() + ent.front().totalIndex_;
+		auto chunk = ent.View<ECS::PositionComp, ECS::IsAlive>();
+		auto entItr = chunk.begin() + *ent.ItrRange().begin();
 
 		//uint32_t index = 0;
 		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
@@ -942,14 +942,14 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 	if (timer.IsFinish()) {
 
 		// スポナーに追加を要求する
-		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](auto enemys)
+		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](const ECS::EntityList<false>& enemys)
 			{
 				// コンポーネントの配列
-				ECS::ComponentSpan::TRange<ECS::PositionComp> arr = enemys.front().chunk_->GetComponent<ECS::PositionComp>();
+				ECS::ComponentSpan::TRange<ECS::PositionComp> arr = enemys.GetChunk()->GetComponent<ECS::PositionComp>();
 				// 発生地点の回転加算値
 				const float diff = Random::GetRandom<float>(0.f, Angle::Rad360);
-				for (uint32_t i = 0; ECS::EntityClass & enemy : enemys) {
-					auto &pos = arr[enemy.totalIndex_];
+				for (uint32_t i = 0; uint32_t enemy : enemys.ItrRange()) {
+					auto &pos = arr[enemy];
 					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
 					i++;
 				}

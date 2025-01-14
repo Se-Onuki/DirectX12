@@ -33,33 +33,32 @@ namespace ECS {
 
 	}
 
-	std::vector<EntityClass> World::CreateEntity(const Archetype &archetype, uint32_t count)
+	EntityList<false> World::CreateEntity(const Archetype &archetype, uint32_t count)
 	{
 		auto chunk = CreateOrGetChunk(archetype);
 
 		auto index = chunk->emplace_back(count);
 
-		std::vector<EntityClass> result{ index.second - index.first };
-		for (uint32_t i = 0; i < result.size(); i++) {
-			result[i] = chunk->GetEntity(index.first + i);
-		}
+		EntityList<false> result{ chunk, index.first, index.second };
 		return result;
 
 	}
 
-	std::vector<EntityClass> World::CreateEntity(const Prefab &prefab, uint32_t count)
+	EntityList<false> World::CreateEntity(const Prefab &prefab, uint32_t count)
 	{
 		auto &&entityList = CreateEntity(prefab.GetArchetype(), count);
 		const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
-		const auto &compItr = prefab.GetComponentMap();
+		const auto &prefabComp = prefab.GetComponentMap();
 
 		for (uint32_t i : prefab.GetArchetype().required_.GetIndexList()) {
 			if (not prefab.GetArchetype().required_.Get()[i]) { continue; }
 			const auto &typeKey = compRegistry->typeDatas_[i];
 
-			auto *const src = compItr.at(typeKey.typeIndex_).get();
-			for (const auto &entity : entityList) {
-				auto ptr = entity.chunk_->GetComp(i, entity.totalIndex_);
+			auto *const src = prefabComp.at(typeKey.typeIndex_).get();
+			auto component = entityList.GetChunk()->GetComponent(i);
+
+			for (const auto entity : entityList.ItrRange()) {
+				auto ptr = &component->at(entity);
 				std::memcpy(ptr, src, typeKey.typeSize_);
 			}
 		}

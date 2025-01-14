@@ -46,17 +46,17 @@ namespace ECS {
 		/// @return コンポーネントのRange
 		template <typename... Ts>
 			requires(sizeof...(Ts) >= 2)
-		auto View()
+		auto View(const uint32_t Begin = 0, const uint32_t End = (std::numeric_limits<uint32_t>::max)())
 		{
 			TypeCompIterator<false, Ts...> begin;
 			begin.pEntityStorage_ = storage_.get();
 			begin.pEntityMemory_ = storage_->GetEntityStorage().data()->second.get();
 			begin.cGroupSize_ = static_cast<uint16_t>(archetype_.GetChunkCapacity());
-			begin.index_ = 0u;
+			begin.index_ = static_cast<uint16_t>(Begin);
 			begin.offset_ = { static_cast<uint16_t>(GetCompArray<Ts>()->second.GetOffset())... };
 
 			TypeCompIterator<false, Ts...> end{};
-			end.index_ = static_cast<uint16_t>(size_);
+			end.index_ = static_cast<uint16_t>((std::min)(size_, End));
 
 			return std::ranges::subrange{ begin, end };
 		}
@@ -66,18 +66,18 @@ namespace ECS {
 		/// @return コンポーネントのRange
 		template <typename... Ts>
 			requires(sizeof...(Ts) >= 2)
-		auto View() const
+		auto View(const uint32_t Begin = 0, const uint32_t End = (std::numeric_limits<uint32_t>::max)()) const
 		{
 
 			TypeCompIterator<true, Ts...> begin;
 			begin.pEntityStorage_ = storage_.get();
 			begin.pEntityMemory_ = storage_->GetEntityStorage().data()->second.get();
 			begin.cGroupSize_ = static_cast<uint16_t>(archetype_.GetChunkCapacity());
-			begin.index_ = 0u;
+			begin.index_ = static_cast<uint16_t>(Begin);
 			begin.offset_ = { static_cast<uint16_t>(GetCompArray<Ts>()->second.GetOffset())... };
 
 			TypeCompIterator<true, Ts...> end{};
-			end.index_ = static_cast<uint16_t>(size_);
+			end.index_ = static_cast<uint16_t>((std::min)(size_, End));
 
 			return std::ranges::subrange{ begin, end };
 		}

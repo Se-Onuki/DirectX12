@@ -7,6 +7,7 @@
 #include "../Archetype.h"
 #include "ComponentArray/Chunk.h"
 #include "../Entity/Prefab.h"
+#include "../Entity/EntityList.h"
 
 namespace ECS {
 
@@ -179,8 +180,8 @@ namespace ECS {
 		const EntityClass &CreateEntity(const Archetype &archetype);
 
 		const EntityClass &CreateEntity(const Prefab &prefab);
-		std::vector<EntityClass> CreateEntity(const Archetype &archetype, uint32_t count);
-		std::vector<EntityClass> CreateEntity(const Prefab &prefab, uint32_t count);
+		EntityList<false> CreateEntity(const Archetype &archetype, uint32_t count);
+		EntityList<false> CreateEntity(const Prefab &prefab, uint32_t count);
 
 		/// @brief アクセスできるチャンクを返す
 		ChunkSet<false> GetAccessableChunk(const Archetype &archetype) {

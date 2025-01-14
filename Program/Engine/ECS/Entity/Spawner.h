@@ -11,7 +11,7 @@ namespace ECS {
 	private:
 
 		// 生成時に呼び出される関数
-		using SpawnFunc = void(*)(std::vector<ECS::EntityClass> &entList);
+		using SpawnFunc = void(*)(const ECS::EntityList<false> &entList);
 
 		struct SpawnData {
 			// 基礎となるプレハブ
