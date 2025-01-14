@@ -690,43 +690,39 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackArrow, ECS::VelocityComp>();
 
 	// 攻撃範囲の生成
-	uint32_t index = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)).begin(); // 書き込み先のIndex
+	auto areaEntity = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)); // 書き込み先のIndex
 	auto areaChanks = world.GetAccessableChunk(areaArch);
 
-	auto sphereRanges = areaChanks.GetRange<ECS::SphereCollisionComp>();
-	auto attackPowerRanges = areaChanks.GetRange<ECS::AttackPower>();
-	auto knockBackRanges = areaChanks.GetRange<ECS::KnockBackDirection>();
-	auto lifeRanges = areaChanks.GetRange<ECS::LifeLimit>();
-	auto velocity = areaChanks.GetRange<ECS::VelocityComp>();
+	auto areaView = areaEntity.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::LifeLimit, ECS::VelocityComp>();
 
 	auto playerPosRanges = attackPlayerChunks.GetRange<ECS::PositionComp>();
 	auto playerRotRanges = attackPlayerChunks.GetRange<ECS::QuaternionRotComp>();
 	auto playerAttackRanges = attackPlayerChunks.GetRange<ECS::AttackStatus>();
 	auto playerPowerRanges = attackPlayerChunks.GetRange<ECS::AttackPower>();
+
+	auto areaItr = areaView.begin();
+
 	// プレイヤの数
 	uint32_t size = attackPlayerChunks.Count();
 	for (uint32_t i = 0; i < size; i++) {
 		if (attackCount.first.at(i)) {
+			auto [sphere, attackPow, knockBack, lifeLim, velocity] = *areaItr++;
 
 			const auto &playerFacing = playerRotRanges.At(i).quateRot_.GetFront();
 
 			const auto &attackStatus = playerAttackRanges.At(i);
-			auto &sphere = sphereRanges.At(index);
 			sphere.collision_.centor = playerPosRanges.At(i).position_ + attackStatus.offset_ * playerFacing;
 			sphere.collision_.radius = attackStatus.radius_ * 0.25f;
-			auto &knockBack = knockBackRanges.At(index);
 			// 吹き飛ばす力
 			knockBack.diffPower_ = { knockBackPower_, knockBackPower_ };
 			knockBack.diff_ = { playerFacing.x, playerFacing.z };
 			// 攻撃持続時間
-			lifeRanges.At(index).lifeLimit_ = 5.f;
+			lifeLim.lifeLimit_ = 5.f;
 			// 攻撃力
-			attackPowerRanges.At(index) = playerPowerRanges.At(i);
+			attackPow = playerPowerRanges.At(i);
 
-			velocity.At(index).velocity_ = playerFacing * 20.f;
+			velocity.velocity_ = playerFacing * 20.f;
 
-			// 次に移動
-			++index;
 		}
 	}
 }

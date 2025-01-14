@@ -18,7 +18,7 @@ namespace ECS {
 
 		template<typename... Ts>
 		auto View() const {
-			return chunk_->View<Ts...>();
+			return chunk_->View<Ts...>(begin_, end_);
 		}
 
 		ChunkPtr GetChunk() const { return chunk_; }
