@@ -480,6 +480,9 @@
     <ClCompile Include="Engine\ECS\World\ComponentArray\ComponentArray.cpp">
       <Filter>Engine\ECS\Chunk</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\ResultScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -949,6 +952,12 @@
     </ClInclude>
     <ClInclude Include="Engine\ECS\Chunk\ComponentIterator.h">
       <Filter>Engine\ECS\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Resource\GameScore.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ResultScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

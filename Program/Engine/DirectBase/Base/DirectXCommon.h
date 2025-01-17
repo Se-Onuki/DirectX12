@@ -172,8 +172,8 @@ public:
 
 	/// @fn void SetFullscreenViewPort(D3D12_VIEWPORT *, D3D12_RECT *)
 	/// @brief フルスクリーンのビューポート設定を適用する
-	/// @param viewport ビューポート
-	/// @param[in] scissorRect シザー短形
+	/// @param[out] viewport ビューポート
+	/// @param[out] scissorRect シザー短形
 	void SetFullscreenViewPort(D3D12_VIEWPORT *viewport, D3D12_RECT *scissorRect);
 
 	/// @fn void DrawTargetReset(D3D12_CPU_DESCRIPTOR_HANDLE *, const SoLib::Color::RGB4 &, D3D12_CPU_DESCRIPTOR_HANDLE *, const D3D12_VIEWPORT &, const D3D12_RECT &)

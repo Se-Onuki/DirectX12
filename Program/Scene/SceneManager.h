@@ -67,6 +67,11 @@ public:
 
 	void Cancel();
 
+	IScene *const GetNextScene() const { return nextScene_.get(); }
+
+	template <typename T>
+	T *const GetNextScene() const { return dynamic_cast<T *const>(nextScene_.get()); }
+
 
 	/// @brief シーン遷移
 	/// @param name 遷移先のシーン

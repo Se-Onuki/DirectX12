@@ -19,14 +19,14 @@ namespace ECS {
 		auto &&entity = CreateEntity(prefab.GetArchetype());
 
 		const auto *compRegistry = ECS::ComponentRegistry::GetInstance();
-		const auto &compItr = prefab.GetComponentMap();
+		const auto &prefabComp = prefab.GetComponentMap();
 
 		for (uint32_t i : prefab.GetArchetype().required_.GetIndexList()) {
 			if (not prefab.GetArchetype().required_.Get()[i]) { continue; }
 			const auto &typeKey = compRegistry->typeDatas_[i];
 
 			auto ptr = entity.chunk_->GetComp(i, entity.totalIndex_);
-			std::memcpy(ptr, compItr.at(typeKey.typeIndex_).get(), typeKey.typeSize_);
+			std::memcpy(ptr, prefabComp.at(typeKey.typeIndex_).get(), typeKey.typeSize_);
 		}
 
 		return entity;

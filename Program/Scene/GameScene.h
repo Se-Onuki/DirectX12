@@ -36,6 +36,7 @@
 #include "../Header/Object/HealthBar.h"
 #include "../Header/Object/PlayerLevel/LevelUP.h"
 #include "../Header/Object/Fade.h"
+#include "../Game/Resource/GameScore.h"
 
 /// @class GameScene
 /// @brief ゲームシーン
@@ -81,15 +82,26 @@ public:
 
 private:
 
-	void PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SceneManager*const scene, Fade*const fade) const;
+	/// @brief ゲームのリザルトを生成する
+	const GameScore &GetGameScore() const;
+
+	/// @brief 初期化処理
+	void FlameClear();
+
+	/// @brief プレイヤの死亡判定
+	/// @param world[in] ワールドデータ 
+	/// @param playerTimer[in, out] タイマー 
+	/// @param scene[out] シーンマネージャー 
+	/// @param fade[out] フェード処理 
+	void PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SceneManager *const scene, Fade *const fade) const;
 
 	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
-	void GeneratePlayerRangeAttack(ECS::World& world) const;
+	void GeneratePlayerRangeAttack(ECS::World &world) const;
 
 	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
-	void GeneratePlayerArrowAttack(ECS::World& world) const;
+	void GeneratePlayerArrowAttack(ECS::World &world) const;
 
 	/// @brief 経験値の生成
 	/// @param world[in, out] ワールドデータ
@@ -97,7 +109,7 @@ private:
 
 	/// @brief 経験値の加算
 	/// @param world[in, out] ワールドデータ
-	void PlayerExperience(ECS::World& world) const;
+	void PlayerExperience(ECS::World &world) const;
 
 	/// @brief 攻撃判定の描画
 	/// @param world[in] ワールドデータ
@@ -109,18 +121,28 @@ private:
 	/// @param attackRender[out] 描画バッファ
 	void ArrowAttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
 
-	void AddSpawner(SoLib::DeltaTimer& timer, ECS::Spawner& spawner) const;
+	/// @brief タイマーに応じてスポナーに追加する処理
+	/// @param timer[in, out] タイマー 
+	/// @param spawner[out] スポナー 
+	void AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) const;
 
 private:
 	/// @brief メニューのタイマー
 	SoLib::DeltaTimer menuTimer_;
 
+	// レベルアップのUIのサイズ
 	VItem(Vector2, LevelUpUISize, _) {};
+	// 経験値バーのUIの中心位置の画面サイズに対する比率
 	VItem(Vector2, ExpUICentorMul, _) { { 0.5f, 1.f } };
-	VItem(Vector2, ExpUICentorDiff, _) { {0.f, -16.f} };
-	VItem(Vector2, ExpUIScaleMul, _) { {1.f, 0.f} };
-	VItem(Vector2, ExpUIScaleDiff, _) { {0.f, 32.f} };
+	// 経験値バーのUIの中心位置のピクセル単位の位置
+	VItem(Vector2, ExpUICentorDiff, _) { { 0.f, -16.f } };
+	// 経験値バーのUIのサイズの画面サイズに対する比率
+	VItem(Vector2, ExpUIScaleMul, _) { { 1.f, 0.f } };
+	// 経験値バーのUIのサイズのピクセル単位のサイズ
+	VItem(Vector2, ExpUIScaleDiff, _) { { 0.f, 32.f } };
 
+	// ゲームのスコアを返す
+	GameScore gameScore_;
 
 	/// @brief メニューの表示フラグ
 	bool isMenuOpen_ = false;
@@ -225,10 +247,14 @@ private:
 	/// @brief ガウシアンブラーのパラメータ
 	CBuffer<std::pair<float, int32_t>> gaussianParam_;
 
+	// 影の色
 	SoLib::Color::RGB4 shadowColor_ = 0x00000055;
+	// 経験値の色
 	SoLib::Color::RGB4 expColor_ = 0x555500FF;
 
+	// 攻撃時間
 	float attackTime_ = 0.25f;
+	// ノックバック威力
 	float knockBackPower_ = 0.5f;
 
 	// 飛び道具の回転の速度

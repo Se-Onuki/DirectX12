@@ -3,6 +3,8 @@
 /// @author ONUKI seiya
 #include "GameScene.h"
 
+#include "ResultScene.h"
+
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
 #include "../Engine/DirectBase/Model/ModelManager.h"
@@ -121,7 +123,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::SphereCollisionComp{ .collision_ = Sphere{.centor = Vector3::up, .radius = 1.f } };
 	*playerPrefab_ += ECS::PlayerTag{};
 	*playerPrefab_ += ECS::IsLanding{};
-	*playerPrefab_ += ECS::AttackCollisionComp{ };
+	*playerPrefab_ += ECS::AttackCollisionComp{};
 	*playerPrefab_ += ECS::EntityState{};
 	*playerPrefab_ += ECS::HealthComp::Create(120);
 	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
@@ -133,7 +135,6 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::Experience{};
 	*playerPrefab_ += ECS::HasShadow{};
 
-	//entityManager_->CreateEntity(*playerPrefab_);
 	newWorld_.CreateEntity(*playerPrefab_);
 
 	enemyPrefab_ = std::make_unique<ECS::Prefab>();
@@ -345,8 +346,7 @@ void GameScene::OnEnter() {
 		static constexpr int32_t powerUp = 5;
 
 		button->Init(TextureManager::Load("UI/PowerUp.png"), [this]() {
-			Archetype playerArchetype;
-			playerArchetype.AddClassData<ECS::PlayerTag>();
+			Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
 
 			// プレイヤのView
 			auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
@@ -367,6 +367,12 @@ void GameScene::OnExit() {
 	audio_->StopAllWave();
 
 	ECS::System::Par::WeaponCollision::attackCollisions_.reset();
+
+	auto nextScene = sceneManager_->GetNextScene<ResultScene>();
+	if (nextScene) {
+		nextScene->SetGameScore(GetGameScore());
+	}
+
 }
 
 void GameScene::Update() {
@@ -386,17 +392,7 @@ void GameScene::Update() {
 
 	damageTimer_.Update(deltaTime);
 
-	ghostRenderer_.Clear();
-	shadowRenderer_.Clear();
-	expRender_.Clear();
-	attackRender_.Clear();
-	arrowAttackRender_.Clear();
-	particleArray_.clear();
-
-	blockRender_->clear();
-	skinModelRender_->clear();
-	modelHandleRender_->clear();
-	skinModelHandleRender_->clear();
+	FlameClear();
 
 	spawnTimer_.Update(fixDeltaTime);
 	playerSpawn_.Update(fixDeltaTime);
@@ -417,6 +413,7 @@ void GameScene::Update() {
 
 	// 攻撃の追加
 	GeneratePlayerRangeAttack(newWorld_);
+	// 飛び道具の追加
 	GeneratePlayerArrowAttack(newWorld_);
 
 	// もし生存フラグが折れていたら、配列から削除
@@ -538,13 +535,14 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	Model::SetPipelineType(Model::PipelineType::kParticle);
-
 	light_->SetLight(commandList);
 
 	shadowRenderer_.DrawExecute(camera);
 	attackRender_.DrawExecute(camera);
-	arrowAttackRender_.DrawExecute(camera);
 	expRender_.DrawExecute(camera);
+
+	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
+	arrowAttackRender_.DrawExecute(camera);
 
 	Model::EndDraw();
 
@@ -644,6 +642,26 @@ void GameScene::PostEffectEnd()
 
 }
 
+const GameScore &GameScene::GetGameScore() const
+{
+	return gameScore_;
+}
+
+void GameScene::FlameClear()
+{
+	ghostRenderer_.Clear();
+	shadowRenderer_.Clear();
+	expRender_.Clear();
+	attackRender_.Clear();
+	arrowAttackRender_.Clear();
+	particleArray_.clear();
+
+	blockRender_->clear();
+	skinModelRender_->clear();
+	modelHandleRender_->clear();
+	skinModelHandleRender_->clear();
+}
+
 void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SceneManager *const scene, Fade *const fade) const
 {
 	Archetype playerArchetype;
@@ -666,7 +684,7 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 			// 終わっていたら
 			if (playerTimer.IsFinish() and playerTimer.IsActive()) {
 
-				scene->ChangeScene("TitleScene", 0.5f);
+				scene->ChangeScene("ResultScene", 0.5f);
 
 				fade->Start({}, 0x000000FF, 0.25f);
 			}
@@ -891,8 +909,7 @@ void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInst
 
 void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const
 {
-	Archetype archetype;
-	archetype.AddClassData<ECS::AttackArrow>();
+	Archetype archetype = Archetype::Generate<ECS::AttackArrow>();
 	// チャンクの取得
 	auto ghostChanks = world.GetAccessableChunk(archetype);
 	// オブジェクトの総数
@@ -918,7 +935,7 @@ void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::Mode
 		std::transform(range.begin(), range.end(), &span[ghostOffset[i]], [attackRotSpeed](const auto &itm) {
 			const auto &[trans, alive] = itm;
 
-			Particle::ParticleData result{ .color = 0xFFFFFFFF };
+			Particle::ParticleData result{ .color = 0x555555FF };
 			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * std::fmodf(alive.aliveTime_, attackRotSpeed)) * (trans.collision_.radius * 0.25f);
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
@@ -938,7 +955,7 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 	if (timer.IsFinish()) {
 
 		// スポナーに追加を要求する
-		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](const ECS::EntityList<false>& enemys)
+		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](const ECS::EntityList<false> &enemys)
 			{
 				// コンポーネントの配列
 				ECS::ComponentSpan::TRange<ECS::PositionComp> arr = enemys.GetChunk()->GetComponent<ECS::PositionComp>();

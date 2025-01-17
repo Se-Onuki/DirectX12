@@ -248,6 +248,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\CGTaskScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
+    <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="Engine\Utils\Convert\Convert.cpp" />
@@ -369,6 +370,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\SceneManager\SceneLoader.h" />
     <ClInclude Include="Engine\SolEngine.h" />
     <ClInclude Include="Engine\Utils\Math\UIValue.h" />
+    <ClInclude Include="Game\Resource\GameScore.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />
@@ -386,6 +388,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\PlayerLevel\LevelUP.h" />
     <ClInclude Include="Scene\CGTaskScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
+    <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Engine\Utils\Containers\AlignasWrapper.h" />

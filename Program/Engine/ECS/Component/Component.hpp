@@ -346,13 +346,16 @@ namespace ECS {
 	};
 
 	// 範囲攻撃の演出
-	struct AttackRangeCircle : IComponent {
-
-	};
+	struct AttackRangeCircle : IComponent {};
 	// 矢の攻撃の演出
-	struct AttackArrow : IComponent {
+	struct AttackArrow : IComponent {};
 
-	};
+	// 物理挙動
+	struct Rigidbody : IComponent {};
+
+	// 外部に影響を受けない物理挙動
+	struct KinematicRigidbody : IComponent {};
+
 	/// @brief 当たったら押し出す方向｡
 	struct KnockBackDirection : IComponent {
 		// 当たった対象がベクトルに対して押し出される方向｡範囲内乱数のローカルの弧度法｡

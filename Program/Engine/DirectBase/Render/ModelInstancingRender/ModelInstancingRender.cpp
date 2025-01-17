@@ -88,18 +88,28 @@ namespace SolEngine {
 		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
 			// チャンクからデータの取得
 			auto transMats = ghostChanks[i]->GetComponent<ECS::PositionComp>();
-			// 転送する
-			std::transform(transMats.begin(), transMats.end(), &span[ghostOffset[i]], [color, afterFunc](const ECS::PositionComp &trans) {
+			if (afterFunc) {
+				// 転送する
+				std::transform(transMats.begin(), transMats.end(), &span[ghostOffset[i]], [color, afterFunc](const ECS::PositionComp &trans) {
 
-				Particle::ParticleData result{ .color = color };
-				result.transform.World = Matrix4x4::Identity();
-				result.transform.World.GetTranslate() = trans;
+					Particle::ParticleData result{ .color = color };
+					result.transform.World = Matrix4x4::Identity();
+					result.transform.World.GetTranslate() = trans;
 
-				if (afterFunc) {
 					afterFunc(result);
-				}
-				return result;
-				});
+					return result;
+					});
+			}
+			else {
+				std::transform(transMats.begin(), transMats.end(), &span[ghostOffset[i]], [color, afterFunc](const ECS::PositionComp &trans) {
+
+					Particle::ParticleData result{ .color = color };
+					result.transform.World = Matrix4x4::Identity();
+					result.transform.World.GetTranslate() = trans;
+
+					return result;
+					});
+			}
 		}
 	}
 

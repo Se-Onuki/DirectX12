@@ -6,6 +6,7 @@
 #include "GameScene.h"
 #include "TitleScene.h"
 #include "CGTaskScene.h"
+#include "ResultScene.h"
 
 SceneManager *const IScene::sceneManager_ = SceneManager::GetInstance();
 
@@ -18,6 +19,7 @@ void SceneManager::StaticInit() {
 	sceneFactory_["TitleScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<TitleScene>(); };
 	sceneFactory_["GameScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<GameScene>(); };
 	sceneFactory_["CGTaskScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<CGTaskScene>(); };
+	sceneFactory_["ResultScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<ResultScene>(); };
 }
 
 void SceneManager::Cancel() {

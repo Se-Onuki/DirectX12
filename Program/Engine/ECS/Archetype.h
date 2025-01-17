@@ -18,6 +18,14 @@ public:
 	Archetype() = default;
 
 	/// @brief コンポーネントを追加
+	template<typename T, typename... TComps>
+	static Archetype Generate() {
+		Archetype result;
+		result.AddClassData<T, TComps...>();
+		return result;
+	}
+
+	/// @brief コンポーネントを追加
 	/// @param component 追加するコンポーネント
 	void AddClassData(const std::initializer_list<uint32_t> &component) {
 		ECS::ComponentRegistry *const compReg = ECS::ComponentRegistry::GetInstance();

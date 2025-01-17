@@ -122,6 +122,7 @@ namespace ECS {
 			class MoveCollisionPosition :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::SphereCollisionComp, ECS::VelocityComp> readWrite_;
+				using Exclusions = Exclusions<ECS::PositionComp>;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);
@@ -139,7 +140,7 @@ namespace ECS {
 
 			class EnemyAttack :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, ECS::HealthComp, ECS::SphereCollisionComp, ECS::AccelerationComp> readWrite_;
+				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, ECS::HealthComp, const ECS::SphereCollisionComp, ECS::AccelerationComp> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);
@@ -147,7 +148,7 @@ namespace ECS {
 
 			class LevelUp :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::Experience> readWrite_;
+				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, const ECS::SphereCollisionComp, ECS::Experience> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 				struct ExpList {
 					ECS::ChunkTRange<ECS::PositionComp, true> pos_;
@@ -164,7 +165,7 @@ namespace ECS {
 
 			class FallCollision :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::SphereCollisionComp, ECS::PositionComp, ECS::VelocityComp> readWrite_;
+				ReadAndWrite<const ECS::SphereCollisionComp, ECS::PositionComp, ECS::VelocityComp> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static const Ground *ground_;
@@ -174,7 +175,7 @@ namespace ECS {
 
 			class WeaponCollision :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::HealthComp, ECS::InvincibleTime> readWrite_;
+				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, const ECS::SphereCollisionComp, ECS::HealthComp, ECS::InvincibleTime> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 				struct AttackCollisions {
 					ECS::ChunkTRange<ECS::SphereCollisionComp, true> sphere_;
