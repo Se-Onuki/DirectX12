@@ -338,7 +338,7 @@ namespace ECS {
 	struct Experience : IComponent {
 		uint32_t level_{};
 		uint32_t exp_{};
-		uint32_t(*needExp_)(uint32_t level) = [](uint32_t level)->uint32_t { return 10 + static_cast<uint32_t>(0.25f * std::powf(static_cast<float>(level), 1.5f)); };
+		uint32_t(*needExp_)(uint32_t level) = [](uint32_t level)->uint32_t { return 10 + static_cast<uint32_t>(0.5f * std::powf(static_cast<float>(level), 1.5f)); };
 	};
 
 	/// @brief レベルデータから構築されたという証明書

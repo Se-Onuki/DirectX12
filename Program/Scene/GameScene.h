@@ -111,6 +111,11 @@ private:
 	/// @param world[in, out] ワールドデータ
 	void PlayerExperience(ECS::World &world) const;
 
+	/// @brief パーティクルの描画
+	/// @param world[in] ワールドデータ
+	/// @param attackRender[out] 描画バッファ
+	void PatricleRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
+
 	/// @brief 攻撃判定の描画
 	/// @param world[in] ワールドデータ
 	/// @param attackRender[out] 描画バッファ
@@ -258,7 +263,7 @@ private:
 	float knockBackPower_ = 0.5f;
 
 	// 飛び道具の回転の速度
-	float arrowAttackRotSpeed_ = 0.125f;
+	float arrowAttackRotSpeed_ = 0.5f;
 
 	float captureRange_ = 3.f;
 

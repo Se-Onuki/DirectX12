@@ -156,6 +156,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::UnRender{};
 	*enemyPrefab_ += ECS::HasShadow{};
 	*enemyPrefab_ += ECS::InvincibleTime{};
+	*enemyPrefab_ += ECS::Rigidbody{};
 
 	//entityManager_->CreateEntity(*enemyPrefab_);
 	newWorld_.CreateEntity(*enemyPrefab_);
@@ -269,6 +270,7 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::AirResistanceSystem>();
 	systemExecuter_.AddSystem<ECS::System::Par::MovePosition>();
 	systemExecuter_.AddSystem<ECS::System::Par::MoveCollisionPosition>();
+	//systemExecuter_.AddSystem<ECS::System::Par::CollisionPushOut>();
 
 	// ゲーム固有の処理
 	systemExecuter_.AddSystem<ECS::System::Par::EnemyMove>();
@@ -846,7 +848,8 @@ void GameScene::GenerateExperience(ECS::World &world) const
 		for (uint32_t i = 0; i < size; i++) {
 			if (deadCount.first.at(i)) {
 				auto [a, b] = (*entItr++);
-				a = enemRange.At(i);
+				auto enemPos = enemRange.At(i);
+				a = enemPos;
 			}
 		}
 	}

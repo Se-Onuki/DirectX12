@@ -119,6 +119,7 @@ namespace ECS {
 
 				void Execute(const World *const, const float);
 			};
+
 			class MoveCollisionPosition :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::SphereCollisionComp, ECS::VelocityComp> readWrite_;
@@ -126,6 +127,18 @@ namespace ECS {
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);
+			};
+
+			class CollisionPushOut :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::PositionComp, ECS::SphereCollisionComp, ECS::Rigidbody, ECS::EnemyTag> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				inline static std::vector<std::ranges::subrange<TypeCompIterator<true, ECS::PositionComp, ECS::SphereCollisionComp>>> collisions_;
+
+				void Execute(const World *const, const float);
+				/// @brief 毎フレーム一度だけ実行するシステム
+				static void ExecuteOnce(const World *const, const float);
 			};
 
 			class EnemyMove :public IJobEntity {

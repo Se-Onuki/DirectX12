@@ -118,6 +118,27 @@ namespace ECS::System::Par {
 		pos.collision_.centor += velocity.velocity_ * deltaTime;
 	}
 
+	void CollisionPushOut::Execute(const World *const, const float)
+	{
+		
+
+	}
+
+	void CollisionPushOut::ExecuteOnce(const World *const world, const float)
+	{
+		collisions_.clear();
+		auto chunks = world->GetAccessableChunk(Archetype::Generate<ECS::PositionComp, ECS::SphereCollisionComp, ECS::Rigidbody, ECS::EnemyTag>());
+
+		if (chunks.empty()) {
+			return;
+		}
+
+		for (const auto &cItr : chunks) {
+			collisions_.push_back(cItr->View<ECS::PositionComp, ECS::SphereCollisionComp>());
+		}
+
+	}
+
 	Vector3 EnemyMove::playerPos_{};
 	void EnemyMove::Execute(const World *const, const float deltaTime)
 	{
