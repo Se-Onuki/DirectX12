@@ -30,6 +30,17 @@ void ResultScene::Update()
 
 void ResultScene::Draw()
 {
+	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
+	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
+
+
+	Sprite::StartDraw(commandList);
+
+	// スプライトの描画
+	fade_->Draw();
+
+	Sprite::EndDraw();
+
 }
 
 void ResultScene::SetGameScore(const GameScore &gameScore)

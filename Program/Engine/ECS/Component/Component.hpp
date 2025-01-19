@@ -331,6 +331,7 @@ namespace ECS {
 		float offset_ = 0.f;
 		float radius_ = 4.5f;
 	};
+
 	struct Parent : IComponent {
 	};
 
@@ -349,6 +350,37 @@ namespace ECS {
 	struct AttackRangeCircle : IComponent {};
 	// 矢の攻撃の演出
 	struct AttackArrow : IComponent {};
+
+	struct ArrowShooter : IComponent {
+		// 弾の数
+		uint32_t count_;
+
+		// クールタイム
+		float coolTime_;
+		// 発射に必要な時間
+		float needTime_;
+
+		float radius_ = 1.f;
+
+		uint32_t power_ = 5;
+
+		Angle::Radian angle_ = 30._deg;
+
+		bool isFire_ = false;
+
+		bool Update(float deltaTime) {
+			isFire_ = false;
+			// 時間差分を追加
+			coolTime_ += deltaTime;
+			// 範囲を超えていたら
+			if (coolTime_ >= needTime_) {
+				coolTime_ = std::fmodf(coolTime_, needTime_);
+				isFire_ = true;
+			}
+			return isFire_;
+		}
+
+	};
 
 	// 物理挙動
 	struct Rigidbody : IComponent {};

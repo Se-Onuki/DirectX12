@@ -210,6 +210,14 @@ namespace ECS {
 				void Execute(const World *const, const float);
 			};
 
+			class PlayerShooterUpdate :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::ArrowShooter> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
+			};
+
 			class PlayerAreaAttack :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackRangeCircle> readWrite_;

@@ -11,6 +11,8 @@
 
 namespace ECS {
 
+
+
 	template <typename T, bool IsConst = false>
 	class ChunkTRange : public std::vector<ComponentSpan::TRange<T, IsConst>> {
 	public:

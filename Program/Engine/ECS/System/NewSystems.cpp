@@ -360,6 +360,13 @@ namespace ECS::System::Par {
 
 	}
 
+	void PlayerShooterUpdate::Execute(const World *const, const float deltaTime)
+	{
+		auto &[shooter] = readWrite_;
+		shooter.Update(deltaTime);
+
+	}
+
 	void PlayerAreaAttack::Execute(const World *const, const float)
 	{
 		auto &[pos, quateRot, attackCircle] = readWrite_;

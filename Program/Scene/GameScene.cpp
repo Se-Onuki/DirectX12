@@ -134,6 +134,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
 	*playerPrefab_ += ECS::Experience{};
 	*playerPrefab_ += ECS::HasShadow{};
+	*playerPrefab_ += ECS::ArrowShooter{ .count_ = 0, .needTime_ = 1.f };
 
 	newWorld_.CreateEntity(*playerPrefab_);
 
@@ -275,6 +276,7 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::WeaponCollision>();
 	systemExecuter_.AddSystem<ECS::System::Par::PlayerMove>();
 	systemExecuter_.AddSystem<ECS::System::Par::PlayerAttack>(); ECS::System::Par::PlayerAttack::attackModel_ = attackModel_;
+	systemExecuter_.AddSystem<ECS::System::Par::PlayerShooterUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::EnemyAttack>();
 
 	// 汎用的な処理
@@ -333,9 +335,9 @@ void GameScene::OnEnter() {
 
 			for (auto chunk : playerChunks) {
 				for (auto &player : *chunk) {
-					auto &health = player.GetComponent<ECS::HealthComp>();
-					// 体力全回復
-					health.nowHealth_ = health.maxHealth_;
+					auto &shooter = player.GetComponent<ECS::ArrowShooter>();
+					// 弾追加
+					shooter.count_++;
 				}
 			}
 			});
@@ -697,27 +699,33 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 {
 	// 攻撃しているプレイヤのアーキタイプ
 	Archetype attackPlayerArch{};
-	attackPlayerArch.AddClassData<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::AttackStatus, ECS::AttackCooltime, ECS::AttackCollisionComp>();
+	attackPlayerArch.AddClassData<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::ArrowShooter>();
 	// チャンクの取得
 	const auto attackPlayerChunks = world.GetAccessableChunk(attackPlayerArch);
+	// 撃ってる弾の数
+	size_t fireCount = 0;
 	// 攻撃中のプレイヤの数
-	auto attackCount = attackPlayerChunks.CountIfFlag<ECS::AttackCollisionComp>([](const ECS::AttackCollisionComp &flag) { return flag.isActive_; });
+	auto attackCount = attackPlayerChunks.CountIfFlag<ECS::ArrowShooter>([&fireCount](const ECS::ArrowShooter &flag) {
+		bool isFire = flag.isFire_ and flag.count_;
+		if (isFire) { fireCount += flag.count_; }
+		return isFire;
+		});
 	// もし生成数が0なら終わり
-	if (attackCount.second == 0) { return; }
+	if (fireCount == 0) { return; }
+
 	// 攻撃範囲のアーキタイプ
 	Archetype areaArch;
 	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackArrow, ECS::VelocityComp>();
 
 	// 攻撃範囲の生成
-	auto areaEntity = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)); // 書き込み先のIndex
+	auto areaEntity = world.CreateEntity(areaArch, static_cast<uint32_t>(fireCount * 2 - 1)); // 書き込み先のIndex
 	auto areaChanks = world.GetAccessableChunk(areaArch);
 
 	auto areaView = areaEntity.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::LifeLimit, ECS::VelocityComp>();
 
 	auto playerPosRanges = attackPlayerChunks.GetRange<ECS::PositionComp>();
 	auto playerRotRanges = attackPlayerChunks.GetRange<ECS::QuaternionRotComp>();
-	auto playerAttackRanges = attackPlayerChunks.GetRange<ECS::AttackStatus>();
-	auto playerPowerRanges = attackPlayerChunks.GetRange<ECS::AttackPower>();
+	auto playerAttackRanges = attackPlayerChunks.GetRange<ECS::ArrowShooter>();
 
 	auto areaItr = areaView.begin();
 
@@ -725,23 +733,27 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 	uint32_t size = attackPlayerChunks.Count();
 	for (uint32_t i = 0; i < size; i++) {
 		if (attackCount.first.at(i)) {
-			auto [sphere, attackPow, knockBack, lifeLim, velocity] = *areaItr++;
-
-			const auto &playerFacing = playerRotRanges.At(i).quateRot_.GetFront();
-
 			const auto &attackStatus = playerAttackRanges.At(i);
-			sphere.collision_.centor = playerPosRanges.At(i).position_ + attackStatus.offset_ * playerFacing;
-			sphere.collision_.radius = attackStatus.radius_ * 0.25f;
-			// 吹き飛ばす力
-			knockBack.diffPower_ = { knockBackPower_, knockBackPower_ };
-			knockBack.diff_ = { playerFacing.x, playerFacing.z };
-			// 攻撃持続時間
-			lifeLim.lifeLimit_ = 5.f;
-			// 攻撃力
-			attackPow = playerPowerRanges.At(i);
+			for (uint32_t c = 0; c < (attackStatus.count_ * 2 - 1); c++) {
 
-			velocity.velocity_ = playerFacing * 20.f;
+				auto [sphere, attackPow, knockBack, lifeLim, velocity] = *areaItr++;
 
+				const auto &playerFacing = playerRotRanges.At(i).quateRot_.GetFront();
+
+				sphere.collision_.centor = playerPosRanges.At(i).position_;
+				sphere.collision_.radius = attackStatus.radius_ * 0.25f;
+				// 吹き飛ばす力
+				knockBack.diffPower_ = { knockBackPower_, knockBackPower_ };
+				knockBack.diff_ = Vector2{ playerFacing.x, playerFacing.z }.Nomalize();
+				// 攻撃持続時間
+				lifeLim.lifeLimit_ = 5.f;
+				// 攻撃力
+				attackPow.power_ = attackStatus.power_;
+
+				float progress = (c + 0.5f) / static_cast<float>(attackStatus.count_ * 2 - 1);
+				// 弾の方向の設定
+				velocity.velocity_ = playerFacing * Quaternion::Create({ 0.f,attackStatus.angle_.Get() * (progress * 2 - 1) ,0.f }) * 20.f;
+			}
 		}
 	}
 }
