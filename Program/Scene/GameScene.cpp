@@ -307,26 +307,15 @@ void GameScene::OnEnter() {
 
 		button->Init(TextureManager::Load("UI/RangeUp.png"), [this]() {
 
-			Archetype playerArchetype;
-			playerArchetype.AddClassData<ECS::PlayerTag>();
+			captureRange_ += captureRangeLevelUp_;
 
-			// プレイヤのView
-			auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
-
-			for (auto chunk : playerChunks) {
-				for (auto &player : *chunk) {
-					auto &status = player.GetComponent<ECS::AttackStatus>();
-					// 攻撃範囲の増大
-					status.radius_++;
-				}
-			}
 			});
 	}
 
 	{
 		ButtonUI *button = levelUpUI_->GetButtonUI(1);
 
-		button->Init(TextureManager::Load("UI/FullHealth.png"), [this]() {
+		button->Init(TextureManager::Load("UI/Shuriken.png"), [this]() {
 			Archetype playerArchetype;
 			playerArchetype.AddClassData<ECS::PlayerTag>();
 
@@ -362,6 +351,27 @@ void GameScene::OnEnter() {
 			}
 			});
 	}
+
+	//{
+	//	std::unique_ptr<ButtonUI> button = ButtonUI::Generate();
+
+	//	button->Init(TextureManager::Load("UI/Shuriken.png"), [this]() {
+	//		Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
+
+	//		// プレイヤのView
+	//		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+
+	//		for (auto chunk : playerChunks) {
+	//			for (auto &player : *chunk) {
+	//				auto &power = player.GetComponent<ECS::AttackPower>();
+	//				// 攻撃力の増加
+	//				power.power_ += powerUp;
+	//			}
+	//		}
+	//		});
+
+	//	arrowLevelUp_.push_back(std::move(button));
+	//}
 
 }
 
@@ -829,10 +839,8 @@ void GameScene::GenerateExperience(ECS::World &world) const
 		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
 		// 経験値オーブの生成
 		auto ent = world.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
-		auto chunk = ent.View<ECS::PositionComp, ECS::IsAlive>();
-		auto entItr = chunk.begin();
+		auto entItr = ent.View<ECS::PositionComp, ECS::IsAlive>().begin();
 
-		//uint32_t index = 0;
 		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
 		uint32_t size = enemyChunks.Count();
 		for (uint32_t i = 0; i < size; i++) {
@@ -874,8 +882,8 @@ void GameScene::PlayerExperience(ECS::World &world) const
 				Vector3 pos = expPosRange.At(i).position_;
 				pos.y = 0.f;
 
-				// 三マス以下なら吸収する
-				if ((playerPos.position_ - pos).LengthSQ() <= 9.f) {
+				// captureRange_以下なら吸収する
+				if ((playerPos.position_ - pos).LengthSQ() <= captureRange_ * captureRange_) {
 					playerExp.exp_++;
 					isAlive.isAlive_ = false;
 				}
@@ -951,8 +959,8 @@ void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::Mode
 		std::transform(range.begin(), range.end(), &span[ghostOffset[i]], [attackRotSpeed](const auto &itm) {
 			const auto &[trans, alive] = itm;
 
-			Particle::ParticleData result{ .color = 0x555555FF };
-			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * std::fmodf(alive.aliveTime_, attackRotSpeed)) * (trans.collision_.radius * 0.25f);
+			Particle::ParticleData result{ .color = 0x333333FF };
+			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, Angle::Rad360 * std::fmodf(alive.aliveTime_, attackRotSpeed)) * (trans.collision_.radius * 0.25f);
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
 			return result;

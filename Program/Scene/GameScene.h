@@ -258,6 +258,11 @@ private:
 	float knockBackPower_ = 0.5f;
 
 	// 飛び道具の回転の速度
-	float arrowAttackRotSpeed_ = 0.25f;
+	float arrowAttackRotSpeed_ = 0.125f;
 
+	float captureRange_ = 3.f;
+
+	float captureRangeLevelUp_ = 0.5f;
+
+	std::vector<std::unique_ptr<ButtonUI>> arrowLevelUp_;
 };

@@ -360,9 +360,9 @@ namespace ECS {
 		// 発射に必要な時間
 		float needTime_;
 
-		float radius_ = 1.f;
+		float radius_ = 10.f;
 
-		uint32_t power_ = 5;
+		uint32_t power_ = 20;
 
 		Angle::Radian angle_ = 30._deg;
 
