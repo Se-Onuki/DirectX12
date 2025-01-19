@@ -113,6 +113,8 @@ public:
 
 	void Target(int32_t target);
 
+	void RandomSet();
+
 	/// @brief メニューが開いているか
 	/// @return メニューが開いているならTrue
 	bool IsActive() const { return isOpen_ or timer_.IsActive(); }

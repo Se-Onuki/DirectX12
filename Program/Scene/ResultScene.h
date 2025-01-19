@@ -18,6 +18,7 @@
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Header/Object/Ground.h"
 #include "../Game/Resource/GameScore.h"
+#include "../Header/Object/Fade.h"
 
 class ResultScene : public IScene {
 public:
@@ -34,7 +35,10 @@ public:
 
 private:
 
+	// ゲームスコア
 	GameScore gameScore_;
+	// フェード
+	Fade *fade_ = nullptr;
 	// 入力インスタンス
 	Input *input_ = nullptr;
 	// 音インスタンス

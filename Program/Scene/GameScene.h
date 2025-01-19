@@ -204,7 +204,7 @@ private:
 	/// @brief カメラのアドレス
 	Camera3D *followCamera_ = nullptr;
 	/// @brief 音のリソースハンドル
-	Audio::SoundHandle soundA_;
+	Audio::SoundHandle attackSound_;
 	/// @brief スポーン間隔を管理するタイマー
 	SoLib::DeltaTimer spawnTimer_{ 2.5f };
 	/// @brief ゲームオブジェクト

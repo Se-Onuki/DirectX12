@@ -3,6 +3,7 @@
 /// @author ONUKI seiya
 #include "LevelUP.h"
 #include "../../../Engine/DirectBase/Input/Input.h"
+#include <ranges>
 
 void LevelUP::Init(int32_t count)
 {
@@ -20,12 +21,9 @@ void LevelUP::Init(int32_t count)
 
 	// サイズを合わせる
 	buttonUIGroup_.buttonUIList_.resize(count);
-	// グループの代入
-	std::transform(button_.begin(), button_.end(), buttonUIGroup_.buttonUIList_.begin(), [](const std::unique_ptr<ButtonUI> &item)->ButtonUI *
-		{
-			return item.get();
-		}
-	);
+	
+	// ランダム配置
+	RandomSet();
 }
 
 void LevelUP::SetWindow(Vector2 center, Vector2 scale, float distance)
@@ -46,6 +44,9 @@ void LevelUP::Open(int32_t target)
 	isOpen_ = true;
 	// タイマーを開始する
 	timer_.Start();
+
+	// ランダム配置
+	RandomSet();
 	// カーソルをあわせる
 	Target(target);
 }
@@ -111,7 +112,7 @@ void LevelUP::Update(const float deltaTime)
 	timer_.Update(deltaTime);
 
 	// ボタンの数
-	const size_t buttonCount = button_.size();
+	const size_t buttonCount = buttonUIGroup_.buttonUIList_.size();
 	const float halfSize = (buttonScale_.x + distance_) / 2 * buttonCount;
 
 	// ボタンの選択の更新
@@ -138,8 +139,8 @@ void LevelUP::Draw() const
 	backGround_->Draw();
 
 	// ボタンの描画
-	for (int32_t i = 0; i < targetCount_ and i < button_.size(); i++) {
-		if (button_[i]) { button_[i]->Draw(); }
+	for (int32_t i = 0; i < targetCount_ and i < buttonUIGroup_.buttonUIList_.size(); i++) {
+		if (buttonUIGroup_.buttonUIList_[i]) { buttonUIGroup_.buttonUIList_[i]->Draw(); }
 	}
 }
 
@@ -155,8 +156,32 @@ void LevelUP::Target(int32_t target)
 		target_ = std::clamp(target, 0, targetCount_ - 1);
 
 		// ボタンを指定する
-		buttonPicker_.Pickup(button_.at(target_).get());
+		buttonPicker_.Pickup(buttonUIGroup_.buttonUIList_.at(target_));
 	}
+}
+
+void LevelUP::RandomSet()
+{
+	std::vector<int32_t> indices(button_.size());
+	for (int32_t i = 0; i < button_.size(); i++) {
+		indices[i] = i;
+	}
+
+	static std::mt19937 gen;
+	static bool init;
+	if (!init) {
+		std::random_device rd;
+		gen.seed(rd());
+		init = true;
+	}
+
+	std::shuffle(indices.begin(), indices.end(), gen);
+
+	std::transform(indices.begin(), indices.begin()+ targetCount_, buttonUIGroup_.buttonUIList_.begin(), [this](const int32_t i)->ButtonUI *
+		{
+			return button_[i].get();
+		}
+	);
 }
 
 std::unique_ptr<ButtonUI> ButtonUI::Generate()

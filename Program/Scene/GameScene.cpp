@@ -169,7 +169,7 @@ void GameScene::OnEnter() {
 	//entityManager_->CreateEntity(followCamera);
 	newWorld_.CreateEntity(followCamera);
 
-	soundA_ = audio_->LoadMP3("resources/Audio/SE/Player/startRotate1.mp3");
+	attackSound_ = audio_->LoadMP3("resources/Audio/SE/Player/startRotate1.mp3");
 
 	ground_.Init();
 
@@ -391,6 +391,7 @@ void GameScene::Update() {
 	light_->ImGuiWidget();
 
 	damageTimer_.Update(deltaTime);
+	gameScore_.aliveTime_ += fixDeltaTime;
 
 	FlameClear();
 
@@ -756,6 +757,9 @@ void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
 	auto attackCount = attackPlayerChunks.CountIfFlag<ECS::AttackCollisionComp>([](const ECS::AttackCollisionComp &flag) { return flag.isActive_; });
 	// もし生成数が0なら終わり
 	if (attackCount.second == 0) { return; }
+
+	attackSound_.Play(false, 0.5f);
+
 	// 攻撃範囲のアーキタイプ
 	Archetype areaArch;
 	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackRangeCircle>();
@@ -814,14 +818,14 @@ void GameScene::GenerateExperience(ECS::World &world) const
 		// 経験値オーブの生成
 		auto ent = world.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
 		auto chunk = ent.View<ECS::PositionComp, ECS::IsAlive>();
-		auto entItr = chunk.begin() + *ent.ItrRange().begin();
+		auto entItr = chunk.begin();
 
 		//uint32_t index = 0;
 		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
 		uint32_t size = enemyChunks.Count();
 		for (uint32_t i = 0; i < size; i++) {
 			if (deadCount.first.at(i)) {
-				auto [a, b] = (*entItr);
+				auto [a, b] = (*entItr++);
 				a = enemRange.At(i);
 			}
 		}
