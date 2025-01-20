@@ -963,7 +963,7 @@ void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::Mode
 			const auto &[trans, alive] = itm;
 
 			Particle::ParticleData result{ .color = 0x333333FF };
-			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, Angle::Rad360 * std::fmodf(alive.aliveTime_, attackRotSpeed)) * (trans.collision_.radius * 0.25f);
+			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, Angle::Rad360 * alive.aliveTime_ / attackRotSpeed) * (trans.collision_.radius * 0.25f);
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
 			return result;

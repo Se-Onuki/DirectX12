@@ -177,17 +177,6 @@ namespace ECS {
 	{
 		return l.index_ == r.index_;
 	}
-
-	//template<bool IsConst, typename... Ts>
-	//bool operator==(const TypeCompIterator<IsConst, Ts...> &l, const std::default_sentinel_t r)
-	//{
-	//	return l.index_ == l.cSize_;
-	//}
-	//template<bool IsConst, typename... Ts>
-	//bool operator!=(const TypeCompIterator<IsConst, Ts...> &l, const std::default_sentinel_t r)
-	//{
-	//	return l.index_ != l.cSize_;
-	//}
 	template<bool IsConst, typename... Ts>
 	std::strong_ordering operator<=>(const TypeCompIterator<IsConst, Ts...> &l, const TypeCompIterator<IsConst, Ts...> &r)
 	{
