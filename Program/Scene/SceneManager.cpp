@@ -7,6 +7,8 @@
 #include "TitleScene.h"
 #include "CGTaskScene.h"
 #include "ResultScene.h"
+#include "NT_ServerScene.h"
+#include "NT_ClientScene.h"
 
 SceneManager *const IScene::sceneManager_ = SceneManager::GetInstance();
 
@@ -20,6 +22,8 @@ void SceneManager::StaticInit() {
 	sceneFactory_["GameScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<GameScene>(); };
 	sceneFactory_["CGTaskScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<CGTaskScene>(); };
 	sceneFactory_["ResultScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<ResultScene>(); };
+	sceneFactory_["NT_ServerScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<NT_ServerScene>(); };
+	sceneFactory_["NT_ClientScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<NT_ClientScene>(); };
 }
 
 void SceneManager::Cancel() {

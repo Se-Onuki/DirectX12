@@ -41,15 +41,15 @@ namespace SoLib {
 		public:
 			File() = default;
 			// コンストラクタ
-			File(const std::string &filePath) {
+			File(const std::string_view &filePath) {
 				Load(filePath);
 			}
 
 			/// @brief ファイルを読み込む
 			/// @param filePath 読み込むファイルのパス
 			/// @return 読み込みに成功したか
-			bool Load(const std::string &filePath) {
-				std::ifstream file(filePath);
+			bool Load(const std::string_view &filePath) {
+				std::ifstream file(filePath.data());
 				if (not file) {
 					// std::cerr << "ファイルが開けません。" << std::endl;
 					return false;

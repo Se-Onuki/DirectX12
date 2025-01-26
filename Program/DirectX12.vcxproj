@@ -251,6 +251,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\CGTaskScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
+    <ClCompile Include="Scene\NT_ClientScene.cpp" />
     <ClCompile Include="Scene\NT_ServerScene.cpp" />
     <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -401,6 +402,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\PlayerLevel\LevelUP.h" />
     <ClInclude Include="Scene\CGTaskScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
+    <ClInclude Include="Scene\NT_ClientScene.h" />
     <ClInclude Include="Scene\NT_ServerScene.h" />
     <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />

@@ -309,7 +309,7 @@ public:
 		// 返す長さ
 		size_t length = afterSize - size_;
 		// メモリを渡す
-		result = {&arrayBuffer_[size_], length};
+		result = { &arrayBuffer_[size_], length };
 		// 長さを上書きする
 		size_ = static_cast<uint32_t>(afterSize);
 		// 返す
@@ -335,7 +335,7 @@ private:
 	DescHeap<D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV>::HeapRange heapRange_;
 	CBuffer<uint32_t> startIndex_;
 
-	uint32_t size_;
+	uint32_t size_{};
 };
 
 template <SoLib::IsRealType T>

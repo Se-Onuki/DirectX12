@@ -9,6 +9,8 @@ public:
 	~TcpClient() = default;
 public:
 
+	static std::unique_ptr<TcpClient> Generate(const char *hostIp, uint16_t port);
+
 	IsSuccess Init(const char *hostIp, uint16_t port);
 
 	/// @brief ホストの情報の検索
@@ -33,6 +35,20 @@ private:
 
 };
 
+inline std::unique_ptr<TcpClient> TcpClient::Generate(const char *hostIp, uint16_t port)
+{
+	std::unique_ptr<Network> network = std::make_unique<Network>();
+	network->SetPortID(port);
+	if (not network->Init()) {
+		return nullptr;
+	}
+	auto client = std::make_unique<TcpClient>(std::move(network));
+	if (not client->Init(hostIp, port)) {
+		return nullptr;
+	}
+	return std::move(client);
+}
+
 inline IsSuccess TcpClient::Init(const char *hostIp, uint16_t port)
 {
 	// ホストの検索
@@ -44,14 +60,14 @@ inline IsSuccess TcpClient::Init(const char *hostIp, uint16_t port)
 	return Connect(port);
 }
 
-LPHOSTENT TcpClient::SetHost(const char *hostIp)
+inline LPHOSTENT TcpClient::SetHost(const char *hostIp)
 {
 	// ホストのIPからホストの情報を取得する
 	lpHost_ = gethostbyname(hostIp);
 	return lpHost_;
 }
 
-IsSuccess TcpClient::Connect(uint16_t port)
+inline IsSuccess TcpClient::Connect(uint16_t port)
 {
 	SOCKADDR_IN sAddr;
 	std::memset(&sAddr, 0, sizeof(SOCKADDR_IN));

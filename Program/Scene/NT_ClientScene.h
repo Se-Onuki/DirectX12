@@ -1,4 +1,4 @@
-/// @file NT_ServerScene.h
+/// @file NT_ClientScene.h
 /// @brief NTのサーバーのシーン
 /// @author ONUKI seiya
 #pragma once
@@ -19,16 +19,16 @@
 #include "../Header/Object/Ground.h"
 #include "../Game/Resource/GameScore.h"
 #include "../Header/Object/Fade.h"
-#include "../Engine/Utils/Network/TcpServer.h"
+#include "../Engine/Utils/Network/TcpClient.h"
 #include "../Header/Entity/Entity.h"
 #include "../Engine/DirectBase/Render/ModelInstancingRender/ModelInstancingRender.h"
 
-void ServerNetworkPosition();
+void ClientNetworkPosition();
 
-class NT_ServerScene : public IScene {
+class NT_ClientScene : public IScene {
 public:
-	NT_ServerScene();
-	~NT_ServerScene();
+	NT_ClientScene();
+	~NT_ClientScene();
 
 	void OnEnter() override;
 	void OnExit() override;
@@ -37,6 +37,8 @@ public:
 	void Draw() override;
 
 	constexpr static uint16_t kPort_ = 8000;
+
+	constexpr static std::string_view kFileName_ = "./resources/IP/HostIP.txt";
 
 	inline static std::atomic<bool> isUpdate_ = false;
 	inline static std::atomic<bool> isRunning_ = true;
@@ -47,10 +49,10 @@ public:
 	inline static Vector3 playerB_;
 
 	// サーバー
-	inline static std::unique_ptr<TcpServer> server_;
+	inline static std::unique_ptr<TcpClient> client_;
 private:
 
-	IsSuccess InitServer();
+	IsSuccess InitClient();
 
 private:
 	// フェード

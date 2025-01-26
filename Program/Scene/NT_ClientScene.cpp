@@ -1,18 +1,18 @@
-#include "NT_ServerScene.h"
+#include "NT_ClientScene.h"
+#include "../Engine/Utils/IO/File.h"
 
-NT_ServerScene::NT_ServerScene()
+NT_ClientScene::NT_ClientScene()
 {
 }
 
-NT_ServerScene::~NT_ServerScene()
+NT_ClientScene::~NT_ClientScene()
 {
 }
 
-void NT_ServerScene::OnEnter()
+void NT_ClientScene::OnEnter()
 {
 	input_ = Input::GetInstance();
-
-	if (not InitServer()) {
+	if (not InitClient()) {
 		SceneManager::GetInstance()->ChangeScene("TitleScene", 0.f);
 		return;
 	}
@@ -31,25 +31,27 @@ void NT_ServerScene::OnEnter()
 
 	playerA_ = Vector3::right * -2.f;
 	playerB_ = Vector3::right * 2.f;
+
+	thread = std::make_unique<std::thread>(ClientNetworkPosition);
+
 	light_ = std::make_unique<DirectionLight>();
 	light_->Init();
+
 	camera_.translation_ = Vector3::front * -10.f;
 	camera_.UpdateMatrix();
-
-	thread = std::make_unique<std::thread>(ServerNetworkPosition);
 }
 
-void NT_ServerScene::OnExit()
+void NT_ClientScene::OnExit()
 {
-	isRunning_ = false;
+	isRunning_.store(false);
 	thread->join();
 }
 
-void NT_ServerScene::Update()
+void NT_ClientScene::Update()
 {
-	if (not server_) { return; }
+	if (not client_) { return; }
 	if (isUpdate_) {
-		playerB_ = recvPos_;
+		playerA_ = recvPos_;
 		isUpdate_.store(false);
 	}
 	auto dInput = input_->GetDirectInput();
@@ -63,15 +65,15 @@ void NT_ServerScene::Update()
 		velocity.x++;
 	}
 
-	playerA_ += velocity.Nomalize() * ImGui::GetIO().DeltaTime;
+	playerB_ += velocity.Nomalize() * ImGui::GetIO().DeltaTime;
 
 	renderBuffer_[0] = { .transform = Matrix4x4::Affine(Vector3::one, Vector3::zero, playerA_) };
 	renderBuffer_[1] = { .transform = Matrix4x4::Affine(Vector3::one, Vector3::zero, playerB_) };
 }
 
-void NT_ServerScene::Draw()
+void NT_ClientScene::Draw()
 {
-	if (not server_) { return; }
+	if (not client_) { return; }
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
 	Model::StartDraw(commandList);
@@ -82,27 +84,27 @@ void NT_ServerScene::Draw()
 	Model::EndDraw();
 }
 
-IsSuccess NT_ServerScene::InitServer()
+IsSuccess NT_ClientScene::InitClient()
 {
-	server_ = TcpServer::Generate(kPort_);
-	if (not server_) { return false; }
-	return server_->ConnectionWait();
+	SoLib::IO::File file(kFileName_);
+	std::string hostIP;
+	static_cast<std::stringstream &>(file) >> hostIP;
+	return (client_ = TcpClient::Generate(hostIP.c_str(), kPort_)) != nullptr;
 }
 
-void ServerNetworkPosition()
+void ClientNetworkPosition()
 {
+	while (NT_ClientScene::isRunning_) {
+		auto &server = NT_ClientScene::client_->GetSocket();
 
-	while (NT_ServerScene::isRunning_) {
-		auto &client = NT_ServerScene::server_->GetClient();
+		server.Send(&NT_ClientScene::playerB_, sizeof(Vector3));
 
-		auto size = client.Recv(&NT_ServerScene::recvPos_, sizeof(Vector3));
+		auto size = server.Recv(&NT_ClientScene::recvPos_, sizeof(Vector3));
 
 		if (size == static_cast<int32_t>(SOCKET_ERROR)) {
 			return;
 		}
-
-		client.Send(&NT_ServerScene::playerA_, sizeof(Vector3));
-		NT_ServerScene::isUpdate_.store(true);
+		NT_ClientScene::isUpdate_.store(true);
 	}
 
 }

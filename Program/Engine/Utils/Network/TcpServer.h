@@ -24,7 +24,7 @@ public:
 	/// @brief 接続処理と､待機を行う
 	/// @param backLog 
 	/// @return 接続が成功したか
-	IsSuccess ConnectionWait(int32_t backLog);
+	IsSuccess ConnectionWait(int32_t backLog = 0);
 
 	/// @brief 接続開始
 	/// @param backLog 
@@ -54,20 +54,20 @@ inline std::unique_ptr<TcpServer> TcpServer::Generate(const uint16_t port)
 	std::unique_ptr<Network> network = std::make_unique<Network>();
 	network->SetPortID(port);
 	if (not network->Init()) {
-		return false;
+		return nullptr;
 	}
 	// サーバの生成
 	std::unique_ptr<TcpServer> result = std::make_unique<TcpServer>(std::move(network));
 
 	// バインドの実行
 	if (not result->Bind(port)) {
-		return false;
+		return nullptr;
 	}
 
 	return std::move(result);
 }
 
-IsSuccess TcpServer::Init()
+inline IsSuccess TcpServer::Init()
 {
 
 	// バインドを実行
@@ -94,7 +94,7 @@ IsSuccess TcpServer::Init()
 }
 
 //
-IsSuccess TcpServer::Bind(const uint16_t port, const uint32_t addr)
+inline IsSuccess TcpServer::Bind(const uint16_t port, const uint32_t addr)
 {
 	SOCKADDR_IN saddr;
 	// メモリの初期化
@@ -127,7 +127,7 @@ inline IsSuccess TcpServer::ConnectionWait(int32_t backLog)
 	return IsSuccess{ client.first.IsActive() };
 }
 
-IsSuccess TcpServer::Listen(int32_t backLog)
+inline IsSuccess TcpServer::Listen(int32_t backLog)
 {
 	return listen(static_cast<SOCKET>(network_->GetSocket()), backLog) != SOCKET_ERROR;
 }
