@@ -29,7 +29,7 @@ private:
 class NumberRender {
 public:
 
-	static std::unique_ptr<NumberRender> Generate(Vector2 texSize, TextureHandle texture);
+	static std::unique_ptr<NumberRender> Generate(TextureHandle texture);
 
 
 private:

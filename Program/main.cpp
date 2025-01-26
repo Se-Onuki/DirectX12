@@ -46,6 +46,7 @@
 #include "Scene/CGTaskScene.h"
 #include "Engine/DirectBase/PostEffect/OffScreenRendering.h"
 #include "Engine/DirectBase/DxResource/DxResourceBufferPoolManager.h"
+#include "Engine/Utils/Network/WindowsSocket/WindowsSocket.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -66,9 +67,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	TextureManager *const textureManager = TextureManager::GetInstance();
 
 	Input *const input = Input::GetInstance();
-	//const DirectInput *const directInput = DirectInput::GetInstance();
 
 	Audio *const audio = Audio::GetInstance();
+
+	WindowsSocket wSocket{};
+	wSocket.Init(2, 0);
 
 #pragma region その他初期化
 
@@ -86,24 +89,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SolEngine::FullScreenTextureStrage::GetInstance()->Init();
 
 	input->Init();
-
-#pragma endregion
-
-#pragma region クラス化の残骸
-
-	//SolEngine::StaticInit("SoLEngine");
-
-	//auto *const winApp = SolEngine::GetInstance()->GetWinApp();
-
-	//auto *const dxCommon = SolEngine::GetInstance()->GetDXCommon();
-	//ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
-
-	//Input *const input = Input::GetInstance();
-	//const DirectInput *const directInput = DirectInput::GetInstance();
-
-	//TextureManager *const textureManager = TextureManager::GetInstance();
-
-	//Audio *const audio = Audio::GetInstance();
 
 #pragma endregion
 
@@ -223,6 +208,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_UPLOAD>::Finalize();
 	SolEngine::DxResourceBufferPoolManager<D3D12_HEAP_TYPE_DEFAULT>::Finalize();
+
+	wSocket.Finalize();
 
 	dxCommon->Finalize();
 

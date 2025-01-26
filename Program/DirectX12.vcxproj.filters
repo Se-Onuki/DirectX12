@@ -163,6 +163,9 @@
     <Filter Include="Engine\UI">
       <UniqueIdentifier>{378f09d5-22f9-47fd-949a-ce337bf07be8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Utils\Network">
+      <UniqueIdentifier>{abf51ab1-48d1-4140-9c5d-eaf22de9976e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -488,6 +491,15 @@
     </ClCompile>
     <ClCompile Include="Engine\UI\Text\NumberRender.cpp">
       <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\NT_ServerScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Network\Socket\UdpNetwork.cpp">
+      <Filter>Engine\Utils\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.cpp">
+      <Filter>Engine\Utils\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -967,6 +979,33 @@
     </ClInclude>
     <ClInclude Include="Engine\UI\Text\NumberRender.h">
       <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\NT_ServerScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\source\repos\NetworkTest\Library\Success.h">
+      <Filter>Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Network\Network.h">
+      <Filter>Engine\Utils\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Network\Socket\ConnectSocket.h">
+      <Filter>Engine\Utils\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Network\Socket\OwnedSocket.h">
+      <Filter>Engine\Utils\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Network\Socket\UdpNetwork.h">
+      <Filter>Engine\Utils\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Network\TcpClient.h">
+      <Filter>Engine\Utils\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Network\TcpServer.h">
+      <Filter>Engine\Utils\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.h">
+      <Filter>Engine\Utils\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

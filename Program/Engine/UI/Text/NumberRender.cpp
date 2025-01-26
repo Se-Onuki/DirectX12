@@ -1,6 +1,6 @@
 #include "NumberRender.h"
 
-std::unique_ptr<NumberRender> NumberRender::Generate(Vector2 texSize, TextureHandle texture)
+std::unique_ptr<NumberRender> NumberRender::Generate(TextureHandle texture)
 {
 	std::unique_ptr<NumberRender> result = std::make_unique<NumberRender>();
 	result->texture_ = texture;
@@ -47,5 +47,9 @@ void NumberText::SetText(uint32_t text)
 
 	textCount_ = static_cast<uint32_t>(str.size());
 
-	std::transform(str.rbegin(), str.rbegin() + (std::min)(str.size(), 3llu), numText_.rbegin(), [textXSize](char c, std::unique_ptr<Sprite> &sprite) { sprite->SetTexOrigin(Vector2{ 0.f, textXSize * static_cast<float>(c - '0') }); });
+	for (int32_t i = static_cast<int32_t>((std::min)(str.size(), 3llu) - 1); i >= 0; i--) {
+		numText_[i]->SetTexOrigin(Vector2{ 0.f, textXSize * static_cast<float>(str[i] - '0') });
+	}
+
+	// std::transform(str.rbegin(), str.rbegin() + (std::min)(str.size(), 3llu), numText_.rbegin(), [textXSize](char c, std::unique_ptr<Sprite> &sprite) ->void { sprite->SetTexOrigin(Vector2{ 0.f, textXSize * static_cast<float>(c - '0') }); });
 }

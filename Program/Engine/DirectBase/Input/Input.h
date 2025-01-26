@@ -46,7 +46,7 @@ struct VirtualPad
 {
 	Vector2 stickR_;
 	Vector2 stickL_;
-	WORD button_;
+	uint16_t button_;
 	float triggerR_;
 	float triggerL_;
 

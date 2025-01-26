@@ -163,8 +163,11 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 	}
 
+	auto textureDesc = texture.textureResource_->GetDesc();
+
 	texture.name_ = file_name;
 	texture.handle_ = heapRange_.GetHandle(handle);
+	texture.textureSize_ = Vector2{ static_cast<float>(textureDesc.Width), static_cast<float>(textureDesc.Height) };
 
 	// SRVの作成
 	device_->CreateShaderResourceView(texture.textureResource_.Get(), &srvDesc, texture.handle_.cpuHandle_);
