@@ -43,7 +43,7 @@ namespace SolEngine {
 		rootSignature_ = pRootSignatureManager->Load({ ResourceSource<RootSignature>::DefaultSampler(), {kRootParam_} });
 		const PipelineState::ShaderSet shader{
 			.vertex_ = pShaderManager->Load({ L"NewSprite.VS.hlsl",L"vs_6_0" }),
-			.pixel_ = pShaderManager->Load({ L"NewSprite.PS.hlsl",L"ps_6_0" })
+			.pixel_ = pShaderManager->Load({ L"Sprite.PS.hlsl",L"ps_6_0" })
 		};
 
 		ResourceSource<PipelineState> pipelineSource;

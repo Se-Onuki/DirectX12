@@ -150,14 +150,12 @@ private:
 	std::pair<Vector2, Vector2> uv_{};
 	// 中心点
 	Vector2 pivot_{};
-	/// @brief スプライトの表示状態
-	bool isVisible_ = true;
 
 	// テクスチャID
-	uint32_t textureHaundle_ = 1u;
+	TextureHandle textureHaundle_ = 1u;
 
-	// テクスチャリソースの情報
-	D3D12_RESOURCE_DESC resourceDesc{};
+	/// @brief スプライトの表示状態
+	bool isVisible_ = true;
 
 public:
 	/// @fn void SetTextureHaundle(const uint32_t)
@@ -166,9 +164,8 @@ public:
 	void SetTextureHaundle(const uint32_t textureHaundle)
 	{
 		textureHaundle_ = textureHaundle;
-		resourceDesc = TextureManager::GetInstance()->GetResourceDesc(textureHaundle);
 		SetTexOrigin(ZeroVector2);
-		SetTexDiff(Vector2{float(resourceDesc.Width), float(resourceDesc.Height)});
+		SetTexDiff(textureHaundle_->textureSize_);
 	}
 
 	/// @fn void SetTexOrigin(const Vector2)
@@ -233,10 +230,10 @@ public:
 	/// @return カラー
 	const SoLib::Color::RGB4 &GetColor() const;
 
-	/// @fn uint32_t GetTexHandle(void)
+	/// @fn TextureHandle GetTexHandle(void)
 	/// @brief テクスチャハンドル取得
 	/// @return テクスチャハンドル
-	uint32_t GetTexHandle() const noexcept { return textureHaundle_; }
+	TextureHandle GetTexHandle() const noexcept { return textureHaundle_; }
 
 	/// @fn void Draw(void)
 	/// @brief 描画の実行

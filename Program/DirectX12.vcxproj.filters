@@ -160,6 +160,9 @@
     <Filter Include="Engine\ECS\Entity">
       <UniqueIdentifier>{e2b452d7-7445-4db4-9ab2-d9cdb127218b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\UI">
+      <UniqueIdentifier>{378f09d5-22f9-47fd-949a-ce337bf07be8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -482,6 +485,9 @@
     </ClCompile>
     <ClCompile Include="Scene\ResultScene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\UI\Text\NumberRender.cpp">
+      <Filter>Engine\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -958,6 +964,9 @@
     </ClInclude>
     <ClInclude Include="Scene\ResultScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\UI\Text\NumberRender.h">
+      <Filter>Engine\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

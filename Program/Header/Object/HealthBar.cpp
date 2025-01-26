@@ -51,9 +51,7 @@ void HealthBar::SetCentor(const Vector2 pos)
 
 void HealthBar::SetScale(const Vector2 radius)
 {
-	const uint32_t barTexture = backGround_->GetTexHandle();
-	const auto &texDesc = TextureManager::GetInstance()->GetResourceDesc(barTexture);
-	const Vector2 textureSize = { static_cast<float>(texDesc.Width), static_cast<float>(texDesc.Height) };
+	const Vector2 textureSize = backGround_->GetTexHandle()->textureSize_;
 
 	vBarScale_ = radius;
 	backGround_->SetScale(vBarScale_);

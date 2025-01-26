@@ -475,10 +475,8 @@ void GameScene::Update() {
 		archetype.AddClassData<ECS::SkinModel, ECS::TransformMatComp>();
 		auto chunks = newWorld_.GetAccessableChunk(archetype);
 		for (auto &chunk : chunks) {
-			auto skinRange = chunk->GetComponent<ECS::SkinModel>();
-			auto transRange = chunk->GetComponent<ECS::TransformMatComp>();
-			for (uint32_t i = 0; i < skinRange.size(); i++) {
-				skinRange[i].skinModel_->skeleton_->AddDrawBuffer(transRange[i], { .z = -2.f });
+			for (auto [skin, trans] : chunk->View<ECS::SkinModel, ECS::TransformMatComp>()) {
+				skin.skinModel_->skeleton_->AddDrawBuffer(trans, { .z = -2.f });
 			}
 		}
 	}

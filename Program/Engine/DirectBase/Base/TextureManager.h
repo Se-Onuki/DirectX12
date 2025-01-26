@@ -32,14 +32,9 @@ public:
 	{
 		ComPtr<ID3D12Resource> textureResource_;
 		DescHeapCbvSrvUav::Handle handle_;
+		Vector2 textureSize_;
 		std::string name_;
 	};
-
-	static inline TextureManager *const GetInstance()
-	{
-		static TextureManager instance{};
-		return &instance;
-	}
 
 	/// @brief テクスチャのハンドル
 	/// @details 実質的にはuint32_t型のラッパー
@@ -71,6 +66,14 @@ public:
 		// テクスチャマネージャへのアクセッサ
 		static const TextureManager *pTextureManager_;
 	};
+
+	static inline TextureManager *const GetInstance()
+	{
+		static TextureManager instance{};
+		TextureHandle::pTextureManager_ = &instance;
+		return &instance;
+	}
+
 	/// @brief 初期テクスチャの読み込み
 	/// @return 初期テクスチャのインデックス
 	static uint32_t LoadDefaultTexture() { return Load("white2x2.png"); }
@@ -150,7 +153,7 @@ private:
 	/// @param file_name ファイル名
 	/// @param textData バイナリデータ( ARGB形式 )
 	/// @return 生成されたテクスチャのHandle
-	uint32_t LoadInternal(const std::string &file_name, const std::span<uint8_t> &textData);
+	uint32_t LoadInternal(const std::string &file_name, const std::span<byte> &textData);
 
 	// デバイス(借用)
 	ID3D12Device *device_ = nullptr;

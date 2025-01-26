@@ -176,7 +176,7 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	return handle;
 }
 
-uint32_t TextureManager::LoadInternal(const std::string &file_name, const std::span<uint8_t> &texData)
+uint32_t TextureManager::LoadInternal(const std::string &file_name, const std::span<byte> &texData)
 {
 #pragma region Texture検索
 
@@ -221,8 +221,11 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name, const std::s
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
+	auto textureDesc = texture.textureResource_->GetDesc();
+
 	texture.name_ = file_name;
 	texture.handle_ = heapRange_.GetHandle(handle);
+	texture.textureSize_ = Vector2{ static_cast<float>(textureDesc.Width), static_cast<float>(textureDesc.Height) };
 
 	// SRVの作成
 	device_->CreateShaderResourceView(texture.textureResource_.Get(), &srvDesc, texture.handle_.cpuHandle_);

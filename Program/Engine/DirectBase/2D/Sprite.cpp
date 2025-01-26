@@ -333,11 +333,11 @@ void Sprite::Init(const std::string &textureName) {
 }
 
 void Sprite::Init(const uint32_t textureHaundle) {
+
 	CreateBuffer();
 	MapVertex();
-	CalcBuffer();
-
 	SetTextureHaundle(textureHaundle);
+	CalcBuffer();
 }
 
 void Sprite::Draw() const {
@@ -346,7 +346,7 @@ void Sprite::Draw() const {
 
 		// マテリアルCBufferの場所を設定
 		commandList_->SetGraphicsRootConstantBufferView((uint32_t)RootParameter::kConstData, constData_.GetGPUVirtualAddress());
-		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)RootParameter::kTexture, textureHaundle_);
+		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable((uint32_t)RootParameter::kTexture, textureHaundle_.index_);
 		// Spriteの描画
 		commandList_->IASetVertexBuffers(0, 1, &vertexData_.GetVBView());	// VBVを設定
 		commandList_->IASetIndexBuffer(&indexData_->GetIBView());
@@ -516,8 +516,10 @@ void Sprite::CalcBuffer() {
 
 #pragma region UV情報
 
-	Vector2 texOrigin = { uv_.first.x / resourceDesc.Width,uv_.first.y / resourceDesc.Height };
-	Vector2 texDiff = { (uv_.first.x + uv_.second.x) / resourceDesc.Width, (uv_.first.y + uv_.second.y) / resourceDesc.Height };
+	Vector2 texSize = textureHaundle_->textureSize_;
+
+	Vector2 texOrigin = { uv_.first.x / texSize.x, uv_.first.y / texSize.y };
+	Vector2 texDiff = { (uv_.first.x + uv_.second.x) / texSize.x, (uv_.first.y + uv_.second.y) / texSize.y };
 
 	vertexArray[(uint32_t)VertexNumer::LDown].texCoord = { texOrigin.x,texDiff.y };	// 左下 { 0, 1 }
 	vertexArray[(uint32_t)VertexNumer::LTop].texCoord = { texOrigin.x,texOrigin.y };// 左上 { 0, 0 }
