@@ -107,11 +107,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	SceneManager *const sceneManager = SceneManager::GetInstance();
 	sceneManager->StaticInit();
 	sceneManager->Init();
-	sceneManager->ChangeScene("NT_ClientScene");
+	sceneManager->ChangeScene("TitleScene");
 
 	// ウィンドウのxボタンが押されるまでループ
 	while (true) {
-		if (winApp->ProcessMessage() /*|| directInput->IsPress(DIK_ESCAPE)*/) { break; }
+		if (winApp->ProcessMessage()) { break; }
 
 		// キーボードの更新
 		input->Update();
