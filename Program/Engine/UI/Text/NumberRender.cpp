@@ -8,6 +8,27 @@ std::unique_ptr<NumberRender> NumberRender::Generate(TextureHandle texture)
 	return std::move(result);
 }
 
+void NumberRender::Clear()
+{
+	index_ = 0;
+}
+
+std::span<std::unique_ptr<NumberText>> NumberRender::Reservation(size_t count)
+{
+
+	// もし範囲外なら
+	if (count + index_ > text_.size()) {
+		// 容量を確保する
+		EmplaceBack(count + index_ - text_.size());
+	}
+
+	std::span<std::unique_ptr<NumberText>> result = std::span{ &text_.at(index_), count };
+	// 加算する
+	count += index_;
+
+	return result;
+}
+
 std::span<std::unique_ptr<NumberText>> NumberRender::EmplaceBack(size_t count)
 {
 	if (count == 0) { return {}; }
@@ -15,21 +36,21 @@ std::span<std::unique_ptr<NumberText>> NumberRender::EmplaceBack(size_t count)
 	size_t beforeSize = text_.size();
 	// サイズ変更
 	text_.resize(beforeSize + count);
-	// 
+	// 始点を取得する
 	auto begin = text_.begin() + beforeSize;
 	std::generate(begin, text_.end(), [this]()->std::unique_ptr<NumberText> { return NumberText::Generate(texture_); });
 
-	return std::span<std::unique_ptr<NumberText>>(begin, count);
+	return std::span(begin, count);
 }
 
-void NumberText::Generate(NumberText *const num, TextureHandle texture)
+void NumberText::Generate(NumberText *const numText, TextureHandle texture)
 {
-	num->textSize_ = texture->textureSize_;
-	num->textSize_.y /= 10.f;
+	numText->textSize_ = texture->textureSize_;
+	numText->textSize_.x /= 10.f;
 
-	auto textureSize = num->textSize_;
+	auto textureSize = numText->textSize_;
 
-	std::generate(num->numText_.begin(), num->numText_.end(), [texture, textureSize]()->std::unique_ptr<Sprite> { return Sprite::Generate(texture.index_); });
+	std::generate(numText->numText_.begin(), numText->numText_.end(), [texture, textureSize]()->std::unique_ptr<Sprite> { return Sprite::Generate(texture.index_); });
 
 }
 
@@ -50,6 +71,13 @@ void NumberText::SetText(uint32_t text)
 	for (int32_t i = static_cast<int32_t>((std::min)(str.size(), 3llu) - 1); i >= 0; i--) {
 		numText_[i]->SetTexOrigin(Vector2{ 0.f, textXSize * static_cast<float>(str[i] - '0') });
 	}
+}
 
-	// std::transform(str.rbegin(), str.rbegin() + (std::min)(str.size(), 3llu), numText_.rbegin(), [textXSize](char c, std::unique_ptr<Sprite> &sprite) ->void { sprite->SetTexOrigin(Vector2{ 0.f, textXSize * static_cast<float>(c - '0') }); });
+void NumberText::SetPosition([[maybe_unused]]Vector2 pos)
+{
+	/*
+	for (uint32_t i = 0; i < textCount_; i++) {
+		
+	}*/
+
 }

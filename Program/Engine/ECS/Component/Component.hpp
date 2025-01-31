@@ -397,6 +397,11 @@ namespace ECS {
 		ValuePair<float> diffPower_{};
 	};
 
+	struct DamageCounter : IComponent {
+		float damageRemainTime_;
+		int32_t damageCount_;
+	};
+
 	struct EffectPlayer : IComponent {
 
 	};
