@@ -66,11 +66,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	TextureManager *const textureManager = TextureManager::GetInstance();
 
-	Input *const input = Input::GetInstance();
+	SolEngine::Input *const input = SolEngine::Input::GetInstance();
 
-	Audio *const audio = Audio::GetInstance();
+	SolEngine::Audio *const audio = SolEngine::Audio::GetInstance();
 
-	WindowsSocket wSocket{};
+	SoLib::WindowsSocket wSocket{};
 	wSocket.Init(2, 0);
 
 #pragma region その他初期化
@@ -94,7 +94,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// フェード演出の初期化
 	Fade::StaticInit(); // 静的初期化
-	Fade::GetInstance()->SetState({ 0.f,0.f }, 0x000000FF);
+	Fade::GetInstance()->SetState(SoLib::Vector2{ 0.f,0.f }, 0x000000FF);
 	Fade::GetInstance()->SetEaseFunc(SoLib::easeInQuad);
 
 	GlobalVariables *const gVariable = GlobalVariables::GetInstance();
@@ -104,7 +104,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	postEffectProcessor->Init();
 
 	// シーン管理クラス
-	SceneManager *const sceneManager = SceneManager::GetInstance();
+	SolEngine::SceneManager *const sceneManager = SolEngine::SceneManager::GetInstance();
 	sceneManager->StaticInit();
 	sceneManager->Init();
 	sceneManager->ChangeScene("TitleScene");

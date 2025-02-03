@@ -72,7 +72,7 @@ namespace SolEngine {
 			/// @brief 再起的に姿勢データを作る
 			/// @param[in] node assimpのノード
 			/// @param[out] transVector 書き込み先の配列
-			static void MakeTransData(const aiNode *node, std::vector<SimpleTransformQuaternion> &transVector);
+			static void MakeTransData(const aiNode *node, std::vector<SoLib::SimpleTransformQuaternion> &transVector);
 
 		};
 

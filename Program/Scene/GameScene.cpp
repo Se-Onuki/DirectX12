@@ -24,8 +24,8 @@
 #include "../Engine/ResourceManager/ResourceLoader.h"
 
 GameScene::GameScene() {
-	input_ = Input::GetInstance();
-	audio_ = Audio::GetInstance();
+	input_ = SolEngine::Input::GetInstance();
+	audio_ = SolEngine::Audio::GetInstance();
 	cameraManager_ = CameraManager::GetInstance();
 	blockRender_ = BlockManager::GetInstance();
 	skinModelRender_ = SkinModelListManager::GetInstance();
@@ -194,7 +194,7 @@ void GameScene::OnEnter() {
 	auto shadowModel = modelDataManager->Load({ shadowAssimp });
 	auto &shadowMesh = shadowModel->meshHandleList_.front();
 	shadowMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
-	static_cast<Matrix4x4 &>(shadowModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 1.5f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
+	static_cast<Matrix4x4 &>(shadowModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 1.5f, { -SoLib::Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
 	shadowRenderer_.Init();
 	shadowRenderer_.SetModelData(shadowModel);
 
@@ -210,7 +210,7 @@ void GameScene::OnEnter() {
 	auto attackModel = modelDataManager->Load({ attackAssimp });
 	auto &attackMesh = attackModel->meshHandleList_.front();
 	attackMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
-	static_cast<Matrix4x4 &>(attackModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 2.f, { -Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
+	static_cast<Matrix4x4 &>(attackModel->rootNode_) = Matrix4x4::Affine(Vector3::one * 2.f, { -SoLib::Angle::Rad90, 0.f, 0.f }, Vector3{ 0.f,0.1f,0.f });
 
 	auto arrowAssimp = assimpManager->Load({ "Model/Shuriken/","shuriken.glb" });
 	auto arrowModel = modelDataManager->Load({ arrowAssimp });
@@ -675,7 +675,7 @@ void GameScene::FlameClear()
 	skinModelHandleRender_->clear();
 }
 
-void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SceneManager *const scene, Fade *const fade) const
+void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SolEngine::SceneManager *const scene, Fade *const fade) const
 {
 	Archetype playerArchetype;
 	playerArchetype.AddClassData<ECS::PlayerTag>();
@@ -923,7 +923,7 @@ void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInst
 			const auto &[trans, alive] = itm;
 
 			Particle::ParticleData result{ .color = (0xFFFFFF00 + static_cast<uint32_t>(0xFF * (1 - SoLib::easeInExpo(alive.aliveTime_ / attackTime)))) };
-			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / attackTime)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / attackTime);
+			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, -SoLib::Angle::Rad360 * 2.f * SoLib::easeInOutBack(alive.aliveTime_ / attackTime)) * trans.collision_.radius * SoLib::easeOutExpo(alive.aliveTime_ / attackTime);
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
 			return result;
@@ -961,7 +961,7 @@ void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::Mode
 			const auto &[trans, alive] = itm;
 
 			Particle::ParticleData result{ .color = 0x333333FF };
-			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, Angle::Rad360 * alive.aliveTime_ / attackRotSpeed) * (trans.collision_.radius * 0.25f);
+			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * alive.aliveTime_ / attackRotSpeed) * (trans.collision_.radius * 0.25f);
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
 			return result;
@@ -985,10 +985,10 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 				// コンポーネントの配列
 				ECS::ComponentSpan::TRange<ECS::PositionComp> arr = enemys.GetChunk()->GetComponent<ECS::PositionComp>();
 				// 発生地点の回転加算値
-				const float diff = Random::GetRandom<float>(0.f, Angle::Rad360);
+				const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
 				for (uint32_t i = 0; uint32_t enemy : enemys.ItrRange()) {
 					auto &pos = arr[enemy];
-					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
+					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
 					i++;
 				}
 			});

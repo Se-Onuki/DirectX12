@@ -9,10 +9,10 @@ void CameraList::ListClear()
 	cameraMap_.clear();
 }
 
-Camera3D* CameraList::AddCamera(const std::string& cameraName)
+SolEngine::Camera3D* CameraList::AddCamera(const std::string& cameraName)
 {
 	// return用のインスタンス生成
-	Camera3D* camera = nullptr;
+	SolEngine::Camera3D* camera = nullptr;
 
 	// カメラリスト内にキーと同じ名前のカメラがあるかチェック
 	auto cameraItr = cameraMap_.find(cameraName);
@@ -24,7 +24,7 @@ Camera3D* CameraList::AddCamera(const std::string& cameraName)
 
 	// 存在していなかった場合カメラをリストに追加
 	// インスタンスの生成
-	std::unique_ptr<Camera3D> newCamera = std::make_unique<Camera3D>();
+	std::unique_ptr<SolEngine::Camera3D> newCamera = std::make_unique<SolEngine::Camera3D>();
 
 	// return用のインスタンス生成
 	//camera = newCamera.get();
@@ -36,7 +36,7 @@ Camera3D* CameraList::AddCamera(const std::string& cameraName)
 	return cameraMap_[cameraName].get();
 }
 
-Camera3D* CameraList::GetCamera(const std::string& cameraName) const
+SolEngine::Camera3D* CameraList::GetCamera(const std::string& cameraName) const
 {
 	// イテレータの取得
 	auto cameraItr = cameraMap_.find(cameraName);

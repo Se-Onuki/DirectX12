@@ -20,7 +20,7 @@
 #include "../Game/Resource/GameScore.h"
 #include "../Header/Object/Fade.h"
 
-class ResultScene : public IScene {
+class ResultScene : public SolEngine::IScene {
 public:
 	ResultScene();
 	~ResultScene();
@@ -40,9 +40,9 @@ private:
 	// フェード
 	Fade *fade_ = nullptr;
 	// 入力インスタンス
-	Input *input_ = nullptr;
+	SolEngine::Input *input_ = nullptr;
 	// 音インスタンス
-	Audio *audio_ = nullptr;
+	SolEngine::Audio *audio_ = nullptr;
 	// カメラマネージャー
 	CameraManager *cameraManager_ = nullptr;
 
@@ -53,8 +53,8 @@ private:
 
 	BlockManager *blockRender_;
 
-	Camera3D camera_;
+	SolEngine::Camera3D camera_;
 
 	// bgm
-	Audio::SoundHandle soundA_;
+	SolEngine::Audio::SoundHandle soundA_;
 };

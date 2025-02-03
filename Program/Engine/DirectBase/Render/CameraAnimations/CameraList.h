@@ -29,19 +29,19 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="cameraName">追加するカメラ名称</param>
 	/// <returns>生成したカメラのポインタ</returns>
-	Camera3D* AddCamera(const std::string& cameraName);
+	SolEngine::Camera3D* AddCamera(const std::string& cameraName);
 
 	/// <summary>
 	/// カメラをリストから取得する関数
 	/// </summary>
 	/// <param name="cameraName">取得するカメラ名称</param>
 	/// <returns>カメラ（ ない場合はnullptr ）</returns>
-	Camera3D* GetCamera(const std::string& cameraName) const;
+	SolEngine::Camera3D* GetCamera(const std::string& cameraName) const;
 
 public: // メンバ変数
 
 	// カメラの配列
-	std::unordered_map<std::string, std::unique_ptr<Camera3D>> cameraMap_;
+	std::unordered_map<std::string, std::unique_ptr<SolEngine::Camera3D>> cameraMap_;
 
 };
 

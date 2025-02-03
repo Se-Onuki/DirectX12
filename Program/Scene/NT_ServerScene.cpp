@@ -10,10 +10,10 @@ NT_ServerScene::~NT_ServerScene()
 
 void NT_ServerScene::OnEnter()
 {
-	input_ = Input::GetInstance();
+	input_ = SolEngine::Input::GetInstance();
 
 	if (not InitServer()) {
-		SceneManager::GetInstance()->ChangeScene("TitleScene", 0.f);
+		SolEngine::SceneManager::GetInstance()->ChangeScene("TitleScene", 0.f);
 		return;
 	}
 	isRunning_ = true;
@@ -84,7 +84,7 @@ void NT_ServerScene::Draw()
 
 IsSuccess NT_ServerScene::InitServer()
 {
-	server_ = TcpServer::Generate(kPort_);
+	server_ = SoLib::TcpServer::Generate(kPort_);
 	if (not server_) { return false; }
 	return server_->ConnectionWait();
 }

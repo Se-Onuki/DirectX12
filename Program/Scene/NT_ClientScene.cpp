@@ -11,9 +11,9 @@ NT_ClientScene::~NT_ClientScene()
 
 void NT_ClientScene::OnEnter()
 {
-	input_ = Input::GetInstance();
+	input_ = SolEngine::Input::GetInstance();
 	if (not InitClient()) {
-		SceneManager::GetInstance()->ChangeScene("TitleScene", 0.f);
+		SolEngine::SceneManager::GetInstance()->ChangeScene("TitleScene", 0.f);
 		return;
 	}
 	isRunning_ = true;
@@ -89,7 +89,7 @@ IsSuccess NT_ClientScene::InitClient()
 	SoLib::IO::File file(kFileName_);
 	std::string hostIP;
 	static_cast<std::stringstream &>(file) >> hostIP;
-	return (client_ = TcpClient::Generate(hostIP.c_str(), kPort_)) != nullptr;
+	return (client_ = SoLib::TcpClient::Generate(hostIP.c_str(), kPort_)) != nullptr;
 }
 
 void ClientNetworkPosition()

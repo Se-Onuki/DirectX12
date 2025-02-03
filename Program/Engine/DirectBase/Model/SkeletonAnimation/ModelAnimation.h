@@ -6,6 +6,7 @@
 #include "../../Engine/ResourceObject/ResourceObjectManager.h"
 #include "../../Engine/Utils/Math/Quaternion.h"
 #include "../../Engine/Utils/Math/Vector3.h"
+#include "../../Engine/Utils/Math/Math.hpp"
 #include "../../Engine/Utils/SoLib/SoLib_Timer.h"
 #include "../AssimpData.h"
 

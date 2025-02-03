@@ -13,7 +13,7 @@ namespace SolEngine {
 
 		ResourceObjectManager<RootSignature> *const rootSignatureManager = ResourceObjectManager<RootSignature>::GetInstance();
 
-		const auto accesser = MakeRootParametersAccesser(SignParam<CBuffer<TransformMatrix>>{"b0VS"});
+		const auto accesser = MakeRootParametersAccesser(SignParam<CBuffer<SoLib::TransformMatrix>>{"b0VS"});
 
 		rootSignature_ = rootSignatureManager->Load({ .sampler_ = ResourceSource<RootSignature>::DefaultSampler(), .item_ { "b0VS,b1AL,b0PS" } });
 
@@ -63,7 +63,7 @@ namespace SolEngine {
 
 	}
 
-	void SolEngine::ModelRender::AddData(ModelManager::Handle model, const Transform &transform)
+	void SolEngine::ModelRender::AddData(ModelManager::Handle model, const SoLib::Transform &transform)
 	{
 		for (const MeshManager::Handle mesh : model->meshHandleList_) {
 			const MaterialManager::Handle material = mesh->materialhandle_;

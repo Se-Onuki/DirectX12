@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
+#include "../Math/Math.hpp"
 
 template<>
 void SoLib::ImGuiDraw([[maybe_unused]] const char *const label, [[maybe_unused]] const std::string &text) {
@@ -104,7 +105,7 @@ bool SoLib::ImGuiWidgetAngle([[maybe_unused]] const char *const label, [[maybe_u
 #endif // USE_IMGUI
 }
 
-bool SoLib::ImGuiDragEuler(const char *const label, float *value)
+bool SoLib::ImGuiDragEuler(const char *const label, float *const value)
 {
 	ImGuiWindow *window = ImGui::GetCurrentWindow();
 	if (window->SkipItems) { return false; }

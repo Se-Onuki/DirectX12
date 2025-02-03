@@ -88,7 +88,7 @@ namespace SolEngine {
 
 	}
 
-	void SkyBoxRender::Draw(const SkyBox &skyBox, const Transform &transform, const Camera3D &camera) const
+	void SkyBoxRender::Draw(const SkyBox &skyBox, const SoLib::Transform &transform, const Camera3D &camera) const
 	{
 		auto *const dxCommon = ::DirectXCommon::GetInstance();
 		auto *const command = dxCommon->GetCommandList();

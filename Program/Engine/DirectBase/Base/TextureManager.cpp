@@ -136,12 +136,12 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	// Textureを読んで転送する
 	DirectX::ScratchImage mipImage;
 
-	mipImage = TextureFunc::Load(directoryPath_ + file_name);
+	mipImage = SolEngine::TextureFunc::Load(directoryPath_ + file_name);
 
 
 	const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-	texture.textureResource_ = TextureFunc::CreateResource(device_, metadata);
-	intermediateData_.push_back(TextureFunc::UpdateData(texture.textureResource_.Get(), mipImage, device_, commandList_));
+	texture.textureResource_ = SolEngine::TextureFunc::CreateResource(device_, metadata);
+	intermediateData_.push_back(SolEngine::TextureFunc::UpdateData(texture.textureResource_.Get(), mipImage, device_, commandList_));
 
 
 #pragma endregion
@@ -205,12 +205,12 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name, const std::s
 	// Textureを読んで転送する
 	DirectX::ScratchImage mipImage;
 
-	mipImage = TextureFunc::Load(texData);
+	mipImage = SolEngine::TextureFunc::Load(texData);
 
 
 	const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
-	texture.textureResource_ = TextureFunc::CreateResource(device_, metadata);
-	intermediateData_.push_back(TextureFunc::UpdateData(texture.textureResource_.Get(), mipImage, device_, commandList_));
+	texture.textureResource_ = SolEngine::TextureFunc::CreateResource(device_, metadata);
+	intermediateData_.push_back(SolEngine::TextureFunc::UpdateData(texture.textureResource_.Get(), mipImage, device_, commandList_));
 
 
 #pragma endregion

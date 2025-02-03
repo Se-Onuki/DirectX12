@@ -18,7 +18,7 @@
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Header/Object/Ground.h"
 
-class TitleScene : public IScene {
+class TitleScene : public SolEngine::IScene {
 public:
 	TitleScene();
 	~TitleScene();
@@ -31,9 +31,9 @@ public:
 
 private:
 	// 入力インスタンス
-	Input *input_ = nullptr;
+	SolEngine::Input *input_ = nullptr;
 	// 音インスタンス
-	Audio *audio_ = nullptr;
+	SolEngine::Audio *audio_ = nullptr;
 	// カメラマネージャー
 	CameraManager *cameraManager_ = nullptr;
 
@@ -47,8 +47,8 @@ private:
 
 	BlockManager *blockRender_;
 
-	Camera3D camera_;
+	SolEngine::Camera3D camera_;
 
 	// bgm
-	Audio::SoundHandle soundA_;
+	SolEngine::Audio::SoundHandle soundA_;
 };

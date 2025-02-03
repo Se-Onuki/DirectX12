@@ -602,8 +602,6 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, cons
 
 #pragma region 2. 中で必要になる変数の宣言
 
-	// meshList_.emplace_back(new Mesh);
-
 	Mesh *modelData = nullptr;        // 構築するModelData
 	Material *materialData = nullptr; // マテリアルの共用
 
@@ -666,7 +664,7 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string &directoryPath, cons
 				// 要素へのIndexから、実際の要素の値を取得して、頂点を機築する
 				Vector4 position = positionList[elementIndices[0] - 1];
 				Vector3 normal = normalList[elementIndices[2] - 1];
-				Vector2 texCoord = ZeroVector2;
+				Vector2 texCoord = SoLib::ZeroVector2;
 				if (elementIndices[1] != 0) { // 値が無かった場合
 					texCoord = texCoordList[elementIndices[1] - 1];
 				}
@@ -940,7 +938,7 @@ std::unique_ptr<Model> Model::CreatePlane()
 	return std::move(newModel);
 }
 
-void Model::Draw(const Transform &transform, const Camera3D &camera) const
+void Model::Draw(const SoLib::Transform &transform, const SolEngine::Camera3D &camera) const
 {
 	assert(sPipelineType_ == PipelineType::kModel && "設定されたシグネチャがkModelではありません");
 
@@ -954,7 +952,7 @@ void Model::Draw(const Transform &transform, const Camera3D &camera) const
 }
 
 
-void Model::Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const
+void Model::Draw(const SkinCluster &skinCluster, const SoLib::Transform &transform, const SolEngine::Camera3D &camera) const
 {
 	assert(sPipelineType_ == PipelineType::kSkinModel && "設定されたシグネチャがkSkinModelではありません");
 
@@ -970,7 +968,7 @@ void Model::Draw(const SkinCluster &skinCluster, const Transform &transform, con
 	}
 }
 
-void Model::Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
+void Model::Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const SolEngine::Camera3D &camera) const
 {
 	assert(sPipelineType_ == PipelineType::kSkinParticle && "設定されたシグネチャがkSkinParticleではありません");
 
@@ -986,7 +984,7 @@ void Model::Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HAND
 	}
 }
 
-void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const
+void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const SolEngine::Camera3D &camera) const
 {
 	assert((sPipelineType_ == PipelineType::kParticle || sPipelineType_ == PipelineType::kShadowParticle) && "設定されたシグネチャがkParticleではありません");
 
@@ -1006,7 +1004,7 @@ void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawC
 	}
 }
 
-void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const
+void Model::Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<SolEngine::Camera3D::CameraMatrix> &camera) const
 {
 	assert((sPipelineType_ == PipelineType::kParticle || sPipelineType_ == PipelineType::kShadowParticle) && "設定されたシグネチャがkParticleではありません");
 
@@ -1089,7 +1087,7 @@ bool Material::ImGuiWidget()
 {
 	bool result = false;
 	if (ImGui::TreeNode(name_.c_str())) {
-		static BaseTransform transform;
+		static SoLib::BaseTransform transform;
 		transform.MatToSRT(materialBuff_->uvTransform);
 
 		if (transform.ImGuiWidget2D()) {
@@ -1349,7 +1347,7 @@ void MinecraftModel::LoadJson(const std::string &file_path)
 				(float)rotateJson->at(0).get<double>(),
 				(float)rotateJson->at(1).get<double>(),
 				(float)rotateJson->at(2).get<double>() };
-			bone.transform_->rotate = SoLib::MakeQuaternion(rotate * Angle::Dig2Rad);
+			bone.transform_->rotate = SoLib::MakeQuaternion(rotate * SoLib::Angle::Dig2Rad);
 		}
 		else {
 			bone.transform_->rotate = Quaternion::Identity;
@@ -1438,7 +1436,7 @@ std::unique_ptr<ModelNode> ModelNode::Create(aiNode *node)
 	aiVector3D scale, translate;
 	aiQuaternion rotate;
 
-	result->transform_ = SoLib::Convert<SimpleTransformQuaternion>(node->mTransformation);
+	result->transform_ = SoLib::Convert<SoLib::SimpleTransformQuaternion>(node->mTransformation);
 
 	// 行列を代入
 	result->localMatrix_ = std::make_unique<CBuffer<Matrix4x4>>(result->transform_.Affine());

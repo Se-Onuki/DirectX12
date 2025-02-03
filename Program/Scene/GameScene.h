@@ -40,7 +40,7 @@
 
 /// @class GameScene
 /// @brief ゲームシーン
-class GameScene : public IScene {
+class GameScene : public SolEngine::IScene {
 public:
 	/// @fn GameScene(void)
 	/// @brief コンストラクタ
@@ -93,7 +93,7 @@ private:
 	/// @param playerTimer[in, out] タイマー 
 	/// @param scene[out] シーンマネージャー 
 	/// @param fade[out] フェード処理 
-	void PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SceneManager *const scene, Fade *const fade) const;
+	void PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SolEngine::SceneManager *const scene, Fade *const fade) const;
 
 	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
@@ -138,7 +138,7 @@ private:
 	// レベルアップのUIのサイズ
 	VItem(Vector2, LevelUpUISize, _) {};
 	// 経験値バーのUIの中心位置の画面サイズに対する比率
-	VItem(Vector2, ExpUICentorMul, _) { { 0.5f, 1.f } };
+	VItem(Vector2, ExpUICentorMul, _) { Vector2{ 0.5f, 1.f } };
 	// 経験値バーのUIの中心位置のピクセル単位の位置
 	VItem(Vector2, ExpUICentorDiff, _) { { 0.f, -16.f } };
 	// 経験値バーのUIのサイズの画面サイズに対する比率
@@ -156,9 +156,9 @@ private:
 	/// @brief グレースケールが有効か
 	int32_t isGrayScale_ = 0;
 	/// @brief 入力のインスタンス
-	Input *input_ = nullptr;
+	SolEngine::Input *input_ = nullptr;
 	/// @brief オーディオのインスタンス
-	Audio *audio_ = nullptr;
+	SolEngine::Audio *audio_ = nullptr;
 	/// @brief カメラマネージャーのインスタンス
 	CameraManager *cameraManager_ = nullptr;
 	/// @brief DirectXの管理クラスのインスタンス
@@ -207,9 +207,9 @@ private:
 	/// @brief 敵のプレハブ
 	std::unique_ptr<ECS::Prefab> enemyPrefab_ = nullptr;
 	/// @brief カメラのアドレス
-	Camera3D *followCamera_ = nullptr;
+	SolEngine::Camera3D *followCamera_ = nullptr;
 	/// @brief 音のリソースハンドル
-	Audio::SoundHandle attackSound_;
+	SolEngine::Audio::SoundHandle attackSound_;
 	/// @brief スポーン間隔を管理するタイマー
 	SoLib::DeltaTimer spawnTimer_{ 2.5f };
 	/// @brief ゲームオブジェクト

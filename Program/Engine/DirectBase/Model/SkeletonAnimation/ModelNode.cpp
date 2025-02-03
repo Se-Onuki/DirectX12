@@ -39,10 +39,10 @@ namespace SolEngine {
 			return GetNodeData(nodeName, nodes_);
 		}
 
-		void NodeTree::MakeTransData(const aiNode *node, std::vector<SimpleTransformQuaternion> &transVector)
+		void NodeTree::MakeTransData(const aiNode *node, std::vector<SoLib::SimpleTransformQuaternion> &transVector)
 		{
 			// 姿勢データを転送
-			transVector.emplace_back() = SoLib::Convert<SimpleTransformQuaternion>(node->mTransformation);
+			transVector.emplace_back() = SoLib::Convert<SoLib::SimpleTransformQuaternion>(node->mTransformation);
 			const std::span<aiNode *> children = std::span<aiNode *>{ node->mChildren, node->mNumChildren };
 			// 子のデータを書き込む
 			for (const auto &child : children) {

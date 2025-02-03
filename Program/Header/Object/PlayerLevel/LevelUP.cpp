@@ -68,15 +68,15 @@ void LevelUP::InputFunc()
 	if (this->OpenProgress() <= 0.f) { return; }
 
 	// 入力処理
-	const Input *const pInput = Input::GetInstance();
+	const SolEngine::Input *const pInput = SolEngine::Input::GetInstance();
 
-	const XInput *const pXInput = pInput->GetXInput();
-	const DirectInput *const pDInput = pInput->GetDirectInput();
+	const SolEngine::XInput *const pXInput = pInput->GetXInput();
+	const SolEngine::DirectInput *const pDInput = pInput->GetDirectInput();
 
 	// 左入力
-	const bool isLeft = pXInput->IsTrigger(KeyCode::DPAD_LEFT) || pXInput->GetState()->stickL_.x < 0.f || pDInput->IsTrigger(DIK_A) || pDInput->IsTrigger(DIK_LEFT);
+	const bool isLeft = pXInput->IsTrigger(SolEngine::KeyCode::DPAD_LEFT) || pXInput->GetState()->stickL_.x < 0.f || pDInput->IsTrigger(DIK_A) || pDInput->IsTrigger(DIK_LEFT);
 	// 右入力
-	const bool isRight = pXInput->IsTrigger(KeyCode::DPAD_RIGHT) || pXInput->GetState()->stickL_.x > 0.f || pDInput->IsTrigger(DIK_D) || pDInput->IsTrigger(DIK_RIGHT);
+	const bool isRight = pXInput->IsTrigger(SolEngine::KeyCode::DPAD_RIGHT) || pXInput->GetState()->stickL_.x > 0.f || pDInput->IsTrigger(DIK_D) || pDInput->IsTrigger(DIK_RIGHT);
 
 	int32_t move{};
 
@@ -92,7 +92,7 @@ void LevelUP::InputFunc()
 	}
 
 	// 決定したか
-	const bool isPush = pXInput->IsTrigger(KeyCode::A) or pDInput->IsTrigger(DIK_RETURN) or pDInput->IsTrigger(DIK_SPACE);
+	const bool isPush = pXInput->IsTrigger(SolEngine::KeyCode::A) or pDInput->IsTrigger(DIK_RETURN) or pDInput->IsTrigger(DIK_SPACE);
 
 	// 決定していたら
 	if (isPush) {

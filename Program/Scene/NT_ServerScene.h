@@ -25,7 +25,7 @@
 
 void ServerNetworkPosition();
 
-class NT_ServerScene : public IScene {
+class NT_ServerScene : public SolEngine::IScene {
 public:
 	NT_ServerScene();
 	~NT_ServerScene();
@@ -47,7 +47,7 @@ public:
 	inline static Vector3 playerB_;
 
 	// サーバー
-	inline static std::unique_ptr<TcpServer> server_;
+	inline static std::unique_ptr<SoLib::TcpServer> server_;
 private:
 
 	IsSuccess InitServer();
@@ -56,9 +56,9 @@ private:
 	// フェード
 	Fade *fade_ = nullptr;
 	// 入力インスタンス
-	Input *input_ = nullptr;
+	SolEngine::Input *input_ = nullptr;
 	// 音インスタンス
-	Audio *audio_ = nullptr;
+	SolEngine::Audio *audio_ = nullptr;
 	// カメラマネージャー
 	CameraManager *cameraManager_ = nullptr;
 	std::unique_ptr<std::thread> thread;
@@ -70,7 +70,7 @@ private:
 
 	BlockManager *blockRender_;
 
-	Camera3D camera_;
+	SolEngine::Camera3D camera_;
 
 	SolEngine::ResourceHandle<SolEngine::ModelData> model_;
 
@@ -80,5 +80,5 @@ private:
 	std::span<Particle::ParticleData> renderBuffer_;
 
 	// bgm
-	Audio::SoundHandle soundA_;
+	SolEngine::Audio::SoundHandle soundA_;
 };

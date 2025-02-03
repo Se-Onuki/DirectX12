@@ -16,6 +16,7 @@
 #include "../../Engine/Utils/Math/Vector2.h"
 #include "../../Engine/Utils/Math/Vector3.h"
 #include "../../Engine/Utils/Math/Vector4.h"
+#include "../../Engine/Utils/Math/Math.hpp"
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -75,7 +76,7 @@ struct ModelNode {
 	void CalcAffine();
 
 	// ノードの状態
-	SimpleTransformQuaternion transform_;
+	SoLib::SimpleTransformQuaternion transform_;
 
 	// 回転の姿勢
 	std::unique_ptr<CBuffer<Matrix4x4>> localMatrix_;
@@ -121,7 +122,7 @@ struct ModelJointState {
 	inline void CalcAffine() { localMatrix_ = transform_.Affine(); }
 
 	// transform情報
-	SimpleTransformQuaternion transform_;
+	SoLib::SimpleTransformQuaternion transform_;
 	// ローカルの体勢情報
 	Matrix4x4 localMatrix_;
 	// スケルトン空間での変換行列
@@ -309,17 +310,17 @@ public:
 	SkinClusterBaseData skinCluster_;
 
 	/// @brief モデルを描画する
-	void Draw(const Transform &transform, const Camera3D &camera) const;
-	void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;
+	void Draw(const SoLib::Transform &transform, const SolEngine::Camera3D &camera) const;
+	void Draw(const SkinCluster &skinCluster, const SoLib::Transform &transform, const SolEngine::Camera3D &camera) const;
 	//void Draw(const Transform &transform, const Camera3D &camera, const Material &material) const;
-	void Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
-	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
-	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<Camera3D::CameraMatrix> &camera) const;
+	void Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const SolEngine::Camera3D &camera) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const SolEngine::Camera3D &camera) const;
+	void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const CBuffer<SolEngine::Camera3D::CameraMatrix> &camera) const;
 	template <typename T>
-	void Draw(const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
+	void Draw(const StructuredBuffer<T> &structurdBuffer, const SolEngine::Camera3D &camera) const;
 
 	template <typename T>
-	void Draw(const SkinCluster &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera3D &camera) const;
+	void Draw(const SkinCluster &skinCluster, const StructuredBuffer<T> &structurdBuffer, const SolEngine::Camera3D &camera) const;
 
 	/// @brief スカイボックスを設定する
 	static void SetSkyBox(const SolEngine::SkyBox &skyBox);
@@ -547,7 +548,7 @@ class MinecraftModel {
 			kCount
 		};
 		std::array<Face, (uint32_t)FaceDirection::kCount> faces_;
-		Transform transformLocal_;
+		SoLib::Transform transformLocal_;
 
 		// void UpdateMatrix();
 
@@ -573,7 +574,7 @@ class MinecraftModel {
 
 		Bone *parent_ = nullptr;
 
-		Transform transform_;
+		SoLib::Transform transform_;
 
 		/// @brief 行列の更新
 		void UpdateTransform();
@@ -596,7 +597,7 @@ public:
 	MinecraftModel() = default;
 	~MinecraftModel() = default;
 
-	Transform transformOrigin_;
+	SoLib::Transform transformOrigin_;
 
 	/// @brief 描画
 	/// @param[in] commandList コマンドリスト
@@ -608,13 +609,13 @@ public:
 };
 
 template <typename T>
-inline void Model::Draw(const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const
+inline void Model::Draw(const StructuredBuffer<T> &structurdBuffer, const SolEngine::Camera3D &camera) const
 {
 	Model::Draw(structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), structurdBuffer.GetStartIndex(), camera);
 }
 
 template <typename T>
-inline void Model::Draw(const SkinCluster &skinCluster, const StructuredBuffer<T> &structurdBuffer, const Camera<Render::CameraType::Projecction> &camera) const
+inline void Model::Draw(const SkinCluster &skinCluster, const StructuredBuffer<T> &structurdBuffer, const SolEngine::Camera3D &camera) const
 {
 	Model::Draw(skinCluster, structurdBuffer.GetHeapRange().GetHandle(0u).gpuHandle_, structurdBuffer.size(), structurdBuffer.GetStartIndex(), camera);
 }

@@ -30,7 +30,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 #pragma region 1. hlslファイルを読む
 
 	// これからシェーダをコンパイルする旨をログに出す
-	DirectXCommon::Log(ConvertString(std::format(L"Begin CompileShader, path: {}, profile: {}\n", file_path, profile)));
+	DirectXCommon::Log(SolEngine::ConvertString(std::format(L"Begin CompileShader, path: {}, profile: {}\n", file_path, profile)));
 	// hlslファイルを読む
 	Microsoft::WRL::ComPtr<IDxcBlobEncoding>shaderSource = nullptr;
 	HRESULT hr = dxcUtils->LoadFile(file_path.c_str(), nullptr, &shaderSource);
@@ -90,7 +90,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
 	assert(SUCCEEDED(hr));
 	// 成功したログを出す
-	DirectXCommon::Log(ConvertString(std::format(L"Compile Succeeded, path: {}, profile: {}\n", file_path, profile)));
+	DirectXCommon::Log(SolEngine::ConvertString(std::format(L"Compile Succeeded, path: {}, profile: {}\n", file_path, profile)));
 	//実行用のバイナリを返却
 	return shaderBlob;
 

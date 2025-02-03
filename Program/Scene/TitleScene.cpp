@@ -12,8 +12,8 @@
 #include "GameScene.h"
 
 TitleScene::TitleScene() {
-	input_ = Input::GetInstance();
-	audio_ = Audio::GetInstance();
+	input_ = SolEngine::Input::GetInstance();
+	audio_ = SolEngine::Audio::GetInstance();
 	cameraManager_ = CameraManager::GetInstance();
 	blockRender_ = BlockManager::GetInstance();
 }
@@ -70,7 +70,7 @@ void TitleScene::Update() {
 
 	button_->SetPosition(Vector2{ WinApp::kWindowWidth * 0.5f,WinApp::kWindowHeight * (2.f / 4.f) });
 
-	if (input_->GetXInput()->IsTrigger(KeyCode::A) or input_->GetDirectInput()->IsTrigger(DIK_SPACE)) {
+	if (input_->GetXInput()->IsTrigger(SolEngine::KeyCode::A) or input_->GetDirectInput()->IsTrigger(DIK_SPACE)) {
 		sceneManager_->ChangeScene<GameScene>(1.f);
 		Fade::GetInstance()->Start(Vector2{}, 0x000000FF, 1.f);
 	}

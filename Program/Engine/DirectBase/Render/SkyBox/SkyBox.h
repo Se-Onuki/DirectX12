@@ -47,7 +47,7 @@ namespace SolEngine {
 		/// @param[in] skyBox 天空ボックス
 		/// @param[in] transform 座標
 		/// @param[in] camera カメラ
-		void Draw(const SkyBox &skyBox, const Transform &transform, const Camera3D &camera) const;
+		void Draw(const SkyBox &skyBox, const SoLib::Transform &transform, const Camera3D &camera) const;
 
 	private:
 		/// @brief バッファの構築

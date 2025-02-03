@@ -6,15 +6,17 @@
 #include "../../Engine/Utils/Math/Math.hpp"
 #include "../../Engine/Utils/Math/Transform.h"
 
-class Input;
+namespace SolEngine {
+	class Input;
+}
 
 class FollowCamera {
-	Camera3D camera_;
+	SolEngine::Camera3D camera_;
 
-	const Transform *target_ = nullptr;
+	const SoLib::Transform *target_ = nullptr;
 	Vector3 rotate_ = {};
 	const float cameraRotSpeed_ = 3._deg;
-	Input *input_ = nullptr;
+	SolEngine::Input *input_ = nullptr;
 
 public:
 	FollowCamera() = default;
@@ -23,7 +25,7 @@ public:
 	void Init();
 	void Update();
 	/// @brief 目標を設定
-	inline void SetTarget(const Transform *const target) { target_ = target; }
+	inline void SetTarget(const SoLib::Transform *const target) { target_ = target; }
 
 	/// @brief ビュー行列を取得
 	const Matrix4x4 &GetViewMatrix() const;

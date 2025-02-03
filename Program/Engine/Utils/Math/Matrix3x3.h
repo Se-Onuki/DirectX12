@@ -7,93 +7,96 @@
 #include <immintrin.h>
 #include "Vector3.h"
 
-struct Matrix3x3 {
-	inline Matrix3x3() = default;
+namespace SoLib {
 
-	inline Matrix3x3(float A, float B, float C, float D, float E, float F, float G, float H, float I) : m{ std::array<float, 3u>{A, B, C}, std::array<float, 3u>{D, E, F}, std::array<float, 3u>{G, H, I} } {	}
+	struct Matrix3x3 {
+		inline Matrix3x3() = default;
 
-	using iterator = float *;
-	using const_iterator = const float *;
+		inline Matrix3x3(float A, float B, float C, float D, float E, float F, float G, float H, float I) : m{ std::array<float, 3u>{A, B, C}, std::array<float, 3u>{D, E, F}, std::array<float, 3u>{G, H, I} } {	}
+
+		using iterator = float *;
+		using const_iterator = const float *;
 
 #pragma warning(push)  // 現在の警告のステータスを保存する
 #pragma warning(disable : 4201)  // C4201警告を無視する
 
-	// 無名共用体
-	union {
-		std::array<float, 9u> arr;
-		std::array<std::array<float, 3u>, 3u> m;
-		std::array<Vector3, 3u> vec;
-	};
-	
+		// 無名共用体
+		union {
+			std::array<float, 9u> arr;
+			std::array<std::array<float, 3u>, 3u> m;
+			std::array<Vector3, 3u> vec;
+		};
+
 #pragma warning(pop)  // 以前の警告のステータスに戻す
 
-	//void Printf(const int32_t x, const int32_t y) const;
+		//void Printf(const int32_t x, const int32_t y) const;
 
-	/// @brief 逆行列関数
-	/// @return 逆行列
-	Matrix3x3 Inverse() const;
+		/// @brief 逆行列関数
+		/// @return 逆行列
+		Matrix3x3 Inverse() const;
 
-	/// @brief 転置行列
-	/// @return 転置行列
-	Matrix3x3 Transpose() const;
+		/// @brief 転置行列
+		/// @return 転置行列
+		Matrix3x3 Transpose() const;
 
-	Matrix3x3 operator+(const Matrix3x3 &Second) const;
+		Matrix3x3 operator+(const Matrix3x3 &Second) const;
 
-	Matrix3x3 operator-(const Matrix3x3 &Second) const;
+		Matrix3x3 operator-(const Matrix3x3 &Second) const;
 
-	Matrix3x3 operator*(const Matrix3x3 &Second) const;
-
-
-	Matrix3x3 operator*(const float &Second) const;
-	Matrix3x3 operator/(const float &Second) const;
+		Matrix3x3 operator*(const Matrix3x3 &Second) const;
 
 
-
-	Matrix3x3 operator+=(const Matrix3x3 &Second);
-
-	Matrix3x3 operator-=(const Matrix3x3 &Second);
-
-	Matrix3x3 operator*=(const Matrix3x3 &Second);
+		Matrix3x3 operator*(const float &Second) const;
+		Matrix3x3 operator/(const float &Second) const;
 
 
-	Matrix3x3 operator*=(const float &Second);
-	Matrix3x3 operator/=(const float &Second);
+
+		Matrix3x3 operator+=(const Matrix3x3 &Second);
+
+		Matrix3x3 operator-=(const Matrix3x3 &Second);
+
+		Matrix3x3 operator*=(const Matrix3x3 &Second);
 
 
-	/// <summary>
-	/// 単位行列
-	/// </summary>
-	/// <returns>単位行列</returns>
-	static Matrix3x3 Identity() {
-		return Matrix3x3{
-			1, 0, 0,
-			0, 1, 0,
-			0, 0, 1
-		};
-	}
+		Matrix3x3 operator*=(const float &Second);
+		Matrix3x3 operator/=(const float &Second);
 
-	static uint32_t size() { return 9u; }
 
-	inline iterator begin() { return m.data()->data(); }
-	inline const_iterator begin() const { return m.data()->data(); }
-	inline const_iterator cbegin() const { return m.data()->data(); }
+		/// <summary>
+		/// 単位行列
+		/// </summary>
+		/// <returns>単位行列</returns>
+		static Matrix3x3 Identity() {
+			return Matrix3x3{
+				1, 0, 0,
+				0, 1, 0,
+				0, 0, 1
+			};
+		}
 
-	inline iterator end() { return begin() + size(); }
-	const_iterator end() const { return end(); }
-	const_iterator cend() const { return end(); }
+		static uint32_t size() { return 9u; }
 
-	float *const data() { return m.data()->data(); }
-	inline const float *data() const { return m.data()->data(); }
-	inline const float *cdata() const { return m.data()->data(); }
+		inline iterator begin() { return m.data()->data(); }
+		inline const_iterator begin() const { return m.data()->data(); }
+		inline const_iterator cbegin() const { return m.data()->data(); }
 
-private:
+		inline iterator end() { return begin() + size(); }
+		const_iterator end() const { return end(); }
+		const_iterator cend() const { return end(); }
 
-	// 転置をSIMDで高速化しようとしたけど、そもそもが速すぎて無駄
-	/*inline static void TransponeArray(float data[8]) {
-		static const __m256i indices = _mm256_set_epi32(5, 2, 7, 4, 1, 6, 3, 0);
+		float *const data() { return m.data()->data(); }
+		inline const float *data() const { return m.data()->data(); }
+		inline const float *cdata() const { return m.data()->data(); }
 
-		__m256 result = _mm256_permutevar8x32_ps(_mm256_loadu_ps(data), indices);
+	private:
 
-		_mm256_storeu_ps(data, result);
-	}*/
-};
+		// 転置をSIMDで高速化しようとしたけど、そもそもが速すぎて無駄
+		/*inline static void TransponeArray(float data[8]) {
+			static const __m256i indices = _mm256_set_epi32(5, 2, 7, 4, 1, 6, 3, 0);
+
+			__m256 result = _mm256_permutevar8x32_ps(_mm256_loadu_ps(data), indices);
+
+			_mm256_storeu_ps(data, result);
+		}*/
+	};
+}

@@ -4,8 +4,8 @@
 #pragma once
 #include <cstdint>
 
-struct Vector3;
 namespace SoLib {
+struct Vector3;
 
 	/// @brief 線形補間
 	/// @tparam T 任意の型

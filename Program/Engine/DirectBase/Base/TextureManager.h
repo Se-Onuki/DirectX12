@@ -14,6 +14,7 @@
 #include "../../ResourceObject/ResourceObject.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include "../Descriptor/DescriptorManager.h"
+#include "../Engine/Utils/Math/Math.hpp"
 
 class TextureManager
 {

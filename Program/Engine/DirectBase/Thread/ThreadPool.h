@@ -4,14 +4,16 @@
 #pragma once
 #include "../../Engine/Utils/Containers/Singleton.h"
 
-class ThreadPoolManager : public SoLib::Singleton<ThreadPoolManager> {
+namespace SolEngine {
+	class ThreadPoolManager : public SoLib::Singleton<ThreadPoolManager> {
 
-	friend SoLib::Singleton<ThreadPoolManager>;
-	ThreadPoolManager() = default;
-	~ThreadPoolManager() = default;
+		friend SoLib::Singleton<ThreadPoolManager>;
+		ThreadPoolManager() = default;
+		~ThreadPoolManager() = default;
 
-public:
+	public:
 
 
 
-};
+	};
+}

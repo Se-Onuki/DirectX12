@@ -84,7 +84,7 @@ void CameraAnimManager::SceneChange()
 	currentAnimation_.End();
 }
 
-void CameraAnimManager::Play(Camera3D* endCamera, float time, float(*func)(float), float standByTime, bool standByIsEnd)
+void CameraAnimManager::Play(SolEngine::Camera3D* endCamera, float time, float(*func)(float), float standByTime, bool standByIsEnd)
 {
 	// 次のアニメーションインスタンス生成
 	NextAnimation nextAnimation;

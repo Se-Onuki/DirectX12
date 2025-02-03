@@ -57,15 +57,15 @@ namespace SoLib {
 		}
 
 	}
-}
 
-
-template<>
-inline bool SoLib::ImGuiWidget<SoLib::Math::Euler>(const char *const label, SoLib::Math::Euler *const value) {
+	template<>
+	inline bool ImGuiWidget(const char *const label, SoLib::Math::Euler *const value) {
 #ifdef USE_IMGUI
-	return SoLib::ImGuiDragEuler(label, &value->x);
+		return ImGuiDragEuler(label, &value->x);
 #else
-	label; value;
-	return false;
+		label; value;
+		return false;
 #endif // USE_IMGUI
+	}
 }
+

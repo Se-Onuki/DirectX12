@@ -36,7 +36,7 @@ void GameObject::Update(float deltaTime) {
 	}
 }
 
-void GameObject::Draw(const Camera3D &vp) const {
+void GameObject::Draw(const SolEngine::Camera3D &vp) const {
 	auto *const modelComp = GetComponent<ModelComp>();
 
 	for (auto &component : componentMap_) {

@@ -18,7 +18,7 @@ void BlockManager::Init(uint32_t maxCount)
 	}
 }
 
-void BlockManager::Draw(const Camera3D &camera)
+void BlockManager::Draw(const SolEngine::Camera3D &camera)
 {
 	// 始点となる添え字
 	uint32_t index = 0u;
@@ -65,7 +65,7 @@ void BlockManager::Draw(const Camera3D &camera)
 	}
 }
 
-void BlockManager::Draw(const CBuffer<Camera3D::CameraMatrix> &camera) {
+void BlockManager::Draw(const CBuffer<SolEngine::Camera3D::CameraMatrix> &camera) {
 	// 始点となる添え字
 	uint32_t index = 0u;
 	// サイズと始点を設定
@@ -132,7 +132,7 @@ void SkinModelListManager::Init(uint32_t maxCount)
 	}
 }
 
-void SkinModelListManager::Draw(const Camera3D &camera)
+void SkinModelListManager::Draw(const SolEngine::Camera3D &camera)
 {// 始点となる添え字
 	uint32_t index = 0u;
 	// サイズと始点を設定
@@ -200,7 +200,7 @@ void ModelHandleListManager::Init(uint32_t maxCount)
 	}
 }
 
-void ModelHandleListManager::Draw(const Camera3D &camera)
+void ModelHandleListManager::Draw(const SolEngine::Camera3D &camera)
 {
 	// 始点となる添え字
 	uint32_t index = 0u;
@@ -262,7 +262,7 @@ void SkinModelHandleListManager::Init(uint32_t maxCount)
 	}
 }
 
-void SkinModelHandleListManager::Draw([[maybe_unused]] const Camera3D &camera) {
+void SkinModelHandleListManager::Draw([[maybe_unused]] const SolEngine::Camera3D &camera) {
 	// 始点となる添え字
 	uint32_t index = 0u;
 	// サイズと始点を設定

@@ -33,7 +33,7 @@ namespace SolEngine {
 		/// @brief データの追加
 		/// @param[in] model モデル
 		/// @param[in] transform ワールド行列
-		void AddData(ModelManager::Handle model, const Transform &transform);
+		void AddData(ModelManager::Handle model, const SoLib::Transform &transform);
 
 		/// @brief ソート
 		void Sort();
@@ -52,7 +52,7 @@ namespace SolEngine {
 
 		std::array<ResourceHandle<PipelineState>, static_cast<uint32_t>(Model::BlendMode::kTotal)> pipeline_;
 
-		std::array<std::unordered_map<const Transform *, std::vector<MeshManager::Handle>>, static_cast<uint32_t>(Model::BlendMode::kTotal)> modelsBuffer_;
+		std::array<std::unordered_map<const SoLib::Transform *, std::vector<MeshManager::Handle>>, static_cast<uint32_t>(Model::BlendMode::kTotal)> modelsBuffer_;
 
 	};
 

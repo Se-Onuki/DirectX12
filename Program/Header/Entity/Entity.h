@@ -56,7 +56,7 @@ public:
 	inline virtual void Update() {};
 	/// @brief 描画処理
 	/// @param vp Cameraクラス
-	inline virtual void Draw(const Camera<Render::CameraType::Projecction> &) const {};
+	inline virtual void Draw(const SolEngine::Camera3D &) const {};
 
 	/// @brief jsonからの読み込み
 	/// @param groupName グループ名
@@ -81,7 +81,7 @@ public:
 	union {
 		// 紐づけられた実体
 		GameObject *const object_ = nullptr;
-		BaseTransform *const transform_;
+		SoLib::BaseTransform *const transform_;
 	};
 	float monoTimeScale_ = 1.f;
 };
@@ -89,7 +89,7 @@ public:
 class GameObject final {
 public:
 	// オブジェクトのSRT
-	BaseTransform transform_;
+	SoLib::BaseTransform transform_;
 
 	GameObject() = default;
 	//Object(const Object&) = default;
@@ -98,7 +98,7 @@ public:
 	void Init();
 	void Reset();
 	void Update(float deltaTime);
-	void Draw(const Camera3D &vp) const;
+	void Draw(const SolEngine::Camera3D &vp) const;
 
 	/*template<typename T>
 	bool HasComponent();*/

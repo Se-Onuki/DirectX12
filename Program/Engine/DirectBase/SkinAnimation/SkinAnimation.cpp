@@ -30,7 +30,7 @@ namespace SolEngine {
 			// モデルのノードに紐づいたアニメーションを取得する
 			const auto &rootNodeAnimation = animation_->nodeAnimations_.at(modelNode->name_);
 			// ノードのアニメーションのデータを取得する
-			SimpleTransformQuaternion rootTransform;
+			SoLib::SimpleTransformQuaternion rootTransform;
 			if (rootNodeAnimation.scale_.size()) {
 				rootTransform.scale_ = rootNodeAnimation.scale_.CalcValue(animateTime);
 			}

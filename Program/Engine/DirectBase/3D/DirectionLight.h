@@ -6,6 +6,7 @@
 #include "../../Engine/Utils/Math/Euler.h"
 #include "../../Engine/Utils/Math/Vector3.h"
 #include "../../Engine/Utils/Math/Vector4.h"
+#include "../../Engine/Utils/Math/Math.hpp"
 #include <stdint.h>
 #include <wrl.h>
 #include <d3d12.h>

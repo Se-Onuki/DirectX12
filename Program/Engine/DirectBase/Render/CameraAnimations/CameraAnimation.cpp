@@ -5,12 +5,12 @@
 #include "CameraManager.h"
 
 // 静的なメンバ変数の実体を宣言
-std::unique_ptr<Camera3D> CameraAnimation::camera_;
+std::unique_ptr<SolEngine::Camera3D> CameraAnimation::camera_;
 
-void CameraAnimation::Init(Camera3D *endCamera, float time, float(*func)(float))
+void CameraAnimation::Init(SolEngine::Camera3D *endCamera, float time, float(*func)(float))
 {
 	if (camera_ == nullptr) {
-		camera_ = std::make_unique<Camera3D>();
+		camera_ = std::make_unique<SolEngine::Camera3D>();
 	}
 
 	// パラメータを格納する

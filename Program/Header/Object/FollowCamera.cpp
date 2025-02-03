@@ -8,7 +8,7 @@
 
 void FollowCamera::Init() {
 	camera_.Init();
-	input_ = Input::GetInstance();
+	input_ = SolEngine::Input::GetInstance();
 }
 
 void FollowCamera::Update() {

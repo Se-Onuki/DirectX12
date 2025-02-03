@@ -12,7 +12,10 @@
 #include <variant>
 #include <vector>
 
-class Render;
+namespace SolEngine {
+	class Render;
+}
+
 struct LineBase;
 struct Plane;
 struct Triangle;

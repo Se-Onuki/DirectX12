@@ -37,7 +37,7 @@ public: // メンバ関数
 	/// <param name="endCamera"終端パラメータを持つカメラ</param>
 	/// <param name="time">アニメーション秒数</param>
 	/// <param name="func">線形補間の型</param>
-	void Init(Camera3D* endCamera, float time, float(*func)(float) = SoLib::easeLinear);
+	void Init(SolEngine::Camera3D* endCamera, float time, float(*func)(float) = SoLib::easeLinear);
 
 	/// <summary>
 	/// 更新
@@ -65,12 +65,12 @@ public: // アクセッサ等
 private: // メンバ変数
 
 	// パラメータ格納用カメラ
-	static std::unique_ptr<Camera3D> camera_;
+	static std::unique_ptr<SolEngine::Camera3D> camera_;
 	
 	// 始端パラメーター保管用
 	CameraParameter startCamera_;
 	// 終端パラメータ保管用
-	Camera3D* endCamera_;
+	SolEngine::Camera3D* endCamera_;
 
 	// アニメーション時間
 	SoLib::DeltaTimer timer_;

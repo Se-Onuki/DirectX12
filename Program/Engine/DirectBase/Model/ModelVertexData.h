@@ -8,6 +8,7 @@
 
 #include "AssimpData.h"
 #include "../Base/VertexBuffer.h"
+#include "../../Utils/Math/Math.hpp"
 
 namespace SolEngine {
 

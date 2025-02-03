@@ -20,7 +20,7 @@ SoLib::Color::RGB4 ECS::ColorLarp::EaseColor(float t) {
 	return SoLib::Lerp(start_, end_, easeFunc_(t));
 }
 
-void  ECS::FollowCamera::TransferData(Camera3D &camera, const Vector3 &translate) const {
+void  ECS::FollowCamera::TransferData(SolEngine::Camera3D &camera, const Vector3 &translate) const {
 
 	camera.rotation_ = this->rotation_;
 	camera.translation_ = translate + (offset_ * rotation_);

@@ -2,8 +2,8 @@
 
 ResultScene::ResultScene()
 {
-	input_ = Input::GetInstance();
-	audio_ = Audio::GetInstance();
+	input_ = SolEngine::Input::GetInstance();
+	audio_ = SolEngine::Audio::GetInstance();
 	fade_ = Fade::GetInstance();
 }
 

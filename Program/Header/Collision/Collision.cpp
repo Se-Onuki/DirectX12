@@ -491,7 +491,7 @@ void OBB::ImGuiDebug(const std::string &group, Vector3 &rotate) {
 		ImGui::DragFloat3("Centor", &centor.x, 0.1f);
 		ImGui::DragFloat3("Size", &size.x, 0.1f);
 
-		if (ImGui::DragFloat3("Rotate", &rotate.x, Angle::Dig2Rad)) {
+		if (ImGui::DragFloat3("Rotate", &rotate.x, SoLib::Angle::Dig2Rad)) {
 			SetRotate(rotate);
 		}
 
@@ -531,7 +531,7 @@ void Pendulum::MoveSwing(const Vector3 &kGravity, const float deltaTime) {
 void ConicalPendulum::MoveAngle(const Vector3 &kGravity, const float deltaTime) {
 	angularVelocity = std::sqrt(-kGravity.y / (length * std::cos(halfApexAngle)));
 	angle += angularVelocity * deltaTime;
-	angle = std::fmod(angle, Angle::PI2);
+	angle = std::fmod(angle, SoLib::Angle::PI2);
 }
 
 Vector3 ConicalPendulum::GetPos() {

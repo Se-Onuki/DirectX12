@@ -24,7 +24,7 @@ public:
 	void AddRotate(const Vector3 &euler);
 
 	/// @brief ターゲットを設定
-	void SetTarget(BaseTransform *const target);
+	void SetTarget(SoLib::BaseTransform *const target);
 	/// @brief ラインを設定
 	void SetLine(const LineBase &target);
 	/// @brief カメラを取得
@@ -35,7 +35,7 @@ public:
 private:
 	LineBase line_;
 
-	BaseTransform *pTarget_ = nullptr;
+	SoLib::BaseTransform *pTarget_ = nullptr;
 
 	VariantItem<"Offset", Vector3> offset_{{0.f, 6.f, -30.f}};
 	VariantItem<"AddOffset", Vector3> addOffset_{{0.f, 6.f, 0.f}};
@@ -43,5 +43,5 @@ private:
 	Quaternion rotate_;
 	Vector3 prePos_;
 
-	Camera3D *camera_;
+	SolEngine::Camera3D *camera_;
 };

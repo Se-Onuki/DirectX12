@@ -14,7 +14,7 @@ struct Particle {
 		TransMat transform;
 		SoLib::Color::RGB4 color;
 	};
-	BaseTransform transform_;
+	SoLib::BaseTransform transform_;
 	SoLib::Color::RGB4 color_;
 
 	using map_struct = ParticleData;

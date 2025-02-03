@@ -25,9 +25,9 @@ namespace SolEngine {
 		CBuffer<Matrix4x4> rootNode_;
 
 		/// @brief モデルの描画
-		void Draw(const Transform &transform, const Camera3D &camera) const;
-		void Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const Transform &transform, const Camera3D &camera) const;
-		void Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const;
+		void Draw(const SoLib::Transform &transform, const Camera3D &camera) const;
+		void Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const SoLib::Transform &transform, const Camera3D &camera) const;
+		void Draw(const SkinCluster &skinCluster, const SoLib::Transform &transform, const Camera3D &camera) const;
 		void Draw(const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 		void Draw(const SkinCluster &skinCluster, const D3D12_GPU_DESCRIPTOR_HANDLE &transformSRV, uint32_t drawCount, const CBuffer<uint32_t> &drawIndex, const Camera3D &camera) const;
 	};

@@ -424,7 +424,7 @@ void Sprite::StartDraw(ID3D12GraphicsCommandList *const commandList) {
 	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い。
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	matProjection_ = Render::MakeOrthographicMatrix({ 0.f,0.f }, { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight }, 0.f, 100.f);
+	matProjection_ = SolEngine::Render::MakeOrthographicMatrix({ 0.f,0.f }, { (float)WinApp::kWindowWidth,(float)WinApp::kWindowHeight }, 0.f, 100.f);
 }
 
 void Sprite::EndDraw() {
@@ -488,7 +488,7 @@ void Sprite::SetPosition(const Vector2 position)
 	transMat_ = transform_.Affine();
 }
 
-void Sprite::SetTransform(const Transform2D &trans)
+void Sprite::SetTransform(const SoLib::Transform2D &trans)
 {
 	transform_.scale_ = { trans.scale_.x, trans.scale_.y, 1.f };
 	transform_.rotate_ = Vector3{ .z = trans.rotate_.Get() };

@@ -74,7 +74,7 @@ public: // その他関数
 	/// <param name="func">イージングタイプ(Solib::linear 等)</param>
 	/// <param name="standByTime">待機秒数</param>
 	/// <param name="standByIsEnd">現在のアニメーションが終了するまで待機するか</param>
-	void Play(Camera3D *endCamera, float time, float(*func)(float) = SoLib::easeLinear, float standByTime = 0.f, bool standByIsEnd = false);
+	void Play(SolEngine::Camera3D *endCamera, float time, float(*func)(float) = SoLib::easeLinear, float standByTime = 0.f, bool standByIsEnd = false);
 
 private: // メンバ変数
 

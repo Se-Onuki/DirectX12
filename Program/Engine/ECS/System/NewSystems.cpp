@@ -286,7 +286,7 @@ namespace ECS::System::Par {
 
 	void PlayerMove::Execute(const World *const, const float deltaTime)
 	{
-		auto *inputManager = Input::GetInstance();
+		auto *inputManager = SolEngine::Input::GetInstance();
 		auto *const xInput = inputManager->GetXInput();
 		auto *const dInput = inputManager->GetDirectInput();
 
@@ -474,7 +474,7 @@ namespace ECS::System::Par {
 	{
 		auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
 
-		const Matrix4x4 &vp = Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight);
+		const Matrix4x4 &vp = SolEngine::Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight);
 		const Matrix4x4 &matVPVp = camera->matView_ * camera->matProjection_ * vp;
 		auto &[enmTag, health, pos, barComp] = readWrite_;
 
@@ -486,7 +486,7 @@ namespace ECS::System::Par {
 		auto *const bar = healthBar_->at(drawCount_).get();
 
 		// 画面上の場所
-		const Vector3 screenPos = Render::WorldToScreen(*pos + barComp.offset_, matVPVp);
+		const Vector3 screenPos = SolEngine::Render::WorldToScreen(*pos + barComp.offset_, matVPVp);
 		// 描画場所を設定
 		bar->SetCentor(screenPos.ToVec2());
 		// 体力バーのサイズ

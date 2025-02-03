@@ -13,7 +13,7 @@
 class ModelComp : public IComponent {
 public:
 	struct ModelBone {
-		Transform transform_;
+		SoLib::Transform transform_;
 		Model *model_;
 
 		ModelBone *parent_ = nullptr;
@@ -22,7 +22,7 @@ public:
 		/// @brief 初期化
 		void Init(Model *const model = nullptr);
 		/// @brief 座標の設定
-		void SetTransform(const BaseTransform &srt);
+		void SetTransform(const SoLib::BaseTransform &srt);
 
 		/// @brief 子供の追加
 		ModelBone *const AddChild(Model *const model);
@@ -32,8 +32,8 @@ public:
 		void SetParent(ModelBone *const parent);
 
 		void Update();
-		void Draw(const Camera<Render::CameraType::Projecction> &vp) const;
-		void Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const;
+		void Draw(const SolEngine::Camera3D&vp) const;
+		void Draw(const SolEngine::Camera3D &vp, const Material &material) const;
 
 		bool ImGuiWidget();
 	};
@@ -60,14 +60,14 @@ public:
 
 
 	void Update() override;
-	void Draw(const Camera<Render::CameraType::Projecction> &vp)const override;
-	void Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const;
+	void Draw(const SolEngine::Camera3D &vp)const override;
+	void Draw(const SolEngine::Camera3D &vp, const Material &material) const;
 
 	void ImGuiWidget() override;
 
 	/// @brief ボーンモデルの追加
-	ModelBone *const AddBone(const std::string &key, Model *const model, const BaseTransform &srt = {});
-	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const BaseTransform &srt);
+	ModelBone *const AddBone(const std::string &key, Model *const model, const SoLib::BaseTransform &srt = {});
+	ModelBone *const AddBone(const std::string &key, Model *const model, ModelBone *const parent, const SoLib::BaseTransform &srt);
 
 	/// @brief ボーンモデルの取得
 	ModelBone *const GetBone(const std::string &key) { return modelKey_.at(key); }

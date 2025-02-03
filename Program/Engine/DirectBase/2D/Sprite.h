@@ -141,7 +141,7 @@ private:
 
 private:
 	// Transform
-	SimpleTransformEuler transform_;
+	SoLib::SimpleTransformEuler transform_;
 	/// @brief アフィン行列
 	Matrix4x4 transMat_ = Matrix4x4::Identity();
 
@@ -164,7 +164,7 @@ public:
 	void SetTextureHaundle(const uint32_t textureHaundle)
 	{
 		textureHaundle_ = textureHaundle;
-		SetTexOrigin(ZeroVector2);
+		SetTexOrigin(Vector2::zero);
 		SetTexDiff(textureHaundle_->textureSize_);
 	}
 
@@ -213,7 +213,7 @@ public:
 	/// @fn void SetTransform(const Transform2D)
 	/// @brief スプライトの姿勢設定
 	/// @param[in] trans スプライトの姿勢
-	void SetTransform(const Transform2D &trans);
+	void SetTransform(const SoLib::Transform2D &trans);
 
 	/// @fn const Transform2D &GetTransform(void)
 	/// @brief 姿勢取得

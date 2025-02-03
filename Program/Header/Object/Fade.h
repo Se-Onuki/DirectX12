@@ -10,6 +10,7 @@
 
 #include "../../Engine/Utils/Math/Vector2.h"
 #include "../../Engine/Utils/Math/Vector4.h"
+#include "../../Engine/Utils/Math/Math.hpp"
 #include "../../Engine/DirectBase/2D/Sprite.h"
 
 #include "../../Engine/Utils/Graphics/Color.h"

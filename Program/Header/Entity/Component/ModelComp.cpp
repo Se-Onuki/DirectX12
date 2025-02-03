@@ -9,13 +9,13 @@ void ModelComp::Update() {
 	}
 }
 
-void ModelComp::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
+void ModelComp::Draw(const SolEngine::Camera3D &vp) const {
 	for (auto &model : modelTree_) {
 		model->Draw(vp);
 	}
 }
 
-void ModelComp::Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const {
+void ModelComp::Draw(const SolEngine::Camera3D &vp, const Material &material) const {
 	for (auto &model : modelTree_) {
 		model->Draw(vp, material);
 	}
@@ -31,7 +31,7 @@ void ModelComp::ModelBone::Init(Model *const model) {
 	if (model) { model_ = model; }
 }
 
-void ModelComp::ModelBone::SetTransform(const BaseTransform &srt) {
+void ModelComp::ModelBone::SetTransform(const SoLib::BaseTransform &srt) {
 	transform_->scale = srt.scale;
 	transform_->rotate = srt.rotate;
 	transform_->translate = srt.translate;
@@ -64,7 +64,7 @@ void ModelComp::ModelBone::Update() {
 	}
 }
 
-void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &vp) const {
+void ModelComp::ModelBone::Draw(const SolEngine::Camera3D &vp) const {
 	if (model_) {
 		this->model_->Draw(transform_, vp);
 	}
@@ -73,7 +73,7 @@ void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &v
 	}
 }
 
-void ModelComp::ModelBone::Draw(const Camera<Render::CameraType::Projecction> &vp, const Material &material) const {
+void ModelComp::ModelBone::Draw(const SolEngine::Camera3D &vp, const Material &material) const {
 	this->model_->Draw(transform_, vp);
 
 	for (auto &child : children_) {
@@ -93,12 +93,12 @@ bool ModelComp::ModelBone::ImGuiWidget() {
 	return result;
 }
 
-ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, const BaseTransform &srt) {
+ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, const SoLib::BaseTransform &srt) {
 	if (modelKey_.count(key) != 0u) return nullptr;
 	auto  newBone = std::make_unique<ModelBone>();
 	newBone->Init(model);
 
-	newBone->transform_->parent_ = static_cast<BaseTransform *>(transform_);
+	newBone->transform_->parent_ = static_cast<SoLib::BaseTransform *>(transform_);
 
 	newBone->SetTransform(srt);
 
@@ -110,7 +110,7 @@ ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *co
 	return modelKey_.at(key);
 }
 
-ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, ModelBone *const parent, const BaseTransform &srt) {
+ModelComp::ModelBone *const ModelComp::AddBone(const std::string &key, Model *const model, ModelBone *const parent, const SoLib::BaseTransform &srt) {
 	if (modelKey_.count(key) != 0u) return nullptr;
 
 	auto *const newBone = parent->AddChild(model);

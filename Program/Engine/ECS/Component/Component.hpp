@@ -80,9 +80,9 @@ namespace ECS {
 		SoLib::Color::RGB4 startColor_ = 0xFFFFFFFF;
 		SoLib::Color::RGB4 endColor_{};
 
-		ValuePair<float> spawnLifeLimit_{ };
+		SoLib::ValuePair<float> spawnLifeLimit_{ };
 
-		ValuePair<float> spawnPower_{};
+		SoLib::ValuePair<float> spawnPower_{};
 		SoLib::Math::Euler spawnRange_{};
 
 		// SoLib::ConstVector<uint32_t, 7u> color_;
@@ -219,7 +219,7 @@ namespace ECS {
 		/// @brief カメラにデータを転送する
 		/// @param camera 転送先のカメラ
 		/// @param translate 平行移動
-		void TransferData(Camera3D &camera, const Vector3 &translate) const;
+		void TransferData(SolEngine::Camera3D &camera, const Vector3 &translate) const;
 	};
 
 	struct BoneTransformComp : IComponent {
@@ -364,7 +364,7 @@ namespace ECS {
 
 		uint32_t power_ = 20;
 
-		Angle::Radian angle_ = 30._deg;
+		SoLib::Angle::Radian angle_ = 30._deg;
 
 		bool isFire_ = false;
 
@@ -394,7 +394,7 @@ namespace ECS {
 		// もしZeroなら位置基準の相対方向
 		Vector2 diff_{};
 		// 押し出す強さ
-		ValuePair<float> diffPower_{};
+		SoLib::ValuePair<float> diffPower_{};
 	};
 
 	struct EffectPlayer : IComponent {

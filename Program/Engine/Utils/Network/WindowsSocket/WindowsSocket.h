@@ -8,21 +8,24 @@
 #include <optional>
 #include "../../Success.h"
 
-class WindowsSocket {
-public:
-	WindowsSocket() = default;
+namespace SoLib {
 
-	~WindowsSocket() { Finalize(); }
+	class WindowsSocket {
+	public:
+		WindowsSocket() = default;
 
-	/// @brief 初期化処理
-	/// @param a 
-	/// @param b 
-	/// @return 初期化の成否
-	IsSuccess Init(uint8_t a, uint8_t b);
+		~WindowsSocket() { Finalize(); }
 
-	IsSuccess Finalize();
+		/// @brief 初期化処理
+		/// @param a 
+		/// @param b 
+		/// @return 初期化の成否
+		IsSuccess Init(uint8_t a, uint8_t b);
 
-private:
+		IsSuccess Finalize();
 
-	std::optional<WSADATA> wsaData_ = std::nullopt;
-};
+	private:
+
+		std::optional<WSADATA> wsaData_ = std::nullopt;
+	};
+}

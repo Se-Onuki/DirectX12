@@ -37,8 +37,8 @@ private:
 	SoLib::Color::RGB4 color_;
 
 	// スプライトの姿勢
-	Transform2D transform_;
+	SoLib::Transform2D transform_;
 	// スプライトのUV座標
-	Transform2D uvTransform_{ .scale_ = Vector2::one };
+	SoLib::Transform2D uvTransform_{ .scale_ = Vector2::one };
 
 };

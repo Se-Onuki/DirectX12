@@ -49,15 +49,15 @@ public: // アクセッサ等
 	/// </summary>
 	/// <param name="cameraName">追加するカメラ名</param>
 	/// <returns>追加したカメラ</returns>
-	Camera3D* AddCamera(const std::string& cameraName);
+	SolEngine::Camera3D* AddCamera(const std::string& cameraName);
 
-	Camera3D* GetCamera(const std::string& cameraName) const;
+	SolEngine::Camera3D* GetCamera(const std::string& cameraName) const;
 
 	/// <summary>
 	/// 使用中のカメラゲッター
 	/// </summary>
 	/// <returns>使用中のカメラ</returns>
-	Camera3D* GetUseCamera() { return useCamera_; }
+	SolEngine::Camera3D* GetUseCamera() { return useCamera_; }
 
 	/// <summary>
 	/// 引数で指定した名前のカメラをメインカメラとして使用する
@@ -69,13 +69,13 @@ public: // アクセッサ等
 	/// 
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetUseCamera( Camera3D* camera);
+	void SetUseCamera(SolEngine::Camera3D* camera);
 
 	/// <summary>
 	/// カメラに引数のパラメーター数値を渡す関数
 	/// </summary>
 	/// <param name="parameter">セットするパラメーター</param>
-	void SetParameters(const Camera3D& parameter) { *useCamera_ = parameter; }
+	void SetParameters(const SolEngine::Camera3D& parameter) { *useCamera_ = parameter; }
 
 	CameraAnimManager* GetCameraAnimManager(){return cameraAnimManager_;}
 
@@ -90,7 +90,7 @@ private: // メンバ変数
 	CameraAnimManager* cameraAnimManager_ = nullptr;
 
 	// 使用中のカメラ
-	Camera3D* useCamera_;
+	SolEngine::Camera3D* useCamera_;
 
 #ifdef USE_IMGUI // ImGui用メンバ変数
 

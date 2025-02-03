@@ -93,6 +93,7 @@ namespace SoLib {
 	template<SoLib::IsRealType T>
 	inline void Singleton<T>::Generate()
 	{
+		// インスタンスを生成｡ テンプレートの阻害になるためnewを使う
 		instance_.reset(new T);
 	}
 

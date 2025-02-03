@@ -114,27 +114,27 @@ void CameraManager::DisplayImGui()
 #endif // USE_IMGUI
 }
 
-Camera3D *CameraManager::AddCamera(const std::string &cameraName)
+SolEngine::Camera3D *CameraManager::AddCamera(const std::string &cameraName)
 {
 	// カメラリストにカメラを追加しそれを返す
 	return cameraList_->AddCamera(cameraName);
 }
 
-Camera3D *CameraManager::GetCamera(const std::string &cameraName) const {
+SolEngine::Camera3D *CameraManager::GetCamera(const std::string &cameraName) const {
 	return cameraList_->GetCamera(cameraName);
 }
 
 void CameraManager::SetUseCamera(const std::string &cameraName)
 {
 	// カメラ配列からカメラを取得
-	Camera3D *getCamera = cameraList_->GetCamera(cameraName);
+	SolEngine::Camera3D *getCamera = cameraList_->GetCamera(cameraName);
 	// 取得できた場合はそのカメラを使用する
 	if (getCamera != nullptr) {
 		useCamera_ = getCamera;
 	}
 }
 
-void CameraManager::SetUseCamera(Camera3D *camera)
+void CameraManager::SetUseCamera(SolEngine::Camera3D *camera)
 {
 	useCamera_ = camera;
 }

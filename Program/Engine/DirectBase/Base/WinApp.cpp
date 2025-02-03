@@ -92,7 +92,7 @@ void WinApp::CreateGameWindow(const char *title, UINT windowStyle, int32_t clien
 	// ウィンドウの生成
 	hwnd = CreateWindow(
 		wc.lpszClassName,				// 利用するクラス名
-		ConvertString(title).c_str(),	// タイトルバーの文字
+		SolEngine::ConvertString(title).c_str(),	// タイトルバーの文字
 		WS_OVERLAPPEDWINDOW,			// よく見るウィンドウスタイル
 		CW_USEDEFAULT,					// 表示X座標 (windowsに任せる)
 		CW_USEDEFAULT,					// 表示Y座標 (windowsに任せる)

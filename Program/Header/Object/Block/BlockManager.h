@@ -140,8 +140,8 @@ public: // メンバ関数
 	/// 描画関数
 	/// </summary>
 	/// <param name="camera"></param>
-	void Draw(const Camera3D &camera);
-	void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
+	void Draw(const SolEngine::Camera3D &camera);
+	void Draw(const CBuffer<SolEngine::Camera3D::CameraMatrix> &camera);
 
 	IBlock *const AddBox(const Model *const model, IBlock &&block) {
 
@@ -222,7 +222,7 @@ public: // メンバ関数
 	/// 描画関数
 	/// </summary>
 	/// <param name="camera"></param>
-	void Draw(const Camera3D &camera);
+	void Draw(const SolEngine::Camera3D &camera);
 	//void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
 
 	IBlock *const AddBox(const SkinModelPair &model, IBlock &&block) {
@@ -383,7 +383,7 @@ public: // メンバ関数
 	/// 描画関数
 	/// </summary>
 	/// <param name="camera"></param>
-	void Draw(const Camera3D &camera);
+	void Draw(const SolEngine::Camera3D &camera);
 	//void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
 
 	IBlock *const AddBox(const ModelHandle model, IBlock &&block) {
@@ -468,7 +468,7 @@ public: // メンバ関数
 	/// 描画関数
 	/// </summary>
 	/// <param name="camera"></param>
-	void Draw(const Camera3D &camera);
+	void Draw(const SolEngine::Camera3D &camera);
 	//void Draw(const CBuffer<Camera3D::CameraMatrix> &camera);
 
 	IBlock *const AddBox(const SkinModelPair &model, IBlock &&block) {

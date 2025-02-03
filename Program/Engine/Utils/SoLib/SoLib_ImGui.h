@@ -20,7 +20,7 @@
 namespace SoLib {
 
 	// ImGuiのラッピングを行う
-	template<IsNotPointer T>
+	template<typename T>
 	bool ImGuiWidget(const char *const label, T *const value);
 
 	template<IsNotPointer T>
@@ -39,17 +39,17 @@ namespace SoLib {
 	template <>
 	bool ImGuiWidget<double>(const char *const label, double *const value);
 	template <>
-	bool ImGuiWidget<Vector2>(const char *const label, Vector2 *const value);
+	bool ImGuiWidget<SoLib::Vector2>(const char *const label, SoLib::Vector2 *const value);
 	template <>
-	bool ImGuiWidget<Vector3>(const char *const label, Vector3 *const value);
+	bool ImGuiWidget<SoLib::Vector3>(const char *const label, SoLib::Vector3 *const value);
 	template <>
-	bool ImGuiWidget<Vector4>(const char *const label, Vector4 *const value);
+	bool ImGuiWidget<SoLib::Vector4>(const char *const label, SoLib::Vector4 *const value);
 
 	template <>
 	bool ImGuiWidget<std::string>(const char *const label, std::string *const value);
 
 	template <>
-	bool ImGuiWidget<Angle::Radian>(const char *const label, Angle::Radian *const value);
+	bool ImGuiWidget<SoLib::Angle::Radian>(const char *const label, SoLib::Angle::Radian *const value);
 
 	//template <typename T, IsContainsType<T> C>
 	//bool ImGuiWidget(const char *const label, C *const value, uint32_t &index);
@@ -67,16 +67,16 @@ namespace SoLib {
 	inline bool ImGuiWidget(ITEM *const value) { return SoLib::ImGuiWidget(value->GetKey(), &value->GetItem()); }
 
 	template <typename T>
-	inline bool ImGuiWidget(const char *const label, ValuePair<T> *const value);
+	inline bool ImGuiWidget(const char *const label, SoLib::ValuePair<T> *const value);
 
-	bool ImGuiDragEuler(const char *const label, float *value);
+	bool ImGuiDragEuler(const char *const label, float *const value);
 
 }
 
 #pragma region inline関数の記述
 
 template<typename T>
-bool SoLib::ImGuiWidget(const char *const label, ValuePair<T> *const value) {
+bool SoLib::ImGuiWidget(const char *const label, SoLib::ValuePair<T> *const value) {
 	bool isAction = false;
 
 #ifdef USE_IMGUI

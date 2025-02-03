@@ -16,7 +16,7 @@
 #include "../Engine/DirectBase/Model/SkeletonAnimation/ModelAnimation.h"
 #include "../Engine/DirectBase/SkinAnimation/SkinAnimation.h"
 
-class CGTaskScene : public IScene {
+class CGTaskScene : public SolEngine::IScene {
 public:
 	void OnEnter() override;
 	void OnExit() override;
@@ -37,8 +37,8 @@ private:
 
 	std::unique_ptr<SolEngine::SkyBox> skyBox_;
 
-	Transform skyBoxTransform_;
-	Transform transform_;
+	SoLib::Transform skyBoxTransform_;
+	SoLib::Transform transform_;
 
 	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
 	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;

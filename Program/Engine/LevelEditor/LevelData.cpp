@@ -90,7 +90,7 @@ namespace SolEngine {
 				}
 				{
 					// 弧度法に変換しつつ､回転量の変換
-					const Vector3 rotate = transform["rotation"].get<Vector3>() * -Angle::Dig2Rad;
+					const Vector3 rotate = transform["rotation"].get<Vector3>() * -SoLib::Angle::Dig2Rad;
 
 					static const Quaternion kBaseRotate = { 0,1,0,0 };	// Y軸に半回転する
 

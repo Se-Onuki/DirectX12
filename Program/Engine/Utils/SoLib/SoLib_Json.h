@@ -49,16 +49,16 @@ namespace SoLib {
 	inline void FromJson(const nlohmann::json &json, T &data);
 }
 
-void from_json(const nlohmann::json &json, Vector2 &data);
-void from_json(const nlohmann::json &json, Vector3 &data);
-void from_json(const nlohmann::json &json, Vector4 &data);
+namespace SoLib {
+void from_json(const nlohmann::json &json, SoLib::Vector2 &data);
+void from_json(const nlohmann::json &json, SoLib::Vector3 &data);
+void from_json(const nlohmann::json &json, SoLib::Vector4 &data);
 
-void to_json(nlohmann::json &json, const Quaternion &data);
-void from_json(const nlohmann::json &json, Quaternion &data);
+void to_json(nlohmann::json &json, const SoLib::Quaternion &data);
+void from_json(const nlohmann::json &json, SoLib::Quaternion &data);
 
 #pragma region Func
 
-namespace SoLib {
 
 	template<SoLib::IsNotPointer T>
 	inline void ToJson(nlohmann::json &json, const T &data) {

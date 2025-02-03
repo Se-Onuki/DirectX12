@@ -56,7 +56,7 @@ void FollowCameraComp::AddRotate(const Vector3 &euler) {
 	}
 }
 
-void FollowCameraComp::SetTarget(BaseTransform *const target) {
+void FollowCameraComp::SetTarget(SoLib::BaseTransform *const target) {
 	pTarget_ = target;
 }
 

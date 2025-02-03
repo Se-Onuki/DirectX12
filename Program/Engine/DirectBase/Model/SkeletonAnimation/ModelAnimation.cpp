@@ -2,6 +2,7 @@
 /// @brief モデルのアニメーションのリソース
 /// @author ONUKI seiya
 #include "ModelAnimation.h"
+#include "../../../Utils/Math/Math.hpp"
 
 namespace SolEngine {
 

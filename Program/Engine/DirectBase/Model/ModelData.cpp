@@ -48,7 +48,7 @@ namespace SolEngine {
 		return std::move(result);
 	}
 
-	void ModelData::Draw(const Transform &transform, const Camera3D &camera) const
+	void ModelData::Draw(const SoLib::Transform &transform, const Camera3D &camera) const
 	{
 		::DirectXCommon *const dxCommon = ::DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
@@ -63,7 +63,7 @@ namespace SolEngine {
 		}
 	}
 
-	void ModelData::Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const Transform &transform, const Camera3D &camera) const
+	void ModelData::Draw(const VertexBuffer<ModelVertexData::VertexData, D3D12_HEAP_TYPE_DEFAULT> &vertexBuffer, const SoLib::Transform &transform, const Camera3D &camera) const
 	{
 		::DirectXCommon *const dxCommon = ::DirectXCommon::GetInstance();
 		ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
@@ -79,7 +79,7 @@ namespace SolEngine {
 
 	}
 
-	void ModelData::Draw(const SkinCluster &skinCluster, const Transform &transform, const Camera3D &camera) const
+	void ModelData::Draw(const SkinCluster &skinCluster, const SoLib::Transform &transform, const Camera3D &camera) const
 	{
 
 		::DirectXCommon *const dxCommon = ::DirectXCommon::GetInstance();
