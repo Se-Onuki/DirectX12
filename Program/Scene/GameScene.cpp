@@ -45,6 +45,8 @@ void GameScene::OnEnter() {
 
 	compRegistry_ = ECS::ComponentRegistry::GetInstance();
 
+	numberRender_ = NumberRender::Generate(TextureManager::Load("UI/Number.png"));
+
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
 	SolEngine::ResourceObjectManager<SolEngine::Skeleton> *const skeletonManager = SolEngine::ResourceObjectManager<SolEngine::Skeleton>::GetInstance();
@@ -994,4 +996,49 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 			});
 		timer.Start();
 	}
+}
+
+void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, [[maybe_unused]] NumberRender &numberRender) const
+{
+	//auto chunks = world.GetAccessableChunk(Archetype::Generate<ECS::DamageCounter>());
+	//uint32_t totalCount = 0;
+
+	//// チャンクと同じ数のデータを確保する
+	//std::vector<std::tuple<size_t, std::vector<bool>, size_t>> chunkOffset(chunks.size());
+	//for (uint32_t i = 0; i < chunkOffset.size(); i++) {
+	//	auto &[index, flag, count] = chunkOffset[i];
+	//	index = totalCount;
+	//	auto [rFlag, rCount] = chunks[i]->CountIfFlag<ECS::DamageCounter>([](const ECS::DamageCounter &flag) {
+	//		return (flag.damageCount_ != 0 and flag.damageRemainTime_ > 0);
+	//		});
+	//	flag = std::move(rFlag);
+	//	count = rCount;
+	//	totalCount += count;
+
+	//}
+	//// 書き込み先のメモリの確保
+	//auto numberSpan = numberRender.Reservation(totalCount);
+
+	//for (size_t i = 0; i < chunkOffset.size();i++) {
+	//	const auto &[index, flag, count] = chunkOffset[i];
+	//	const auto &chunk = chunks[i];
+	//	
+	//	auto numItr = &numberSpan[index];
+
+	//	const auto& chunkView = chunk->View<ECS::PositionComp, ECS::DamageCounter>();
+	//	auto viewItr = chunkView.begin();
+
+	//	for (uint32_t j = 0; j < chunkView.size(); j++) {
+	//		auto target = viewItr++;
+	//		if (flag[j]) {
+	//			const auto &[position, damageCounter] = *target;
+
+	//			(*(numItr++))->SetText(damageCounter.damageCount_);
+
+	//		}
+	//	}	
+
+	//}
+
+
 }

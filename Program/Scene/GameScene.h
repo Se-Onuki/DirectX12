@@ -37,6 +37,7 @@
 #include "../Header/Object/PlayerLevel/LevelUP.h"
 #include "../Header/Object/Fade.h"
 #include "../Game/Resource/GameScore.h"
+#include "../Engine/UI/Text/NumberRender.h"
 
 /// @class GameScene
 /// @brief ゲームシーン
@@ -130,6 +131,11 @@ private:
 	/// @param timer[in, out] タイマー 
 	/// @param spawner[out] スポナー 
 	void AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) const;
+
+	/// @brief ダメージの描画
+	/// @param world[in] ワールドデータ
+	/// @param numberRender[out] 数字の描画データ格納先
+	void DamageRender(const ECS::World &world, NumberRender &numberRender) const;
 
 private:
 	/// @brief メニューのタイマー
@@ -251,6 +257,9 @@ private:
 	CBuffer<SoLib::Color::HSV4> hsvParam_{ {0.f, 0.5f, 0.5f, 1.f} };
 	/// @brief ガウシアンブラーのパラメータ
 	CBuffer<std::pair<float, int32_t>> gaussianParam_;
+
+	// 数字の出力
+	std::unique_ptr<NumberRender> numberRender_;
 
 	// 影の色
 	SoLib::Color::RGB4 shadowColor_ = 0x00000055;
