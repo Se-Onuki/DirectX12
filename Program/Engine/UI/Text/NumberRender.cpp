@@ -51,7 +51,14 @@ namespace SolEngine {
 
 		auto textureSize = numText->textSize_;
 
-		std::generate(numText->numText_.begin(), numText->numText_.end(), [texture, textureSize]()->std::unique_ptr<Sprite> { return Sprite::Generate(texture.index_); });
+		std::generate(numText->numText_.begin(), numText->numText_.end(), [texture, textureSize]()->std::unique_ptr<Sprite> {
+			auto itm = Sprite::Generate(texture.index_);
+			itm->SetPivot(Vector2::one * 0.5f);
+			itm->SetTexDiff(textureSize);
+			itm->SetScale(textureSize);
+			return std::move(itm);
+			}
+		);
 
 	}
 
@@ -68,18 +75,25 @@ namespace SolEngine {
 		auto str = std::to_string(text);
 
 		textCount_ = static_cast<uint32_t>(str.size());
+		if (textCount_ == 0) { return; }
 
-		for (int32_t i = static_cast<int32_t>((std::min)(str.size(), 3llu) - 1); i >= 0; i--) {
-			numText_[i]->SetTexOrigin(Vector2{ 0.f, textXSize * static_cast<float>(str[i] - '0') });
+		for (uint32_t i = 0; i < (std::min)(textCount_, static_cast<uint32_t>(kNumCount_)); i++) {
+			numText_[i]->SetTexOrigin(Vector2{ textXSize * static_cast<float>(str[textCount_ - i - 1] - '0'), 0.f });
 		}
 	}
 
 	void NumberText::SetPosition([[maybe_unused]] Vector2 pos)
 	{
-		/*
-		for (uint32_t i = 0; i < textCount_; i++) {
+		for (auto itr = numText_.rbegin(); itr != numText_.rend(); itr++) {
+			(*itr)->SetPosition(pos);
+			pos.x += textSize_.x;
+		}
 
-		}*/
-
+	}
+	void NumberText::Draw() const
+	{
+		for (const auto &itm : numText_) {
+			itm->Draw();
+		}
 	}
 }

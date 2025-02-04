@@ -45,7 +45,7 @@ void GameScene::OnEnter() {
 
 	compRegistry_ = ECS::ComponentRegistry::GetInstance();
 
-	numberRender_ = NumberRender::Generate(TextureManager::Load("UI/Number.png"));
+	numberRender_ = SolEngine::NumberRender::Generate(TextureManager::Load("UI/Number.png"));
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
 	SolEngine::ResourceObjectManager<SolEngine::ModelData> *const modelDataManager = SolEngine::ResourceObjectManager<SolEngine::ModelData>::GetInstance();
@@ -313,7 +313,8 @@ void GameScene::OnEnter() {
 
 			captureRange_ += captureRangeLevelUp_;
 
-			});
+			}
+		);
 	}
 
 	{
@@ -333,7 +334,8 @@ void GameScene::OnEnter() {
 					shooter.count_++;
 				}
 			}
-			});
+			}
+		);
 	}
 
 	{
@@ -353,29 +355,19 @@ void GameScene::OnEnter() {
 					power.power_ += powerUp;
 				}
 			}
-			});
+			}
+		);
 	}
 
-	//{
-	//	std::unique_ptr<ButtonUI> button = ButtonUI::Generate();
+	gameTimerUI_ = std::make_unique<HealthBar>();
+	gameTimer_.Start();
+	gameTimerUI_->Init();
 
-	//	button->Init(TextureManager::Load("UI/Shuriken.png"), [this]() {
-	//		Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
+	gameTimerUI_->SetCentor(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUICentorMul_->x, static_cast<float>(WinApp::kWindowHeight) * (1 - (vExpUICentorMul_->y)) } + Vector2{ vExpUICentorDiff_->x, -vExpUICentorDiff_->y / 2 });
+	gameTimerUI_->SetScale(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUIScaleMul_->x + vExpUIScaleDiff_->x, (static_cast<float>(WinApp::kWindowHeight) * vExpUIScaleMul_->y + vExpUIScaleDiff_->y) / 2 });
 
-	//		// プレイヤのView
-	//		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
-
-	//		for (auto chunk : playerChunks) {
-	//			for (auto &player : *chunk) {
-	//				auto &power = player.GetComponent<ECS::AttackPower>();
-	//				// 攻撃力の増加
-	//				power.power_ += powerUp;
-	//			}
-	//		}
-	//		});
-
-	//	arrowLevelUp_.push_back(std::move(button));
-	//}
+	killUI_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"));
+	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ - 96*4, (-vExpUICentorDiff_->y) * 5 });
 
 }
 
@@ -414,6 +406,9 @@ void GameScene::Update() {
 	spawnTimer_.Update(fixDeltaTime);
 	playerSpawn_.Update(fixDeltaTime);
 
+	gameTimer_.Update(fixDeltaTime);
+	gameTimerUI_->SetPercent(1 - gameTimer_.GetProgress());
+
 	// エンティティの追加
 	spawner_.Execute(&newWorld_);
 	// プレハブの破棄
@@ -426,7 +421,7 @@ void GameScene::Update() {
 	PlayerDead(newWorld_, playerSpawn_, sceneManager_, Fade::GetInstance());
 
 	// 経験値オーブの追加
-	GenerateExperience(newWorld_);
+	GenerateExperience(newWorld_, killCount_);
 
 	// 攻撃の追加
 	GeneratePlayerRangeAttack(newWorld_);
@@ -444,6 +439,8 @@ void GameScene::Update() {
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 	// カメラのアップデート
 	cameraManager_->Update(fixDeltaTime);
+
+	killUI_->SetText(static_cast<uint32_t>(killCount_));
 
 	// 敵の描画
 	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_);
@@ -573,11 +570,13 @@ void GameScene::Draw() {
 		bar->Draw();
 		count++;
 	}
+	killUI_->Draw();
 
 	healthBar_->Draw();
 
 	expBar_->Draw();
-	//levelUI_->Draw();
+
+	gameTimerUI_->Draw();
 	// レベルアップの選択処理の描画
 	levelUpUI_->Draw();
 
@@ -688,8 +687,10 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 		// プレイヤのViewの長さが0である場合は死んでいる
 		bool playerIsDead = playerChunks.Count() == 0u;
 
+		bool isGameFinish = gameTimer_.IsFinish();
+
 		// 死んでいた場合は
-		if (playerIsDead) {
+		if (playerIsDead or isGameFinish) {
 			// スポーンタイマーが止まっていたら
 			if (not playerTimer.IsActive()) {
 				// 再度実行
@@ -697,7 +698,7 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 			}
 
 			// 終わっていたら
-			if (playerTimer.IsFinish() and playerTimer.IsActive()) {
+			if ((playerTimer.IsFinish() and playerTimer.IsActive()) or isGameFinish) {
 
 				scene->ChangeScene("ResultScene", 0.5f);
 
@@ -822,7 +823,7 @@ void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
 	}
 }
 
-void GameScene::GenerateExperience(ECS::World &world) const
+void GameScene::GenerateExperience(ECS::World &world, size_t &killCount) const
 {
 	// 経験値の追加
 	{
@@ -835,6 +836,8 @@ void GameScene::GenerateExperience(ECS::World &world) const
 		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
 
 		if (deadCount.second == 0) { return; }
+
+		killCount += deadCount.second;
 
 		// 経験値のアーキタイプ
 		Archetype expArch;
@@ -998,7 +1001,7 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 	}
 }
 
-void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, [[maybe_unused]] NumberRender &numberRender) const
+void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, [[maybe_unused]] SolEngine::NumberRender &numberRender) const
 {
 	//auto chunks = world.GetAccessableChunk(Archetype::Generate<ECS::DamageCounter>());
 	//uint32_t totalCount = 0;

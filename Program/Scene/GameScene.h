@@ -106,7 +106,7 @@ private:
 
 	/// @brief 経験値の生成
 	/// @param world[in, out] ワールドデータ
-	void GenerateExperience(ECS::World &world) const;
+	void GenerateExperience(ECS::World &world, size_t &killCount) const;
 
 	/// @brief 経験値の加算
 	/// @param world[in, out] ワールドデータ
@@ -135,7 +135,7 @@ private:
 	/// @brief ダメージの描画
 	/// @param world[in] ワールドデータ
 	/// @param numberRender[out] 数字の描画データ格納先
-	void DamageRender(const ECS::World &world, NumberRender &numberRender) const;
+	void DamageRender(const ECS::World &world, SolEngine::NumberRender &numberRender) const;
 
 private:
 	/// @brief メニューのタイマー
@@ -259,7 +259,7 @@ private:
 	CBuffer<std::pair<float, int32_t>> gaussianParam_;
 
 	// 数字の出力
-	std::unique_ptr<NumberRender> numberRender_;
+	std::unique_ptr<SolEngine::NumberRender> numberRender_;
 
 	// 影の色
 	SoLib::Color::RGB4 shadowColor_ = 0x00000055;
@@ -279,4 +279,12 @@ private:
 	float captureRangeLevelUp_ = 0.5f;
 
 	std::vector<std::unique_ptr<ButtonUI>> arrowLevelUp_;
+
+	std::unique_ptr<HealthBar> gameTimerUI_;
+
+	SoLib::DeltaTimer gameTimer_{ 60 * 3 };
+
+	std::unique_ptr<SolEngine::NumberText> killUI_;
+
+	size_t killCount_;
 };

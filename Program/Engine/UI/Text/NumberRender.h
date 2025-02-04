@@ -10,14 +10,23 @@ namespace SolEngine {
 
 	class NumberText {
 	public:
-		constexpr static size_t kNumCount_ = 3u;
-
-		static void Generate(NumberText *const num, TextureHandle texture);
+		constexpr static size_t kNumCount_ = 4u;
+		/// @brief 生成関数
+		/// @param texture[in] テクスチャ
 		static std::unique_ptr<NumberText> Generate(TextureHandle texture);
+		/// @param num[out] 生成先
+		static void Generate(NumberText *const num, TextureHandle texture);
 
+		/// @brief 文字の指定
+		/// @param text 文字
 		void SetText(uint32_t text);
 
+		/// @brief 場所の設定
+		/// @param pos 場所
 		void SetPosition(Vector2 pos);
+
+		/// @brief 描画関数
+		void Draw() const;
 
 	private:
 		// 文字データ
