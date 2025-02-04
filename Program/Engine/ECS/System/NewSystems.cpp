@@ -120,7 +120,7 @@ namespace ECS::System::Par {
 
 	void CollisionPushOut::Execute(const World *const, const float)
 	{
-		
+
 
 	}
 
@@ -238,7 +238,7 @@ namespace ECS::System::Par {
 
 	void WeaponCollision::Execute(const World *const, const float)
 	{
-		auto &[enemy, pos, collision, health, invincible] = readWrite_;
+		auto &[enemy, pos, collision, health, invincible, counter] = readWrite_;
 		// 無敵時間なら終わり
 		if (invincible.timer_.IsActive()) {
 			return;
@@ -251,8 +251,11 @@ namespace ECS::System::Par {
 
 			// 攻撃判定が当たってたら検知
 			if (Collision::IsHit(sphere, attackColl.collision_)) {
+				auto power = attackCollisions_->power_.At(i).power_;
 				// 体力を減らす
-				health.nowHealth_ -= attackCollisions_->power_.At(i).power_;
+				health.nowHealth_ -= power;
+				counter.damageCount_ += power;
+				counter.damageRemainTime_ = 2.f;
 
 				// ノックバック
 				const auto &knockBack = attackCollisions_->knockBack_.At(i);
@@ -580,5 +583,16 @@ namespace ECS::System::Par {
 		//auto parentTransMat = parent.parent_.chunk_->GetComp<ECS::TransformMatComp>(parent.parent_.totalIndex_);
 		//// 親の行列を乗算する
 		//transMat.transformMat_ *= parentTransMat->transformMat_;
+	}
+	void DamageUpdate::Execute(const World *const, const float deltaTime)
+	{
+		auto &[damage] = this->readWrite_;
+		if (damage.damageRemainTime_ >= 0.f) {
+			damage.damageRemainTime_ -= deltaTime;
+		}
+		else {
+			damage.damageCount_ = 0;
+		}
+
 	}
 }

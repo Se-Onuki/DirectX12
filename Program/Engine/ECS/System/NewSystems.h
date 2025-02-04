@@ -188,7 +188,7 @@ namespace ECS {
 
 			class WeaponCollision :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, const ECS::SphereCollisionComp, ECS::HealthComp, ECS::InvincibleTime> readWrite_;
+				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, const ECS::SphereCollisionComp, ECS::HealthComp, ECS::InvincibleTime, ECS::DamageCounter> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 				struct AttackCollisions {
 					ECS::ChunkTRange<ECS::SphereCollisionComp, true> sphere_;
@@ -337,6 +337,14 @@ namespace ECS {
 			class CalcParentTransform :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::TransformMatComp, ECS::Parent> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
+			};
+
+			class DamageUpdate :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::DamageCounter> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);

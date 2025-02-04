@@ -138,7 +138,7 @@ private:
 	/// @brief ダメージの描画
 	/// @param world[in] ワールドデータ
 	/// @param numberRender[out] 数字の描画データ格納先
-	void DamageRender(const ECS::World &world, SolEngine::NumberRender &numberRender) const;
+	void DamageRender(const ECS::World &world, const SolEngine::Camera3D &camera, SolEngine::NumberRender &numberRender) const;
 
 private:
 	/// @brief メニューのタイマー

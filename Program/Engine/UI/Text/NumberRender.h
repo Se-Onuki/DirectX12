@@ -25,6 +25,14 @@ namespace SolEngine {
 		/// @param pos 場所
 		void SetPosition(Vector2 pos);
 
+		/// @brief 原点の指定
+		/// @param pivot 中心点
+		void SetPivot(Vector2 pivot);
+
+		/// @brief 文字の倍率
+		/// @param scale 
+		void SetScale(float scale);
+
 		/// @brief 描画関数
 		void Draw() const;
 
@@ -33,6 +41,8 @@ namespace SolEngine {
 		std::array<std::unique_ptr<Sprite>, kNumCount_> numText_;
 		// 文字サイズ
 		Vector2 textSize_;
+		// 中心点
+		Vector2 pivot_;
 		// 文字数
 		uint32_t textCount_;
 		// テキストの表示倍率
@@ -56,6 +66,8 @@ namespace SolEngine {
 		/// @return 確保したデータ
 		std::span<std::unique_ptr<NumberText>> Reservation(size_t count);
 
+		void Draw() const;
+
 	private:
 
 		/// @brief 生成
@@ -65,7 +77,7 @@ namespace SolEngine {
 
 
 		std::vector<std::unique_ptr<NumberText>> text_;
-		uint32_t index_ = 0u;
+		size_t index_ = 0u;
 
 		TextureHandle texture_;
 

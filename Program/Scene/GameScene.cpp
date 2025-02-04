@@ -159,6 +159,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::HasShadow{};
 	*enemyPrefab_ += ECS::InvincibleTime{};
 	*enemyPrefab_ += ECS::Rigidbody{};
+	*enemyPrefab_ += ECS::DamageCounter{};
 
 	//entityManager_->CreateEntity(*enemyPrefab_);
 	newWorld_.CreateEntity(*enemyPrefab_);
@@ -281,6 +282,7 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::PlayerAttack>(); ECS::System::Par::PlayerAttack::attackModel_ = attackModel_;
 	systemExecuter_.AddSystem<ECS::System::Par::PlayerShooterUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::EnemyAttack>();
+	systemExecuter_.AddSystem<ECS::System::Par::DamageUpdate>();
 
 	// 汎用的な処理
 	systemExecuter_.AddSystem<ECS::System::Par::SlideFollowCameraUpdate>();
@@ -366,7 +368,9 @@ void GameScene::OnEnter() {
 	gameTimerUI_->SetScale(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUIScaleMul_->x + vExpUIScaleDiff_->x, (static_cast<float>(WinApp::kWindowHeight) * vExpUIScaleMul_->y + vExpUIScaleDiff_->y) / 2 });
 
 	killUI_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"));
-	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 4, (-vExpUICentorDiff_->y) * 5 });
+	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 4, (-vExpUICentorDiff_->y) * 8 });
+
+	killUI_->SetPivot(Vector2::one * 0.5f);
 
 }
 
@@ -460,6 +464,9 @@ void GameScene::Update() {
 	AttackEffectRender(newWorld_, attackRender_);
 
 	ArrowAttackEffectRender(newWorld_, arrowAttackRender_);
+
+	const auto &camera = *cameraManager_->GetUseCamera();
+	DamageRender(newWorld_, camera, *numberRender_);
 
 	{
 		// 入力処理
@@ -571,6 +578,8 @@ void GameScene::Draw() {
 	}
 	killUI_->Draw();
 
+	numberRender_->Draw();
+
 	healthBar_->Draw();
 
 	expBar_->Draw();
@@ -678,6 +687,7 @@ void GameScene::FlameClear()
 	skinModelRender_->clear();
 	modelHandleRender_->clear();
 	skinModelHandleRender_->clear();
+	numberRender_->Clear();
 }
 
 void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SolEngine::SceneManager *const scene, Fade *const fade) const
@@ -986,9 +996,9 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 	// 敵の沸く半径
 	constexpr float kEnemyRadius = 45.f;
 
-	const float gameProgress = gameTimer_.GetProgress();
-
 	if (timer.IsFinish()) {
+
+		const float gameProgress = gameTimer_.GetProgress();
 
 		// スポナーに追加を要求する
 		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [gameProgress](const ECS::EntityList<false> &enemys)
@@ -1007,47 +1017,57 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 	}
 }
 
-void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, [[maybe_unused]] SolEngine::NumberRender &numberRender) const
+void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, const SolEngine::Camera3D &camera, [[maybe_unused]] SolEngine::NumberRender &numberRender) const
 {
-	//auto chunks = world.GetAccessableChunk(Archetype::Generate<ECS::DamageCounter>());
-	//uint32_t totalCount = 0;
+	auto chunks = world.GetAccessableChunk(Archetype::Generate<ECS::DamageCounter>());
+	size_t totalCount = 0;
 
-	//// チャンクと同じ数のデータを確保する
-	//std::vector<std::tuple<size_t, std::vector<bool>, size_t>> chunkOffset(chunks.size());
-	//for (uint32_t i = 0; i < chunkOffset.size(); i++) {
-	//	auto &[index, flag, count] = chunkOffset[i];
-	//	index = totalCount;
-	//	auto [rFlag, rCount] = chunks[i]->CountIfFlag<ECS::DamageCounter>([](const ECS::DamageCounter &flag) {
-	//		return (flag.damageCount_ != 0 and flag.damageRemainTime_ > 0);
-	//		});
-	//	flag = std::move(rFlag);
-	//	count = rCount;
-	//	totalCount += count;
+	// チャンクと同じ数のデータを確保する
+	std::vector<std::tuple<size_t, std::vector<bool>, size_t>> chunkOffset(chunks.size());
+	for (uint32_t i = 0; i < chunkOffset.size(); i++) {
+		auto &[index, flag, count] = chunkOffset[i];
+		index = totalCount;
+		auto [rFlag, rCount] = chunks[i]->CountIfFlag<ECS::DamageCounter>([](const ECS::DamageCounter &flag) {
+			return (flag.damageCount_ != 0 and flag.damageRemainTime_ > 0);
+			});
+		flag = std::move(rFlag);
+		count = rCount;
+		totalCount += count;
 
-	//}
-	//// 書き込み先のメモリの確保
-	//auto numberSpan = numberRender.Reservation(totalCount);
+	}
+	if (totalCount == 0) {
+		return;
+	}
 
-	//for (size_t i = 0; i < chunkOffset.size();i++) {
-	//	const auto &[index, flag, count] = chunkOffset[i];
-	//	const auto &chunk = chunks[i];
-	//	
-	//	auto numItr = &numberSpan[index];
+	// 書き込み先のメモリの確保
+	auto numberSpan = numberRender.Reservation(totalCount);
 
-	//	const auto& chunkView = chunk->View<ECS::PositionComp, ECS::DamageCounter>();
-	//	auto viewItr = chunkView.begin();
+	const Matrix4x4 &vp = SolEngine::Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight);
+	const Matrix4x4 &matVPVp = camera.matView_ * camera.matProjection_ * vp;
 
-	//	for (uint32_t j = 0; j < chunkView.size(); j++) {
-	//		auto target = viewItr++;
-	//		if (flag[j]) {
-	//			const auto &[position, damageCounter] = *target;
+	for (size_t i = 0; i < chunkOffset.size(); i++) {
+		const auto &[index, flag, count] = chunkOffset[i];
+		const auto &chunk = chunks[i];
 
-	//			(*(numItr++))->SetText(damageCounter.damageCount_);
+		auto numItr = &numberSpan[index];
 
-	//		}
-	//	}	
+		const auto &chunkView = chunk->View<ECS::PositionComp, ECS::DamageCounter>();
+		auto viewItr = chunkView.begin();
 
-	//}
+		for (uint32_t j = 0; j < chunkView.size(); j++) {
+			auto target = viewItr++;
+			if (flag[j]) {
+				const auto &[position, damageCounter] = *target;
+				auto num = (*(numItr++)).get();
+
+				num->SetText(damageCounter.damageCount_);
+
+				num->SetPosition(SolEngine::Render::WorldToScreen(position, matVPVp).ToVec2());
+
+			}
+		}
+
+	}
 
 
 }

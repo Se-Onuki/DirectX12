@@ -16,6 +16,9 @@ namespace SolEngine {
 
 	std::span<std::unique_ptr<NumberText>> NumberRender::Reservation(size_t count)
 	{
+		if (count + index_ == 0) {
+			return {};
+		}
 
 		// もし範囲外なら
 		if (count + index_ > text_.size()) {
@@ -25,9 +28,16 @@ namespace SolEngine {
 
 		std::span<std::unique_ptr<NumberText>> result = std::span{ &text_.at(index_), count };
 		// 加算する
-		count += index_;
+		index_ += count;
 
 		return result;
+	}
+
+	void NumberRender::Draw() const
+	{
+		for (uint32_t i = 0; i < index_; i++) {
+			text_[i]->Draw();
+		}
 	}
 
 	std::span<std::unique_ptr<NumberText>> NumberRender::EmplaceBack(size_t count)
@@ -39,7 +49,14 @@ namespace SolEngine {
 		text_.resize(beforeSize + count);
 		// 始点を取得する
 		auto begin = text_.begin() + beforeSize;
-		std::generate(begin, text_.end(), [this]()->std::unique_ptr<NumberText> { return NumberText::Generate(texture_); });
+		std::generate(begin, text_.end(), [this]()->std::unique_ptr<NumberText>
+			{
+				auto itm = NumberText::Generate(texture_);
+				itm->SetPivot(Vector2::one / 2);
+				itm->SetScale(0.25f);
+				return std::move(itm);
+			}
+		);
 
 		return std::span(begin, count);
 	}
@@ -84,11 +101,24 @@ namespace SolEngine {
 
 	void NumberText::SetPosition([[maybe_unused]] Vector2 pos)
 	{
+		Vector2 beginPos = { pos.x - (textSize_.x * ((kNumCount_ - 1.5f) * textMul_ / 2)), pos.y - ((textSize_.y / 2) + textSize_.y * pivot_.y) * textMul_ };
+		Vector2 diff = Vector2{ textSize_.x * (kNumCount_ - 1) * textMul_, 0.f } / kNumCount_;
+
 		for (auto itr = numText_.rbegin(); itr != numText_.rend(); itr++) {
-			(*itr)->SetPosition(pos);
-			pos.x += textSize_.x;
+			(*itr)->SetPosition(beginPos);
+			beginPos += diff;
 		}
 
+	}
+
+	void NumberText::SetPivot(Vector2 pivot)
+	{
+		pivot_ = pivot;
+	}
+	void NumberText::SetScale(float scale)
+	{
+		textMul_ = scale;
+		for (auto &itm : numText_) { itm->SetScale(textSize_ * scale); }
 	}
 	void NumberText::Draw() const
 	{
