@@ -50,7 +50,7 @@ namespace ECS {
 		{
 			TypeCompIterator<false, Ts...> begin;
 			begin.pEntityStorage_ = storage_.get();
-			begin.pEntityMemory_ = storage_->GetEntityStorage().data()->second.get();
+			begin.pEntityMemory_ = storage_->GetEntityStorage().at(Begin / archetype_.GetChunkCapacity()).second.get();
 			begin.cGroupSize_ = static_cast<uint16_t>(archetype_.GetChunkCapacity());
 			begin.index_ = static_cast<uint16_t>(Begin);
 			begin.offset_ = { static_cast<uint16_t>(GetCompArray<Ts>()->second.GetOffset())... };

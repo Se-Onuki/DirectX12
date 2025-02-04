@@ -31,27 +31,16 @@ namespace SoLib {
 	public:
 		float x, y, z;
 
-		/// <summary>
-		/// ベクトルをデバック表示する
-		/// </summary>
-		/// <param name="x">x座標</param>
-		/// <param name="y">y座標</param>
-		void Printf(int x, int y) const;
-
-		/// <summary>
-		/// ベクトル長関数
-		/// </summary>
-		/// <returns>ベクトルの長さ</returns>
+		/// @brief ベクトル長関数
+		/// @return ベクトルの長さ</returns>
 		float Length() const { return sqrtf((*this) * (*this)); }
 
 		/// @brief 2乗ベクトル長関数
 		/// @return ベクトル長
 		float LengthSQ() const { return (*this) * (*this); }
 
-		/// <summary>
-		/// 正規化
-		/// </summary>
-		/// <returns>ベクトル長が1のベクトル</returns>
+		/// @brief 正規化
+		/// @return ベクトル長が1のベクトル</returns>
 		Vector3 Nomalize() const
 		{
 
@@ -88,23 +77,23 @@ namespace SoLib {
 			return *this;
 		}
 
-		Vector3 operator*(const float &Second) const
+		Vector3 operator*(const float Second) const
 		{
 			return Vector3{ this->x * Second, this->y * Second, this->z * Second };
 		}
-		Vector3 operator/(const float &Second) const
+		Vector3 operator/(const float Second) const
 		{
 			return Vector3{ this->x / Second, this->y / Second, this->z / Second };
 		}
 
-		Vector3 &operator*=(const float &Second)
+		Vector3 &operator*=(const float Second)
 		{
 			this->x *= Second;
 			this->y *= Second;
 			this->z *= Second;
 			return *this;
 		}
-		Vector3 &operator/=(const float &Second)
+		Vector3 &operator/=(const float Second)
 		{
 			this->x /= Second;
 			this->y /= Second;
@@ -114,10 +103,6 @@ namespace SoLib {
 
 		float &operator[](uint32_t index) noexcept { return arr()[index]; }
 		float operator[](uint32_t index) const noexcept { return arr()[index]; }
-
-		// Vector3 operator*(const Matrix3x3& Second) const {}
-
-		// Vector3 operator*=(const Matrix3x3& Second) {}
 
 		Vector3 operator*(const Matrix4x4 &Second) const;
 

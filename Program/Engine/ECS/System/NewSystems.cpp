@@ -567,14 +567,6 @@ namespace ECS::System::Par {
 			levelUp_->Open();
 		}
 
-		//if (levelUpTimer_.IsActive()) {
-		//	const float progress = levelUpTimer_.GetProgress();
-		//	const float percent = std::fmodf(progress, 0.5f) * 2.f;
-		//	const float t = progress > 0.5f and progress < 1.0f ? 1.f - percent : percent;
-
-
-		//}
-
 		expBar_->SetPercent(static_cast<float>(exp.exp_) / exp.needExp_(exp.level_));
 
 	}

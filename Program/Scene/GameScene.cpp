@@ -272,7 +272,6 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::AirResistanceSystem>();
 	systemExecuter_.AddSystem<ECS::System::Par::MovePosition>();
 	systemExecuter_.AddSystem<ECS::System::Par::MoveCollisionPosition>();
-	//systemExecuter_.AddSystem<ECS::System::Par::CollisionPushOut>();
 
 	// ゲーム固有の処理
 	systemExecuter_.AddSystem<ECS::System::Par::EnemyMove>();
@@ -367,7 +366,7 @@ void GameScene::OnEnter() {
 	gameTimerUI_->SetScale(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUIScaleMul_->x + vExpUIScaleDiff_->x, (static_cast<float>(WinApp::kWindowHeight) * vExpUIScaleMul_->y + vExpUIScaleDiff_->y) / 2 });
 
 	killUI_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"));
-	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ - 96*4, (-vExpUICentorDiff_->y) * 5 });
+	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 4, (-vExpUICentorDiff_->y) * 5 });
 
 }
 
@@ -375,7 +374,7 @@ void GameScene::OnExit() {
 	audio_->StopAllWave();
 
 	ECS::System::Par::WeaponCollision::attackCollisions_.reset();
-
+	SetGameScore();
 	auto nextScene = sceneManager_->GetNextScene<ResultScene>();
 	if (nextScene) {
 		nextScene->SetGameScore(GetGameScore());
@@ -654,6 +653,11 @@ void GameScene::PostEffectEnd()
 
 	fullScreen_->Draw({ L"FullScreen.PS.hlsl" }, resultTex->renderTargetTexture_.Get(), resultTex->srvHandle_.gpuHandle_);
 
+}
+
+void GameScene::SetGameScore()
+{
+	gameScore_.killCount_ = killCount_;
 }
 
 const GameScore &GameScene::GetGameScore() const
@@ -982,19 +986,21 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 	// 敵の沸く半径
 	constexpr float kEnemyRadius = 45.f;
 
+	const float gameProgress = gameTimer_.GetProgress();
+
 	if (timer.IsFinish()) {
 
 		// スポナーに追加を要求する
-		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [](const ECS::EntityList<false> &enemys)
+		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [gameProgress](const ECS::EntityList<false> &enemys)
 			{
 				// コンポーネントの配列
-				ECS::ComponentSpan::TRange<ECS::PositionComp> arr = enemys.GetChunk()->GetComponent<ECS::PositionComp>();
+				auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp>();
 				// 発生地点の回転加算値
 				const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
-				for (uint32_t i = 0; uint32_t enemy : enemys.ItrRange()) {
-					auto &pos = arr[enemy];
+				for (uint32_t i = 0; i < enemys.ItrRange().size(); i++) {
+					auto [pos, health] = *(arr.begin() + i);
 					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
-					i++;
+					health = ECS::HealthComp::Create(static_cast<int32_t>(100 + 500 * gameProgress));
 				}
 			});
 		timer.Start();

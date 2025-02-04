@@ -83,7 +83,10 @@ public:
 
 private:
 
-	/// @brief ゲームのリザルトを生成する
+	/// @brief ゲームスコアを保存する
+	void SetGameScore();
+
+	/// @brief ゲームのリザルトを取得する
 	const GameScore &GetGameScore() const;
 
 	/// @brief 初期化処理

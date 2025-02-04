@@ -10,6 +10,8 @@ struct GameScore {
 	// ゲームスコア
 	uint32_t score_;
 
+	size_t killCount_;
+
 	// 生存時間
 	SoLib::Time::SecondF aliveTime_;
 
