@@ -13,6 +13,14 @@
 /// 修飾文字付き
 #define VItem(T, Name, Deco) VariantItem<#Name,T> v##Name##Deco
 
+//
+//	VItem(float, Hoge, _) == VariantItem<"Hoge", float> vHoge_;
+//	↑vHoge_というfloat型として扱われる｡(アライメント､sizeofもfloatと同じ値)
+//	GetKey()で"Hoge"という文字列を取得できる｡
+//	C#などのnameof関数の機能を型に持たせたような形｡
+//
+
+// 文字列と数値を組み合わせた型｡
 template<SoLib::Text::ConstExprString Str, SoLib::IsRealType T>
 class VariantItem final : public SoLib::Text::StaticString<Str> {
 public:

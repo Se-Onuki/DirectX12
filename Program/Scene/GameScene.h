@@ -155,6 +155,9 @@ private:
 	// 経験値バーのUIのサイズのピクセル単位のサイズ
 	VItem(Vector2, ExpUIScaleDiff, _) { { 0.f, 32.f } };
 
+	VItem(int32_t, EnemyHealthBase, _) { 100 };
+	VItem(int32_t, EnemyHelthDiff, _) { 500 };
+
 	// ゲームのスコアを返す
 	GameScore gameScore_;
 

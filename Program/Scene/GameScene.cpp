@@ -865,7 +865,7 @@ void GameScene::GenerateExperience(ECS::World &world, size_t &killCount) const
 		for (uint32_t i = 0; i < size; i++) {
 			if (deadCount.first.at(i)) {
 				auto [a, b] = (*entItr++);
-				auto enemPos = enemRange.At(i);
+				const auto &enemPos = enemRange.At(i);
 				a = enemPos;
 			}
 		}
@@ -1000,8 +1000,10 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 
 		const float gameProgress = gameTimer_.GetProgress();
 
+		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHelthDiff_ * gameProgress);
+
 		// スポナーに追加を要求する
-		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [gameProgress](const ECS::EntityList<false> &enemys)
+		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [enemyHealth, gameProgress](const ECS::EntityList<false> &enemys)
 			{
 				// コンポーネントの配列
 				auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp>();
@@ -1010,7 +1012,7 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 				for (uint32_t i = 0; i < enemys.ItrRange().size(); i++) {
 					auto [pos, health] = *(arr.begin() + i);
 					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
-					health = ECS::HealthComp::Create(static_cast<int32_t>(100 + 500 * gameProgress));
+					health = ECS::HealthComp::Create(enemyHealth);
 				}
 			});
 		timer.Start();
