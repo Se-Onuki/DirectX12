@@ -19,7 +19,7 @@ namespace SoLib {
 
 	/// @brief 非ポインタ型
 	template<typename T>
-	concept IsNotPointer = !std::is_pointer_v<T>;
+	concept IsNotPointer = not std::is_pointer_v<T>;
 
 	template <typename T>
 	concept IsRealType = not std::is_pointer_v<T> and not std::is_reference_v<T>;
@@ -55,7 +55,7 @@ namespace SoLib {
 
 	/// @brief 数値型である
 	template <typename T>
-	concept IsNumber = std::is_floating_point_v<T> || std::is_integral_v<T>;
+	concept IsNumber = std::is_floating_point_v<T> or std::is_integral_v<T>;
 
 	template <typename Itr>
 	concept IsIterator = requires(Itr iter) {

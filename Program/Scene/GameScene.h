@@ -38,6 +38,7 @@
 #include "../Header/Object/Fade.h"
 #include "../Game/Resource/GameScore.h"
 #include "../Engine/UI/Text/NumberRender.h"
+#include "../Engine/DirectBase/File/GlobalVariables.h"
 
 /// @class GameScene
 /// @brief ゲームシーン
@@ -109,6 +110,7 @@ private:
 
 	/// @brief 経験値の生成
 	/// @param world[in, out] ワールドデータ
+	/// @param killCount[in, out] 倒した数
 	void GenerateExperience(ECS::World &world, size_t &killCount) const;
 
 	/// @brief 経験値の加算
@@ -140,6 +142,12 @@ private:
 	/// @param numberRender[out] 数字の描画データ格納先
 	void DamageRender(const ECS::World &world, const SolEngine::Camera3D &camera, SolEngine::NumberRender &numberRender) const;
 
+	bool ImGuiWidget(const std::string_view &name);
+
+	void Load(const GlobalVariables::Group &group);
+
+	void Save(GlobalVariables::Group &group) const;
+
 private:
 	/// @brief メニューのタイマー
 	SoLib::DeltaTimer menuTimer_;
@@ -157,6 +165,9 @@ private:
 
 	VItem(int32_t, EnemyHealthBase, _) { 100 };
 	VItem(int32_t, EnemyHelthDiff, _) { 500 };
+
+	VItem(int32_t, EnemySpawnCount, _) { 10 };
+	VItem(float, EnemyRadius, _) { 45.f };
 
 	// ゲームのスコアを返す
 	GameScore gameScore_;

@@ -991,19 +991,19 @@ void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::Mode
 
 void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) const
 {
-	// 敵のスポーン数
-	constexpr uint32_t kEnemyCount = 10u;
-	// 敵の沸く半径
-	constexpr float kEnemyRadius = 45.f;
 
 	if (timer.IsFinish()) {
 
 		const float gameProgress = gameTimer_.GetProgress();
 
 		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHelthDiff_ * gameProgress);
+		// 敵のスポーン数
+		const int32_t enemyCount = *vEnemySpawnCount_;
+		// 敵の沸く半径
+		const float enemyRadius = *vEnemyRadius_;
 
 		// スポナーに追加を要求する
-		spawner.AddSpawner(enemyPrefab_.get(), kEnemyCount, [enemyHealth, gameProgress](const ECS::EntityList<false> &enemys)
+		spawner.AddSpawner(enemyPrefab_.get(), enemyCount, [enemyCount, enemyRadius, enemyHealth, gameProgress](const ECS::EntityList<false> &enemys)
 			{
 				// コンポーネントの配列
 				auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp>();
@@ -1011,7 +1011,7 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 				const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
 				for (uint32_t i = 0; i < enemys.ItrRange().size(); i++) {
 					auto [pos, health] = *(arr.begin() + i);
-					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / kEnemyCount) * i + diff, 0.f }) * kEnemyRadius;
+					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / enemyCount) * i + diff, 0.f }) * enemyRadius;
 					health = ECS::HealthComp::Create(enemyHealth);
 				}
 			});
@@ -1071,5 +1071,31 @@ void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, const Sol
 
 	}
 
+
+}
+
+bool GameScene::ImGuiWidget(const std::string_view &name)
+{
+	this->vEnemyHealthBase_;
+
+	return false;
+}
+
+void GameScene::Load(const GlobalVariables::Group &group)
+{
+	group >> vEnemyHealthBase_;
+	group >> vEnemyHelthDiff_;
+
+	group >> vEnemySpawnCount_;
+	group >> vEnemyRadius_;
+
+	group >> vLevelUpUISize_;
+
+	group >> vExpUICentorMul_;
+	group >> vExpUICentorDiff_;
+}
+
+void GameScene::Save(GlobalVariables::Group &group) const
+{
 
 }
