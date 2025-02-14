@@ -2,6 +2,7 @@ import bpy
 from .model_io import *
 from .colider import *
 from .component import *
+from .player_spawn import *
 
 # クラスバーの拡張メニュー
 class TOPBAR_MT_my_menu(bpy.types.Menu):
@@ -18,7 +19,9 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
 		# トップバーの｢エディターメニュー｣に項目(オペレータ)を追加
 		self.layout.operator(MYADDON_OT_add_model.bl_idname, text= MYADDON_OT_add_model.bl_label)
 		self.layout.operator(MYADDON_OT_export_scene.bl_idname, text= MYADDON_OT_export_scene.bl_label)
-	
+		self.layout.operator(MYADDON_OT_player_spawn_point.bl_idname, text= MYADDON_OT_player_spawn_point.bl_label)
+		
+
 	# 既存のメニューにサブメニューを追加
 	def submenu(self, context):
 

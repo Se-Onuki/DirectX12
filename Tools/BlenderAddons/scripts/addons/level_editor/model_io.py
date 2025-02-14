@@ -93,7 +93,10 @@ class MYADDON_OT_export_scene(bpy.types.Operator, bpy_extras.io_utils.ExportHelp
 		# シーンのオブジェクト1個分のjsonオブジェクトを生成
 		json_object = dict()
 		# オブジェクトの種類
-		json_object["type"] = object.type
+		if 'type' in object:
+			json_object["type"] = object["type"]
+		else:
+			json_object["type"] = object.type
 		# オブジェクト名
 		json_object["name"] = object.name
 
@@ -280,10 +283,10 @@ class MYADDON_OT_import_mesh(bpy.types.Operator, bpy_extras.io_utils.ImportHelpe
 
 	def import_mesh(self, context, filepath):
 		
-		# Deselect all objects
+		# すべてのオブジェクトの選択を解除する
 		bpy.ops.object.select_all(action='DESELECT')
 
-		# Select the active object (the one to be replaced)
+		# アクティブなオブジェクト(置き換える対象)を選択する
 		obj = context.active_object
 
 		# 文字列の末尾から最初の'\'までの文字をfileNameに代入

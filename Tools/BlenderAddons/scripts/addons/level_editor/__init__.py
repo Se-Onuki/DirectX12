@@ -1,12 +1,5 @@
 from typing import Set
 import bpy
-from bpy.types import Context
-import math
-import mathutils
-import bpy_extras
-import gpu
-import gpu_extras.batch
-import copy
 
 # Blenderに登録するアドオン情報
 bl_info = {
@@ -31,6 +24,8 @@ from .model_io import *
 from .colider import *
 
 from .menu import *
+
+from .player_spawn import *
 
 # AddOn有効時のコールバック
 def register():
@@ -70,6 +65,8 @@ classes = (
 	MYADDON_OT_import_mesh,
 	OBJECT_PT_component,
 	MYADDON_OT_add_model,
+	MYADDON_OT_player_spawn_model,
+	MYADDON_OT_player_spawn_point,
 )
 
 # メニュー項目描画
