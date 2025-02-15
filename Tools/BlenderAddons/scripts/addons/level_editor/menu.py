@@ -20,6 +20,7 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
 		self.layout.operator(MYADDON_OT_add_model.bl_idname, text= MYADDON_OT_add_model.bl_label)
 		self.layout.operator(MYADDON_OT_export_scene.bl_idname, text= MYADDON_OT_export_scene.bl_label)
 		self.layout.operator(MYADDON_OT_player_spawn_point.bl_idname, text= MYADDON_OT_player_spawn_point.bl_label)
+		self.layout.operator(MYADDON_OT_enemy_spawn_point.bl_idname, text= MYADDON_OT_enemy_spawn_point.bl_label)
 		
 
 	# 既存のメニューにサブメニューを追加

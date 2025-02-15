@@ -27,6 +27,8 @@ from .menu import *
 
 from .player_spawn import *
 
+from .spawn import *
+
 # AddOn有効時のコールバック
 def register():
 	# Blenderにクラスを登録する
@@ -65,8 +67,10 @@ classes = (
 	MYADDON_OT_import_mesh,
 	OBJECT_PT_component,
 	MYADDON_OT_add_model,
-	MYADDON_OT_player_spawn_model,
+	MYADDON_OT_spawn_point_import,
+	MYADDON_OT_spawn_point_generate,
 	MYADDON_OT_player_spawn_point,
+	MYADDON_OT_enemy_spawn_point,
 )
 
 # メニュー項目描画
