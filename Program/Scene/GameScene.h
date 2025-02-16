@@ -297,7 +297,7 @@ private:
 
 	std::vector<std::unique_ptr<ButtonUI>> arrowLevelUp_;
 
-	std::unique_ptr<HealthBar> gameTimerUI_;
+	std::array<std::unique_ptr<SolEngine::NumberText>, 2u> gameTimerUI_;
 
 	SoLib::DeltaTimer gameTimer_{ 60 * 3 };
 

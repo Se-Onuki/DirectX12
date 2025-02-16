@@ -360,15 +360,18 @@ void GameScene::OnEnter() {
 		);
 	}
 
-	gameTimerUI_ = std::make_unique<HealthBar>();
 	gameTimer_.Start();
-	gameTimerUI_->Init();
+	for (uint32_t i = 0; i < 2; i++) {
+		auto &timeUI = gameTimerUI_[i];
 
-	gameTimerUI_->SetCentor(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUICentorMul_->x, static_cast<float>(WinApp::kWindowHeight) * (1 - (vExpUICentorMul_->y)) } + Vector2{ vExpUICentorDiff_->x, -vExpUICentorDiff_->y / 2 });
-	gameTimerUI_->SetScale(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUIScaleMul_->x + vExpUIScaleDiff_->x, (static_cast<float>(WinApp::kWindowHeight) * vExpUIScaleMul_->y + vExpUIScaleDiff_->y) / 2 });
+		timeUI = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 2u);
+		timeUI->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f + (i == 0 ? -72.f : 72.f),96.f });
+		timeUI->SetPivot(Vector2{ static_cast<float>(1 - i), 1.f });
+
+	}
 
 	killUI_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 4);
-	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 4, (-vExpUICentorDiff_->y) * 8 });
+	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 2, (-vExpUICentorDiff_->y) * 8 });
 
 	killUI_->SetPivot(Vector2::one * 0.5f);
 
@@ -410,7 +413,11 @@ void GameScene::Update() {
 	playerSpawn_.Update(fixDeltaTime);
 
 	gameTimer_.Update(fixDeltaTime);
-	gameTimerUI_->SetPercent(1 - gameTimer_.GetProgress());
+	{
+		auto [m, s] = SoLib::Time::GetMoment(gameTimer_.GetTimeRemain());
+		gameTimerUI_[0]->SetText(m);
+		gameTimerUI_[1]->SetText(s);
+	}
 
 	// エンティティの追加
 	spawner_.Execute(&newWorld_);
@@ -584,7 +591,9 @@ void GameScene::Draw() {
 
 	expBar_->Draw();
 
-	gameTimerUI_->Draw();
+	for (const auto &ui : gameTimerUI_) {
+		ui->Draw();
+	}
 	// レベルアップの選択処理の描画
 	levelUpUI_->Draw();
 
@@ -1088,8 +1097,8 @@ bool GameScene::ImGuiWidget(const std::string_view &name)
 
 		SoLib::ImGuiWidget(&this->vExpUICentorMul_);
 		SoLib::ImGuiWidget(&this->vExpUICentorDiff_);
-		
-		ImGui::TreePop();	
+
+		ImGui::TreePop();
 	}
 	return false;
 }

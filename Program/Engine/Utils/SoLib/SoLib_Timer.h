@@ -205,7 +205,7 @@ namespace SoLib {
 
 			/// @brief 残り時間を取得
 			/// @return float 残り時間
-			inline float GetTimeRemain() const { return nowFlame_ - goalFlame_; }
+			inline float GetTimeRemain() const { return goalFlame_ - nowFlame_; }
 
 			/// @brief 現在進行度を取得
 			/// @return float 0.0f ~ 1.0fの現在進行度
