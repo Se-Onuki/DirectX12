@@ -361,6 +361,15 @@ void GameScene::OnEnter() {
 			}
 		);
 	}
+	{
+		auto button = ButtonUI::Generate();
+		button->Init(TextureManager::Load("UI/KnockBack.png"), [this]() {
+			Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
+
+			baseKnockBackPower_ += 0.1f;
+			}
+		);
+	}
 
 	gameTimer_.Start();
 	for (uint32_t i = 0; i < 2; i++) {
@@ -783,7 +792,7 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 				sphere.collision_.centor = playerPosRanges.At(i).position_;
 				sphere.collision_.radius = attackStatus.radius_ * 0.25f;
 				// 吹き飛ばす力
-				knockBack.diffPower_ = { knockBackPower_, knockBackPower_ };
+				knockBack.diffPower_ = { baseKnockBackPower_, baseKnockBackPower_ };
 				knockBack.diff_ = Vector2{ playerFacing.x, playerFacing.z }.Nomalize();
 				// 攻撃持続時間
 				lifeLim.lifeLimit_ = 5.f;
@@ -838,7 +847,7 @@ void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
 			sphere.collision_.radius = attackStatus.radius_;
 			auto &knockBack = knockBackRanges.At(index);
 			// 吹き飛ばす力
-			knockBack.diffPower_ = { knockBackPower_, knockBackPower_ };
+			knockBack.diffPower_ = { baseKnockBackPower_, baseKnockBackPower_ };
 			// 攻撃持続時間
 			lifeRanges.At(index).lifeLimit_ = attackTime_;
 			// 攻撃力
@@ -1011,7 +1020,7 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 
 		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * gameProgress);
 		// 敵のスポーン数
-		const int32_t enemyCount = *vEnemySpawnCount_;
+		const int32_t enemyCount = static_cast<int32_t>(*vEnemySpawnCount_ + *vEnemySpawnDiff_ * gameProgress);
 		// 敵の沸く半径
 		const float enemyRadius = *vEnemyRadius_;
 

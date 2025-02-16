@@ -129,6 +129,8 @@ public:
 
 	ButtonUI *const GetButtonUI(uint32_t index) { return index >= button_.size() ? nullptr : button_[index].get(); }
 
+	void push_back(std::unique_ptr<ButtonUI> &&button);
+
 private:
 
 	// 画面の中心位置

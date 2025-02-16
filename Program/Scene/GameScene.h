@@ -166,7 +166,8 @@ private:
 	VItem(int32_t, EnemyHealthBase, _) { 100 };
 	VItem(int32_t, EnemyHealthDiff, _) { 500 };
 
-	VItem(int32_t, EnemySpawnCount, _) { 10 };
+	VItem(int32_t, EnemySpawnCount, _) { 1 };
+	VItem(int32_t, EnemySpawnDiff, _) { 20 };
 	VItem(float, EnemyRadius, _) { 45.f };
 
 	// ゲームのスコアを返す
@@ -286,7 +287,7 @@ private:
 	// 攻撃時間
 	float attackTime_ = 0.25f;
 	// ノックバック威力
-	float knockBackPower_ = 0.15f;
+	float baseKnockBackPower_ = 0.15f;
 
 	// 飛び道具の回転の速度
 	float arrowAttackRotSpeed_ = 0.5f;

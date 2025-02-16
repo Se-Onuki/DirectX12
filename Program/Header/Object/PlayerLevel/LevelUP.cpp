@@ -21,7 +21,7 @@ void LevelUP::Init(int32_t count)
 
 	// サイズを合わせる
 	buttonUIGroup_.buttonUIList_.resize(count);
-	
+
 	// ランダム配置
 	RandomSet();
 }
@@ -163,9 +163,8 @@ void LevelUP::Target(int32_t target)
 void LevelUP::RandomSet()
 {
 	std::vector<int32_t> indices(button_.size());
-	for (int32_t i = 0; i < button_.size(); i++) {
-		indices[i] = i;
-	}
+	auto iota = std::views::iota(0, static_cast<int32_t>(button_.size()));
+	std::transform(iota.begin(), iota.end(), indices.begin(), [](const int32_t i)->int32_t { return i; });
 
 	static std::mt19937 gen;
 	static bool init;
@@ -177,11 +176,16 @@ void LevelUP::RandomSet()
 
 	std::shuffle(indices.begin(), indices.end(), gen);
 
-	std::transform(indices.begin(), indices.begin()+ targetCount_, buttonUIGroup_.buttonUIList_.begin(), [this](const int32_t i)->ButtonUI *
+	std::transform(indices.begin(), indices.begin() + targetCount_, buttonUIGroup_.buttonUIList_.begin(), [this](const int32_t i)->ButtonUI *
 		{
 			return button_[i].get();
 		}
 	);
+}
+
+void LevelUP::push_back(std::unique_ptr<ButtonUI> &&button)
+{
+	button_.push_back(std::move(button));
 }
 
 std::unique_ptr<ButtonUI> ButtonUI::Generate()
