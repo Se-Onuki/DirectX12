@@ -297,7 +297,10 @@ private:
 
 	std::vector<std::unique_ptr<ButtonUI>> arrowLevelUp_;
 
+	// 時間表示のUI
 	std::array<std::unique_ptr<SolEngine::NumberText>, 2u> gameTimerUI_;
+	// 時間の中間の点
+	std::unique_ptr<Sprite> timerCoron_;
 
 	SoLib::DeltaTimer gameTimer_{ 60 * 3 };
 

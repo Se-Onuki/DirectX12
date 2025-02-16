@@ -187,6 +187,8 @@ void GameScene::OnEnter() {
 	expBar_ = std::make_unique<HealthBar>();
 	expBar_->Init();
 
+	expBar_->SetColor(0xFFFF00FF, 0xFFFFFFFF);
+
 	expBar_->SetCentor(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUICentorMul_->x, static_cast<float>(WinApp::kWindowHeight) * vExpUICentorMul_->y } + *vExpUICentorDiff_);
 	expBar_->SetScale(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUIScaleMul_->x + vExpUIScaleDiff_->x, static_cast<float>(WinApp::kWindowHeight) * vExpUIScaleMul_->y + vExpUIScaleDiff_->y });
 
@@ -369,6 +371,8 @@ void GameScene::OnEnter() {
 		timeUI->SetPivot(Vector2{ static_cast<float>(1 - i), 1.f });
 
 	}
+
+	//timerCoron_ = Sprite::Generate();
 
 	killUI_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 4);
 	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 2, (-vExpUICentorDiff_->y) * 8 });

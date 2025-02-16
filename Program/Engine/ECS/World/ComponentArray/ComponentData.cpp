@@ -13,6 +13,7 @@ namespace ECS {
 
 	std::byte *ComponentSpan::operator[](uint32_t index)
 	{
+
 		return (pEntityStorage_->GetEntityStorage()[index / itemCount_].second->data() + offset_) + (index % itemCount_) * typeSize_;
 	}
 

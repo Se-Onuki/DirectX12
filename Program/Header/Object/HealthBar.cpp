@@ -61,3 +61,9 @@ void HealthBar::SetScale(const Vector2 radius)
 	gauge_->SetScale(*vBarScale_ - barFlameSize_ * 2.f);
 	gauge_->SetPosition(*vBarCentor_ - Vector2{ vBarScale_->x * 0.5f - barFlameSize_.x,0.f });
 }
+
+void HealthBar::SetColor(uint32_t mainColor, uint32_t backColor)
+{
+	gauge_->SetColor(mainColor);
+	backGround_->SetColor(backColor);
+}

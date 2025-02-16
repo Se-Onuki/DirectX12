@@ -57,12 +57,12 @@ namespace ECS {
 		// 次に進む
 		itr.index_++;
 		// もし末尾に到達していたら
-		if (itr.index_ % itr.cGroupSize_ == 0u) {
+		if (itr.index_ % (itr.cGroupSize_ + 1) == 0u) {
 			// ストレージ
 			auto &groups = itr.pEntityStorage_->GetEntityStorage();
 
 			// ポインタを変更
-			itr.pEntityMemory_ = groups.at(itr.index_ / itr.cGroupSize_).second.get();
+			itr.pEntityMemory_ = groups.at(itr.index_ / (itr.cGroupSize_ + 1)).second.get();
 		}
 		return itr;
 	}
@@ -81,12 +81,12 @@ namespace ECS {
 		// 次に進む
 		itr.index_--;
 		// もし末尾に到達していたら
-		if ((itr.index_ + 1) % itr.cGroupSize_ == 0) {
+		if ((itr.index_ + 1) % (itr.cGroupSize_+1) == 0) {
 			// ストレージ
 			auto &groups = itr.pEntityStorage_->GetEntityStorage();
 
 			// ポインタを変更
-			itr.pEntityMemory_ = groups.at(itr.index_ / itr.cGroupSize_).second.get();
+			itr.pEntityMemory_ = groups.at(itr.index_ / (itr.cGroupSize_+1)).second.get();
 		}
 		return itr;
 	}
@@ -117,16 +117,18 @@ namespace ECS {
 	template<bool IsConst, typename... Ts>
 	auto operator+=(TypeCompIterator<IsConst, Ts...> &itr, int32_t diff) -> TypeCompIterator<IsConst, Ts...> &
 	{
+		const auto arraySize = itr.cGroupSize_ + 1;
+
 		// もし負数なら､逆側に渡す
 		if (diff < 0) { return itr -= -diff; }
 		itr.index_ = static_cast<uint16_t>(itr.index_ + diff);
 		// もし領域を越えていたら
-		if (diff >= itr.cGroupSize_ or (itr.index_ % itr.cGroupSize_) < diff) {
+		if (diff >= arraySize or (itr.index_ % arraySize) < diff) {
 			// ストレージ
 			auto &groups = itr.pEntityStorage_->GetEntityStorage();
 
 			// ポインタを変更
-			itr.pEntityMemory_ = groups.at(itr.index_ / itr.cGroupSize_).second.get();
+			itr.pEntityMemory_ = groups.at(itr.index_ / arraySize).second.get();
 		}
 		return itr;
 	}
@@ -140,18 +142,19 @@ namespace ECS {
 	template<bool IsConst, typename... Ts>
 	auto operator-=(TypeCompIterator<IsConst, Ts...> &itr, int32_t diff) -> TypeCompIterator<IsConst, Ts...> &
 	{
+		const auto arraySize = itr.cGroupSize_ + 1;
 		// もし負数なら､逆側に渡す
 		if (diff < 0) { return itr += -diff; }
 		itr.index_ = static_cast<uint16_t>(itr.index_ - diff);
 		// もし領域を越えていたら
-		if (diff >= itr.cGroupSize_ // もし範囲より大きい移動幅か
-			or (itr.index_ % itr.cGroupSize_) > diff	// 移動先が別のグループなら
+		if (diff >= arraySize // もし範囲より大きい移動幅か
+			or (itr.index_ % arraySize) > diff	// 移動先が別のグループなら
 			) {
 			// ストレージ
 			auto &groups = itr.pEntityStorage_->GetEntityStorage();
 
 			// ポインタを変更
-			itr.pEntityMemory_ = groups.at(itr.index_ / itr.cGroupSize_).second.get();
+			itr.pEntityMemory_ = groups.at(itr.index_ / arraySize).second.get();
 		}
 		return itr;
 	}

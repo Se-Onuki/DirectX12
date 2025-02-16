@@ -26,6 +26,11 @@ public:
 	/// @brief サイズを設定
 	void SetScale(const Vector2 radius);
 
+	/// @brief 色の指定
+	/// @param[in] mainColor ゲージの色
+	/// @param[in] backColor 背景色
+	void SetColor(uint32_t mainColor, uint32_t backColor);
+
 
 private:
 
