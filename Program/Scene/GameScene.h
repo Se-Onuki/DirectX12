@@ -164,7 +164,7 @@ private:
 	VItem(Vector2, ExpUIScaleDiff, _) { { 0.f, 32.f } };
 
 	VItem(int32_t, EnemyHealthBase, _) { 100 };
-	VItem(int32_t, EnemyHelthDiff, _) { 500 };
+	VItem(int32_t, EnemyHealthDiff, _) { 500 };
 
 	VItem(int32_t, EnemySpawnCount, _) { 10 };
 	VItem(float, EnemyRadius, _) { 45.f };

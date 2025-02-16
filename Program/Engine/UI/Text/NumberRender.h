@@ -10,12 +10,11 @@ namespace SolEngine {
 
 	class NumberText {
 	public:
-		constexpr static size_t kNumCount_ = 4u;
 		/// @brief 生成関数
 		/// @param texture[in] テクスチャ
-		static std::unique_ptr<NumberText> Generate(TextureHandle texture);
+		static std::unique_ptr<NumberText> Generate(TextureHandle texture, uint32_t textCount);
 		/// @param num[out] 生成先
-		static void Generate(NumberText *const num, TextureHandle texture);
+		static void Generate(NumberText *const num, TextureHandle texture, uint32_t textCount);
 
 		/// @brief 文字の指定
 		/// @param text 文字
@@ -38,13 +37,15 @@ namespace SolEngine {
 
 	private:
 		// 文字データ
-		std::array<std::unique_ptr<Sprite>, kNumCount_> numText_;
+		std::unique_ptr<std::unique_ptr<Sprite>[]> textData_;
+		// 文字列の参照
+		std::span<std::unique_ptr<Sprite>> numText_;
 		// 文字サイズ
 		Vector2 textSize_;
 		// 中心点
 		Vector2 pivot_;
 		// 文字数
-		uint32_t textCount_;
+		uint32_t drawTextCount_;
 		// テキストの表示倍率
 		float textMul_ = 1.f;
 
@@ -69,6 +70,8 @@ namespace SolEngine {
 		void Draw() const;
 
 	private:
+		/// @brief 文字列の長さ
+		constexpr static size_t kNumCount_ = 4u;
 
 		/// @brief 生成
 		/// @param count 生成数

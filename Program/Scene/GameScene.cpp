@@ -367,7 +367,7 @@ void GameScene::OnEnter() {
 	gameTimerUI_->SetCentor(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUICentorMul_->x, static_cast<float>(WinApp::kWindowHeight) * (1 - (vExpUICentorMul_->y)) } + Vector2{ vExpUICentorDiff_->x, -vExpUICentorDiff_->y / 2 });
 	gameTimerUI_->SetScale(Vector2{ static_cast<float>(WinApp::kWindowWidth) * vExpUIScaleMul_->x + vExpUIScaleDiff_->x, (static_cast<float>(WinApp::kWindowHeight) * vExpUIScaleMul_->y + vExpUIScaleDiff_->y) / 2 });
 
-	killUI_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"));
+	killUI_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 4);
 	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 4, (-vExpUICentorDiff_->y) * 8 });
 
 	killUI_->SetPivot(Vector2::one * 0.5f);
@@ -996,7 +996,7 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 
 		const float gameProgress = gameTimer_.GetProgress();
 
-		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHelthDiff_ * gameProgress);
+		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * gameProgress);
 		// 敵のスポーン数
 		const int32_t enemyCount = *vEnemySpawnCount_;
 		// 敵の沸く半径
@@ -1076,15 +1076,28 @@ void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, const Sol
 
 bool GameScene::ImGuiWidget(const std::string_view &name)
 {
-	this->vEnemyHealthBase_;
+	if (ImGui::TreeNode(name.data())) {
 
+		SoLib::ImGuiWidget(&this->vEnemyHealthBase_);
+		SoLib::ImGuiWidget(&this->vEnemyHealthDiff_);
+
+		SoLib::ImGuiWidget(&this->vEnemySpawnCount_);
+		SoLib::ImGuiWidget(&this->vEnemyRadius_);
+
+		SoLib::ImGuiWidget(&this->vLevelUpUISize_);
+
+		SoLib::ImGuiWidget(&this->vExpUICentorMul_);
+		SoLib::ImGuiWidget(&this->vExpUICentorDiff_);
+		
+		ImGui::TreePop();	
+	}
 	return false;
 }
 
 void GameScene::Load(const GlobalVariables::Group &group)
 {
 	group >> vEnemyHealthBase_;
-	group >> vEnemyHelthDiff_;
+	group >> vEnemyHealthDiff_;
 
 	group >> vEnemySpawnCount_;
 	group >> vEnemyRadius_;
@@ -1097,5 +1110,14 @@ void GameScene::Load(const GlobalVariables::Group &group)
 
 void GameScene::Save(GlobalVariables::Group &group) const
 {
+	group << vEnemyHealthBase_;
+	group << vEnemyHealthDiff_;
 
+	group << vEnemySpawnCount_;
+	group << vEnemyRadius_;
+
+	group << vLevelUpUISize_;
+
+	group << vExpUICentorMul_;
+	group << vExpUICentorDiff_;
 }

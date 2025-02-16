@@ -51,6 +51,19 @@ namespace SoLib {
 
 		using SecondF = Second<float>;
 
+		/// @brief 秒数から時間を算出する
+		/// @param[in] time 秒数
+		/// @return 換算した時間(分, 秒)
+		inline std::pair<uint32_t, uint32_t> GetMoment(const float time) {
+			const uint32_t iTime = static_cast<uint32_t>(time);
+			std::pair<uint32_t, uint32_t> result;
+
+			result.first = iTime / 60;
+			result.second = iTime % 60;
+
+			return result;
+		}
+
 		/// @brief タイマークラス
 		class FlameTimer {
 			uint32_t goalFlame_;
@@ -183,12 +196,16 @@ namespace SoLib {
 			bool IsActive() const { return isActive_; }
 
 			/// @brief 現在フレームを取得
-			/// @return uint32_t 現在フレーム
+			/// @return float 現在フレーム
 			inline  float GetNowFlame() const { return nowFlame_; }
 
 			/// @brief ゴールフレームを取得
-			/// @return uint32_t ゴールフレーム
+			/// @return float ゴールフレーム
 			inline  float GetGoalFlame() const { return goalFlame_; }
+
+			/// @brief 残り時間を取得
+			/// @return float 残り時間
+			inline float GetTimeRemain() const { return nowFlame_ - goalFlame_; }
 
 			/// @brief 現在進行度を取得
 			/// @return float 0.0f ~ 1.0fの現在進行度

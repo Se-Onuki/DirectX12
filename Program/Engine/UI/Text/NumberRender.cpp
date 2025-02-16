@@ -51,7 +51,7 @@ namespace SolEngine {
 		auto begin = text_.begin() + beforeSize;
 		std::generate(begin, text_.end(), [this]()->std::unique_ptr<NumberText>
 			{
-				auto itm = NumberText::Generate(texture_);
+				auto itm = NumberText::Generate(texture_, kNumCount_);
 				itm->SetPivot(Vector2::one / 2);
 				itm->SetScale(0.25f);
 				return std::move(itm);
@@ -61,12 +61,16 @@ namespace SolEngine {
 		return std::span(begin, count);
 	}
 
-	void NumberText::Generate(NumberText *const numText, TextureHandle texture)
+	void NumberText::Generate(NumberText *const numText, TextureHandle texture, uint32_t textCount)
 	{
 		numText->textSize_ = texture->textureSize_;
 		numText->textSize_.x /= 10.f;
 
 		auto textureSize = numText->textSize_;
+
+		numText->textData_ = std::make_unique<std::unique_ptr<Sprite>[]>(textCount);
+
+		numText->numText_ = { numText->textData_.get(), textCount };
 
 		std::generate(numText->numText_.begin(), numText->numText_.end(), [texture, textureSize]()->std::unique_ptr<Sprite> {
 			auto itm = Sprite::Generate(texture.index_);
@@ -79,10 +83,10 @@ namespace SolEngine {
 
 	}
 
-	std::unique_ptr<NumberText> NumberText::Generate(TextureHandle texture)
+	std::unique_ptr<NumberText> NumberText::Generate(TextureHandle texture, uint32_t textCount)
 	{
 		std::unique_ptr<NumberText> result = std::make_unique<NumberText>();
-		NumberText::Generate(result.get(), texture);
+		NumberText::Generate(result.get(), texture, textCount);
 		return std::move(result);
 	}
 
@@ -91,18 +95,18 @@ namespace SolEngine {
 		float textXSize = textSize_.x;
 		auto str = std::to_string(text);
 
-		textCount_ = static_cast<uint32_t>(str.size());
-		if (textCount_ == 0) { return; }
+		drawTextCount_ = static_cast<uint32_t>(str.size());
+		if (drawTextCount_ == 0) { return; }
 
-		for (uint32_t i = 0; i < (std::min)(textCount_, static_cast<uint32_t>(kNumCount_)); i++) {
-			numText_[i]->SetTexOrigin(Vector2{ textXSize * static_cast<float>(str[textCount_ - i - 1] - '0'), 0.f });
+		for (uint32_t i = 0; i < (std::min)(drawTextCount_, static_cast<uint32_t>(numText_.size())); i++) {
+			numText_[i]->SetTexOrigin(Vector2{ textXSize * static_cast<float>(str[drawTextCount_ - i - 1] - '0'), 0.f });
 		}
 	}
 
 	void NumberText::SetPosition([[maybe_unused]] Vector2 pos)
 	{
-		Vector2 beginPos = { pos.x - (textSize_.x * ((kNumCount_ - 1.5f) * textMul_ / 2)), pos.y - ((textSize_.y / 2) + textSize_.y * pivot_.y) * textMul_ };
-		Vector2 diff = Vector2{ textSize_.x * (kNumCount_ - 1) * textMul_, 0.f } / kNumCount_;
+		Vector2 beginPos = { pos.x - (textSize_.x * ((numText_.size() - 1.5f) * textMul_ / 2)), pos.y - ((textSize_.y / 2) + textSize_.y * pivot_.y) * textMul_ };
+		Vector2 diff = Vector2{ textSize_.x * (numText_.size() - 1) * textMul_, 0.f } / static_cast<float>(numText_.size());
 
 		for (auto itr = numText_.rbegin(); itr != numText_.rend(); itr++) {
 			(*itr)->SetPosition(beginPos);
