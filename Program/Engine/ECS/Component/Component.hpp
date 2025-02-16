@@ -362,7 +362,7 @@ namespace ECS {
 
 		float radius_ = 10.f;
 
-		uint32_t power_ = 20;
+		uint32_t power_ = 10;
 
 		SoLib::Angle::Radian angle_ = 30._deg;
 

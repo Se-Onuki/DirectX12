@@ -132,7 +132,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
 	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
 	*playerPrefab_ += ECS::AttackStatus{ .radius_ = 10.f };
-	*playerPrefab_ += ECS::AttackPower{ .power_ = 40 };
+	*playerPrefab_ += ECS::AttackPower{ .power_ = 20 };
 	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
 	*playerPrefab_ += ECS::Experience{};
 	*playerPrefab_ += ECS::HasShadow{};

@@ -286,7 +286,7 @@ private:
 	// 攻撃時間
 	float attackTime_ = 0.25f;
 	// ノックバック威力
-	float knockBackPower_ = 0.5f;
+	float knockBackPower_ = 0.15f;
 
 	// 飛び道具の回転の速度
 	float arrowAttackRotSpeed_ = 0.5f;
