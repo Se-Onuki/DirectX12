@@ -53,15 +53,34 @@ namespace SolEngine {
 		// 書き込み先の確保
 		auto span = Reservation(totalCount);
 		for (uint32_t i = 0; i < ghostOffset.size(); i++) {
-			// チャンクからデータの取得
-			auto transMats = ghostChanks[i]->GetComponent<ECS::TransformMatComp>();
-			// 転送する
-			std::transform(transMats.begin(), transMats.end(), &span[ghostOffset[i]], [color, afterFunc](const ECS::TransformMatComp &trans) { Particle::ParticleData result{ .transform = trans.transformMat_, .color = color };
-			if (afterFunc) {
-				afterFunc(result);
+			if (ghostChanks[i]->GetArchetype().required_.IsHasComp<ECS::Color>()) {
+
+				// チャンクからデータの取得
+				auto transMats = ghostChanks[i]->View<ECS::TransformMatComp, ECS::Color>();
+				// 転送する
+				std::transform(transMats.begin(), transMats.end(), &span[ghostOffset[i]], [afterFunc](const auto & itm) { 
+					const auto &[trans, color] = itm;
+					Particle::ParticleData result{ .transform = trans.transformMat_, .color = color.color_ };
+				if (afterFunc) {
+					afterFunc(result);
+				}
+				return result;
+					});
+
+
 			}
-			return result;
-				});
+			else {
+
+				// チャンクからデータの取得
+				auto transMats = ghostChanks[i]->GetComponent<ECS::TransformMatComp>();
+				// 転送する
+				std::transform(transMats.begin(), transMats.end(), &span[ghostOffset[i]], [color, afterFunc](const ECS::TransformMatComp &trans) { Particle::ParticleData result{ .transform = trans.transformMat_, .color = color };
+				if (afterFunc) {
+					afterFunc(result);
+				}
+				return result;
+					});
+			}
 		}
 	}
 	void ModelInstancingRender::AddTransData(const ECS::World &world, const Archetype &arch, const uint32_t color, std::function<void(InstanceType &)> afterFunc)

@@ -57,12 +57,12 @@ namespace ECS {
 		// 次に進む
 		itr.index_++;
 		// もし末尾に到達していたら
-		if (itr.index_ % (itr.cGroupSize_ + 1) == 0u) {
+		if (itr.index_ % itr.cGroupSize_ == 0u) {
 			// ストレージ
 			auto &groups = itr.pEntityStorage_->GetEntityStorage();
 
 			// ポインタを変更
-			itr.pEntityMemory_ = groups.at(itr.index_ / (itr.cGroupSize_ + 1)).second.get();
+			itr.pEntityMemory_ = groups.at(itr.index_ / itr.cGroupSize_).second.get();
 		}
 		return itr;
 	}
@@ -81,12 +81,12 @@ namespace ECS {
 		// 次に進む
 		itr.index_--;
 		// もし末尾に到達していたら
-		if ((itr.index_ + 1) % (itr.cGroupSize_+1) == 0) {
+		if ((itr.index_ + 1) % itr.cGroupSize_ == 0) {
 			// ストレージ
 			auto &groups = itr.pEntityStorage_->GetEntityStorage();
 
 			// ポインタを変更
-			itr.pEntityMemory_ = groups.at(itr.index_ / (itr.cGroupSize_+1)).second.get();
+			itr.pEntityMemory_ = groups.at(itr.index_ / itr.cGroupSize_).second.get();
 		}
 		return itr;
 	}
@@ -117,7 +117,7 @@ namespace ECS {
 	template<bool IsConst, typename... Ts>
 	auto operator+=(TypeCompIterator<IsConst, Ts...> &itr, int32_t diff) -> TypeCompIterator<IsConst, Ts...> &
 	{
-		const auto arraySize = itr.cGroupSize_ + 1;
+		const auto arraySize = itr.cGroupSize_;
 
 		// もし負数なら､逆側に渡す
 		if (diff < 0) { return itr -= -diff; }
@@ -142,7 +142,7 @@ namespace ECS {
 	template<bool IsConst, typename... Ts>
 	auto operator-=(TypeCompIterator<IsConst, Ts...> &itr, int32_t diff) -> TypeCompIterator<IsConst, Ts...> &
 	{
-		const auto arraySize = itr.cGroupSize_ + 1;
+		const auto arraySize = itr.cGroupSize_;
 		// もし負数なら､逆側に渡す
 		if (diff < 0) { return itr += -diff; }
 		itr.index_ = static_cast<uint16_t>(itr.index_ - diff);

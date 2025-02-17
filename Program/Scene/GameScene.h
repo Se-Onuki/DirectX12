@@ -155,7 +155,7 @@ private:
 	// レベルアップのUIのサイズ
 	VItem(Vector2, LevelUpUISize, _) {};
 	// 経験値バーのUIの中心位置の画面サイズに対する比率
-	VItem(Vector2, ExpUICentorMul, _) { Vector2{ 0.5f, 1.f } };
+	VItem(Vector2, ExpUICentorMul, _) { { 0.5f, 1.f } };
 	// 経験値バーのUIの中心位置のピクセル単位の位置
 	VItem(Vector2, ExpUICentorDiff, _) { { 0.f, -16.f } };
 	// 経験値バーのUIのサイズの画面サイズに対する比率
@@ -169,6 +169,17 @@ private:
 	VItem(int32_t, EnemySpawnCount, _) { 1 };
 	VItem(int32_t, EnemySpawnDiff, _) { 20 };
 	VItem(float, EnemyRadius, _) { 45.f };
+
+	VItem(float, PowerUpEnemySpawnTime, _) { 60.f };
+
+	inline static constexpr std::array<uint32_t, 6> kEnemyColor_{
+		0xFFFFFFFF,
+		0x55FF55FF,
+		0x5555FFFF,
+		0xFF33FFFF,
+		0xFFFF00FF,
+
+	};
 
 	// ゲームのスコアを返す
 	GameScore gameScore_;

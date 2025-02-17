@@ -160,6 +160,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::InvincibleTime{};
 	*enemyPrefab_ += ECS::Rigidbody{};
 	*enemyPrefab_ += ECS::DamageCounter{};
+	*enemyPrefab_ += ECS::Color{};
 
 	//entityManager_->CreateEntity(*enemyPrefab_);
 	newWorld_.CreateEntity(*enemyPrefab_);
@@ -466,17 +467,20 @@ void GameScene::Update() {
 	killUI_->SetText(static_cast<uint32_t>(killCount_));
 
 	// 敵の描画
-	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_);
-	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, shadowColor_, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
-	data.transform.World = Matrix4x4::Identity();
-	data.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
+	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_, 0x00000000);
+	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, shadowColor_, [](Particle::ParticleData &data) {
+		Vector3 translate = data.transform.World.GetTranslate();
+		data.transform.World = Matrix4x4::Identity();
+		data.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
+		data.color = 0x00000055;
 		}
 	);
 
 	// 経験値の描画
-	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, expColor_, [](Particle::ParticleData &data) { Vector3 translate = data.transform.World.GetTranslate();
-	data.transform.World = Matrix4x4::Identity();
-	data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
+	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, expColor_, [](Particle::ParticleData &data) {
+		Vector3 translate = data.transform.World.GetTranslate();
+		data.transform.World = Matrix4x4::Identity();
+		data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
 		}
 	);
 
@@ -558,6 +562,7 @@ void GameScene::Draw() {
 
 	light_->SetLight(commandList);
 
+	arrowAttackRender_.DrawExecute(camera);
 	blockRender_->Draw(camera);
 	modelHandleRender_->Draw(camera);
 
@@ -569,18 +574,12 @@ void GameScene::Draw() {
 	skinModelRender_->Draw(camera);
 	skinModelHandleRender_->Draw(camera);
 
-	Model::SetPipelineType(Model::PipelineType::kModel);
-	light_->SetLight(commandList);
-
 	Model::SetPipelineType(Model::PipelineType::kParticle);
 	light_->SetLight(commandList);
 
 	shadowRenderer_.DrawExecute(camera);
 	attackRender_.DrawExecute(camera);
 	expRender_.DrawExecute(camera);
-
-	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
-	arrowAttackRender_.DrawExecute(camera);
 
 	Model::EndDraw();
 
@@ -1016,8 +1015,10 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 
 	if (timer.IsFinish()) {
 
+		// ゲームの進行度
 		const float gameProgress = gameTimer_.GetProgress();
 
+		// 敵の体力
 		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * gameProgress);
 		// 敵のスポーン数
 		const int32_t enemyCount = static_cast<int32_t>(*vEnemySpawnCount_ + *vEnemySpawnDiff_ * gameProgress);
@@ -1028,13 +1029,14 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 		spawner.AddSpawner(enemyPrefab_.get(), enemyCount, [enemyCount, enemyRadius, enemyHealth, gameProgress](const ECS::EntityList<false> &enemys)
 			{
 				// コンポーネントの配列
-				auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp>();
+				auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp, ECS::Color>();
 				// 発生地点の回転加算値
 				const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
 				for (uint32_t i = 0; i < enemys.ItrRange().size(); i++) {
-					auto [pos, health] = *(arr.begin() + i);
+					auto [pos, health, color] = *(arr.begin() + i);
 					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / enemyCount) * i + diff, 0.f }) * enemyRadius;
 					health = ECS::HealthComp::Create(enemyHealth);
+					color.color_ = kEnemyColor_[static_cast<size_t>(gameProgress / 0.2f)];
 				}
 			});
 		timer.Start();
