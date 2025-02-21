@@ -121,13 +121,13 @@ namespace SolEngine {
 	{
 		const uint32_t count = drawTextCount_;
 		const float TotalLength = (count - 1) * textSize_.x * textMul_;
-		Vector2 beginPos = { pos_.x + (TotalLength * pivot_.x), pos_.y /*- ((textSize_.y / 2) + textSize_.y * pivot_.y) * textMul_*/ };
+		Vector2 beginPos = { pos_.x - (TotalLength * pivot_.x), pos_.y /*- ((textSize_.y / 2) + textSize_.y * pivot_.y) * textMul_*/ };
 		const Vector2 diff = Vector2{ textSize_.x * textMul_, 0.f };
 
-		for (uint32_t i = 0; i < count; i++) {
+		for (int32_t i = count - 1; i >= 0; i--) {
 			const auto &itr = numText_[i];
 			itr->SetPosition(beginPos);
-			beginPos -= diff;
+			beginPos += diff;
 		}
 	}
 

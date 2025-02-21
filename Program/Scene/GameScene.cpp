@@ -429,8 +429,8 @@ void GameScene::Update() {
 	gameTimer_.Update(fixDeltaTime);
 	{
 		auto [m, s] = SoLib::Time::GetMoment(gameTimer_.GetTimeRemain());
-		gameTimerUI_[0]->SetText(m);
-		gameTimerUI_[1]->SetText(s);
+		gameTimerUI_[0]->SetText(m, true);
+		gameTimerUI_[1]->SetText(s, true);
 	}
 
 	// エンティティの追加
