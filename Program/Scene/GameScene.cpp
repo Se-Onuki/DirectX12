@@ -467,7 +467,10 @@ void GameScene::Update() {
 	killUI_->SetText(static_cast<uint32_t>(killCount_));
 
 	// 敵の描画
-	ghostRenderer_.AddMatData<ECS::GhostModel>(newWorld_, 0x00000000);
+	ghostRenderer_.TransfarData<ECS::GhostModel, ECS::TransformMatComp, ECS::Color>(newWorld_, [](const std::tuple<const ECS::GhostModel &, const ECS::TransformMatComp &, const ECS::Color &> &data)->Particle::ParticleData {
+		auto [ghost, mat, color] = data;
+
+		return Particle::ParticleData{ .transform = mat.transformMat_, .color = color.color_ }; });
 	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, shadowColor_, [](Particle::ParticleData &data) {
 		Vector3 translate = data.transform.World.GetTranslate();
 		data.transform.World = Matrix4x4::Identity();

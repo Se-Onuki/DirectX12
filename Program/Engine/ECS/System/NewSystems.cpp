@@ -275,10 +275,8 @@ namespace ECS::System::Par {
 
 	void WeaponCollision::ExecuteOnce(const World *const world, const float)
 	{
-		Archetype archetype;
-		archetype.AddClassData<ECS::SphereCollisionComp, ECS::KnockBackDirection, ECS::AttackPower>();
-		const auto &chunks = world->GetAccessableChunk(archetype);
-		attackCollisions_ = std::make_unique<AttackCollisions>();
+		const auto &chunks = world->GetAccessableChunk(Archetype::Generate<ECS::SphereCollisionComp, ECS::KnockBackDirection, ECS::AttackPower>());
+		if (not attackCollisions_) { attackCollisions_ = std::make_unique<AttackCollisions>(); }
 		attackCollisions_->size_ = chunks.Count();
 		if (attackCollisions_->size_) {
 			attackCollisions_->sphere_ = std::move(chunks.GetRange<ECS::SphereCollisionComp>());
@@ -593,6 +591,23 @@ namespace ECS::System::Par {
 		else {
 			damage.damageCount_ = 0;
 		}
+
+	}
+	void CollectionExpOrb::Execute(const World *const, const float)
+	{
+		auto [exp, position] = readWrite_;
+
+
+
+
+	}
+	void CollectionExpOrb::ExecuteOnce(const World *const world, const float)
+	{
+		const auto &chunks = world->GetAccessableChunk(Archetype::Generate<ECS::PlayerTag>());
+		if (not playerPos_) { playerPos_ = std::make_unique<PlayerPos>(); }
+		if (chunks.empty()) { playerPos_->pos_ = std::nullopt; return; }
+
+		playerPos_->pos_ = chunks.front()->GetComponent<ECS::PositionComp>()[0];
 
 	}
 }

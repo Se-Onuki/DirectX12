@@ -350,6 +350,20 @@ namespace ECS {
 				void Execute(const World *const, const float);
 			};
 
+			class CollectionExpOrb :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::ExpOrb, ECS::PositionComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+				struct PlayerPos {
+					std::optional<Vector3> pos_ ;
+				};
+				inline static std::unique_ptr<PlayerPos> playerPos_ = nullptr;
+
+				void Execute(const World *const, const float);
+				/// @brief 毎フレーム一度だけ実行するシステム
+				static void ExecuteOnce(const World *const, const float);
+			};
+
 		}
 	}
 }
