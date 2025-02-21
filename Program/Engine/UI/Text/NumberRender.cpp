@@ -90,7 +90,7 @@ namespace SolEngine {
 		return std::move(result);
 	}
 
-	void NumberText::SetText(uint32_t text)
+	void NumberText::SetText(uint32_t text, bool isZeroFill)
 	{
 		float textXSize = textSize_.x;
 		auto str = std::to_string(text);
@@ -101,32 +101,51 @@ namespace SolEngine {
 		for (uint32_t i = 0; i < (std::min)(drawTextCount_, static_cast<uint32_t>(numText_.size())); i++) {
 			numText_[i]->SetTexOrigin(Vector2{ textXSize * static_cast<float>(str[drawTextCount_ - i - 1] - '0'), 0.f });
 		}
-	}
 
-	void NumberText::SetPosition([[maybe_unused]] Vector2 pos)
-	{
-		Vector2 beginPos = { pos.x - (textSize_.x * ((numText_.size() - 1.5f) * textMul_ / 2)), pos.y - ((textSize_.y / 2) + textSize_.y * pivot_.y) * textMul_ };
-		Vector2 diff = Vector2{ textSize_.x * (numText_.size() - 1) * textMul_, 0.f } / static_cast<float>(numText_.size());
-
-		for (auto itr = numText_.rbegin(); itr != numText_.rend(); itr++) {
-			(*itr)->SetPosition(beginPos);
-			beginPos += diff;
+		if (isZeroFill) {
+			for (uint32_t i = drawTextCount_; i < numText_.size(); i++) {
+				numText_[i]->SetTexOrigin(Vector2::zero);
+			}
+			drawTextCount_ = static_cast<uint32_t>(numText_.size());
 		}
 
+		FixPos();
+	}
+
+	void NumberText::SetPosition([[maybe_unused]] Vector2 pos) {
+		pos_ = pos;
+		FixPos();
+	}
+
+	void NumberText::FixPos()
+	{
+		const uint32_t count = drawTextCount_;
+		const float TotalLength = (count - 1) * textSize_.x * textMul_;
+		Vector2 beginPos = { pos_.x + (TotalLength * pivot_.x), pos_.y /*- ((textSize_.y / 2) + textSize_.y * pivot_.y) * textMul_*/ };
+		const Vector2 diff = Vector2{ textSize_.x * textMul_, 0.f };
+
+		for (uint32_t i = 0; i < count; i++) {
+			const auto &itr = numText_[i];
+			itr->SetPosition(beginPos);
+			beginPos -= diff;
+		}
 	}
 
 	void NumberText::SetPivot(Vector2 pivot)
 	{
 		pivot_ = pivot;
 	}
+
 	void NumberText::SetScale(float scale)
 	{
 		textMul_ = scale;
 		for (auto &itm : numText_) { itm->SetScale(textSize_ * scale); }
 	}
+
 	void NumberText::Draw() const
 	{
-		for (const auto &itm : numText_) {
+		for (uint32_t i = 0; i < drawTextCount_; i++) {
+			const auto &itm = numText_[i];
 			itm->Draw();
 		}
 	}

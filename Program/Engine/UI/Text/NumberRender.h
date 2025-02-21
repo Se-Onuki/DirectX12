@@ -18,11 +18,13 @@ namespace SolEngine {
 
 		/// @brief 文字の指定
 		/// @param text 文字
-		void SetText(uint32_t text);
+		void SetText(uint32_t text, bool isZeroFill = false);
 
 		/// @brief 場所の設定
 		/// @param pos 場所
 		void SetPosition(Vector2 pos);
+
+		void FixPos();
 
 		/// @brief 原点の指定
 		/// @param pivot 中心点
@@ -44,6 +46,8 @@ namespace SolEngine {
 		Vector2 textSize_;
 		// 中心点
 		Vector2 pivot_;
+		// 座標
+		Vector2 pos_;
 		// 文字数
 		uint32_t drawTextCount_;
 		// テキストの表示倍率

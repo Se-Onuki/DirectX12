@@ -378,7 +378,7 @@ void GameScene::OnEnter() {
 
 		timeUI = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 2u);
 		timeUI->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f + (i == 0 ? -72.f : 72.f),96.f });
-		timeUI->SetPivot(Vector2{ static_cast<float>(1 - i), 1.f });
+		timeUI->SetPivot(Vector2{ static_cast<float>(1 - i), 0.f });
 
 	}
 
@@ -458,7 +458,7 @@ void GameScene::Update() {
 	// 経験値の加算
 	PlayerExperience(newWorld_);
 	// 描画のカウントのリセット
-	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = {};
+	ECS::System::Par::DrawEnemyHelthBar::drawCount_ = 0;
 	// ECSの処理の更新
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 	// カメラのアップデート
@@ -467,26 +467,44 @@ void GameScene::Update() {
 	killUI_->SetText(static_cast<uint32_t>(killCount_));
 
 	// 敵の描画
-	ghostRenderer_.TransfarData<ECS::GhostModel, ECS::TransformMatComp, ECS::Color>(newWorld_, [](const std::tuple<const ECS::GhostModel &, const ECS::TransformMatComp &, const ECS::Color &> &data)->Particle::ParticleData {
-		auto [ghost, mat, color] = data;
-
-		return Particle::ParticleData{ .transform = mat.transformMat_, .color = color.color_ }; });
-	shadowRenderer_.AddMatData<ECS::HasShadow>(newWorld_, shadowColor_, [](Particle::ParticleData &data) {
-		Vector3 translate = data.transform.World.GetTranslate();
-		data.transform.World = Matrix4x4::Identity();
-		data.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
-		data.color = 0x00000055;
+	ghostRenderer_.TransfarData<ECS::GhostModel, ECS::TransformMatComp, ECS::Color>(newWorld_, [](const std::tuple<const ECS::GhostModel &, const ECS::TransformMatComp &, const ECS::Color &> &data)->Particle::ParticleData
+		{
+			const auto &[ghost, mat, color] = data;
+			return Particle::ParticleData{ .transform = mat.transformMat_, .color = color.color_ };
 		}
 	);
+	// 丸影の描画
+	{
+		// 影の色
+		const uint32_t color = static_cast<uint32_t>(shadowColor_);
+		shadowRenderer_.TransfarData<ECS::HasShadow, ECS::PositionComp>(newWorld_, [color](const std::tuple<const ECS::HasShadow &, const ECS::PositionComp &> &data)
+			{
+				const auto &[shadow, pos] = data;
+				const Vector3 translate = pos.position_;
+				Particle::ParticleData result;
+				result.transform.World = Matrix4x4::Identity();
+				result.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
+				result.color = color;
+				return result;
+			}
+		);
+	}
 
 	// 経験値の描画
-	expRender_.AddTransData<ECS::ExpOrb>(newWorld_, expColor_, [](Particle::ParticleData &data) {
-		Vector3 translate = data.transform.World.GetTranslate();
-		data.transform.World = Matrix4x4::Identity();
-		data.transform.World.vecs[3] = { translate.x, 0.1f, translate.z, 1.f };
-		}
-	);
-
+	{
+		const uint32_t color = static_cast<uint32_t>(expColor_);
+		expRender_.TransfarData<ECS::ExpOrb, ECS::PositionComp>(newWorld_, [color](const std::tuple<const ECS::ExpOrb &, const ECS::PositionComp &> &data)
+			{
+				const auto &[shadow, pos] = data;
+				const Vector3 translate = pos.position_;
+				Particle::ParticleData result{};
+				result.transform.World = Matrix4x4::Identity();
+				result.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
+				result.color = color;
+				return result;
+			}
+		);
+	}
 	// 攻撃範囲の描画
 	AttackEffectRender(newWorld_, attackRender_);
 
