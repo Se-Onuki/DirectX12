@@ -377,7 +377,7 @@ void GameScene::OnEnter() {
 		auto &timeUI = gameTimerUI_[i];
 
 		timeUI = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 2u);
-		timeUI->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f + (i == 0 ? -72.f : 72.f),96.f });
+		timeUI->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f + (i == 0 ? -48.f : 48.f),96.f });
 		timeUI->SetPivot(Vector2{ static_cast<float>(1 - i), 0.f });
 
 	}
@@ -464,7 +464,7 @@ void GameScene::Update() {
 	// カメラのアップデート
 	cameraManager_->Update(fixDeltaTime);
 
-	killUI_->SetText(static_cast<uint32_t>(killCount_));
+	killUI_->SetText(static_cast<uint32_t>(killCount_), true);
 
 	// 敵の描画
 	ghostRenderer_.TransfarData<ECS::GhostModel, ECS::TransformMatComp, ECS::Color>(newWorld_, [](const std::tuple<const ECS::GhostModel &, const ECS::TransformMatComp &, const ECS::Color &> &data)->Particle::ParticleData
@@ -995,40 +995,18 @@ void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInst
 
 void GameScene::ArrowAttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const
 {
-	Archetype archetype = Archetype::Generate<ECS::AttackArrow>();
-	// チャンクの取得
-	auto ghostChanks = world.GetAccessableChunk(archetype);
-	// オブジェクトの総数
-	uint32_t totalCount = 0u;
 
-	// チャンクと同じ数のデータを確保する
-	std::vector<uint32_t> ghostOffset(ghostChanks.size());
-	for (uint32_t i = 0; i < ghostOffset.size(); i++) {
-		ghostOffset[i] = totalCount;
-		totalCount += ghostChanks[i]->size();
-	}
-	// もし空なら終わる
-	if (totalCount == 0) { return; }
+	const float attackRotSpeed = arrowAttackRotSpeed_;
+	attackRender.TransfarData<ECS::AttackArrow, ECS::SphereCollisionComp, ECS::AliveTime>(world, [attackRotSpeed](const auto &item) {
+		const auto &[arrow, trans, alive] = item;
 
-	// 書き込み先の確保
-	auto span = attackRender.Reservation(totalCount);
-	for (uint32_t i = 0; i < ghostOffset.size(); i++) {
-		// チャンクからデータの取得
-		auto range = ghostChanks[i]->View<ECS::SphereCollisionComp, ECS::AliveTime>();
-		// データを転送する
-		const float attackRotSpeed = arrowAttackRotSpeed_;
-		// 転送する
-		std::transform(range.begin(), range.end(), &span[ghostOffset[i]], [attackRotSpeed](const auto &itm) {
-			const auto &[trans, alive] = itm;
-
-			Particle::ParticleData result{ .color = 0x333333FF };
-			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * alive.aliveTime_ / attackRotSpeed) * (trans.collision_.radius * 0.25f);
-			result.transform.World.GetTranslate() = trans.collision_.centor;
-			result.transform.World.m[3][3] = 1.f;
-			return result;
-			});
-
-	}
+		Particle::ParticleData result{ .color = 0x333333FF };
+		result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * alive.aliveTime_ / attackRotSpeed) * (trans.collision_.radius * 0.25f);
+		result.transform.World.GetTranslate() = trans.collision_.centor;
+		result.transform.World.m[3][3] = 1.f;
+		return result;
+		}
+	);
 }
 
 void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) const
@@ -1040,9 +1018,9 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 		const float gameProgress = gameTimer_.GetProgress();
 
 		// 敵の体力
-		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * gameProgress);
+		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
 		// 敵のスポーン数
-		const int32_t enemyCount = static_cast<int32_t>(*vEnemySpawnCount_ + *vEnemySpawnDiff_ * gameProgress);
+		const int32_t enemyCount = static_cast<int32_t>(*vEnemySpawnCount_ + *vEnemySpawnDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
 		// 敵の沸く半径
 		const float enemyRadius = *vEnemyRadius_;
 

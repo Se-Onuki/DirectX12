@@ -188,6 +188,10 @@ namespace ECS {
 
 	struct GhostModel : IComponent {};
 
+	struct StoneBullet : IComponent {};
+
+	struct Explosion : IComponent {};
+
 	struct UnRender : IComponent {};
 
 	struct HasShadow : IComponent {};

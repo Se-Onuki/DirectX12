@@ -120,9 +120,10 @@ namespace SolEngine {
 	void NumberText::FixPos()
 	{
 		const uint32_t count = drawTextCount_;
-		const float TotalLength = (count - 1) * textSize_.x * textMul_;
+		const float distance = textSize_.x * textMul_ * 0.6f ;
+		const float TotalLength = (count - 1) * distance;
 		Vector2 beginPos = { pos_.x - (TotalLength * pivot_.x), pos_.y /*- ((textSize_.y / 2) + textSize_.y * pivot_.y) * textMul_*/ };
-		const Vector2 diff = Vector2{ textSize_.x * textMul_, 0.f };
+		const Vector2 diff = Vector2{ distance, 0.f };
 
 		for (int32_t i = count - 1; i >= 0; i--) {
 			const auto &itr = numText_[i];
