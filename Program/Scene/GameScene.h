@@ -106,6 +106,10 @@ private:
 
 	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
+	void GeneratePlayerStoneAttack(ECS::World &world) const;
+
+	/// @brief プレイヤの範囲攻撃の生成処理
+	/// @param world[in, out] ワールドデータ
 	void GeneratePlayerArrowAttack(ECS::World &world) const;
 
 	/// @brief 経験値の生成
@@ -121,6 +125,11 @@ private:
 	/// @param world[in] ワールドデータ
 	/// @param attackRender[out] 描画バッファ
 	void PatricleRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
+
+	/// @brief 衛星の描画
+	/// @param world[in] ワールドデータ
+	/// @param attackRender[out] 描画バッファ
+	void SatelliteAttackRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
 
 	/// @brief 攻撃判定の描画
 	/// @param world[in] ワールドデータ
@@ -222,6 +231,9 @@ private:
 
 	/// @brief 矢のモデルのインスタンシング描画の配列
 	SolEngine::ModelInstancingRender arrowAttackRender_;
+
+	/// @brief 箱のモデルのインスタンシング描画の配列
+	SolEngine::ModelInstancingRender boxAttackRender_;
 
 	/// @brief スポナークラス
 	ECS::Spawner spawner_;

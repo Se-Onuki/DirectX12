@@ -204,6 +204,21 @@ namespace ECS {
 				static void ExecuteOnce(const World *const, const float);
 			};
 
+			class StoneWeaponCollision :public IJobEntity {
+			public:
+				ReadAndWrite<const ECS::AliveTime, ECS::SphereCollisionComp, ECS::StoneBullet> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+				struct PlayerPos {
+					std::optional<Vector3> pos_;
+
+				};
+				inline static std::unique_ptr<PlayerPos> playerPos_ = nullptr;
+
+				void Execute(const World *const, const float);
+				/// @brief 毎フレーム一度だけ実行するシステム
+				static void ExecuteOnce(const World *const, const float);
+			};
+
 			class PlayerMove :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AccelerationComp, ECS::InputFlagComp, ECS::ModelAnimator, ECS::IsLanding, ECS::AttackStatus, ECS::AttackCooltime> readWrite_;

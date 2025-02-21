@@ -229,6 +229,12 @@ void GameScene::OnEnter() {
 	arrowAttackRender_.Init();
 	arrowAttackRender_.SetModelData(arrowModel);
 
+	auto boxAssimp = assimpManager->Load({ "Model/AnimatedCube/","AnimatedCube.gltf" });
+	auto boxModel = modelDataManager->Load({ boxAssimp });
+
+	boxAttackRender_.Init();
+	boxAttackRender_.SetModelData(boxModel);
+
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
 		bar->Init();
@@ -284,6 +290,7 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::PlayerMove>();
 	systemExecuter_.AddSystem<ECS::System::Par::PlayerAttack>(); ECS::System::Par::PlayerAttack::attackModel_ = attackModel_;
 	systemExecuter_.AddSystem<ECS::System::Par::PlayerShooterUpdate>();
+	systemExecuter_.AddSystem<ECS::System::Par::StoneWeaponCollision>();
 	systemExecuter_.AddSystem<ECS::System::Par::EnemyAttack>();
 	systemExecuter_.AddSystem<ECS::System::Par::DamageUpdate>();
 
@@ -370,6 +377,7 @@ void GameScene::OnEnter() {
 			baseKnockBackPower_ += 0.1f;
 			}
 		);
+		levelUpUI_->push_back(std::move(button));
 	}
 
 	gameTimer_.Start();
@@ -389,6 +397,7 @@ void GameScene::OnEnter() {
 
 	killUI_->SetPivot(Vector2::one * 0.5f);
 
+	GeneratePlayerStoneAttack(newWorld_);
 }
 
 void GameScene::OnExit() {
@@ -509,6 +518,7 @@ void GameScene::Update() {
 	AttackEffectRender(newWorld_, attackRender_);
 
 	ArrowAttackEffectRender(newWorld_, arrowAttackRender_);
+	SatelliteAttackRender(newWorld_, boxAttackRender_);
 
 	const auto &camera = *cameraManager_->GetUseCamera();
 	DamageRender(newWorld_, camera, *numberRender_);
@@ -584,6 +594,7 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	arrowAttackRender_.DrawExecute(camera);
+	boxAttackRender_.DrawExecute(camera);
 	blockRender_->Draw(camera);
 	modelHandleRender_->Draw(camera);
 
@@ -723,6 +734,7 @@ void GameScene::FlameClear()
 	expRender_.Clear();
 	attackRender_.Clear();
 	arrowAttackRender_.Clear();
+	boxAttackRender_.Clear();
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -764,6 +776,17 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 	}
 }
 
+void GameScene::GeneratePlayerStoneAttack(ECS::World &world) const
+{
+	auto stone = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::StoneBullet>(), 3);
+
+	auto view = stone.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::AliveTime>();
+	for (int32_t i = 0; auto [coll, attack, time] : view) {
+		coll.collision_.radius = 1.f;
+		attack.power_ = 5;
+		time.aliveTime_ += (SoLib::Angle::Rad360 / 3) * i++;
+	}
+}
 void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 {
 	// 攻撃しているプレイヤのアーキタイプ
@@ -783,12 +806,10 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 	if (fireCount == 0) { return; }
 
 	// 攻撃範囲のアーキタイプ
-	Archetype areaArch;
-	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackArrow, ECS::VelocityComp>();
+	Archetype areaArch = Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackArrow, ECS::VelocityComp>();
 
 	// 攻撃範囲の生成
 	auto areaEntity = world.CreateEntity(areaArch, static_cast<uint32_t>(fireCount * 2 - 1)); // 書き込み先のIndex
-	auto areaChanks = world.GetAccessableChunk(areaArch);
 
 	auto areaView = areaEntity.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::LifeLimit, ECS::VelocityComp>();
 
@@ -927,31 +948,40 @@ void GameScene::PlayerExperience(ECS::World &world) const
 		auto &playerExp = playerChunks.GetRange<ECS::Experience>().At(0);
 
 		// 経験値のアーキタイプ
-		Archetype expArch;
-		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
-		auto expChunks = world.GetAccessableChunk(expArch);
+		auto expChunks = world.GetAccessableChunk(Archetype::Generate<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>());
 
-		const uint32_t size = expChunks.Count();
+		for (auto &chunk : expChunks) {
+			for (auto [pos, alive] : chunk->View<ECS::PositionComp, ECS::IsAlive>()) {
 
-		auto expPosRange = expChunks.GetRange<ECS::PositionComp>();
-		auto expAliveRange = expChunks.GetRange<ECS::IsAlive>();
+				// 生きてたら
+				if (alive.isAlive_) {
+					pos.position_.y = 0.f;
 
-		for (uint32_t i = 0; i < size; i++) {
-
-			auto &isAlive = expAliveRange.At(i);
-			// 生きてたら
-			if (isAlive.isAlive_) {
-				Vector3 pos = expPosRange.At(i).position_;
-				pos.y = 0.f;
-
-				// captureRange_以下なら吸収する
-				if ((playerPos.position_ - pos).LengthSQ() <= captureRange_ * captureRange_) {
-					playerExp.exp_++;
-					isAlive.isAlive_ = false;
+					// captureRange_以下なら吸収する
+					if ((playerPos.position_ - pos).LengthSQ() <= captureRange_ * captureRange_) {
+						playerExp.exp_++;
+						alive.isAlive_ = false;
+					}
 				}
 			}
 		}
 	}
+}
+
+void GameScene::SatelliteAttackRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const
+{
+
+	const float attackRotSpeed = arrowAttackRotSpeed_;
+	attackRender.TransfarData<ECS::StoneBullet, ECS::SphereCollisionComp, ECS::AliveTime>(world, [attackRotSpeed](const auto &item) {
+		const auto &[arrow, trans, alive] = item;
+
+		Particle::ParticleData result{ .color = 0x333333FF };
+		result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * alive.aliveTime_ / attackRotSpeed) * (trans.collision_.radius);
+		result.transform.World.GetTranslate() = trans.collision_.centor;
+		result.transform.World.m[3][3] = 1.f;
+		return result;
+		}
+	);
 }
 
 void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const
@@ -988,7 +1018,8 @@ void GameScene::AttackEffectRender(const ECS::World &world, SolEngine::ModelInst
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
 			return result;
-			});
+			}
+		);
 	}
 
 }
