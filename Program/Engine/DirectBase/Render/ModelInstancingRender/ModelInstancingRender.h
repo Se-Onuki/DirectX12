@@ -69,20 +69,23 @@ namespace SolEngine {
 		/// @param[in] afterFunc 追加後の処理
 		void AddTransData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
 
-
+		/// @brief 描画データの転送
+		/// @tparam ...Ts 抜き出すコンポーネント
+		/// @param world ワールドデータ
+		/// @param func 書き込み用の変換関数
 		template<typename... Ts>
 		void TransfarData(const ECS::World &world, std::function<InstanceType(const std::tuple<const Ts &...> &)> func) {
 
 			// チャンクの取得
-			auto ghostChanks = world.GetAccessableChunk(Archetype::Generate<Ts...>());
+			auto chanks = world.GetAccessableChunk(Archetype::Generate<Ts...>());
 			// オブジェクトの総数
 			uint32_t totalCount = 0u;
 
 			// チャンクと同じ数のデータを確保する
-			std::vector<uint32_t> ghostOffset(ghostChanks.size());
-			for (uint32_t i = 0; i < ghostOffset.size(); i++) {
-				ghostOffset[i] = totalCount;
-				totalCount += ghostChanks[i]->size();
+			std::vector<uint32_t> offset(chanks.size());
+			for (uint32_t i = 0; i < offset.size(); i++) {
+				offset[i] = totalCount;
+				totalCount += chanks[i]->size();
 			}
 			// もし空なら終わる
 			if (totalCount == 0) {
@@ -91,12 +94,12 @@ namespace SolEngine {
 
 			// 書き込み先の確保
 			auto span = Reservation(totalCount);
-			for (uint32_t i = 0; i < ghostOffset.size(); i++) {
+			for (uint32_t i = 0; i < offset.size(); i++) {
 				// チャンクからデータの取得
-				auto transMats = ghostChanks[i]->View<Ts...>();
+				auto transMats = chanks[i]->View<Ts...>();
 
 				// 転送する
-				std::transform(transMats.begin(), transMats.end(), &span[ghostOffset[i]], func);
+				std::transform(transMats.begin(), transMats.end(), &span[offset[i]], func);
 
 			}
 		}

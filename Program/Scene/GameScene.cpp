@@ -435,10 +435,11 @@ void GameScene::Update() {
 
 	spawnTimer_.Update(fixDeltaTime);
 	playerSpawn_.Update(fixDeltaTime);
-
+	// 時計の更新
 	gameTimer_.Update(fixDeltaTime);
 	{
-		auto [m, s] = SoLib::Time::GetMoment(gameTimer_.GetTimeRemain());
+		// 時計の分秒への変換
+		auto &&[m, s] = SoLib::Time::GetMoment(gameTimer_.GetTimeRemain());
 		gameTimerUI_[0]->SetText(m, true);
 		gameTimerUI_[1]->SetText(s, true);
 	}
@@ -792,11 +793,8 @@ void GameScene::GeneratePlayerStoneAttack(ECS::World &world, uint32_t addCount) 
 }
 void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 {
-	// 攻撃しているプレイヤのアーキタイプ
-	Archetype attackPlayerArch{};
-	attackPlayerArch.AddClassData<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::ArrowShooter>();
-	// チャンクの取得
-	const auto attackPlayerChunks = world.GetAccessableChunk(attackPlayerArch);
+	// 攻撃中のチャンクの取得
+	const auto attackPlayerChunks = world.GetAccessableChunk(Archetype::Generate<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::ArrowShooter>());
 	// 撃ってる弾の数
 	size_t fireCount = 0;
 	// 攻撃中のプレイヤの数

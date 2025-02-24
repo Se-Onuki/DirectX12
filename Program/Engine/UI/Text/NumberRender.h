@@ -17,13 +17,15 @@ namespace SolEngine {
 		static void Generate(NumberText *const num, TextureHandle texture, uint32_t textCount);
 
 		/// @brief 文字の指定
-		/// @param text 文字
+		/// @param text[in] 文字
+		/// @param isZeroFill[in] 0埋めをするかどうか
 		void SetText(uint32_t text, bool isZeroFill = false);
 
 		/// @brief 場所の設定
 		/// @param pos 場所
 		void SetPosition(Vector2 pos);
 
+		/// @brief 座標の正規化
 		void FixPos();
 
 		/// @brief 原点の指定
