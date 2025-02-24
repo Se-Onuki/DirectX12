@@ -615,7 +615,7 @@ namespace ECS::System::Par {
 		if (not playerPos_) { return; }
 		auto [aliveTime, coll, stone] = readWrite_;
 
-		Vector3 front = Quaternion::AnyAxisRotation(Vector3::up, SoLib::Angle::Mod(aliveTime.aliveTime_ * 2.f)).GetFront() * 7.5f;
+		Vector3 front = Quaternion::AnyAxisRotation(Vector3::up, SoLib::Angle::Mod(aliveTime.aliveTime_ * 2.f + stone.angleOffset_)).GetFront() * 7.5f;
 		coll.collision_.centor = front + *playerPos_->pos_;
 
 	}

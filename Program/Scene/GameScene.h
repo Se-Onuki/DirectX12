@@ -39,6 +39,7 @@
 #include "../Game/Resource/GameScore.h"
 #include "../Engine/UI/Text/NumberRender.h"
 #include "../Engine/DirectBase/File/GlobalVariables.h"
+#include "../Game/Resource/EnemyDataTable.h"
 
 /// @class GameScene
 /// @brief ゲームシーン
@@ -106,7 +107,7 @@ private:
 
 	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
-	void GeneratePlayerStoneAttack(ECS::World &world) const;
+	void GeneratePlayerStoneAttack(ECS::World &world, uint32_t addCount) const;
 
 	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
@@ -181,14 +182,17 @@ private:
 
 	VItem(float, PowerUpEnemySpawnTime, _) { 60.f };
 
+	// 色
 	inline static constexpr std::array<uint32_t, 6> kEnemyColor_{
 		0xFFFFFFFF,
 		0x55FF55FF,
 		0x5555FFFF,
 		0xFF33FFFF,
 		0xFFFF00FF,
-
 	};
+
+	// 敵の強さのテーブル
+	std::unique_ptr<EnemyTable> enemyTable_;
 
 	// ゲームのスコアを返す
 	GameScore gameScore_;

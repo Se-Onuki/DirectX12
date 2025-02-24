@@ -188,7 +188,9 @@ namespace ECS {
 
 	struct GhostModel : IComponent {};
 
-	struct StoneBullet : IComponent {};
+	struct StoneBullet : IComponent {
+		float angleOffset_ = 0.f;
+	};
 
 	struct Explosion : IComponent {};
 

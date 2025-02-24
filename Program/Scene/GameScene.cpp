@@ -381,11 +381,12 @@ void GameScene::OnEnter() {
 	}
 
 	gameTimer_.Start();
+	static constexpr std::array<float, 2u> kIsPlus{ -1.f, 1.f };
 	for (uint32_t i = 0; i < 2; i++) {
 		auto &timeUI = gameTimerUI_[i];
 
 		timeUI = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 2u);
-		timeUI->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f + (i == 0 ? -48.f : 48.f),96.f });
+		timeUI->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f + 48 * kIsPlus[i],96.f });
 		timeUI->SetPivot(Vector2{ static_cast<float>(1 - i), 0.f });
 
 	}
@@ -397,7 +398,7 @@ void GameScene::OnEnter() {
 
 	killUI_->SetPivot(Vector2::one * 0.5f);
 
-	GeneratePlayerStoneAttack(newWorld_);
+	GeneratePlayerStoneAttack(newWorld_, 3);
 }
 
 void GameScene::OnExit() {
@@ -776,15 +777,17 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 	}
 }
 
-void GameScene::GeneratePlayerStoneAttack(ECS::World &world) const
+void GameScene::GeneratePlayerStoneAttack(ECS::World &world, uint32_t addCount) const
 {
-	auto stone = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::StoneBullet>(), 3);
+	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::StoneBullet>(), addCount);
 
-	auto view = stone.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::AliveTime>();
-	for (int32_t i = 0; auto [coll, attack, time] : view) {
+	const uint32_t bulletCount = stoneEntity.GetChunk()->size();
+
+	auto view = stoneEntity.GetChunk()->View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::StoneBullet>();
+	for (int32_t i = 0; auto [coll, attack, stone] : view) {
 		coll.collision_.radius = 1.f;
 		attack.power_ = 5;
-		time.aliveTime_ += (SoLib::Angle::Rad360 / 3) * i++;
+		stone.angleOffset_ += (SoLib::Angle::Rad360 / bulletCount) * i++;
 	}
 }
 void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
@@ -973,10 +976,10 @@ void GameScene::SatelliteAttackRender(const ECS::World &world, SolEngine::ModelI
 
 	const float attackRotSpeed = arrowAttackRotSpeed_;
 	attackRender.TransfarData<ECS::StoneBullet, ECS::SphereCollisionComp, ECS::AliveTime>(world, [attackRotSpeed](const auto &item) {
-		const auto &[arrow, trans, alive] = item;
+		const auto &[bullet, trans, time] = item;
 
 		Particle::ParticleData result{ .color = 0x333333FF };
-		result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * alive.aliveTime_ / attackRotSpeed) * (trans.collision_.radius);
+		result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * time.aliveTime_ / attackRotSpeed) * (trans.collision_.radius);
 		result.transform.World.GetTranslate() = trans.collision_.centor;
 		result.transform.World.m[3][3] = 1.f;
 		return result;

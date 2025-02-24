@@ -166,6 +166,9 @@
     <Filter Include="Engine\Utils\Network">
       <UniqueIdentifier>{abf51ab1-48d1-4140-9c5d-eaf22de9976e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Resource">
+      <UniqueIdentifier>{8ae4bb8a-4641-4001-8f6d-44e8cb031ce3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -974,9 +977,6 @@
     <ClInclude Include="Engine\ECS\Chunk\ComponentIterator.h">
       <Filter>Engine\ECS\Chunk</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Resource\GameScore.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\ResultScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -1012,6 +1012,12 @@
     </ClInclude>
     <ClInclude Include="Scene\NT_ClientScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Resource\GameScore.h">
+      <Filter>Game\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Resource\EnemyDataTable.h">
+      <Filter>Game\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

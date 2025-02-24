@@ -384,6 +384,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utils\Network\TcpClient.h" />
     <ClInclude Include="Engine\Utils\Network\TcpServer.h" />
     <ClInclude Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.h" />
+    <ClInclude Include="Game\Resource\EnemyDataTable.h" />
     <ClInclude Include="Game\Resource\GameScore.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
