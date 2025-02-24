@@ -784,10 +784,10 @@ void GameScene::GeneratePlayerStoneAttack(ECS::World &world, uint32_t addCount) 
 	const uint32_t bulletCount = stoneEntity.GetChunk()->size();
 
 	auto view = stoneEntity.GetChunk()->View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::StoneBullet>();
-	for (int32_t i = 0; auto [coll, attack, stone] : view) {
+	for (int32_t i = 0; auto [coll, attack, stoneBullet] : view) {
 		coll.collision_.radius = 1.f;
 		attack.power_ = 5;
-		stone.angleOffset_ += (SoLib::Angle::Rad360 / bulletCount) * i++;
+		stoneBullet.angleOffset_ += (SoLib::Angle::Rad360 / bulletCount) * i++;
 	}
 }
 void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const

@@ -607,7 +607,10 @@ namespace ECS::System::Par {
 		if (not playerPos_) { playerPos_ = std::make_unique<PlayerPos>(); }
 		if (chunks.empty()) { playerPos_->pos_ = std::nullopt; return; }
 
-		playerPos_->pos_ = chunks.front()->GetComponent<ECS::PositionComp>()[0];
+		auto compRange = chunks.front()->GetComponent<ECS::PositionComp>();
+		if (not compRange.IsActive()) { playerPos_->pos_ = std::nullopt; return; }
+
+		playerPos_->pos_ = compRange.front();
 
 	}
 	void StoneWeaponCollision::Execute(const World *const, const float)
@@ -625,6 +628,9 @@ namespace ECS::System::Par {
 		if (not playerPos_) { playerPos_ = std::make_unique<PlayerPos>(); }
 		if (chunks.empty()) { playerPos_->pos_ = std::nullopt; return; }
 
-		playerPos_->pos_ = chunks.front()->GetComponent<ECS::PositionComp>()[0];
+		auto compRange = chunks.front()->GetComponent<ECS::PositionComp>();
+		if (not compRange.IsActive()) { playerPos_->pos_ = std::nullopt; return; }
+
+		playerPos_->pos_ = compRange.front();
 	}
 }

@@ -102,6 +102,14 @@ namespace ECS {
 
 			uint32_t size() const { return end_ - begin_; }
 
+			T &front() requires(IsConst == false) { return compData_->at<T>(0); }
+			const T &front() const { return compData_->at<T>(0); }
+
+			T &back() requires(IsConst == false) { return compData_->at<T>(end_ - 1); }
+			const T &back() const { return compData_->at<T>(end_ - 1); }
+
+			bool IsActive() const { return compData_ and ((end_ - begin_) > 0); }
+
 		private:
 
 			friend TRange<T, true>;
