@@ -190,6 +190,8 @@ namespace ECS {
 
 	struct StoneBullet : IComponent {
 		float angleOffset_ = 0.f;
+		float rotateSpeed_ = 2.f;
+		float distance_ = 7.5f;
 	};
 
 	struct Explosion : IComponent {};
