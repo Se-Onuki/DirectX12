@@ -734,7 +734,7 @@ void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
 	// 0
 	{
 		EnemyData data{};
-		data.color_.color_ = 0xFFFFFFFF;
+		data.color_.color_ = 0x555555FF;
 		data.health_ = 100;
 		data.power_.power_ = 10;
 		data.speed_.moveSpeed_ = 5.f;
@@ -743,7 +743,7 @@ void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
 	// 1
 	{
 		EnemyData data{};
-		data.color_.color_ = 0x55FF55FF;
+		data.color_.color_ = 0xFFFFFFFF;
 		data.health_ = 120;
 		data.power_.power_ = 15;
 		data.speed_.moveSpeed_ = 3.f;
@@ -752,8 +752,8 @@ void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
 	// 2
 	{
 		EnemyData data{};
-		data.color_.color_ = 0x5555FFFF;
-		data.health_ = 200;
+		data.color_.color_ = 0x9999FFFF;
+		data.health_ = 150;
 		data.power_.power_ = 15;
 		data.speed_.moveSpeed_ = 3.f;
 		enemyTable->push_back(data);
@@ -761,19 +761,55 @@ void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
 	// 3
 	{
 		EnemyData data{};
-		data.color_.color_ = 0xFF33FFFF;
-		data.health_ = 200;
+		data.color_.color_ = 0x99FF99FF;
+		data.health_ = 150;
 		data.power_.power_ = 20;
-		data.speed_.moveSpeed_ = 5.f;
+		data.speed_.moveSpeed_ = 2.5f;
 		enemyTable->push_back(data);
 	}
 	// 4
 	{
 		EnemyData data{};
-		data.color_.color_ = 0xFFFF00FF;
+		data.color_.color_ = 0xF58220FF;
+		data.health_ = 150;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 2.f;
+		enemyTable->push_back(data);
+	}
+	// 5
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFF9999FF;
 		data.health_ = 200;
 		data.power_.power_ = 20;
-		data.speed_.moveSpeed_ = 6.5f;
+		data.speed_.moveSpeed_ = 2.f;
+		enemyTable->push_back(data);
+	}
+	// 6
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFFCCCCFF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 2.f;
+		enemyTable->push_back(data);
+	}
+	// 7
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFF99FFFF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 1.f;
+		enemyTable->push_back(data);
+	}
+	// 8
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFFFF99FF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 1.f;
 		enemyTable->push_back(data);
 	}
 
@@ -1110,27 +1146,9 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 		// ゲームの進行度
 		const float gameProgress = gameTimer_.GetProgress();
 
-		// 敵の体力
-		//const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
 		// 敵のスポーン数
 		const int32_t enemyCount = static_cast<int32_t>(*vEnemySpawnCount_ + *vEnemySpawnDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
-		// 敵の沸く半径
-		//const float enemyRadius = *vEnemyRadius_;
 
-		//// スポナーに追加を要求する
-		//spawner.AddSpawner(enemyPrefab_.get(), enemyCount, [enemyCount, enemyRadius, enemyHealth, gameProgress](const ECS::EntityList<false> &enemys)
-		//	{
-		//		// コンポーネントの配列
-		//		auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp, ECS::Color>();
-		//		// 発生地点の回転加算値
-		//		const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
-		//		for (uint32_t i = 0; i < enemys.ItrRange().size(); i++) {
-		//			auto [pos, health, color] = *(arr.begin() + i);
-		//			pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / enemyCount) * i + diff, 0.f }) * enemyRadius;
-		//			health = ECS::HealthComp::Create(enemyHealth);
-		//			color.color_ = kEnemyColor_[static_cast<size_t>(gameProgress / 0.2f)];
-		//		}
-		//	});
 
 		// 時間をもとに現在の出現データを取得
 		if (auto table = enemyTable_->GetEnemyDataForTime(gameTimer_.GetNowFlame()); table) {
