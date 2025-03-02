@@ -152,7 +152,7 @@ namespace ECS {
 
 			class EnemyMove :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp> readWrite_;
+				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, ECS::QuaternionRotComp, ECS::MoveSpeed> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				static Vector3 playerPos_;
@@ -200,9 +200,7 @@ namespace ECS {
 				ReadAndWrite<ECS::EnemyTag, ECS::PositionComp, const ECS::SphereCollisionComp, ECS::HealthComp, ECS::InvincibleTime, ECS::DamageCounter> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 				struct AttackCollisions {
-					ECS::ChunkTRange<ECS::SphereCollisionComp, true> sphere_;
-					ECS::ChunkTRange<ECS::KnockBackDirection, true> knockBack_;
-					ECS::ChunkTRange<ECS::AttackPower, true> power_;
+					std::vector<std::tuple<ECS::SphereCollisionComp, ECS::KnockBackDirection, ECS::AttackPower>> collisionData_;
 					uint32_t size_ = 0;
 
 				};
@@ -379,7 +377,7 @@ namespace ECS {
 				ReadAndWrite<ECS::ExpOrb, ECS::PositionComp> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 				struct PlayerPos {
-					std::optional<Vector3> pos_ ;
+					std::optional<Vector3> pos_;
 				};
 				inline static std::unique_ptr<PlayerPos> playerPos_ = nullptr;
 

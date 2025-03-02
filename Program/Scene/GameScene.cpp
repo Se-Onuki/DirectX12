@@ -162,6 +162,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::Rigidbody{};
 	*enemyPrefab_ += ECS::DamageCounter{};
 	*enemyPrefab_ += ECS::Color{};
+	*enemyPrefab_ += ECS::MoveSpeed{ .moveSpeed_ = 5.f };
 
 	//entityManager_->CreateEntity(*enemyPrefab_);
 	newWorld_.CreateEntity(*enemyPrefab_);
@@ -211,7 +212,7 @@ void GameScene::OnEnter() {
 	orbMesh->materialhandle_->blendMode_ = Model::BlendMode::kNone;
 	auto orbMaterial = orbMesh->materialhandle_->materialData_.get();
 	orbMaterial->emissive = 0x333300FF;
-	orbMaterial->shininess = 30.f;
+	orbMaterial->shininess = 50.f;
 	orbMaterial->shininessStrength = 100.f;
 
 	expRender_.Init();
@@ -239,6 +240,8 @@ void GameScene::OnEnter() {
 
 	boxAttackRender_.Init();
 	boxAttackRender_.SetModelData(boxModel);
+
+	enemyTable_ = std::make_unique<EnemyTable>();
 
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
@@ -437,6 +440,7 @@ void GameScene::Update() {
 	damageTimer_.Update(deltaTime);
 	gameScore_.aliveTime_ += fixDeltaTime;
 
+	// 毎フレームの初期化
 	FlameClear();
 
 	spawnTimer_.Update(fixDeltaTime);
@@ -455,8 +459,6 @@ void GameScene::Update() {
 	spawner_.Execute(&newWorld_);
 	// プレハブの破棄
 	spawner_.clear();
-
-	SoLib::ImGuiWidget("経験値のマテリアル", (*expRender_.GetModelData()->meshHandleList_.front()->materialhandle_));
 
 	// 敵の追加
 	AddSpawner(spawnTimer_, spawner_);
@@ -486,7 +488,7 @@ void GameScene::Update() {
 
 	killUI_->SetText(static_cast<uint32_t>(killCount_), true);
 
-	// 敵の描画
+	// 敵の描画 (環境によってはTransfarData関数に静的検査のエラー表示が出るが､実行･コンパイルは通る)
 	ghostRenderer_.TransfarData<ECS::GhostModel, ECS::TransformMatComp, ECS::Color>(newWorld_, [](const std::tuple<const ECS::GhostModel &, const ECS::TransformMatComp &, const ECS::Color &> &data)->Particle::ParticleData
 		{
 			const auto &[ghost, mat, color] = data;
@@ -569,9 +571,7 @@ void GameScene::Update() {
 	gaussianParam_->second = SoLib::Lerp(1, 32, isMenuOpen_ ? menuTimer_.GetProgress() : 1.f - menuTimer_.GetProgress());
 
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
-	if (material) {
-		SoLib::ImGuiWidget("Material", *material);
-	}
+	if (material) { SoLib::ImGuiWidget("Material", *material); }
 
 	SoLib::ImGuiWidget("HsvParam", hsvParam_.get());
 }
@@ -1079,6 +1079,14 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 					color.color_ = kEnemyColor_[static_cast<size_t>(gameProgress / 0.2f)];
 				}
 			});
+
+		// 時間をもとに現在の出現データを取得
+		if (auto table = enemyTable_->GetEnemyDataForTime(gameTimer_.GetNowFlame()); table) {
+			// 発生地点の回転加算値
+			const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
+			// 取得したデータから出現関数を生成し､計算する
+			spawner.AddSpawner(enemyPrefab_.get(), enemyCount, table->SpawnFunc(diff, enemyRadius));
+		}
 		timer.Start();
 	}
 }

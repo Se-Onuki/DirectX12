@@ -143,10 +143,10 @@ namespace ECS::System::Par {
 	void EnemyMove::Execute(const World *const, const float deltaTime)
 	{
 
-		auto &[enemy, pos, rotate] = readWrite_;
+		auto &[enemy, pos, rotate, speed] = readWrite_;
 		Vector3 direction = (playerPos_ - pos.position_);
 		direction.y = 0.f;
-		direction = direction.Normalize() * (100.f * deltaTime * deltaTime);
+		direction = direction.Normalize() * (speed.moveSpeed_ * deltaTime);
 		pos.position_ += direction;
 
 		rotate.quateRot_ = Quaternion::LookAt(direction);
@@ -247,25 +247,22 @@ namespace ECS::System::Par {
 		Sphere sphere = collision.collision_;
 		sphere.centor += pos;
 		for (uint32_t i = 0; i < attackCollisions_->size_; i++) {
-			const auto &attackColl = attackCollisions_->sphere_.At(i);
+			auto [sphereComp, knockBack, power] = attackCollisions_->collisionData_[i];
 
 			// 攻撃判定が当たってたら検知
-			if (Collision::IsHit(sphere, attackColl.collision_)) {
-				auto power = attackCollisions_->power_.At(i).power_;
+			if (Collision::IsHit(sphere, sphereComp.collision_)) {
 				// 体力を減らす
-				health.nowHealth_ -= power;
-				counter.damageCount_ += power;
+				health.nowHealth_ -= power.power_;
+				counter.damageCount_ += power.power_;
 				counter.damageRemainTime_ = 1.f;
 
-				// ノックバック
-				const auto &knockBack = attackCollisions_->knockBack_.At(i);
 				// ノックバックが指定されてなかったら
 				if (knockBack.diff_ == Vector2::zero) {
 					// 相対座標で押し出す
-					pos.position_ += (pos.position_ - attackColl.collision_.centor) * knockBack.diffPower_.Random();
+					pos.position_ += (pos.position_ - sphereComp.collision_.centor) * knockBack.diffPower_.Random();
 					pos.position_.y = 0.f;
 				}
-				invincible.timer_.Start(0.5f);
+				invincible.timer_.Start(0.25f);
 				break;
 
 			}
@@ -279,9 +276,18 @@ namespace ECS::System::Par {
 		if (not attackCollisions_) { attackCollisions_ = std::make_unique<AttackCollisions>(); }
 		attackCollisions_->size_ = chunks.Count();
 		if (attackCollisions_->size_) {
-			attackCollisions_->sphere_ = std::move(chunks.GetRange<ECS::SphereCollisionComp>());
-			attackCollisions_->knockBack_ = std::move(chunks.GetRange<ECS::KnockBackDirection>());
-			attackCollisions_->power_ = std::move(chunks.GetRange<ECS::AttackPower>());
+			{
+
+				attackCollisions_->collisionData_.resize(attackCollisions_->size_);
+				size_t index = 0;
+				for (const auto &chunk : chunks) {
+					auto view = chunk->View<ECS::SphereCollisionComp, ECS::KnockBackDirection, ECS::AttackPower>();
+
+					std::copy(view.begin(), view.end(), attackCollisions_->collisionData_.begin() + index);
+					index += chunk->size();
+				}
+			}
+
 		}
 	}
 
@@ -307,7 +313,7 @@ namespace ECS::System::Par {
 		// カメラの向きに回転したベクトル
 		const Vector3 &rotateInput = lInput3d /** Quaternion::AnyAxisRotation(Vector3::up, camera->rotation_.y)*/;
 		// 回転したベクトルを使って移動
-		pos.position_ += rotateInput * (500.f * deltaTime * deltaTime);
+		pos.position_ += rotateInput * (10.f * deltaTime);
 
 		// ステージの半径
 		static constexpr float kStageRadius = 43.f;
@@ -615,7 +621,7 @@ namespace ECS::System::Par {
 	}
 	void StoneWeaponCollision::Execute(const World *const, const float)
 	{
-		if (not playerPos_) { return; }
+		if (not playerPos_ or not playerPos_->pos_) { return; }
 		auto [aliveTime, coll, stone] = readWrite_;
 
 		Vector3 front = Quaternion::AnyAxisRotation(Vector3::up, SoLib::Angle::Mod(aliveTime.aliveTime_ * 2.f + stone.angleOffset_)).GetFront() * 7.5f;
@@ -625,7 +631,7 @@ namespace ECS::System::Par {
 	void StoneWeaponCollision::ExecuteOnce(const World *const world, const float)
 	{
 		const auto &chunks = world->GetAccessableChunk(Archetype::Generate<ECS::PlayerTag>());
-		if (not playerPos_) { playerPos_ = std::make_unique<PlayerPos>(); }
+		if (not playerPos_ or not playerPos_->pos_) { playerPos_ = std::make_unique<PlayerPos>(); }
 		if (chunks.empty()) { playerPos_->pos_ = std::nullopt; return; }
 
 		auto compRange = chunks.front()->GetComponent<ECS::PositionComp>();
