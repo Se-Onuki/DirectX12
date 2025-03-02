@@ -10,7 +10,7 @@
 #include "json.hpp"
 #pragma warning(pop)
 
-/// 修飾文字付き
+/// 変数名と紐づく文字列を同時に定義する
 #define VItem(T, Name, Deco) VariantItem<#Name,T> v##Name##Deco
 
 //

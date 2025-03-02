@@ -207,7 +207,7 @@ void GameScene::OnEnter() {
 	auto orbAssimp = assimpManager->Load({ "Model/", "Orb.obj" });
 	auto orbModel = modelDataManager->Load({ orbAssimp });
 	auto &orbMesh = orbModel->meshHandleList_.front();
-	orbMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
+	orbMesh->materialhandle_->blendMode_ = Model::BlendMode::kNone;
 
 	expRender_.Init();
 	expRender_.SetModelData(orbModel);
@@ -437,6 +437,7 @@ void GameScene::Update() {
 	playerSpawn_.Update(fixDeltaTime);
 	// 時計の更新
 	gameTimer_.Update(fixDeltaTime);
+
 	{
 		// 時計の分秒への変換
 		auto &&[m, s] = SoLib::Time::GetMoment(gameTimer_.GetTimeRemain());
@@ -599,6 +600,7 @@ void GameScene::Draw() {
 	boxAttackRender_.DrawExecute(camera);
 	blockRender_->Draw(camera);
 	modelHandleRender_->Draw(camera);
+	expRender_.DrawExecute(camera);
 
 	ghostRenderer_.DrawExecute(camera);
 
@@ -613,7 +615,6 @@ void GameScene::Draw() {
 
 	shadowRenderer_.DrawExecute(camera);
 	attackRender_.DrawExecute(camera);
-	expRender_.DrawExecute(camera);
 
 	Model::EndDraw();
 
