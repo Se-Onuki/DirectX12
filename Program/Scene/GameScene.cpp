@@ -284,7 +284,6 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::AnimateUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::ModelAnimatorUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::SkinModelUpdate>();
-	//systemExecuter_.AddSystem<ECS::System::Par::ExpAnimationUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::ColorLerp>();
 	// 座標などの移動
 	systemExecuter_.AddSystem<ECS::System::Par::AddGravity>();
@@ -427,7 +426,6 @@ void GameScene::Update() {
 	static bool skeletonDraw = false;
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	[[maybe_unused]] const float fixDeltaTime = not (isMenuOpen_ or levelUpUI_->IsActive()) ? deltaTime : 0.f;
-	[[maybe_unused]] const float powDeltaTime = fixDeltaTime * fixDeltaTime;
 
 	ImGui::Text("XInput左スティックで移動");
 	ImGui::Text("エンティティ数 / %lu", newWorld_.size());
@@ -872,6 +870,23 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 				fade->Start({}, 0x000000FF, 0.25f);
 			}
 		}
+	}
+}
+
+void GameScene::GenetateFallingStone(ECS::World &world) const
+{
+	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::FallingStone, ECS::VelocityComp, ECS::AccelerationComp, ECS::GravityComp>(), 1u);
+
+	auto attackPlayerChunks = world.GetAccessableChunk(Archetype::Generate<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::ArrowShooter>());
+
+	if (attackPlayerChunks.empty()) { return; }
+	auto &&[shooter, rot] = *attackPlayerChunks.front()->View<ECS::ArrowShooter, ECS::QuaternionRotComp>().begin();
+
+	auto view = stoneEntity.GetChunk()->View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::FallingStone, ECS::AccelerationComp>();
+	for (auto [coll, attack, stoneBullet, acc] : view) {
+		coll.collision_.radius = 1.f;
+		attack.power_ = 5;
+		acc.acceleration_ += (Quaternion::AnyAxisRotation(Vector3::right, 45._deg) * rot.quateRot_).Normalize().GetFront().Normalize();
 	}
 }
 

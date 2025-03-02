@@ -196,6 +196,8 @@ namespace ECS {
 		float angleOffset_ = 0.f;
 	};
 
+	struct FallingStone : IComponent {};
+
 	struct Explosion : IComponent {};
 
 	struct UnRender : IComponent {};

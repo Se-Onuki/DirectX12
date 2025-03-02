@@ -105,6 +105,10 @@ private:
 	/// @param fade[out] フェード処理 
 	void PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SolEngine::SceneManager *const scene, Fade *const fade) const;
 
+	/// @brief プレイヤの落下攻撃の生成処理
+	/// @param world[in, out] ワールドデータ
+	void GenetateFallingStone(ECS::World &world) const;
+
 	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
 	void GeneratePlayerRangeAttack(ECS::World &world) const;
