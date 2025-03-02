@@ -241,7 +241,7 @@ void GameScene::OnEnter() {
 	boxAttackRender_.Init();
 	boxAttackRender_.SetModelData(boxModel);
 
-	enemyTable_ = std::make_unique<EnemyTable>();
+	InitEnemyTable(enemyTable_);
 
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
@@ -728,6 +728,58 @@ void GameScene::PostEffectEnd()
 
 }
 
+void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
+{
+	enemyTable = std::make_unique<EnemyTable>();
+	// 0
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFFFFFFFF;
+		data.health_ = 100;
+		data.power_.power_ = 10;
+		data.speed_.moveSpeed_ = 5.f;
+		enemyTable->push_back(data);
+	}
+	// 1
+	{
+		EnemyData data{};
+		data.color_.color_ = 0x55FF55FF;
+		data.health_ = 120;
+		data.power_.power_ = 15;
+		data.speed_.moveSpeed_ = 3.f;
+		enemyTable->push_back(data);
+	}
+	// 2
+	{
+		EnemyData data{};
+		data.color_.color_ = 0x5555FFFF;
+		data.health_ = 200;
+		data.power_.power_ = 15;
+		data.speed_.moveSpeed_ = 3.f;
+		enemyTable->push_back(data);
+	}
+	// 3
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFF33FFFF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 5.f;
+		enemyTable->push_back(data);
+	}
+	// 4
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFFFF00FF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 6.5f;
+		enemyTable->push_back(data);
+	}
+
+
+}
+
 void GameScene::SetGameScore()
 {
 	gameScore_.killCount_ = killCount_;
@@ -1059,33 +1111,33 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 		const float gameProgress = gameTimer_.GetProgress();
 
 		// 敵の体力
-		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
+		//const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
 		// 敵のスポーン数
 		const int32_t enemyCount = static_cast<int32_t>(*vEnemySpawnCount_ + *vEnemySpawnDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
 		// 敵の沸く半径
-		const float enemyRadius = *vEnemyRadius_;
+		//const float enemyRadius = *vEnemyRadius_;
 
-		// スポナーに追加を要求する
-		spawner.AddSpawner(enemyPrefab_.get(), enemyCount, [enemyCount, enemyRadius, enemyHealth, gameProgress](const ECS::EntityList<false> &enemys)
-			{
-				// コンポーネントの配列
-				auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp, ECS::Color>();
-				// 発生地点の回転加算値
-				const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
-				for (uint32_t i = 0; i < enemys.ItrRange().size(); i++) {
-					auto [pos, health, color] = *(arr.begin() + i);
-					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / enemyCount) * i + diff, 0.f }) * enemyRadius;
-					health = ECS::HealthComp::Create(enemyHealth);
-					color.color_ = kEnemyColor_[static_cast<size_t>(gameProgress / 0.2f)];
-				}
-			});
+		//// スポナーに追加を要求する
+		//spawner.AddSpawner(enemyPrefab_.get(), enemyCount, [enemyCount, enemyRadius, enemyHealth, gameProgress](const ECS::EntityList<false> &enemys)
+		//	{
+		//		// コンポーネントの配列
+		//		auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp, ECS::Color>();
+		//		// 発生地点の回転加算値
+		//		const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
+		//		for (uint32_t i = 0; i < enemys.ItrRange().size(); i++) {
+		//			auto [pos, health, color] = *(arr.begin() + i);
+		//			pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / enemyCount) * i + diff, 0.f }) * enemyRadius;
+		//			health = ECS::HealthComp::Create(enemyHealth);
+		//			color.color_ = kEnemyColor_[static_cast<size_t>(gameProgress / 0.2f)];
+		//		}
+		//	});
 
 		// 時間をもとに現在の出現データを取得
 		if (auto table = enemyTable_->GetEnemyDataForTime(gameTimer_.GetNowFlame()); table) {
 			// 発生地点の回転加算値
 			const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
 			// 取得したデータから出現関数を生成し､計算する
-			spawner.AddSpawner(enemyPrefab_.get(), enemyCount, table->SpawnFunc(diff, enemyRadius));
+			spawner.AddSpawner(enemyPrefab_.get(), enemyCount, table->SpawnFunc(diff, *vEnemyRadius_));
 		}
 		timer.Start();
 	}

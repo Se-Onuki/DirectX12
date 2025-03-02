@@ -85,6 +85,10 @@ public:
 
 private:
 
+	/// @brief 敵の生成データの初期化
+	/// @param enemyTable[out] 敵の生成テーブル 
+	void InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const;
+
 	/// @brief ゲームスコアを保存する
 	void SetGameScore();
 
