@@ -36,7 +36,7 @@ namespace SoLib {
 		/// 正規化
 		/// </summary>
 		/// <returns>ベクトル長が1のベクトル</returns>
-		Vector4 Nomalize() const {
+		Vector4 Normalize() const {
 
 			float Length = this->Length();
 			if (Length != 0) {

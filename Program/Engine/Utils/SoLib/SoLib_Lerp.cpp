@@ -15,8 +15,8 @@ namespace SoLib {
 			return Lerp(Start, End, t);
 		}
 
-		Vector3 nStart = Start.Nomalize();
-		Vector3 nEnd = End.Nomalize();
+		Vector3 nStart = Start.Normalize();
+		Vector3 nEnd = End.Normalize();
 
 		float angle = nStart * nEnd;
 

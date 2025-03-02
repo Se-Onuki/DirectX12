@@ -146,7 +146,7 @@ namespace ECS::System::Par {
 		auto &[enemy, pos, rotate] = readWrite_;
 		Vector3 direction = (playerPos_ - pos.position_);
 		direction.y = 0.f;
-		direction = direction.Nomalize() * (100.f * deltaTime * deltaTime);
+		direction = direction.Normalize() * (100.f * deltaTime * deltaTime);
 		pos.position_ += direction;
 
 		rotate.quateRot_ = Quaternion::LookAt(direction);
@@ -188,7 +188,7 @@ namespace ECS::System::Par {
 					// 高さを0にする
 					diff.y = 0;
 					// プレイヤに加速度を加算
-					playerAcceleration.acceleration_ += diff.Nomalize() * 15.f;
+					playerAcceleration.acceleration_ += diff.Normalize() * 15.f;
 					// 体力を減算
 					playerHealth.nowHealth_ -= power.power_;
 
@@ -300,7 +300,7 @@ namespace ECS::System::Par {
 			if (dInput->IsPress(DIK_D)) { inputLs.x += 1; }
 			if (dInput->IsPress(DIK_W)) { inputLs.y += 1; }
 			if (dInput->IsPress(DIK_S)) { inputLs.y -= 1; }
-			inputLs = inputLs.Nomalize();
+			inputLs = inputLs.Normalize();
 		}
 		// 3次元的に解釈した入力
 		const Vector3 lInput3d{ inputLs.x,0.f,inputLs.y };
@@ -327,12 +327,12 @@ namespace ECS::System::Par {
 			if (dInput->IsPress(DIK_RIGHT)) { inputRs.x += 1; }
 			if (dInput->IsPress(DIK_UP)) { inputRs.y += 1; }
 			if (dInput->IsPress(DIK_DOWN)) { inputRs.y -= 1; }
-			inputRs = inputRs.Nomalize();
+			inputRs = inputRs.Normalize();
 		}
 		// もし角度が0でなければ
 		if (inputRs != Vector2::zero) {
 			// ハーフべクトルを定義
-			Vector2 halfVector = (Vector2::up + inputRs.Nomalize()).Nomalize();
+			Vector2 halfVector = (Vector2::up + inputRs.Normalize()).Normalize();
 			// もし真後ろなら横を代入しておく
 			if (halfVector == Vector2::zero) {
 				halfVector = Vector2::right;

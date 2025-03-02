@@ -88,7 +88,7 @@ struct Plane : public IShape
 	static Plane Create(const Vector3 &Normal, const Vector3 &Point);
 	static Plane Create(const Vector3 Vertex[3])
 	{
-		return Create(((Vertex[1] - Vertex[0]).cross(Vertex[2] - Vertex[1])).Nomalize(), Vertex[0]);
+		return Create(((Vertex[1] - Vertex[0]).cross(Vertex[2] - Vertex[1])).Normalize(), Vertex[0]);
 	}
 	static Plane Create(const Triangle &trinagle);
 
@@ -126,7 +126,7 @@ struct Triangle : public IShape
 	{
 		const Vector3 &VecA = vertices_[1] - vertices_[0]; // 0 から 1 に向けて
 		const Vector3 &VecB = vertices_[2] - vertices_[1]; // 1 から 2 に向けて
-		return (VecA.cross(VecB)).Nomalize();
+		return (VecA.cross(VecB)).Normalize();
 	}
 
 	// void ImGuiDebug(const std::string &group);

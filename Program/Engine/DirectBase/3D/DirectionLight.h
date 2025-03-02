@@ -7,6 +7,7 @@
 #include "../../Engine/Utils/Math/Vector3.h"
 #include "../../Engine/Utils/Math/Vector4.h"
 #include "../../Engine/Utils/Math/Math.hpp"
+#include "../../Engine/DirectBase/Base/CBuffer.h"
 #include <stdint.h>
 #include <wrl.h>
 #include <d3d12.h>
@@ -71,10 +72,20 @@ public:
 	/// @return 並行光源
 	[[nodiscard]] static std::unique_ptr<DirectionLight> Generate();
 
+	/// @brief 角度の取得
+	/// @return 角度
+	const SoLib::Math::Euler &GetEuler() const { return euler_; }
+
+	/// @brief 角度の設定
+	/// @return 角度
+	void SetEuler(const SoLib::Math::Euler &euler) {
+		euler_ = euler;
+		lightData_->direction = SoLib::EulerToDirection(euler_).Normalize();
+	}
+
 private:
 
-	ComPtr<ID3D12Resource> lightResource_ = nullptr;
-	Direction *lightData_ = nullptr;
+	CBuffer<Direction> lightData_;
 	SoLib::Math::Euler euler_;
 
 };

@@ -87,6 +87,15 @@ namespace ECS {
 
 			};
 
+			class ExpAnimationUpdate :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::ExpOrb, ECS::AliveTime, ECS::RotateComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
+
+			};
+
 			class ColorLerp :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::AliveTime, ECS::LifeLimit, ECS::ColorLarp, ECS::Color> readWrite_;

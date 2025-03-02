@@ -426,8 +426,8 @@ namespace SoLib {
 
 	Matrix4x4 Matrix4x4::LookAtLH(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector)
 	{
-		Vector3 zaxis = (cameraTarget - cameraPosition).Nomalize();
-		Vector3 xaxis = cameraUpVector.cross(zaxis).Nomalize();
+		Vector3 zaxis = (cameraTarget - cameraPosition).Normalize();
+		Vector3 xaxis = cameraUpVector.cross(zaxis).Normalize();
 		Vector3 yaxis = zaxis.cross(xaxis);
 
 		return Matrix4x4{

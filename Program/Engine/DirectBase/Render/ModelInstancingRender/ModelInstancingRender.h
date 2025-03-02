@@ -30,6 +30,10 @@ namespace SolEngine {
 		/// @param modelData モデルデータ
 		void SetModelData(ResourceHandle<ModelData> modelData);
 
+		/// @brief モデルデータの取得
+		/// @return モデルデータ
+		ResourceHandle<ModelData> GetModelData() const { return modelData_; }
+
 		/// @brief 描画データの書き込み先の取得
 		/// @param count 取得数
 		/// @return 取得した書き込み先の配列

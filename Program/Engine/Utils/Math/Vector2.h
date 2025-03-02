@@ -44,7 +44,7 @@ namespace SoLib {
 		/// 正規化
 		/// </summary>
 		/// <returns>ベクトル長が1のベクトル</returns>
-		Vector2 Nomalize() const;
+		Vector2 Normalize() const;
 
 		Vector2 operator+(const Vector2 Second) const;
 		Vector2 operator-(const Vector2 Second) const;

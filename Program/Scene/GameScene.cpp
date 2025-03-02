@@ -59,6 +59,7 @@ void GameScene::OnEnter() {
 	auto ghostModel = modelDataManager->Load({ ghostAssimp });
 
 	light_ = DirectionLight::Generate();
+	light_->SetEuler({ 75._deg,0.f,0.f });
 
 	blockRender_->Init(1024u);
 	skinModelRender_->Init(1024u);
@@ -208,6 +209,10 @@ void GameScene::OnEnter() {
 	auto orbModel = modelDataManager->Load({ orbAssimp });
 	auto &orbMesh = orbModel->meshHandleList_.front();
 	orbMesh->materialhandle_->blendMode_ = Model::BlendMode::kNone;
+	auto orbMaterial = orbMesh->materialhandle_->materialData_.get();
+	orbMaterial->emissive = 0x333300FF;
+	orbMaterial->shininess = 30.f;
+	orbMaterial->shininessStrength = 100.f;
 
 	expRender_.Init();
 	expRender_.SetModelData(orbModel);
@@ -276,6 +281,7 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::AnimateUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::ModelAnimatorUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::SkinModelUpdate>();
+	//systemExecuter_.AddSystem<ECS::System::Par::ExpAnimationUpdate>();
 	systemExecuter_.AddSystem<ECS::System::Par::ColorLerp>();
 	// 座標などの移動
 	systemExecuter_.AddSystem<ECS::System::Par::AddGravity>();
@@ -450,6 +456,8 @@ void GameScene::Update() {
 	// プレハブの破棄
 	spawner_.clear();
 
+	SoLib::ImGuiWidget("経験値のマテリアル", (*expRender_.GetModelData()->meshHandleList_.front()->materialhandle_));
+
 	// 敵の追加
 	AddSpawner(spawnTimer_, spawner_);
 
@@ -505,12 +513,12 @@ void GameScene::Update() {
 	// 経験値の描画
 	{
 		const uint32_t color = static_cast<uint32_t>(expColor_);
-		expRender_.TransfarData<ECS::ExpOrb, ECS::PositionComp>(newWorld_, [color](const std::tuple<const ECS::ExpOrb &, const ECS::PositionComp &> &data)
+		expRender_.TransfarData<ECS::ExpOrb, ECS::PositionComp, ECS::AliveTime>(newWorld_, [color](const std::tuple<const ECS::ExpOrb &, const ECS::PositionComp &, const ECS::AliveTime &> &data)
 			{
-				const auto &[shadow, pos] = data;
+				const auto &[shadow, pos, aliveTime] = data;
 				const Vector3 translate = pos.position_;
 				Particle::ParticleData result{};
-				result.transform.World = Matrix4x4::Identity();
+				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, aliveTime.aliveTime_ * SoLib::Angle::Rad90);
 				result.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
 				result.color = color;
 				return result;
@@ -836,7 +844,7 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 				sphere.collision_.radius = attackStatus.radius_ * 0.25f;
 				// 吹き飛ばす力
 				knockBack.diffPower_ = { baseKnockBackPower_, baseKnockBackPower_ };
-				knockBack.diff_ = Vector2{ playerFacing.x, playerFacing.z }.Nomalize();
+				knockBack.diff_ = Vector2{ playerFacing.x, playerFacing.z }.Normalize();
 				// 攻撃持続時間
 				lifeLim.lifeLimit_ = 5.f;
 				// 攻撃力
@@ -920,7 +928,7 @@ void GameScene::GenerateExperience(ECS::World &world, size_t &killCount) const
 
 		// 経験値のアーキタイプ
 		Archetype expArch;
-		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
+		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive, ECS::AliveTime>();
 		// 経験値オーブの生成
 		auto ent = world.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
 		auto entItr = ent.View<ECS::PositionComp, ECS::IsAlive>().begin();
