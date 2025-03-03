@@ -129,6 +129,10 @@ namespace ECS {
 		SoLib::Color::RGB4 color_ = 0xFFFFFFFF;
 	};
 
+	struct MoveSpeed : IComponent {
+		float moveSpeed_ = 0.f;
+	};
+
 	struct PositionComp : IComponent {
 		Vector3 position_;
 		inline Vector3 &operator=(const Vector3 &other) { return  position_ = other; }
@@ -193,6 +197,8 @@ namespace ECS {
 		float rotateSpeed_ = 2.f;
 		float distance_ = 7.5f;
 	};
+
+	struct FallingStone : IComponent {};
 
 	struct Explosion : IComponent {};
 

@@ -13,7 +13,7 @@ namespace SoLib {
 		TransformMatrix result;
 		// サイズを一定にした行列
 		Matrix3x3 tmp;
-		std::transform(GetRotateMat().vec.cbegin(), GetRotateMat().vec.cend(), tmp.vec.begin(), [](const Vector3 &line) { return line.Nomalize(); });
+		std::transform(GetRotateMat().vec.cbegin(), GetRotateMat().vec.cend(), tmp.vec.begin(), [](const Vector3 &line) { return line.Normalize(); });
 
 		result.GetRotateMat() = tmp.Transpose();
 

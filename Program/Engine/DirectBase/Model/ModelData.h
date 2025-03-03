@@ -20,7 +20,7 @@ namespace SolEngine {
 
 	class ModelData : public IResourceObject {
 	public:
-		std::vector<ResourceHandle<Mesh>> meshHandleList_;
+		std::vector<SolEngine::ResourceHandle<SolEngine::Mesh>> meshHandleList_;
 		ResourceHandle<ModelVertexData> modelVertex_;
 		CBuffer<Matrix4x4> rootNode_;
 

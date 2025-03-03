@@ -63,5 +63,12 @@
       </ArrayItems>
     </Expand>
   </Type>
+  
+  <Type Name="CBuffer&lt;*,*&gt;">
+    <DisplayString>{{ data = {*(($T1*)&amp;(buffer_.item_._Value._Ptr->_Myval.item_._Mypair._Myval2->itemData_[0]))}}}</DisplayString>
+    <Expand>
+      <Item Name="[data]">*(($T1*)&amp;(buffer_.item_._Value._Ptr->_Myval.item_._Mypair._Myval2->itemData_[0]))</Item>
+    </Expand>
+  </Type>
 
 </AutoVisualizer>

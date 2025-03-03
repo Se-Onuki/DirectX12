@@ -66,7 +66,7 @@ Plane Plane::Create(const Vector3 &Normal, const Vector3 &Point) {
 	LineBase line{ .origin = Vector3::zero, .diff = Normal, .lineType = LineBase::LineType::Line };
 	Vector3 centor = line.ClosestPoint(Point);
 	if (centor != Vector3::zero) {
-		out.normal = centor.Nomalize();
+		out.normal = centor.Normalize();
 		out.distance = centor.Length();
 	}
 	else {
@@ -222,17 +222,17 @@ const bool Collision::IsHit(const OBB &obbA, const OBB &obbB) {
 		IsHitAxis(bOrientation[1], objA, objB) &&
 		IsHitAxis(bOrientation[2], objA, objB) &&
 
-		IsHitAxis(aOrientation[0].cross(bOrientation[0]).Nomalize(), objA, objB) &&
-		IsHitAxis(aOrientation[0].cross(bOrientation[1]).Nomalize(), objA, objB) &&
-		IsHitAxis(aOrientation[0].cross(bOrientation[2]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[0].cross(bOrientation[0]).Normalize(), objA, objB) &&
+		IsHitAxis(aOrientation[0].cross(bOrientation[1]).Normalize(), objA, objB) &&
+		IsHitAxis(aOrientation[0].cross(bOrientation[2]).Normalize(), objA, objB) &&
 
-		IsHitAxis(aOrientation[1].cross(bOrientation[0]).Nomalize(), objA, objB) &&
-		IsHitAxis(aOrientation[1].cross(bOrientation[1]).Nomalize(), objA, objB) &&
-		IsHitAxis(aOrientation[1].cross(bOrientation[2]).Nomalize(), objA, objB) &&
+		IsHitAxis(aOrientation[1].cross(bOrientation[0]).Normalize(), objA, objB) &&
+		IsHitAxis(aOrientation[1].cross(bOrientation[1]).Normalize(), objA, objB) &&
+		IsHitAxis(aOrientation[1].cross(bOrientation[2]).Normalize(), objA, objB) &&
 
-		IsHitAxis(aOrientation[2].cross(bOrientation[0]).Nomalize(), objA, objB) &&
-		IsHitAxis(aOrientation[2].cross(bOrientation[1]).Nomalize(), objA, objB) &&
-		IsHitAxis(aOrientation[2].cross(bOrientation[2]).Nomalize(), objA, objB);
+		IsHitAxis(aOrientation[2].cross(bOrientation[0]).Normalize(), objA, objB) &&
+		IsHitAxis(aOrientation[2].cross(bOrientation[1]).Normalize(), objA, objB) &&
+		IsHitAxis(aOrientation[2].cross(bOrientation[2]).Normalize(), objA, objB);
 }
 
 const bool Collision::IsHit(const Capsule &cupsele, const Plane &plane) {
@@ -384,7 +384,7 @@ Vector3 AABB::GetNormal(const Vector3 &surface) const {
 		}
 	}
 
-	return result.Nomalize();
+	return result.Normalize();
 }
 
 Vector3 AABB::GetNormal(const Vector3 &surface, const Vector3 &direction) const {
@@ -408,7 +408,7 @@ Vector3 AABB::GetNormal(const Vector3 &surface, const Vector3 &direction) const 
 		}
 	}
 
-	return result.Nomalize();
+	return result.Normalize();
 }
 
 Matrix4x4 AABB::TransMat() const {
@@ -508,7 +508,7 @@ Vector3 Spring::GetAcceleration(const Ball &ball) {
 	const Vector3 diff = ball.position - anchor;
 	const float length = diff.Length();
 	if (length) {
-		Vector3 direction = diff.Nomalize();
+		Vector3 direction = diff.Normalize();
 		Vector3 restPosition = anchor + direction * naturalLength;
 		Vector3 desplacement = length * (ball.position - restPosition);
 		Vector3 restoringForce = -stiffness * desplacement;
@@ -560,7 +560,7 @@ void Ball::Update(const Plane &plane, const float deltaTime, const float elastic
 
 Vector3 Capsule::GetHitPoint(const Plane &plane) const {
 	// 引き戻す単位
-	const Vector3 invDiff = -segment.diff.Nomalize();
+	const Vector3 invDiff = -segment.diff.Normalize();
 	// 引き戻す時の係数
 	const float dot = plane.normal * invDiff;
 	// 戻す量

@@ -65,7 +65,7 @@ void NT_ClientScene::Update()
 		velocity.x++;
 	}
 
-	playerB_ += velocity.Nomalize() * ImGui::GetIO().DeltaTime;
+	playerB_ += velocity.Normalize() * ImGui::GetIO().DeltaTime;
 
 	renderBuffer_[0] = { .transform = Matrix4x4::Affine(Vector3::one, Vector3::zero, playerA_) };
 	renderBuffer_[1] = { .transform = Matrix4x4::Affine(Vector3::one, Vector3::zero, playerB_) };

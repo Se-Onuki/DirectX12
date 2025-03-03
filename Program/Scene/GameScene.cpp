@@ -59,6 +59,7 @@ void GameScene::OnEnter() {
 	auto ghostModel = modelDataManager->Load({ ghostAssimp });
 
 	light_ = DirectionLight::Generate();
+	light_->SetEuler({ 75._deg,0.f,0.f });
 
 	blockRender_->Init(1024u);
 	skinModelRender_->Init(1024u);
@@ -161,6 +162,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::Rigidbody{};
 	*enemyPrefab_ += ECS::DamageCounter{};
 	*enemyPrefab_ += ECS::Color{};
+	*enemyPrefab_ += ECS::MoveSpeed{ .moveSpeed_ = 5.f };
 
 	//entityManager_->CreateEntity(*enemyPrefab_);
 	newWorld_.CreateEntity(*enemyPrefab_);
@@ -207,7 +209,11 @@ void GameScene::OnEnter() {
 	auto orbAssimp = assimpManager->Load({ "Model/", "Orb.obj" });
 	auto orbModel = modelDataManager->Load({ orbAssimp });
 	auto &orbMesh = orbModel->meshHandleList_.front();
-	orbMesh->materialhandle_->blendMode_ = Model::BlendMode::kNormal;
+	orbMesh->materialhandle_->blendMode_ = Model::BlendMode::kNone;
+	auto orbMaterial = orbMesh->materialhandle_->materialData_.get();
+	orbMaterial->emissive = 0x333300FF;
+	orbMaterial->shininess = 50.f;
+	orbMaterial->shininessStrength = 100.f;
 
 	expRender_.Init();
 	expRender_.SetModelData(orbModel);
@@ -234,6 +240,8 @@ void GameScene::OnEnter() {
 
 	boxAttackRender_.Init();
 	boxAttackRender_.SetModelData(boxModel);
+
+	InitEnemyTable(enemyTable_);
 
 	for (auto &bar : enemyHealthBar_) {
 		bar = std::make_unique<HealthBar>();
@@ -418,7 +426,6 @@ void GameScene::Update() {
 	static bool skeletonDraw = false;
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 	[[maybe_unused]] const float fixDeltaTime = not (isMenuOpen_ or levelUpUI_->IsActive()) ? deltaTime : 0.f;
-	[[maybe_unused]] const float powDeltaTime = fixDeltaTime * fixDeltaTime;
 
 	ImGui::Text("XInput左スティックで移動");
 	ImGui::Text("エンティティ数 / %lu", newWorld_.size());
@@ -431,12 +438,14 @@ void GameScene::Update() {
 	damageTimer_.Update(deltaTime);
 	gameScore_.aliveTime_ += fixDeltaTime;
 
+	// 毎フレームの初期化
 	FlameClear();
 
 	spawnTimer_.Update(fixDeltaTime);
 	playerSpawn_.Update(fixDeltaTime);
 	// 時計の更新
 	gameTimer_.Update(fixDeltaTime);
+
 	{
 		// 時計の分秒への変換
 		auto &&[m, s] = SoLib::Time::GetMoment(gameTimer_.GetTimeRemain());
@@ -477,7 +486,7 @@ void GameScene::Update() {
 
 	killUI_->SetText(static_cast<uint32_t>(killCount_), true);
 
-	// 敵の描画
+	// 敵の描画 (環境によってはTransfarData関数に静的検査のエラー表示が出るが､実行･コンパイルは通る)
 	ghostRenderer_.TransfarData<ECS::GhostModel, ECS::TransformMatComp, ECS::Color>(newWorld_, [](const std::tuple<const ECS::GhostModel &, const ECS::TransformMatComp &, const ECS::Color &> &data)->Particle::ParticleData
 		{
 			const auto &[ghost, mat, color] = data;
@@ -504,12 +513,12 @@ void GameScene::Update() {
 	// 経験値の描画
 	{
 		const uint32_t color = static_cast<uint32_t>(expColor_);
-		expRender_.TransfarData<ECS::ExpOrb, ECS::PositionComp>(newWorld_, [color](const std::tuple<const ECS::ExpOrb &, const ECS::PositionComp &> &data)
+		expRender_.TransfarData<ECS::ExpOrb, ECS::PositionComp, ECS::AliveTime>(newWorld_, [color](const std::tuple<const ECS::ExpOrb &, const ECS::PositionComp &, const ECS::AliveTime &> &data)
 			{
-				const auto &[shadow, pos] = data;
+				const auto &[shadow, pos, aliveTime] = data;
 				const Vector3 translate = pos.position_;
 				Particle::ParticleData result{};
-				result.transform.World = Matrix4x4::Identity();
+				result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, aliveTime.aliveTime_ * SoLib::Angle::Rad90);
 				result.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
 				result.color = color;
 				return result;
@@ -560,9 +569,7 @@ void GameScene::Update() {
 	gaussianParam_->second = SoLib::Lerp(1, 32, isMenuOpen_ ? menuTimer_.GetProgress() : 1.f - menuTimer_.GetProgress());
 
 	auto material = SolEngine::ResourceObjectManager<SolEngine::Material>::GetInstance()->ImGuiWidget("MaterialManager");
-	if (material) {
-		SoLib::ImGuiWidget("Material", *material);
-	}
+	if (material) { SoLib::ImGuiWidget("Material", *material); }
 
 	SoLib::ImGuiWidget("HsvParam", hsvParam_.get());
 }
@@ -599,6 +606,7 @@ void GameScene::Draw() {
 	boxAttackRender_.DrawExecute(camera);
 	blockRender_->Draw(camera);
 	modelHandleRender_->Draw(camera);
+	expRender_.DrawExecute(camera);
 
 	ghostRenderer_.DrawExecute(camera);
 
@@ -613,7 +621,6 @@ void GameScene::Draw() {
 
 	shadowRenderer_.DrawExecute(camera);
 	attackRender_.DrawExecute(camera);
-	expRender_.DrawExecute(camera);
 
 	Model::EndDraw();
 
@@ -719,6 +726,94 @@ void GameScene::PostEffectEnd()
 
 }
 
+void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
+{
+	enemyTable = std::make_unique<EnemyTable>();
+	// 0
+	{
+		EnemyData data{};
+		data.color_.color_ = 0x555555FF;
+		data.health_ = 100;
+		data.power_.power_ = 10;
+		data.speed_.moveSpeed_ = 5.f;
+		enemyTable->push_back(data);
+	}
+	// 1
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFFFFFFFF;
+		data.health_ = 120;
+		data.power_.power_ = 15;
+		data.speed_.moveSpeed_ = 3.f;
+		enemyTable->push_back(data);
+	}
+	// 2
+	{
+		EnemyData data{};
+		data.color_.color_ = 0x9999FFFF;
+		data.health_ = 150;
+		data.power_.power_ = 15;
+		data.speed_.moveSpeed_ = 3.f;
+		enemyTable->push_back(data);
+	}
+	// 3
+	{
+		EnemyData data{};
+		data.color_.color_ = 0x99FF99FF;
+		data.health_ = 150;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 2.5f;
+		enemyTable->push_back(data);
+	}
+	// 4
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xF58220FF;
+		data.health_ = 150;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 2.f;
+		enemyTable->push_back(data);
+	}
+	// 5
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFF9999FF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 2.f;
+		enemyTable->push_back(data);
+	}
+	// 6
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFFCCCCFF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 2.f;
+		enemyTable->push_back(data);
+	}
+	// 7
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFF99FFFF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 1.f;
+		enemyTable->push_back(data);
+	}
+	// 8
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFFFF99FF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 1.f;
+		enemyTable->push_back(data);
+	}
+
+
+}
+
 void GameScene::SetGameScore()
 {
 	gameScore_.killCount_ = killCount_;
@@ -775,6 +870,23 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 				fade->Start({}, 0x000000FF, 0.25f);
 			}
 		}
+	}
+}
+
+void GameScene::GenetateFallingStone(ECS::World &world) const
+{
+	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::FallingStone, ECS::VelocityComp, ECS::AccelerationComp, ECS::GravityComp>(), 1u);
+
+	auto attackPlayerChunks = world.GetAccessableChunk(Archetype::Generate<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::ArrowShooter>());
+
+	if (attackPlayerChunks.empty()) { return; }
+	auto &&[shooter, rot] = *attackPlayerChunks.front()->View<ECS::ArrowShooter, ECS::QuaternionRotComp>().begin();
+
+	auto view = stoneEntity.GetChunk()->View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::FallingStone, ECS::AccelerationComp>();
+	for (auto [coll, attack, stoneBullet, acc] : view) {
+		coll.collision_.radius = 1.f;
+		attack.power_ = 5;
+		acc.acceleration_ += (Quaternion::AnyAxisRotation(Vector3::right, 45._deg) * rot.quateRot_).Normalize().GetFront().Normalize();
 	}
 }
 
@@ -835,7 +947,7 @@ void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 				sphere.collision_.radius = attackStatus.radius_ * 0.25f;
 				// 吹き飛ばす力
 				knockBack.diffPower_ = { baseKnockBackPower_, baseKnockBackPower_ };
-				knockBack.diff_ = Vector2{ playerFacing.x, playerFacing.z }.Nomalize();
+				knockBack.diff_ = Vector2{ playerFacing.x, playerFacing.z }.Normalize();
 				// 攻撃持続時間
 				lifeLim.lifeLimit_ = 5.f;
 				// 攻撃力
@@ -919,7 +1031,7 @@ void GameScene::GenerateExperience(ECS::World &world, size_t &killCount) const
 
 		// 経験値のアーキタイプ
 		Archetype expArch;
-		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>();
+		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive, ECS::AliveTime>();
 		// 経験値オーブの生成
 		auto ent = world.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
 		auto entItr = ent.View<ECS::PositionComp, ECS::IsAlive>().begin();
@@ -1049,27 +1161,17 @@ void GameScene::AddSpawner(SoLib::DeltaTimer &timer, ECS::Spawner &spawner) cons
 		// ゲームの進行度
 		const float gameProgress = gameTimer_.GetProgress();
 
-		// 敵の体力
-		const int32_t enemyHealth = static_cast<int32_t>(*vEnemyHealthBase_ + *vEnemyHealthDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
 		// 敵のスポーン数
 		const int32_t enemyCount = static_cast<int32_t>(*vEnemySpawnCount_ + *vEnemySpawnDiff_ * static_cast<int32_t>(gameProgress / 0.2f) * 0.2f);
-		// 敵の沸く半径
-		const float enemyRadius = *vEnemyRadius_;
 
-		// スポナーに追加を要求する
-		spawner.AddSpawner(enemyPrefab_.get(), enemyCount, [enemyCount, enemyRadius, enemyHealth, gameProgress](const ECS::EntityList<false> &enemys)
-			{
-				// コンポーネントの配列
-				auto arr = enemys.View<ECS::PositionComp, ECS::HealthComp, ECS::Color>();
-				// 発生地点の回転加算値
-				const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
-				for (uint32_t i = 0; i < enemys.ItrRange().size(); i++) {
-					auto [pos, health, color] = *(arr.begin() + i);
-					pos.position_ = SoLib::EulerToDirection(SoLib::Euler{ 0.f, (SoLib::Angle::Rad360 / enemyCount) * i + diff, 0.f }) * enemyRadius;
-					health = ECS::HealthComp::Create(enemyHealth);
-					color.color_ = kEnemyColor_[static_cast<size_t>(gameProgress / 0.2f)];
-				}
-			});
+
+		// 時間をもとに現在の出現データを取得
+		if (auto table = enemyTable_->GetEnemyDataForTime(gameTimer_.GetNowFlame()); table) {
+			// 発生地点の回転加算値
+			const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
+			// 取得したデータから出現関数を生成し､計算する
+			spawner.AddSpawner(enemyPrefab_.get(), enemyCount, table->SpawnFunc(diff, *vEnemyRadius_));
+		}
 		timer.Start();
 	}
 }

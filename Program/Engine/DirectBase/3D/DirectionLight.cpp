@@ -9,12 +9,12 @@
 
 void DirectionLight::Init()
 {
-	lightResource_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Direction));
+	/*lightResource_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Direction));
 
-	lightResource_->Map(0, nullptr, reinterpret_cast<void **>(&lightData_));
+	lightResource_->Map(0, nullptr, reinterpret_cast<void **>(&lightData_));*/
 
 	lightData_->color = 0xFFFFFFFF;
-	lightData_->direction = Vector3{ 0.f,-1.f,0.f }.Nomalize();
+	lightData_->direction = Vector3{ 0.f,-1.f,0.f }.Normalize();
 	lightData_->intensity = 1.f;
 	lightData_->pattern = int32_t(Pattern::kHalfLambert);
 
@@ -23,7 +23,7 @@ void DirectionLight::Init()
 
 void DirectionLight::SetLight(ID3D12GraphicsCommandList *const commandList)
 {
-	commandList->SetGraphicsRootConstantBufferView((uint32_t)Model::RootParameter::kLight, lightResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(static_cast<uint32_t>(Model::RootParameter::kLight), lightData_.GetGPUVirtualAddress());
 }
 
 std::unique_ptr<DirectionLight> DirectionLight::Generate()
@@ -36,9 +36,8 @@ std::unique_ptr<DirectionLight> DirectionLight::Generate()
 void DirectionLight::ImGuiWidget()
 {
 	ImGui::ColorEdit3("Color", &lightData_->color.r);
-	//if (ImGui::DragFloat3("Direction", &lightData_->direction.x, 1.f / 255, -1, 1)) {
 	if (SoLib::ImGuiDragEuler("Direction", &euler_.x)) {
-		lightData_->direction = SoLib::EulerToDirection(euler_).Nomalize();
+		lightData_->direction = SoLib::EulerToDirection(euler_).Normalize();
 	}
 	ImGui::DragFloat("Brightness ", &lightData_->intensity, 0.01f, 0, 1);
 	const static std::array<const char *const, 3u>lightPattern{ "kNone", "kLambert","kHalfLambert" };

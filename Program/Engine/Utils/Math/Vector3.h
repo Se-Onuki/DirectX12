@@ -41,7 +41,7 @@ namespace SoLib {
 
 		/// @brief 正規化
 		/// @return ベクトル長が1のベクトル</returns>
-		Vector3 Nomalize() const
+		Vector3 Normalize() const
 		{
 
 			float Length = this->Length();

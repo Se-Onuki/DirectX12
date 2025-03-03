@@ -34,7 +34,7 @@ namespace SoLib {
 		return sqrtf(powf(x, 2) + powf(y, 2));
 	}
 
-	Vector2 Vector2::Nomalize() const {
+	Vector2 Vector2::Normalize() const {
 		float Length = this->Length();
 		if (Length != 0) {
 			return *this / Length;

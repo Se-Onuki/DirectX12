@@ -85,6 +85,10 @@ public:
 
 private:
 
+	/// @brief 敵の生成データの初期化
+	/// @param enemyTable[out] 敵の生成テーブル 
+	void InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const;
+
 	/// @brief ゲームスコアを保存する
 	void SetGameScore();
 
@@ -100,6 +104,10 @@ private:
 	/// @param scene[out] シーンマネージャー 
 	/// @param fade[out] フェード処理 
 	void PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SolEngine::SceneManager *const scene, Fade *const fade) const;
+
+	/// @brief プレイヤの落下攻撃の生成処理
+	/// @param world[in, out] ワールドデータ
+	void GenetateFallingStone(ECS::World &world) const;
 
 	/// @brief プレイヤの範囲攻撃の生成処理
 	/// @param world[in, out] ワールドデータ
