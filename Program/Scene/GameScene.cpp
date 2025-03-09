@@ -112,7 +112,7 @@ void GameScene::OnEnter() {
 	playerPrefab_ = std::make_unique<ECS::Prefab>();
 
 	*playerPrefab_ += ECS::IsAlive{};
-	*playerPrefab_ += ECS::ScaleComp{ .scale_ = Vector3::one * 2.5f };
+	*playerPrefab_ += ECS::ScaleComp{ .scale_ = Vector3::one * 2.f };
 	*playerPrefab_ += ECS::QuaternionRotComp{};
 	*playerPrefab_ += ECS::PositionComp{ .position_ {.x = 0.1f} };
 	*playerPrefab_ += ECS::InputFlagComp{};
@@ -138,7 +138,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::Experience{};
 	*playerPrefab_ += ECS::HasShadow{};
 	*playerPrefab_ += ECS::ArrowShooter{ .count_ = 0, .needTime_ = 1.f };
-	*playerPrefab_ += ECS::StoneShooter{ .count_ = 1, .needTime_ = 1.f };
+	*playerPrefab_ += ECS::StoneShooter{ .count_ = 0, .needTime_ = 1.f };
 
 	newWorld_.CreateEntity(*playerPrefab_);
 
@@ -383,9 +383,36 @@ void GameScene::OnEnter() {
 	{
 		auto button = ButtonUI::Generate();
 		button->Init(TextureManager::Load("UI/KnockBack.png"), [this]() {
-			Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
 
 			baseKnockBackPower_ += 0.1f;
+			}
+		);
+		levelUpUI_->push_back(std::move(button));
+	}
+	{
+		auto button = ButtonUI::Generate();
+		button->Init(TextureManager::Load("UI/FullHealth.png"), [this]() {
+
+			GeneratePlayerStoneAttack(newWorld_, 1u);
+			}
+		);
+		levelUpUI_->push_back(std::move(button));
+	}
+	{
+		auto button = ButtonUI::Generate();
+		button->Init(TextureManager::Load("UI/FullHealth.png"), [this]()
+			{
+				Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
+
+				// プレイヤのView
+				auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+
+				for (auto chunk : playerChunks) {
+					for (auto &player : *chunk) {
+						auto &shooter = player.GetComponent<ECS::StoneShooter>();
+						shooter.count_++;
+					}
+				}
 			}
 		);
 		levelUpUI_->push_back(std::move(button));
@@ -409,7 +436,7 @@ void GameScene::OnEnter() {
 
 	killUI_->SetPivot(Vector2::one * 0.5f);
 
-	GeneratePlayerStoneAttack(newWorld_, 3);
+	// GeneratePlayerStoneAttack(newWorld_, 3);
 }
 
 void GameScene::OnExit() {
@@ -1119,7 +1146,7 @@ void GameScene::SatelliteAttackRender(const ECS::World &world, SolEngine::ModelI
 		{
 			const auto &[bullet, trans, time] = item;
 
-			Particle::ParticleData result{ .color = 0x333333FF };
+			Particle::ParticleData result{ .color = 0x666666FF };
 			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * time.aliveTime_ / attackRotSpeed) * (trans.collision_.radius);
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
@@ -1131,7 +1158,7 @@ void GameScene::SatelliteAttackRender(const ECS::World &world, SolEngine::ModelI
 		{
 			const auto &[stone, trans, time] = item;
 
-			Particle::ParticleData result{ .color = 0x333333FF };
+			Particle::ParticleData result{ .color = 0x666666FF };
 			result.transform.World = Matrix4x4::Identity() * (trans.collision_.radius);
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
