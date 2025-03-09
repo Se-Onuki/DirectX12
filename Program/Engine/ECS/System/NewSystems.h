@@ -380,6 +380,14 @@ namespace ECS {
 				void Execute(const World *const, const float);
 			};
 
+			class FallingStoneUpdate :public IJobEntity {
+			public:
+				ReadAndWrite<ECS::FallingStone, ECS::IsAlive, ECS::SphereCollisionComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
+			};
+
 			class CollectionExpOrb :public IJobEntity {
 			public:
 				ReadAndWrite<ECS::ExpOrb, ECS::PositionComp> readWrite_;

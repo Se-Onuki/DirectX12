@@ -303,6 +303,7 @@ void GameScene::OnEnter() {
 	systemExecuter_.AddSystem<ECS::System::Par::StoneWeaponCollision>();
 	systemExecuter_.AddSystem<ECS::System::Par::EnemyAttack>();
 	systemExecuter_.AddSystem<ECS::System::Par::DamageUpdate>();
+	systemExecuter_.AddSystem<ECS::System::Par::FallingStoneUpdate>();
 
 	// 汎用的な処理
 	systemExecuter_.AddSystem<ECS::System::Par::SlideFollowCameraUpdate>();
@@ -905,7 +906,7 @@ void GameScene::GenetateFallingStone(ECS::World &world) const
 		coll.collision_.centor = pos;
 		coll.collision_.radius = 0.75f;
 		attack.power_ = shooter.bulletData_.power_;
-		acc.acceleration_ += (Quaternion::AnyAxisRotation(Vector3::right, -80._deg) * rot.quateRot_).Normalize().GetFront().Normalize() * 15.f;
+		acc.acceleration_ += (rot.quateRot_ * Quaternion::AnyAxisRotation(Vector3::right, -80._deg)).Normalize().GetFront().Normalize() * 15.f;
 		gravity.gravity_ *= 2.f;
 	}
 }

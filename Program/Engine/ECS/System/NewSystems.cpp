@@ -645,4 +645,14 @@ namespace ECS::System::Par {
 
 		shareData_->playerPos_ = compRange.front();
 	}
+
+	void FallingStoneUpdate::Execute(const World *const, const float)
+	{
+		const auto &[fall, isAlive, coll] = readWrite_;
+
+		if (coll.collision_.centor.y < -coll.collision_.radius) {
+			isAlive.isAlive_ = false;
+		}
+
+	}
 }
