@@ -365,6 +365,45 @@ namespace ECS {
 	// 矢の攻撃の演出
 	struct AttackArrow : IComponent {};
 
+	struct StoneShooter : IComponent {
+		// 弾の情報
+		struct Bullet {
+
+			float radius_ = 10.f;
+
+			uint32_t power_ = 10;
+
+		};
+
+		// 弾の数
+		uint32_t count_;
+
+		// クールタイム
+		float coolTime_;
+		// 発射に必要な時間
+		float needTime_;
+
+		SoLib::Angle::Radian angle_ = 30._deg;
+
+		// 発射する弾のパラメータ
+		Bullet bulletData_;
+
+		bool isFire_ = false;
+
+		bool Update(float deltaTime) {
+			isFire_ = false;
+			// 時間差分を追加
+			coolTime_ += deltaTime;
+			// 範囲を超えていたら
+			if (coolTime_ >= needTime_) {
+				coolTime_ = std::fmodf(coolTime_, needTime_);
+				isFire_ = true;
+			}
+			return isFire_;
+		}
+
+	};
+
 	struct ArrowShooter : IComponent {
 		// 弾の数
 		uint32_t count_;

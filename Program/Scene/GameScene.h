@@ -327,6 +327,7 @@ private:
 	// 飛び道具の回転の速度
 	float arrowAttackRotSpeed_ = 0.5f;
 
+	// 吸収するときの半径
 	float captureRange_ = 3.f;
 
 	float captureRangeLevelUp_ = 0.5f;

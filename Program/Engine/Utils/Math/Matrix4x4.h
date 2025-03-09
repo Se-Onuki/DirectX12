@@ -29,7 +29,8 @@ namespace SoLib {
 				  Vector4{A, B, C, D},
 				  Vector4{E, F, G, H},
 				  Vector4{I, J, K, L},
-				  Vector4{M, N, O, P} } {}
+				  Vector4{M, N, O, P} } {
+		}
 
 		inline Matrix4x4(const Vector4 &A, const Vector4 &B, const Vector4 &C, const Vector4 &D)
 		{
@@ -97,16 +98,16 @@ namespace SoLib {
 		/// @brief 回転行列を取得する
 		Matrix4x4 GetRotate() const { return this->Crop<3u, 3u>(); }
 		/// @brief 右ベクトル
-		const Vector3 &GetRight() const { return *reinterpret_cast<const Vector3 *>(m[0].data()); }
+		const Vector3 &GetRight() const { return vecs[0].ToVec3(); }
 		/// @brief 上ベクトル
-		const Vector3 &GetUp() const { return *reinterpret_cast<const Vector3 *>(m[1].data()); }
+		const Vector3 &GetUp() const { return vecs[1].ToVec3(); }
 
 		/// @brief 前方ベクトル
-		const Vector3 &GetFront() const { return *reinterpret_cast<const Vector3 *>(m[2].data()); }
+		const Vector3 &GetFront() const { return vecs[2].ToVec3(); }
 		/// @brief 平行移動ベクトルを取得する
 		/// @return 平行移動ベクトル
-		Vector3 &GetTranslate() { return reinterpret_cast<Vector3 &>(m[3]); }
-		const Vector3 &GetTranslate() const { return reinterpret_cast<const Vector3 &>(m[3]); }
+		Vector3 &GetTranslate() { return vecs[3].ToVec3(); }
+		const Vector3 &GetTranslate() const { return vecs[3].ToVec3(); }
 
 		/// @brief アフィン行列を生成する
 		static Matrix4x4 Affine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);

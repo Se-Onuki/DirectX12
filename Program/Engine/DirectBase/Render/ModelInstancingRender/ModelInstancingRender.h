@@ -73,10 +73,10 @@ namespace SolEngine {
 		/// @param[in] afterFunc 追加後の処理
 		void AddTransData(const ECS::World &world, const Archetype &arch, const uint32_t color = 0xFFFFFFFF, std::function<void(InstanceType &)> afterFunc = nullptr);
 
-		/// @brief 描画データの転送
+		/// @brief 描画データの転送 (環境によっては関数に静的検査のエラー表示が出るが､実行･コンパイルは通る)
 		/// @tparam ...Ts 抜き出すコンポーネント
 		/// @param world ワールドデータ
-		/// @param func 書き込み用の変換関数
+		/// @param func 書き込み用の変換関数 (ラムダ関数でもコンパイルは通るが､静的検査で誤検知のエラーが出る｡)
 		template<typename... Ts>
 		void TransfarData(const ECS::World &world, std::function<InstanceType(const std::tuple<const Ts &...> &)> func) {
 

@@ -100,12 +100,17 @@ namespace ECS::System::Par {
 		acceleration.acceleration_ -= velocity.velocity_ * airResistance.resistance;
 	}
 
-	void MovePosition::Execute(const World *const, const float deltaTime)
+	void CalcAcceleration::Execute(const World *const, const float)
 	{
-		auto &[pos, velocity, acceleration] = readWrite_;
+		auto &[velocity, acceleration] = readWrite_;
 
 		velocity.velocity_ += acceleration.acceleration_;
 		acceleration.acceleration_ = {};
+	}
+
+	void MovePosition::Execute(const World *const, const float deltaTime)
+	{
+		auto &[pos, velocity] = readWrite_;
 
 		pos.position_ += velocity.velocity_ * deltaTime;
 	}
@@ -390,8 +395,9 @@ namespace ECS::System::Par {
 
 	void PlayerShooterUpdate::Execute(const World *const, const float deltaTime)
 	{
-		auto &[shooter] = readWrite_;
-		shooter.Update(deltaTime);
+		auto &[arrowShooter, stoneShooter] = readWrite_;
+		arrowShooter.Update(deltaTime);
+		stoneShooter.Update(deltaTime);
 
 	}
 

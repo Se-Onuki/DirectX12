@@ -14,6 +14,10 @@ namespace ECS {
 		using ChunkPtr = std::conditional_t<IsConst, const Chunk *, Chunk *>;
 
 		EntityList() = default;
+		/// @brief コンストラクタ
+		/// @param chunk[in] ターゲットのチャンク
+		/// @param begin[in] 始点
+		/// @param end[in] 番兵
 		EntityList(ChunkPtr chunk, uint32_t begin, uint32_t end) : chunk_(chunk), begin_(begin), end_(end) {}
 
 		template<typename... Ts>

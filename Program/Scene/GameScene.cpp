@@ -138,6 +138,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::Experience{};
 	*playerPrefab_ += ECS::HasShadow{};
 	*playerPrefab_ += ECS::ArrowShooter{ .count_ = 0, .needTime_ = 1.f };
+	*playerPrefab_ += ECS::StoneShooter{ .count_ = 1, .needTime_ = 1.f };
 
 	newWorld_.CreateEntity(*playerPrefab_);
 
@@ -288,6 +289,7 @@ void GameScene::OnEnter() {
 	// 座標などの移動
 	systemExecuter_.AddSystem<ECS::System::Par::AddGravity>();
 	systemExecuter_.AddSystem<ECS::System::Par::AirResistanceSystem>();
+	systemExecuter_.AddSystem<ECS::System::Par::CalcAcceleration>();
 	systemExecuter_.AddSystem<ECS::System::Par::MovePosition>();
 	systemExecuter_.AddSystem<ECS::System::Par::MoveCollisionPosition>();
 
@@ -471,6 +473,8 @@ void GameScene::Update() {
 	GeneratePlayerRangeAttack(newWorld_);
 	// 飛び道具の追加
 	GeneratePlayerArrowAttack(newWorld_);
+	// 落石の生成
+	GenetateFallingStone(newWorld_);
 
 	// もし生存フラグが折れていたら、配列から削除
 	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item.isAlive_; });
@@ -875,32 +879,44 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 
 void GameScene::GenetateFallingStone(ECS::World &world) const
 {
-	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::FallingStone, ECS::VelocityComp, ECS::AccelerationComp, ECS::GravityComp>(), 1u);
-
-	auto attackPlayerChunks = world.GetAccessableChunk(Archetype::Generate<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::ArrowShooter>());
-
+	auto attackPlayerChunks = world.GetAccessableChunk(Archetype::Generate<ECS::PositionComp, ECS::QuaternionRotComp, ECS::AttackPower, ECS::StoneShooter>());
 	if (attackPlayerChunks.empty()) { return; }
-	auto &&[shooter, rot] = *attackPlayerChunks.front()->View<ECS::ArrowShooter, ECS::QuaternionRotComp>().begin();
 
-	auto view = stoneEntity.GetChunk()->View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::FallingStone, ECS::AccelerationComp>();
+	auto &&[shooter, rot, pos] = *attackPlayerChunks.front()->View<ECS::StoneShooter, ECS::QuaternionRotComp, ECS::PositionComp>().begin();
+
+	if (not shooter.isFire_) { return; }
+
+	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::FallingStone, ECS::VelocityComp, ECS::AccelerationComp, ECS::GravityComp>(), shooter.count_);
+
+	auto view = stoneEntity.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::FallingStone, ECS::AccelerationComp>();
 	for (auto [coll, attack, stoneBullet, acc] : view) {
+		coll.collision_.centor = pos;
 		coll.collision_.radius = 1.f;
-		attack.power_ = 5;
-		acc.acceleration_ += (Quaternion::AnyAxisRotation(Vector3::right, 45._deg) * rot.quateRot_).Normalize().GetFront().Normalize();
+		attack.power_ = shooter.bulletData_.power_;
+		acc.acceleration_ += (Quaternion::AnyAxisRotation(Vector3::right, -75._deg) * rot.quateRot_).Normalize().GetFront().Normalize() * 10.f;
 	}
 }
 
 void GameScene::GeneratePlayerStoneAttack(ECS::World &world, uint32_t addCount) const
 {
+	// 生成した石のデータ
 	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::StoneBullet>(), addCount);
 
+	// 同じ石が何個あるか
 	const uint32_t bulletCount = stoneEntity.GetChunk()->size();
 
+	// 差分
+	const float bulletAngleOffset = SoLib::Angle::Rad360 / bulletCount;
+
+	// 生成した石のデータ郡
 	auto view = stoneEntity.GetChunk()->View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::StoneBullet>();
+	// データの走査
 	for (int32_t i = 0; auto [coll, attack, stoneBullet] : view) {
+
 		coll.collision_.radius = 1.f;
 		attack.power_ = 5;
-		stoneBullet.angleOffset_ += (SoLib::Angle::Rad360 / bulletCount) * i++;
+		// 個数に応じた角度
+		stoneBullet.angleOffset_ += bulletAngleOffset * i++;
 	}
 }
 void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
@@ -1085,14 +1101,27 @@ void GameScene::SatelliteAttackRender(const ECS::World &world, SolEngine::ModelI
 {
 
 	const float attackRotSpeed = arrowAttackRotSpeed_;
-	attackRender.TransfarData<ECS::StoneBullet, ECS::SphereCollisionComp, ECS::AliveTime>(world, [attackRotSpeed](const auto &item) {
-		const auto &[bullet, trans, time] = item;
+	attackRender.TransfarData<ECS::StoneBullet, ECS::SphereCollisionComp, ECS::AliveTime>(world, [attackRotSpeed](const auto &item)
+		{
+			const auto &[bullet, trans, time] = item;
 
-		Particle::ParticleData result{ .color = 0x333333FF };
-		result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * time.aliveTime_ / attackRotSpeed) * (trans.collision_.radius);
-		result.transform.World.GetTranslate() = trans.collision_.centor;
-		result.transform.World.m[3][3] = 1.f;
-		return result;
+			Particle::ParticleData result{ .color = 0x333333FF };
+			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * time.aliveTime_ / attackRotSpeed) * (trans.collision_.radius);
+			result.transform.World.GetTranslate() = trans.collision_.centor;
+			result.transform.World.m[3][3] = 1.f;
+			return result;
+		}
+	);
+
+	attackRender.TransfarData<ECS::FallingStone, ECS::SphereCollisionComp, ECS::AliveTime>(world, [](const auto &item)
+		{
+			const auto &[stone, trans, time] = item;
+
+			Particle::ParticleData result{ .color = 0x333333FF };
+			result.transform.World = Matrix4x4::Identity() * (trans.collision_.radius);
+			result.transform.World.GetTranslate() = trans.collision_.centor;
+			result.transform.World.m[3][3] = 1.f;
+			return result;
 		}
 	);
 }

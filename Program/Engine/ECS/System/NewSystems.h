@@ -121,9 +121,17 @@ namespace ECS {
 				void Execute(const World *const, const float);
 
 			};
+
+			class CalcAcceleration : public IJobEntity {
+			public:
+				ReadAndWrite<ECS::VelocityComp, ECS::AccelerationComp> readWrite_;
+				using DataBase = DataBase<decltype(readWrite_)>;
+
+				void Execute(const World *const, const float);
+			};
 			class MovePosition :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::PositionComp, ECS::VelocityComp, ECS::AccelerationComp> readWrite_;
+				ReadAndWrite<ECS::PositionComp, ECS::VelocityComp> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);
@@ -247,7 +255,7 @@ namespace ECS {
 
 			class PlayerShooterUpdate :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::ArrowShooter> readWrite_;
+				ReadAndWrite<ECS::ArrowShooter, ECS::StoneShooter> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);
