@@ -512,6 +512,18 @@ void GameScene::Update() {
 				return result;
 			}
 		);
+
+		shadowRenderer_.TransfarData<ECS::HasShadow, ECS::SphereCollisionComp>(newWorld_, Archetype::Generate<ECS::PositionComp>().required_, [color](const std::tuple<const ECS::HasShadow &, const ECS::SphereCollisionComp &> &data)
+			{
+				const auto &[shadow, pos] = data;
+				const Vector3 translate = pos.collision_.centor;
+				Particle::ParticleData result;
+				result.transform.World = Matrix4x4::Identity();
+				result.transform.World.GetTranslate() = Vector3{ translate.x, 0.1f, translate.z };
+				result.color = color;
+				return result;
+			}
+		);
 	}
 
 	// 経験値の描画
@@ -886,14 +898,15 @@ void GameScene::GenetateFallingStone(ECS::World &world) const
 
 	if (not shooter.isFire_) { return; }
 
-	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::FallingStone, ECS::VelocityComp, ECS::AccelerationComp, ECS::GravityComp>(), shooter.count_);
+	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::FallingStone, ECS::VelocityComp, ECS::AccelerationComp, ECS::GravityComp, ECS::HasShadow>(), shooter.count_);
 
-	auto view = stoneEntity.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::FallingStone, ECS::AccelerationComp>();
-	for (auto [coll, attack, stoneBullet, acc] : view) {
+	auto view = stoneEntity.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::FallingStone, ECS::AccelerationComp, ECS::GravityComp>();
+	for (auto [coll, attack, stoneBullet, acc, gravity] : view) {
 		coll.collision_.centor = pos;
-		coll.collision_.radius = 1.f;
+		coll.collision_.radius = 0.75f;
 		attack.power_ = shooter.bulletData_.power_;
-		acc.acceleration_ += (Quaternion::AnyAxisRotation(Vector3::right, -75._deg) * rot.quateRot_).Normalize().GetFront().Normalize() * 10.f;
+		acc.acceleration_ += (Quaternion::AnyAxisRotation(Vector3::right, -80._deg) * rot.quateRot_).Normalize().GetFront().Normalize() * 15.f;
+		gravity.gravity_ *= 2.f;
 	}
 }
 

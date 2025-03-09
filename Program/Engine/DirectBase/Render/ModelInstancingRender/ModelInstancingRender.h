@@ -78,10 +78,10 @@ namespace SolEngine {
 		/// @param world ワールドデータ
 		/// @param func 書き込み用の変換関数 (ラムダ関数でもコンパイルは通るが､静的検査で誤検知のエラーが出る｡)
 		template<typename... Ts>
-		void TransfarData(const ECS::World &world, std::function<InstanceType(const std::tuple<const Ts &...> &)> func) {
+		void TransfarData(const ECS::World &world, const ECS::ComponentRegistry::ComponentFlag exclusions, std::function<InstanceType(const std::tuple<const Ts &...> &)> func) {
 
 			// チャンクの取得
-			auto chanks = world.GetAccessableChunk(Archetype::Generate<Ts...>());
+			auto chanks = world.GetAccessableChunk(Archetype::Generate<Ts...>(), exclusions);
 			// オブジェクトの総数
 			uint32_t totalCount = 0u;
 
@@ -107,6 +107,16 @@ namespace SolEngine {
 
 			}
 		}
+
+		/// @brief 描画データの転送 (環境によっては関数に静的検査のエラー表示が出るが､実行･コンパイルは通る)
+		/// @tparam ...Ts 抜き出すコンポーネント
+		/// @param world ワールドデータ
+		/// @param func 書き込み用の変換関数 (ラムダ関数でもコンパイルは通るが､静的検査で誤検知のエラーが出る｡)
+		template<typename... Ts>
+		void TransfarData(const ECS::World &world, std::function<InstanceType(const std::tuple<const Ts &...> &)> func) {
+			TransfarData<Ts...>(world, {}, func);
+		}
+
 		/// @brief 描画の実行
 		/// @param camera カメラ情報
 		void DrawExecute(const Camera3D &camera) const;
