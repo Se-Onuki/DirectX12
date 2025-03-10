@@ -151,7 +151,7 @@ namespace ECS {
 				ReadAndWrite<ECS::PositionComp, ECS::SphereCollisionComp, ECS::Rigidbody, ECS::EnemyTag> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
-				inline static std::vector<std::ranges::subrange<TypeCompIterator<true, ECS::PositionComp, ECS::SphereCollisionComp>>> collisions_;
+				inline static std::vector<TypesCompRange<true, ECS::PositionComp, ECS::SphereCollisionComp>> collisions_;
 
 				void Execute(const World *const, const float);
 				/// @brief 毎フレーム一度だけ実行するシステム

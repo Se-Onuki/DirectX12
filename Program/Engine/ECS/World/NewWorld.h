@@ -55,16 +55,25 @@ namespace ECS {
 		}
 	};
 
-	//template<bool IsConst, typename... Ts>
-	//struct 
+	//template <bool IsConst, typename... Ts>
+	//class ChunkView :public std::ranges::view_interface<ChunkView<IsConst,Ts...>> {
+	//public:
+	//	std::ranges::subrange<TypeCompIterator<IsConst, Ts...>> range_;
+	//	auto begin() { return range_.begin(); }
+	//	auto begin() const { return range_.begin(); }
 
+	//	auto end() { return range_.end(); }
+	//	auto end() const { return range_.end(); }
 
+	//	auto empty() const { return range_.empty(); }
+	//};
 
 	template <bool IsConst = false>
 	class ChunkSet : public std::conditional_t<IsConst, std::vector<const Chunk *>, std::vector<Chunk *>> {
 	public:
 
 		using Type = std::conditional_t<IsConst, std::vector<const Chunk *>, std::vector<Chunk *>>;
+
 
 	public:
 
@@ -124,9 +133,9 @@ namespace ECS {
 			std::vector<bool> flag(Count());
 			auto itr = flag.begin();
 			// チャンクを走査
-			for (const Chunk *chank : *this) {
+			for (const Chunk *chunk : *this) {
 				// コンポーネントを取得して返す
-				for (const T &value : chank->GetComponent<T>()) {
+				for (const T &value : chunk->GetComponent<T>()) {
 					if (*itr++ = value == data) { count++; }
 				}
 			}
@@ -145,14 +154,47 @@ namespace ECS {
 			std::vector<bool> flag(Count());
 			auto itr = flag.begin();
 			// チャンクを走査
-			for (const Chunk *chank : *this) {
+			for (const Chunk *chunk : *this) {
 				// コンポーネントを取得して返す
-				for (const T &value : chank->GetComponent<T>()) {
+				for (const T &value : chunk->GetComponent<T>()) {
 					if (*itr++ = pred(value)) { count++; }
 				}
 			}
 			return { std::move(flag), count };
 		}
+
+		template<typename... Ts>
+			requires (IsConst == false)
+		auto View() const {
+			std::vector<TypesCompRange<false, Ts...>> result;
+			result.reserve(this->size());
+
+			for (auto chunk : *this) {
+				result.push_back(chunk->View<Ts...>());
+			}
+
+			return result;
+		}
+
+		template<typename... Ts>
+			requires (IsConst == true)
+		auto View() const {
+			std::vector<TypesCompRange<true, Ts...>> result;
+			result.reserve(this->size());
+
+			for (auto chunk : *this) {
+				result.push_back(chunk->View<Ts...>());
+			}
+
+			return std::ranges::views::join(result);
+		}
+
+		template<typename... Ts>
+		void Hoge(const std::function<uint32_t(uint32_t)> &pred) const {
+
+
+		}
+
 
 	private:
 	};

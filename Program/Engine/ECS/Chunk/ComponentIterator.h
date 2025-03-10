@@ -13,6 +13,10 @@ namespace ECS {
 	class TypeCompIterator {
 	public:
 
+		explicit operator TypeCompIterator<not IsConst, Ts...>() const { return std::bit_cast<TypeCompIterator<not IsConst, Ts...>>(*this); }
+
+		explicit operator bool() const { return pEntityStorage_ and pEntityMemory_ and cGroupSize_; }
+
 		template<typename U>
 		using ConstRef = std::conditional_t<IsConst, const U &, U &>;
 		template<typename U>
@@ -22,14 +26,15 @@ namespace ECS {
 		using value_type = std::tuple<ConstRef<Ts>...>;
 		using iterator_category = std::random_access_iterator_tag;
 
-		using value_ptr = std::tuple<ConstPtr<Ts>...>;
+		using pointer = std::tuple<ConstPtr<Ts>...>;
+		using reference = std::tuple<ConstRef<Ts>...>;
 
-		auto operator*()->value_type;
+		auto operator*() const->value_type;
 		auto operator[](uint32_t index) const->value_type;
 
 	private:
 
-		auto GetGroupPtr() const->value_ptr;
+		auto GetGroupPtr() const->pointer;
 
 	public:
 
@@ -166,7 +171,7 @@ namespace ECS {
 
 
 	template<bool IsConst, typename... Ts>
-	auto TypeCompIterator<IsConst, Ts...>::operator*() -> TypeCompIterator<IsConst, Ts...>::value_type
+	auto TypeCompIterator<IsConst, Ts...>::operator*() const -> TypeCompIterator<IsConst, Ts...>::value_type
 	{
 		// グループ内のIndexに変更する
 		uint16_t i = index_ % cGroupSize_;
@@ -193,10 +198,10 @@ namespace ECS {
 	}
 
 	template<bool IsConst, typename ...Ts>
-	inline auto TypeCompIterator<IsConst, Ts...>::GetGroupPtr() const -> TypeCompIterator<IsConst, Ts...>::value_ptr
+	inline auto TypeCompIterator<IsConst, Ts...>::GetGroupPtr() const -> TypeCompIterator<IsConst, Ts...>::pointer
 	{
 		return std::apply([this](auto... memoryOffsets) {
-			return value_ptr(									// 4. それらを全部まとめて返す
+			return pointer(									// 4. それらを全部まとめて返す
 				reinterpret_cast<ConstPtr<Ts>>(					// 3. Ts型にポインタを変更する
 					&(											// 2. std::byte*に型を変更する
 						pEntityMemory_->at(memoryOffsets)	// 1. 保存先の先頭にオフセットを加算する(std::byte&)
@@ -206,4 +211,33 @@ namespace ECS {
 	}
 
 #pragma endregion
+	template<bool IsConst, typename... Ts>
+	class TypesCompRange : public std::ranges::view_interface<TypesCompRange<IsConst, Ts...>> {
+		TypeCompIterator<IsConst, Ts...> begin_;
+		uint16_t size_ = 0u;
+	public:
+		TypesCompRange() = default;
+		TypesCompRange(const TypesCompRange &) = default;
+		TypesCompRange &operator=(const TypesCompRange &) = default;
+
+		TypesCompRange(const TypeCompIterator<IsConst, Ts...> &begin, uint16_t size) : begin_(begin), size_(size) {}
+		const auto& begin() { return begin_; }
+		const auto& begin() const { return begin_; }
+		auto end() { return TypeCompIterator<IsConst, Ts...>{.index_ = size_}; }
+		auto end() const { return TypeCompIterator<IsConst, Ts...>{.index_ = size_}; }
+
+		auto empty() const { return size_ and static_cast<bool>(begin_); }
+		explicit operator bool() const { return not empty(); }
+
+		auto &front() { return *begin_; }
+		const auto &front() const { return *begin_; }
+
+		auto &back() { return begin_[size_ - 1]; }
+		const auto &back() const { return begin_[size_ - 1]; }
+
+		size_t size() const { return size_ - begin_.index_; }
+		auto &operator[](size_t i) const { return begin_[i]; }
+	};
+
+
 }

@@ -138,7 +138,7 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::Experience{};
 	*playerPrefab_ += ECS::HasShadow{};
 	*playerPrefab_ += ECS::ArrowShooter{ .count_ = 0, .needTime_ = 1.f };
-	*playerPrefab_ += ECS::StoneShooter{ .count_ = 0, .needTime_ = 1.f };
+	*playerPrefab_ += ECS::StoneShooter{ .count_ = 0, .needTime_ = 1.f, .bulletData_ = {.power_ = 30 } };
 
 	newWorld_.CreateEntity(*playerPrefab_);
 
@@ -400,7 +400,7 @@ void GameScene::OnEnter() {
 	}
 	{
 		auto button = ButtonUI::Generate();
-		button->Init(TextureManager::Load("UI/FullHealth.png"), [this]()
+		button->Init(TextureManager::Load("white2x2.png"), [this]()
 			{
 				Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
 
@@ -505,7 +505,7 @@ void GameScene::Update() {
 	GenetateFallingStone(newWorld_);
 
 	// もし生存フラグが折れていたら、配列から削除
-	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) {return not item.isAlive_; });
+	newWorld_.erase_if<ECS::IsAlive>([](const auto &item) { return not item.isAlive_; });
 
 	// 経験値の加算
 	PlayerExperience(newWorld_);
@@ -1074,11 +1074,8 @@ void GameScene::GenerateExperience(ECS::World &world, size_t &killCount) const
 {
 	// 経験値の追加
 	{
-		// 敵のアーキタイプ
-		Archetype enemArch{};
-		enemArch.AddClassData<ECS::IsAlive, ECS::EnemyTag>();
 		// チャンクの取得
-		auto enemyChunks = world.GetAccessableChunk(enemArch);
+		auto enemyChunks = world.GetAccessableChunk(Archetype::Generate<ECS::IsAlive, ECS::EnemyTag>());
 		// 死亡している数
 		auto deadCount = enemyChunks.CountIfFlag(ECS::IsAlive{ .isAlive_ = false });
 
@@ -1119,20 +1116,21 @@ void GameScene::PlayerExperience(ECS::World &world) const
 
 		// 経験値のアーキタイプ
 		auto expChunks = world.GetAccessableChunk(Archetype::Generate<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>());
+		auto view = std::ranges::views::join(expChunks.View<ECS::PositionComp, ECS::IsAlive>());
 
-		for (auto &chunk : expChunks) {
-			for (auto [pos, alive] : chunk->View<ECS::PositionComp, ECS::IsAlive>()) {
 
-				// 生きてたら
-				if (alive.isAlive_) {
-					pos.position_.y = 0.f;
+		for (auto [pos, alive] : view) {
 
-					// captureRange_以下なら吸収する
-					if ((playerPos.position_ - pos).LengthSQ() <= captureRange_ * captureRange_) {
-						playerExp.exp_++;
-						alive.isAlive_ = false;
-					}
+			// 生きてたら
+			if (alive.isAlive_) {
+				pos.position_.y = 0.f;
+
+				// captureRange_以下なら吸収する
+				if ((playerPos.position_ - pos).LengthSQ() <= captureRange_ * captureRange_) {
+					playerExp.exp_++;
+					alive.isAlive_ = false;
 				}
+
 			}
 		}
 	}

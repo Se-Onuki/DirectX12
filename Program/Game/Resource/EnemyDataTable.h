@@ -26,7 +26,7 @@ public:
 					health = ECS::HealthComp::Create(health_);
 					color = color_;
 					power = power_;
-					speed = speed;
+					speed = speed_;
 
 					i++;
 				}
