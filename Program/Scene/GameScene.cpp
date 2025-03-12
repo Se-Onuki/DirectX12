@@ -400,7 +400,7 @@ void GameScene::OnEnter() {
 	}
 	{
 		auto button = ButtonUI::Generate();
-		button->Init(TextureManager::Load("white2x2.png"), [this]()
+		button->Init(TextureManager::Load("UI/Stone.png"), [this]()
 			{
 				Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
 
@@ -842,7 +842,7 @@ void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
 		data.color_.color_ = 0xFF99FFFF;
 		data.health_ = 200;
 		data.power_.power_ = 20;
-		data.speed_.moveSpeed_ = 1.f;
+		data.speed_.moveSpeed_ = 2.f;
 		enemyTable->push_back(data);
 	}
 	// 8
@@ -851,7 +851,7 @@ void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
 		data.color_.color_ = 0xFFFF99FF;
 		data.health_ = 200;
 		data.power_.power_ = 20;
-		data.speed_.moveSpeed_ = 1.f;
+		data.speed_.moveSpeed_ = 2.f;
 		enemyTable->push_back(data);
 	}
 
@@ -957,7 +957,7 @@ void GameScene::GeneratePlayerStoneAttack(ECS::World &world, uint32_t addCount) 
 		coll.collision_.radius = 1.f;
 		attack.power_ = 5;
 		// 個数に応じた角度
-		stoneBullet.angleOffset_ += bulletAngleOffset * i++;
+		stoneBullet.angleOffset_ = bulletAngleOffset * i++;
 	}
 }
 void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
@@ -1117,7 +1117,6 @@ void GameScene::PlayerExperience(ECS::World &world) const
 		// 経験値のアーキタイプ
 		auto expChunks = world.GetAccessableChunk(Archetype::Generate<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>());
 		auto view = std::ranges::views::join(expChunks.View<ECS::PositionComp, ECS::IsAlive>());
-
 
 		for (auto [pos, alive] : view) {
 
