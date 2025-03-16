@@ -327,16 +327,17 @@ namespace ECS {
 		size_t count = 0;
 		// 要素数の数だけのメモリを確保する
 		std::vector<uint32_t> indexList(size(), (std::numeric_limits<uint32_t>::max)());
-		auto itr = indexList.begin();
+		auto source = this->View<T>();
 		// チャンク内部を走査
 		// コンポーネントを取得して返す
-		for (const auto &[value] : this->View<T>()) {
-			// 条件に一致したらtrueを代入し､カウントを追加する
-			if (pred(value)) {
-				*(itr) = static_cast<uint32_t>(count++);
+		std::transform(source.begin(), source.end(), indexList.begin(), [&](const auto &value)
+			{
+				auto [v] = value;
+				// 条件に一致したらカウントを追加する
+				return (pred(v) ? static_cast<uint32_t>(count++) : (std::numeric_limits<uint32_t>::max)());
 			}
-			itr++;
-		}
+		);
+
 		return { std::move(indexList), count };
 	}
 
@@ -373,10 +374,16 @@ namespace ECS {
 		// 1つのデータのエンティティの数
 		const uint32_t entCount = archetype_.GetChunkCapacity();
 
+		const uint32_t nowCapacity = entCount * storage_->size();
+
 		// もし末尾まで到達していたら
-		if (entCount * storage_->size() < size_ + count) {
+		if (nowCapacity < size_ + count) {
+
+			const uint32_t needEntityCount = (size_ + count) - nowCapacity;
+			const uint32_t needGroupCount = static_cast<uint32_t>(std::ceil(static_cast<float>(needEntityCount) / entCount));
+
 			// メモリを確保する
-			AddGroups();
+			AddGroups(needGroupCount);
 		}
 
 		const uint32_t beforeCount = size_;

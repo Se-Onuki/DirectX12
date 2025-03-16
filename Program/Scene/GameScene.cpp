@@ -485,6 +485,18 @@ void GameScene::Update() {
 	// プレハブの破棄
 	spawner_.clear();
 
+	{
+
+		static int32_t iSpawnEntityCount = 0;
+		SoLib::ImGuiWidget("生成数", &iSpawnEntityCount);
+		if (ImGui::Button("敵の生成")) {
+			// 発生地点の回転加算値
+			const float diff = SoLib::Random::GetRandom<float>(0.f, SoLib::Angle::Rad360);
+			// 取得したデータから出現関数を生成し､計算する
+			spawner_.AddSpawner(enemyPrefab_.get(), iSpawnEntityCount, enemyTable_->GetEnemyDataForTime(gameTimer_.GetNowFlame())->SpawnFunc(diff, *vEnemyRadius_));
+		}
+	}
+
 	// 敵の追加
 	AddSpawner(spawnTimer_, spawner_);
 
