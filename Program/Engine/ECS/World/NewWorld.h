@@ -173,7 +173,7 @@ namespace ECS {
 				result.push_back(chunk->View<Ts...>());
 			}
 
-			return result;
+			return std::ranges::views::join(std::move(result));
 		}
 
 		template<typename... Ts>
@@ -186,15 +186,8 @@ namespace ECS {
 				result.push_back(chunk->View<Ts...>());
 			}
 
-			return std::ranges::views::join(result);
+			return std::ranges::views::join(std::move(result));
 		}
-
-		template<typename... Ts>
-		void Hoge(const std::function<uint32_t(uint32_t)> &pred) const {
-
-
-		}
-
 
 	private:
 	};

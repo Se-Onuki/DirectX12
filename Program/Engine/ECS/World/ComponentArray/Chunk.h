@@ -137,6 +137,9 @@ namespace ECS {
 		template <typename T, typename Predicate>
 		std::pair<std::vector<bool>, size_t> CountIfFlag(const Predicate &pred) const;
 
+		template <typename T, typename Predicate>
+		std::pair<std::vector<uint32_t>, size_t> CountIfIndex(const Predicate &pred) const;
+
 	public:
 		/// @brief コンポーネントの取得
 		/// @param compId コンポーネントのID
@@ -309,14 +312,33 @@ namespace ECS {
 		auto itr = flag.begin();
 		// チャンク内部を走査
 		// コンポーネントを取得して返す
-		for (const T &value : this->GetComponent<T>()) {
-			// 条件に一致したらtrueを代入し､カウントを追加する
+		for (const auto &[value] : this->View<T>()) {
 			if (*itr++ = pred(value)) {
 				count++;
 			}
 		}
 		return { std::move(flag), count };
 	}
+
+	template <typename T, typename Predicate>
+	inline std::pair<std::vector<uint32_t>, size_t> Chunk::CountIfIndex(const Predicate &pred) const
+	{
+		// ヒット数
+		size_t count = 0;
+		// 要素数の数だけのメモリを確保する
+		std::vector<uint32_t> indexList(size(), (std::numeric_limits<uint32_t>::max)());
+		auto itr = indexList.begin();
+		// チャンク内部を走査
+		// コンポーネントを取得して返す
+		for (const auto &[value] : this->View<T>()) {
+			// 条件に一致したらtrueを代入し､カウントを追加する
+			if (pred(value)) {
+				*(itr++) = static_cast<uint32_t>(count++);
+			}
+		}
+		return { std::move(indexList), count };
+	}
+
 
 	inline uint32_t Chunk::emplace_back()
 	{

@@ -391,7 +391,7 @@ void GameScene::OnEnter() {
 	}
 	{
 		auto button = ButtonUI::Generate();
-		button->Init(TextureManager::Load("UI/FullHealth.png"), [this]() {
+		button->Init(TextureManager::Load("UI/Satellite.png"), [this]() {
 
 			GeneratePlayerStoneAttack(newWorld_, 1u);
 			}
@@ -407,11 +407,8 @@ void GameScene::OnEnter() {
 				// プレイヤのView
 				auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
 
-				for (auto chunk : playerChunks) {
-					for (auto &player : *chunk) {
-						auto &shooter = player.GetComponent<ECS::StoneShooter>();
-						shooter.count_++;
-					}
+				for (auto [shooter] : playerChunks.View<ECS::StoneShooter>()) {
+					shooter.count_++;
 				}
 			}
 		);
@@ -1037,35 +1034,26 @@ void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
 	areaArch.AddClassData<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::LifeLimit, ECS::AliveTime, ECS::AttackRangeCircle>();
 
 	// 攻撃範囲の生成
-	uint32_t index = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second)).begin(); // 書き込み先のIndex
-	auto areaChanks = world.GetAccessableChunk(areaArch);
+	auto areaChunk = world.CreateEntity(areaArch, static_cast<uint32_t>(attackCount.second));
 
-	auto sphereRanges = areaChanks.GetRange<ECS::SphereCollisionComp>();
-	auto attackPowerRanges = areaChanks.GetRange<ECS::AttackPower>();
-	auto knockBackRanges = areaChanks.GetRange<ECS::KnockBackDirection>();
-	auto lifeRanges = areaChanks.GetRange<ECS::LifeLimit>();
+	auto areaView = areaChunk.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::LifeLimit>();
+	auto areaItr = areaView.begin();
 
-	auto playerPosRanges = attackPlayerChunks.GetRange<ECS::PositionComp>();
-	auto playerRotRanges = attackPlayerChunks.GetRange<ECS::QuaternionRotComp>();
-	auto playerAttackRanges = attackPlayerChunks.GetRange<ECS::AttackStatus>();
-	auto playerPowerRanges = attackPlayerChunks.GetRange<ECS::AttackPower>();
+	auto playerView = attackPlayerChunks.View<const ECS::PositionComp, const ECS::QuaternionRotComp, const ECS::AttackStatus, const ECS::AttackPower>();
+	auto playerItr = playerView.begin();
 	uint32_t size = attackPlayerChunks.Count();
 	for (uint32_t i = 0; i < size; i++) {
 		if (attackCount.first.at(i)) {
-			const auto &attackStatus = playerAttackRanges.At(i);
-			auto &sphere = sphereRanges.At(index);
-			sphere.collision_.centor = playerPosRanges.At(i).position_ + attackStatus.offset_ * playerRotRanges.At(i).quateRot_.GetFront();
+			auto [sphere, attackPower, knockBack, lifeTime] = *areaItr++;
+			const auto [playerPos, rot, attackStatus, playerAttackPower] = *playerItr++;
+			sphere.collision_.centor = playerPos.position_ + attackStatus.offset_ * rot.quateRot_.GetFront();
 			sphere.collision_.radius = attackStatus.radius_;
-			auto &knockBack = knockBackRanges.At(index);
 			// 吹き飛ばす力
 			knockBack.diffPower_ = { baseKnockBackPower_, baseKnockBackPower_ };
 			// 攻撃持続時間
-			lifeRanges.At(index).lifeLimit_ = attackTime_;
+			lifeTime.lifeLimit_ = attackTime_;
 			// 攻撃力
-			attackPowerRanges.At(index) = playerPowerRanges.At(i);
-
-			// 次に移動
-			++index;
+			attackPower = playerAttackPower;
 		}
 	}
 }
@@ -1088,15 +1076,16 @@ void GameScene::GenerateExperience(ECS::World &world, size_t &killCount) const
 		expArch.AddClassData<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive, ECS::AliveTime>();
 		// 経験値オーブの生成
 		auto ent = world.CreateEntity(expArch, static_cast<uint32_t>(deadCount.second));
-		auto entItr = ent.View<ECS::PositionComp, ECS::IsAlive>().begin();
+		auto entItr = ent.View<ECS::PositionComp>().begin();
 
-		auto enemRange = enemyChunks.GetRange<ECS::PositionComp>();
+		auto enemRange = enemyChunks.View<const ECS::PositionComp>();
+		auto enemyItr = enemRange.begin();
 		uint32_t size = enemyChunks.Count();
 		for (uint32_t i = 0; i < size; i++) {
 			if (deadCount.first.at(i)) {
-				auto [a, b] = (*entItr++);
-				const auto &enemPos = enemRange.At(i);
-				a = enemPos;
+				auto [expPos] = (*entItr++);
+				const auto &[enemPos] = *(enemyItr++);
+				expPos = enemPos;
 			}
 		}
 	}
@@ -1109,14 +1098,15 @@ void GameScene::PlayerExperience(ECS::World &world) const
 	playerArchetype.AddClassData<ECS::PlayerTag>();
 	// プレイヤのView
 	auto playerChunks = world.GetAccessableChunk(playerArchetype);
-	if (playerChunks.Count()) {
 
-		const auto &playerPos = playerChunks.GetRange<ECS::PositionComp>().At(0);
-		auto &playerExp = playerChunks.GetRange<ECS::Experience>().At(0);
+	auto playerView = playerChunks.View<ECS::PositionComp, ECS::Experience>();
+	if (not playerView.empty()) {
+
+		const auto &[playerPos, playerExp] = playerView.front();
 
 		// 経験値のアーキタイプ
 		auto expChunks = world.GetAccessableChunk(Archetype::Generate<ECS::ExpOrb, ECS::PositionComp, ECS::IsAlive>());
-		auto view = std::ranges::views::join(expChunks.View<ECS::PositionComp, ECS::IsAlive>());
+		auto view = expChunks.View<ECS::PositionComp, ECS::IsAlive>();
 
 		for (auto [pos, alive] : view) {
 
@@ -1249,14 +1239,14 @@ void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, const Sol
 	size_t totalCount = 0;
 
 	// チャンクと同じ数のデータを確保する
-	std::vector<std::tuple<size_t, std::vector<bool>, size_t>> chunkOffset(chunks.size());
+	std::vector<std::tuple<size_t, std::vector<uint32_t>, size_t>> chunkOffset(chunks.size());
 	for (uint32_t i = 0; i < chunkOffset.size(); i++) {
-		auto &[index, flag, count] = chunkOffset[i];
-		index = totalCount;
-		auto [rFlag, rCount] = chunks[i]->CountIfFlag<ECS::DamageCounter>([](const ECS::DamageCounter &flag) {
+		auto &[offset, index, count] = chunkOffset[i];
+		offset = totalCount;
+		auto &&[rIndex, rCount] = chunks[i]->CountIfIndex<ECS::DamageCounter>([](const ECS::DamageCounter &flag) {
 			return (flag.damageCount_ != 0 and flag.damageRemainTime_ > 0);
 			});
-		flag = std::move(rFlag);
+		index = std::move(rIndex);
 		count = rCount;
 		totalCount += count;
 
@@ -1272,19 +1262,20 @@ void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, const Sol
 	const Matrix4x4 &matVPVp = camera.matView_ * camera.matProjection_ * vp;
 
 	for (size_t i = 0; i < chunkOffset.size(); i++) {
-		const auto &[index, flag, count] = chunkOffset[i];
+		const auto &[offset, indexList, count] = chunkOffset[i];
 		const auto &chunk = chunks[i];
 
-		auto numItr = &numberSpan[index];
+		auto numItr = &numberSpan[offset];
 
 		const auto &chunkView = chunk->View<ECS::PositionComp, ECS::DamageCounter>();
 		auto viewItr = chunkView.begin();
 
 		for (uint32_t j = 0; j < chunkView.size(); j++) {
 			auto target = viewItr++;
-			if (flag[j]) {
+			uint32_t index = indexList[j];
+			if (index != (std::numeric_limits<uint32_t>::max)()) {
 				const auto &[position, damageCounter] = *target;
-				auto num = (*(numItr++)).get();
+				auto num = numItr[index].get();
 
 				num->SetText(damageCounter.damageCount_);
 
