@@ -333,8 +333,9 @@ namespace ECS {
 		for (const auto &[value] : this->View<T>()) {
 			// 条件に一致したらtrueを代入し､カウントを追加する
 			if (pred(value)) {
-				*(itr++) = static_cast<uint32_t>(count++);
+				*(itr) = static_cast<uint32_t>(count++);
 			}
+			itr++;
 		}
 		return { std::move(indexList), count };
 	}

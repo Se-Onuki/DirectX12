@@ -236,7 +236,7 @@ void GameScene::OnEnter() {
 	arrowAttackRender_.Init();
 	arrowAttackRender_.SetModelData(arrowModel);
 
-	auto boxAssimp = assimpManager->Load({ "Model/AnimatedCube/","AnimatedCube.gltf" });
+	auto boxAssimp = assimpManager->Load({ "Model/Ultimate Nature Pack/","Rock_3.obj" });
 	auto boxModel = modelDataManager->Load({ boxAssimp });
 
 	boxAttackRender_.Init();
@@ -566,6 +566,17 @@ void GameScene::Update() {
 			}
 		);
 	}
+
+	{
+		auto chunk = newWorld_.GetAccessableChunk(Archetype::Generate<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>());
+		auto stoneView = chunk.View<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>();
+
+		
+
+
+
+	}
+
 	// 攻撃範囲の描画
 	AttackEffectRender(newWorld_, attackRender_);
 
@@ -954,9 +965,10 @@ void GameScene::GeneratePlayerStoneAttack(ECS::World &world, uint32_t addCount) 
 		coll.collision_.radius = 1.f;
 		attack.power_ = 5;
 		// 個数に応じた角度
-		stoneBullet.angleOffset_ = bulletAngleOffset * i++;
+		stoneBullet.angleOffset_ = (bulletAngleOffset * i++);
 	}
 }
+
 void GameScene::GeneratePlayerArrowAttack(ECS::World &world) const
 {
 	// 攻撃中のチャンクの取得
@@ -1045,7 +1057,7 @@ void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
 	for (uint32_t i = 0; i < size; i++) {
 		if (attackCount.first.at(i)) {
 			auto [sphere, attackPower, knockBack, lifeTime] = *areaItr++;
-			const auto [playerPos, rot, attackStatus, playerAttackPower] = *playerItr++;
+			const auto [playerPos, rot, attackStatus, playerAttackPower] = *playerItr;
 			sphere.collision_.centor = playerPos.position_ + attackStatus.offset_ * rot.quateRot_.GetFront();
 			sphere.collision_.radius = attackStatus.radius_;
 			// 吹き飛ばす力
@@ -1055,6 +1067,7 @@ void GameScene::GeneratePlayerRangeAttack(ECS::World &world) const
 			// 攻撃力
 			attackPower = playerAttackPower;
 		}
+		playerItr++;
 	}
 }
 
@@ -1084,9 +1097,10 @@ void GameScene::GenerateExperience(ECS::World &world, size_t &killCount) const
 		for (uint32_t i = 0; i < size; i++) {
 			if (deadCount.first.at(i)) {
 				auto [expPos] = (*entItr++);
-				const auto &[enemPos] = *(enemyItr++);
+				const auto &[enemPos] = *(enemyItr);
 				expPos = enemPos;
 			}
+			enemyItr++;
 		}
 	}
 }
@@ -1094,10 +1108,8 @@ void GameScene::GenerateExperience(ECS::World &world, size_t &killCount) const
 void GameScene::PlayerExperience(ECS::World &world) const
 {
 
-	Archetype playerArchetype;
-	playerArchetype.AddClassData<ECS::PlayerTag>();
 	// プレイヤのView
-	auto playerChunks = world.GetAccessableChunk(playerArchetype);
+	auto playerChunks = world.GetAccessableChunk(Archetype::Generate<ECS::PlayerTag>());
 
 	auto playerView = playerChunks.View<ECS::PositionComp, ECS::Experience>();
 	if (not playerView.empty()) {
@@ -1134,7 +1146,7 @@ void GameScene::SatelliteAttackRender(const ECS::World &world, SolEngine::ModelI
 			const auto &[bullet, trans, time] = item;
 
 			Particle::ParticleData result{ .color = 0x666666FF };
-			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * time.aliveTime_ / attackRotSpeed) * (trans.collision_.radius);
+			result.transform.World = Matrix4x4::AnyAngleRotate(Vector3::up, SoLib::Angle::Rad360 * time.aliveTime_ / attackRotSpeed) * (trans.collision_.radius) * 3.f;
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
 			return result;
@@ -1146,7 +1158,7 @@ void GameScene::SatelliteAttackRender(const ECS::World &world, SolEngine::ModelI
 			const auto &[stone, trans, time] = item;
 
 			Particle::ParticleData result{ .color = 0x666666FF };
-			result.transform.World = Matrix4x4::Identity() * (trans.collision_.radius);
+			result.transform.World = Matrix4x4::Identity() * (trans.collision_.radius) * 3.f;
 			result.transform.World.GetTranslate() = trans.collision_.centor;
 			result.transform.World.m[3][3] = 1.f;
 			return result;
@@ -1271,10 +1283,9 @@ void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, const Sol
 		auto viewItr = chunkView.begin();
 
 		for (uint32_t j = 0; j < chunkView.size(); j++) {
-			auto target = viewItr++;
 			uint32_t index = indexList[j];
 			if (index != (std::numeric_limits<uint32_t>::max)()) {
-				const auto &[position, damageCounter] = *target;
+				const auto &[position, damageCounter] = *viewItr;
 				auto num = numItr[index].get();
 
 				num->SetText(damageCounter.damageCount_);
@@ -1282,6 +1293,7 @@ void GameScene::DamageRender([[maybe_unused]] const ECS::World &world, const Sol
 				num->SetPosition(SolEngine::Render::WorldToScreen(position, matVPVp).ToVec2());
 
 			}
+			viewItr++;
 		}
 
 	}
