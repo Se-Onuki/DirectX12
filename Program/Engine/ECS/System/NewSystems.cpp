@@ -630,20 +630,24 @@ namespace ECS::System::Par {
 		if (not shareData_ or not shareData_->playerPos_) { return; }
 		auto [aliveTime, coll, stone] = readWrite_;
 
-		Vector3 front = Quaternion::AnyAxisRotation(Vector3::up, SoLib::Angle::Mod(aliveTime.aliveTime_ * stone.rotateSpeed_ + stone.angleOffset_)).GetFront() * stone.distance_;
+		Vector3 front = Quaternion::AnyAxisRotation(Vector3::up, SoLib::Angle::Mod(shareData_->playerAliveTime_ * stone.rotateSpeed_ + stone.angleOffset_)).GetFront() * stone.distance_;
 		coll.collision_.centor = front + *shareData_->playerPos_;
 
 	}
 	void StoneWeaponCollision::ExecuteOnce(const World *const world, const float)
 	{
-		const auto &chunks = world->GetAccessableChunk(Archetype::Generate<ECS::PlayerTag>());
+		const auto &chunks = world->GetAccessableChunk(Archetype::Generate<ECS::PlayerTag, ECS::PositionComp, ECS::AliveTime>());
 		if (not shareData_ or not shareData_->playerPos_) { shareData_ = std::make_unique<ShareData>(); }
-		if (chunks.empty()) { shareData_->playerPos_ = std::nullopt; return; }
+		if (chunks.empty() or not chunks.front() or not chunks.front()->size()) { shareData_->playerPos_ = std::nullopt; return; }
 
-		auto compRange = chunks.front()->GetComponent<ECS::PositionComp>();
-		if (not compRange.IsActive()) { shareData_->playerPos_ = std::nullopt; return; }
+		auto compRange = chunks.front()->View<ECS::PositionComp, ECS::AliveTime>();
+		if (compRange) { shareData_->playerPos_ = std::nullopt; return; }
 
-		shareData_->playerPos_ = compRange.front();
+		auto [pos, aliveTime] = compRange.front();
+
+		shareData_->playerPos_ = pos;
+		shareData_->playerAliveTime_ = aliveTime.aliveTime_;
+
 	}
 
 	void FallingStoneUpdate::Execute(const World *const, const float)

@@ -229,7 +229,7 @@ namespace ECS {
 		auto empty() const { return size_ and static_cast<bool>(begin_); }
 		explicit operator bool() const { return not empty(); }
 
-		auto &front() { return *begin_; }
+		auto front() { return *begin_; }
 		const auto &front() const { return *begin_; }
 
 		auto &back() { return begin_[size_ - 1]; }

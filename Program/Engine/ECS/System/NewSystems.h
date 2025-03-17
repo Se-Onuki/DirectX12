@@ -225,7 +225,7 @@ namespace ECS {
 				using DataBase = DataBase<decltype(readWrite_)>;
 				struct ShareData {
 					std::optional<Vector3> playerPos_;
-
+					float playerAliveTime_ = 0;
 				};
 				inline static std::unique_ptr<ShareData> shareData_ = nullptr;
 

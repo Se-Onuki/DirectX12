@@ -112,6 +112,7 @@ void GameScene::OnEnter() {
 	playerPrefab_ = std::make_unique<ECS::Prefab>();
 
 	*playerPrefab_ += ECS::IsAlive{};
+	*playerPrefab_ += ECS::AliveTime{};
 	*playerPrefab_ += ECS::ScaleComp{ .scale_ = Vector3::one * 2.f };
 	*playerPrefab_ += ECS::QuaternionRotComp{};
 	*playerPrefab_ += ECS::PositionComp{ .position_ {.x = 0.1f} };
