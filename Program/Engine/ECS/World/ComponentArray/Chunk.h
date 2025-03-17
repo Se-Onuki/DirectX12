@@ -377,9 +377,9 @@ namespace ECS {
 		const uint32_t nowCapacity = entCount * storage_->size();
 
 		// もし末尾まで到達していたら
-		if (nowCapacity < size_ + count) {
+		if (nowCapacity <= size_ + count) {
 
-			const uint32_t needEntityCount = (size_ + count) - nowCapacity;
+			const uint32_t needEntityCount = (size_ + count) - nowCapacity + 1;
 			const uint32_t needGroupCount = static_cast<uint32_t>(std::ceil(static_cast<float>(needEntityCount) / entCount));
 
 			// メモリを確保する
