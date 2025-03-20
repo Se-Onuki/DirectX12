@@ -74,31 +74,18 @@ namespace ECS {
 		SoLib::Color::RGB4 end_;
 	};
 
+	class Prefab;
+	template<bool IsConst>
+	class EntityList;
+
 	struct EmitterComp : IComponent {
-		int32_t count_{};
-		SoLib::DeltaTimer frequency_;
-		SoLib::Color::RGB4 startColor_ = 0xFFFFFFFF;
-		SoLib::Color::RGB4 endColor_{};
-
-		SoLib::ValuePair<float> spawnLifeLimit_{ };
-
-		SoLib::ValuePair<float> spawnPower_{};
-		SoLib::Math::Euler spawnRange_{};
-
-		// SoLib::ConstVector<uint32_t, 7u> color_;
+		Prefab *prefab_ = nullptr;
+		// 生成したパーティクルに行う処理
+		void(*beforeCreate_)(const EntityList<false> &entList) = nullptr;
+		// 秒間で発生するパーティクルの個数
+		uint32_t generateOfTime_ = 0;
 
 
-		bool ImGuiWidget(const char *const label) {
-			bool isChanged = false;
-			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : EmittCount" }).c_str(), &count_);
-			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : EmittSpan" }).c_str(), &frequency_);
-			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnLifeLimit" }).c_str(), &spawnLifeLimit_);
-			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnPower" }).c_str(), &spawnPower_);
-			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : SpawnRange" }).c_str(), &spawnRange_);
-			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : StartColor" }).c_str(), &startColor_);
-			isChanged |= SoLib::ImGuiWidget((label + std::string{ " : EndColor" }).c_str(), &endColor_);
-			return isChanged;
-		}
 	};
 
 	struct ColorLarp :IComponent {

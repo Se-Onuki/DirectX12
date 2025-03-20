@@ -18,8 +18,7 @@ namespace ECS {
 	class Chunk;
 	class World;
 
-	struct IJobEntity
-	{};
+	struct IJobEntity {};
 
 	struct IFunctionalSystem
 	{

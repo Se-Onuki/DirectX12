@@ -235,6 +235,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utils\Math\UIValue.cpp" />
     <ClCompile Include="Engine\Utils\Network\Socket\UdpNetwork.cpp" />
     <ClCompile Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.cpp" />
+    <ClCompile Include="Engine\VFX\Particle\Particle.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
@@ -384,6 +385,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utils\Network\TcpClient.h" />
     <ClInclude Include="Engine\Utils\Network\TcpServer.h" />
     <ClInclude Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.h" />
+    <ClInclude Include="Engine\VFX\Particle\Particle.h" />
+    <ClInclude Include="Engine\VFX\Particle\ParticleSystem.h" />
     <ClInclude Include="Game\Resource\EnemyDataTable.h" />
     <ClInclude Include="Game\Resource\GameScore.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
