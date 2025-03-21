@@ -38,7 +38,7 @@ namespace SolEngine::VFX
 
 	private:
 
-		void Generate() const;
+		void Generate(uint32_t count) const;
 
 		SoLib::Time::DeltaTimer timer_;
 

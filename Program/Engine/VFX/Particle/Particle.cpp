@@ -20,12 +20,12 @@ namespace SolEngine::VFX {
 
 	void ParticleEmitter::EmitUpdate(float deltaTime) const
 	{
-
+		if (deltaTime <= 0) { return; }
+		Generate(static_cast<uint32_t>(particleSpawnOfTime_ / deltaTime));
 	}
 
-	void ParticleEmitter::Generate(ECS::World *const world) const
+	void ParticleEmitter::Generate([[maybe_unused]] uint32_t count) const
 	{
-		world->CreateEntity(particleBase_);
 	}
 
 	void ParticleManager::AddEmitter(std::unique_ptr<ParticleEmitter> particleEmitter)
@@ -35,14 +35,13 @@ namespace SolEngine::VFX {
 
 	void ParticleManager::Update(float deltaTime)
 	{
-
+		std::for_each(particleBuffer_.begin(), particleBuffer_.end(), [deltaTime](auto &buffer) {buffer->Update(deltaTime); });
 	}
 
 	std::unique_ptr<ParticleManager> SolEngine::VFX::ParticleManager::Generate()
 	{
 		auto result = std::make_unique<ParticleManager>();
 
-		result->world_ = std::make_unique<ECS::World>();
 
 		return std::move(result);
 	}
