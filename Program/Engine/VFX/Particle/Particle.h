@@ -16,12 +16,20 @@ namespace SolEngine::VFX
 	class IParticle {
 	public:
 
+		struct DrawData {
+			Matrix4x4 mat_;
+			SoLib::Color::RGB4 color_;
+		};
 
+		virtual void Update(float deltaTime) = 0;
+
+		virtual const DrawData &GetDrawData() const = 0;
 	};
 
 	class TestParticle : public IParticle {
 	public:
 
+		void Update(float deltaTime);
 
 	};
 

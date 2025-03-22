@@ -2,6 +2,10 @@
 
 namespace SolEngine::VFX {
 
+	void TestParticle::Update(float deltaTime)
+	{
+	}
+
 	void ParticleEmitter::Init()
 	{
 
@@ -45,5 +49,6 @@ namespace SolEngine::VFX {
 
 		return std::move(result);
 	}
+
 
 }
