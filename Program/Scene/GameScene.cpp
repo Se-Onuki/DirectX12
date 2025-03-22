@@ -44,7 +44,7 @@ void GameScene::OnEnter() {
 	texStrage_ = SolEngine::FullScreenTextureStrage::GetInstance();
 
 	particleManager_ = SolEngine::VFX::ParticleManager::Generate();
-	//particleManager_->AddEmitter(std::make_unique<SolEngine::VFX::ParticleEmitter>>());
+	particleManager_->AddEmitter(std::move(SolEngine::VFX::ParticleEmitter::Generate<SolEngine::VFX::TestParticle>()));
 
 	compRegistry_ = ECS::ComponentRegistry::GetInstance();
 

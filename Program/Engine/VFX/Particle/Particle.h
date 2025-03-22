@@ -189,9 +189,17 @@ namespace SolEngine::VFX
 
 		ModelHandle GetModelHandle() const { return modelData_; }
 
+		/// @brief ジェネレーターの取得
+		/// @return ジェネレーターの関数ポインタ
 		auto GetGenerater() const { return generater_; }
 
 		bool IsDead() const { return isDead_; }
+
+		template<typename T>
+		void SetGenerater() { generater_ = []()->std::unique_ptr<IParticle> { return std::make_unique<T>(); }; }
+
+		template<typename T>
+		static std::unique_ptr<ParticleEmitter> Generate();
 
 	private:
 
@@ -277,5 +285,16 @@ namespace SolEngine::VFX
 	};
 
 
+
+	template<typename T>
+	inline std::unique_ptr<ParticleEmitter> ParticleEmitter::Generate()
+	{
+		std::unique_ptr<ParticleEmitter> result = std::make_unique<ParticleEmitter>();
+
+		result->SetGenerater<T>();
+		result->Init();
+
+		return std::move(result);
+	}
 
 }
