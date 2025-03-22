@@ -40,6 +40,7 @@
 #include "../Engine/UI/Text/NumberRender.h"
 #include "../Engine/DirectBase/File/GlobalVariables.h"
 #include "../Game/Resource/EnemyDataTable.h"
+#include "../Engine/VFX/Particle/Particle.h"
 
 /// @class GameScene
 /// @brief ゲームシーン
@@ -273,6 +274,8 @@ private:
 	SoLib::DeltaTimer spawnTimer_{ 2.5f };
 	/// @brief ゲームオブジェクト
 	GameObject gameObject_;
+
+	std::unique_ptr<SolEngine::VFX::ParticleManager> particleManager_;
 
 	/// @brief 体力バー
 	std::unique_ptr<HealthBar> healthBar_;

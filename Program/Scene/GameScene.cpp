@@ -43,6 +43,9 @@ void GameScene::OnEnter() {
 	pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
 	texStrage_ = SolEngine::FullScreenTextureStrage::GetInstance();
 
+	particleManager_ = SolEngine::VFX::ParticleManager::Generate();
+	//particleManager_->AddEmitter(std::make_unique<SolEngine::VFX::ParticleEmitter>>());
+
 	compRegistry_ = ECS::ComponentRegistry::GetInstance();
 
 	numberRender_ = SolEngine::NumberRender::Generate(TextureManager::Load("UI/Number.png"));
@@ -584,7 +587,7 @@ void GameScene::Update() {
 		auto chunk = newWorld_.GetAccessableChunk(Archetype::Generate<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>());
 		auto stoneView = chunk.View<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>();
 
-		
+
 
 
 
