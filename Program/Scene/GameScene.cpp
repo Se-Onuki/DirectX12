@@ -43,9 +43,6 @@ void GameScene::OnEnter() {
 	pShaderManager_ = SolEngine::ResourceObjectManager<Shader, ShaderSource>::GetInstance();
 	texStrage_ = SolEngine::FullScreenTextureStrage::GetInstance();
 
-	particleManager_ = SolEngine::VFX::ParticleManager::Generate();
-	particleManager_->AddEmitter(std::move(SolEngine::VFX::ParticleEmitter::Generate<SolEngine::VFX::TestParticle>()));
-
 	compRegistry_ = ECS::ComponentRegistry::GetInstance();
 
 	numberRender_ = SolEngine::NumberRender::Generate(TextureManager::Load("UI/Number.png"));
@@ -273,6 +270,14 @@ void GameScene::OnEnter() {
 	menuTimer_.Start(0.01f);
 
 	vignettingParam_ = { 16.f, 0.8f };
+
+
+	particleManager_ = SolEngine::VFX::ParticleManager::Generate();
+	auto particleEmitter = SolEngine::VFX::ParticleEmitter::Generate<SolEngine::VFX::TestParticle>();
+	particleEmitter->SetModelHandle(attackModel);
+	particleManager_->AddEmitter(std::move(particleEmitter));
+	particleRender_ = std::move(SolEngine::VFX::ParticleRender::Generate());
+
 
 	ECS::IFunctionalSystem::world_ = &newWorld_;
 
@@ -689,6 +694,7 @@ void GameScene::Draw() {
 
 	shadowRenderer_.DrawExecute(camera);
 	attackRender_.DrawExecute(camera);
+	particleRender_->ExecuteDraw(particleManager_.get(), camera);
 
 	Model::EndDraw();
 

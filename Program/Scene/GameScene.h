@@ -134,7 +134,7 @@ private:
 	/// @brief パーティクルの描画
 	/// @param world[in] ワールドデータ
 	/// @param attackRender[out] 描画バッファ
-	void PatricleRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
+	//void PatricleRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
 
 	/// @brief 衛星の描画
 	/// @param world[in] ワールドデータ
@@ -276,6 +276,7 @@ private:
 	GameObject gameObject_;
 
 	std::unique_ptr<SolEngine::VFX::ParticleManager> particleManager_;
+	std::unique_ptr<SolEngine::VFX::ParticleRender> particleRender_;
 
 	/// @brief 体力バー
 	std::unique_ptr<HealthBar> healthBar_;

@@ -4,6 +4,7 @@
 #pragma once
 #include <cstdint>
 #include "../../Utils/Math/Math.hpp"
+#include "../../Engine/ResourceObject/ResourceObjectManager.h"
 
 #include "../Engine/DirectBase/Base/EngineObject.h"
 #include "../Engine/DirectBase/Base/StructBuffer.h"
@@ -187,6 +188,8 @@ namespace SolEngine::VFX
 
 		void SetParticleList(ParticleList *const particleList) { particleList_ = particleList; }
 
+		void SetModelHandle(const ModelHandle model) { modelData_ = model; }
+
 		ModelHandle GetModelHandle() const { return modelData_; }
 
 		/// @brief ジェネレーターの取得
@@ -233,6 +236,7 @@ namespace SolEngine::VFX
 
 		// モデルのハンドル
 		using ModelHandle = SolEngine::ResourceHandle<SolEngine::ModelData>;
+	public:
 		struct GeneraterAndModel {
 			std::unique_ptr<IParticle>(*generater_)();
 			ModelHandle model_;
@@ -240,7 +244,7 @@ namespace SolEngine::VFX
 		};
 		struct Hash {
 			size_t operator()(const GeneraterAndModel &data) const {
-				return (data.model_.GetHashID() & 0xFFFF) | (std::bit_cast<size_t>(data.generater_) & 0xFFFF0000);
+				return (data.model_.GetHashID() & 0xFFFFFFFF) | (std::bit_cast<size_t>(data.generater_) & 0xFFFFFFFF00000000);
 			}
 		};
 
@@ -253,6 +257,8 @@ namespace SolEngine::VFX
 		void Update(float deltaTime);
 
 		static std::unique_ptr<ParticleManager> Generate();
+
+		const auto &GetParticleData() const { return particleData_; }
 
 	private:
 
@@ -267,6 +273,12 @@ namespace SolEngine::VFX
 		// モデルのハンドル
 		using ModelHandle = SolEngine::ResourceHandle<SolEngine::ModelData>;
 
+		struct Hash {
+			size_t operator()(const ModelHandle model) const {
+				return model.GetHashID();
+			}
+		};
+
 	public:
 
 		/// @brief 初期化処理
@@ -277,10 +289,18 @@ namespace SolEngine::VFX
 
 		/// @brief 描画処理
 		/// @param[in] particleManager データの取得元
-		void ExecuteDraw(ParticleManager *const particleManager);
+		void ExecuteDraw(ParticleManager *const particleManager, const Camera3D &camera);
+
+		static std::unique_ptr<ParticleRender> Generate();
 
 	private:
-		std::unordered_map<ModelHandle, StructuredBuffer<IParticle::DrawData>> modelData_;
+
+		/// @brief モデルデータに応じたバッファ取得
+		/// @param[in] modelHandle モデルのハンドル
+		StructuredBuffer<IParticle::DrawData> *GetOrAddModelBuffer(ModelHandle modelHandle);
+
+	private:
+		std::unordered_map<ModelHandle, std::unique_ptr<StructuredBuffer<IParticle::DrawData>>, Hash> modelBuffers_;
 
 	};
 

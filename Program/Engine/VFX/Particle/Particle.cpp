@@ -142,11 +142,63 @@ namespace SolEngine::VFX {
 
 	void ParticleRender::FrameClear()
 	{
+		// for文で走査
+		for (const auto &[model, datas] : modelBuffers_) {
+			datas->clear();
+		}
+
 	}
 
-	void ParticleRender::ExecuteDraw(ParticleManager *const particleManager)
+	void ParticleRender::ExecuteDraw(ParticleManager *const particleManager, const Camera3D &camera)
 	{
-		particleManager;
+		// データの取得
+		const auto &particleData = particleManager->GetParticleData();
+		// for文で走査
+		for (const auto &[funcAndModel, datas] : particleData) {
+
+			// もし空なら飛ばす
+			if (datas->particleData_.empty()) { continue; }
+			// モデルデータの取得
+			auto &&[func, model] = funcAndModel;
+			// モデルデータからインスタンスの取得
+			auto buffer = GetOrAddModelBuffer(model);
+			// 書き込み先の予約
+			auto memory = buffer->Reservation(datas->particleData_.size());
+
+			assert(memory.size() == datas->particleData_.size() and "書き込みデータが範囲外になりました");
+			// データの転送
+			std::transform(datas->particleData_.begin(), datas->particleData_.end(), memory.begin(), [](const std::unique_ptr<IParticle> &particle) { return particle->GenerateDrawData(); });
+
+
+		}
+
+		// for文で走査
+		for (const auto &[model, datas] : modelBuffers_) {
+			// 描画処理
+			model->Draw(datas->GetHeapRange().GetHandle().gpuHandle_, datas->size(), datas->GetStartIndex(), camera);
+		}
+
+	}
+
+	std::unique_ptr<ParticleRender> ParticleRender::Generate()
+	{
+		std::unique_ptr<ParticleRender> result = std::make_unique<ParticleRender>();
+		result->Init();
+		return std::move(result);
+	}
+
+	StructuredBuffer<IParticle::DrawData> *ParticleRender::GetOrAddModelBuffer(ModelHandle modelHandle)
+	{
+		// モデルに応じたイテレータ
+		auto itr = modelBuffers_.find(modelHandle);
+		// データが空だったら
+		if (itr == modelBuffers_.end()) {
+			// 構築して渡す
+			itr = modelBuffers_.emplace(modelHandle, std::make_unique<StructuredBuffer<IParticle::DrawData>>(1024)).first;
+		}
+
+		// バッファのアドレスを返す
+		return itr->second.get();
 	}
 
 }
