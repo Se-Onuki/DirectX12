@@ -38,6 +38,10 @@ namespace SolEngine::VFX
 		/// @param[out] drawData 書き出し先
 		virtual void OutputDrawData(DrawData *const drawData) const = 0;
 
+		/// @brief 死亡判定
+		/// @return 死亡していたならtrue
+		virtual bool IsDead() const = 0;
+
 		/// @brief 書き出し処理のGenerate版
 		/// @return 生成したデータ
 		const DrawData GenerateDrawData() const;
@@ -138,6 +142,8 @@ namespace SolEngine::VFX
 
 		void OutputDrawData(DrawData *const drawData) const override;
 
+		bool IsDead() const override;
+
 	private:
 
 		/// @brief 座標の計算処理
@@ -149,10 +155,13 @@ namespace SolEngine::VFX
 		void TransferColor(DrawData *const drawData) const;
 
 	public:
-
+		// 加速度
+		Vector3 acceleration_;
+		// 速度
 		Vector3 velocity_;
-
+		// 座標系
 		SoLib::SimpleTransformQuaternion transform_;
+		// 色
 		SoLib::Color::RGB4 color_;
 
 	};
@@ -164,7 +173,7 @@ namespace SolEngine::VFX
 
 		void push_back(std::list<std::unique_ptr<IParticle>> &&particle);
 
-		void push_back(std::unique_ptr<IParticle>(*particle)(), uint32_t count);
+		void push_back(std::unique_ptr<IParticle>(*const func)(), uint32_t count);
 
 	public:
 
@@ -189,6 +198,10 @@ namespace SolEngine::VFX
 		void SetParticleList(ParticleList *const particleList) { particleList_ = particleList; }
 
 		void SetModelHandle(const ModelHandle model) { modelData_ = model; }
+
+		void SetSpawnCount(uint32_t count) { particleSpawnOfTime_ = count; }
+
+		void SetSpawnTimer(float goal, bool isLoop = false);
 
 		ModelHandle GetModelHandle() const { return modelData_; }
 
@@ -225,7 +238,7 @@ namespace SolEngine::VFX
 		// モデルデータ
 		ModelHandle modelData_;
 
-		/// @brief 実行回数のカウント
+		/// @brief 残り実行回数(nulloptは無限)
 		std::optional<uint32_t> executeCount_ = std::nullopt;
 
 		/// @brief 死んでいるか否か
@@ -264,7 +277,7 @@ namespace SolEngine::VFX
 
 		std::unordered_map<GeneraterAndModel, std::unique_ptr<ParticleList>, Hash> particleData_;
 
-		std::list<std::unique_ptr<ParticleEmitter>> particleBuffer_;
+		std::list<std::unique_ptr<ParticleEmitter>> particleEmitter_;
 	};
 
 	class ParticleRender : EngineObject {
@@ -300,7 +313,10 @@ namespace SolEngine::VFX
 		StructuredBuffer<IParticle::DrawData> *GetOrAddModelBuffer(ModelHandle modelHandle);
 
 	private:
+
 		std::unordered_map<ModelHandle, std::unique_ptr<StructuredBuffer<IParticle::DrawData>>, Hash> modelBuffers_;
+
+		uint32_t bufferSize_ = 1024;
 
 	};
 

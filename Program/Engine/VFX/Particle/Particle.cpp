@@ -26,6 +26,7 @@ namespace SolEngine::VFX {
 				particle->Update(deltaTime);
 			}
 		);
+		std::erase_if(particleData_, [](const std::unique_ptr<IParticle> &particle) { return particle->IsDead(); });
 	}
 
 	void ParticleList::push_back(std::list<std::unique_ptr<IParticle>> &&particle)
@@ -33,10 +34,14 @@ namespace SolEngine::VFX {
 		particleData_.insert(particleData_.end(), std::move_iterator(particle.begin()), std::move_iterator(particle.end()));
 	}
 
-	void ParticleList::push_back(std::unique_ptr<IParticle>(*particle)(), uint32_t count)
+	void ParticleList::push_back(std::unique_ptr<IParticle>(*const func)(), uint32_t count)
 	{
 		//particle; count;
-		std::generate_n(std::inserter(particleData_, particleData_.end()), count, particle);
+		std::generate_n(std::inserter(particleData_, particleData_.end()), count, [func]() {
+			auto particle = func();
+			particle->Init();
+			return std::move(particle);
+			});
 	}
 
 
@@ -58,6 +63,9 @@ namespace SolEngine::VFX {
 				if (*executeCount_ == 0) {
 					timer_.Reset();
 				}
+				else {
+					(*executeCount_)--;
+				}
 			}
 			EmitUpdate(deltaTime);
 
@@ -68,7 +76,12 @@ namespace SolEngine::VFX {
 	{
 		if (deltaTime <= 0) { return; }
 
-		GenerateParticle(static_cast<uint32_t>(particleSpawnOfTime_ / deltaTime));
+		GenerateParticle(particleSpawnOfTime_);
+	}
+
+	void ParticleEmitter::SetSpawnTimer(float goal, bool isLoop)
+	{
+		timer_.Start(goal, isLoop);
 	}
 
 	void ParticleEmitter::GenerateParticle(uint32_t count) const
@@ -92,12 +105,16 @@ namespace SolEngine::VFX {
 		// イテレータの中のパーティクルリストをエミッターに渡す
 		particleEmitter->SetParticleList(itr->second.get());
 		// エミッタのデータを転送して格納する
-		particleBuffer_.push_back(std::move(particleEmitter));
+		particleEmitter_.push_back(std::move(particleEmitter));
 	}
 
 	void ParticleManager::Update(float deltaTime)
 	{
-		std::for_each(particleBuffer_.begin(), particleBuffer_.end(), [deltaTime](auto &buffer) { buffer->Update(deltaTime); });
+		std::for_each(particleEmitter_.begin(), particleEmitter_.end(), [deltaTime](auto &emitter) { emitter->Update(deltaTime); });
+		std::erase_if(particleEmitter_, [](const auto &emitter) { return emitter->IsDead(); });
+		for (auto &[key, data] : particleData_) {
+			data->Update(deltaTime);
+		}
 	}
 
 	std::unique_ptr<ParticleManager> SolEngine::VFX::ParticleManager::Generate()
@@ -112,18 +129,27 @@ namespace SolEngine::VFX {
 
 	void TestParticle::Init()
 	{
-
+		color_ = 0xFFFFFFFF;
 	}
 
 	void TestParticle::Update(float deltaTime)
 	{
+		velocity_ += acceleration_;
 		transform_.translate_ += velocity_ * deltaTime;
+		acceleration_ = {};
 	}
 
 	void TestParticle::OutputDrawData(IParticle::DrawData *const drawData) const
 	{
-		// 座標の計算処理
+		// 座標の転送
 		TransferTransform(drawData);
+		// 色の転送
+		TransferColor(drawData);
+	}
+
+	bool TestParticle::IsDead() const
+	{
+		return false;
 	}
 
 	void TestParticle::TransferTransform(DrawData *const drawData) const
@@ -194,7 +220,7 @@ namespace SolEngine::VFX {
 		// データが空だったら
 		if (itr == modelBuffers_.end()) {
 			// 構築して渡す
-			itr = modelBuffers_.emplace(modelHandle, std::make_unique<StructuredBuffer<IParticle::DrawData>>(1024)).first;
+			itr = modelBuffers_.emplace(modelHandle, std::make_unique<StructuredBuffer<IParticle::DrawData>>(bufferSize_)).first;
 		}
 
 		// バッファのアドレスを返す

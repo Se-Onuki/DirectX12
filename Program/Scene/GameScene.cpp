@@ -273,8 +273,12 @@ void GameScene::OnEnter() {
 
 
 	particleManager_ = SolEngine::VFX::ParticleManager::Generate();
+
 	auto particleEmitter = SolEngine::VFX::ParticleEmitter::Generate<SolEngine::VFX::TestParticle>();
 	particleEmitter->SetModelHandle(attackModel);
+	particleEmitter->SetSpawnCount(16u);
+	particleEmitter->SetSpawnTimer(1.f);
+
 	particleManager_->AddEmitter(std::move(particleEmitter));
 	particleRender_ = std::move(SolEngine::VFX::ParticleRender::Generate());
 
@@ -625,6 +629,9 @@ void GameScene::Update() {
 		}
 	}
 
+	// パーティクルの更新
+	particleManager_->Update(fixDeltaTime);
+
 	grayScaleParam_ = 1 - damageTimer_.GetProgress();
 
 	ImGui::DragFloat2("VignettingParam", &vignettingParam_->first);
@@ -913,6 +920,7 @@ void GameScene::FlameClear()
 	modelHandleRender_->clear();
 	skinModelHandleRender_->clear();
 	numberRender_->Clear();
+	particleRender_->FrameClear();
 }
 
 void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTimer, SolEngine::SceneManager *const scene, Fade *const fade) const
