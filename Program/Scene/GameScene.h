@@ -141,6 +141,11 @@ private:
 	/// @param attackRender[out] 描画バッファ
 	void SatelliteAttackRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
 
+	/// @brief 落下物の描画
+	/// @param world[in] ワールドデータ
+	/// @param attackRender[out] 描画バッファ
+	void FallingStoneAttackRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const;
+
 	/// @brief 攻撃判定の描画
 	/// @param world[in] ワールドデータ
 	/// @param attackRender[out] 描画バッファ
@@ -245,8 +250,11 @@ private:
 	/// @brief 矢のモデルのインスタンシング描画の配列
 	SolEngine::ModelInstancingRender arrowAttackRender_;
 
-	/// @brief 箱のモデルのインスタンシング描画の配列
-	SolEngine::ModelInstancingRender boxAttackRender_;
+	/// @brief 石のモデルのインスタンシング描画の配列
+	SolEngine::ModelInstancingRender stoneAttackRender_;
+
+	/// @brief 剣のモデルのインスタンシング描画の配列
+	SolEngine::ModelInstancingRender swordAttackRender_;
 
 	/// @brief スポナークラス
 	ECS::Spawner spawner_;

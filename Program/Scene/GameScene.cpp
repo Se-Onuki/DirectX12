@@ -237,11 +237,18 @@ void GameScene::OnEnter() {
 	arrowAttackRender_.Init();
 	arrowAttackRender_.SetModelData(arrowModel);
 
-	auto boxAssimp = assimpManager->Load({ "Model/Ultimate Nature Pack/","Rock_3.obj" });
-	auto boxModel = modelDataManager->Load({ boxAssimp });
+	auto stoneAssimp = assimpManager->Load({ "Model/Ultimate Nature Pack/","Rock_3.obj" });
+	auto stoneModel = modelDataManager->Load({ stoneAssimp });
 
-	boxAttackRender_.Init();
-	boxAttackRender_.SetModelData(boxModel);
+	stoneAttackRender_.Init();
+	stoneAttackRender_.SetModelData(stoneModel);
+
+	auto swordAssimp = assimpManager->Load({ "Model/UltimateRPGItemsPack/","Axe_small.obj" });
+	auto swordModel = modelDataManager->Load({ swordAssimp });
+	(*swordModel->rootNode_.get()) = Matrix4x4::Affine(Vector3::one, Vector3{ .x = -SoLib::Angle::Rad90 }, Vector3{});
+
+	swordAttackRender_.Init();
+	swordAttackRender_.SetModelData(swordModel);
 
 	InitEnemyTable(enemyTable_);
 
@@ -275,7 +282,7 @@ void GameScene::OnEnter() {
 	particleManager_ = SolEngine::VFX::ParticleManager::Generate();
 
 	auto particleEmitter = SolEngine::VFX::ParticleEmitter::Generate<SolEngine::VFX::TestParticle>();
-	particleEmitter->SetModelHandle(boxModel);
+	particleEmitter->SetModelHandle(stoneModel);
 	particleEmitter->SetSpawnCount(0);
 	particleEmitter->SetDurationTimer((std::numeric_limits<float>::max)());
 
@@ -593,31 +600,31 @@ void GameScene::Update() {
 			}
 		);
 	}
-
+	// 更新が無かったら飛ばす
 	if (fixDeltaTime) {
+		// チャンクを取得する
 		auto chunk = newWorld_.GetAccessableChunk(Archetype::Generate<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>());
+		// チャンクから結合Viewを取得し､有効なデータだけを取る
 		auto stoneView = chunk.View<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>() | std::ranges::views::filter([](const std::tuple<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp> &item)
 			{
-				auto [alive, fall, pos] = item;
+				const auto &[alive, fall, pos] = item;
 				return alive.isAlive_ and pos.collision_.centor.y <= 0.f;
 			}
 		);
-
+		// 石の場所から石を飛ばす
 		for (const auto &[alive, fall, pos] : stoneView) {
 			particleEmitter_->SetScale(Vector3::one * 0.75f);
 			particleEmitter_->SetTranslate(pos.collision_.centor);
 			particleEmitter_->Start();
 		}
-
-
-
 	}
 
 	// 攻撃範囲の描画
 	AttackEffectRender(newWorld_, attackRender_);
 
 	ArrowAttackEffectRender(newWorld_, arrowAttackRender_);
-	SatelliteAttackRender(newWorld_, boxAttackRender_);
+	FallingStoneAttackRender(newWorld_, stoneAttackRender_);
+	SatelliteAttackRender(newWorld_, swordAttackRender_);
 
 	const auto &camera = *cameraManager_->GetUseCamera();
 	DamageRender(newWorld_, camera, *numberRender_);
@@ -694,7 +701,8 @@ void GameScene::Draw() {
 	light_->SetLight(commandList);
 
 	arrowAttackRender_.DrawExecute(camera);
-	boxAttackRender_.DrawExecute(camera);
+	stoneAttackRender_.DrawExecute(camera);
+	swordAttackRender_.DrawExecute(camera);
 	blockRender_->Draw(camera);
 	modelHandleRender_->Draw(camera);
 	expRender_.DrawExecute(camera);
@@ -924,7 +932,8 @@ void GameScene::FlameClear()
 	expRender_.Clear();
 	attackRender_.Clear();
 	arrowAttackRender_.Clear();
-	boxAttackRender_.Clear();
+	stoneAttackRender_.Clear();
+	swordAttackRender_.Clear();
 	particleArray_.clear();
 
 	blockRender_->clear();
@@ -979,12 +988,15 @@ void GameScene::GenetateFallingStone(ECS::World &world) const
 	auto stoneEntity = world.CreateEntity(Archetype::Generate<ECS::SphereCollisionComp, ECS::AttackPower, ECS::KnockBackDirection, ECS::IsAlive, ECS::AliveTime, ECS::FallingStone, ECS::VelocityComp, ECS::AccelerationComp, ECS::GravityComp, ECS::HasShadow>(), shooter.count_);
 
 	auto view = stoneEntity.View<ECS::SphereCollisionComp, ECS::AttackPower, ECS::FallingStone, ECS::AccelerationComp, ECS::GravityComp>();
+	uint32_t index = 0;
 	for (auto [coll, attack, stoneBullet, acc, gravity] : view) {
 		coll.collision_.centor = pos;
 		coll.collision_.radius = 0.75f;
 		attack.power_ = shooter.bulletData_.power_;
-		acc.acceleration_ += (rot.quateRot_ * Quaternion::AnyAxisRotation(Vector3::right, -80._deg)).Normalize().GetFront().Normalize() * 15.f;
-		gravity.gravity_ *= 2.f;
+		acc.acceleration_ += (rot.quateRot_ * Quaternion::AnyAxisRotation(Vector3::right, -80._deg)).Normalize().GetFront().Normalize() * (10.f * (1.f + index) + 5.f);
+		gravity.gravity_ *= 2.f * (1.f + index);
+
+		index++;
 	}
 }
 
@@ -1194,7 +1206,10 @@ void GameScene::SatelliteAttackRender(const ECS::World &world, SolEngine::ModelI
 			return result;
 		}
 	);
+}
 
+void GameScene::FallingStoneAttackRender(const ECS::World &world, SolEngine::ModelInstancingRender &attackRender) const
+{
 	attackRender.TransfarData<ECS::FallingStone, ECS::SphereCollisionComp, ECS::AliveTime>(world, [](const auto &item)
 		{
 			const auto &[stone, trans, time] = item;
