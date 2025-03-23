@@ -275,11 +275,13 @@ void GameScene::OnEnter() {
 	particleManager_ = SolEngine::VFX::ParticleManager::Generate();
 
 	auto particleEmitter = SolEngine::VFX::ParticleEmitter::Generate<SolEngine::VFX::TestParticle>();
-	particleEmitter->SetModelHandle(attackModel);
-	particleEmitter->SetSpawnCount(16u);
-	particleEmitter->SetSpawnTimer(1.f);
+	particleEmitter->SetModelHandle(boxModel);
+	particleEmitter->SetSpawnCount(0);
+	particleEmitter->SetDurationTimer((std::numeric_limits<float>::max)());
 
-	particleManager_->AddEmitter(std::move(particleEmitter));
+	particleEmitter->AddBurst({ .time_ = 0.f, .count_ = 12 });
+
+	particleEmitter_ = particleManager_->AddEmitter(std::move(particleEmitter));
 	particleRender_ = std::move(SolEngine::VFX::ParticleRender::Generate());
 
 
@@ -592,11 +594,20 @@ void GameScene::Update() {
 		);
 	}
 
-	{
+	if (fixDeltaTime) {
 		auto chunk = newWorld_.GetAccessableChunk(Archetype::Generate<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>());
-		auto stoneView = chunk.View<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>();
+		auto stoneView = chunk.View<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp>() | std::ranges::views::filter([](const std::tuple<ECS::IsAlive, ECS::FallingStone, ECS::SphereCollisionComp> &item)
+			{
+				auto [alive, fall, pos] = item;
+				return alive.isAlive_ and pos.collision_.centor.y <= 0.f;
+			}
+		);
 
-
+		for (const auto &[alive, fall, pos] : stoneView) {
+			particleEmitter_->SetScale(Vector3::one * 0.75f);
+			particleEmitter_->SetTranslate(pos.collision_.centor);
+			particleEmitter_->Start();
+		}
 
 
 
@@ -690,6 +701,8 @@ void GameScene::Draw() {
 
 	ghostRenderer_.DrawExecute(camera);
 
+	particleRender_->ExecuteDraw(particleManager_.get(), camera);
+
 	Model::SetPipelineType(Model::PipelineType::kSkinParticle);
 	light_->SetLight(commandList);
 
@@ -701,7 +714,6 @@ void GameScene::Draw() {
 
 	shadowRenderer_.DrawExecute(camera);
 	attackRender_.DrawExecute(camera);
-	particleRender_->ExecuteDraw(particleManager_.get(), camera);
 
 	Model::EndDraw();
 

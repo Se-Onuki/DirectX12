@@ -277,6 +277,7 @@ private:
 
 	std::unique_ptr<SolEngine::VFX::ParticleManager> particleManager_;
 	std::unique_ptr<SolEngine::VFX::ParticleRender> particleRender_;
+	SolEngine::VFX::ParticleEmitter *particleEmitter_ = nullptr;
 
 	/// @brief 体力バー
 	std::unique_ptr<HealthBar> healthBar_;

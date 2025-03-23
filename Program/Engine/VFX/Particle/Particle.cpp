@@ -34,14 +34,10 @@ namespace SolEngine::VFX {
 		particleData_.insert(particleData_.end(), std::move_iterator(particle.begin()), std::move_iterator(particle.end()));
 	}
 
-	void ParticleList::push_back(std::unique_ptr<IParticle>(*const func)(), uint32_t count)
+	void ParticleList::push_back(const std::function<std::unique_ptr<IParticle>(void)> &func, uint32_t count)
 	{
-		//particle; count;
-		std::generate_n(std::inserter(particleData_, particleData_.end()), count, [func]() {
-			auto particle = func();
-			particle->Init();
-			return std::move(particle);
-			});
+		// 生成処理を行う｡
+		std::generate_n(std::inserter(particleData_, particleData_.end()), count, func);
 	}
 
 
@@ -52,44 +48,75 @@ namespace SolEngine::VFX {
 
 	void ParticleEmitter::Start()
 	{
-		timer_.Start();
+		durationTimer_.Start();
+		std::for_each(burstEmitter_.begin(), burstEmitter_.end(), [](auto &data) {data.second = false; });
 	}
 
 	void ParticleEmitter::Update(float deltaTime)
 	{
-		timer_.Update(deltaTime);
-		if (timer_.IsFinish() and timer_.IsActive()) {
+		durationTimer_.Update(deltaTime);
+		if (durationTimer_.IsFinish() and durationTimer_.IsActive()) {
 			if (executeCount_) {
 				if (*executeCount_ == 0) {
-					timer_.Reset();
+					durationTimer_.Reset();
+					isDead_ = true;
 				}
 				else {
 					(*executeCount_)--;
 				}
 			}
-			EmitUpdate(deltaTime);
 
+		}
+		if (durationTimer_.IsActive()) {
+			std::for_each(burstEmitter_.begin(), burstEmitter_.end(), [this](std::pair<Burst, bool> &burstData) {
+				if (burstData.second) { return; }	// もし使ったデータなら飛ばす
+				if (burstData.first.time_ > durationTimer_.GetNowFlame()) { return; }	// もしまだ到達してないなら飛ばす
+				GenerateParticle(burstData.first.count_);	// 指定した個数分追加
+				burstData.second = true;	// フラグを立てる
+				}
+			);
+
+			EmitUpdate(deltaTime);
 		}
 	}
 
-	void ParticleEmitter::EmitUpdate(float deltaTime) const
+	void ParticleEmitter::EmitUpdate(float deltaTime)
 	{
 		if (deltaTime <= 0) { return; }
 
-		GenerateParticle(particleSpawnOfTime_);
+		float spawnCount = particleSpawnOfTime_ * deltaTime;
+		spawnCalcBuffer_ += std::fmodf(spawnCount, 1.f);
+
+		GenerateParticle(static_cast<uint32_t>(spawnCount + spawnCalcBuffer_));
+		spawnCalcBuffer_ = std::fmodf(spawnCalcBuffer_, 1.f);
 	}
 
-	void ParticleEmitter::SetSpawnTimer(float goal, bool isLoop)
+	void ParticleEmitter::SetDurationTimer(float goal, bool isLoop)
 	{
-		timer_.Start(goal, isLoop);
+		durationTimer_.Start(goal, isLoop);
+		durationTimer_.Reset();
+	}
+
+	void ParticleEmitter::AddBurst(const Burst burst)
+	{
+		burstEmitter_.push_back({ burst,false });
+		burstEmitter_.sort();
 	}
 
 	void ParticleEmitter::GenerateParticle(uint32_t count) const
 	{
-		particleList_->push_back(generater_, count);
+		if (not count) { return; }	// もし空なら作らない
+
+		particleList_->push_back([this]()
+			{
+				auto particle = generater_();
+				particle->Init();
+				dynamic_cast<TestParticle *>(particle.get())->transform_ = emitterTransform_;
+				return std::move(particle);
+			}, count);
 	}
 
-	void ParticleManager::AddEmitter(std::unique_ptr<ParticleEmitter> particleEmitter)
+	ParticleEmitter *const ParticleManager::AddEmitter(std::unique_ptr<ParticleEmitter> particleEmitter)
 	{
 		// 検索タグ
 		const auto tag = GeneraterAndModel(particleEmitter->GetGenerater(), particleEmitter->GetModelHandle());
@@ -105,7 +132,7 @@ namespace SolEngine::VFX {
 		// イテレータの中のパーティクルリストをエミッターに渡す
 		particleEmitter->SetParticleList(itr->second.get());
 		// エミッタのデータを転送して格納する
-		particleEmitter_.push_back(std::move(particleEmitter));
+		return particleEmitter_.emplace_back(std::move(particleEmitter)).get();
 	}
 
 	void ParticleManager::Update(float deltaTime)
@@ -130,13 +157,17 @@ namespace SolEngine::VFX {
 	void TestParticle::Init()
 	{
 		color_ = 0xFFFFFFFF;
+		velocity_ = Quaternion::Create(SoLib::Math::Euler(-45._deg, SoLib::Random::GetRandom(0.f, SoLib::Angle::Rad360), 0.f)).GetFront() * SoLib::Random::GetRandom(2.f,5.f);
+
 	}
 
 	void TestParticle::Update(float deltaTime)
 	{
+		acceleration_.y += -9.8f * deltaTime;
 		velocity_ += acceleration_;
 		transform_.translate_ += velocity_ * deltaTime;
 		acceleration_ = {};
+		if (transform_.translate_.y < -0.5f and velocity_.y < 0.f) { isDead_ = true; }
 	}
 
 	void TestParticle::OutputDrawData(IParticle::DrawData *const drawData) const
@@ -145,11 +176,6 @@ namespace SolEngine::VFX {
 		TransferTransform(drawData);
 		// 色の転送
 		TransferColor(drawData);
-	}
-
-	bool TestParticle::IsDead() const
-	{
-		return false;
 	}
 
 	void TestParticle::TransferTransform(DrawData *const drawData) const

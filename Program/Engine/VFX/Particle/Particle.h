@@ -142,7 +142,7 @@ namespace SolEngine::VFX
 
 		void OutputDrawData(DrawData *const drawData) const override;
 
-		bool IsDead() const override;
+		bool IsDead() const override { return isDead_; }
 
 	private:
 
@@ -164,6 +164,8 @@ namespace SolEngine::VFX
 		// 色
 		SoLib::Color::RGB4 color_;
 
+		bool isDead_ = false;
+
 	};
 
 	class ParticleList {
@@ -173,7 +175,7 @@ namespace SolEngine::VFX
 
 		void push_back(std::list<std::unique_ptr<IParticle>> &&particle);
 
-		void push_back(std::unique_ptr<IParticle>(*const func)(), uint32_t count);
+		void push_back(const std::function<std::unique_ptr<IParticle>(void)> &func, uint32_t count);
 
 	public:
 
@@ -187,13 +189,26 @@ namespace SolEngine::VFX
 		using ModelHandle = SolEngine::ResourceHandle<SolEngine::ModelData>;
 	public:
 
+		struct Burst {
+			float time_;
+			uint32_t count_;
+			bool operator==(const Burst &) const = default;
+			auto operator<=>(const Burst &that) const {
+				if (std::partial_ordering comp = this->time_ <=> that.time_; comp != 0) { return comp; }
+				std::partial_ordering comp = this->count_ <=> that.count_;
+				return comp;
+			}
+		};
+
+	public:
+
 		void Init();
 
 		void Start();
 
 		void Update(float deltaTime);
 
-		void EmitUpdate(float deltaTime) const;
+		void EmitUpdate(float deltaTime);
 
 		void SetParticleList(ParticleList *const particleList) { particleList_ = particleList; }
 
@@ -201,7 +216,14 @@ namespace SolEngine::VFX
 
 		void SetSpawnCount(uint32_t count) { particleSpawnOfTime_ = count; }
 
-		void SetSpawnTimer(float goal, bool isLoop = false);
+		void SetDurationTimer(float goal, bool isLoop = false);
+
+		void AddBurst(const Burst burst);
+
+		void SetScale(const Vector3 &scale) { emitterTransform_.scale_ = scale; }
+		void SetTranslate(const Vector3 &translate) { emitterTransform_.translate_ = translate; }
+
+		const auto &GetTransform() const { return emitterTransform_; }
 
 		ModelHandle GetModelHandle() const { return modelData_; }
 
@@ -229,8 +251,10 @@ namespace SolEngine::VFX
 		// パーティクルの格納先
 		ParticleList *particleList_ = nullptr;
 
+		std::list<std::pair<Burst, bool>> burstEmitter_;
+
 		// 実行のタイマー
-		SoLib::Time::DeltaTimer timer_;
+		SoLib::Time::DeltaTimer durationTimer_;
 
 		// パーティクル生成の個数
 		uint32_t particleSpawnOfTime_ = 0;
@@ -240,6 +264,12 @@ namespace SolEngine::VFX
 
 		/// @brief 残り実行回数(nulloptは無限)
 		std::optional<uint32_t> executeCount_ = std::nullopt;
+
+		//
+		SoLib::SimpleTransformQuaternion emitterTransform_;
+
+		// 生成数の時間の蓄積
+		float spawnCalcBuffer_ = 0.f;
 
 		/// @brief 死んでいるか否か
 		bool isDead_ = false;
@@ -265,7 +295,7 @@ namespace SolEngine::VFX
 
 		ParticleManager() = default;
 
-		void AddEmitter(std::unique_ptr<ParticleEmitter> particleEmitter);
+		ParticleEmitter *const AddEmitter(std::unique_ptr<ParticleEmitter> particleEmitter);
 
 		void Update(float deltaTime);
 
