@@ -168,7 +168,7 @@ void LevelUP::RandomSet()
 
 	static std::mt19937 gen;
 	static bool init;
-	if (!init) {
+	if (not init) {
 		std::random_device rd;
 		gen.seed(rd());
 		init = true;

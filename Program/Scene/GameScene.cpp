@@ -283,7 +283,6 @@ void GameScene::OnEnter() {
 
 	auto particleEmitter = SolEngine::VFX::ParticleEmitter::Generate<SolEngine::VFX::TestParticle>();
 	particleEmitter->SetModelHandle(stoneModel);
-	particleEmitter->SetSpawnCount(0);
 	particleEmitter->SetDurationTimer((std::numeric_limits<float>::max)());
 
 	particleEmitter->AddBurst({ .time_ = 0.f, .count_ = 12 });
