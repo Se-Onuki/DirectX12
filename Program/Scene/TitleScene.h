@@ -10,6 +10,8 @@
 
 #include "../Engine/DirectBase/Model/Model.h"
 #include "../../Engine/Utils/Math/Transform.h"
+#include "../Engine/ECS/World/NewWorld.h"
+#include "../Engine/ECS/System/FunctionalSystem.h"
 
 #include "../Engine/DirectBase/Input/Input.h"
 #include "../Engine/DirectBase/Base/Audio.h"
@@ -37,6 +39,9 @@ private:
 	// カメラマネージャー
 	CameraManager *cameraManager_ = nullptr;
 
+	ECS::World world_;
+	ECS::SystemExecuter systemExecuter_;
+
 	// 平行光源
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
@@ -46,6 +51,7 @@ private:
 	Ground ground_{ 0.f, Vector2{100.f,100.f} };
 
 	BlockManager *blockRender_;
+	ModelHandleListManager *blockHandleRender_;
 
 	SolEngine::Camera3D camera_;
 

@@ -10,6 +10,8 @@
 
 #include "../Header/Object/Fade.h"
 #include "GameScene.h"
+#include "../Engine/LevelEditor/LevelImporter.h"
+#include "../Engine/ECS/System/NewSystems.h"
 
 TitleScene::TitleScene() {
 	input_ = SolEngine::Input::GetInstance();
@@ -25,6 +27,8 @@ void TitleScene::OnEnter() {
 	// ライトの生成
 	light_ = DirectionLight::Generate();
 	blockRender_->Init(1024u);
+	blockHandleRender_ = ModelHandleListManager::GetInstance();
+	blockHandleRender_->Init(1024u);
 	ModelManager::GetInstance()->CreateDefaultModel();
 
 	sprite_ = Sprite::Generate(TextureManager::Load("UI/TitleECS.dds"));
@@ -42,6 +46,19 @@ void TitleScene::OnEnter() {
 
 	soundA_.Play(true, 0.5f);
 
+	SolEngine::ResourceObjectManager<SolEngine::LevelData> *const levelDataManager = SolEngine::ResourceObjectManager<SolEngine::LevelData>::GetInstance();
+
+	auto levelData = levelDataManager->Load({ .fileName_ = "check.json" });
+
+	SolEngine::LevelImporter levelImporter;
+	levelImporter.Import(levelData, &world_);
+
+	levelDataManager->Destory(levelData);
+
+	systemExecuter_.AddSystem<ECS::System::Par::CalcEulerTransMatrix>();
+	systemExecuter_.AddSystem<ECS::System::Par::CalcTransMatrix>();
+	systemExecuter_.AddSystem<ECS::System::Par::ModelDrawer>();
+
 }
 
 void TitleScene::OnExit() {
@@ -56,8 +73,9 @@ void TitleScene::Update() {
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
 	blockRender_->clear();
+	blockHandleRender_->clear();
 
-	camera_.rotation_ *= SoLib::MakeQuaternion(SoLib::Euler{ 0.f, 22.5_deg * deltaTime, 0.f });
+	camera_.rotation_ *= SoLib::MakeQuaternion(SoLib::Euler{ 0.f, 11.25_deg * deltaTime, 0.f });
 	camera_.UpdateMatrix();
 
 	sprite_->SetScale(Vector2{ 256,64 } *2.f);
@@ -74,8 +92,11 @@ void TitleScene::Update() {
 		sceneManager_->ChangeScene<GameScene>(1.f);
 		Fade::GetInstance()->Start(Vector2{}, 0x000000FF, 1.f);
 	}
+
 	// デルタタイムの取得
 	// const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
+
+	systemExecuter_.Execute(&world_, deltaTime);
 }
 
 void TitleScene::Draw() {
@@ -101,9 +122,10 @@ void TitleScene::Draw() {
 	Model::SetPipelineType(Model::PipelineType::kShadowParticle);
 
 	light_->SetLight(commandList);
-	ground_.Draw();
+	// ground_.Draw();
 
 	blockRender_->Draw(camera_);
+	blockHandleRender_->Draw(camera_);
 
 	Model::EndDraw();
 
