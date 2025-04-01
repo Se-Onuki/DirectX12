@@ -169,6 +169,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\DirectBase\Model\ResourceModel.cpp" />
+    <ClCompile Include="Engine\DirectBase\Render\CameraManager.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.cpp" />
     <ClCompile Include="Engine\ECS\Component\Component.cpp" />
     <ClCompile Include="Engine\ECS\Entity\Spawner.cpp" />
@@ -217,10 +218,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectBase\Model\SkinClusterBase.cpp" />
     <ClCompile Include="Engine\DirectBase\PostEffect\OffScreenRendering.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Camera.cpp" />
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.cpp" />
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp" />
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.cpp" />
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\Render.cpp" />
     <ClCompile Include="Engine\DirectBase\Render\SkyBox\SkyBox.cpp" />
     <ClCompile Include="Engine\DirectBase\SkinAnimation\SkinAnimation.cpp" />
@@ -236,6 +233,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utils\Network\Socket\UdpNetwork.cpp" />
     <ClCompile Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.cpp" />
     <ClCompile Include="Engine\VFX\Particle\Particle.cpp" />
+    <ClCompile Include="Game\GameScene\GameModel.cpp" />
+    <ClCompile Include="Game\GameScene\GameRenderer.cpp" />
+    <ClCompile Include="Game\UI\ControllerUI.cpp" />
     <ClCompile Include="Header\Collision\Collision.cpp" />
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp" />
     <ClCompile Include="Header\Entity\Component\HealthComp.cpp" />
@@ -285,6 +285,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="..\..\..\..\source\repos\NetworkTest\Library\Success.h" />
     <ClInclude Include="Engine\DirectBase\Model\ResourceModel.h" />
+    <ClInclude Include="Engine\DirectBase\Render\CameraManager.h" />
     <ClInclude Include="Engine\DirectBase\Render\ModelInstancingRender\ModelInstancingRender.h" />
     <ClInclude Include="Engine\ECS\Archetype.h" />
     <ClInclude Include="Engine\ECS\Chunk\ComponentIterator.h" />
@@ -356,10 +357,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectBase\Model\SkinClusterBase.h" />
     <ClInclude Include="Engine\DirectBase\PostEffect\OffScreenRendering.h" />
     <ClInclude Include="Engine\DirectBase\Render\Camera.h" />
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.h" />
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h" />
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.h" />
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h" />
     <ClInclude Include="Engine\DirectBase\Render\Render.h" />
     <ClInclude Include="Engine\DirectBase\Render\SkyBox\SkyBox.h" />
     <ClInclude Include="Engine\DirectBase\SkinAnimation\SkinAnimation.h" />
@@ -387,8 +384,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.h" />
     <ClInclude Include="Engine\VFX\Particle\Particle.h" />
     <ClInclude Include="Engine\VFX\Particle\ParticleSystem.h" />
+    <ClInclude Include="Game\GameScene\GameModel.h" />
+    <ClInclude Include="Game\GameScene\GameRenderer.h" />
     <ClInclude Include="Game\Resource\EnemyDataTable.h" />
     <ClInclude Include="Game\Resource\GameScore.h" />
+    <ClInclude Include="Game\UI\ControllerUI.h" />
     <ClInclude Include="Header\Collision\Collision.h" />
     <ClInclude Include="Header\Entity\Component\Collider.h" />
     <ClInclude Include="Header\Entity\Component\ComponentManager.h" />

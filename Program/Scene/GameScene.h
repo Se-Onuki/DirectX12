@@ -7,7 +7,7 @@
 
 #include "../Engine/DirectBase/2D/Sprite.h"
 #include "../Engine/DirectBase/3D/DirectionLight.h"
-#include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../Engine/DirectBase/Render/CameraManager.h"
 
 #include "../../Engine/Utils/Math/Transform.h"
 #include "../Engine/DirectBase/Model/Model.h"
@@ -222,7 +222,7 @@ private:
 	/// @brief オーディオのインスタンス
 	SolEngine::Audio *audio_ = nullptr;
 	/// @brief カメラマネージャーのインスタンス
-	CameraManager *cameraManager_ = nullptr;
+	SolEngine::CameraManager *cameraManager_ = nullptr;
 	/// @brief DirectXの管理クラスのインスタンス
 	DirectXCommon *pDxCommon_ = nullptr;
 	/// @brief ライトのデータ

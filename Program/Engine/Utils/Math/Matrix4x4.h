@@ -52,9 +52,6 @@ namespace SoLib {
 			std::array<float, 16u> arr;
 		};
 
-		void
-			Printf(const int32_t x, const int32_t y) const;
-
 		/// @brief 逆行列関数
 		/// @return 逆行列
 		Matrix4x4 Inverse() const;

@@ -21,7 +21,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include "../../Engine/Utils/Convert/Convert.h"
-#include "../Render/CameraAnimations/CameraManager.h"
+#include "../Render/CameraManager.h"
 #include "../../ResourceObject/ResourceObjectManager.h"
 #include <execution>
 #include "SkeletonReference.h"
@@ -1814,14 +1814,15 @@ void SkeletonState::AddDrawBuffer(const Matrix4x4 &transMat, const Vector3 &draw
 {
 	auto *blockRender_ = BlockManager::GetInstance();
 	Model *plane = ModelManager::GetInstance()->GetModel("Plane");
-	const Matrix4x4 &cameraInvMat = CameraManager::GetInstance()->GetUseCamera()->matProjection_.InverseSRT();
+	const Matrix4x4 &cameraInvMat = SolEngine::CameraManager::GetInstance()->GetCamera()->matProjection_.InverseSRT();
 
 	for (const auto &joint : joints_) {
 
 		Matrix4x4 affineMat = cameraInvMat;
-		for (uint32_t i = 0; i < 12; i++) {
+		std::for_each_n(affineMat.begin(), 12, [](float &v) {v *= 0.1f; });
+		/*for (uint32_t i = 0; i < 12; i++) {
 			affineMat.arr[i] = affineMat.arr[i] * 0.1f;
-		}
+		}*/
 		affineMat.GetTranslate() = joint.skeletonSpaceMatrix_.GetTranslate() * transMat + drawOffset;
 		blockRender_->AddBox(plane, { .transMat_ = affineMat });
 	}

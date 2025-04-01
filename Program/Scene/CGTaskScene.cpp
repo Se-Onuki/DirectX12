@@ -4,7 +4,7 @@
 #include "../Engine/DirectBase/Model/ModelManager.h"
 #include "../Header/Entity/Component/ModelComp.h"
 #include "CGTaskScene.h"
-#include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../Engine/DirectBase/Render/CameraManager.h"
 #include "../../../externals/DirectXTex/d3dx12.h"
 #include "../Engine/LevelEditor/LevelData.h"
 #include "../Engine/LevelEditor/LevelImporter.h"
@@ -36,8 +36,8 @@ void CGTaskScene::OnEnter()
 	pDxCommon_ = DirectXCommon::GetInstance();
 
 	light_ = DirectionLight::Generate();
-	CameraManager::GetInstance()->Init();
-	auto *nowCamera = CameraManager::GetInstance()->GetUseCamera();
+	SolEngine::CameraManager::GetInstance()->Init();
+	auto *nowCamera = SolEngine::CameraManager::GetInstance()->GetCamera();
 	nowCamera->translation_ = { 0.f, 0.9f,-2.5f };
 
 	offScreen_ = std::make_unique<PostEffect::OffScreenRenderer>();
@@ -92,8 +92,8 @@ void CGTaskScene::Update()
 
 	skinModel_->Update(**animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
 
-	CameraManager::GetInstance()->DisplayImGui();
-	CameraManager::GetInstance()->Update(deltaTime);
+	//SolEngine::CameraManager::GetInstance()->DisplayImGui();
+	SolEngine::CameraManager::GetInstance()->CalcAll();
 
 	computeShader_.Update(*skinModel_->skinCluster_, *boxModel_, *skeleton_->modelInfluence_);
 }
@@ -103,7 +103,7 @@ void CGTaskScene::Draw()
 
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();
-	const auto &camera = *CameraManager::GetInstance()->GetUseCamera();
+	const auto &camera = *SolEngine::CameraManager::GetInstance()->GetCamera();
 
 #pragma region 背面スプライト
 

@@ -188,7 +188,7 @@ namespace SolEngine::VFX
 		// モデルのハンドル
 		using ModelHandle = SolEngine::ResourceHandle<SolEngine::ModelData>;
 	public:
-
+		/// @brief 発射するデータ
 		struct Burst {
 			float time_;
 			uint32_t count_;
@@ -265,7 +265,7 @@ namespace SolEngine::VFX
 		/// @brief 残り実行回数(nulloptは無限)
 		std::optional<uint32_t> executeCount_ = std::nullopt;
 
-		//
+		// エミッタの座標
 		SoLib::SimpleTransformQuaternion emitterTransform_;
 
 		// 生成数の時間の蓄積

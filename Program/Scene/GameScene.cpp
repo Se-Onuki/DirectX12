@@ -8,7 +8,7 @@
 #include "../Engine/DirectBase/Base/DirectXCommon.h"
 #include "../Engine/DirectBase/Descriptor/DescriptorHandle.h"
 #include "../Engine/DirectBase/Model/ModelManager.h"
-#include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../Engine/DirectBase/Render/CameraManager.h"
 #include "../Header/Object/Fade.h"
 #include "../../Engine/Utils/SoLib/SoLib.h"
 #include <imgui.h>
@@ -26,7 +26,7 @@
 GameScene::GameScene() {
 	input_ = SolEngine::Input::GetInstance();
 	audio_ = SolEngine::Audio::GetInstance();
-	cameraManager_ = CameraManager::GetInstance();
+	cameraManager_ = SolEngine::CameraManager::GetInstance();
 	blockRender_ = BlockManager::GetInstance();
 	skinModelRender_ = SkinModelListManager::GetInstance();
 	modelHandleRender_ = ModelHandleListManager::GetInstance();
@@ -104,10 +104,10 @@ void GameScene::OnEnter() {
 		mtr->blendMode_ = Model::BlendMode::kAdd;
 	}
 
-	cameraManager_->Init();
-	followCamera_ = cameraManager_->AddCamera("FollowCamera");
-	cameraManager_->SetUseCamera(followCamera_);
-	cameraManager_->Update(0.f);
+	const std::string cameraName = "FollowCamera";
+
+	followCamera_ = cameraManager_->AddCamera(cameraName);
+	cameraManager_->SetMainCamera(cameraName);
 
 	playerPrefab_ = std::make_unique<ECS::Prefab>();
 
@@ -544,7 +544,7 @@ void GameScene::Update() {
 	// ECSの処理の更新
 	systemExecuter_.Execute(&newWorld_, fixDeltaTime);
 	// カメラのアップデート
-	cameraManager_->Update(fixDeltaTime);
+	cameraManager_->CalcAll();
 
 	killUI_->SetText(static_cast<uint32_t>(killCount_), true);
 
@@ -625,7 +625,7 @@ void GameScene::Update() {
 	FallingStoneAttackRender(newWorld_, stoneAttackRender_);
 	SatelliteAttackRender(newWorld_, swordAttackRender_);
 
-	const auto &camera = *cameraManager_->GetUseCamera();
+	const auto &camera = *cameraManager_->GetCamera();
 	DamageRender(newWorld_, camera, *numberRender_);
 
 	{
@@ -673,7 +673,7 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 
-	const auto &camera = *cameraManager_->GetUseCamera();
+	const auto &camera = *cameraManager_->GetCamera();
 
 	DirectXCommon *const dxCommon = DirectXCommon::GetInstance();
 	ID3D12GraphicsCommandList *const commandList = dxCommon->GetCommandList();

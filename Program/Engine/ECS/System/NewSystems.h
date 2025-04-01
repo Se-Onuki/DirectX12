@@ -170,7 +170,7 @@ namespace ECS {
 
 			class EnemyAttack :public IJobEntity {
 			public:
-				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, ECS::HealthComp, const ECS::SphereCollisionComp, ECS::AccelerationComp> readWrite_;
+				ReadAndWrite<ECS::PlayerTag, ECS::PositionComp, ECS::HealthComp, const ECS::SphereCollisionComp, ECS::AccelerationComp, ECS::InvincibleTime> readWrite_;
 				using DataBase = DataBase<decltype(readWrite_)>;
 
 				void Execute(const World *const, const float);

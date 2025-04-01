@@ -4,10 +4,10 @@
 #include "FollowCameraComp.h"
 #include "../../Engine/Utils/SoLib/SoLib_Lerp.h"
 #include "../../Engine/Utils/SoLib/SoLib_ImGui.h"
-#include "../../../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../../Engine/DirectBase/Render/CameraManager.h"
 
 void FollowCameraComp::Init() {
-	camera_ = CameraManager::GetInstance()->AddCamera("FollowCamera");
+	camera_ = SolEngine::CameraManager::GetInstance()->AddCamera("FollowCamera");
 	camera_->CalcMatrix();
 }
 
@@ -47,7 +47,7 @@ void FollowCameraComp::ImGuiWidget() {
 
 void FollowCameraComp::AddRotate(const Vector3 &euler) {
 	if (euler.LengthSQ() != 0.f) {
-		if (CameraManager::GetInstance()->GetUseCamera() == camera_) {
+		if (SolEngine::CameraManager::GetInstance()->GetCamera() == camera_) {
 			rotate_ *= Quaternion::LookAt(SoLib::EulerToDirection(euler));
 
 			camera_->rotation_ *= Quaternion::LookAt(SoLib::EulerToDirection(euler));

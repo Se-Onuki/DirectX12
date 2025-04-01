@@ -67,9 +67,6 @@
     <Filter Include="Engine\Utils\SoLib">
       <UniqueIdentifier>{718943a2-fecd-4a48-a88c-ffda723192fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Render\CameraAnimations">
-      <UniqueIdentifier>{1b09de97-f37d-47ef-a58e-986936e385cd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Utils\Graphics">
       <UniqueIdentifier>{34273b47-9ebb-47d3-b275-7eee60fc69bf}</UniqueIdentifier>
     </Filter>
@@ -172,6 +169,15 @@
     <Filter Include="Engine\VFX">
       <UniqueIdentifier>{353decc6-939d-40fd-affa-bb7be258eb6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\GameScene">
+      <UniqueIdentifier>{4849ce7c-8387-439c-8749-9754089b2974}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Render\Camera\CameraManager">
+      <UniqueIdentifier>{f6c97111-d1cd-48ef-bf02-65afe469323b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI">
+      <UniqueIdentifier>{4fed19e7-4e92-4085-ad95-90869166b6c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -266,18 +272,6 @@
     </ClCompile>
     <ClCompile Include="Header\Entity\Component\FollowCameraComp.cpp">
       <Filter>Game\Entity\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraList.cpp">
-      <Filter>Engine\Render\CameraAnimations</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.cpp">
-      <Filter>Engine\Render\CameraAnimations</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.cpp">
-      <Filter>Engine\Render\CameraAnimations</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.cpp">
-      <Filter>Engine\Render\CameraAnimations</Filter>
     </ClCompile>
     <ClCompile Include="Header\Object\Block\BlockManager.cpp">
       <Filter>Game\Object\Block</Filter>
@@ -513,6 +507,18 @@
     <ClCompile Include="Engine\VFX\Particle\Particle.cpp">
       <Filter>Engine\VFX</Filter>
     </ClCompile>
+    <ClCompile Include="Game\GameScene\GameModel.cpp">
+      <Filter>Game\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameScene\GameRenderer.cpp">
+      <Filter>Game\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectBase\Render\CameraManager.cpp">
+      <Filter>Engine\Render\Camera\CameraManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\ControllerUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -643,18 +649,6 @@
     </ClInclude>
     <ClInclude Include="Header\Entity\Component\FollowCameraComp.h">
       <Filter>Game\Entity\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraList.h">
-      <Filter>Engine\Render\CameraAnimations</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraManager.h">
-      <Filter>Engine\Render\CameraAnimations</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimation.h">
-      <Filter>Engine\Render\CameraAnimations</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\DirectBase\Render\CameraAnimations\CameraAnimManager.h">
-      <Filter>Engine\Render\CameraAnimations</Filter>
     </ClInclude>
     <ClInclude Include="Header\Object\Block\BlockManager.h">
       <Filter>Game\Object\Block</Filter>
@@ -1030,6 +1024,18 @@
     </ClInclude>
     <ClInclude Include="Engine\VFX\Particle\ParticleSystem.h">
       <Filter>Engine\VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameScene\GameRenderer.h">
+      <Filter>Game\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameScene\GameModel.h">
+      <Filter>Game\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectBase\Render\CameraManager.h">
+      <Filter>Engine\Render\Camera\CameraManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\ControllerUI.h">
+      <Filter>Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

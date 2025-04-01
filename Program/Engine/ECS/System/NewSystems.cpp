@@ -5,7 +5,7 @@
 #include "../World/ComponentArray/Chunk.h"
 #include "../World/NewWorld.h"
 #include "../../Engine/DirectBase/Input/Input.h"
-#include "../../DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../../DirectBase/Render/CameraManager.h"
 
 namespace ECS::System::Par {
 
@@ -160,7 +160,8 @@ namespace ECS::System::Par {
 
 	void EnemyAttack::Execute(const World *const world, const float)
 	{
-		auto &[playerTag, playerPos, playerHealth, playerCollision, playerAcceleration] = readWrite_;
+		auto &[playerTag, playerPos, playerHealth, playerCollision, playerAcceleration, invincibleTime] = readWrite_;
+
 
 		// 当たり判定を取得
 		auto plColl = playerCollision.collision_;
@@ -168,42 +169,40 @@ namespace ECS::System::Par {
 
 		Archetype archetype;
 		archetype.AddClassData<ECS::EnemyTag, ECS::PositionComp, ECS::SphereCollisionComp, ECS::AttackPower, ECS::AttackCooltime>();
-		for (auto *const chunk : world->GetAccessableChunk(archetype)) {
 
-			auto posRange = chunk->GetComponent<ECS::PositionComp>();
-			auto collRange = chunk->GetComponent<ECS::SphereCollisionComp>();
-			auto powerRange = chunk->GetComponent<ECS::AttackPower>();
-			auto coolTimeRange = chunk->GetComponent<ECS::AttackCooltime>();
 
-			auto collItr = collRange.begin();
-			auto powItr = powerRange.begin();
-			auto timeItr = coolTimeRange.begin();
+		auto enemyView = world->GetAccessableChunk(archetype).View<ECS::PositionComp, ECS::SphereCollisionComp, ECS::AttackPower, ECS::AttackCooltime>();
 
-			for (auto &pos : posRange) {
-				auto &collider = *collItr++;
-				auto &power = *powItr++;
-				auto &coolTime = *timeItr++;
+		for (auto [pos, collider, power, coolTime] : enemyView) {
 
-				Sphere enColl = collider.collision_;
-				enColl.centor += pos.position_;
+			Sphere enColl = collider.collision_;
+			enColl.centor += pos.position_;
 
-				// クールタイムが終わっており、接触している場合
-				if (not coolTime.cooltime_.IsActive() and Collision::IsHit(plColl, enColl)) {
-					Vector3 diff = playerPos.position_ - pos.position_;
-					// 高さを0にする
-					diff.y = 0;
-					// プレイヤに加速度を加算
-					playerAcceleration.acceleration_ += diff.Normalize() * 15.f;
+			// クールタイムが終わっており、接触している場合
+			if (not coolTime.cooltime_.IsActive() and Collision::IsHit(plColl, enColl)) {
+				Vector3 diff = playerPos.position_ - pos.position_;
+				// 高さを0にする
+				diff.y = 0;
+				// プレイヤに加速度を加算
+				playerAcceleration.acceleration_ += diff.Normalize() * 10.f;
+
+				// もし無敵時間中じゃないなら
+				if (not invincibleTime.timer_.IsActive()) {
+
 					// 体力を減算
 					playerHealth.nowHealth_ -= power.power_;
 
-					// クールタイムを開始
-					//coolTime.cooltime_.Start();
+					invincibleTime.timer_.Start();
 
 				}
 
+				// クールタイムを開始
+				//coolTime.cooltime_.Start();
+
 			}
+
 		}
+
 	}
 
 	void LevelUp::Execute(const World *const, const float)
@@ -449,7 +448,7 @@ namespace ECS::System::Par {
 
 		*cameraPos = posList.front()->position_;
 
-		followCamera.TransferData(*CameraManager::GetInstance()->GetCamera("FollowCamera"), *cameraPos);
+		followCamera.TransferData(*SolEngine::CameraManager::GetInstance()->GetCamera("FollowCamera"), *cameraPos);
 	}
 
 	void CalcTransMatrix::Execute(const World *const, const float)
@@ -485,7 +484,7 @@ namespace ECS::System::Par {
 
 	void DrawEnemyHelthBar::Execute(const World *const, const float)
 	{
-		auto *const camera = CameraManager::GetInstance()->GetCamera("FollowCamera");
+		auto *const camera = SolEngine::CameraManager::GetInstance()->GetCamera("FollowCamera");
 
 		const Matrix4x4 &vp = SolEngine::Render::MakeViewportMatrix({ 0,0 }, WinApp::kWindowWidth, WinApp::kWindowHeight);
 		const Matrix4x4 &matVPVp = camera->matView_ * camera->matProjection_ * vp;
@@ -516,7 +515,7 @@ namespace ECS::System::Par {
 	{
 
 		// カメラの逆行列
-		const Matrix4x4 &billboardMat = CameraManager::GetInstance()->GetUseCamera()->matView_.GetRotate().InverseRT();
+		const Matrix4x4 &billboardMat = SolEngine::CameraManager::GetInstance()->GetCamera()->matView_.GetRotate().InverseRT();
 
 		static BlockManager *const blockManager = BlockManager::GetInstance();
 

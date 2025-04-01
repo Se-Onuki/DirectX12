@@ -16,7 +16,7 @@
 TitleScene::TitleScene() {
 	input_ = SolEngine::Input::GetInstance();
 	audio_ = SolEngine::Audio::GetInstance();
-	cameraManager_ = CameraManager::GetInstance();
+	cameraManager_ = SolEngine::CameraManager::GetInstance();
 	blockRender_ = BlockManager::GetInstance();
 }
 

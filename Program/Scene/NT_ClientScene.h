@@ -6,7 +6,7 @@
 
 #include "../Engine/DirectBase/3D/DirectionLight.h"
 #include "../Engine/DirectBase/2D/Sprite.h"
-#include "../Engine/DirectBase/Render/CameraAnimations/CameraManager.h"
+#include "../Engine/DirectBase/Render/CameraManager.h"
 
 #include "../Engine/DirectBase/Model/Model.h"
 #include "../../Engine/Utils/Math/Transform.h"
@@ -62,7 +62,7 @@ private:
 	// 音インスタンス
 	SolEngine::Audio *audio_ = nullptr;
 	// カメラマネージャー
-	CameraManager *cameraManager_ = nullptr;
+	SolEngine::CameraManager *cameraManager_ = nullptr;
 	std::unique_ptr<std::thread> thread;
 
 	// 平行光源
