@@ -7,6 +7,7 @@
 
 #include "../Resource/EnemyDataTable.h"
 #include "../Resource/GameScore.h"
+#include "../UI/ControllerUI.h"
 
 namespace Game {
 
@@ -23,6 +24,8 @@ namespace Game {
 
 	private:
 
+		// コントローラーの表記
+		std::unique_ptr<ControllerUI> controllerUI_;
 
 		// 敵の強さのテーブル
 		std::unique_ptr<EnemyTable> enemyTable_;

@@ -1,5 +1,10 @@
 #include "GameModel.h"
 
-void Game::GameModel::Update(float)
-{
+namespace Game {
+
+	void GameModel::Update(float deltaTime)
+	{
+		controllerUI_->Update(deltaTime);
+	}
+
 }

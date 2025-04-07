@@ -196,9 +196,6 @@ namespace ECS::System::Par {
 
 				}
 
-				// クールタイムを開始
-				//coolTime.cooltime_.Start();
-
 			}
 
 		}
