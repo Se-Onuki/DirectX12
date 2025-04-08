@@ -447,7 +447,14 @@ void GameScene::OnEnter() {
 
 	}
 
-	//timerCoron_ = Sprite::Generate();
+	controllerUI_ = std::make_unique<Game::ControllerUI>();
+	controllerUI_->Init();
+
+	timerCoron_ = Sprite::Generate(TextureManager::Load("UI/Coron.png"));
+
+	timerCoron_->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f ,96.f });
+	timerCoron_->SetPivot(Vector2::one * 0.5f);
+	timerCoron_->SetScale(Vector2{ 18,96 });
 
 	killUI_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 4);
 	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 2, (-vExpUICentorDiff_->y) * 8 });
@@ -485,6 +492,8 @@ void GameScene::Update() {
 
 	damageTimer_.Update(deltaTime);
 	gameScore_.aliveTime_ += fixDeltaTime;
+
+	controllerUI_->Update(deltaTime);
 
 	// 毎フレームの初期化
 	FlameClear();
@@ -743,6 +752,9 @@ void GameScene::Draw() {
 	healthBar_->Draw();
 
 	expBar_->Draw();
+
+	controllerUI_->Draw();
+	timerCoron_->Draw();
 
 	for (const auto &ui : gameTimerUI_) {
 		ui->Draw();

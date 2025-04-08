@@ -41,6 +41,7 @@
 #include "../Engine/DirectBase/File/GlobalVariables.h"
 #include "../Game/Resource/EnemyDataTable.h"
 #include "../Engine/VFX/Particle/Particle.h"
+#include "../Game/UI/ControllerUI.h"
 
 /// @class GameScene
 /// @brief ゲームシーン
@@ -357,4 +358,6 @@ private:
 	std::unique_ptr<SolEngine::NumberText> killUI_;
 
 	size_t killCount_;
+
+	std::unique_ptr<Game::ControllerUI> controllerUI_ = nullptr;
 };

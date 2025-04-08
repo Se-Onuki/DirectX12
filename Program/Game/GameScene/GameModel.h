@@ -20,6 +20,8 @@ namespace Game {
 		GameModel() = default;
 		~GameModel() = default;
 
+		void Init();
+
 		void Update(float deltaTime);
 
 	private:
