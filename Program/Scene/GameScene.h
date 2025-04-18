@@ -92,7 +92,7 @@ private:
 	void InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const;
 
 	/// @brief ゲームスコアを保存する
-	void SetGameScore();
+	void UpdateGameScore();
 
 	/// @brief ゲームのリザルトを取得する
 	const GameScore &GetGameScore() const;

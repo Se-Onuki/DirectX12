@@ -517,7 +517,7 @@
       <Filter>Engine\Render\Camera\CameraManager</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\ControllerUI.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Game\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

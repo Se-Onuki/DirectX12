@@ -135,8 +135,8 @@ namespace SolEngine {
 			explicit inline operator bool() const
 			{
 				return Singleton::instance_ and							 // マネージャーが存在するか
-					   item_ and										 // データが存在するか
-					   *item_ != Singleton::instance_->resources_.end(); // データが存在するか
+					item_ and										 // データが存在するか
+					*item_ != Singleton::instance_->resources_.end(); // データが存在するか
 			}
 
 		private:
@@ -159,7 +159,7 @@ namespace SolEngine {
 		/// @return 追加したデータのハンドル
 		template <SoLib::IsRealType T>
 		UniqueHandle PushBack(uint32_t size = 1u);
-		
+
 		/// @brief データの追加
 		/// @tparam T 追加する型
 		/// @param[in] data 追加するデータ
@@ -174,6 +174,8 @@ namespace SolEngine {
 		/// @return 追加したデータのハンドル群
 		template <typename Itr>
 		std::vector<DxResourceBuffer<HType> *> PushBack(Itr begin, Itr end);
+
+		void ReleaseUnusingReosurce(uint32_t memSize = (std::numeric_limits<uint32_t>::max)());
 
 	private:
 		// リソースのマネージャ
@@ -205,6 +207,20 @@ namespace SolEngine {
 
 		// データを破棄
 		resources_.erase(itr);
+	}
+
+	template<D3D12_HEAP_TYPE HType>
+	inline void DxResourceBufferPoolManager<HType>::ReleaseUnusingReosurce(uint32_t memSize)
+	{
+		// 該当するサイズのメモリがあるか
+		auto itr = unUsingResource_.find(memSize);
+
+		// もし無かったら終わる
+		if (itr == unUsingResource_.end()) {
+			return;
+		}
+
+		unUsingResource_.erase(itr);
 	}
 
 	template <D3D12_HEAP_TYPE HType>
@@ -258,7 +274,7 @@ namespace SolEngine {
 		const size_t diff = std::distance(begin, end);
 
 		// 構築する要素
-		std::vector<DxResourceItem> target{diff};
+		std::vector<DxResourceItem> target{ diff };
 
 		// 使用する型
 		using Type = decltype(begin.operator*());
@@ -291,8 +307,8 @@ namespace SolEngine {
 		// データを渡す
 		std::transform(begin, end, target.begin(), [](const Type &item) { return &item; });
 
-		std::vector<DxResourceBuffer<HType> *> result{diff};
-		std::transform(target.begin(), target.end(), result.begin(), [](const DxResourceItem &item) -> const DxResourceBuffer<HType> * { return item.item_.get(); });
+		std::vector<DxResourceBuffer<HType> *> result{ diff };
+		std::transform(target.begin(), target.end(), result.begin(), [](const DxResourceItem &item) -> const DxResourceBuffer<HType> *{ return item.item_.get(); });
 
 		// そのデータを追加する
 		resources_.insert(std::make_move_iterator(target.begin()), std::make_move_iterator(target.end()));

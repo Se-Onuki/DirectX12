@@ -10,6 +10,7 @@ class EnemyData {
 public:
 	EnemyData() = default;
 
+	int32_t spawnCount_;
 	int32_t health_{};
 	ECS::AttackPower power_{};
 	ECS::Color color_{};

@@ -34,7 +34,11 @@ GameScene::GameScene() {
 }
 
 GameScene::~GameScene() {
-
+	auto bufferManager = SolEngine::DxResourceBufferPoolManager<>::GetInstance();
+	// メモリフラグメンテーション対策
+	for (uint32_t i = 1; i < 16; i++) {
+		bufferManager->ReleaseUnusingReosurce(i);
+	}
 }
 
 void GameScene::OnEnter() {
@@ -460,15 +464,13 @@ void GameScene::OnEnter() {
 	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 2, (-vExpUICentorDiff_->y) * 8 });
 
 	killUI_->SetPivot(Vector2::one * 0.5f);
-
-	// GeneratePlayerStoneAttack(newWorld_, 3);
 }
 
 void GameScene::OnExit() {
 	audio_->StopAllWave();
 
 	ECS::System::Par::WeaponCollision::attackCollisions_.reset();
-	SetGameScore();
+	UpdateGameScore();
 	auto nextScene = sceneManager_->GetNextScene<ResultScene>();
 	if (nextScene) {
 		nextScene->SetGameScore(GetGameScore());
@@ -926,9 +928,10 @@ void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
 
 }
 
-void GameScene::SetGameScore()
+void GameScene::UpdateGameScore()
 {
 	gameScore_.killCount_ = killCount_;
+	gameScore_.aliveTime_ = gameTimer_.GetNowFlame();
 }
 
 const GameScore &GameScene::GetGameScore() const
