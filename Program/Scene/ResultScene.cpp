@@ -22,6 +22,13 @@ void ResultScene::OnEnter()
 	blockHandleRender_->Init(1024u);
 	fade_->Start(Vector2{}, 0x00000000, 1.f);
 
+	const std::string resultTexture = std::string("UI/") + (gameScore_.isClear_ ? "gameClear.png" : "gameOver.png");
+
+	resultText_ = Sprite::Generate(TextureManager::Load(resultTexture));
+	resultText_->SetPivot(Vector2::one * 0.5f);
+	resultText_->SetPosition(Vector2{ WinApp::kWindowWidth * 0.5f, WinApp::kWindowHeight * 0.25f });
+	resultText_->SetScale(Vector2{ 640.f,320.f });
+
 	camera_.Init();
 
 	camera_.translation_.y = 5.f;
@@ -83,6 +90,8 @@ void ResultScene::Draw()
 
 
 	Sprite::StartDraw(commandList);
+
+	resultText_->Draw();
 
 	// スプライトの描画
 	fade_->Draw();

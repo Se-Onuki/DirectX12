@@ -937,6 +937,7 @@ void GameScene::UpdateGameScore()
 {
 	gameScore_.killCount_ = killCount_;
 	gameScore_.aliveTime_ = gameTimer_.GetNowFlame();
+	gameScore_.isClear_ = gameTimer_.IsFinish();
 }
 
 const GameScore &GameScene::GetGameScore() const
@@ -974,7 +975,7 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 		// プレイヤのViewの長さが0である場合は死んでいる
 		bool playerIsDead = playerChunks.Count() == 0u;
 
-		bool isGameFinish = clearAfterTimer_.IsFinish();
+		bool isGameFinish = clearAfterTimer_.IsFinish() and clearAfterTimer_.IsActive();
 
 		// 死んでいた場合は
 		if (playerIsDead or isGameFinish) {

@@ -34,12 +34,13 @@ namespace SolEngine {
 
 	void SceneManager::ChangeScene(std::unique_ptr<IScene> nextScene) {
 		if (nextScene == nullptr) return;
+		nextScene_ = std::move(nextScene);
 		if (currentScene_) {
 			// 遷移前のシーンの退室処理
 			currentScene_->OnExit();
 		}
 		// 保持するシーンのキーとポインタを更新
-		currentScene_ = std::move(nextScene);
+		currentScene_ = std::move(nextScene_);
 		currentScene_->OnEnter();
 	}
 

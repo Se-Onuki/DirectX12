@@ -15,4 +15,6 @@ struct GameScore {
 	// 生存時間
 	SoLib::Time::SecondF aliveTime_;
 
+	bool isClear_ = false;
+
 };
