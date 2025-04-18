@@ -353,7 +353,7 @@ private:
 	// 時間の中間の点
 	std::unique_ptr<Sprite> timerCoron_;
 
-	SoLib::DeltaTimer gameTimer_{ 10, true };
+	SoLib::DeltaTimer gameTimer_{ 60 * 3, true };
 
 	SoLib::DeltaTimer clearAfterTimer_{ 1.5f, false };
 

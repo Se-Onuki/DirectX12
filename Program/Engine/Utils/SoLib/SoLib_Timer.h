@@ -169,6 +169,8 @@ namespace SoLib {
 				}
 			}
 
+			void SetNowTime(float time) { nowFlame_ = time; }
+
 			/// @brief 更新処理 ( 基本的に各フレームの先頭で行うこと )
 			/// @return bool 実行中である場合true
 			bool Update(float deltaTime);

@@ -134,7 +134,9 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AttackCollisionComp{};
 	*playerPrefab_ += ECS::EntityState{};
 	*playerPrefab_ += ECS::HealthComp::Create(120);
-	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, true } };
+	SoLib::DeltaTimer timer{ 1.f, true };
+	timer.SetNowTime(1.f);
+	*playerPrefab_ += ECS::InvincibleTime{ .timer_ = timer };
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
 	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
 	*playerPrefab_ += ECS::AttackStatus{ .radius_ = 10.f };
@@ -921,6 +923,15 @@ void GameScene::InitEnemyTable(std::unique_ptr<EnemyTable> &enemyTable) const
 		enemyTable->push_back(data);
 	}
 	// 8
+	{
+		EnemyData data{};
+		data.color_.color_ = 0xFFFF99FF;
+		data.health_ = 200;
+		data.power_.power_ = 20;
+		data.speed_.moveSpeed_ = 2.f;
+		enemyTable->push_back(data);
+	}
+	// 雑対応
 	{
 		EnemyData data{};
 		data.color_.color_ = 0xFFFF99FF;

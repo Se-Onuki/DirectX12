@@ -27,7 +27,7 @@ void ResultScene::OnEnter()
 	resultText_ = Sprite::Generate(TextureManager::Load(resultTexture));
 	resultText_->SetPivot(Vector2::one * 0.5f);
 	resultText_->SetPosition(Vector2{ WinApp::kWindowWidth * 0.5f, WinApp::kWindowHeight * 0.25f });
-	resultText_->SetScale(Vector2{ 640.f,320.f });
+	resultText_->SetScale(Vector2{ 640.f,320.f }*2.f);
 
 	camera_.Init();
 
