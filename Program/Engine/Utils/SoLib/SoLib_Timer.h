@@ -163,7 +163,7 @@ namespace SoLib {
 
 		public:
 			friend bool ::SoLib::ImGuiWidget(const char *const label, DeltaTimer *const ptr);
-			DeltaTimer(float goal = 0.f, bool start = false, bool isLoop = false) : goalFlame_(goal), nowFlame_(0.f), isFinish_(false), isActive_(false), isLoop_(isLoop) {
+			DeltaTimer(float goal = 0.f, bool start = true, bool isLoop = false) : goalFlame_(goal), nowFlame_(0.f), isFinish_(false), isActive_(false), isLoop_(isLoop) {
 				if (start) {
 					Start(goal, isLoop);
 				}

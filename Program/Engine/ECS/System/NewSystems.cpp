@@ -158,8 +158,13 @@ namespace ECS::System::Par {
 
 	}
 
-	void EnemyAttack::Execute(const World *const world, const float)
+	void EnemyAttack::Execute(const World *const world, const float deltaTime)
 	{
+		// 時間が止まってたら終わる
+		if (not deltaTime) {
+			return;
+		}
+
 		auto &[playerTag, playerPos, playerHealth, playerCollision, playerAcceleration, invincibleTime] = readWrite_;
 
 

@@ -118,7 +118,9 @@ namespace SoLib {
 	}
 
 	void DeltaTimer::AddFlame(float deltaTime) {
-		nowFlame_ += deltaTime;
+		if (isActive_) {
+			nowFlame_ += deltaTime;
+		}
 	}
 
 	void DeltaTimer::Start(bool isLoop) {

@@ -134,12 +134,12 @@ void GameScene::OnEnter() {
 	*playerPrefab_ += ECS::AttackCollisionComp{};
 	*playerPrefab_ += ECS::EntityState{};
 	*playerPrefab_ += ECS::HealthComp::Create(120);
-	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, false } };
+	*playerPrefab_ += ECS::InvincibleTime{ .timer_{ 1.f, true } };
 	*playerPrefab_ += ECS::AirResistance{ .resistance = (3.6f / 60.f) };
 	*playerPrefab_ += ECS::CursorComp{ .model_ = cursor, .inModel_ = inCursor };
 	*playerPrefab_ += ECS::AttackStatus{ .radius_ = 10.f };
 	*playerPrefab_ += ECS::AttackPower{ .power_ = 20 };
-	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, false } };
+	*playerPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.0f, true } };
 	*playerPrefab_ += ECS::Experience{};
 	*playerPrefab_ += ECS::HasShadow{};
 	*playerPrefab_ += ECS::ArrowShooter{ .count_ = 0, .needTime_ = 1.f };
@@ -160,7 +160,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::HealthComp::Create(100);
 	*enemyPrefab_ += ECS::HealthBarComp{};
 	*enemyPrefab_ += ECS::AttackPower{ .power_ = 10 };
-	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, false } };
+	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, true } };
 	*enemyPrefab_ += ECS::GhostModel{};
 	*enemyPrefab_ += ECS::UnRender{};
 	*enemyPrefab_ += ECS::HasShadow{};
@@ -531,6 +531,11 @@ void GameScene::Update() {
 
 	// 敵の追加
 	AddSpawner(spawnTimer_, spawner_);
+
+	clearAfterTimer_.Update(fixDeltaTime);
+	if (gameTimer_.IsFinish() and gameTimer_.IsActive()) {
+		clearAfterTimer_.Start();
+	}
 
 	// プレイヤの死亡処理
 	PlayerDead(newWorld_, playerSpawn_, sceneManager_, Fade::GetInstance());
@@ -969,7 +974,7 @@ void GameScene::PlayerDead(const ECS::World &world, SoLib::DeltaTimer &playerTim
 		// プレイヤのViewの長さが0である場合は死んでいる
 		bool playerIsDead = playerChunks.Count() == 0u;
 
-		bool isGameFinish = gameTimer_.IsFinish();
+		bool isGameFinish = clearAfterTimer_.IsFinish();
 
 		// 死んでいた場合は
 		if (playerIsDead or isGameFinish) {
