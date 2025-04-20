@@ -362,4 +362,6 @@ private:
 	size_t killCount_;
 
 	std::unique_ptr<Game::ControllerUI> controllerUI_ = nullptr;
+
+	std::unique_ptr<Sprite> inputDisplay_ = nullptr;
 };

@@ -180,6 +180,12 @@ namespace SolEngine {
 		{
 			return &gamePad_[0];
 		}
+		/// @brief 一つ前の状態を返す
+		/// @return 一つ前の状態
+		const VirtualPad *const GetPreState() const
+		{
+			return &gamePad_[1];
+		}
 
 	private:
 	};

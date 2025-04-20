@@ -162,7 +162,7 @@ void GameScene::OnEnter() {
 	*enemyPrefab_ += ECS::HealthComp::Create(100);
 	*enemyPrefab_ += ECS::HealthBarComp{};
 	*enemyPrefab_ += ECS::AttackPower{ .power_ = 10 };
-	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 5.f, true } };
+	*enemyPrefab_ += ECS::AttackCooltime{ .cooltime_ = { 1.f, true } };
 	*enemyPrefab_ += ECS::GhostModel{};
 	*enemyPrefab_ += ECS::UnRender{};
 	*enemyPrefab_ += ECS::HasShadow{};
@@ -466,6 +466,9 @@ void GameScene::OnEnter() {
 	killUI_->SetPosition(Vector2{ static_cast<float>(WinApp::kWindowWidth) , 0 } + Vector2{ -96 * 2, (-vExpUICentorDiff_->y) * 8 });
 
 	killUI_->SetPivot(Vector2::one * 0.5f);
+
+	inputDisplay_ = Sprite::Generate(TextureManager::Load("UI/Input.png"));
+	inputDisplay_->SetScale(Vector2{ WinApp::kWindowWidth, WinApp::kWindowHeight });
 }
 
 void GameScene::OnExit() {
@@ -768,6 +771,8 @@ void GameScene::Draw() {
 	for (const auto &ui : gameTimerUI_) {
 		ui->Draw();
 	}
+
+	inputDisplay_->Draw();
 	// レベルアップの選択処理の描画
 	levelUpUI_->Draw();
 

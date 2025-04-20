@@ -167,6 +167,8 @@ namespace SoLib {
 		/// @brief スケーリング
 		Vector3 Scaling(const Vector3 &other) const;
 		/// @brief Vector2への変換
+		Vector2& ToVec2() { return *reinterpret_cast<Vector2 *>(this); }
+		/// @brief Vector2への変換
 		Vector2 ToVec2() const { return *reinterpret_cast<const Vector2 *>(this); }
 
 		/// @brief 暗黙的な配列への変換

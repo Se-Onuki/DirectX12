@@ -73,10 +73,12 @@ void LevelUP::InputFunc()
 	const SolEngine::XInput *const pXInput = pInput->GetXInput();
 	const SolEngine::DirectInput *const pDInput = pInput->GetDirectInput();
 
+	const float inputDeadZone = 0.25f;
+
 	// 左入力
-	const bool isLeft = pXInput->IsTrigger(SolEngine::KeyCode::DPAD_LEFT) || pXInput->GetState()->stickL_.x < 0.f || pDInput->IsTrigger(DIK_A) || pDInput->IsTrigger(DIK_LEFT);
+	const bool isLeft = pXInput->IsTrigger(SolEngine::KeyCode::DPAD_LEFT) || (pXInput->GetState()->stickL_.x < -inputDeadZone and pXInput->GetPreState()->stickL_.x >= -inputDeadZone) || pDInput->IsTrigger(DIK_A) || pDInput->IsTrigger(DIK_LEFT);
 	// 右入力
-	const bool isRight = pXInput->IsTrigger(SolEngine::KeyCode::DPAD_RIGHT) || pXInput->GetState()->stickL_.x > 0.f || pDInput->IsTrigger(DIK_D) || pDInput->IsTrigger(DIK_RIGHT);
+	const bool isRight = pXInput->IsTrigger(SolEngine::KeyCode::DPAD_RIGHT) || (pXInput->GetState()->stickL_.x > inputDeadZone and pXInput->GetPreState()->stickL_.x <= inputDeadZone) || pDInput->IsTrigger(DIK_D) || pDInput->IsTrigger(DIK_RIGHT);
 
 	int32_t move{};
 

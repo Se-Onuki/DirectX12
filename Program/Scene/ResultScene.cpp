@@ -26,7 +26,7 @@ void ResultScene::OnEnter()
 
 	resultText_ = Sprite::Generate(TextureManager::Load(resultTexture));
 	resultText_->SetPivot(Vector2::one * 0.5f);
-	resultText_->SetPosition(Vector2{ WinApp::kWindowWidth * 0.5f, WinApp::kWindowHeight * 0.25f });
+	resultText_->SetPosition(Vector2{ WinApp::kWindowWidth * 0.5f, WinApp::kWindowHeight * 0.5f });
 	resultText_->SetScale(Vector2{ 640.f,320.f }*2.f);
 
 	camera_.Init();
@@ -45,6 +45,23 @@ void ResultScene::OnEnter()
 	systemExecuter_.AddSystem<ECS::System::Par::CalcEulerTransMatrix>();
 	systemExecuter_.AddSystem<ECS::System::Par::CalcTransMatrix>();
 	systemExecuter_.AddSystem<ECS::System::Par::ModelDrawer>();
+
+	for (auto &timeUI : gameTimerUI_) {
+
+		timeUI = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 2u);
+	}
+	{
+		// 時計の分秒への変換
+		auto &&[m, s] = SoLib::Time::GetMoment(gameScore_.aliveTime_);
+		gameTimerUI_[0]->SetText(m, true);
+		gameTimerUI_[1]->SetText(s, true);
+	}
+
+	timerCoron_ = Sprite::Generate(TextureManager::Load("UI/Coron.png"));
+
+
+	const Vector2 timerPos{ WinApp::kWindowWidth / 2.f ,96.f };
+	SetTimerPos(timerPos);
 }
 
 void ResultScene::OnExit()
@@ -53,6 +70,15 @@ void ResultScene::OnExit()
 
 void ResultScene::Update()
 {
+
+#ifdef USE_IMGUI
+
+	auto pos = timerCoron_->GetTransform().translate_.ToVec2();
+	SoLib::ImGuiWidget("TimerPos", &pos);
+	SetTimerPos(pos);
+
+#endif // USE_IMGUI
+
 
 	[[maybe_unused]] const float deltaTime = std::clamp(ImGui::GetIO().DeltaTime, 0.f, 0.1f);
 
@@ -93,6 +119,12 @@ void ResultScene::Draw()
 
 	resultText_->Draw();
 
+	//for (const auto &num : gameTimerUI_) {
+	//	num->Draw();
+	//}
+
+	//timerCoron_->Draw();
+
 	// スプライトの描画
 	fade_->Draw();
 
@@ -103,4 +135,18 @@ void ResultScene::Draw()
 void ResultScene::SetGameScore(const GameScore &gameScore)
 {
 	gameScore_ = gameScore;
+}
+
+void ResultScene::SetTimerPos(Vector2 pos)
+{
+	static constexpr std::array<float, 2u> kIsPlus{ -1.f, 1.f };
+	for (uint32_t i = 0; i < 2; i++) {
+		auto &timeUI = gameTimerUI_[i];
+		timeUI->SetPosition(pos + Vector2{ 48 * kIsPlus[i],0 });
+		timeUI->SetPivot(Vector2{ static_cast<float>(1 - i), 0.f });
+	}
+
+	timerCoron_->SetPosition(pos);
+	timerCoron_->SetPivot(Vector2::one * 0.5f);
+	timerCoron_->SetScale(Vector2{ 18,96 });
 }

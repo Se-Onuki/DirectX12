@@ -21,6 +21,7 @@
 #include "../Header/Object/Ground.h"
 #include "../Game/Resource/GameScore.h"
 #include "../Header/Object/Fade.h"
+#include "../Engine/UI/Text/NumberRender.h"
 
 class ResultScene : public SolEngine::IScene {
 public:
@@ -34,6 +35,8 @@ public:
 	void Draw() override;
 
 	void SetGameScore(const GameScore &gameScore);
+
+	void SetTimerPos(Vector2 pos);
 
 private:
 
@@ -66,4 +69,9 @@ private:
 
 	// bgm
 	SolEngine::Audio::SoundHandle soundA_;
+
+	// 時間表示のUI
+	std::array<std::unique_ptr<SolEngine::NumberText>, 2u> gameTimerUI_;
+
+	std::unique_ptr<Sprite> timerCoron_;
 };
