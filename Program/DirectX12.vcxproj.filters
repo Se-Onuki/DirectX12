@@ -178,6 +178,12 @@
     <Filter Include="Game\UI">
       <UniqueIdentifier>{4fed19e7-4e92-4085-ad95-90869166b6c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Utils\IO\JoyCon">
+      <UniqueIdentifier>{80ee1175-32f8-435b-ad57-734be156eb7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Utils\IO\HID">
+      <UniqueIdentifier>{09a7d777-774a-43fd-96c5-cf54d2088e51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -518,6 +524,12 @@
     </ClCompile>
     <ClCompile Include="Game\UI\ControllerUI.cpp">
       <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\IO\HID\HidDeviceHolder.cpp">
+      <Filter>Engine\Utils\IO\HID</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\IO\JoyCon\JoyCon.cpp">
+      <Filter>Engine\Utils\IO\JoyCon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1036,6 +1048,12 @@
     </ClInclude>
     <ClInclude Include="Game\UI\ControllerUI.h">
       <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\IO\HID\HidDeviceHolder.h">
+      <Filter>Engine\Utils\IO\HID</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\IO\JoyCon\JoyCon.h">
+      <Filter>Engine\Utils\IO\JoyCon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
