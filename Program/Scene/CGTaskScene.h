@@ -45,4 +45,9 @@ private:
 
 	SoLib::JoyConManager joyConManager_;
 
+	SoLib::JoyConUpdater joyConUpdater_;
+
+	std::thread updateThread_;
+
+	std::string binary_;
 };

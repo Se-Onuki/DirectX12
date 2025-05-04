@@ -75,10 +75,10 @@ namespace SoLib {
 	{
 		while (true) {
 			// もしアップデートを続けられないなら
-			//if (not *this) {
-			//	// 終わる
-			//	return;
-			//}
+			if (not *this) {
+				// 終わる
+				return;
+			}
 			GetInputData();
 		}
 	}

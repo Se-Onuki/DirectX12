@@ -15,7 +15,13 @@
 
 void CGTaskScene::OnEnter()
 {
-	joyConManager_.Init();
+	{
+		joyConManager_.Init();
+		auto [r, l] = joyConManager_.GetJoyConDevice();
+		joyConUpdater_.Init(r, l);
+
+		updateThread_ = std::thread(&SoLib::JoyConUpdater::Update, &joyConUpdater_);
+	}
 
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
@@ -47,6 +53,9 @@ void CGTaskScene::OnExit()
 {
 	SolEngine::SkyBoxRender::Finalize();
 	//fullScreen_->Finalize();
+
+	joyConUpdater_.StopUpdate();
+	updateThread_.join();
 }
 
 void CGTaskScene::Update()
@@ -69,7 +78,30 @@ void CGTaskScene::Update()
 	if (material) {
 		SoLib::ImGuiWidget("Material", *material);
 	}
+	// 状態をクリアします。
+	binary_.clear();
 
+	auto [right, left] = joyConUpdater_.GetJoyConRL();
+
+	for (uint32_t i = 0; auto mem : right.data_) {
+		binary_ += (std::bitset<8u>(static_cast<uint8_t>(mem))).to_string() + ' ';
+		if (i % 4 == 3) {
+			binary_ += '\n';
+		}
+		i++;
+	}
+	binary_ += "\n\n";
+
+	for (uint32_t i = 0; auto mem : left.data_) {
+		binary_ += (std::bitset<8u>(static_cast<uint8_t>(mem))).to_string() + ' ';
+		if (i % 4 == 3) {
+			binary_ += '\n';
+		}
+		i++;
+	}
+	binary_ += "\n\n";
+
+	ImGui::Text(binary_.c_str());
 
 	//skinModel_->Update(**animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
 
