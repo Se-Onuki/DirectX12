@@ -51,8 +51,22 @@ namespace SoLib {
 		memory.response_ = hid_read_timeout(device, std::bit_cast<uint8_t *>(memory.data()), memory.data_.size(), 1);
 	}
 
+	uint32_t BinaryJoyConData::GetTimeSpan() const
+	{
+		int32_t sub = static_cast<uint8_t>(*GetJoyMemory(JoyMemoryOffset::kTimer_)) - prevTime_;
+		if (sub < 0) {
+			sub += 0b100000000;
+		}
+		return static_cast<uint32_t>(sub);
+	}
+
 	int32_t BinaryJoyConData::ReadInputReport(hid_device_ *device)
 	{
+		// もし更新があったら
+		if (response_) {
+			// 一つ前のデータの時間を保存
+			prevTime_ = static_cast<uint8_t>(*GetJoyMemory(JoyMemoryOffset::kTimer_));
+		}
 		SoLib::ReadInputReport(device, *this);
 		return this->response_;
 	}

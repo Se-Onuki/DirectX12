@@ -41,4 +41,27 @@ namespace SoLib {
 
 		return result.Normalize();
 	}
+
+
+
+	Quaternion &Quaternion::RK4(const Math::Euler &omega, float dt)
+	{
+		const Quaternion &q1 = *this;
+		const Quaternion &om = Quaternion{ static_cast<const Vector3 &>(omega),0.f };
+		Quaternion k1 = (q1 * om * 0.5f) * dt;
+
+		Quaternion q2 = q1 + k1 * 0.5f;
+		Quaternion k2 = (q2 * om * 0.5f) * dt;
+
+		Quaternion q3 = q1 + k2 * 0.5f;
+		Quaternion k3 = (q3 * om * 0.5f) * dt;
+
+		Quaternion q4 = q1 + k3;
+		Quaternion k4 = (q4 * om * 0.5f) * dt;
+
+		*this = q1 + (k1 + k2 * 2.0f + k3 * 2.0f + k4) * (1.0f / 6.0f);
+		Normalize();
+
+		return *this;
+	}
 }

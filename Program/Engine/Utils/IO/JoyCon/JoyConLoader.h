@@ -127,7 +127,10 @@ namespace SoLib {
 		std::span<const std::byte> GetSensor() const { return { &data_[static_cast<uint32_t>(JoyMemoryOffset::kTransform_)], 12u * 3u }; }
 
 		std::array<std::byte, static_cast<size_t>(JoyMemoryOffset::kEnd)> data_{};
+		uint8_t prevTime_ = 0;
 		int32_t response_ = 0;
+
+		uint32_t GetTimeSpan() const;
 
 		/// @brief hidから取得したデータを格納する
 		/// @param[in] device デバイスのデータ

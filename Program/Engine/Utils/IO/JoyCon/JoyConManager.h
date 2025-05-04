@@ -27,7 +27,7 @@ namespace SoLib {
 	private:
 
 		void Calc(const BinaryJoyConData *ref, JoyConBase *out) const;
-		std::array<Math::Euler,3u> CalcRot(const float deltaTime, const BinaryJoyConData *ref) const;
+		std::array<Math::Euler,3u> CalcRot(const BinaryJoyConData *ref) const;
 	public:
 		SoLib::JoyConUpdater *reference_ = nullptr;
 		DoubleJoyCon *joycon_ = nullptr;

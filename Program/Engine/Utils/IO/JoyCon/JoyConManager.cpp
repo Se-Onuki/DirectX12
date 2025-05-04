@@ -47,54 +47,38 @@ namespace SoLib {
 		return true;
 	}
 
-	void JoyConInputParser::Calc(const float deltaTime) const
+	void JoyConInputParser::Calc(const float) const
 	{
 		std::vector<std::array<Math::Euler, 3u>> eulerRight;
 		std::vector<std::array<Math::Euler, 3u>> eulerLeft;
 
+		std::vector<float> rDelta;
+		std::vector<float> lDelta;
+
 		do {
 			reference_->Update();
 			const auto &[right, left] = reference_->GetJoyConRL();
-			if (right) { eulerRight.push_back(CalcRot(deltaTime, &right)); };
-			if (left) { eulerLeft.push_back(CalcRot(deltaTime, &left)); }
+			if (right) {
+				eulerRight.push_back(CalcRot(&right));
+				rDelta.push_back(right.GetTimeSpan() / 600.f);
+			};
+			if (left) {
+				eulerLeft.push_back(CalcRot(&left));
+				lDelta.push_back(left.GetTimeSpan() / 600.f);
+			}
 			if (not right or not left) { break; }
 
 		} while (true);
-		/*const auto &[right, left] = reference_->GetJoyConRL();
-		Calc(&right, &static_cast<JoyConBase &>(joycon_->joyConR_));
-		Calc(&left, &static_cast<JoyConBase &>(joycon_->joyConL_));*/
 
-		Quaternion angleAccel = Quaternion::Identity;
 		auto eulerRange = std::views::join(eulerRight);
-		for (auto &rot : eulerRange) {
-			// 角度を時間で合わせる
-			rot = Math::Euler(Vector3(rot) / (3.f * eulerRight.size()));
-			// クォータニオンにする
-			auto angleTmp = Quaternion::Create(rot);
-			// 回転方向をあわせる
-			angleTmp = Quaternion{ -angleTmp.x, -angleTmp.y, angleTmp.z, angleTmp.w }.Normalize();
-
-			// 乗算
-			(angleAccel *= angleTmp).Normalize();
+		for (int32_t i = 0; auto & rot : eulerRange) {
+			joycon_->joyConR_.transform_.rotate_.RK4(rot, rDelta[i++ / 3]);
 		}
-		// 回転を追加する
-		(joycon_->joyConR_.transform_.rotate_ *= /*{ -angleAccel.x, -angleAccel.y, angleAccel.z, angleAccel.w }*/ angleAccel).Normalize();
-
-		angleAccel = Quaternion::Identity;
 		eulerRange = std::views::join(eulerLeft);
-		for (auto &rot : eulerRange) {
-			// 角度を時間で合わせる
-			rot = Math::Euler(Vector3(rot) / (3.f * eulerLeft.size()));
-			// クォータニオンにする
-			auto angleTmp = Quaternion::Create(rot);
-			// 回転方向をあわせる
-			angleTmp = Quaternion{ -angleTmp.x, -angleTmp.y, angleTmp.z, angleTmp.w }.Normalize();
-
-			// 乗算
-			(angleAccel *= angleTmp).Normalize();
+		for (int32_t i = 0; auto & rot : eulerRange) {
+			joycon_->joyConL_.transform_.rotate_.RK4(rot, lDelta[i++ / 3]);
 		}
-		// 回転を追加する
-		(joycon_->joyConL_.transform_.rotate_ *= /*{ -angleAccel.x, -angleAccel.y, angleAccel.z, angleAccel.w }*/ angleAccel).Normalize();
+
 	}
 
 	void JoyConInputParser::Calc(const BinaryJoyConData *ref, JoyConBase *out) const
@@ -137,7 +121,7 @@ namespace SoLib {
 
 		(out->transform_.rotate_ *= /*{ -angleAccel.x, -angleAccel.y, angleAccel.z, angleAccel.w }*/ angleAccel).Normalize();
 	}
-	std::array<Math::Euler, 3u> JoyConInputParser::CalcRot(const float deltaTime, const BinaryJoyConData *ref) const
+	std::array<Math::Euler, 3u> JoyConInputParser::CalcRot(const BinaryJoyConData *ref) const
 	{
 		std::array<Math::Euler, 3u> result;
 
@@ -160,15 +144,16 @@ namespace SoLib {
 
 			for (uint32_t i = 0; i < 3u; i++) {
 
-				float gyro_cal_coeff = (float)(816.f / (float)(kCalGyroCoeff_ - kOriginAngle_[i]));
+				float gyro_cal_coeff = (float)(936.f * Angle::Dig2Rad / (float)(kCalGyroCoeff_ - kOriginAngle_[i]));
 				float sign = std::copysignf(1.f, int16_t(item.gyro_[i] - kOriginAngle_[i]));
 				///*rot.begin()[i] =(sign * std::clamp(int16_t(std::abs(item.gyro_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * kRotCalc * (1 / 3600.f);*/
-				rot.begin()[i] = (sign * std::clamp(int16_t(std::abs(item.gyro_[i] - kOriginAngle_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * gyro_cal_coeff * (deltaTime * deltaTime);
+				rot.begin()[i] = (sign * std::clamp(int16_t(std::abs(item.gyro_[i] - kOriginAngle_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * gyro_cal_coeff;
 
 
 
 			}
-			//rot.x *= -1.f;
+			rot.x *= -1.f;
+			rot.y *= -1.f;
 			//auto tmp = Quaternion::Create(rot);
 			//tmp = Quaternion{ -tmp.x, -tmp.y, tmp.z, tmp.w }.Normalize();
 

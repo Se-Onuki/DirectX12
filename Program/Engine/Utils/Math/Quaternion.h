@@ -96,6 +96,15 @@ namespace SoLib {
 		inline explicit operator __m128() const noexcept { return _mm_load_ps(&x); }
 		inline Quaternion &operator=(const __m128 &vec) noexcept { _mm_store_ps(&x, vec); return *this; }
 
+		inline Quaternion operator+(const Quaternion &q) const { return Quaternion{ x + q.x, y + q.y, z + q.z, w + q.w }; }
+		inline Quaternion operator*(float v) const { return Quaternion{ x * v,y * v,z * v,w * v }; }
+
+		/// @brief RK法による回転計算
+		/// @param[in] omega 回転量
+		/// @param[in] dt 時間差分
+		/// @return 計算結果
+		Quaternion &RK4(const Math::Euler &omega, float dt);
+
 	};
 
 	inline Quaternion operator*(const Quaternion &a, const Quaternion &b) {
