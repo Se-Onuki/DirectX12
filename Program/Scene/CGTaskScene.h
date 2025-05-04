@@ -15,6 +15,7 @@
 #include "../Engine/DirectBase/Model/SkeletonAnimation/Skeleton.h"
 #include "../Engine/DirectBase/Model/SkeletonAnimation/ModelAnimation.h"
 #include "../Engine/DirectBase/SkinAnimation/SkinAnimation.h"
+#include "../Engine/Utils/IO/JoyCon/JoyConManager.h"
 
 class CGTaskScene : public SolEngine::IScene {
 public:
@@ -41,5 +42,7 @@ private:
 	SolEngine::ResourceHandle<SolEngine::ModelData> boxModel_;
 
 	DirectXCommon *pDxCommon_ = nullptr;
+
+	SoLib::JoyConManager joyConManager_;
 
 };

@@ -15,6 +15,8 @@
 
 void CGTaskScene::OnEnter()
 {
+	joyConManager_.Init();
+
 
 	SolEngine::ResourceObjectManager<SolEngine::AssimpData> *const assimpManager = SolEngine::ResourceObjectManager<SolEngine::AssimpData>::GetInstance();
 	auto assimpHandle = assimpManager->Load({ "Model/human/", "BrainStem.glb" });

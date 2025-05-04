@@ -231,6 +231,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\UI\Text\NumberRender.cpp" />
     <ClCompile Include="Engine\Utils\IO\HID\HidDeviceHolder.cpp" />
     <ClCompile Include="Engine\Utils\IO\JoyCon\JoyCon.cpp" />
+    <ClCompile Include="Engine\Utils\IO\JoyCon\JoyConLoader.cpp" />
+    <ClCompile Include="Engine\Utils\IO\JoyCon\JoyConManager.cpp" />
     <ClCompile Include="Engine\Utils\Math\UIValue.cpp" />
     <ClCompile Include="Engine\Utils\Network\Socket\UdpNetwork.cpp" />
     <ClCompile Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.cpp" />
@@ -378,6 +380,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\UI\Text\NumberRender.h" />
     <ClInclude Include="Engine\Utils\IO\HID\HidDeviceHolder.h" />
     <ClInclude Include="Engine\Utils\IO\JoyCon\JoyCon.h" />
+    <ClInclude Include="Engine\Utils\IO\JoyCon\JoyConLoader.h" />
+    <ClInclude Include="Engine\Utils\IO\JoyCon\JoyConManager.h" />
     <ClInclude Include="Engine\Utils\Math\UIValue.h" />
     <ClInclude Include="Engine\Utils\Network\Network.h" />
     <ClInclude Include="Engine\Utils\Network\Socket\ConnectSocket.h" />

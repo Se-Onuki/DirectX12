@@ -531,6 +531,12 @@
     <ClCompile Include="Engine\Utils\IO\JoyCon\JoyCon.cpp">
       <Filter>Engine\Utils\IO\JoyCon</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Utils\IO\JoyCon\JoyConLoader.cpp">
+      <Filter>Engine\Utils\IO\JoyCon</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\IO\JoyCon\JoyConManager.cpp">
+      <Filter>Engine\Utils\IO\JoyCon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -1053,6 +1059,12 @@
       <Filter>Engine\Utils\IO\HID</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Utils\IO\JoyCon\JoyCon.h">
+      <Filter>Engine\Utils\IO\JoyCon</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\IO\JoyCon\JoyConLoader.h">
+      <Filter>Engine\Utils\IO\JoyCon</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\IO\JoyCon\JoyConManager.h">
       <Filter>Engine\Utils\IO\JoyCon</Filter>
     </ClInclude>
   </ItemGroup>

@@ -56,6 +56,8 @@ namespace SoLib {
 
 		bool operator==(const HidDeviceInfoItrator &) const = default;
 
+		explicit operator bool() const { return itr_; }
+
 		HidDeviceInfoItrator &operator++() {
 			itr_ = itr_->next;
 			return *this;
@@ -94,7 +96,15 @@ namespace SoLib {
 		HidDeviceInfoItrator begin() const { return begin_; }
 		HidDeviceInfoItrator end() const { return nullptr; }
 
+		bool empty() { return not begin_.itr_; }
+
+		void clear();
+
+		void push_front(HidDeviceInfoItrator itr);
+
 		std::list<std::pair<std::string, const HidDeviceInfo>> FindDevice(std::string(*)(const HidDeviceInfo)) const;
+
+		HidDeviceInfoRange DrainFilter(std::string(*)(const HidDeviceInfo));
 
 	private:
 		HidDeviceInfoItrator begin_;
