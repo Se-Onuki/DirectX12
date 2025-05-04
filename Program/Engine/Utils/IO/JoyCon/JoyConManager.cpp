@@ -47,32 +47,54 @@ namespace SoLib {
 		return true;
 	}
 
-	void JoyConInputParser::Calc() const
+	void JoyConInputParser::Calc(const float deltaTime) const
 	{
-		uint32_t count = 0;
-		std::vector<std::array<Math::Euler, 3u>> euler;
+		std::vector<std::array<Math::Euler, 3u>> eulerRight;
+		std::vector<std::array<Math::Euler, 3u>> eulerLeft;
 
 		do {
-			count++;
 			reference_->Update();
 			const auto &[right, left] = reference_->GetJoyConRL();
-			euler.push_back(CalcRot(&right));
+			if (right) { eulerRight.push_back(CalcRot(deltaTime, &right)); };
+			if (left) { eulerLeft.push_back(CalcRot(deltaTime, &left)); }
+			if (not right or not left) { break; }
 
-		} while (reference_->joyConR_->second);
+		} while (true);
 		/*const auto &[right, left] = reference_->GetJoyConRL();
 		Calc(&right, &static_cast<JoyConBase &>(joycon_->joyConR_));
 		Calc(&left, &static_cast<JoyConBase &>(joycon_->joyConL_));*/
 
 		Quaternion angleAccel = Quaternion::Identity;
-		auto eulerRange = std::views::join(euler);
+		auto eulerRange = std::views::join(eulerRight);
 		for (auto &rot : eulerRange) {
-			rot = Math::Euler(Vector3(rot) / (3.f * count));
-			auto tmp = Quaternion::Create(rot);
-			tmp = Quaternion{ -tmp.x, -tmp.y, tmp.z, tmp.w }.Normalize();
+			// 角度を時間で合わせる
+			rot = Math::Euler(Vector3(rot) / (3.f * eulerRight.size()));
+			// クォータニオンにする
+			auto angleTmp = Quaternion::Create(rot);
+			// 回転方向をあわせる
+			angleTmp = Quaternion{ -angleTmp.x, -angleTmp.y, angleTmp.z, angleTmp.w }.Normalize();
 
-			(angleAccel *= tmp).Normalize();
+			// 乗算
+			(angleAccel *= angleTmp).Normalize();
 		}
+		// 回転を追加する
 		(joycon_->joyConR_.transform_.rotate_ *= /*{ -angleAccel.x, -angleAccel.y, angleAccel.z, angleAccel.w }*/ angleAccel).Normalize();
+
+		angleAccel = Quaternion::Identity;
+		eulerRange = std::views::join(eulerLeft);
+		for (auto &rot : eulerRange) {
+			// 角度を時間で合わせる
+			rot = Math::Euler(Vector3(rot) / (3.f * eulerLeft.size()));
+			// クォータニオンにする
+			auto angleTmp = Quaternion::Create(rot);
+			// 回転方向をあわせる
+			angleTmp = Quaternion{ -angleTmp.x, -angleTmp.y, angleTmp.z, angleTmp.w }.Normalize();
+
+			// 乗算
+			(angleAccel *= angleTmp).Normalize();
+		}
+		// 回転を追加する
+		(joycon_->joyConL_.transform_.rotate_ *= /*{ -angleAccel.x, -angleAccel.y, angleAccel.z, angleAccel.w }*/ angleAccel).Normalize();
 	}
 
 	void JoyConInputParser::Calc(const BinaryJoyConData *ref, JoyConBase *out) const
@@ -107,7 +129,7 @@ namespace SoLib {
 			}
 			//rot.x *= -1.f;
 			auto tmp = Quaternion::Create(rot);
-			tmp = Quaternion{ -tmp.x, -tmp.y, tmp.z, tmp.w }.Normalize();
+			//tmp = Quaternion{ -tmp.x, -tmp.y, tmp.z, tmp.w }.Normalize();
 
 			(angleAccel *= tmp).Normalize();
 		}
@@ -115,7 +137,7 @@ namespace SoLib {
 
 		(out->transform_.rotate_ *= /*{ -angleAccel.x, -angleAccel.y, angleAccel.z, angleAccel.w }*/ angleAccel).Normalize();
 	}
-	std::array<Math::Euler, 3u> JoyConInputParser::CalcRot(const BinaryJoyConData *ref) const
+	std::array<Math::Euler, 3u> JoyConInputParser::CalcRot(const float deltaTime, const BinaryJoyConData *ref) const
 	{
 		std::array<Math::Euler, 3u> result;
 
@@ -138,15 +160,15 @@ namespace SoLib {
 
 			for (uint32_t i = 0; i < 3u; i++) {
 
-				float gyro_cal_coeff = (float)(936.f / (float)(kCalGyroCoeff_ - kOriginAngle_[i]));
+				float gyro_cal_coeff = (float)(816.f / (float)(kCalGyroCoeff_ - kOriginAngle_[i]));
 				float sign = std::copysignf(1.f, int16_t(item.gyro_[i] - kOriginAngle_[i]));
 				///*rot.begin()[i] =(sign * std::clamp(int16_t(std::abs(item.gyro_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * kRotCalc * (1 / 3600.f);*/
-				rot.begin()[i] = (sign * std::clamp(int16_t(std::abs(item.gyro_[i] - kOriginAngle_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * gyro_cal_coeff / 3600.f;
+				rot.begin()[i] = (sign * std::clamp(int16_t(std::abs(item.gyro_[i] - kOriginAngle_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * gyro_cal_coeff * (deltaTime * deltaTime);
 
 
 
 			}
-			////rot.x *= -1.f;
+			//rot.x *= -1.f;
 			//auto tmp = Quaternion::Create(rot);
 			//tmp = Quaternion{ -tmp.x, -tmp.y, tmp.z, tmp.w }.Normalize();
 

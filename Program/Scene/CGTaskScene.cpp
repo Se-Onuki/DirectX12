@@ -62,7 +62,7 @@ void CGTaskScene::OnExit()
 
 void CGTaskScene::Update()
 {
-	//const float deltaTime = ImGui::GetIO().DeltaTime;
+	const float deltaTime = ImGui::GetIO().DeltaTime;
 
 	SolEngine::ResourceObjectManager<Shader>::GetInstance()->ImGuiWidget("ShaderManager");
 
@@ -70,7 +70,7 @@ void CGTaskScene::Update()
 	//model_->ImGuiWidget();
 	transform_->ImGuiWidget();
 
-	joyConManager_.inputParser_.Calc();
+	joyConManager_.inputParser_.Calc(deltaTime);
 
 	transform_->rotate = joyConManager_.joycon_.joyConR_.transform_.rotate_;
 	transform_->UpdateMatrix();

@@ -21,13 +21,13 @@ namespace SoLib {
 			std::array<int16_t, 3u> gyro_;
 		};
 
-		void Calc() const;
+		void Calc(const float deltaTime) const;
 
 
 	private:
 
 		void Calc(const BinaryJoyConData *ref, JoyConBase *out) const;
-		std::array<Math::Euler,3u> CalcRot(const BinaryJoyConData *ref) const;
+		std::array<Math::Euler,3u> CalcRot(const float deltaTime, const BinaryJoyConData *ref) const;
 	public:
 		SoLib::JoyConUpdater *reference_ = nullptr;
 		DoubleJoyCon *joycon_ = nullptr;

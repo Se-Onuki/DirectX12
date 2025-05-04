@@ -163,7 +163,7 @@ namespace SoLib {
 		/// @brief 更新の停止指示
 		void StopUpdate();
 
-	//private:
+	private:
 
 		/// @brief デバイスからデータを読み取る
 		void GetInputData();
