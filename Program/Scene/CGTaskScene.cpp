@@ -20,7 +20,9 @@ void CGTaskScene::OnEnter()
 		auto [r, l] = joyConManager_.GetJoyConDevice();
 		joyConUpdater_.Init(r, l);
 
-		updateThread_ = std::thread(&SoLib::JoyConUpdater::Update, &joyConUpdater_);
+		//updateThread_ = std::thread(&SoLib::JoyConUpdater::Update, &joyConUpdater_);
+
+		joyConManager_.inputParser_.reference_ = &joyConUpdater_;
 	}
 
 
@@ -55,7 +57,7 @@ void CGTaskScene::OnExit()
 	//fullScreen_->Finalize();
 
 	joyConUpdater_.StopUpdate();
-	updateThread_.join();
+	//updateThread_.join();
 }
 
 void CGTaskScene::Update()
@@ -67,6 +69,10 @@ void CGTaskScene::Update()
 	light_->ImGuiWidget();
 	//model_->ImGuiWidget();
 	transform_->ImGuiWidget();
+
+	joyConManager_.inputParser_.Calc();
+
+	transform_->rotate = joyConManager_.joycon_.joyConR_.transform_.rotate_;
 	transform_->UpdateMatrix();
 
 	skyBoxTransform_->ImGuiWidget("SkyBox");
@@ -78,9 +84,11 @@ void CGTaskScene::Update()
 	if (material) {
 		SoLib::ImGuiWidget("Material", *material);
 	}
-	// 状態をクリアします。
+
+	// 文字のクリア
 	binary_.clear();
 
+	// 状態の取得
 	auto [right, left] = joyConUpdater_.GetJoyConRL();
 
 	for (uint32_t i = 0; auto mem : right.data_) {
@@ -103,12 +111,7 @@ void CGTaskScene::Update()
 
 	ImGui::Text(binary_.c_str());
 
-	//skinModel_->Update(**animation_, animationPlayer_.GetDeltaTimer().GetNowFlame());
-
-	//SolEngine::CameraManager::GetInstance()->DisplayImGui();
 	SolEngine::CameraManager::GetInstance()->CalcAll();
-
-	//computeShader_.Update(*skinModel_->skinCluster_, *boxModel_, *skeleton_->modelInfluence_);
 }
 
 void CGTaskScene::Draw()

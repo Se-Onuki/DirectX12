@@ -23,14 +23,17 @@ namespace SoLib {
 		JoyConBase() = default;
 		~JoyConBase() = default;
 
-	private:
+		//private:
+
+		Vector3 accel_ = {};
+		Vector3 velocity_ = {};
 
 		SimpleTransformQuaternion transform_;
 
 	};
 
 
-	class JoyConR
+	class JoyConR : public JoyConBase
 	{
 	public:
 		JoyConR() = default;
@@ -42,7 +45,7 @@ namespace SoLib {
 
 	};
 
-	class JoyConL
+	class JoyConL : public JoyConBase
 	{
 	public:
 		JoyConL() = default;
@@ -62,7 +65,7 @@ namespace SoLib {
 		DoubleJoyCon() = default;
 
 
-	private:
+	//private:
 
 		JoyConR joyConR_;
 		JoyConL joyConL_;

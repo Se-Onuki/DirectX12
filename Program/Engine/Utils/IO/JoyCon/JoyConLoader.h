@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "../HID/HidDeviceHolder.h"
+#include <deque>
 
 namespace SoLib {
 
@@ -125,7 +126,7 @@ namespace SoLib {
 		/// @return センサーの情報群
 		std::span<const std::byte> GetSensor() const { return { &data_[static_cast<uint32_t>(JoyMemoryOffset::kTransform_)], 12u * 3u }; }
 
-		std::array<std::byte, 0x40> data_{};
+		std::array<std::byte, static_cast<size_t>(JoyMemoryOffset::kEnd)> data_{};
 		int32_t response_ = 0;
 
 		/// @brief hidから取得したデータを格納する
@@ -162,7 +163,7 @@ namespace SoLib {
 		/// @brief 更新の停止指示
 		void StopUpdate();
 
-	private:
+	//private:
 
 		/// @brief デバイスからデータを読み取る
 		void GetInputData();
@@ -171,12 +172,6 @@ namespace SoLib {
 		std::unique_ptr<JoyconDevicePair> joyConL_;
 
 		bool isUpdate_ = true;
-
-	};
-
-	class MemoryConverter {
-	public:
-
 
 	};
 

@@ -73,14 +73,14 @@ namespace SoLib {
 
 	void JoyConUpdater::Update()
 	{
-		while (true) {
-			// もしアップデートを続けられないなら
-			if (not *this) {
-				// 終わる
-				return;
-			}
-			GetInputData();
-		}
+		//while (true) {
+		//	// もしアップデートを続けられないなら
+		//	if (not *this) {
+		//		// 終わる
+		//		return;
+		//	}
+		GetInputData();
+		//}
 	}
 
 	const std::array<const BinaryJoyConData, 2u> JoyConUpdater::GetJoyConRL() const
