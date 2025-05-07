@@ -70,7 +70,7 @@ void CGTaskScene::Update()
 	//model_->ImGuiWidget();
 	transform_->ImGuiWidget();
 
-	joyConManager_.inputParser_.Calc(deltaTime);
+	joyConManager_.inputParser_.Update(deltaTime);
 
 	transform_->rotate = joyConManager_.joycon_.joyConR_.transform_.rotate_;
 	transform_->UpdateMatrix();

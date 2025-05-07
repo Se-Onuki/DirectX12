@@ -1,4 +1,5 @@
 #include "JoyConManager.h"
+#include "../../../DirectBase/Input/Input.h"
 
 namespace SoLib {
 	IsSuccess JoyConManager::Init()
@@ -47,7 +48,7 @@ namespace SoLib {
 		return true;
 	}
 
-	void JoyConInputParser::Calc(const float) const
+	void JoyConInputParser::Update(const float)
 	{
 		std::vector<std::array<Math::Euler, 3u>> eulerRight;
 		std::vector<std::array<Math::Euler, 3u>> eulerLeft;
@@ -55,24 +56,38 @@ namespace SoLib {
 		std::vector<float> rDelta;
 		std::vector<float> lDelta;
 
+		// 送信される情報の差分
+		static constexpr float kSendCount = 200.f * 3;
+
 		do {
 			reference_->Update();
 			const auto &[right, left] = reference_->GetJoyConRL();
 			if (right) {
 				eulerRight.push_back(CalcRot(&right));
-				rDelta.push_back(right.GetTimeSpan() / 600.f);
+				rDelta.push_back(right.GetTimeSpan() / kSendCount);
 			};
 			if (left) {
 				eulerLeft.push_back(CalcRot(&left));
-				lDelta.push_back(left.GetTimeSpan() / 600.f);
+				lDelta.push_back(left.GetTimeSpan() / kSendCount);
 			}
 			if (not right or not left) { break; }
 
 		} while (true);
 
+		auto input = SolEngine::DirectInput::GetInstance();
+
+		if (input->IsTrigger(DIK_L)) {
+			static_cast<Vector3 &>(rotateBias_[0]) = Vector3::zero;
+		}
 		auto eulerRange = std::views::join(eulerRight);
 		for (int32_t i = 0; auto & rot : eulerRange) {
+			if (input->IsTrigger(DIK_L)) {
+				static_cast<Vector3 &>(rotateBias_[0]) += rot;
+			}
 			joycon_->joyConR_.transform_.rotate_.RK4(rot, rDelta[i++ / 3]);
+		}
+		if (input->IsTrigger(DIK_L)) {
+			static_cast<Vector3 &>(rotateBias_[0]) /= static_cast<float>(eulerRight.size() * 3.f);
 		}
 		eulerRange = std::views::join(eulerLeft);
 		for (int32_t i = 0; auto & rot : eulerRange) {
@@ -104,9 +119,9 @@ namespace SoLib {
 			for (uint32_t i = 0; i < 3u; i++) {
 
 				float gyro_cal_coeff = (float)(936.f / (float)(kCalGyroCoeff_ - kOriginAngle_[i]));
-				float sign = std::copysignf(1.f, int16_t(item.gyro_[i] - kOriginAngle_[i]));
+				//float sign = std::copysignf(1.f, int16_t(item.gyro_[i] - kOriginAngle_[i]));
 				/*rot.begin()[i] =(sign * std::clamp(int16_t(std::abs(item.gyro_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * kRotCalc * (1 / 3600.f);*/
-				rot.begin()[i] = (sign * std::clamp(int16_t(std::abs(item.gyro_[i] - kOriginAngle_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * gyro_cal_coeff / 3600.f / 3;
+				rot.begin()[i] = (item.gyro_[i] - rotateBias_[0].begin()[i]) * gyro_cal_coeff / 3600.f / 3;
 
 
 
@@ -144,18 +159,17 @@ namespace SoLib {
 
 			for (uint32_t i = 0; i < 3u; i++) {
 
-				float gyro_cal_coeff = (float)(936.f * Angle::Dig2Rad / (float)(kCalGyroCoeff_ - kOriginAngle_[i]));
-				float sign = std::copysignf(1.f, int16_t(item.gyro_[i] - kOriginAngle_[i]));
+				float gyro_cal_coeff = (float)(936.f * Angle::Dig2Rad / (float)(kCalGyroCoeff_));
+				//float sign = std::copysignf(1.f, int16_t(item.gyro_[i]));
 				///*rot.begin()[i] =(sign * std::clamp(int16_t(std::abs(item.gyro_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * kRotCalc * (1 / 3600.f);*/
-				rot.begin()[i] = (sign * std::clamp(int16_t(std::abs(item.gyro_[i] - kOriginAngle_[i]) - 75), int16_t(0), (std::numeric_limits<int16_t>::max)())) * gyro_cal_coeff;
-
-
-
+				rot.begin()[i] = ((item.gyro_[i])) * gyro_cal_coeff;
 			}
 			rot.x *= -1.f;
 			rot.y *= -1.f;
 			//auto tmp = Quaternion::Create(rot);
 			//tmp = Quaternion{ -tmp.x, -tmp.y, tmp.z, tmp.w }.Normalize();
+
+			static_cast<Vector3 &>(rot) -= static_cast<const Vector3&>(rotateBias_[0]);
 
 			//(angleAccel *= tmp).Normalize();
 		}
