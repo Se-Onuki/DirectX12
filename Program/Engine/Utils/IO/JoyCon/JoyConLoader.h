@@ -163,9 +163,6 @@ namespace SoLib {
 		/// @return Joy-Conのデータ
 		const std::array<const BinaryJoyConData, 2u> GetJoyConRL() const;
 
-		/// @brief 更新の停止指示
-		void StopUpdate();
-
 	private:
 
 		/// @brief デバイスからデータを読み取る
@@ -173,8 +170,6 @@ namespace SoLib {
 
 		std::unique_ptr<JoyconDevicePair> joyConR_;
 		std::unique_ptr<JoyconDevicePair> joyConL_;
-
-		bool isUpdate_ = true;
 
 	};
 

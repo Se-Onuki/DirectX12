@@ -73,9 +73,6 @@ namespace SoLib {
 
 	void JoyConUpdater::Init(hid_device_ *right, hid_device_ *left)
 	{
-		// 更新を行う設定にする
-		isUpdate_ = true;
-
 		// データの確保
 		joyConR_ = std::make_unique<JoyconDevicePair>();
 		joyConL_ = std::make_unique<JoyconDevicePair>();
@@ -87,24 +84,12 @@ namespace SoLib {
 
 	void JoyConUpdater::Update()
 	{
-		//while (true) {
-		//	// もしアップデートを続けられないなら
-		//	if (not *this) {
-		//		// 終わる
-		//		return;
-		//	}
 		GetInputData();
-		//}
 	}
 
 	const std::array<const BinaryJoyConData, 2u> JoyConUpdater::GetJoyConRL() const
 	{
 		return { joyConR_->second, joyConL_->second };
-	}
-
-	void JoyConUpdater::StopUpdate()
-	{
-		isUpdate_ = false;
 	}
 
 	void JoyConUpdater::GetInputData()

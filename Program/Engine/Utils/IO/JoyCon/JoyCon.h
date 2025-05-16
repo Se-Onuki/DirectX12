@@ -17,7 +17,7 @@
 
 namespace SoLib {
 
-
+	/// @brief Joy-Conの共通部分
 	class JoyConBase {
 	public:
 		JoyConBase() = default;
@@ -25,9 +25,12 @@ namespace SoLib {
 
 		//private:
 
+		/// @brief 加速度
 		Vector3 accel_ = {};
+		/// @brief 速度
 		Vector3 velocity_ = {};
 
+		/// @brief 姿勢
 		SimpleTransformQuaternion transform_;
 
 	};
@@ -39,8 +42,12 @@ namespace SoLib {
 		JoyConR() = default;
 		~JoyConR() = default;
 
-		bool IsPress(BinaryJoyConData::JoyButtonR) const;
+		/// @brief 押したかどうか
+		/// @param[in] button ボタン
+		/// @return 押したならTrue
+		bool IsPress(BinaryJoyConData::JoyButtonR button) const;
 
+		/// @brief ボタンのバイナリ
 		uint16_t button_;
 
 	};
@@ -50,11 +57,13 @@ namespace SoLib {
 	public:
 		JoyConL() = default;
 		~JoyConL() = default;
-
-		bool IsPress(BinaryJoyConData::JoyButtonL) const;
+		/// @brief 押したかどうか
+		/// @param[in] button ボタン
+		/// @return 押したならTrue
+		bool IsPress(BinaryJoyConData::JoyButtonL button) const;
 
 	private:
-
+		/// @brief ボタンのバイナリ
 		uint16_t button_;
 
 	};
@@ -67,7 +76,9 @@ namespace SoLib {
 
 	//private:
 
+		/// @brief 右Joy-Con
 		JoyConR joyConR_;
+		/// @brief 左Joy-Con
 		JoyConL joyConL_;
 
 	};
