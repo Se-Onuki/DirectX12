@@ -154,7 +154,7 @@ namespace SoLib {
 		/// @brief 更新処理
 		void Update();
 
-		operator bool() const { return joyConL_ and joyConR_ and isUpdate_; }
+		operator bool() const { return joyConL_ and joyConR_; }
 
 		/// @brief Joy-Conとデバイスのペア
 		using JoyconDevicePair = std::pair<hid_device_ *, BinaryJoyConData>;

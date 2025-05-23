@@ -123,7 +123,7 @@ void LevelUP::Update(const float deltaTime)
 	buttonUIGroup_.SetStatus(
 		[buttonCount, halfSize, this](ButtonUI *const button, const size_t index) {
 			const float t = static_cast<float>(index) / buttonCount;
-			button->sprite_->SetPosition(Vector2{ windowCenter_.x - (halfSize) * 0.5f - distance_ * 2.f + halfSize * 2 * t, windowCenter_.y });
+			button->sprite_->SetPosition(Vector2{ windowCenter_.x - (halfSize) * 0.5f - distance_ * 1.5f + halfSize * 2 * t, windowCenter_.y });
 			button->sprite_->SetScale(buttonScale_);
 			// カラーを設定する
 			SoLib::Color::RGB4 color = button->sprite_->GetColor();

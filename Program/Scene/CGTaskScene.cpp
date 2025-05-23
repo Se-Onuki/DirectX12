@@ -56,8 +56,6 @@ void CGTaskScene::OnExit()
 	SolEngine::SkyBoxRender::Finalize();
 	//fullScreen_->Finalize();
 
-	joyConUpdater_.StopUpdate();
-	//updateThread_.join();
 }
 
 void CGTaskScene::Update()
