@@ -353,7 +353,7 @@ void GameScene::OnEnter() {
 	levelUpUI_->SetWindow(Vector2{ WinApp::kWindowWidth / 2.f, WinApp::kWindowHeight / 2.f }, windowSize, windowDistance);
 	ECS::System::Par::ExpGaugeDrawer::levelUp_ = levelUpUI_.get();
 
-	constexpr int32_t kUiCount = 3;
+	constexpr int32_t kUiCount = 2;
 	levelUpUI_->Init(kUiCount);
 	{
 		ButtonUI *button = levelUpUI_->GetButtonUI(0);
@@ -387,26 +387,48 @@ void GameScene::OnEnter() {
 		);
 	}
 
-	{
-		ButtonUI *button = levelUpUI_->GetButtonUI(2);
-		static constexpr int32_t powerUp = 5;
+	//{
+	//	ButtonUI *button = levelUpUI_->GetButtonUI(2);
+	//	static constexpr int32_t powerUp = 5;
 
-		button->Init(TextureManager::Load("UI/PowerUp.png"), [this]() {
-			Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
+	//	button->Init(TextureManager::Load("UI/PowerUp.png"), [this]() {
+	//		Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
 
-			// プレイヤのView
-			auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+	//		// プレイヤのView
+	//		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
 
-			for (auto chunk : playerChunks) {
-				for (auto &player : *chunk) {
-					auto &power = player.GetComponent<ECS::AttackPower>();
-					// 攻撃力の増加
-					power.power_ += powerUp;
-				}
-			}
-			}
-		);
-	}
+	//		for (auto chunk : playerChunks) {
+	//			for (auto &player : *chunk) {
+	//				auto &power = player.GetComponent<ECS::AttackPower>();
+	//				// 攻撃力の増加
+	//				power.power_ += powerUp;
+	//			}
+	//		}
+	//		}
+	//	);
+	//}
+
+	//{
+	//	ButtonUI *button = levelUpUI_->GetButtonUI(3);
+	//	static constexpr int32_t powerUp = 5;
+
+	//	button->Init(TextureManager::Load("UI/PowerUp.png"), [this]() {
+	//		Archetype playerArchetype = Archetype::Generate<ECS::PlayerTag>();
+
+	//		// プレイヤのView
+	//		auto playerChunks = newWorld_.GetAccessableChunk(playerArchetype);
+
+	//		for (auto chunk : playerChunks) {
+	//			for (auto &player : *chunk) {
+	//				auto &power = player.GetComponent<ECS::AttackPower>();
+	//				// 攻撃力の増加
+	//				power.power_ += powerUp;
+	//			}
+	//		}
+	//		}
+	//	);
+	//}
+
 	{
 		auto button = ButtonUI::Generate();
 		button->Init(TextureManager::Load("UI/KnockBack.png"), [this]() {

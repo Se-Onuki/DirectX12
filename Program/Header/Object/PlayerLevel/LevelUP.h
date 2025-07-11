@@ -94,7 +94,7 @@ public:
 	LevelUP() = default;
 	~LevelUP() = default;
 
-	void Init(int32_t count = 3);
+	void Init(int32_t count = 4);
 
 	void SetWindow(Vector2 center, Vector2 scale, float distance);
 
