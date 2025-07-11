@@ -15,6 +15,7 @@
 #include "../Engine/DirectBase/Model/SkeletonAnimation/Skeleton.h"
 #include "../Engine/DirectBase/Model/SkeletonAnimation/ModelAnimation.h"
 #include "../Engine/DirectBase/SkinAnimation/SkinAnimation.h"
+#include "../Engine/Utils/IO/JoyCon/JoyConManager.h"
 
 class CGTaskScene : public SolEngine::IScene {
 public:
@@ -33,24 +34,20 @@ public:
 private:
 	std::unique_ptr<DirectionLight> light_ = nullptr;
 
-	std::unique_ptr<SkinModel> skinModel_;
-
 	std::unique_ptr<SolEngine::SkyBox> skyBox_;
 
 	SoLib::Transform skyBoxTransform_;
 	SoLib::Transform transform_;
 
-	std::unique_ptr<PostEffect::OffScreenRenderer> offScreen_ = nullptr;
-	PostEffect::FullScreenRenderer *fullScreen_ = nullptr;
-
-	SolEngine::AnimationPlayer animationPlayer_;
-	SolEngine::ResourceHandle<SolEngine::Animation> animation_;
-
 	SolEngine::ResourceHandle<SolEngine::ModelData> boxModel_;
-	SolEngine::ResourceHandle<SolEngine::Skeleton> skeleton_;
 
 	DirectXCommon *pDxCommon_ = nullptr;
 
-	SolEngine::SkinningComputeShader computeShader_;
+	SoLib::JoyConManager joyConManager_;
 
+	SoLib::JoyConUpdater joyConUpdater_;
+
+	std::thread updateThread_;
+
+	std::string binary_;
 };

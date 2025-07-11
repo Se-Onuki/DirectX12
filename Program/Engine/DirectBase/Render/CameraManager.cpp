@@ -3,6 +3,8 @@
 namespace SolEngine {
 	void CameraManager::Init()
 	{
+		AddCamera("MainCamera");
+		SetMainCamera("MainCamera");
 	}
 	void CameraManager::Clear()
 	{

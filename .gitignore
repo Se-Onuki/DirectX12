@@ -361,3 +361,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /Program/externals/DirectXTex/Shaders/Compiled
 !/Externals/DirectXTex/Lib/**
+
+!**/hidapi.dll
