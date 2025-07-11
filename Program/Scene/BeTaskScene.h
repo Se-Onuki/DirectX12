@@ -20,9 +20,17 @@
 #include "../Header/Object/Block/BlockManager.h"
 #include "../Header/Object/Ground.h"
 #include "../Engine/UI/Text/NumberRender.h"
+#include <future>
 
 class BeTaskScene : public SolEngine::IScene {
 public:
+
+	enum class TaskState {
+		kStart,		// 実行中
+		kStop,		// 停止
+		kSendScore,	// スコア送信
+	};
+
 	BeTaskScene();
 	~BeTaskScene();
 
@@ -40,6 +48,19 @@ private:
 
 	void DrawTimerText() const;
 
+	uint32_t TimeToScore(const std::chrono::milliseconds &time) const;
+
+	void SendScore();
+
+	void GetTopScore();
+
+	static std::future<std::string> PostScoreAsync(int32_t score);
+
+	static std::future<std::string> GetAllScoreAsync();
+
+	static size_t WriteCallback(void *const c, const size_t s, const size_t n, std::string *const userp);
+
+
 private:
 	// 入力インスタンス
 	SolEngine::Input *input_ = nullptr;
@@ -55,14 +76,20 @@ private:
 
 	std::array<std::unique_ptr<SolEngine::NumberText>, 2> number_;
 
+	std::unique_ptr<SolEngine::NumberText> scoreText_;
+
+	std::array<std::unique_ptr<SolEngine::NumberText>, 5> topScoreText_;
+
 	// 高精度クロックの開始時刻
 	std::chrono::steady_clock::time_point startTime_;
 
 	// 処理時間
 	std::chrono::milliseconds timeDuration_;
 
+	SoLib::Time::SecondF drawTimeCount_ = 7;
+
 	// bgm
 	SolEngine::Audio::SoundHandle soundA_;
 
-	bool isTimerStart_ = false;
+	TaskState state_ = TaskState::kStop;
 };

@@ -1,4 +1,6 @@
 #include "BeTaskScene.h"
+#include "../Engine/Utils/Network/WindowsSocket/WindowsSocket.h"
+#include <curl/curl.h>
 
 BeTaskScene::BeTaskScene()
 {
@@ -20,7 +22,13 @@ void BeTaskScene::OnEnter()
 	// タイマーの場所を設定
 	SetTimerPositon();
 
+	scoreText_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 4);
+	scoreText_->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f, 96.f * 2 });
 
+	for (float i = 0; auto &num : topScoreText_) {
+		num = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 4);
+		num->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f, 96.f * i++ + 96.f * 3 });
+	}
 }
 
 void BeTaskScene::OnExit()
@@ -31,7 +39,7 @@ void BeTaskScene::Update()
 {
 
 	// タイマーが動作してたら更新処理を行う
-	if (isTimerStart_) {
+	if (state_ == TaskState::kStart) {
 		// 高精度クロックでの現在時刻
 		auto now = std::chrono::high_resolution_clock::now();
 
@@ -44,19 +52,32 @@ void BeTaskScene::Update()
 	// 計測ボタンを押したら
 	if (input_->GetDirectInput()->IsTrigger(DIK_SPACE)) {
 		// もし開始していたら
-		if (isTimerStart_) {
+		if (state_ == TaskState::kStart) {
 			// タイマーを停止
-			isTimerStart_ = false;
+			state_ = TaskState::kStop;
+
+			scoreText_->SetText(TimeToScore(timeDuration_), true);
 
 		}
 		// もし開始していなかったら
-		else {
+		else if (state_ == TaskState::kStop or state_ == TaskState::kSendScore) {
 			// タイマーを開始
-			isTimerStart_ = true;
+			state_ = TaskState::kStart;
 			// 高精度クロックの現在時刻を取得
 			startTime_ = std::chrono::high_resolution_clock::now();
 		}
 
+	}
+
+	if (state_ == TaskState::kStop) {
+		// スコアを送信する
+		if (input_->GetDirectInput()->IsTrigger(DIK_RETURN)) {
+			state_ = TaskState::kSendScore;
+			// スコアを送信
+			PostScoreAsync(TimeToScore(timeDuration_)).get();
+			// スコアの取得
+			GetTopScore();
+		}
 	}
 
 }
@@ -68,8 +89,16 @@ void BeTaskScene::Draw()
 
 	Sprite::StartDraw(commandList);
 
-	// スプライトの描画
-	DrawTimerText();
+	// 規定された時間以下なら表示する
+	if (timeDuration_.count() > drawTimeCount_ * 1000 or state_ != TaskState::kStart) {
+		// スプライトの描画
+		DrawTimerText();
+	}
+	if (state_ != TaskState::kStart) {
+		// スコアの表示
+		scoreText_->Draw();
+
+	}
 
 	Sprite::EndDraw();
 }
@@ -104,4 +133,127 @@ void BeTaskScene::DrawTimerText() const
 	for (const auto &num : number_) {
 		num->Draw();
 	}
+}
+
+uint32_t BeTaskScene::TimeToScore(const std::chrono::milliseconds &time) const
+{
+	// 十秒を超過していたら0点
+	if (time.count() >= (10 * 1000ll)) {
+		return 0;
+	}
+
+	// 10秒から離れるごとに1000点から得点が減る｡0.001秒で1点減る｡
+	uint32_t score = 1000 + 10000 - static_cast<uint32_t>(time.count());
+
+	return score;
+}
+
+void BeTaskScene::SendScore()
+{
+}
+
+void BeTaskScene::GetTopScore()
+{
+
+	auto getRes = GetAllScoreAsync().get();
+
+	if (getRes != "CURL初期化エラー") {
+		try {
+			nlohmann::json jsonData = nlohmann::json::parse(getRes);
+			for (uint32_t i = 0; i < topScoreText_.size(); i++) {
+				if (i < jsonData.size()) {
+					topScoreText_[i]->SetText(jsonData[i]["score"].get<int32_t>(), true);
+				}
+				else {
+					topScoreText_[i]->SetText(0, true);
+				}
+			}
+		}
+		catch ([[maybe_unused]] const nlohmann::json::parse_error &e) {
+
+			return;
+		}
+	}
+
+
+
+}
+
+std::future<std::string> BeTaskScene::PostScoreAsync(int32_t score)
+{
+	{
+		return std::async(std::launch::async, [score]() ->std::string {
+			CURL *curl = curl_easy_init();
+
+			if (not curl) {
+				return "CURL初期化エラー";
+			}
+			nlohmann::json body = nlohmann::json::object();
+			body["score"] = score;
+
+			std::string bodyStr = body.dump();
+
+			struct curl_slist *headers = nullptr;
+			headers = curl_slist_append(headers, "Content-Type: application/json");
+
+			std::string response{};
+
+			curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:3000/scores");
+			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+			curl_easy_setopt(curl, CURLOPT_POST, 1L);
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, bodyStr.c_str());
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+			CURLcode res = curl_easy_perform(curl);
+
+			long httpCode = 0;
+
+			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
+
+			curl_slist_free_all(headers);
+			curl_easy_cleanup(curl);
+
+			if (res != CURLE_OK) {
+				return "送信エラー: " + std::string(curl_easy_strerror(res));
+			}
+
+			std::stringstream ss;
+			ss << "HTTP " << httpCode << ": " << response;
+			return ss.str();
+
+
+			}
+		);
+	}
+}
+
+std::future<std::string> BeTaskScene::GetAllScoreAsync()
+{
+	return std::async(std::launch::async, []()->std::string {
+		CURL *curl = curl_easy_init();
+		if (not curl) {
+			return "CURL初期化エラー";
+		}
+
+		std::string response{};
+		curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:3000/scores");
+		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+		CURLcode res = curl_easy_perform(curl);
+		curl_easy_cleanup(curl);
+
+		if (res != CURLE_OK) {
+			return "取得エラー: " + std::string(curl_easy_strerror(res));
+		}
+		return response;
+		}
+	);
+}
+
+size_t BeTaskScene::WriteCallback(void *const c, const size_t s, const size_t n, std::string *const userp) {
+	static_cast<std::string *>(userp)->append(static_cast<char *>(c), s * n);
+	return s * n;
 }

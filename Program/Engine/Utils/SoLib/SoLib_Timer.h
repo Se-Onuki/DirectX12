@@ -57,7 +57,7 @@ namespace SoLib {
 			T &GetTime()  noexcept { return time_; }
 			const T &GetTime() const noexcept { return time_; }
 
-			inline operator T &()  noexcept { return time_; }
+			inline operator T &() noexcept { return time_; }
 			inline operator const T &() const noexcept { return time_; }
 
 			inline operator std::chrono::duration<T>() const noexcept { return static_cast<std::chrono::duration<T>>(time_); };
