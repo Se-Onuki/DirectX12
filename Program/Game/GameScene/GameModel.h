@@ -11,14 +11,14 @@
 
 namespace Game {
 
-	class GameRenderer;
+	class GameSceneRenderer;
 
-	class GameModel {
+	class GameSceneModel {
 	public:
-		friend GameRenderer;
+		friend GameSceneRenderer;
 
-		GameModel() = default;
-		~GameModel() = default;
+		GameSceneModel() = default;
+		~GameSceneModel() = default;
 
 		void Init();
 

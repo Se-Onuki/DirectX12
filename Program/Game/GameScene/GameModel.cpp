@@ -1,11 +1,11 @@
 #include "GameModel.h"
 
 namespace Game {
-	void GameModel::Init()
+	void GameSceneModel::Init()
 	{
 		controllerUI_ = std::make_unique<Game::ControllerUI>();
 	}
-	void GameModel::Update(float deltaTime)
+	void GameSceneModel::Update(float deltaTime)
 	{
 		controllerUI_->Update(deltaTime);
 	}

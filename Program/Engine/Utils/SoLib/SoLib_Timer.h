@@ -19,6 +19,23 @@ namespace SoLib {
 	bool ImGuiWidget(const char *const label, Time::DeltaTimer *const ptr);
 	namespace Time {
 
+		/// @brief 与えられた関数から､処理の実行時間を計測する
+		template <typename T>
+		T MeasureTime(const std::function<void(void)> &func) {
+			// 高精度クロックの開始
+			auto start = std::chrono::high_resolution_clock::now();
+
+			func();
+
+			// 高精度クロックの終了
+			auto end = std::chrono::high_resolution_clock::now();
+
+			// 処理時間を計算
+			auto duration = std::chrono::duration_cast<T>(end - start);
+
+			return duration;
+		}
+
 
 		template <SoLib::IsFloatPoint T>
 		class Second final {
@@ -61,6 +78,17 @@ namespace SoLib {
 			result.first = iTime / 60;
 			result.second = iTime % 60;
 
+			return result;
+		}
+
+		/// @brief ミリ秒から時間を算出する
+		/// @param[in] time ミリ秒
+		/// @return 換算した時間(秒, 小数点以下)
+		inline std::pair<uint32_t, uint32_t> GetMilliMoment(const std::chrono::milliseconds &time) {
+			auto millisec = time.count();
+			std::pair<uint32_t, uint32_t> result;
+			result.first = static_cast<uint32_t>(millisec / 1000);
+			result.second = static_cast<uint32_t>(millisec % 1000);
 			return result;
 		}
 

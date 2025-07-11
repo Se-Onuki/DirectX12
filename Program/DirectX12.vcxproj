@@ -254,6 +254,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Header\Object\HealthBar.cpp" />
     <ClCompile Include="Header\Object\PlayerLevel\LevelUP.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene\BeTaskScene.cpp" />
     <ClCompile Include="Scene\CGTaskScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\NT_ClientScene.cpp" />
@@ -412,6 +413,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Header\Object\Ground.h" />
     <ClInclude Include="Header\Object\HealthBar.h" />
     <ClInclude Include="Header\Object\PlayerLevel\LevelUP.h" />
+    <ClInclude Include="Scene\BeTaskScene.h" />
     <ClInclude Include="Scene\CGTaskScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\NT_ClientScene.h" />

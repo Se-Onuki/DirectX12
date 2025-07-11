@@ -8,13 +8,13 @@
 
 namespace Game {
 
-	class GameModel;
+	class GameSceneModel;
 
-	class GameRenderer {
+	class GameSceneRenderer {
 	public:
 
-		GameRenderer() = default;
-		~GameRenderer() = default;
+		GameSceneRenderer() = default;
+		~GameSceneRenderer() = default;
 
 		/// @brief 初期化
 		void Init();
@@ -22,7 +22,7 @@ namespace Game {
 
 		/// @brief ゲームの情報の描画
 		/// @param[in] gameModel ゲームの情報
-		void Render(const GameModel &gameModel);
+		void Render(const GameSceneModel &gameModel);
 
 
 	private:

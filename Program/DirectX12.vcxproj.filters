@@ -537,6 +537,9 @@
     <ClCompile Include="Engine\Utils\IO\JoyCon\JoyConManager.cpp">
       <Filter>Engine\Utils\IO\JoyCon</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\BeTaskScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -1066,6 +1069,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Utils\IO\JoyCon\JoyConManager.h">
       <Filter>Engine\Utils\IO\JoyCon</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\BeTaskScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

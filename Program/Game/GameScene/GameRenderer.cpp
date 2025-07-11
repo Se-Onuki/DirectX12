@@ -3,12 +3,12 @@
 
 #include "GameModel.h"
 
-void Game::GameRenderer::Init()
+void Game::GameSceneRenderer::Init()
 {
 	pShaderManager_ = SolEngine::ResourceObjectManager<Shader>::GetInstance();
 }
 
-void Game::GameRenderer::Render(const GameModel &)
+void Game::GameSceneRenderer::Render(const GameSceneModel &)
 {
 
 

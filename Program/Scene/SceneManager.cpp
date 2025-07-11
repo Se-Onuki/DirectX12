@@ -9,6 +9,7 @@
 #include "ResultScene.h"
 #include "NT_ServerScene.h"
 #include "NT_ClientScene.h"
+#include "BeTaskScene.h"
 
 namespace SolEngine {
 	SceneManager *const IScene::sceneManager_ = SceneManager::GetInstance();
@@ -25,6 +26,7 @@ namespace SolEngine {
 		sceneFactory_["ResultScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<ResultScene>(); };
 		sceneFactory_["NT_ServerScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<NT_ServerScene>(); };
 		sceneFactory_["NT_ClientScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<NT_ClientScene>(); };
+		sceneFactory_["BeTaskScene"] = []()->std::unique_ptr<IScene> { return std::make_unique<BeTaskScene>(); };
 	}
 
 	void SceneManager::Cancel() {
