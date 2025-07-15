@@ -42,22 +42,37 @@ public:
 
 private:
 
+	/// @brief タイマーの場所を設定
 	void SetTimerPositon();
 
+	/// @brief 与えられた時間をテキストに変換
+	/// @param time[in] 時間 
 	void TimeToText(const std::chrono::milliseconds &time);
 
+	/// @brief 時間のテキストの描画
 	void DrawTimerText() const;
 
+	/// @brief 時間からスコアを算出
+	/// @param time[in] 時間
+	/// @return 算出したスコア
 	uint32_t TimeToScore(const std::chrono::milliseconds &time) const;
 
+	/// @brief スコアを送信する
 	void SendScore();
 
+	/// @brief 最高得点を取得
 	void GetTopScore();
 
+	/// @brief スコアの非同期送信
+	/// @param score[in] 送信するスコア
+	/// @return 送信結果を含む std::string を格納した std::future オブジェクト
 	static std::future<std::string> PostScoreAsync(int32_t score);
 
+	/// @brief すべてのスコアを非同期的に取得します。
+	/// @return すべてのスコアを含む std::string を格納した std::future オブジェクト
 	static std::future<std::string> GetAllScoreAsync();
 
+	/// @brief CURLの書き込みコールバック関数
 	static size_t WriteCallback(void *const c, const size_t s, const size_t n, std::string *const userp);
 
 
@@ -86,7 +101,7 @@ private:
 	// 処理時間
 	std::chrono::milliseconds timeDuration_;
 
-	SoLib::Time::SecondF drawTimeCount_ = 7;
+	const SoLib::Time::SecondF drawTimeCount_ = 7;
 
 	// bgm
 	SolEngine::Audio::SoundHandle soundA_;

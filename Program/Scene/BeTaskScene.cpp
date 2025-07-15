@@ -10,11 +10,13 @@ BeTaskScene::BeTaskScene()
 	audio_ = SolEngine::Audio::GetInstance();
 	// カメラマネージャーの取得
 	cameraManager_ = SolEngine::CameraManager::GetInstance();
+
+	curl_global_init(CURL_GLOBAL_ALL);
 }
 
 BeTaskScene::~BeTaskScene()
 {
-
+	curl_global_cleanup();
 }
 
 void BeTaskScene::OnEnter()
@@ -90,13 +92,17 @@ void BeTaskScene::Draw()
 	Sprite::StartDraw(commandList);
 
 	// 規定された時間以下なら表示する
-	if (timeDuration_.count() > drawTimeCount_ * 1000 or state_ != TaskState::kStart) {
+	if (timeDuration_.count() < drawTimeCount_ * 1000 or state_ != TaskState::kStart) {
 		// スプライトの描画
 		DrawTimerText();
 	}
 	if (state_ != TaskState::kStart) {
 		// スコアの表示
 		scoreText_->Draw();
+
+		for(const auto &num : topScoreText_) {
+			num->Draw();
+		}
 
 	}
 
@@ -143,13 +149,18 @@ uint32_t BeTaskScene::TimeToScore(const std::chrono::milliseconds &time) const
 	}
 
 	// 10秒から離れるごとに1000点から得点が減る｡0.001秒で1点減る｡
-	uint32_t score = 1000 + 10000 - static_cast<uint32_t>(time.count());
+	int32_t score = 1000 - (10000 - static_cast<uint32_t>(time.count()));
+	// もしマイナスになっていたら0点
+	if (score < 0) {
+		score = 0;
+	}
 
-	return score;
+	return static_cast<uint32_t>(score);
 }
 
 void BeTaskScene::SendScore()
 {
+	PostScoreAsync(TimeToScore(timeDuration_)).get();
 }
 
 void BeTaskScene::GetTopScore()
@@ -236,15 +247,20 @@ std::future<std::string> BeTaskScene::GetAllScoreAsync()
 			return "CURL初期化エラー";
 		}
 
+		// 応答を格納する文字列
 		std::string response{};
+		// CURLのオプションを設定
 		curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:3000/scores");
 		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
+		// CURLを実行して応答を取得
 		CURLcode res = curl_easy_perform(curl);
+		// curlのクリーンアップ
 		curl_easy_cleanup(curl);
 
+		// 応答コードがCURLE_OKでない場合はエラーメッセージを返す
 		if (res != CURLE_OK) {
 			return "取得エラー: " + std::string(curl_easy_strerror(res));
 		}
@@ -254,6 +270,8 @@ std::future<std::string> BeTaskScene::GetAllScoreAsync()
 }
 
 size_t BeTaskScene::WriteCallback(void *const c, const size_t s, const size_t n, std::string *const userp) {
-	static_cast<std::string *>(userp)->append(static_cast<char *>(c), s * n);
+	// 文字列の末端に､アドレスcを始点としたs*nバイトの文字列を追加する
+	userp->append(static_cast<char *>(c), s * n);
+	// 追加したバイト数を返す
 	return s * n;
 }
