@@ -1,6 +1,7 @@
 #include "BeTaskScene.h"
 #include "../Engine/Utils/Network/WindowsSocket/WindowsSocket.h"
 #include <curl/curl.h>
+#include "../Engine/Utils/Network/Curl/Curl.h"
 
 BeTaskScene::BeTaskScene()
 {
@@ -39,6 +40,19 @@ void BeTaskScene::OnExit()
 
 void BeTaskScene::Update()
 {
+	static std::string name;
+	static std::string password;
+	static std::string loginResult;
+
+	ImGui::Begin("Curl操作");
+	SoLib::ImGuiWidget("name",&name);
+	SoLib::ImGuiWidget("password",&password);
+	if (ImGui::Button("Login")) {
+		// ログイン処理を非同期で行う
+		loginResult = LoginAsync(name, password).get();
+	}
+	ImGui::Text("Login Result: %s", loginResult.c_str());
+	ImGui::End();
 
 	// タイマーが動作してたら更新処理を行う
 	if (state_ == TaskState::kStart) {
@@ -100,7 +114,7 @@ void BeTaskScene::Draw()
 		// スコアの表示
 		scoreText_->Draw();
 
-		for(const auto &num : topScoreText_) {
+		for (const auto &num : topScoreText_) {
 			num->Draw();
 		}
 
@@ -148,8 +162,12 @@ uint32_t BeTaskScene::TimeToScore(const std::chrono::milliseconds &time) const
 		return 0;
 	}
 
+	// 10秒からの差を計算
+	// 10秒 = 10000ミリ秒
+	const int32_t diff = std::abs(10000 - static_cast<int32_t>(time.count()));
+
 	// 10秒から離れるごとに1000点から得点が減る｡0.001秒で1点減る｡
-	int32_t score = 1000 - (10000 - static_cast<uint32_t>(time.count()));
+	int32_t score = 1000 - diff;
 	// もしマイナスになっていたら0点
 	if (score < 0) {
 		score = 0;
@@ -194,7 +212,9 @@ std::future<std::string> BeTaskScene::PostScoreAsync(int32_t score)
 {
 	{
 		return std::async(std::launch::async, [score]() ->std::string {
-			CURL *curl = curl_easy_init();
+			SoLib::Curl curl;
+			/*CURL *curl = curl_easy_init();*/
+			curl.Init();
 
 			if (not curl) {
 				return "CURL初期化エラー";
@@ -209,21 +229,21 @@ std::future<std::string> BeTaskScene::PostScoreAsync(int32_t score)
 
 			std::string response{};
 
-			curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:3000/scores");
-			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-			curl_easy_setopt(curl, CURLOPT_POST, 1L);
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, bodyStr.c_str());
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+			curl.SetOption(CURLOPT_URL, "http://localhost:3000/scores");
+			curl.SetOption(CURLOPT_HTTPHEADER, headers);
+			curl.SetOption(CURLOPT_POST, 1L);
+			curl.SetOption(CURLOPT_POSTFIELDS, bodyStr.c_str());
+			curl.SetOption(CURLOPT_WRITEFUNCTION, SoLib::Network::WriteCallback);
+			curl.SetOption(CURLOPT_WRITEDATA, &response);
 
-			CURLcode res = curl_easy_perform(curl);
+			CURLcode res = curl.Perform();
 
 			long httpCode = 0;
 
-			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
+			curl.GetInfo(CURLINFO_RESPONSE_CODE, &httpCode);
 
 			curl_slist_free_all(headers);
-			curl_easy_cleanup(curl);
+			curl.CleanUp();
 
 			if (res != CURLE_OK) {
 				return "送信エラー: " + std::string(curl_easy_strerror(res));
@@ -252,7 +272,7 @@ std::future<std::string> BeTaskScene::GetAllScoreAsync()
 		// CURLのオプションを設定
 		curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:3000/scores");
 		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, SoLib::Network::WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
 		// CURLを実行して応答を取得
@@ -269,9 +289,43 @@ std::future<std::string> BeTaskScene::GetAllScoreAsync()
 	);
 }
 
-size_t BeTaskScene::WriteCallback(void *const c, const size_t s, const size_t n, std::string *const userp) {
-	// 文字列の末端に､アドレスcを始点としたs*nバイトの文字列を追加する
-	userp->append(static_cast<char *>(c), s * n);
-	// 追加したバイト数を返す
-	return s * n;
+std::future<std::string> BeTaskScene::LoginAsync(const std::string &name, const std::string &password)
+{
+	nlohmann::json body = nlohmann::json::object();
+	body["name"] = name;
+	body["password"] = password;
+	const std::string bodyStr = body.dump();
+	return std::async(std::launch::async, [bodyStr]()->std::string {
+		SoLib::Curl curl;
+		curl.Init();
+
+		struct curl_slist *headers = nullptr;
+		headers = curl_slist_append(headers, "Content-Type: application/json");
+
+		std::string response{};
+
+		curl.SetOption(CURLOPT_URL, "http://localhost:3000/users/login");
+		curl.SetOption(CURLOPT_HTTPHEADER, headers);
+		curl.SetOption(CURLOPT_POST, 1L);
+		curl.SetOption(CURLOPT_POSTFIELDS, bodyStr.c_str());
+		curl.SetOption(CURLOPT_WRITEFUNCTION, SoLib::Network::WriteCallback);
+		curl.SetOption(CURLOPT_WRITEDATA, &response);
+
+		CURLcode res = curl.Perform();
+
+		long httpCode = 0;
+
+		curl.GetInfo(CURLINFO_RESPONSE_CODE, &httpCode);
+
+		curl_slist_free_all(headers);
+		curl.CleanUp();
+
+		if (res != CURLE_OK) {
+			return "ログインエラー: " + std::string(curl_easy_strerror(res));
+		}
+
+		return response;
+
+		}
+	);
 }

@@ -235,6 +235,7 @@ copy "$(ProjectDir)externals\libcurl\bin\libcurl.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Engine\Utils\IO\JoyCon\JoyConLoader.cpp" />
     <ClCompile Include="Engine\Utils\IO\JoyCon\JoyConManager.cpp" />
     <ClCompile Include="Engine\Utils\Math\UIValue.cpp" />
+    <ClCompile Include="Engine\Utils\Network\Curl\Curl.cpp" />
     <ClCompile Include="Engine\Utils\Network\Socket\UdpNetwork.cpp" />
     <ClCompile Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.cpp" />
     <ClCompile Include="Engine\VFX\Particle\Particle.cpp" />
@@ -385,6 +386,7 @@ copy "$(ProjectDir)externals\libcurl\bin\libcurl.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Engine\Utils\IO\JoyCon\JoyConLoader.h" />
     <ClInclude Include="Engine\Utils\IO\JoyCon\JoyConManager.h" />
     <ClInclude Include="Engine\Utils\Math\UIValue.h" />
+    <ClInclude Include="Engine\Utils\Network\Curl\Curl.h" />
     <ClInclude Include="Engine\Utils\Network\Network.h" />
     <ClInclude Include="Engine\Utils\Network\Socket\ConnectSocket.h" />
     <ClInclude Include="Engine\Utils\Network\Socket\OwnedSocket.h" />

@@ -72,9 +72,11 @@ private:
 	/// @return すべてのスコアを含む std::string を格納した std::future オブジェクト
 	static std::future<std::string> GetAllScoreAsync();
 
-	/// @brief CURLの書き込みコールバック関数
-	static size_t WriteCallback(void *const c, const size_t s, const size_t n, std::string *const userp);
-
+	/// @brief ログイン処理
+	/// @param name[in] 名前
+	/// @param password[in] パスワード 
+	/// @return 結果
+	static std::future<std::string> LoginAsync(const std::string &name, const std::string &password);
 
 private:
 	// 入力インスタンス
