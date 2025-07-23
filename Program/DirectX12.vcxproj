@@ -238,6 +238,8 @@ copy "$(ProjectDir)externals\libcurl\bin\libcurl.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Engine\Utils\Network\Curl\Curl.cpp" />
     <ClCompile Include="Engine\Utils\Network\Socket\UdpNetwork.cpp" />
     <ClCompile Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.cpp" />
+    <ClCompile Include="Engine\Utils\SoLib\NewImGui.cpp" />
+    <ClCompile Include="Engine\Utils\Text\Text.cpp" />
     <ClCompile Include="Engine\VFX\Particle\Particle.cpp" />
     <ClCompile Include="Game\GameScene\GameModel.cpp" />
     <ClCompile Include="Game\GameScene\GameRenderer.cpp" />
@@ -394,6 +396,8 @@ copy "$(ProjectDir)externals\libcurl\bin\libcurl.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Engine\Utils\Network\TcpClient.h" />
     <ClInclude Include="Engine\Utils\Network\TcpServer.h" />
     <ClInclude Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.h" />
+    <ClInclude Include="Engine\Utils\SoLib\NewImGui.h" />
+    <ClInclude Include="Engine\Utils\Text\Text.h" />
     <ClInclude Include="Engine\VFX\Particle\Particle.h" />
     <ClInclude Include="Engine\VFX\Particle\ParticleSystem.h" />
     <ClInclude Include="Game\GameScene\GameModel.h" />

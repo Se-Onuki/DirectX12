@@ -47,7 +47,7 @@ namespace SolEngine {
 		/// @brief TextureをCPUで読み込む
 		/// @param file_path ファイルパス
 		/// @return ミップマップ付きのデータ
-		inline DirectX::ScratchImage Load(const std::span<uint8_t> &texData) {
+		inline DirectX::ScratchImage Load(const std::span<std::byte> &texData) {
 			HRESULT hr = S_FALSE;
 			// テクスチャファイルを呼んでプログラムで扱えるようにする
 			DirectX::ScratchImage image{};

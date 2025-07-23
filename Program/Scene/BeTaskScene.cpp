@@ -3,6 +3,8 @@
 #include <curl/curl.h>
 #include "../Engine/Utils/Network/Curl/Curl.h"
 
+#include "../Engine/Utils/SoLib/NewImGui.h"
+
 BeTaskScene::BeTaskScene()
 {
 	// 入力インスタンスの取得
@@ -45,13 +47,13 @@ void BeTaskScene::Update()
 	static std::string loginResult;
 
 	ImGui::Begin("Curl操作");
-	SoLib::ImGuiWidget("name",&name);
-	SoLib::ImGuiWidget("password",&password);
+	SoLib::ImGuiWidget("name", &name);
+	SoLib::ImGuiWidget("password", &password);
 	if (ImGui::Button("Login")) {
 		// ログイン処理を非同期で行う
 		loginResult = LoginAsync(name, password).get();
 	}
-	SoLib::ImGuiWidget("Login Result", &loginResult);
+	SoLib::NewImGui::ImGuiWidget(loginResult);
 	ImGui::End();
 
 	// タイマーが動作してたら更新処理を行う

@@ -86,7 +86,7 @@ public:
 	/// @return 読み込んだテクスチャのインデックス
 	static uint32_t Load(const std::string_view &file_name);
 	/// @param[in] textData バイナリデータ
-	static uint32_t Load(const std::string_view &file_name, const std::span<uint8_t> &textData);
+	static uint32_t Load(const std::string_view &file_name, const std::span<std::byte> &textData);
 	/// @brief 初期化
 	/// @param[in] device デバイス
 	/// @param[in] commandList コマンドリスト
@@ -154,7 +154,7 @@ private:
 	/// @param file_name ファイル名
 	/// @param textData バイナリデータ( ARGB形式 )
 	/// @return 生成されたテクスチャのHandle
-	uint32_t LoadInternal(const std::string_view &file_name, const std::span<byte> &textData);
+	uint32_t LoadInternal(const std::string_view &file_name, const std::span<std::byte> &textData);
 
 	// デバイス(借用)
 	ID3D12Device *device_ = nullptr;

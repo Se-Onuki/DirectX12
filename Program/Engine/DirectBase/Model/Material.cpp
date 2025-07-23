@@ -37,7 +37,7 @@ namespace SolEngine {
 				const auto &texName = texture->mFilename;
 
 				// テクスチャのデータ
-				const std::span<uint8_t> texData = { &(texture->pcData->b), texture->mHeight ? texture->mHeight * texture->mWidth * 4u : texture->mWidth * 4u };
+				const std::span<std::byte> texData = { reinterpret_cast<std::byte *>(&(texture->pcData->b)), texture->mHeight ? texture->mHeight * texture->mWidth * 4u : texture->mWidth * 4u };
 
 				// テクスチャのデータを読み込んで保存する
 				textureHandles.push_back(::TextureManager::Load(texName.C_Str(), texData));

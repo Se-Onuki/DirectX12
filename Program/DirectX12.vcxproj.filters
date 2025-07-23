@@ -543,6 +543,12 @@
     <ClCompile Include="Engine\Utils\Network\Curl\Curl.cpp">
       <Filter>Engine\Utils\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Utils\SoLib\NewImGui.cpp">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utils\Text\Text.cpp">
+      <Filter>Engine\Utils\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneManager.h">
@@ -1078,6 +1084,12 @@
     </ClInclude>
     <ClInclude Include="Engine\Utils\Network\Curl\Curl.h">
       <Filter>Engine\Utils\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\NewImGui.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\Text\Text.h">
+      <Filter>Engine\Utils\Text</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

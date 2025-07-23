@@ -36,7 +36,7 @@ uint32_t TextureManager::Load(const std::string_view &file_name)
 }
 
 
-uint32_t TextureManager::Load(const std::string_view &file_name, const std::span<uint8_t> &textData)
+uint32_t TextureManager::Load(const std::string_view &file_name, const std::span<std::byte> &textData)
 {
 	return GetInstance()->LoadInternal(file_name, textData);
 }
@@ -174,7 +174,7 @@ uint32_t TextureManager::LoadInternal(const std::string_view &file_name)
 	return handle;
 }
 
-uint32_t TextureManager::LoadInternal(const std::string_view &file_name, const std::span<byte> &texData)
+uint32_t TextureManager::LoadInternal(const std::string_view &file_name, const std::span<std::byte> &texData)
 {
 #pragma region Texture検索
 
