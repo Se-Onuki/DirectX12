@@ -51,7 +51,7 @@ void BeTaskScene::Update()
 		// ログイン処理を非同期で行う
 		loginResult = LoginAsync(name, password).get();
 	}
-	ImGui::Text("Login Result: %s", loginResult.c_str());
+	SoLib::ImGuiWidget("Login Result", &loginResult);
 	ImGui::End();
 
 	// タイマーが動作してたら更新処理を行う

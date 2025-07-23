@@ -96,29 +96,29 @@ bool SoLib::ImGuiWidget(const char *const label, SoLib::ValuePair<T> *const valu
 
 template<SoLib::IsContainer C>
 uint32_t SoLib::ImGuiWidget(const char *const label, const C *const value, const uint32_t index, const std::function<std::string(uint32_t)> &displayChar) {
-
-	//T *selectItem = nullptr;
+	// イテレータの番号を当てる
 	uint32_t result = index;
 
 #ifdef USE_IMGUI
 
-
-	if (ImGui::BeginCombo(label, displayChar(index).c_str())) {
+	// コンボの開始
+	if (ImGui::BeginCombo(label, displayChar(index).c_str())) {	// 初期表示はdisplayChar(index)で指定された､現在の指定先の文字列｡
+		// コンテナのサイズ分ループ
 		for (uint32_t i = 0u; i < value->size(); i++) {
+			// 選択されているかどうかのフラグ
 			bool is_selected = (index == i);
 
-			std::string itemName = displayChar(i);
+			// アイテムの文字列を取得する
+			const std::string &itemName = displayChar(i);
 
 			// もし空文字列なら表示しない
 			if (itemName != "") {
-
+				// アイテムを選択可能にして､選択されているならばフラグを立てる
 				if (ImGui::Selectable(itemName.c_str(), is_selected)) {
 					result = i;
+					break;	// 選択されたらループを抜ける
 				}
 			}
-			/*	if (is_selected) {
-					ImGui::SetItemDefaultFocus();
-				}*/
 		}
 		ImGui::EndCombo();
 	}
@@ -150,7 +150,6 @@ Itr SoLib::ImGuiWidget(const char *const label, C *const value, Itr itr, const F
 
 	if (ImGui::BeginCombo(label, previewName.c_str())) {
 		for (Itr i = value->begin(); i != value->end(); ++i) {
-			//bool is_selected = (itr == i);
 
 			// アイテムの文字列
 			std::string itemName = displayChar(i);
@@ -158,13 +157,11 @@ Itr SoLib::ImGuiWidget(const char *const label, C *const value, Itr itr, const F
 			// もし空文字列なら表示しない
 			if (itemName != "") {
 
-				if (ImGui::Selectable(itemName.c_str()/*, is_selected*/)) {
+				if (ImGui::Selectable(itemName.c_str())) {
 					itr = i;
+					break;	// 選択されたらループを抜ける
 				}
 			}
-			/*	if (is_selected) {
-					ImGui::SetItemDefaultFocus();
-				}*/
 		}
 		ImGui::EndCombo();
 	}

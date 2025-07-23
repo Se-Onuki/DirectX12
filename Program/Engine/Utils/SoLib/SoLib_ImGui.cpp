@@ -105,31 +105,48 @@ bool SoLib::ImGuiWidgetAngle([[maybe_unused]] const char *const label, [[maybe_u
 #endif // USE_IMGUI
 }
 
-bool SoLib::ImGuiDragEuler(const char *const label, float *const value)
+bool SoLib::ImGuiDragEuler(const char *const label, float *const radEuler)
 {
+	// ウィンドウを取得
 	ImGuiWindow *window = ImGui::GetCurrentWindow();
+	// ウィンドウがスキップされているなら飛ばす
 	if (window->SkipItems) { return false; }
 
+	// ImGuiのコンテキストを取得
 	ImGuiContext &g = *GImGui;
+	// 値が変更されているかのフラグ
 	bool value_changed = false;
+	// グループの開始(レイアウトの整合性を保つ)
 	ImGui::BeginGroup();
+	// ラベル名をIDとして使用
 	ImGui::PushID(label);
+	// 書き込むアイテムの幅を3つに指定
 	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+	
 	for (int i = 0; i < 3; i++) {
+		// ラベルのIDにインデックスを追加(重複対策)
 		ImGui::PushID(i);
+		// 値が0以外であれば､行間に隙間を空ける
 		if (i > 0) { ImGui::SameLine(0, g.Style.ItemInnerSpacing.x); }
-		value_changed |= ImGui::SliderAngle("", &value[i], -180.f, 180.f);
+		// 数値を-180から180の範囲でスライダーで変更できるようにする｡
+		value_changed |= ImGui::SliderAngle("", &radEuler[i], -180.f, 180.f);
+		// 一時的に使用したIDをポップする
 		ImGui::PopID();
+		// 幅設定を戻す
 		ImGui::PopItemWidth();
 	}
+	// ラベルのIDを破棄する
 	ImGui::PopID();
 
+	// ラベルの終端を見つける
 	const char *label_end = ImGui::FindRenderedTextEnd(label);
+	// ラベルが終端に達していない場合、ラベルを表示する
 	if (label != label_end) {
+		// 余白を空けてからラベルを表示
 		ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
 		ImGui::TextEx(label, label_end);
 	}
-
+	// グループ化を終了する
 	ImGui::EndGroup();
 	return value_changed;
 }
