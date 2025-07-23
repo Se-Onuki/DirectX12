@@ -188,7 +188,7 @@ namespace SolEngine {
 		static auto itr = fileMap_.begin();
 
 		itr = SoLib::ImGuiWidget("AudioList", &fileMap_, itr,
-			[](const decltype(itr) &itemIndex) -> std::string
+			[](const auto &itemIndex) -> std::string
 			{
 				return '(' + std::to_string(itemIndex->second) + ')' + itemIndex->first;
 			});

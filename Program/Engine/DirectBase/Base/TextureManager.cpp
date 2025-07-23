@@ -11,6 +11,7 @@
 #include "DirectXCommon.h"
 
 #include <imgui.h>
+#include <imgui_stdlib.h>
 #include "../../Engine/Utils/SoLib/SoLib_ImGui.h"
 
 const TextureManager *TextureManager::TextureHandle::pTextureManager_ = nullptr;
@@ -29,13 +30,13 @@ void TextureManager::StartDraw()
 
 }
 
-uint32_t TextureManager::Load(const std::string &file_name)
+uint32_t TextureManager::Load(const std::string_view &file_name)
 {
 	return GetInstance()->LoadInternal(file_name);
 }
 
 
-uint32_t TextureManager::Load(const std::string &file_name, const std::span<uint8_t> &textData)
+uint32_t TextureManager::Load(const std::string_view &file_name, const std::span<uint8_t> &textData)
 {
 	return GetInstance()->LoadInternal(file_name, textData);
 }
@@ -53,10 +54,8 @@ void TextureManager::Init(ID3D12Device *const device, ID3D12GraphicsCommandList 
 }
 
 void TextureManager::Reset() {
-	//HRESULT hr = S_FALSE;
 
 	nextIndex_ = 0;
-	//srvHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, maxTextureCount, true);
 
 	for (size_t i = 0u; i < maxTextureCount; i++) {
 		textureArray_[i].textureResource_.Reset();
@@ -75,11 +74,11 @@ void TextureManager::ImGuiWindow() {
 }
 
 uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
-	static char filePath[32];
-	ImGui::InputTextWithHint("textureLoad", "resources/...", filePath, 32u);
+	static std::string filePath;
+	ImGui::InputTextWithHint("textureLoad", "resources/...", &filePath);
 	if (ImGui::Button("Load")) {
 		LoadInternal(filePath);
-		filePath[0] = '\0';
+		filePath.clear();
 	}
 
 	index = SoLib::ImGuiWidget("TextureList", &textureArray_, index,
@@ -90,14 +89,7 @@ uint32_t TextureManager::ImGuiTextureSelecter(uint32_t index) {
 		}
 	);
 
-
-	if (textureArray_[index].handle_.gpuHandle_.ptr) {
-		const auto &resourceDesc = textureArray_[index].textureResource_->GetDesc();
-		const Vector2 texSize = Vector2{ (float)resourceDesc.Width,(float)resourceDesc.Height } / (float)resourceDesc.Width * 100.f;
-		ImGui::Image((ImTextureID)textureArray_[index].handle_.gpuHandle_.ptr, ImVec2{ texSize.x,texSize.y });
-		ImGui::SameLine();
-		ImGui::Text("Width: %d\nHeight: %d", resourceDesc.Width, resourceDesc.Height);
-	}
+	SoLib::ImGuiWidget(textureArray_[index].name_.c_str(), &textureArray_[index]);
 
 	return index;
 }
@@ -111,7 +103,7 @@ void TextureManager::EndFlame()
 	intermediateData_.clear();
 }
 
-uint32_t TextureManager::LoadInternal(const std::string &file_name)
+uint32_t TextureManager::LoadInternal(const std::string_view &file_name)
 {
 #pragma region Texture検索
 
@@ -136,7 +128,10 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	// Textureを読んで転送する
 	DirectX::ScratchImage mipImage;
 
-	mipImage = SolEngine::TextureFunc::Load(directoryPath_ + file_name);
+	std::string file = directoryPath_;
+	file.append(file_name);
+
+	mipImage = SolEngine::TextureFunc::Load(file);
 
 
 	const DirectX::TexMetadata &metadata = mipImage.GetMetadata();
@@ -179,7 +174,7 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name)
 	return handle;
 }
 
-uint32_t TextureManager::LoadInternal(const std::string &file_name, const std::span<byte> &texData)
+uint32_t TextureManager::LoadInternal(const std::string_view &file_name, const std::span<byte> &texData)
 {
 #pragma region Texture検索
 
@@ -243,4 +238,34 @@ uint32_t TextureManager::LoadInternal(const std::string &file_name, const std::s
 const TextureManager::Texture *TextureManager::TextureHandle::GetTexture() const
 {
 	return pTextureManager_->GetTexture(index_);
+}
+
+template<>
+bool SoLib::ImGuiWidget(const char *const label, TextureManager::Texture *const value)
+{
+#ifdef USE_IMGUI
+
+	// もし値がnullptrなら､falseを返す
+	if (value == nullptr or label == nullptr) {
+		return false;
+	}
+
+	ImGui::Text(label);
+
+	if (value->handle_.gpuHandle_.ptr) {
+		const auto &resourceDesc = value->textureResource_->GetDesc();
+		const Vector2 texSize = Vector2{ (float)resourceDesc.Width,(float)resourceDesc.Height } / (float)resourceDesc.Width * 100.f;
+		ImGui::Image(std::bit_cast<ImTextureID>(value->handle_.gpuHandle_.ptr), ImVec2{ texSize.x,texSize.y });
+		ImGui::SameLine();
+		ImGui::Text("Width: %d\nHeight: %d", resourceDesc.Width, resourceDesc.Height);
+	}
+
+	return false;
+#else 
+
+	label; value;
+
+	return false;
+
+#endif // USE_IMGUI
 }

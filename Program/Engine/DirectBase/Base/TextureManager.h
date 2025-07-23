@@ -84,9 +84,9 @@ public:
 	/// @brief テクスチャの読み込み
 	/// @param[in] file_name 読み込むファイル名
 	/// @return 読み込んだテクスチャのインデックス
-	static uint32_t Load(const std::string &file_name);
+	static uint32_t Load(const std::string_view &file_name);
 	/// @param[in] textData バイナリデータ
-	static uint32_t Load(const std::string &file_name, const std::span<uint8_t> &textData);
+	static uint32_t Load(const std::string_view &file_name, const std::span<uint8_t> &textData);
 	/// @brief 初期化
 	/// @param[in] device デバイス
 	/// @param[in] commandList コマンドリスト
@@ -148,13 +148,13 @@ private:
 	/// @brief ファイル名からテクスチャを生成する｡
 	/// @param file_name ファイル名
 	/// @return 生成されたテクスチャのHandle
-	uint32_t LoadInternal(const std::string &file_name);
+	uint32_t LoadInternal(const std::string_view &file_name);
 
 	/// @brief バイナリデータからテクスチャを生成する｡
 	/// @param file_name ファイル名
 	/// @param textData バイナリデータ( ARGB形式 )
 	/// @return 生成されたテクスチャのHandle
-	uint32_t LoadInternal(const std::string &file_name, const std::span<byte> &textData);
+	uint32_t LoadInternal(const std::string_view &file_name, const std::span<byte> &textData);
 
 	// デバイス(借用)
 	ID3D12Device *device_ = nullptr;
@@ -177,6 +177,11 @@ private:
 	// 画像転送用一時テクスチャリソース
 	std::list<ComPtr<ID3D12Resource>> intermediateData_;
 };
+
+namespace SoLib {
+	template <>
+	bool ImGuiWidget(const char *const label, TextureManager::Texture *const value);
+}
 
 namespace SolEngine {
 

@@ -277,9 +277,9 @@ namespace SolEngine {
 		Microsoft::WRL::ComPtr<IXAudio2> xAudio2_ = nullptr;
 		IXAudio2MasteringVoice *masterVoice_ = nullptr;
 
-		::std::array<::std::unique_ptr<SoundData>, kMaxSound> soundArray_;
-		::std::unordered_map<::std::string, uint32_t> fileMap_;
-		::std::unordered_set<Voice, VoiceHash> voices_;
+		std::array<std::unique_ptr<SoundData>, kMaxSound> soundArray_;
+		std::unordered_map<std::string, uint32_t> fileMap_;
+		std::unordered_set<Voice, VoiceHash> voices_;
 
 		// オーディオコールバック
 		XAudio2VoiceCallback voiceCallback_;

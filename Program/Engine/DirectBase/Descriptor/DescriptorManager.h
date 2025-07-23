@@ -19,8 +19,8 @@ class DescHeap {
 
 public:
 	struct Handle {
-		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle_;
-		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
+		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle_ = {0};
+		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_ = {0};
 	};
 
 	inline static const D3D12_DESCRIPTOR_HEAP_TYPE HeapType_ = HeapType;
