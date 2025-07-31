@@ -54,6 +54,7 @@ void BeTaskScene::Update()
 		loginResult = LoginAsync(name, password).get();
 	}
 	SoLib::NewImGui::ImGuiWidget(loginResult);
+	SoLib::NewImGui::ImGuiWidget("a");
 	ImGui::End();
 
 	// タイマーが動作してたら更新処理を行う

@@ -12,6 +12,8 @@ namespace SoLib {
 		template<IsRealType T>
 		IsSuccess ImGuiWidget(const T *const value);
 
+		IsSuccess ImGuiWidget(const char *const value);
+
 		IsSuccess ImGuiWidget(const std::string_view &value);
 
 		template<IsRealType T>

@@ -5,13 +5,22 @@
 
 namespace SoLib::NewImGui {
 
+	IsSuccess ImGuiWidget(const char *const value) { return ImGuiWidget(std::string_view{ value }); }
+
 	IsSuccess ImGuiWidget(const std::string_view &value) {
 
 #ifdef USE_IMGUI
 
-		ImGui::Text(value.data());
-		if (ImGui::Button("Copy", ImVec2{ 50.f, 0.f })) {
-			return Text::CopyClipboard(value);
+		if (value.empty()) {
+			ImGui::Text("");
+			return false; // 空文字列は無視
+		}
+		bool isClicked = false;
+		if (ImGui::Selectable(value.data(), &isClicked, ImGuiSelectableFlags_AllowDoubleClick)) {
+			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+				// ダブルクリックされたらクリップボードにコピー
+				return Text::CopyClipboard(value);
+			}
 		}
 		return false;
 
