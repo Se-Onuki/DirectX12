@@ -231,7 +231,7 @@ std::future<std::string> BeTaskScene::PostScoreAsync(int32_t score)
 
 			std::string response{};
 
-			curl.SetOption(CURLOPT_URL, "http://localhost:3000/scores");
+			curl.SetOption(CURLOPT_URL, "https://swgame-se-onuki-onuki-seiyas-projects.vercel.app/scores");
 			curl.SetOption(CURLOPT_HTTPHEADER, headers);
 			curl.SetOption(CURLOPT_POST, 1L);
 			curl.SetOption(CURLOPT_POSTFIELDS, bodyStr.c_str());
@@ -272,7 +272,7 @@ std::future<std::string> BeTaskScene::GetAllScoreAsync()
 		// 応答を格納する文字列
 		std::string response{};
 		// CURLのオプションを設定
-		curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:3000/scores");
+		curl_easy_setopt(curl, CURLOPT_URL, "https://swgame-se-onuki-onuki-seiyas-projects.vercel.app/scores");
 		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, SoLib::Network::WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
@@ -306,7 +306,7 @@ std::future<std::string> BeTaskScene::LoginAsync(const std::string &name, const 
 
 		std::string response{};
 
-		curl.SetOption(CURLOPT_URL, "http://localhost:3000/users/login");
+		curl.SetOption(CURLOPT_URL, "https://swgame-se-onuki-onuki-seiyas-projects.vercel.app/login");
 		curl.SetOption(CURLOPT_HTTPHEADER, headers);
 		curl.SetOption(CURLOPT_POST, 1L);
 		curl.SetOption(CURLOPT_POSTFIELDS, bodyStr.c_str());
