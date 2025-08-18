@@ -1091,6 +1091,15 @@
     <ClInclude Include="Engine\Utils\Text\Text.h">
       <Filter>Engine\Utils\Text</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\ImGuiObject.hpp">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\ImGuiRegistry.hpp">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utils\SoLib\SoLib_Memory.h">
+      <Filter>Engine\Utils\SoLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shader\Sprite.PS.hlsl">

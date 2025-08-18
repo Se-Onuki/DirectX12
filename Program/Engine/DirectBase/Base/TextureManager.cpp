@@ -255,7 +255,7 @@ bool SoLib::ImGuiWidget(const char *const label, TextureManager::Texture *const 
 	if (value->handle_.gpuHandle_.ptr) {
 		const auto &resourceDesc = value->textureResource_->GetDesc();
 		const Vector2 texSize = Vector2{ (float)resourceDesc.Width,(float)resourceDesc.Height } / (float)resourceDesc.Width * 100.f;
-		ImGui::Image(std::bit_cast<ImTextureID>(value->handle_.gpuHandle_.ptr), ImVec2{ texSize.x,texSize.y });
+		ImGui::Image(value->GetTextureID(), ImVec2{ texSize.x,texSize.y });
 		ImGui::SameLine();
 		ImGui::Text("Width: %d\nHeight: %d", resourceDesc.Width, resourceDesc.Height);
 	}

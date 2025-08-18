@@ -17,6 +17,23 @@ public:
 private:
 	bool isSuccess_ = false;
 };
+
+inline IsSuccess operator|(const IsSuccess &lhs, const IsSuccess &rhs) {
+	return IsSuccess(static_cast<bool>(lhs) | static_cast<bool>(rhs));
+}
+
+inline IsSuccess operator|=(IsSuccess &lhs, const IsSuccess &rhs) {
+	return lhs = lhs | rhs;
+}
+
+inline IsSuccess operator&(const IsSuccess &lhs, const IsSuccess &rhs) {
+	return IsSuccess(static_cast<bool>(lhs) & static_cast<bool>(rhs));
+}
+
+inline IsSuccess operator&=(IsSuccess &lhs, const IsSuccess &rhs) {
+	return lhs = lhs & rhs;
+}
+
 //
 //class IsSuccessText {
 //public:
