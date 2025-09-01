@@ -103,3 +103,8 @@ namespace SoLib::Memory {
 	}
 
 }
+
+namespace SoLib {
+	template<SoLib::IsRealType T>
+	using view_pointer = SoLib::Memory::view_pointer<T>;
+}
