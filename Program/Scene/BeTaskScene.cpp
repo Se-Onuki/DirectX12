@@ -30,7 +30,7 @@ void BeTaskScene::OnEnter()
 	scoreText_ = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 4);
 	scoreText_->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f, 96.f * 2 });
 
-	for (float i = 0; auto &num : topScoreText_) {
+	for (float i = 0; auto & num : topScoreText_) {
 		num = SolEngine::NumberText::Generate(TextureManager::Load("UI/Number.png"), 4);
 		num->SetPosition(Vector2{ WinApp::kWindowWidth / 2.f, 96.f * i++ + 96.f * 3 });
 	}
@@ -52,6 +52,13 @@ void BeTaskScene::Update()
 	if (ImGui::Button("Login")) {
 		// ログイン処理を非同期で行う
 		loginResult = LoginAsync(name, password).get();
+		if (not loginResult.starts_with("ログインエラー:")) {
+			nlohmann::json result = nlohmann::json::parse(loginResult);
+			authorization_ = "Bearer " + result["token"].get<std::string>();
+		}
+		else {
+			authorization_.clear();
+		}
 	}
 	SoLib::NewImGui::ImGuiWidget(loginResult);
 	SoLib::NewImGui::ImGuiWidget("a");
@@ -93,7 +100,7 @@ void BeTaskScene::Update()
 		if (input_->GetDirectInput()->IsTrigger(DIK_RETURN)) {
 			state_ = TaskState::kSendScore;
 			// スコアを送信
-			PostScoreAsync(TimeToScore(timeDuration_)).get();
+			PostScoreAsync(TimeToScore(timeDuration_), authorization_).get();
 			// スコアの取得
 			GetTopScore();
 		}
@@ -181,18 +188,19 @@ uint32_t BeTaskScene::TimeToScore(const std::chrono::milliseconds &time) const
 
 void BeTaskScene::SendScore()
 {
-	PostScoreAsync(TimeToScore(timeDuration_)).get();
+	PostScoreAsync(TimeToScore(timeDuration_), authorization_).get();
 }
 
 void BeTaskScene::GetTopScore()
 {
 
-	auto getRes = GetAllScoreAsync().get();
+	auto getRes = GetAllScoreAsync(authorization_).get();
 
 	if (getRes != "CURL初期化エラー") {
 		try {
 			nlohmann::json jsonData = nlohmann::json::parse(getRes);
-			for (uint32_t i = 0; i < topScoreText_.size(); i++) {
+			size_t length = std::min(jsonData.size(), topScoreText_.size());
+			for (uint32_t i = 0; i < length; i++) {
 				if (i < jsonData.size()) {
 					topScoreText_[i]->SetText(jsonData[i]["score"].get<int32_t>(), true);
 				}
@@ -211,10 +219,10 @@ void BeTaskScene::GetTopScore()
 
 }
 
-std::future<std::string> BeTaskScene::PostScoreAsync(int32_t score)
+std::future<std::string> BeTaskScene::PostScoreAsync(int32_t score, const std::string &authorization)
 {
 	{
-		return std::async(std::launch::async, [score]() ->std::string {
+		return std::async(std::launch::async, [score, authorization]() ->std::string {
 			SoLib::Curl curl;
 			/*CURL *curl = curl_easy_init();*/
 			curl.Init();
@@ -229,6 +237,7 @@ std::future<std::string> BeTaskScene::PostScoreAsync(int32_t score)
 
 			struct curl_slist *headers = nullptr;
 			headers = curl_slist_append(headers, "Content-Type: application/json");
+			headers = curl_slist_append(headers, ("Authorization: " + authorization).c_str());
 
 			std::string response{};
 
@@ -262,24 +271,31 @@ std::future<std::string> BeTaskScene::PostScoreAsync(int32_t score)
 	}
 }
 
-std::future<std::string> BeTaskScene::GetAllScoreAsync()
+std::future<std::string> BeTaskScene::GetAllScoreAsync(const std::string &authorization)
 {
-	return std::async(std::launch::async, []()->std::string {
+	return std::async(std::launch::async, [authorization]()->std::string {
 		CURL *curl = curl_easy_init();
 		if (not curl) {
 			return "CURL初期化エラー";
 		}
 
+
+		struct curl_slist *headers = nullptr;
+		headers = curl_slist_append(headers, ("Authorization: " + authorization).c_str());
+
 		// 応答を格納する文字列
 		std::string response{};
 		// CURLのオプションを設定
 		curl_easy_setopt(curl, CURLOPT_URL, "https://swgame-se-onuki-onuki-seiyas-projects.vercel.app/scores");
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, SoLib::Network::WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
 		// CURLを実行して応答を取得
 		CURLcode res = curl_easy_perform(curl);
+
+		curl_slist_free_all(headers);
 		// curlのクリーンアップ
 		curl_easy_cleanup(curl);
 
@@ -307,7 +323,7 @@ std::future<std::string> BeTaskScene::LoginAsync(const std::string &name, const 
 
 		std::string response{};
 
-		curl.SetOption(CURLOPT_URL, "https://swgame-se-onuki-onuki-seiyas-projects.vercel.app/login");
+		curl.SetOption(CURLOPT_URL, "https://swgame-se-onuki-onuki-seiyas-projects.vercel.app/users/login");
 		curl.SetOption(CURLOPT_HTTPHEADER, headers);
 		curl.SetOption(CURLOPT_POST, 1L);
 		curl.SetOption(CURLOPT_POSTFIELDS, bodyStr.c_str());

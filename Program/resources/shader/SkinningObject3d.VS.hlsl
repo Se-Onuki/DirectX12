@@ -53,9 +53,9 @@ Skinned Skinning(VertexShaderInput input)
     result.position = (
         0.f, 0.f, 0.f, 0.f
     );
-    for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++)
     {
-        result.position += mul(input.position, gMatrixPalette[input.index[i]].skeletonSpaceMatrix_) * input.weight[i];
+        result.position += mul(input.position, gMatrixPalette[input.index[j]].skeletonSpaceMatrix_) * input.weight[j];
     }
     result.position.w = 1.f; // 確実に1を代入する
     

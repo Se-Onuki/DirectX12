@@ -66,11 +66,11 @@ private:
 	/// @brief スコアの非同期送信
 	/// @param score[in] 送信するスコア
 	/// @return 送信結果を含む std::string を格納した std::future オブジェクト
-	static std::future<std::string> PostScoreAsync(int32_t score);
+	static std::future<std::string> PostScoreAsync(int32_t score, const std::string &authorization);
 
 	/// @brief すべてのスコアを非同期的に取得します。
 	/// @return すべてのスコアを含む std::string を格納した std::future オブジェクト
-	static std::future<std::string> GetAllScoreAsync();
+	static std::future<std::string> GetAllScoreAsync(const std::string &authorization);
 
 	/// @brief ログイン処理
 	/// @param name[in] 名前
@@ -109,4 +109,6 @@ private:
 	SolEngine::Audio::SoundHandle soundA_;
 
 	TaskState state_ = TaskState::kStop;
+
+	std::string authorization_;
 };
