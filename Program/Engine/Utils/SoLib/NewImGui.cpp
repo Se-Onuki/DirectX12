@@ -18,8 +18,8 @@ namespace SoLib::NewImGui {
 		bool isClicked = false;
 		if (ImGui::Selectable(value.data(), &isClicked, ImGuiSelectableFlags_AllowDoubleClick)) {
 			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-				// ダブルクリックされたらクリップボードにコピー
-				return Text::CopyClipboard(value);
+				// ダブルクリックされたらtrue
+				return true;
 			}
 		}
 		return false;
@@ -32,6 +32,27 @@ namespace SoLib::NewImGui {
 #endif // USE_IMGUI
 
 
+	}
+
+	IsSuccess ImGuiWindow::Draw() const
+	{
+#ifdef USE_IMGUI
+
+		ImGui::Begin(title_.c_str());
+
+		for (const auto &widget : widgets_) {
+			if (widget) {
+				widget->Draw();
+			}
+		}
+
+
+		ImGui::End();
+
+#endif // USE_IMGUI
+
+
+		return false;
 	}
 
 }

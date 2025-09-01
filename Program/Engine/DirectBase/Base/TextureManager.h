@@ -35,6 +35,8 @@ public:
 		DescHeapCbvSrvUav::Handle handle_;
 		Vector2 textureSize_;
 		std::string name_;
+
+		ImTextureID GetTextureID() const { return std::bit_cast<ImTextureID>(handle_.gpuHandle_.ptr); }
 	};
 
 	/// @brief テクスチャのハンドル

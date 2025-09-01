@@ -396,7 +396,10 @@ copy "$(ProjectDir)externals\libcurl\bin\libcurl.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Engine\Utils\Network\TcpClient.h" />
     <ClInclude Include="Engine\Utils\Network\TcpServer.h" />
     <ClInclude Include="Engine\Utils\Network\WindowsSocket\WindowsSocket.h" />
+    <ClInclude Include="Engine\Utils\SoLib\ImGuiObject.hpp" />
+    <ClInclude Include="Engine\Utils\SoLib\ImGuiRegistry.hpp" />
     <ClInclude Include="Engine\Utils\SoLib\NewImGui.h" />
+    <ClInclude Include="Engine\Utils\SoLib\SoLib_Memory.h" />
     <ClInclude Include="Engine\Utils\Text\Text.h" />
     <ClInclude Include="Engine\VFX\Particle\Particle.h" />
     <ClInclude Include="Engine\VFX\Particle\ParticleSystem.h" />

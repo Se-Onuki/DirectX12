@@ -75,6 +75,15 @@ namespace SoLib {
 		{ iter != iter } -> std::same_as<bool>;
 	};
 
+	template <typename Itr, typename T>
+	concept IsIteratorOf = requires(Itr iter) {
+		// イテレータのデリファレンス可能性を確認
+		{ *iter } -> std::same_as<T &>;
+		// イテレータの要素型がTであることを確認
+		typename std::iterator_traits<Itr>::value_type;
+		requires std::same_as<typename std::iterator_traits<Itr>::value_type, T>;
+	};
+
 	template <typename Func, typename ReturnType, typename... Args>
 	concept IsFunction = requires(Func func, Args... args) {
 		// 関数の戻り値の型を確認
